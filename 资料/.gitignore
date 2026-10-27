@@ -1,0 +1,51 @@
+# Python caches and local tooling output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime-only state and temporary command output
+文档/证据/运行/
+文档/证据/测试与回归日志/
+文档/证据/execution_outputs/
+*.err
+*.out
+*.pid
+regen00.*
+diagnostic_*.txt
+compile.err
+eval.err
+eval.out
+
+# Historical copies and generated migration workspaces
+文档/合并升级/
+文档/归档/
+# Keep the curated archive created by the material reorganization.
+!文档/归档/
+文档/归档/*
+!文档/归档/历史恢复与改进/
+!文档/归档/历史恢复与改进/**
+!文档/归档/类型参考/
+!文档/归档/类型参考/**
+!文档/归档/运行诊断/
+!文档/归档/运行诊断/**
+!文档/归档/旧管道快照/
+!文档/归档/旧管道快照/**
+文档/恢复候选/
+验收/
+资料版本/
+资料索引/
+
+# Generated bulk reports and derived databases
+文档/证据/创作流程绑定/
+文档/证据/全量资料解释词创作绑定.json
+文档/证据/全量资料治理/
+文档/证据/来源深度检查报告.json
+文档/证据/step08_full_context_validation.json
+文档/证据/按时间改进对照台账.md
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.vscode/

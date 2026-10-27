@@ -1,0 +1,93 @@
+{
+  "schema_version": "creative-material-lifecycle-1.0",
+  "description": "六大小说创作资料及其派生对象的统一生命周期规范",
+  "canonical_source_kinds": ["资料库", "类型系统", "类型连接", "静态网络", "动态网络", "锚点网络"],
+  "success_states": [
+    "source_readable",
+    "source_indexed",
+    "semantically_translated",
+    "qualified",
+    "candidate",
+    "activated",
+    "selected",
+    "consumed",
+    "prose_realized",
+    "reviewed"
+  ],
+  "non_success_terminal_states": [
+    "deferred",
+    "not_applicable",
+    "conflicted",
+    "quarantined",
+    "unconfirmed"
+  ],
+  "transition_policy": {
+    "monotonic": true,
+    "no_implicit_promotion": true,
+    "authorization_is_not_consumption": true,
+    "indexing_is_not_selection": true,
+    "selection_is_not_prose_realization": true,
+    "historical_artifact_is_not_project_fact": true,
+    "candidate_or_unconfirmed_cannot_constrain_formal_prose": true,
+    "deferred_requires_reason": true,
+    "not_applicable_requires_scope_reason": true,
+    "conflicted_requires_competing_sources": true
+  },
+  "required_object_fields": [
+    "source_id",
+    "binding_id",
+    "source_kind",
+    "source_ref",
+    "source_file_sha256",
+    "object_sha256",
+    "semantic_interpretation",
+    "applicable_stages",
+    "source_specific_trigger",
+    "creative_object",
+    "observable_action",
+    "observable_result",
+    "cost_or_change",
+    "semantic_anchor",
+    "evidence_requirements",
+    "status"
+  ],
+  "required_evidence_by_state": {
+    "source_readable": ["source_ref", "source_file_sha256"],
+    "source_indexed": ["source_id", "source_ref", "object_sha256"],
+    "semantically_translated": ["semantic_interpretation", "semantic_anchor"],
+    "qualified": ["applicable_stages", "source_specific_trigger", "creative_object", "observable_action", "observable_result", "cost_or_change"],
+    "candidate": ["activation_reason", "matched_creative_need", "evidence_requirements"],
+    "activated": ["activation_conditions_met", "activation_evidence", "scene_id"],
+    "selected": ["selection_rationale", "scene_id", "binding_id"],
+    "consumed": ["prose_location", "observable_result", "run_id"],
+    "prose_realized": ["prose_location", "paragraph_sha256", "semantic_effect", "run_id"],
+    "reviewed": ["review_status", "reviewed_by", "reviewed_at"]
+  },
+  "statistics": {
+    "source_objects": "原始资料中可定位的稳定对象数量",
+    "indexed_objects": "已有稳定索引的对象数量",
+    "translated_objects": "已有语义解释的对象数量",
+    "qualified_objects": "通过资料合同的对象数量",
+    "candidate_objects": "匹配当前创作需求的候选数量",
+    "selected_objects": "被场景或节点明确选中的对象数量",
+    "consumed_objects": "有运行消费记录的对象数量",
+    "prose_realized_objects": "有正文位置和段落哈希的对象数量",
+    "deferred_objects": "明确暂不适用或等待条件的对象数量"
+  },
+  "source_immutability": {
+    "raw_files": [
+      "原始资料/资料库.txt",
+      "原始资料/类型系统.txt",
+      "原始资料/类型连接.txt",
+      "原始资料/静态网络.txt",
+      "原始资料/动态网络.txt",
+      "原始资料/锚点网络.txt"
+    ],
+    "raw_writeback_requires": ["current_source_sha256", "exact_locator", "exact_old_text", "exact_new_text", "human_approval"]
+  },
+  "delivery_policy": {
+    "draft_only_is_not_formal_release": true,
+    "formal_release_requires": ["story_core_confirmation", "source_attestations", "same_run_manifest", "literary_review", "three_chapter_gate", "human_approval"],
+    "current_project_status": "draft_only"
+  }
+}

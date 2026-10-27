@@ -1,0 +1,222 @@
+{
+  "schema_version": "project-config-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "project_name": "衡渊-潮痕入骨",
+  "project_mode": "system_runtime_planned",
+  "creation_mode": "project_bound",
+  "run_mode": "full_authored_run",
+  "creation_scope": "complete_formal_creation",
+  "status": "runtime_baseline_ready",
+  "created_at": "2026-08-19T04:48:59.608931Z",
+  "primary_type": "玄幻",
+  "genre_selection": [
+    "玄幻",
+    "悬疑"
+  ],
+  "theme_combination": [
+    "悬疑"
+  ],
+  "type_combination": {
+    "combination_id": "玄幻+悬疑",
+    "status": "author_confirmed_for_draft_only"
+  },
+  "type_selection_policy": {
+    "mode": "draft_only",
+    "formal_release_allowed": false
+  },
+  "target_words": 4500,
+  "target_chapter_count": 1,
+  "story_core_confirmation": {
+    "status": "pending",
+    "confirmation_id": "",
+    "confirmed_by": "",
+    "confirmed_at": "",
+    "project_id": "trial-玄幻-沈砚",
+    "reason": "等待作者确认故事核心；灵感选型回执和规划产物仅保持 draft_only"
+  },
+  "book_title": "潮痕入骨",
+  "world_stage": "三百年前的潮灾之后，七大宗以镇潮大阵维持各地灵脉。阵法让修行稳定，也把灵脉最危险的波动和承受波动的人一并藏进了档案。",
+  "mainline_conflict": "当维持多数人安稳的秩序，必须长期牺牲少数无名者时，推翻它的人该承担怎样的代价？",
+  "core_mystery": "镇潮阵在固定潮期抽取低阶修士检测时逸散的灵息，输送给旧域中沉眠的阵眼。阵眼维系的并非灾息，而是一批当年被留在旧域、仍以神识支撑阵法的人。",
+  "protagonist": {
+    "name": "沈砚",
+    "personality": [
+      "谨慎",
+      "追问",
+      "重视证据"
+    ],
+    "desire": "取得内门晋升资格，换回被宗门扣留的母亲遗物。",
+    "obsession": "查清父亲在潮期死亡的真相",
+    "decision_tendency": [
+      "先取证",
+      "以细节逼人表态"
+    ],
+    "blind_spots": [
+      "容易把盟友推入被动"
+    ],
+    "emotional_reactions": [
+      "面对规则说谎时急于追查"
+    ],
+    "dynamic_aliases": [
+      "沈砚"
+    ],
+    "dynamic_node_id": "1.1",
+    "dynamic_node_name": "主角"
+  },
+  "chapter_plan": [
+    {
+      "chapter_id": "CH01",
+      "chapter_goal": "沈砚在外门检测中发现镇潮阵异常，取得第一份证据，并为保留它付出晋升资格受损的代价。",
+      "target_words": 4500,
+      "scenes": [
+        {
+          "scene_id": "CH01-S01",
+          "purpose": "在外门检测场建立沈砚的可复核观察、陆昭的现实顾虑和镇潮阵异常的第一处可见痕迹。",
+          "action_chain": [
+            {
+              "beat": "入场",
+              "event": "沈砚进入外门检测场，先观察值守弟子的记录顺序和检测石的旧痕。",
+              "pressure": "今日检测决定晋升资格，任何质疑都会被记为扰乱秩序。"
+            },
+            {
+              "beat": "异常",
+              "event": "第七息回亮时，检测石的细纹与镇潮阵方向同时发白。",
+              "pressure": "执律堂将异象归为修行不稳，要求他立刻离台。"
+            },
+            {
+              "beat": "试探",
+              "event": "沈砚用不带指控的问题追问检测记录的间隔，陆昭替他遮住旁人的视线。",
+              "pressure": "陆昭的药额依赖宗门考核，不愿被他的追查拖入禁令。"
+            },
+            {
+              "beat": "取证",
+              "event": "他趁记录册翻页时记下被药灰填过的刻痕和第七息的偏差。",
+              "pressure": "若被发现私留读数，晋升资格会当场冻结。"
+            },
+            {
+              "beat": "钩子",
+              "event": "沈砚把异常读数藏进袖中，决定去档案廊寻找潮灾前的原始记录。",
+              "pressure": "他失去当场申诉的机会，只能在规则之外继续追查。"
+            }
+          ],
+          "location": "栖云宗外门检测场",
+          "character_goal": "通过检测并确认第七息异常是否来自自身",
+          "obstacle": "执律堂将异常归为修行不稳，陆昭要求他不要公开追问",
+          "new_information": "第七息回亮与镇潮阵的灵息回声同步",
+          "state_before": "沈砚只怀疑检测有误",
+          "state_after": "沈砚确认异常可被复核且可能来自阵法",
+          "ending": "他把异常读数藏入袖中，失去当场申诉的机会",
+          "hook": "档案廊是否留有潮灾前的原始记录"
+        },
+        {
+          "scene_id": "CH01-S02",
+          "purpose": "让沈砚在档案廊以问题逼许照微表态，并取得一份只能证明异常存在、尚不能解释真相的缺页。",
+          "action_chain": [
+            {
+              "beat": "入场",
+              "event": "沈砚进入藏卷阁档案廊，先确认封存柜、旧册和巡查路线的位置。",
+              "pressure": "越权接触潮灾卷宗会连累当值录事。"
+            },
+            {
+              "beat": "对话",
+              "event": "他以缺失页码为由向许照微提问，不直接说出镇潮阵异常。",
+              "pressure": "许照微必须在守规与保留线索之间选择。"
+            },
+            {
+              "beat": "缺页",
+              "event": "许照微让他看见被整齐切走的一页，页边仍留有潮期编号。",
+              "pressure": "缺页只能证明删改存在，无法解释谁在删改。"
+            },
+            {
+              "beat": "取证",
+              "event": "沈砚把页边刻痕与检测石读数并列记下，发现两者的时段重合。",
+              "pressure": "他不能留下会暴露许照微的抄录痕迹。"
+            },
+            {
+              "beat": "钩子",
+              "event": "许照微把缺页留给他，同时要求他不得提及自己的名字。",
+              "pressure": "下一轮检测即将开始，证据必须在被收回前找到用途。"
+            }
+          ],
+          "location": "栖云宗藏卷阁档案廊",
+          "character_goal": "取得能证明异常存在的旧档案缺页",
+          "obstacle": "许照微以禁令阻拦，越权查档会连累她",
+          "new_information": "潮灾名册中存在被刻意抹去的名字与检测记录",
+          "state_before": "沈砚只拥有一条异常读数",
+          "state_after": "沈砚获得不能解释真相但足以继续追查的缺页",
+          "ending": "许照微留下缺页后要求他不得提及自己的名字",
+          "hook": "缺页上的刻痕指向下一轮检测"
+        },
+        {
+          "scene_id": "CH01-S03",
+          "purpose": "让沈砚决定保留异常证据而非交回，陆昭因此承担可见风险，并以晋升资格受损作为章末不可逆代价。",
+          "action_chain": [
+            {
+              "beat": "门前",
+              "event": "沈砚带着缺页回到封存室外，禁线已把回廊灯火隔在身后。",
+              "pressure": "执律堂正在追查缺失读数，陆昭被叫去问话。"
+            },
+            {
+              "beat": "分歧",
+              "event": "陆昭要求他交回证据保住药额，沈砚承认自己尚未掌握真相。",
+              "pressure": "两人的利益第一次正面冲突，任何承诺都无法消除风险。"
+            },
+            {
+              "beat": "验证",
+              "event": "沈砚按缺页上的节拍叩门，第三次回声来自旧域更深处。",
+              "pressure": "这一步会留下触碰禁线的可追查痕迹。"
+            },
+            {
+              "beat": "选择",
+              "event": "他没有交回异常读数，而是把可复核的刻痕与缺页一同藏起。",
+              "pressure": "陆昭因此被记为协助者，药额和晋升资格都可能受影响。"
+            },
+            {
+              "beat": "代价",
+              "event": "执律堂宣布暂缓沈砚的晋升资格，夜里的镇潮阵再次回响。",
+              "pressure": "退路变窄后，他必须决定是否继续进入旧域。"
+            }
+          ],
+          "location": "栖云宗外门回廊与封存室外",
+          "character_goal": "保留异常证据并避免陆昭因协助受罚",
+          "obstacle": "执律堂追查缺失读数，陆昭的药额与晋升资格都受牵连",
+          "new_information": "交回证据会让异常被归档，保留证据会立刻触犯宗门秩序",
+          "state_before": "沈砚仍能在规则内调查",
+          "state_after": "沈砚决定越界保留证据，陆昭承担可见风险",
+          "ending": "沈砚的晋升资格被暂缓，退路正式变窄",
+          "hook": "镇潮阵下一次回响将在夜间出现"
+        }
+      ]
+    }
+  ],
+  "source_basis": {
+    "story_bible": "配置/项目创作圣经.json",
+    "scene_brief": "配置/首章场景创作简报.json",
+    "material_snapshots": [
+      {
+        "path": "原始资料/资料库.txt",
+        "sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed"
+      },
+      {
+        "path": "原始资料/类型系统.txt",
+        "sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582"
+      },
+      {
+        "path": "原始资料/类型连接.txt",
+        "sha256": "e7b7f8f2d1bb7f1af3007ed24da1d3531f767a08c14db94e79346264eafed7b0"
+      },
+      {
+        "path": "原始资料/静态网络.txt",
+        "sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197"
+      },
+      {
+        "path": "原始资料/动态网络.txt",
+        "sha256": "d6093b82fe6e072bdff7300fadcf175112b988d319c6b836f5d5b881b5282cc6"
+      },
+      {
+        "path": "原始资料/锚点网络.txt",
+        "sha256": "9b7ea71e53613a453fe71fa0a862411f65f22328a38ee7b97db7fd5bab7be759"
+      }
+    ]
+  }
+}

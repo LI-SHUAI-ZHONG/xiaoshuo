@@ -1,0 +1,44 @@
+{
+  "schema_version": "project-creative-production-policy-1.0",
+  "policy_id": "project-creative-production-boundary-1.0",
+  "release_status": "draft_only",
+  "creation_modes": ["generic_novel", "project_bound"],
+  "source_kinds": {
+    "资料库": "source_material",
+    "动态网络": "runtime_network",
+    "静态网络": "static_network",
+    "锚点网络": "anchor_network",
+    "类型系统": "generic_type_method",
+    "类型系统来源块": "generic_type_source_block",
+    "类型连接": "project_type_connection"
+  },
+  "required_strategy_fields": [
+    "source_specific_trigger",
+    "observable_action",
+    "observable_result",
+    "cost_or_change",
+    "semantic_anchor",
+    "evidence_location",
+    "quality_rule"
+  ],
+  "hard_boundaries": {
+    "authorization_is_not_consumption": true,
+    "classification_required_before_activation": true,
+    "matched_creative_need_and_stage_evidence_required": true,
+    "model_required_for_quality_candidate": true,
+    "automatic_validation_required_before_derived_batch": true,
+    "formal_release_requires_project_source_confirmation": true,
+    "type_connection_requires_project_type_confirmation": true,
+    "full_material_improvement_requires_original_object_readback": true,
+    "full_material_improvement_covers_all_source_kinds": true,
+    "type_selection_blocks_activation_not_source_improvement": true,
+    "type_rule_material_binding_does_not_require_project_type_confirmation": true,
+    "experimental_summary_candidates_are_nonrelease": true,
+    "automatic_draft_requires_semantic_and_literary_review": false
+  },
+  "full_material_improvement_policy": {
+    "required_before_new_improvement_batch": true,
+    "contract": "配置/全量模型资料改进方案.json",
+    "validator": "全量模型资料改进方案.py"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": "creative-material-map-1.0",
+  "generated_at": "2026-08-31",
+  "project_id": "trial-玄幻-沈砚",
+  "delivery_status": "draft_only",
+  "policy": "保留当前主管道稳定路径；历史、证据和候选资料不得自动提升为正文事实。",
+  "canonical_layers": {
+    "raw_sources": [
+      "原始资料/资料库.txt",
+      "原始资料/类型系统.txt",
+      "原始资料/类型连接.txt",
+      "原始资料/静态网络.txt",
+      "原始资料/动态网络.txt",
+      "原始资料/锚点网络.txt"
+    ],
+    "runtime_views": [
+      "文档/资料库索引.jsonl",
+      "文档/证据/类型连接全局索引.json",
+      "网络完整数据/静态连接完整数据.json",
+      "网络完整数据/动态连接完整数据.json",
+      "文档/证据/静态网络索引.json",
+      "文档/证据/动态链索引.jsonl",
+      "文档/证据/锚点分类索引.json"
+    ],
+    "project_inputs": [
+      "配置/project_config.json",
+      "配置/项目创作圣经.json",
+      "配置/首章场景创作简报.json",
+      "配置/项目创作生产政策.json"
+    ],
+    "governance_and_evidence": [
+      "文档/证据/资源注册表.json",
+      "文档/证据/启动绑定合同.json",
+      "文档/资料治理/资料用途清单.json",
+      "文档/资料治理/待隔离资料批准清单.json"
+    ],
+    "execution": ["脚本/执行管道.py", "脚本/来源解析器.py"],
+    "creative_outputs": ["文档/创作设计/", "文档/创作深化/", "正文/运行/"]
+  },
+  "archived_categories": {
+    "historical_records": [
+      "文档/归档/历史恢复与改进/20260820_20260826_全资料恢复说明.md",
+      "文档/归档/历史恢复与改进/20260820_20260826_逐日重放状态.json",
+      "文档/归档/历史恢复与改进/20260820_20260826_正式目录历史时间截断复制摘要.json",
+      "文档/归档/历史恢复与改进/改进.md",
+      "文档/归档/历史恢复与改进/改进方法/"
+    ],
+    "reference_materials": [
+      "文档/归档/类型参考/小说类型.csv",
+      "文档/归档/类型参考/小说类型.txt",
+      "文档/归档/类型参考/小说类型_玄幻悬疑专项核对.json",
+      "文档/归档/类型参考/小说类型_玄幻悬疑专项核对.md",
+      "文档/归档/类型参考/小说类型主资料 - 副本.md",
+      "文档/归档/历史恢复与改进/_upgrade_file_inventory.txt"
+    ],
+    "diagnostics_and_logs": [
+      "文档/归档/运行诊断/history-repair-v*.log",
+      "文档/归档/运行诊断/*.err",
+      "文档/归档/运行诊断/*.out",
+      "文档/归档/运行诊断/*.pid",
+      "文档/归档/运行诊断/diagnostic_*.txt",
+      "文档/归档/运行诊断/人物相关全集命中.txt",
+      "文档/归档/运行诊断/基线登记_运行输出.txt",
+      "文档/归档/运行诊断/文件清单.json",
+      "文档/归档/运行诊断/_small_file_pipeline_references.txt"
+    ],
+    "old_pipeline_snapshots": ["文档/归档/旧管道快照/执行管道.py.before_upstream_dispatch_20260820_123802"]
+  },
+  "not_deleted": true,
+  "archive_is_reversible": true,
+  "known_limits": [
+    "当前项目来源确认仍未完成，正式发布继续禁止。",
+    "历史运行证据和候选资料只保留审计价值，不作为当前创作输入。",
+    "文档/证据/运行/、文档/合并升级/等目录由 .gitignore 忽略；本次精选归档已加入精确例外规则，归档内容可随仓库保留。"
+  ]
+}
