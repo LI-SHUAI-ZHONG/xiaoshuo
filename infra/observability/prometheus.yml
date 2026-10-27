@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0f47fc88bb0d8c2545affae6aa4754434e0a90a9cc9f8d3a8a685486075c1452
-size 161
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: accos-otel
+    static_configs:
+      - targets: ["otel-collector:8889"]

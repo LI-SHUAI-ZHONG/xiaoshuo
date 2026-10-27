@@ -1,3 +1,15 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:57298f32f47b95523598a217a9d05de323c95eb50edc88009be95f824d7e3186
-size 270
+[CmdletBinding()]
+param()
+
+$ErrorActionPreference = 'Stop'
+$repositoryRoot = Resolve-Path (Join-Path $PSScriptRoot '..')
+Push-Location $repositoryRoot
+try {
+    & corepack pnpm run install:all
+    $exitCode = $LASTEXITCODE
+}
+finally {
+    Pop-Location
+}
+exit $exitCode
+

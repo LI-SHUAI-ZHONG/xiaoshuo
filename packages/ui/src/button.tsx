@@ -1,3 +1,27 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e674843d536f0a10fc2e8ddec0e4a6f5b4bd8c66d873136090b9639522f88a32
-size 808
+import { forwardRef, type ButtonHTMLAttributes } from "react";
+
+import { cx } from "./utils.ts";
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  busy?: boolean;
+  variant?: "primary" | "secondary" | "ghost" | "danger";
+}
+
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { busy = false, children, className, disabled, type = "button", variant = "primary", ...props },
+  ref,
+) {
+  return (
+    <button
+      ref={ref}
+      aria-busy={busy || undefined}
+      className={cx("ui-button", `ui-button--${variant}`, className)}
+      disabled={busy ? true : disabled}
+      type={type}
+      {...props}
+    >
+      {busy ? <span aria-hidden="true" className="ui-button__spinner" /> : null}
+      <span>{children}</span>
+    </button>
+  );
+});

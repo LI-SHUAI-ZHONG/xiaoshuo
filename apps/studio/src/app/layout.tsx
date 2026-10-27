@@ -1,3 +1,26 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7cfb37f92e07c691a0fd1ef23f59196fc96a365cb12137a3335170e235d758df
-size 658
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+
+import { StudioProviders } from "../providers/studio-providers";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  description: "ACCOS 创作者工作台",
+  title: {
+    default: "ACCOS Studio",
+    template: "%s · ACCOS Studio",
+  },
+};
+
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  return (
+    <html lang="zh-CN">
+      <body>
+        <a className="studio-skip-link" href="#main-content">
+          跳到主要内容
+        </a>
+        <StudioProviders>{children}</StudioProviders>
+      </body>
+    </html>
+  );
+}

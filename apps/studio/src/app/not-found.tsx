@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d9643a0a0725a8f7fda6747262e444c591673ed2d500aaed392aeb73ade4f654
-size 454
+import { EmptyState } from "@accos/ui";
+import Link from "next/link";
+
+export default function NotFound() {
+  return (
+    <main className="studio-state-wrap" id="main-content">
+      <EmptyState
+        action={
+          <Link className="studio-link-button" href="/workspaces">
+            返回工作区
+          </Link>
+        }
+        description="请求的 Studio 路由不存在。"
+        title="页面未找到"
+      />
+    </main>
+  );
+}

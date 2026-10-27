@@ -1,3 +1,42 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:32949dec813a8c8670d101c18e27a3e39d8375db9c64c8d0fb5d7ea0d2f7e314
-size 906
+"""Stable public asset contracts."""
+
+from accos.modules.assets.application import (
+    AssetService,
+    DefaultUploadSecurityPolicy,
+    UnconfiguredContentScanner,
+    UploadResult,
+    object_key_for,
+)
+from accos.modules.assets.domain import (
+    Asset,
+    AssetSort,
+    AssetStatus,
+    AssetVersion,
+    ProcessingStatus,
+    ScanResult,
+    ScanStatus,
+    UploadSession,
+    UploadStatus,
+)
+from accos.modules.assets.ports import AssetRepository, ContentScanner, ObjectStorage, StoredObject
+
+__all__ = [
+    "Asset",
+    "AssetRepository",
+    "AssetService",
+    "AssetSort",
+    "AssetStatus",
+    "AssetVersion",
+    "ContentScanner",
+    "DefaultUploadSecurityPolicy",
+    "ObjectStorage",
+    "ProcessingStatus",
+    "ScanResult",
+    "ScanStatus",
+    "StoredObject",
+    "UnconfiguredContentScanner",
+    "UploadResult",
+    "UploadSession",
+    "UploadStatus",
+    "object_key_for",
+]

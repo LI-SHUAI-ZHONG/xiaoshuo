@@ -1,3 +1,444 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:0089b2637c339758eef668f9685e8b231d9f8d20a63aadc18f8e324f0b013169
-size 15423
+{
+  "schema_version": 1,
+  "date": "2026-09-26",
+  "kind": "source_and_document_review_not_runtime_acceptance",
+  "step": 25,
+  "status": "IMPLEMENTED_UNTESTED",
+  "user_instruction": "继续25步开始施工",
+  "actual_scope": "核对第25步已有交接并修补安装保护、OIDC恢复及待测缺口；第26步代码未改，原状态保留。",
+  "baseline": {
+    "directory": "D:\\搭建\\.construction\\baselines\\stage25-resume-20260926",
+    "file_count": 585,
+    "archive_sha256": "4ea217653c84ef062fa9b0f4ca10c755cb55af57755a8c76b6449a436f473b56",
+    "restore_exercised": false
+  },
+  "changed_files": [
+    {
+      "path": "apps/studio/src/app/(public)/login/page.tsx",
+      "before_sha256": "d0d2771b9966e78d0e2c2ffa0eede4d1508c8bc0cb6046433cd47032cfa06b7b",
+      "after_sha256": "d196e22b28b0bb9ede585de35e670593f3800b3e0e6a16e20f55c84e4148a259"
+    },
+    {
+      "path": "apps/studio/src/components/local-session-form.tsx",
+      "before_sha256": "1517300477bae410c118748c618cff011fdd100a316093d05ab3fba8d4fa07b9",
+      "after_sha256": "e928db0f17f9d03ffe00279a8a05f376532aea9a92f433ad3e602ca4deee1719"
+    },
+    {
+      "path": "docs/contracts/implementation-register.json",
+      "before_sha256": "6cb0c6547c8cc30fa04715e4bcb89443e8120c76a56d183337aa534fc3fb2ddf",
+      "after_sha256": "a1eb3a2cdbc144622ba71dbd7bcba17d7705d4bd68f1a778504874b7569f713a"
+    },
+    {
+      "path": "docs/contracts/migrations.json",
+      "before_sha256": "5175ddc04be990acc5968eb4fc609f2e8619f53ca9b5f61474ca99d94dac99a6",
+      "after_sha256": "4ea044871ad20d63d93241590cbf1a21d362bda77bcd7e117340100a50f821b1"
+    },
+    {
+      "path": "docs/contracts/test-registration.json",
+      "before_sha256": "9a0ba3d2a74fda43e7d75c1b78b0b7453e3518ead35839a2d5c061d4aeb4e139",
+      "after_sha256": "446fea5b776a5939af9846cacfc34607c872460cbecf5cd7c617c007cbd78e32"
+    },
+    {
+      "path": "docs/handoffs/25.md",
+      "before_sha256": "4c118ede5be93caae628ad1b0b037aad65e6288139f8772dce87af3074085884",
+      "after_sha256": "30bd60ea3dbd39071e74ea747a246b9e6f523591c291cd6fcd2f214512c1d678"
+    },
+    {
+      "path": "docs/runbooks/local-identity.md",
+      "before_sha256": "ecd046c2f14dabc200a9e3b634665d2a153b58becae1d5a9ee9ba0ae1baaee90",
+      "after_sha256": "6ab518f43ad18d0d1ff1ac28e8f8078cedc4765429f2cd219750f8f7e8d223fd"
+    },
+    {
+      "path": "packages/api-client/openapi.json",
+      "before_sha256": "b1e6e5735610e8d367d29ee7d94298271bc82de672b4d055e9332efbece0c8cb",
+      "after_sha256": "0ffb6885d4571132720bc704a90fcbfb54259ddf5e2728207580250b4957fd6b"
+    },
+    {
+      "path": "packages/api-client/src/generated/schema.ts",
+      "before_sha256": "122eb75ebed5a93d9e9566ad5098d63595782086081cf7edca85f04f4796d230",
+      "after_sha256": "12505e988d3f800fa2f2c17cbc6efa95f88fec48cfbd27a8650eb745d8d2da5e"
+    },
+    {
+      "path": "scripts/prepare_local_identity.py",
+      "before_sha256": "bbf27d42be09524a3133b639d4fa5afffea105dfa0c080f7fccf6ec4adc9deee",
+      "after_sha256": "19b965ad94b328d882edb7a863345dcc64be616581517e83ddc10a87e9661be4"
+    },
+    {
+      "path": "scripts/setup_identity.py",
+      "before_sha256": "136d656989ff02b020697860c3e0fa13b9d17221d5d2e742e0e501a9bec20a33",
+      "after_sha256": "df41533abb936ee0637bf945cceab2c87675a0a38cc7ffce90b842cd25a1f861"
+    },
+    {
+      "path": "services/core/src/accos/adapters/identity/oidc.py",
+      "before_sha256": "8c6cf5e3c72e76e772ce5dd9e6e26d3f865abaaf655b5f479ad6ca1495ce8250",
+      "after_sha256": "9e06199654f0abb83f3e1eb10ca6757ceb339d8ae16908f824d05dd0f79a3c6e"
+    },
+    {
+      "path": "services/core/src/accos/entrypoints/api/v1/account_router.py",
+      "before_sha256": "1c957f6b21906cec923ac26c28ded8de96dd1ea6d7622f672d38714c23a9b2c3",
+      "after_sha256": "5b882d6f0bab10cf86f6e7ee35254a99e08099d995ca3b6ec3382626a2202ab2"
+    },
+    {
+      "path": "services/core/src/accos/modules/identity/account_service.py",
+      "before_sha256": "2b297c4feacf91508d82555bae0c8a5a96e44e59ccf0206ac75c98d9bfa8505b",
+      "after_sha256": "e55f07cd420530e4c3f344805f82e48071552adeb367ec8b974f6d6fee3ede93"
+    },
+    {
+      "path": "services/core/tests/test_identity_accounts.py",
+      "before_sha256": "304e12e53f319b10b48857a26a4a5fdc4ef4b4c32f127bc6322cf33e266fd3d4",
+      "after_sha256": "11e925929ab004b522c3cb75a2c1e47bb1e49593f5bb9c326df000786cdff3a6"
+    },
+    {
+      "path": "services/core/tests/test_identity_accounts_sql.py",
+      "before_sha256": "61e286caaa0e33cce96ea1612244c9c70efdde1feed039ae2a1fbd7ebac82ab9",
+      "after_sha256": "ba68e6b0bc03b9166795551d668c5debcb898a6b336e8a48cde83df225efc820"
+    },
+    {
+      "path": "services/core/tests/test_identity_installation.py",
+      "before_sha256": "f459ac84954c6a8a335e81f5d2f97890ecc10b2a318a1575f611d6289765e61a",
+      "after_sha256": "641600b4521f0ced9c695f12f7e5e979c3b6148fa0894cf0a73b40fed7c3dae9"
+    },
+    {
+      "path": "tests/e2e/identity-stage25.spec.ts",
+      "before_sha256": "c9e8a5f546f38d7a9c9217918077f6397467e4656d8f10d0992247cd5677277b",
+      "after_sha256": "b7a41b90b1c5dfd8d809adb935573f6e1117aaaf5d6acf20306463995f3bad32"
+    },
+    {
+      "path": "后续执行/00_开始这里.md",
+      "before_sha256": "c99619809e5946123a266b3d54f485b67d17716be268f9cf95e14ef1609a4276",
+      "after_sha256": "efe7b252e7adccc4bc0e87c302c8162782f4e310dc47e911bcbd90a105aef241"
+    },
+    {
+      "path": "后续执行/03_需求覆盖矩阵.md",
+      "before_sha256": "ccdb909b566a5dd449e0dc3e704c082a746ec258fca72dada080d7595b91743c",
+      "after_sha256": "4efe0b6df667361eebb90ff80541a99e7a37109c53fbed0a3a748ddc5ccfc0a5"
+    },
+    {
+      "path": "后续执行/08_统一待测试表.md",
+      "before_sha256": "c832683ea9e014f6de962180cdd0f7f769665535b6bcf6a92110568399a2bf50",
+      "after_sha256": "962e6fb2d3df1b36ac127bb6ea020d09920e4c621c2027b375426b31f989eff6"
+    },
+    {
+      "path": "后续执行/09_迁移交付与恢复.md",
+      "before_sha256": "d8969ca9ac3f8a5088b4afd16134ca295a1eae2fae547783e4d3927d0a19b4e9",
+      "after_sha256": "dd90ad5cf7f08118e2db84056b3bd8a9120771d8b14f621f02741d402309c99a"
+    },
+    {
+      "path": "后续执行/10_Codex总执行指令.md",
+      "before_sha256": "75880c84e535d06dcf44aef641d32a66ff15ef9100a6217f892c004ddb815b58",
+      "after_sha256": "830829620e7dbdf01709449ccc6d594b1b7c445d3bafd27121054904a8cdcf57"
+    },
+    {
+      "path": "后续执行/13_接管说明与施工断点.md",
+      "before_sha256": "d43a45b8f9fe6dc62a38df8c3ff9057e20cd40c33eaa7429ce1e3721f5ccaae0",
+      "after_sha256": "06e0cb3d67f9096b5aaac929945f005c78765c234f4a7fba5da76b5980256b21"
+    },
+    {
+      "path": "后续执行/步骤/25_本地身份设置与审批.md",
+      "before_sha256": "296860a998ba268ca05fea0ea1a207bab286c572064721bbd83163a44b5faad6",
+      "after_sha256": "02311d2bb098287ac8af6883d9d133aba96b7a47f36c0d093d06b061d754af93"
+    },
+    {
+      "path": "后续执行/统一待测试表.csv",
+      "before_sha256": "164deb1ec3872c2edaec7834a836b8f52bda5f55bfc21d992ab3e657effb4bb9",
+      "after_sha256": "82f08a6136a29ae3407bc5dff09d6497e55200b41b7991667eee2d5813a18c90"
+    },
+    {
+      "path": "后续执行/进度.json",
+      "before_sha256": "ded8f376e78f4eb597d0c0a08c767eb3b2aacf8c3940d583016f5dd4d047e946",
+      "after_sha256": "1065c6e769b4e03d6f5fa2daa06d9646cd9fc4f7903080e449997cc895dba871"
+    },
+    {
+      "path": "后续执行/需求覆盖矩阵.csv",
+      "before_sha256": "5b21ea06de4a5b90a19f8c7e71c33faec6dde2ae94c2c18da5e0673fda9c1838",
+      "after_sha256": "0e1b9ed4232d2228cc1577c382ede8b7030ae5ce3b2a474f818651085ce99593"
+    }
+  ],
+  "new_files": [
+    {
+      "path": "services/core/tests/test_identity_oidc_callbacks.py",
+      "sha256": "edb9c5adf93297ec00cf5c3854ab1e34fec5030b23a52171baae6e65c901a7cd"
+    }
+  ],
+  "unchanged_history": [
+    {
+      "path": "docs/handoffs/01.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/02.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/03.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/04.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/05.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/06.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/07.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/08.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/09.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/10.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/11.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/12.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/13.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/14.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/15.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/16.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/17.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/18.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/19.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/20.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/21.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/22.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/23.md",
+      "unchanged": true
+    },
+    {
+      "path": "docs/handoffs/24.md",
+      "unchanged": true
+    },
+    {
+      "path": "创作搭建.txt",
+      "unchanged": true
+    },
+    {
+      "path": "执行.txt",
+      "unchanged": true
+    },
+    {
+      "path": "执行/00_执行总览与使用规则.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/01_仓库初始化与架构契约.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/02_开发工具链与质量门禁.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/03_本地基础设施与环境配置.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/04_后端内核与应用启动.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/05_数据层迁移仓储与Outbox.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/06_身份权限安全与审计.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/07_项目工作区与资产核心.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/08_事件任务与工作流引擎.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/09_AI模型网关工具与插件边界.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/10_Agent运行时与总控编排.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/11_知识采集检索与研究骨架.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/12_七层记忆与上下文构建.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/13_小说世界人物与作者模型骨架.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/14_Canon一致性与质量评估.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/15_反馈指标与受控进化闭环.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/16_API基础契约与客户端生成.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/17_API资源路由与实时事件.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/18_Studio前端底座与设计系统.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/19_Studio项目与创作工作区.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/20_Studio监控与系统工作区.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/21_多模态生态与扩展接口骨架.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/22_可观测性韧性备份与灾备.md",
+      "unchanged": true
+    },
+    {
+      "path": "执行/23_集成测试CI发布与最终验收.md",
+      "unchanged": true
+    },
+    {
+      "path": "改进资料.txt",
+      "unchanged": true
+    }
+  ],
+  "source_migration_heads": [
+    "0013_identity_accounts"
+  ],
+  "migration_files": 13,
+  "database_head": "NOT_QUERIED",
+  "database_migrations_executed": false,
+  "openapi": {
+    "paths": 109,
+    "operations": 122,
+    "generated_offline": true,
+    "oidc_redirect_status": 303
+  },
+  "static_checks": [
+    {
+      "command": "node scripts/static-toolchain.mjs api",
+      "exit_code": 0
+    },
+    {
+      "command": "node scripts/static-toolchain.mjs types",
+      "exit_code": 0,
+      "python_source_files": 192,
+      "typescript_projects": 4
+    },
+    {
+      "command": ".venv/Scripts/python.exe -I -m mypy --config-file scripts/static-mypy.ini scripts/setup_identity.py scripts/prepare_local_identity.py services/core/tests/test_identity_installation.py services/core/tests/test_identity_oidc_callbacks.py",
+      "exit_code": 0,
+      "source_files": 4
+    },
+    {
+      "command": "node scripts/static-toolchain.mjs syntax",
+      "exit_code": 0,
+      "parsed_source_files": 255
+    },
+    {
+      "command": ".venv/Scripts/ruff.exe format --check scripts/setup_identity.py scripts/prepare_local_identity.py services/core/src/accos/modules/identity/account_service.py services/core/src/accos/entrypoints/api/v1/account_router.py services/core/src/accos/adapters/identity/oidc.py services/core/tests/test_identity_installation.py services/core/tests/test_identity_accounts.py services/core/tests/test_identity_oidc_callbacks.py services/core/tests/test_identity_accounts_sql.py",
+      "exit_code": 0,
+      "files": [
+        "scripts/setup_identity.py",
+        "scripts/prepare_local_identity.py",
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/src/accos/adapters/identity/oidc.py",
+        "services/core/tests/test_identity_installation.py",
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_oidc_callbacks.py",
+        "services/core/tests/test_identity_accounts_sql.py"
+      ]
+    },
+    {
+      "command": "node node_modules/prettier/bin/prettier.cjs --check --config .prettierrc.json --ignore-path .prettierignore --no-editorconfig 'apps/studio/src/components/local-session-form.tsx' 'apps/studio/src/app/(public)/login/page.tsx' 'tests/e2e/identity-stage25.spec.ts'",
+      "exit_code": 0,
+      "files": [
+        "apps/studio/src/components/local-session-form.tsx",
+        "apps/studio/src/app/(public)/login/page.tsx",
+        "tests/e2e/identity-stage25.spec.ts"
+      ]
+    }
+  ],
+  "document_checks": {
+    "requirements": 144,
+    "test_packages": 144,
+    "test_state": "NOT_RUN",
+    "registered_file_links_present": true
+  },
+  "runtime_tests": "NOT_RUN",
+  "services_started": false,
+  "installation_executed": false,
+  "real_oidc_executed": false,
+  "next_step": 26,
+  "next_step_status": "IN_PROGRESS",
+  "limitations": [
+    "源文件和静态检查不证明运行行为正确。",
+    "T005真实IdP、Windows ACL效果和全部项目验收留第45步。",
+    "恢复副本只包括修补前白名单源码；未包含真实密钥、数据库或对象数据，未执行恢复。"
+  ]
+}

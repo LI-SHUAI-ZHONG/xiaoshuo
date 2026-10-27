@@ -1,3 +1,94 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:bca79e330f690f441bbd7929b5e142c51f287b4d0b25b2e2a0410cfdd912256a
-size 3625
+{
+  "schema": "workflow-definition.v2",
+  "name": "creative_orchestration",
+  "version": 1,
+  "graph_version": 2,
+  "description": "Content-free bounded orchestration skeleton; project inputs are resolved and frozen at run time.",
+  "max_nodes": 32,
+  "nodes": [
+    {
+      "key": "understand-intent",
+      "executor": "agent.director.intent",
+      "depends_on": [],
+      "input_schema": { "type": "object", "required": ["goal_reference"] },
+      "output_schema": { "type": "object", "required": ["intent_reference"] },
+      "requirements": [],
+      "budget_limit_microusd": 250000,
+      "approval_policy": null,
+      "retry": { "max_attempts": 2, "initial_delay_seconds": 1, "maximum_delay_seconds": 8 },
+      "timeout_seconds": 120,
+      "max_iterations": 1,
+      "compensation": null
+    },
+    {
+      "key": "plan",
+      "executor": "agent.director.plan",
+      "depends_on": ["understand-intent"],
+      "input_schema": { "type": "object", "required": ["intent_reference"] },
+      "output_schema": { "type": "object", "required": ["plan_reference"] },
+      "requirements": [],
+      "budget_limit_microusd": 500000,
+      "approval_policy": null,
+      "retry": { "max_attempts": 2, "initial_delay_seconds": 1, "maximum_delay_seconds": 8 },
+      "timeout_seconds": 180,
+      "max_iterations": 1,
+      "compensation": null
+    },
+    {
+      "key": "research-proposal",
+      "executor": "agent.research",
+      "depends_on": ["plan"],
+      "input_schema": { "type": "object", "required": ["plan_reference"] },
+      "output_schema": { "type": "object", "required": ["proposal_reference"] },
+      "requirements": [],
+      "budget_limit_microusd": 1000000,
+      "approval_policy": null,
+      "retry": { "max_attempts": 3, "initial_delay_seconds": 2, "maximum_delay_seconds": 30 },
+      "timeout_seconds": 300,
+      "max_iterations": 1,
+      "compensation": null
+    },
+    {
+      "key": "world-proposal",
+      "executor": "agent.world",
+      "depends_on": ["plan"],
+      "input_schema": { "type": "object", "required": ["plan_reference"] },
+      "output_schema": { "type": "object", "required": ["proposal_reference"] },
+      "requirements": [],
+      "budget_limit_microusd": 1000000,
+      "approval_policy": null,
+      "retry": { "max_attempts": 3, "initial_delay_seconds": 2, "maximum_delay_seconds": 30 },
+      "timeout_seconds": 300,
+      "max_iterations": 1,
+      "compensation": null
+    },
+    {
+      "key": "synthesize-plan",
+      "executor": "agent.director.meeting_summary",
+      "depends_on": ["research-proposal", "world-proposal"],
+      "input_schema": { "type": "object", "required": ["proposal_references"] },
+      "output_schema": { "type": "object", "required": ["decision_summary_reference"] },
+      "requirements": [],
+      "budget_limit_microusd": 500000,
+      "approval_policy": null,
+      "retry": { "max_attempts": 2, "initial_delay_seconds": 1, "maximum_delay_seconds": 8 },
+      "timeout_seconds": 180,
+      "max_iterations": 1,
+      "compensation": null
+    },
+    {
+      "key": "human-review",
+      "executor": "workflow.approval",
+      "depends_on": ["synthesize-plan"],
+      "input_schema": { "type": "object", "required": ["decision_summary_reference"] },
+      "output_schema": { "type": "object", "required": ["approval_reference"] },
+      "requirements": [],
+      "budget_limit_microusd": null,
+      "approval_policy": "workspace-active",
+      "retry": { "max_attempts": 1, "initial_delay_seconds": 1, "maximum_delay_seconds": 1 },
+      "timeout_seconds": 86400,
+      "max_iterations": 1,
+      "compensation": null
+    }
+  ]
+}

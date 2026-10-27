@@ -1,3 +1,711 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:55cc0000e8bbcf26927392e11b570794da8837e51a061dbea075c839e3a03761
-size 32993
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "requirement": "R001",
+      "step": 24,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "scripts/source_baseline.py",
+        ".construction/baselines/stage24-source-only-20260924/manifest.json",
+        ".construction/baselines/stage24-source-only-20260924/source.zip",
+        "docs/runbooks/construction-static-only.md"
+      ],
+      "api_operations": [],
+      "pages": [],
+      "migration_revisions": [],
+      "tests": ["T001"],
+      "verification": "NOT_RUN",
+      "notes": "538-file source-only backup; no runtime database/object data; recovery rehearsal deferred to 45."
+    },
+    {
+      "requirement": "R002",
+      "step": 24,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "docs/adr/0006-full-product-scope-and-single-ownership.md",
+        "docs/adr/0007-personal-and-team-approval-policies.md",
+        "docs/adr/0008-content-dependencies-and-real-providers.md",
+        "docs/adr/0009-evolution-collaboration-and-ecosystem.md",
+        "docs/architecture/17-full-product-contracts.md",
+        "docs/contracts/README.md",
+        "docs/contracts/ownership.json",
+        "docs/contracts/migrations.json",
+        "services/core/src/accos/kernel/shared_contracts.py",
+        "packages/api-client/shared-contracts.json",
+        "packages/api-client/src/generated/shared-contracts.ts",
+        "scripts/check_import_boundaries.py",
+        "scripts/check_table_ownership.py"
+      ],
+      "api_operations": [],
+      "pages": [],
+      "migration_revisions": [],
+      "tests": ["T002"],
+      "verification": "NOT_RUN",
+      "notes": "Common values implemented; future owner-specific protocols frozen in the registry, not claimed implemented."
+    },
+    {
+      "requirement": "R003",
+      "step": 24,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "scripts/static-toolchain.mjs",
+        "scripts/static_syntax.py",
+        "scripts/static-mypy.ini",
+        "scripts/export_shared_contracts.py",
+        "scripts/shared-contracts.mjs",
+        "scripts/toolchain.mjs",
+        "package.json",
+        "docs/runbooks/construction-static-only.md",
+        "docs/handoffs/TEMPLATE-full-product.md",
+        "docs/contracts/test-registration.json",
+        "services/core/tests/test_construction_contracts.py",
+        "tests/construction/static-toolchain.test.mjs"
+      ],
+      "api_operations": [],
+      "pages": [],
+      "migration_revisions": [],
+      "tests": ["T003"],
+      "verification": "NOT_RUN",
+      "notes": "Syntax, format, type and common-schema compilation are separate from the preserved final runtime gates."
+    },
+    {
+      "requirement": "R004",
+      "step": 25,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/modules/identity/accounts.py",
+        "services/core/src/accos/modules/identity/account_ports.py",
+        "services/core/src/accos/adapters/identity/accounts.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/src/accos/entrypoints/api/v1/account_schemas.py",
+        "services/core/src/accos/composition/root.py",
+        "services/core/migrations/versions/0013_identity_accounts.py",
+        "apps/studio/src/features/system/settings-workspace.tsx",
+        "packages/api-client/openapi.json",
+        "packages/api-client/src/generated/schema.ts",
+        "docs/runbooks/local-identity.md",
+        "services/core/src/accos/adapters/identity/crypto.py",
+        "services/core/src/accos/kernel/auth_settings.py",
+        "services/core/src/accos/kernel/settings.py",
+        "scripts/setup_identity.py",
+        ".env.example",
+        "apps/studio/src/components/local-session-form.tsx",
+        "apps/studio/src/providers/auth-provider.tsx",
+        "scripts/prepare_local_identity.py"
+      ],
+      "api_operations": [
+        "POST /api/v1/auth/bootstrap",
+        "POST /api/v1/auth/login",
+        "POST /api/v1/auth/logout",
+        "GET /api/v1/auth/session",
+        "GET /api/v1/auth/sessions",
+        "DELETE /api/v1/auth/sessions/{session_id}",
+        "POST /api/v1/auth/password"
+      ],
+      "pages": ["/setup", "/login", "/settings"],
+      "migration_revisions": ["0013_identity_accounts"],
+      "tests": ["T004"],
+      "verification": "NOT_RUN",
+      "notes": "Existing stage25 work retained and closed with private installer configuration, version preconditions, schema/client wiring and per-requirement evidence. Runtime validation is deferred to 45.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第25步续建_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R005",
+      "step": 25,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/modules/identity/accounts.py",
+        "services/core/src/accos/modules/identity/account_ports.py",
+        "services/core/src/accos/adapters/identity/accounts.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/src/accos/entrypoints/api/v1/account_schemas.py",
+        "services/core/src/accos/composition/root.py",
+        "services/core/migrations/versions/0013_identity_accounts.py",
+        "apps/studio/src/features/system/settings-workspace.tsx",
+        "packages/api-client/openapi.json",
+        "packages/api-client/src/generated/schema.ts",
+        "docs/runbooks/local-identity.md",
+        "services/core/src/accos/adapters/identity/oidc.py",
+        "services/core/src/accos/kernel/auth_settings.py",
+        "apps/studio/src/app/(public)/login/page.tsx",
+        "apps/studio/src/components/local-session-form.tsx",
+        "services/core/tests/test_identity_oidc_callbacks.py"
+      ],
+      "api_operations": ["GET /api/v1/auth/oidc/start", "GET /api/v1/auth/oidc/callback"],
+      "pages": ["/setup", "/login", "/settings"],
+      "migration_revisions": ["0013_identity_accounts"],
+      "tests": ["T005"],
+      "verification": "NOT_RUN",
+      "notes": "Existing stage25 work retained and closed with private installer configuration, version preconditions, schema/client wiring and per-requirement evidence. Runtime validation is deferred to 45.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第25步续建_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R006",
+      "step": 25,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/modules/identity/accounts.py",
+        "services/core/src/accos/modules/identity/account_ports.py",
+        "services/core/src/accos/adapters/identity/accounts.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/src/accos/entrypoints/api/v1/account_schemas.py",
+        "services/core/src/accos/composition/root.py",
+        "services/core/migrations/versions/0013_identity_accounts.py",
+        "apps/studio/src/features/system/settings-workspace.tsx",
+        "packages/api-client/openapi.json",
+        "packages/api-client/src/generated/schema.ts",
+        "docs/runbooks/local-identity.md",
+        "services/core/src/accos/modules/identity/application.py",
+        "services/core/src/accos/modules/projects/application.py",
+        "services/core/src/accos/modules/memory/application.py",
+        "services/core/src/accos/adapters/projects/persistence.py",
+        "services/core/tests/test_identity_accounts_sql.py"
+      ],
+      "api_operations": [
+        "GET|PUT /api/v1/identity/members",
+        "GET|PUT /api/v1/identity/grants",
+        "GET /api/v1/identity/creator"
+      ],
+      "pages": ["/settings"],
+      "migration_revisions": ["0013_identity_accounts"],
+      "tests": ["T006"],
+      "verification": "NOT_RUN",
+      "notes": "Existing stage25 work retained and closed with private installer configuration, version preconditions, schema/client wiring and per-requirement evidence. Runtime validation is deferred to 45.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第25步续建_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R007",
+      "step": 25,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/modules/identity/accounts.py",
+        "services/core/src/accos/modules/identity/account_ports.py",
+        "services/core/src/accos/adapters/identity/accounts.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/src/accos/entrypoints/api/v1/account_schemas.py",
+        "services/core/src/accos/composition/root.py",
+        "services/core/migrations/versions/0013_identity_accounts.py",
+        "apps/studio/src/features/system/settings-workspace.tsx",
+        "packages/api-client/openapi.json",
+        "packages/api-client/src/generated/schema.ts",
+        "docs/runbooks/local-identity.md",
+        "services/core/src/accos/modules/workflows/application.py",
+        "services/core/src/accos/modules/workflows/domain.py",
+        "services/core/src/accos/adapters/workflows/persistence.py",
+        "services/core/src/accos/modules/evolution/application.py",
+        "services/core/src/accos/modules/evolution/domain.py",
+        "services/core/src/accos/adapters/evolution/persistence.py",
+        "apps/studio/src/features/workflows/workflow-run-detail.tsx"
+      ],
+      "api_operations": [
+        "GET /api/v1/identity/control-requests",
+        "POST /api/v1/identity/control-requests/{request_id}/decision",
+        "Existing workflow/evolution approval operations via ApprovalPolicyResolver"
+      ],
+      "pages": ["/settings"],
+      "migration_revisions": ["0013_identity_accounts"],
+      "tests": ["T007"],
+      "verification": "NOT_RUN",
+      "notes": "Existing stage25 work retained and closed with private installer configuration, version preconditions, schema/client wiring and per-requirement evidence. Runtime validation is deferred to 45.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第25步续建_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R008",
+      "step": 25,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/modules/identity/accounts.py",
+        "services/core/src/accos/modules/identity/account_ports.py",
+        "services/core/src/accos/adapters/identity/accounts.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/src/accos/entrypoints/api/v1/account_schemas.py",
+        "services/core/src/accos/composition/root.py",
+        "services/core/migrations/versions/0013_identity_accounts.py",
+        "apps/studio/src/features/system/settings-workspace.tsx",
+        "packages/api-client/openapi.json",
+        "packages/api-client/src/generated/schema.ts",
+        "docs/runbooks/local-identity.md",
+        "services/core/src/accos/adapters/identity/crypto.py",
+        "scripts/setup_identity.py",
+        "services/core/src/accos/kernel/auth_settings.py",
+        "services/core/src/accos/kernel/settings.py",
+        ".env.example",
+        "scripts/prepare_local_identity.py"
+      ],
+      "api_operations": [
+        "GET|PUT /api/v1/settings/credentials",
+        "POST /api/v1/settings/credentials/rewrap",
+        "GET /api/v1/settings/export"
+      ],
+      "pages": ["/settings"],
+      "migration_revisions": ["0013_identity_accounts"],
+      "tests": ["T008"],
+      "verification": "NOT_RUN",
+      "notes": "Existing stage25 work retained and closed with private installer configuration, version preconditions, schema/client wiring and per-requirement evidence. Runtime validation is deferred to 45.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第25步续建_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R009",
+      "step": 25,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/modules/identity/accounts.py",
+        "services/core/src/accos/modules/identity/account_ports.py",
+        "services/core/src/accos/adapters/identity/accounts.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/src/accos/entrypoints/api/v1/account_schemas.py",
+        "services/core/src/accos/composition/root.py",
+        "services/core/migrations/versions/0013_identity_accounts.py",
+        "apps/studio/src/features/system/settings-workspace.tsx",
+        "packages/api-client/openapi.json",
+        "packages/api-client/src/generated/schema.ts",
+        "docs/runbooks/local-identity.md",
+        "services/core/src/accos/kernel/security.py",
+        "services/core/src/accos/modules/identity/application.py"
+      ],
+      "api_operations": [
+        "GET|POST /api/v1/identity/tokens",
+        "DELETE /api/v1/identity/tokens/{token_id}"
+      ],
+      "pages": ["/settings"],
+      "migration_revisions": ["0013_identity_accounts"],
+      "tests": ["T009"],
+      "verification": "NOT_RUN",
+      "notes": "Existing stage25 work retained and closed with private installer configuration, version preconditions, schema/client wiring and per-requirement evidence. Runtime validation is deferred to 45.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第25步续建_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R010",
+      "step": 25,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/modules/identity/accounts.py",
+        "services/core/src/accos/modules/identity/account_ports.py",
+        "services/core/src/accos/adapters/identity/accounts.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/src/accos/entrypoints/api/v1/account_schemas.py",
+        "services/core/src/accos/composition/root.py",
+        "services/core/migrations/versions/0013_identity_accounts.py",
+        "apps/studio/src/features/system/settings-workspace.tsx",
+        "packages/api-client/openapi.json",
+        "packages/api-client/src/generated/schema.ts",
+        "docs/runbooks/local-identity.md",
+        "services/core/src/accos/kernel/shared_contracts.py"
+      ],
+      "api_operations": [
+        "GET|PUT /api/v1/settings/workspace",
+        "POST /api/v1/settings/import",
+        "GET /api/v1/settings/export",
+        "GET /api/v1/capabilities"
+      ],
+      "pages": ["/settings"],
+      "migration_revisions": ["0013_identity_accounts"],
+      "tests": ["T010"],
+      "verification": "NOT_RUN",
+      "notes": "Existing stage25 work retained and closed with private installer configuration, version preconditions, schema/client wiring and per-requirement evidence. Runtime validation is deferred to 45.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第25步续建_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R011",
+      "step": 26,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/projects/content.py",
+        "services/core/src/accos/modules/projects/content_service.py",
+        "services/core/src/accos/adapters/projects/content.py",
+        "services/core/src/accos/modules/assets/application.py",
+        "services/core/migrations/versions/0014_artifact_content.py",
+        "services/core/src/accos/entrypoints/api/v1/content_router.py"
+      ],
+      "api_operations": [
+        "GET|PUT /api/v1/projects/{project_id}/artifacts/{artifact_id}/working-copy",
+        "GET /api/v1/projects/{project_id}/artifacts/{artifact_id}/content",
+        "POST /api/v1/projects/{project_id}/artifacts/{artifact_id}/revisions/{revision_id}/import-legacy"
+      ],
+      "pages": ["/projects/{project_id}/write/{artifact_id}"],
+      "migration_revisions": ["0014_artifact_content"],
+      "tests": ["T011"],
+      "verification": "NOT_RUN",
+      "notes": "Canonical editor JSON and UTF-8 text projection are immutable scoped assets with server digests. Legacy hash-only records remain explicitly unavailable; reviewed S3 mappings append a new revision.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第26步施工_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R012",
+      "step": 26,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/projects/content.py",
+        "services/core/src/accos/modules/projects/content_service.py",
+        "services/core/src/accos/adapters/projects/content.py",
+        "apps/studio/src/features/writing/drafts.ts",
+        "apps/studio/src/features/writing/use-writing-copy.ts",
+        "apps/studio/src/features/writing/editor.tsx",
+        "apps/studio/src/providers/auth-provider.tsx"
+      ],
+      "api_operations": [
+        "GET|PUT /api/v1/projects/{project_id}/artifacts/{artifact_id}/working-copy",
+        "POST /api/v1/projects/{project_id}/artifacts/{artifact_id}/reconcile"
+      ],
+      "pages": ["/projects/{project_id}/write/{artifact_id}"],
+      "migration_revisions": ["0014_artifact_content"],
+      "tests": ["T012"],
+      "verification": "NOT_RUN",
+      "notes": "Strong CAS and client change replay are paired with identity/workspace/project/artifact/branch scoped IndexedDB drafts, serialized local writes, IME protection, reconnect recovery and logout warnings.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第26步施工_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R013",
+      "step": 26,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/projects/content_service.py",
+        "services/core/src/accos/adapters/projects/content.py",
+        "services/core/src/accos/entrypoints/api/v1/content_router.py",
+        "apps/studio/src/features/writing/content-writing-space.tsx"
+      ],
+      "api_operations": [
+        "GET /api/v1/projects/{project_id}/artifacts/{artifact_id}/revision-history",
+        "GET /api/v1/projects/{project_id}/artifacts/{artifact_id}/content",
+        "POST /api/v1/projects/{project_id}/artifacts/{artifact_id}/revisions/{revision_id}/restore"
+      ],
+      "pages": ["/projects/{project_id}/write/{artifact_id}"],
+      "migration_revisions": ["0014_artifact_content"],
+      "tests": ["T013"],
+      "verification": "NOT_RUN",
+      "notes": "Revision assets are immutable, parent edges are preserved, history is cursor-paged, and restoring an earlier revision appends a new head.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第26步施工_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R014",
+      "step": 26,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/projects/content.py",
+        "services/core/src/accos/modules/projects/content_service.py",
+        "services/core/src/accos/adapters/projects/content.py",
+        "services/core/src/accos/entrypoints/api/v1/content_router.py",
+        "apps/studio/src/features/writing/editor.tsx",
+        "apps/studio/src/features/writing/content-writing-space.tsx"
+      ],
+      "api_operations": [
+        "GET|POST /api/v1/projects/{project_id}/artifacts/{artifact_id}/branches",
+        "PUT /api/v1/projects/{project_id}/artifacts/{artifact_id}/branches/{branch_id}/archive",
+        "GET /api/v1/projects/{project_id}/artifacts/{artifact_id}/diffs",
+        "POST /api/v1/projects/{project_id}/artifacts/{artifact_id}/merge",
+        "POST|GET|APPLY /api/v1/projects/{project_id}/artifacts/{artifact_id}/patches"
+      ],
+      "pages": ["/projects/{project_id}/write/{artifact_id}"],
+      "migration_revisions": ["0014_artifact_content"],
+      "tests": ["T014"],
+      "verification": "NOT_RUN",
+      "notes": "Stable block IDs support three-way merge, explicit same-block/order conflicts, two-parent merge revisions and locked-block protection for candidate patches.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第26步施工_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R015",
+      "step": 26,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/assets/application.py",
+        "services/core/src/accos/adapters/assets/persistence.py",
+        "services/core/src/accos/adapters/assets/storage.py",
+        "services/core/src/accos/adapters/assets/retention.py",
+        "services/core/src/accos/modules/assets/downloads.py",
+        "services/core/src/accos/entrypoints/api/v1/content_collections.py",
+        "apps/studio/src/features/projects/asset-library.tsx"
+      ],
+      "api_operations": [
+        "GET /api/v1/projects/{project_id}/assets/page",
+        "GET /api/v1/projects/{project_id}/assets/{asset_id}/versions",
+        "POST /api/v1/projects/{project_id}/assets/{asset_id}/versions/{version_id}/download-ticket",
+        "GET /api/v1/projects/{project_id}/assets/{asset_id}/versions/{version_id}/content"
+      ],
+      "pages": ["/projects/{project_id}"],
+      "migration_revisions": ["0014_artifact_content"],
+      "tests": ["T015"],
+      "verification": "NOT_RUN",
+      "notes": "Server hash/MIME/size validation, exact immutable versions, actor-scoped download tickets and delayed orphan collection with registered-version and backup holds are wired into API and Worker.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第26步施工_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R016",
+      "step": 26,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/projects/application.py",
+        "services/core/src/accos/adapters/projects/persistence.py",
+        "services/core/src/accos/entrypoints/api/v1/content_collections.py",
+        "apps/studio/src/features/projects/collection-api.ts",
+        "apps/studio/src/features/projects/projects-page.tsx",
+        "apps/studio/src/features/projects/project-actions.tsx",
+        "apps/studio/src/features/projects/asset-library.tsx",
+        "apps/studio/src/features/writing/content-writing-space.tsx"
+      ],
+      "api_operations": [
+        "GET /api/v1/workspaces/{workspace_id}/projects/page",
+        "PUT /api/v1/projects/{project_id}/details",
+        "GET /api/v1/projects/{project_id}/assets/page",
+        "GET /api/v1/projects/{project_id}/assets/{asset_id}/versions",
+        "GET /api/v1/projects/{project_id}/artifacts/{artifact_id}/revision-history"
+      ],
+      "pages": [
+        "/projects",
+        "/projects/{project_id}",
+        "/projects/{project_id}/write/{artifact_id}"
+      ],
+      "migration_revisions": ["0014_artifact_content"],
+      "tests": ["T016"],
+      "verification": "NOT_RUN",
+      "notes": "Project search, keyset paging, rename, archive/restore, asset versions and revision history are available through generated-client backed UI without manual identifiers.",
+      "last_source_review": {
+        "date": "2026-09-26",
+        "evidence": "后续执行/证据/第26步施工_20260926.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R017",
+      "step": 27,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/adapters/models/http.py",
+        "services/core/src/accos/adapters/models/real_providers.py",
+        "services/core/src/accos/modules/models/invocation.py",
+        "services/core/src/accos/modules/models/runtime.py",
+        "services/core/src/accos/entrypoints/api/v1/model_router.py"
+      ],
+      "api_operations": [
+        "POST /api/v1/projects/{project_id}/model-calls",
+        "GET /api/v1/projects/{project_id}/model-calls/{call_id}",
+        "GET /api/v1/projects/{project_id}/model-calls/{call_id}/content"
+      ],
+      "pages": ["/projects/{project_id}/models"],
+      "migration_revisions": ["0015_model_execution"],
+      "tests": ["T017"],
+      "verification": "NOT_RUN",
+      "notes": "OpenAI Responses text, structured output, tools, refusal, incomplete state, provider errors and usage are mapped into models.v2 records without logging prompt or output bodies.",
+      "last_source_review": {
+        "date": "2026-10-27",
+        "evidence": "后续执行/证据/第27步施工_20261027.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R018",
+      "step": 27,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/adapters/models/real_providers.py",
+        "services/core/src/accos/modules/models/registry.py",
+        "services/core/src/accos/composition/models.py",
+        ".env.example"
+      ],
+      "api_operations": ["GET|POST /api/v1/workspaces/{workspace_id}/model-profiles"],
+      "pages": ["/settings/models"],
+      "migration_revisions": ["0015_model_execution"],
+      "tests": ["T018"],
+      "verification": "NOT_RUN",
+      "notes": "Chat Completions-compatible, Ollama chat/embed and OpenAI embedding use distinct protocol adapters and capability declarations; local endpoints require an installation allowlist.",
+      "last_source_review": {
+        "date": "2026-10-27",
+        "evidence": "后续执行/证据/第27步施工_20261027.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R019",
+      "step": 27,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/models/prompts.py",
+        "services/core/resources/prompts/manifest.json",
+        "services/core/resources/prompts/agent.task.json",
+        "services/core/src/accos/modules/agents/real_executor.py",
+        "services/core/src/accos/modules/agents/jobs.py",
+        "services/core/src/accos/adapters/agents/jobs.py",
+        "apps/studio/src/features/models/prompt-workspace.tsx",
+        "apps/studio/src/features/models/agent-workspace.tsx"
+      ],
+      "api_operations": [
+        "GET|POST /api/v1/workspaces/{workspace_id}/prompt-templates",
+        "POST /api/v1/workspaces/{workspace_id}/prompt-preview",
+        "GET|POST /api/v1/projects/{project_id}/agent-tasks",
+        "GET /api/v1/projects/{project_id}/agent-tasks/{job_id}/content"
+      ],
+      "pages": ["/settings/prompts", "/projects/{project_id}/agents"],
+      "migration_revisions": ["0015_model_execution"],
+      "tests": ["T019"],
+      "verification": "NOT_RUN",
+      "notes": "Seven packaged prompts carry bodies, variables and output schemas; published versions use CAS and immutable checksums. Durable real Agent jobs freeze prompt/model inputs, bound tool loops and persist final candidate content.",
+      "last_source_review": {
+        "date": "2026-10-27",
+        "evidence": "后续执行/证据/第27步施工_20261027.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R020",
+      "step": 27,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/models/invocation.py",
+        "services/core/src/accos/modules/models/runtime.py",
+        "services/core/src/accos/adapters/models/runtime_store.py",
+        "services/core/src/accos/entrypoints/api/v1/model_router.py",
+        "apps/studio/src/features/models/call-detail.tsx"
+      ],
+      "api_operations": [
+        "GET /api/v1/projects/{project_id}/model-calls/{call_id}/events",
+        "POST /api/v1/projects/{project_id}/model-calls/{call_id}/cancel",
+        "GET /api/v1/projects/{project_id}/model-calls/{call_id}/content"
+      ],
+      "pages": ["/projects/{project_id}/models"],
+      "migration_revisions": ["0015_model_execution"],
+      "tests": ["T020"],
+      "verification": "NOT_RUN",
+      "notes": "Ordered SSE events and partial checkpoints survive reconnect; only a persisted complete output reaches completed, while refusal, incomplete, cancelled, failed and unknown remain distinct terminal states.",
+      "last_source_review": {
+        "date": "2026-10-27",
+        "evidence": "后续执行/证据/第27步施工_20261027.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R021",
+      "step": 27,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/adapters/models/budgets.py",
+        "services/core/src/accos/adapters/models/runtime_store.py",
+        "services/core/src/accos/modules/models/budgets.py",
+        "services/core/src/accos/modules/models/runtime.py",
+        "services/core/src/accos/modules/models/registry.py"
+      ],
+      "api_operations": [
+        "GET|PUT /api/v1/workspaces/{workspace_id}/budgets",
+        "GET /api/v1/projects/{project_id}/model-calls/{call_id}/attempts",
+        "POST /api/v1/projects/{project_id}/model-calls/{call_id}/attempts/{reservation_id}/reconcile"
+      ],
+      "pages": ["/settings/models", "/projects/{project_id}/models"],
+      "migration_revisions": ["0015_model_execution"],
+      "tests": ["T021"],
+      "verification": "NOT_RUN",
+      "notes": "PostgreSQL reservations are atomic and settle or remain unknown per attempt; Redis quotas are shared across workers. Retries and fallbacks reserve separately and private inputs cannot route to disallowed providers.",
+      "last_source_review": {
+        "date": "2026-10-27",
+        "evidence": "后续执行/证据/第27步施工_20261027.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R022",
+      "step": 27,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/modules/models/registry.py",
+        "services/core/src/accos/modules/models/runtime.py",
+        "services/core/src/accos/adapters/models/runtime_rows.py",
+        "apps/studio/src/features/models/model-settings.tsx",
+        "apps/studio/src/features/models/model-common.tsx"
+      ],
+      "api_operations": [
+        "GET|POST /api/v1/workspaces/{workspace_id}/model-profiles",
+        "GET|POST /api/v1/workspaces/{workspace_id}/model-policies"
+      ],
+      "pages": ["/settings/models"],
+      "migration_revisions": ["0015_model_execution"],
+      "tests": ["T022"],
+      "verification": "NOT_RUN",
+      "notes": "Versioned profiles describe protocol, capabilities, tokenizer, dimensions, parameter bounds, locality and dated prices; policies freeze route and cache scope together with prompt versions.",
+      "last_source_review": {
+        "date": "2026-10-27",
+        "evidence": "后续执行/证据/第27步施工_20261027.json",
+        "verification": "NOT_RUN"
+      }
+    },
+    {
+      "requirement": "R023",
+      "step": 27,
+      "status": "IMPLEMENTED_UNTESTED",
+      "files": [
+        "services/core/src/accos/adapters/models/runtime_store.py",
+        "services/core/src/accos/entrypoints/api/v1/model_router.py",
+        "apps/studio/src/features/models/model-api.ts",
+        "apps/studio/src/features/models/model-workspace.tsx",
+        "apps/studio/src/features/models/call-detail.tsx"
+      ],
+      "api_operations": [
+        "GET /api/v1/projects/{project_id}/model-calls",
+        "GET /api/v1/projects/{project_id}/model-calls/{call_id}",
+        "GET /api/v1/projects/{project_id}/model-calls/{call_id}/attempts",
+        "POST /api/v1/feedback/ratings"
+      ],
+      "pages": ["/projects/{project_id}/models"],
+      "migration_revisions": ["0015_model_execution"],
+      "tests": ["T023"],
+      "verification": "NOT_RUN",
+      "notes": "Project-scoped keyset history exposes authorized input/output references, attempts, latency, usage, price version, cost, errors and human rating without embedding content in logs or list payloads.",
+      "last_source_review": {
+        "date": "2026-10-27",
+        "evidence": "后续执行/证据/第27步施工_20261027.json",
+        "verification": "NOT_RUN"
+      }
+    }
+  ]
+}

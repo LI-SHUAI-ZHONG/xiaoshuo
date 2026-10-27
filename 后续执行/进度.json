@@ -1,3 +1,389 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e6e50b3653b5eb23ed5bcb3a175b7b7bbc2215ca88fdb19f4b1dc025984120d6
-size 16620
+{
+  "schema_version": 1,
+  "date": "2026-10-27",
+  "scope": "个人本地优先，完整保留扩展功能",
+  "artifact_status": "IMPLEMENTATION_IN_PROGRESS",
+  "execution_control": {
+    "mode": "IMPLEMENTATION_AUTHORIZED",
+    "implementation_paused": false,
+    "reason": "2026-10-27继续施工；第27步已实现未测试，施工断点按序推进到第28步，仍不运行测试、服务、迁移或模型试调用。",
+    "resume_rule": "本任务继续已授权的实际施工；各步交接后按序推进，测试统一45，外部实际收费/发布依具体授权。",
+    "takeover_document": "后续执行/13_接管说明与施工断点.md",
+    "last_turn_scope": "第27步已以IMPLEMENTED_UNTESTED收尾；恢复副本stage27-takeover-20260927与stage27-resume-20260927保留，当前进入第28步。"
+  },
+  "current_step": 28,
+  "source_of_truth": "后续执行/00_开始这里.md",
+  "status_enum": ["PLANNED", "IN_PROGRESS", "IMPLEMENTED_UNTESTED", "BLOCKED", "VERIFIED"],
+  "build_test_policy": "24–44不运行项目测试；45集中测试、修复和验收",
+  "requirements_count": 144,
+  "test_packages_count": 144,
+  "steps": [
+    {
+      "step": 24,
+      "title": "基线与契约定版",
+      "file": "步骤/24_基线与契约定版.md",
+      "dependencies": [],
+      "status": "IMPLEMENTED_UNTESTED",
+      "requirements": ["R001", "R002", "R003"],
+      "tests": ["T001", "T002", "T003"],
+      "handoff": "docs/handoffs/24.md",
+      "implementation_evidence": [
+        "docs/handoffs/24.md",
+        "docs/contracts/implementation-register.json",
+        "docs/contracts/test-registration.json",
+        ".construction/baselines/stage24-source-only-20260924/manifest.json",
+        "services/core/src/accos/kernel/shared_contracts.py",
+        "scripts/static-toolchain.mjs"
+      ],
+      "external_requirements": [],
+      "next_action": "保留24已施工未测试状态；仅在授权施工后核对交接证据并接手25，不因未VERIFIED重做24。T001-T003在45执行。"
+    },
+    {
+      "step": 25,
+      "title": "本地身份设置与审批",
+      "file": "步骤/25_本地身份设置与审批.md",
+      "dependencies": [24],
+      "status": "IMPLEMENTED_UNTESTED",
+      "requirements": ["R004", "R005", "R006", "R007", "R008", "R009", "R010"],
+      "tests": ["T004", "T005", "T006", "T007", "T008", "T009", "T010"],
+      "handoff": "docs/handoffs/25.md",
+      "implementation_evidence": [
+        "docs/handoffs/25.md",
+        "docs/contracts/implementation-register.json",
+        "docs/contracts/test-registration.json",
+        "docs/contracts/migrations.json",
+        "docs/runbooks/local-identity.md",
+        "后续执行/证据/第25步续建_20260926.json"
+      ],
+      "external_requirements": [
+        "T005.R验收需要已配置且授权的HTTPS IdP及预配issuer/subject；本轮未执行真实往返。"
+      ],
+      "observed_partial_files": [
+        "services/core/src/accos/modules/identity/account_service.py",
+        "services/core/src/accos/adapters/identity/accounts.py",
+        "services/core/src/accos/entrypoints/api/v1/account_router.py",
+        "services/core/migrations/versions/0013_identity_accounts.py",
+        "apps/studio/src/features/system/settings-workspace.tsx",
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_accounts_sql.py",
+        "tests/e2e/identity-stage25.spec.ts"
+      ],
+      "next_action": "第25步本轮修补已交接；T004–T010留45运行。下一步按26卡核对已有断点并补齐正文存储/版本/编辑基础，不重做25。",
+      "resumption": {
+        "date": "2026-09-26",
+        "status": "IMPLEMENTED_UNTESTED",
+        "requirements": ["R004", "R005", "R008"],
+        "additional_test_coverage": ["T006"],
+        "baseline": ".construction/baselines/stage25-resume-20260926",
+        "evidence": "后续执行/证据/第25步续建_20260926.json",
+        "runtime_validation": "NOT_RUN"
+      }
+    },
+    {
+      "step": 26,
+      "title": "正文存储版本与编辑基础",
+      "file": "步骤/26_正文存储版本与编辑基础.md",
+      "dependencies": [24, 25],
+      "status": "IMPLEMENTED_UNTESTED",
+      "requirements": ["R011", "R012", "R013", "R014", "R015", "R016"],
+      "tests": ["T011", "T012", "T013", "T014", "T015", "T016"],
+      "handoff": "docs/handoffs/26.md",
+      "implementation_evidence": [
+        "docs/handoffs/26.md",
+        "docs/contracts/implementation-register.json",
+        "docs/contracts/test-registration.json",
+        "docs/contracts/migrations.json",
+        "services/core/migrations/versions/0014_artifact_content.py",
+        "后续执行/证据/第26步施工_20260926.json",
+        ".construction/baselines/stage26-takeover-20260926/manifest.json"
+      ],
+      "external_requirements": [],
+      "next_action": "第26步已实现未测试；T011–T016留45运行。下一步按27卡实现真实模型、Prompt与Agent执行，沿用唯一正文资产/Revision事实。"
+    },
+    {
+      "step": 27,
+      "title": "真实模型Prompt与Agent执行",
+      "file": "步骤/27_真实模型Prompt与Agent执行.md",
+      "dependencies": [25, 26],
+      "status": "IMPLEMENTED_UNTESTED",
+      "requirements": ["R017", "R018", "R019", "R020", "R021", "R022", "R023"],
+      "tests": ["T017", "T018", "T019", "T020", "T021", "T022", "T023"],
+      "handoff": "docs/handoffs/27.md",
+      "implementation_evidence": [
+        "docs/handoffs/27.md",
+        "docs/contracts/implementation-register.json",
+        "docs/contracts/test-registration.json",
+        "docs/contracts/migrations.json",
+        "services/core/migrations/versions/0015_model_execution.py",
+        "services/core/resources/prompts/manifest.json",
+        "后续执行/证据/第27步施工_20261027.json",
+        ".construction/baselines/stage27-takeover-20260927/manifest.json",
+        ".construction/baselines/stage27-resume-20260927/manifest.json"
+      ],
+      "external_requirements": [
+        "第45步隔离环境中的真实OpenAI/兼容端点凭据、本地Ollama模型与受控费用上限"
+      ],
+      "next_action": "R017–R023已实现，T017–T023留第45步。下一步按28卡扩展版本化DAG、冻结输入、调度恢复与总控。"
+    },
+    {
+      "step": 28,
+      "title": "依赖工作流调度与总控",
+      "file": "步骤/28_依赖工作流调度与总控.md",
+      "dependencies": [25, 26, 27],
+      "status": "IN_PROGRESS",
+      "requirements": ["R024", "R025", "R026", "R027", "R028", "R029", "R030"],
+      "tests": ["T024", "T025", "T026", "T027", "T028", "T029", "T030"],
+      "handoff": "docs/handoffs/28.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "先核对现有workflow position线性模型、MasterOrchestrator和第27步Agent/Model契约，再按R024–R030扩展；T024–T030留第45步。"
+    },
+    {
+      "step": 29,
+      "title": "知识采集转译与混合检索",
+      "file": "步骤/29_知识采集转译与混合检索.md",
+      "dependencies": [26, 27, 28],
+      "status": "PLANNED",
+      "requirements": ["R031", "R032", "R033", "R034", "R035", "R036", "R037", "R038", "R039"],
+      "tests": ["T031", "T032", "T033", "T034", "T035", "T036", "T037", "T038", "T039"],
+      "handoff": "docs/handoffs/29.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 30,
+      "title": "七层记忆与强制上下文",
+      "file": "步骤/30_七层记忆与强制上下文.md",
+      "dependencies": [26, 27, 28, 29],
+      "status": "PLANNED",
+      "requirements": ["R040", "R041", "R042", "R043", "R044", "R045", "R046", "R047"],
+      "tests": ["T040", "T041", "T042", "T043", "T044", "T045", "T046", "T047"],
+      "handoff": "docs/handoffs/30.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 31,
+      "title": "类型主题剧情与场景规划",
+      "file": "步骤/31_类型主题剧情与场景规划.md",
+      "dependencies": [26, 27, 28, 29, 30],
+      "status": "PLANNED",
+      "requirements": [
+        "R048",
+        "R049",
+        "R050",
+        "R051",
+        "R052",
+        "R053",
+        "R054",
+        "R055",
+        "R056",
+        "R057"
+      ],
+      "tests": ["T048", "T049", "T050", "T051", "T052", "T053", "T054", "T055", "T056", "T057"],
+      "handoff": "docs/handoffs/31.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 32,
+      "title": "世界人物时间线与模拟",
+      "file": "步骤/32_世界人物时间线与模拟.md",
+      "dependencies": [30, 31],
+      "status": "PLANNED",
+      "requirements": [
+        "R058",
+        "R059",
+        "R060",
+        "R061",
+        "R062",
+        "R063",
+        "R064",
+        "R065",
+        "R066",
+        "R067"
+      ],
+      "tests": ["T058", "T059", "T060", "T061", "T062", "T063", "T064", "T065", "T066", "T067"],
+      "handoff": "docs/handoffs/32.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 33,
+      "title": "写作审稿修订与接受闭环",
+      "file": "步骤/33_写作审稿修订与接受闭环.md",
+      "dependencies": [25, 26, 27, 28, 29, 30, 31, 32],
+      "status": "PLANNED",
+      "requirements": ["R068", "R069", "R070", "R071", "R072", "R073", "R074", "R075", "R076"],
+      "tests": ["T068", "T069", "T070", "T071", "T072", "T073", "T074", "T075", "T076"],
+      "handoff": "docs/handoffs/33.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 34,
+      "title": "完整Studio与可视化整合",
+      "file": "步骤/34_完整Studio与可视化整合.md",
+      "dependencies": [25, 26, 27, 28, 29, 30, 31, 32, 33],
+      "status": "PLANNED",
+      "requirements": ["R077", "R078", "R079", "R080", "R081"],
+      "tests": ["T077", "T078", "T079", "T080", "T081"],
+      "handoff": "docs/handoffs/34.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 35,
+      "title": "自主研究多项目计划与战略",
+      "file": "步骤/35_自主研究多项目计划与战略.md",
+      "dependencies": [28, 29, 30, 31, 32, 33, 34],
+      "status": "PLANNED",
+      "requirements": ["R082", "R083", "R084", "R085", "R086", "R087", "R088"],
+      "tests": ["T082", "T083", "T084", "T085", "T086", "T087", "T088"],
+      "handoff": "docs/handoffs/35.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 36,
+      "title": "作者学习反馈与成长",
+      "file": "步骤/36_作者学习反馈与成长.md",
+      "dependencies": [30, 33, 34, 35],
+      "status": "PLANNED",
+      "requirements": ["R089", "R090", "R091", "R092", "R093"],
+      "tests": ["T089", "T090", "T091", "T092", "T093"],
+      "handoff": "docs/handoffs/36.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 37,
+      "title": "实验室受控进化与晋升",
+      "file": "步骤/37_实验室受控进化与晋升.md",
+      "dependencies": [28, 33, 35, 36],
+      "status": "PLANNED",
+      "requirements": ["R094", "R095", "R096", "R097", "R098", "R099", "R100"],
+      "tests": ["T094", "T095", "T096", "T097", "T098", "T099", "T100"],
+      "handoff": "docs/handoffs/37.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 38,
+      "title": "插件沙箱工具与模块生成",
+      "file": "步骤/38_插件沙箱工具与模块生成.md",
+      "dependencies": [25, 27, 28, 37],
+      "status": "PLANNED",
+      "requirements": ["R101", "R102", "R103", "R104", "R105"],
+      "tests": ["T101", "T102", "T103", "T104", "T105"],
+      "handoff": "docs/handoffs/38.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 39,
+      "title": "宇宙IP出版导入与改编",
+      "file": "步骤/39_宇宙IP出版导入与改编.md",
+      "dependencies": [26, 30, 31, 32, 34, 35],
+      "status": "PLANNED",
+      "requirements": ["R106", "R107", "R108", "R109", "R110", "R111"],
+      "tests": ["T106", "T107", "T108", "T109", "T110", "T111"],
+      "handoff": "docs/handoffs/39.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 40,
+      "title": "图音视频3D与跨媒介资产",
+      "file": "步骤/40_图音视频3D与跨媒介资产.md",
+      "dependencies": [27, 32, 34, 39],
+      "status": "PLANNED",
+      "requirements": ["R112", "R113", "R114", "R115", "R116", "R117", "R118"],
+      "tests": ["T112", "T113", "T114", "T115", "T116", "T117", "T118"],
+      "handoff": "docs/handoffs/40.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 41,
+      "title": "团队协作实时编辑与审阅",
+      "file": "步骤/41_团队协作实时编辑与审阅.md",
+      "dependencies": [25, 26, 34, 39],
+      "status": "PLANNED",
+      "requirements": ["R119", "R120", "R121", "R122", "R123"],
+      "tests": ["T119", "T120", "T121", "T122", "T123"],
+      "handoff": "docs/handoffs/41.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 42,
+      "title": "私有市场权属分成与信誉",
+      "file": "步骤/42_私有市场权属分成与信誉.md",
+      "dependencies": [25, 38, 39, 41],
+      "status": "PLANNED",
+      "requirements": ["R124", "R125", "R126", "R127", "R128", "R129"],
+      "tests": ["T124", "T125", "T126", "T127", "T128", "T129"],
+      "handoff": "docs/handoffs/42.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 43,
+      "title": "本地交付运维备份与迁移",
+      "file": "步骤/43_本地交付运维备份与迁移.md",
+      "dependencies": [25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42],
+      "status": "PLANNED",
+      "requirements": ["R130", "R131", "R132", "R133", "R134", "R135"],
+      "tests": ["T130", "T131", "T132", "T133", "T134", "T135"],
+      "handoff": "docs/handoffs/43.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 44,
+      "title": "全功能接线与施工完整性复核",
+      "file": "步骤/44_全功能接线与施工完整性复核.md",
+      "dependencies": [
+        24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43
+      ],
+      "status": "PLANNED",
+      "requirements": ["R136", "R137", "R138", "R139"],
+      "tests": ["T136", "T137", "T138", "T139"],
+      "handoff": "docs/handoffs/44.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    },
+    {
+      "step": 45,
+      "title": "统一测试修复与最终验收",
+      "file": "步骤/45_统一测试修复与最终验收.md",
+      "dependencies": [
+        24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44
+      ],
+      "status": "PLANNED",
+      "requirements": ["R140", "R141", "R142", "R143", "R144"],
+      "tests": ["T140", "T141", "T142", "T143", "T144"],
+      "handoff": "docs/handoffs/45.md",
+      "implementation_evidence": [],
+      "external_requirements": [],
+      "next_action": "等待前置施工完成后按本卡实施。"
+    }
+  ]
+}

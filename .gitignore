@@ -1,3 +1,65 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fcebdc9068a85c6e4da0b9451efb528c91e2c96dd6889b6a69297ec1931bbc69
-size 750
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+.secrets/
+secrets/
+credentials/
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tmp-uv-cache/
+.tmp-pytest*/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/
+dist/
+build/
+
+# Node and frontend
+node_modules/
+.next/
+next-env.d.ts
+.turbo/
+.eslintcache
+coverage/
+playwright-report/
+test-results/
+.tmp-playwright/
+*.tsbuildinfo
+
+# Runtime and local infrastructure data
+.secrets/
+*.log
+*.pid
+*.db
+*.sqlite
+*.sqlite3
+infra/volumes/
+infra/.data/
+infra/minio-data/
+infra/backups/
+.construction/
+.construction/
+
+# Editors and operating systems
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Keep dependency lockfiles tracked. Do not add lockfile patterns here.
+
+.tmp-*/
+GitHubDesktop_latest_setup/
+GitHubDesktop_zh_setup/

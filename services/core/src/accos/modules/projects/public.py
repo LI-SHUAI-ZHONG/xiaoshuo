@@ -1,3 +1,27 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:321e9c4dda3b0ce2e624bdefe25c2ce56ef83791575a7bfd876351c3145bb4a4
-size 583
+"""Stable public contracts for project consumers."""
+
+from accos.modules.projects.application import ProjectService
+from accos.modules.projects.domain import (
+    Artifact,
+    ArtifactRevision,
+    ArtifactSort,
+    ArtifactType,
+    Project,
+    ProjectSettings,
+    ProjectSort,
+    ProjectStatus,
+)
+from accos.modules.projects.ports import ProjectRepository
+
+__all__ = [
+    "Artifact",
+    "ArtifactRevision",
+    "ArtifactSort",
+    "ArtifactType",
+    "Project",
+    "ProjectRepository",
+    "ProjectService",
+    "ProjectSettings",
+    "ProjectSort",
+    "ProjectStatus",
+]

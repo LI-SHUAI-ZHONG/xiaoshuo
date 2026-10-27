@@ -1,3 +1,9 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8bc527cf2435525dc4402155f16f1380e56707eb31d93d96021ec370eee443c4
-size 236
+{
+  "plugin_id": "fixture-plugin",
+  "version": "1.0.0",
+  "core_compatibility": ">=0.0.0,<1.0.0",
+  "capabilities": ["fixture.reference"],
+  "required_permissions": ["tool:run"],
+  "signature": "fixture-signature",
+  "enabled": true
+}

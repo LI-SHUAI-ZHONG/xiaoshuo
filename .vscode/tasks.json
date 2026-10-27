@@ -1,3 +1,152 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c4c6b516a0e224ccfca3f9b5b6113645d608076bc647a29952a81c1b28a99d48
-size 3781
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ACCOS: Install locked dependencies",
+      "type": "shell",
+      "command": "corepack",
+      "args": ["pnpm", "run", "install:all"],
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Quick check",
+      "type": "shell",
+      "command": "corepack",
+      "args": ["pnpm", "run", "check:quick"],
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Full check",
+      "type": "shell",
+      "command": "corepack",
+      "args": ["pnpm", "run", "check"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Python tests",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "pytest"],
+      "group": "test",
+      "problemMatcher": "$python"
+    },
+    {
+      "label": "ACCOS: Database migrate",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "--frozen", "alembic", "-c", "services/core/alembic.ini", "upgrade", "head"],
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Database migration check",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "--frozen", "alembic", "-c", "services/core/alembic.ini", "check"],
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: API",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "python", "-m", "accos.entrypoints.api"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Worker",
+      "type": "shell",
+      "command": "uv",
+      "args": ["run", "python", "-m", "accos.entrypoints.worker"],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Studio placeholder",
+      "type": "process",
+      "command": "node",
+      "args": ["scripts/placeholder.mjs", "studio"],
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Infra up",
+      "type": "shell",
+      "command": "sh",
+      "args": ["${workspaceFolder}/scripts/infra.sh", "up"],
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}\\scripts\\infra.ps1",
+          "up"
+        ]
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Infra status",
+      "type": "shell",
+      "command": "sh",
+      "args": ["${workspaceFolder}/scripts/infra.sh", "status"],
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}\\scripts\\infra.ps1",
+          "status"
+        ]
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Infra self-check",
+      "type": "shell",
+      "command": "sh",
+      "args": ["${workspaceFolder}/scripts/infra-self-check.sh"],
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}\\scripts\\infra-self-check.ps1"
+        ]
+      },
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "ACCOS: Infra down (preserve data)",
+      "type": "shell",
+      "command": "sh",
+      "args": ["${workspaceFolder}/scripts/infra.sh", "down"],
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-NoProfile",
+          "-ExecutionPolicy",
+          "Bypass",
+          "-File",
+          "${workspaceFolder}\\scripts\\infra.ps1",
+          "down"
+        ]
+      },
+      "problemMatcher": []
+    }
+  ]
+}

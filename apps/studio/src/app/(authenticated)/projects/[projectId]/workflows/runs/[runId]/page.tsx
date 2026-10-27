@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c61d9039284b1c8fc829c5663d9b2214c2676515a86cf7402ee659297a99c1f1
-size 305
+import { WorkflowRunDetail } from "../../../../../../../features/workflows/workflow-run-detail";
+
+export default async function WorkflowRunPage(
+  props: PageProps<"/projects/[projectId]/workflows/runs/[runId]">,
+) {
+  const { runId } = await props.params;
+  return <WorkflowRunDetail runId={runId} />;
+}

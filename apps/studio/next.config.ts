@@ -1,3 +1,23 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2280819aec9b874e6c46b7ee54f0d6ff1f1860a62c7b65fc3dd3cf56cee0d4bb
-size 581
+import type { NextConfig } from "next";
+import { resolve } from "node:path";
+
+const apiOrigin = process.env.ACCOS_API_ORIGIN;
+
+const nextConfig: NextConfig = {
+  compress: false,
+  output: "standalone",
+  outputFileTracingRoot: resolve(process.cwd(), "../.."),
+  reactStrictMode: true,
+  transpilePackages: ["@accos/api-client", "@accos/ui"],
+  rewrites() {
+    if (!apiOrigin) return Promise.resolve([]);
+    return Promise.resolve([
+      {
+        source: "/api/v1/:path*",
+        destination: `${apiOrigin}/api/v1/:path*`,
+      },
+    ]);
+  },
+};
+
+export default nextConfig;

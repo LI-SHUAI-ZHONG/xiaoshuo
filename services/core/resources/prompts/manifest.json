@@ -1,3 +1,65 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dd253f1bc548b2ef14ea17c8ad1e2d5df013451cd9b32443df5458ed3478af15
-size 1982
+{
+  "schema_version": 1,
+  "package_id": "accos.common-prompts",
+  "version": "1.0.0",
+  "owner": "models",
+  "package_type": "prompt",
+  "minimum_contract_version": "1.0.0",
+  "files": [
+    {
+      "path": "agent.task.json",
+      "sha256": "6341a0c90627365ecfd09cace9e502cec138e33b0d96a5f3fd649b5dfe714de7",
+      "byte_length": 3487,
+      "kind": "prompt"
+    },
+    {
+      "path": "director.clarify.json",
+      "sha256": "9e8005f7fd7f92ae75898f048d35dc549d2a467481e791373603389aefa81eba",
+      "byte_length": 3456,
+      "kind": "prompt"
+    },
+    {
+      "path": "director.intent.json",
+      "sha256": "d246fa8acf25d29e235d1f29d072569524890f8907cf6665b14cae69667c1964",
+      "byte_length": 3397,
+      "kind": "prompt"
+    },
+    {
+      "path": "director.meeting_summary.json",
+      "sha256": "ed372fcff8453977860a20e0966700d269e4db4ce91cc2b7a30a4339f12a1a40",
+      "byte_length": 3464,
+      "kind": "prompt"
+    },
+    {
+      "path": "director.plan.json",
+      "sha256": "034497eb182da23cda35a0e1c7dc0e9a91708eef2f7e8832c8a364aa8e8c6ee9",
+      "byte_length": 4391,
+      "kind": "prompt"
+    },
+    {
+      "path": "director.replan.json",
+      "sha256": "9db3137b7e4827c94fbada9b4e92731057f69f8faddf1dcc95792aed4370346e",
+      "byte_length": 4280,
+      "kind": "prompt"
+    },
+    {
+      "path": "director.route.json",
+      "sha256": "227ddce486b3ff2ca007fde4973849dc95dfb3b2d9739f3d45ec995419d420c7",
+      "byte_length": 3430,
+      "kind": "prompt"
+    }
+  ],
+  "entrypoints": {
+    "agent.task": "agent.task.json",
+    "director.clarify": "director.clarify.json",
+    "director.intent": "director.intent.json",
+    "director.meeting_summary": "director.meeting_summary.json",
+    "director.plan": "director.plan.json",
+    "director.replan": "director.replan.json",
+    "director.route": "director.route.json"
+  },
+  "dependencies": [],
+  "required_permissions": [
+    "model:run"
+  ]
+}

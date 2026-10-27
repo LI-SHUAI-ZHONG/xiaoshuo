@@ -1,3 +1,33 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2f1501743b55a2d39b630fdba8bc387c4890e1c3969dddb3d6748048c1a60f34
-size 805
+"use client";
+
+import { create } from "zustand";
+
+interface UiState {
+  commandOpen: boolean;
+  detailPanelOpen: boolean;
+  draftPanelWidth: number;
+  setCommandOpen: (open: boolean) => void;
+  setDetailPanelOpen: (open: boolean) => void;
+  setDraftPanelWidth: (width: number) => void;
+  setSidebarOpen: (open: boolean) => void;
+  sidebarOpen: boolean;
+}
+
+export const useUiStore = create<UiState>((set) => ({
+  commandOpen: false,
+  detailPanelOpen: false,
+  draftPanelWidth: 420,
+  setCommandOpen: (commandOpen) => {
+    set({ commandOpen });
+  },
+  setDetailPanelOpen: (detailPanelOpen) => {
+    set({ detailPanelOpen });
+  },
+  setDraftPanelWidth: (draftPanelWidth) => {
+    set({ draftPanelWidth });
+  },
+  setSidebarOpen: (sidebarOpen) => {
+    set({ sidebarOpen });
+  },
+  sidebarOpen: false,
+}));

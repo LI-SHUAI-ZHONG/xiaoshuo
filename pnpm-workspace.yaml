@@ -1,3 +1,5 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e66ec711f47594d1bd67e7852891066a78262e2ba77b3d375a07c92200e12d0a
-size 82
+packages:
+  - apps/*
+  - packages/*
+minimumReleaseAgeExclude:
+  - globals@17.12.0

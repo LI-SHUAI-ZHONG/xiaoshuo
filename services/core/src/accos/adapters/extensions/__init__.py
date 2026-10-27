@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:fabffe5199b4d11bd5d99b545f2cfea62e8bf686221038083f755adb2b5ba3c2
-size 306
+"""Concrete adapters for isolated optional extensions."""
+
+from accos.adapters.extensions.graph import (
+    ExtensionGraphEdgeRow,
+    ExtensionGraphNodeRow,
+    SqlAlchemyExtensionGraphStore,
+)
+
+__all__ = [
+    "ExtensionGraphEdgeRow",
+    "ExtensionGraphNodeRow",
+    "SqlAlchemyExtensionGraphStore",
+]

@@ -1,3 +1,504 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:838e0cb6c08fa05a8bcb7c21dd04940e16797098215462162327b7b527836ac0
-size 24297
+{
+  "schema_version": 1,
+  "execute_at_step": 45,
+  "entries": [
+    {
+      "test": "T001",
+      "requirement": "R001",
+      "implementation_step": 24,
+      "status": "NOT_RUN",
+      "test_files": ["services/core/tests/test_construction_contracts.py"],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_construction_contracts.py -k 'baseline or recovery'",
+        ".venv/Scripts/python.exe -I scripts/source_baseline.py restore --archive .construction/baselines/stage24-source-only-20260924/source.zip --target .construction/recovered/stage24-acceptance"
+      ],
+      "manual_checks": [
+        "Compare every recovered file's SHA-256 with the baseline manifest; compare protected original inputs and legacy handoffs/migrations with the original hashes.",
+        "Confirm no .env, credential data, dependency, infrastructure runtime data, or cache file is restored.",
+        "The real source archive must be present in the isolated local acceptance environment; synthetic archive tests alone do not pass T001."
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T001/",
+      "result": null
+    },
+    {
+      "test": "T002",
+      "requirement": "R002",
+      "implementation_step": 24,
+      "status": "NOT_RUN",
+      "test_files": ["services/core/tests/test_construction_contracts.py"],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_construction_contracts.py",
+        ".venv/Scripts/python.exe scripts/check_import_boundaries.py",
+        ".venv/Scripts/python.exe scripts/check_table_ownership.py"
+      ],
+      "manual_checks": [
+        "Reject duplicate/moved table ownership, cross-owner private imports and raw SQL writes; permit the documented public ports.",
+        "Review frozen domain protocol fields and generated schema provenance; do not count planned ports as implementations."
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T002/",
+      "result": null
+    },
+    {
+      "test": "T003",
+      "requirement": "R003",
+      "implementation_step": 24,
+      "status": "NOT_RUN",
+      "test_files": ["tests/construction/static-toolchain.test.mjs"],
+      "commands": ["node --test tests/construction/static-toolchain.test.mjs"],
+      "manual_checks": [
+        "Recorded subprocess plans contain only fixed installed compilers; no package manager, test runner, service startup or credentials inherited.",
+        "Unknown modes and argument forwarding fail closed; compiler failure stops the plan.",
+        "Review actual compiler behavior and newly introduced plugins/references before expanding the construction allowlist."
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T003/",
+      "result": null
+    },
+    {
+      "test": "T004",
+      "requirement": "R004",
+      "implementation_step": 25,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_accounts_sql.py",
+        "services/core/tests/test_identity_installation.py",
+        "tests/e2e/identity-stage25.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts.py -k t004",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts_sql.py -k t004",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_installation.py",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/identity-stage25.spec.ts"
+      ],
+      "manual_checks": [
+        "空库初始化、重启登录、重复bootstrap拒绝、过期/撤销会话拒绝",
+        "Run only at stage45 using an isolated PostgreSQL URL and test account; missing configuration is WAITING_EXTERNAL, not PASS.",
+        "在隔离Windows安装中核对新目录与两个秘密文件的SID ACL；另一个普通账户不可读取；模拟权限设置失败，目录保护失败时不生成秘密，文件保护失败时不写入内容。POSIX核对0700/0600。",
+        "新旧两个安装CLI输出仅文件路径，旧入口要求新的父目录；非法来源/工作区参数及重试覆盖被拒绝，保留已产生的私有文件。"
+      ],
+      "external_requirements": [],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T004/",
+      "result": null
+    },
+    {
+      "test": "T005",
+      "requirement": "R005",
+      "implementation_step": 25,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_accounts_sql.py",
+        "services/core/tests/test_identity_oidc_callbacks.py",
+        "tests/e2e/identity-stage25.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts.py -k t005",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts_sql.py -k t005",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_oidc_callbacks.py",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/identity-stage25.spec.ts -g T005"
+      ],
+      "manual_checks": [
+        "模拟IdP验证错误issuer/nonce/重放；有配置后真实IdP往返",
+        "Run only at stage45 using an isolated PostgreSQL URL and test account; missing configuration is WAITING_EXTERNAL, not PASS.",
+        "确认取消/过期/无成员资格/配置错误返回登录页，state和浏览器绑定校验、单次消费及临时Cookie清理生效；供应商详情/授权码不进入重定向或UI。",
+        "配置含租户查询参数的授权端点，校验原路由参数保留、state/client_id/redirect_uri/PKCE无重复。协议与UI夹具不得替代真实IdP往返。"
+      ],
+      "external_requirements": [
+        "Real HTTPS OIDC provider and provisioned issuer/subject for .R evidence"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T005/",
+      "result": null
+    },
+    {
+      "test": "T006",
+      "requirement": "R006",
+      "implementation_step": 25,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_accounts_sql.py",
+        "tests/e2e/identity-stage25.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts.py -k t006",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts_sql.py -k t006",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/identity-stage25.spec.ts"
+      ],
+      "manual_checks": [
+        "双工作区同名实体读写/搜索/下载均隔离，撤权后旧token不可访问",
+        "Run only at stage45 using an isolated PostgreSQL URL and test account; missing configuration is WAITING_EXTERNAL, not PASS.",
+        "已补test_t006_scopes_and_revocation_are_rechecked_with_persisted_memberships：真实隔离PG的双工作区、项目grant、PAT撤销及成员撤销复核；列表/搜索/下载全链路仍按本包原动作验收。"
+      ],
+      "external_requirements": [],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T006/",
+      "result": null
+    },
+    {
+      "test": "T007",
+      "requirement": "R007",
+      "implementation_step": 25,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_accounts_sql.py"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts.py -k t007",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts_sql.py -k t007"
+      ],
+      "manual_checks": [
+        "新个人任务自批、团队自批拒绝、Agent伪造拒绝、旧在途保持旧策略",
+        "Run only at stage45 using an isolated PostgreSQL URL and test account; missing configuration is WAITING_EXTERNAL, not PASS."
+      ],
+      "external_requirements": [],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T007/",
+      "result": null
+    },
+    {
+      "test": "T008",
+      "requirement": "R008",
+      "implementation_step": 25,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_accounts_sql.py",
+        "services/core/tests/test_identity_installation.py",
+        "tests/e2e/identity-stage25.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts.py -k t008",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts_sql.py -k t008",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_installation.py",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/identity-stage25.spec.ts"
+      ],
+      "manual_checks": [
+        "UI/API/日志/导出不回显key，轮换后旧key引用停用，错误主密钥明确失败",
+        "Run only at stage45 using an isolated PostgreSQL URL and test account; missing configuration is WAITING_EXTERNAL, not PASS.",
+        "在隔离Windows安装中核对新目录与两个秘密文件的SID ACL；另一个普通账户不可读取；模拟权限设置失败，目录保护失败时不生成秘密，文件保护失败时不写入内容。POSIX核对0700/0600。",
+        "新旧两个安装CLI输出仅文件路径，旧入口要求新的父目录；非法来源/工作区参数及重试覆盖被拒绝，保留已产生的私有文件。"
+      ],
+      "external_requirements": [],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T008/",
+      "result": null
+    },
+    {
+      "test": "T009",
+      "requirement": "R009",
+      "implementation_step": 25,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_accounts_sql.py",
+        "tests/e2e/identity-stage25.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts.py -k t009",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts_sql.py -k t009",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/identity-stage25.spec.ts"
+      ],
+      "manual_checks": [
+        "令牌重复展示不含明文、撤销即拒、PAT审批拒绝、审计可关联操作",
+        "Run only at stage45 using an isolated PostgreSQL URL and test account; missing configuration is WAITING_EXTERNAL, not PASS."
+      ],
+      "external_requirements": [],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T009/",
+      "result": null
+    },
+    {
+      "test": "T010",
+      "requirement": "R010",
+      "implementation_step": 25,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_identity_accounts.py",
+        "services/core/tests/test_identity_accounts_sql.py",
+        "tests/e2e/identity-stage25.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts.py -k t010",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_identity_accounts_sql.py -k t010",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/identity-stage25.spec.ts"
+      ],
+      "manual_checks": [
+        "无key/无数据/失败/关闭各显示不同状态，CAS并发设置不丢更新",
+        "Run only at stage45 using an isolated PostgreSQL URL and test account; missing configuration is WAITING_EXTERNAL, not PASS."
+      ],
+      "external_requirements": [],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T010/",
+      "result": null
+    },
+    {
+      "test": "T011",
+      "requirement": "R011",
+      "implementation_step": 26,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_content_stage26.py",
+        "services/core/tests/test_content_stage26_sql.py",
+        "tests/e2e/content-stage26.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26.py -k t011",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26_sql.py -k t011",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/content-stage26.spec.ts -g T011"
+      ],
+      "manual_checks": [
+        "Save Chinese and empty content, restart API/Worker, read exact JSON/text/hash, and verify an object-store failure never advances the branch pointer.",
+        "Confirm studio-input hash records expose unavailable metadata without fabricated text; run reviewed legacy S3 import only in the isolated migration environment."
+      ],
+      "external_requirements": [
+        "Isolated PostgreSQL and S3-compatible object namespace with the 0014 migration applied"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T011/",
+      "result": null
+    },
+    {
+      "test": "T012",
+      "requirement": "R012",
+      "implementation_step": 26,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_content_stage26_sql.py",
+        "tests/e2e/content-stage26.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26_sql.py -k t012",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/content-stage26.spec.ts -g T012"
+      ],
+      "manual_checks": [
+        "Exercise delayed acknowledgement, simultaneous writers, browser crash/reload, offline reconnect, IME composition, logout warning and two-tab conflict resolution.",
+        "Sign in as another actor and verify that actor-scoped IndexedDB recovery never offers the first actor's draft."
+      ],
+      "external_requirements": [
+        "Isolated browser profile plus stage-45 owner and second-user credentials"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T012/",
+      "result": null
+    },
+    {
+      "test": "T013",
+      "requirement": "R013",
+      "implementation_step": 26,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_content_stage26_sql.py",
+        "tests/e2e/content-stage26.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26_sql.py -k t013",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/content-stage26.spec.ts -g T013"
+      ],
+      "manual_checks": [
+        "Create three revisions, restore the first as a fourth revision, compare immutable hashes and inspect both parent edges after restart."
+      ],
+      "external_requirements": ["Isolated PostgreSQL and S3-compatible object namespace"],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T013/",
+      "result": null
+    },
+    {
+      "test": "T014",
+      "requirement": "R014",
+      "implementation_step": 26,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_content_stage26.py",
+        "services/core/tests/test_content_stage26_sql.py",
+        "tests/e2e/content-stage26.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26.py -k t014",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26_sql.py -k t014",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/content-stage26.spec.ts -g T014"
+      ],
+      "manual_checks": [
+        "Merge different blocks automatically; retain both versions of same-block and incompatible-order conflicts until the author chooses.",
+        "Attempt a candidate patch against a locked block and a stale base, then verify the author's head remains unchanged."
+      ],
+      "external_requirements": ["Isolated PostgreSQL and S3-compatible object namespace"],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T014/",
+      "result": null
+    },
+    {
+      "test": "T015",
+      "requirement": "R015",
+      "implementation_step": 26,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_content_stage26.py",
+        "services/core/tests/test_content_stage26_sql.py"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26.py -k t015",
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26_sql.py -k t015"
+      ],
+      "manual_checks": [
+        "Reject extension/MIME spoofing, incorrect hash and oversized uploads; verify a signed ticket is actor/workspace/project/asset/version bound and expires.",
+        "Run orphan collection after its delay: registered versions and active backup holds remain, while an unreferenced failed upload is removed."
+      ],
+      "external_requirements": [
+        "Isolated S3-compatible namespace and running Worker for the real retention pass"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T015/",
+      "result": null
+    },
+    {
+      "test": "T016",
+      "requirement": "R016",
+      "implementation_step": 26,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_content_stage26_sql.py",
+        "tests/e2e/content-stage26.spec.ts"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_content_stage26_sql.py -k t016",
+        "node node_modules/@playwright/test/cli.js test tests/e2e/content-stage26.spec.ts -g T016"
+      ],
+      "manual_checks": [
+        "Create from an empty workspace, search and keyset-page projects/assets/revisions, rename, archive and restore without losing content.",
+        "Verify every collection filters by live workspace/project permissions and requires no manually entered identifier in Studio."
+      ],
+      "external_requirements": [
+        "Isolated PostgreSQL, object namespace and stage-45 browser credentials"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T016/",
+      "result": null
+    },
+    {
+      "test": "T017",
+      "requirement": "R017",
+      "implementation_step": 27,
+      "status": "NOT_RUN",
+      "test_files": ["services/core/tests/test_models_stage27.py"],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_models_stage27.py -k t017"
+      ],
+      "manual_checks": [
+        "Against an isolated billed account, exercise Responses text, strict structured output, tool calls, refusal, incomplete output, provider error and usage reconciliation; inspect that request and response bodies never enter logs."
+      ],
+      "external_requirements": [
+        "Stage-45 isolated OpenAI credential, spending cap and disposable project"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T017/",
+      "result": null
+    },
+    {
+      "test": "T018",
+      "requirement": "R018",
+      "implementation_step": 27,
+      "status": "NOT_RUN",
+      "test_files": ["services/core/tests/test_models_stage27.py"],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_models_stage27.py -k t018"
+      ],
+      "manual_checks": [
+        "Run one Chat Completions-compatible text call and one allowlisted Ollama chat/embed call; confirm unsupported capabilities and embedding dimensions fail explicitly."
+      ],
+      "external_requirements": [
+        "Stage-45 compatible endpoint and allowlisted local Ollama instance with pinned models"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T018/",
+      "result": null
+    },
+    {
+      "test": "T019",
+      "requirement": "R019",
+      "implementation_step": 27,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_models_stage27.py",
+        "services/core/tests/test_models_stage27_sql.py"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_models_stage27.py services/core/tests/test_models_stage27_sql.py -k t019"
+      ],
+      "manual_checks": [
+        "Publish a prompt with correct CAS, reject missing variables and invalid output schema, run a real Agent job through bounded tool turns, then restart the worker and read the persisted candidate result and frozen versions."
+      ],
+      "external_requirements": [
+        "Isolated PostgreSQL, object namespace, Worker and configured model credential"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T019/",
+      "result": null
+    },
+    {
+      "test": "T020",
+      "requirement": "R020",
+      "implementation_step": 27,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_models_stage27.py",
+        "services/core/tests/test_models_stage27_sql.py"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_models_stage27.py services/core/tests/test_models_stage27_sql.py -k t020"
+      ],
+      "manual_checks": [
+        "Disconnect and resume SSE from Last-Event-ID, cancel before and during generation, kill a leased worker, and verify partial, completed, refused, incomplete, cancelled, failed and unknown states never collapse into each other."
+      ],
+      "external_requirements": [
+        "Isolated PostgreSQL, object namespace, Worker and controllable streaming provider"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T020/",
+      "result": null
+    },
+    {
+      "test": "T021",
+      "requirement": "R021",
+      "implementation_step": 27,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_models_stage27.py",
+        "services/core/tests/test_models_stage27_sql.py"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_models_stage27.py services/core/tests/test_models_stage27_sql.py -k t021"
+      ],
+      "manual_checks": [
+        "Race reservations from multiple workers, force a retry and fallback, exhaust shared Redis quota, revoke access before dispatch, and reconcile an unknown billed attempt with evidence."
+      ],
+      "external_requirements": [
+        "Isolated PostgreSQL and Redis plus provider billing evidence for unknown reconciliation"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T021/",
+      "result": null
+    },
+    {
+      "test": "T022",
+      "requirement": "R022",
+      "implementation_step": 27,
+      "status": "NOT_RUN",
+      "test_files": ["services/core/tests/test_models_stage27.py"],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_models_stage27.py -k t022"
+      ],
+      "manual_checks": [
+        "Configure versioned profiles and policies in Studio; verify capability, tokenizer, dimension, parameter, locality, cache-scope and dated-price constraints determine routing and cost without silently defaulting unknown prices to zero."
+      ],
+      "external_requirements": ["Stage-45 provider model inventory and price snapshot"],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T022/",
+      "result": null
+    },
+    {
+      "test": "T023",
+      "requirement": "R023",
+      "implementation_step": 27,
+      "status": "NOT_RUN",
+      "test_files": [
+        "services/core/tests/test_models_stage27.py",
+        "services/core/tests/test_models_stage27_sql.py"
+      ],
+      "commands": [
+        ".venv/Scripts/python.exe -m pytest services/core/tests/test_models_stage27.py services/core/tests/test_models_stage27_sql.py -k t023"
+      ],
+      "manual_checks": [
+        "Page through project call history, open authorized input/output and per-attempt billing, compare two model profiles, submit a human rating, then revoke project access and verify all history/content endpoints deny access."
+      ],
+      "external_requirements": [
+        "Isolated PostgreSQL, object namespace and stage-45 owner/second-user browser credentials"
+      ],
+      "evidence_path": "docs/acceptance-full/evidence/<run-id>/T023/",
+      "result": null
+    }
+  ]
+}

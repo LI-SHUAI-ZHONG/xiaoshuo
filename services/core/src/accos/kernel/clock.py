@@ -1,3 +1,29 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a1001c91116a8962a179905ce6c25376dd40ef117f65bd2d68a7b8a54e08c851
-size 807
+"""UTC clock and timestamp serialization contracts."""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+from typing import Protocol
+
+
+class Clock(Protocol):
+    """Clock port used by deterministic runtime services."""
+
+    def now(self) -> datetime:
+        """Return a timezone-aware instant."""
+        ...
+
+
+class UtcClock:
+    """System implementation of the UTC clock port."""
+
+    def now(self) -> datetime:
+        """Return the current UTC instant."""
+        return datetime.now(tz=UTC)
+
+
+def format_utc(value: datetime) -> str:
+    """Serialize an aware instant as RFC 3339 UTC text."""
+    if value.tzinfo is None or value.utcoffset() is None:
+        raise ValueError("timestamp must be timezone-aware")
+    return value.astimezone(UTC).isoformat().replace("+00:00", "Z")

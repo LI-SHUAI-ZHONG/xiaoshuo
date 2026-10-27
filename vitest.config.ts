@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:356f8ed8134f36daef45fc0e31db044f0547325e3d739356c610490b64ede238
-size 399
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    include: [
+      "tests/unit/**/*.test.ts",
+      "packages/**/*.test.ts",
+      "packages/**/*.test.tsx",
+      "apps/**/*.test.ts",
+      "apps/**/*.test.tsx",
+    ],
+    passWithNoTests: false,
+    setupFiles: ["./tests/setup.ts"],
+  },
+});

@@ -1,3 +1,481 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:35399a595bcee91f7e931c7c9bdd576e5241831c8c136648217eb8bd2ed9d832
-size 14505
+name: ${ACCOS_COMPOSE_PROJECT_NAME:-accos}
+
+x-runtime-environment: &runtime-environment
+  ACCOS_DATABASE_URL: "${ACCOS_DATABASE_URL:?ACCOS_DATABASE_URL is required; copy .env.example to .env}"
+  ACCOS_REDIS_URL: "${ACCOS_REDIS_URL:?ACCOS_REDIS_URL is required; copy .env.example to .env}"
+  ACCOS_S3_ENDPOINT: "${ACCOS_S3_ENDPOINT:?ACCOS_S3_ENDPOINT is required; copy .env.example to .env}"
+  ACCOS_S3_BUCKET: "${ACCOS_S3_BUCKET:?ACCOS_S3_BUCKET is required; copy .env.example to .env}"
+  ACCOS_S3_ACCESS_KEY: "${ACCOS_S3_ACCESS_KEY:?ACCOS_S3_ACCESS_KEY is required; copy .env.example to .env}"
+  ACCOS_S3_SECRET_KEY: "${ACCOS_S3_SECRET_KEY:?ACCOS_S3_SECRET_KEY is required; copy .env.example to .env}"
+  ACCOS_LOG_LEVEL: "${ACCOS_LOG_LEVEL:-INFO}"
+  ACCOS_REAL_PROVIDER_CALLS_ENABLED: "${ACCOS_REAL_PROVIDER_CALLS_ENABLED:-false}"
+  ACCOS_METRICS_ENABLED: "${ACCOS_METRICS_ENABLED:-true}"
+  ACCOS_OTLP_ENDPOINT: "${ACCOS_OTLP_ENDPOINT:-}"
+
+x-container-runtime-environment: &container-runtime-environment
+  ACCOS_DATABASE_URL: "postgresql+psycopg://${ACCOS_POSTGRES_USER:-accos}:${ACCOS_POSTGRES_PASSWORD:?ACCOS_POSTGRES_PASSWORD is required; copy .env.example to .env}@postgres:5432/${ACCOS_POSTGRES_DB:-accos}"
+  ACCOS_REDIS_URL: "redis://:${ACCOS_REDIS_PASSWORD:?ACCOS_REDIS_PASSWORD is required; copy .env.example to .env}@redis:6379/0"
+  ACCOS_S3_ENDPOINT: "http://minio:9000"
+  ACCOS_S3_BUCKET: "${ACCOS_S3_BUCKET:?ACCOS_S3_BUCKET is required; copy .env.example to .env}"
+  ACCOS_S3_ACCESS_KEY: "${ACCOS_S3_ACCESS_KEY:?ACCOS_S3_ACCESS_KEY is required; copy .env.example to .env}"
+  ACCOS_S3_SECRET_KEY: "${ACCOS_S3_SECRET_KEY:?ACCOS_S3_SECRET_KEY is required; copy .env.example to .env}"
+  ACCOS_S3_REGION: "${ACCOS_S3_REGION:-us-east-1}"
+  ACCOS_S3_USE_SSL: "false"
+  ACCOS_ENV: "${ACCOS_ENV:-container}"
+  ACCOS_LOG_LEVEL: "${ACCOS_LOG_LEVEL:-INFO}"
+  ACCOS_REAL_PROVIDER_CALLS_ENABLED: "false"
+  ACCOS_METRICS_ENABLED: "${ACCOS_METRICS_ENABLED:-true}"
+  ACCOS_OTLP_ENDPOINT: "${ACCOS_OTLP_ENDPOINT:-}"
+  ACCOS_DEV_IDENTITY_ENABLED: "${ACCOS_DEV_IDENTITY_ENABLED:-false}"
+  ACCOS_DEV_IDENTITY_TOKEN: "${ACCOS_DEV_IDENTITY_TOKEN:-}"
+  ACCOS_DEV_IDENTITY_ACTOR_ID: "${ACCOS_DEV_IDENTITY_ACTOR_ID:-}"
+  ACCOS_DEV_IDENTITY_WORKSPACE_ID: "${ACCOS_DEV_IDENTITY_WORKSPACE_ID:-}"
+  ACCOS_DEV_IDENTITY_APPROVER_TOKEN: "${ACCOS_DEV_IDENTITY_APPROVER_TOKEN:-}"
+  ACCOS_DEV_IDENTITY_APPROVER_ACTOR_ID: "${ACCOS_DEV_IDENTITY_APPROVER_ACTOR_ID:-}"
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: "3"
+
+x-security: &default-security
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg17-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${ACCOS_POSTGRES_DB:-accos}"
+      POSTGRES_USER: "${ACCOS_POSTGRES_USER:-accos}"
+      POSTGRES_PASSWORD: "${ACCOS_POSTGRES_PASSWORD:?ACCOS_POSTGRES_PASSWORD is required; copy .env.example to .env}"
+    ports:
+      - "127.0.0.1:${ACCOS_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - infrastructure
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+        reservations:
+          cpus: "0.10"
+          memory: 256m
+    logging: *default-logging
+    <<: *default-security
+
+  redis:
+    image: redis:7.4.11-bookworm
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: "${ACCOS_REDIS_PASSWORD:?ACCOS_REDIS_PASSWORD is required; copy .env.example to .env}"
+    command:
+      - /bin/sh
+      - -ec
+      - exec redis-server --appendonly yes --appendfsync everysec --requirepass "$${REDIS_PASSWORD}"
+    ports:
+      - "127.0.0.1:${ACCOS_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - infrastructure
+    healthcheck:
+      test: ["CMD-SHELL", 'REDISCLI_AUTH="$${REDIS_PASSWORD}" redis-cli ping | grep -qx PONG']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512m
+        reservations:
+          cpus: "0.05"
+          memory: 64m
+    logging: *default-logging
+    <<: *default-security
+
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: "${ACCOS_S3_ACCESS_KEY:?ACCOS_S3_ACCESS_KEY is required; copy .env.example to .env}"
+      MINIO_ROOT_PASSWORD: "${ACCOS_S3_SECRET_KEY:?ACCOS_S3_SECRET_KEY is required; copy .env.example to .env}"
+    command: ["server", "/data", "--console-address", ":9001"]
+    ports:
+      - "127.0.0.1:${ACCOS_MINIO_API_PORT:-9000}:9000"
+      - "127.0.0.1:${ACCOS_MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - infrastructure
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/live >/dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+        reservations:
+          cpus: "0.10"
+          memory: 256m
+    logging: *default-logging
+    <<: *default-security
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+    profiles: ["tools", "application"]
+    environment:
+      <<: *runtime-environment
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        mc alias set local http://minio:9000 "$${ACCOS_S3_ACCESS_KEY}" "$${ACCOS_S3_SECRET_KEY}" >/dev/null
+        mc mb --ignore-existing "local/$${ACCOS_S3_BUCKET}" >/dev/null
+        mc version enable "local/$${ACCOS_S3_BUCKET}" >/dev/null
+        mc stat "local/$${ACCOS_S3_BUCKET}" >/dev/null
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - infrastructure
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128m
+    logging: *default-logging
+    read_only: true
+    tmpfs:
+      - /tmp
+    <<: *default-security
+
+  postgres-check:
+    image: pgvector/pgvector:0.8.6-pg17-bookworm
+    profiles: ["tools"]
+    environment:
+      <<: *runtime-environment
+      PGDATABASE: "${ACCOS_POSTGRES_DB:-accos}"
+      PGUSER: "${ACCOS_POSTGRES_USER:-accos}"
+      PGPASSWORD: "${ACCOS_POSTGRES_PASSWORD:?ACCOS_POSTGRES_PASSWORD is required; copy .env.example to .env}"
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        psql -h postgres -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS vector;" >/dev/null
+        test "$$(psql -h postgres -Atc "SELECT extversion FROM pg_extension WHERE extname = 'vector';")" = "0.8.6"
+        test "$$(psql -h postgres -Atc "SELECT '[1,2,3]'::vector;")" = "[1,2,3]"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - infrastructure
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128m
+    logging: *default-logging
+    read_only: true
+    tmpfs:
+      - /tmp
+    <<: *default-security
+
+  redis-check:
+    image: redis:7.4.11-bookworm
+    profiles: ["tools"]
+    environment:
+      <<: *runtime-environment
+      REDISCLI_AUTH: "${ACCOS_REDIS_PASSWORD:?ACCOS_REDIS_PASSWORD is required; copy .env.example to .env}"
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - redis-cli -h redis ping | grep -qx PONG
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - infrastructure
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128m
+    logging: *default-logging
+    read_only: true
+    tmpfs:
+      - /tmp
+    <<: *default-security
+
+  minio-check:
+    image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+    profiles: ["tools"]
+    environment:
+      <<: *runtime-environment
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        mc alias set local http://minio:9000 "$${ACCOS_S3_ACCESS_KEY}" "$${ACCOS_S3_SECRET_KEY}" >/dev/null
+        probe_path="local/$${ACCOS_S3_BUCKET}/.accos-infra-check"
+        cleanup() { mc rm --force "$${probe_path}" >/dev/null 2>&1 || true; }
+        trap cleanup EXIT
+        printf fixture-object | mc pipe "$${probe_path}" >/dev/null
+        test "$$(mc cat "$${probe_path}")" = "fixture-object"
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - infrastructure
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 128m
+    logging: *default-logging
+    read_only: true
+    tmpfs:
+      - /tmp
+    <<: *default-security
+
+  migrate:
+    image: accos-api:${ACCOS_IMAGE_TAG:-0.1.0-skeleton}
+    profiles: ["application"]
+    build:
+      context: ..
+      dockerfile: services/core/Dockerfile
+      target: api
+      args:
+        ACCOS_REVISION: "${ACCOS_REVISION:-unknown}"
+        ACCOS_VERSION: "${ACCOS_VERSION:-0.1.0-skeleton}"
+    environment:
+      <<: *container-runtime-environment
+    command: ["alembic", "-c", "services/core/alembic.ini", "upgrade", "head"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - infrastructure
+    restart: "no"
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512m
+    logging: *default-logging
+    <<: *default-security
+
+  api:
+    image: accos-api:${ACCOS_IMAGE_TAG:-0.1.0-skeleton}
+    profiles: ["application"]
+    build:
+      context: ..
+      dockerfile: services/core/Dockerfile
+      target: api
+      args:
+        ACCOS_REVISION: "${ACCOS_REVISION:-unknown}"
+        ACCOS_VERSION: "${ACCOS_VERSION:-0.1.0-skeleton}"
+    environment:
+      <<: *container-runtime-environment
+      ACCOS_API_HOST: "0.0.0.0"
+      ACCOS_API_PORT: "8000"
+    ports:
+      - "127.0.0.1:${ACCOS_API_PORT:-8000}:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    networks:
+      - infrastructure
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/ready', timeout=2).read()",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+    logging: *default-logging
+    <<: *default-security
+
+  worker:
+    image: accos-worker:${ACCOS_IMAGE_TAG:-0.1.0-skeleton}
+    profiles: ["application"]
+    build:
+      context: ..
+      dockerfile: services/core/Dockerfile
+      target: worker
+      args:
+        ACCOS_REVISION: "${ACCOS_REVISION:-unknown}"
+        ACCOS_VERSION: "${ACCOS_VERSION:-0.1.0-skeleton}"
+    environment:
+      <<: *container-runtime-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    networks:
+      - infrastructure
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+    logging: *default-logging
+    <<: *default-security
+
+  studio:
+    image: accos-studio:${ACCOS_IMAGE_TAG:-0.1.0-skeleton}
+    profiles: ["application"]
+    build:
+      context: ..
+      dockerfile: apps/studio/Dockerfile
+      args:
+        ACCOS_API_ORIGIN: "http://api:8000"
+        ACCOS_REVISION: "${ACCOS_REVISION:-unknown}"
+        ACCOS_VERSION: "${ACCOS_VERSION:-0.1.0-skeleton}"
+    ports:
+      - "127.0.0.1:${ACCOS_STUDIO_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - infrastructure
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+    logging: *default-logging
+    <<: *default-security
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.136.0
+    profiles: ["observability"]
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./observability/otel-collector.yaml:/etc/otelcol-contrib/config.yaml:ro
+    ports:
+      - "127.0.0.1:${ACCOS_OTLP_GRPC_PORT:-4317}:4317"
+      - "127.0.0.1:${ACCOS_OTLP_HTTP_PORT:-4318}:4318"
+    depends_on:
+      jaeger:
+        condition: service_started
+    networks:
+      - infrastructure
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 256m
+    logging: *default-logging
+    <<: *default-security
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.76.0
+    profiles: ["observability"]
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "127.0.0.1:${ACCOS_JAEGER_PORT:-16686}:16686"
+    networks:
+      - infrastructure
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512m
+    logging: *default-logging
+    <<: *default-security
+
+  prometheus:
+    image: prom/prometheus:v3.6.0
+    profiles: ["observability"]
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=24h
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:${ACCOS_PROMETHEUS_PORT:-9090}:9090"
+    depends_on:
+      otel-collector:
+        condition: service_started
+    networks:
+      - infrastructure
+    read_only: true
+    tmpfs:
+      - /tmp
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512m
+    logging: *default-logging
+    <<: *default-security
+
+networks:
+  infrastructure:
+    driver: bridge
+    name: ${ACCOS_COMPOSE_PROJECT_NAME:-accos}-infrastructure
+
+volumes:
+  postgres-data:
+    name: ${ACCOS_COMPOSE_PROJECT_NAME:-accos}-postgres-data
+  redis-data:
+    name: ${ACCOS_COMPOSE_PROJECT_NAME:-accos}-redis-data
+  minio-data:
+    name: ${ACCOS_COMPOSE_PROJECT_NAME:-accos}-minio-data
+  prometheus-data:
+    name: ${ACCOS_COMPOSE_PROJECT_NAME:-accos}-prometheus-data

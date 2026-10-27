@@ -1,3 +1,75 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c4c08ba5b0bc6c8118628ab0fade18603c632b55d2d43efc41e399bf0768a8db
-size 2290
+{
+  "schema_version": 1,
+  "date": "2026-09-26",
+  "step": 26,
+  "status": "IMPLEMENTED_UNTESTED",
+  "requirements": [
+    "R011",
+    "R012",
+    "R013",
+    "R014",
+    "R015",
+    "R016"
+  ],
+  "tests_registered_not_run": [
+    "T011",
+    "T012",
+    "T013",
+    "T014",
+    "T015",
+    "T016"
+  ],
+  "takeover_baseline": {
+    "path": ".construction/baselines/stage26-takeover-20260926",
+    "files": 602,
+    "archive_sha256": "c0a5239801dde3a2fc6008aaa7f459e53565b31dc3e88dc5f091f4c9cd622e5e",
+    "restore_test_status": "NOT_RUN"
+  },
+  "migration": {
+    "source_head": "0014_artifact_content",
+    "down_revision": "0013_identity_accounts",
+    "sha256": "0eab68355ae21cd2ab7c7539b95a36d298f89aafa9c5035a961729b80ef0be94",
+    "database_head": "NOT_QUERIED",
+    "executed": false,
+    "next_unallocated_prefix": "0015"
+  },
+  "static_checks": [
+    {
+      "command": "node scripts/static-toolchain.mjs api",
+      "result": "PASS",
+      "detail": "OpenAPI and generated TypeScript client updated without starting the application"
+    },
+    {
+      "command": "node scripts/static-toolchain.mjs contracts",
+      "result": "PASS",
+      "detail": "Shared schemas generated without starting the application or tests"
+    },
+    {
+      "command": "node scripts/static-toolchain.mjs types",
+      "result": "PASS",
+      "detail": "mypy plus four TypeScript projects; 201 Python source files reported"
+    },
+    {
+      "command": "node scripts/static-toolchain.mjs syntax",
+      "result": "PASS",
+      "detail": "267 Python/JSON/TOML/Node sources parsed; no project code or tests executed"
+    },
+    {
+      "command": "targeted ruff/prettier format checks for stage26 files",
+      "result": "PASS",
+      "detail": "Six Python files and selected writing/project TypeScript files"
+    }
+  ],
+  "runtime_actions": {
+    "tests_run": false,
+    "application_started": false,
+    "services_started": false,
+    "database_queried": false,
+    "migration_executed": false,
+    "external_network_used": false
+  },
+  "notes": [
+    "The full repository format check still reports two older files outside the stage26 scope: services/core/tests/test_api_v1.py and services/core/tests/test_projects_assets.py.",
+    "Runtime behavior and recovery remain NOT_RUN until step45."
+  ]
+}

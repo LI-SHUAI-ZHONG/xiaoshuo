@@ -1,3 +1,20 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:83b980168ea7c43f552b40f85773ea6e2bb47e206969472430b99830e949d699
-size 205
+.git
+.github
+.mypy_cache
+.pytest_cache
+.ruff_cache
+.tmp-*
+.venv
+**/__pycache__
+**/*.pyc
+**/.next
+**/node_modules
+coverage
+docs
+执行
+infra/.data
+infra/backups
+node_modules
+playwright-report
+test-results
+

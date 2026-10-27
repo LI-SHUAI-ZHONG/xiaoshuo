@@ -1,3 +1,29 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:06687d6f742060a9566bca318a6a8726170af337f8957294b67f94352752060a
-size 874
+import createClient from "openapi-fetch";
+
+import type { paths } from "./generated/schema.ts";
+
+export interface AccosClientOptions {
+  baseUrl: string;
+  token: string;
+  csrfToken?: string;
+  workspaceId: string;
+  fetch?: typeof globalThis.fetch;
+}
+
+export function createAccosClient(options: AccosClientOptions) {
+  const common = {
+    baseUrl: options.baseUrl,
+    credentials: "same-origin" as const,
+    headers: {
+      ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+      ...(options.csrfToken ? { "X-CSRF-Token": options.csrfToken } : {}),
+      "X-Workspace-ID": options.workspaceId,
+    },
+  };
+  if (options.fetch) return createClient<paths>({ ...common, fetch: options.fetch });
+  return createClient<paths>(common);
+}
+
+export function createAuthClient() {
+  return createClient<paths>({ baseUrl: "", credentials: "same-origin" });
+}

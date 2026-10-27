@@ -1,3 +1,8 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:acb152c752acee14b22d6d43b8225175b1115c38b26f1ef2705357f16a614e6e
-size 131
+.venv/
+coverage/
+node_modules/
+packages/api-client/openapi*.json
+packages/api-client/src/generated/
+pnpm-lock.yaml
+uv.lock
+执行/

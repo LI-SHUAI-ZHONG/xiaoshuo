@@ -1,3 +1,48 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d436b4c80bf58c8517211ce95bdb97c1bfa1f12d14e44c66dba65d1f57253b04
-size 1427
+import { forwardRef, useId, type SelectHTMLAttributes } from "react";
+
+import { cx } from "./utils.ts";
+
+export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
+  description?: string;
+  error?: string;
+  label: string;
+}
+
+export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select(
+  { children, className, description, error, id: providedId, label, ...props },
+  ref,
+) {
+  const generatedId = useId();
+  const id = providedId ?? generatedId;
+  const descriptionId = description ? `${id}-description` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = [descriptionId, errorId].filter(Boolean).join(" ") || undefined;
+
+  return (
+    <label className="ui-field" htmlFor={id}>
+      <span className="ui-field__label">{label}</span>
+      {description ? (
+        <span className="ui-field__description" id={descriptionId}>
+          {description}
+        </span>
+      ) : null}
+      <span className="ui-select-wrap">
+        <select
+          ref={ref}
+          aria-describedby={describedBy}
+          aria-invalid={Boolean(error)}
+          className={cx("ui-select", className)}
+          id={id}
+          {...props}
+        >
+          {children}
+        </select>
+      </span>
+      {error ? (
+        <span className="ui-field__error" id={errorId} role="alert">
+          {error}
+        </span>
+      ) : null}
+    </label>
+  );
+});

@@ -1,3 +1,565 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d33be1726253d89b76ffaeaed371f7889bdd0ab47af8ed8f3d19789668c24080
-size 19163
+{
+  "schema_version": 1,
+  "contract_version": "1.0.0",
+  "tables": [
+    {
+      "table": "agent_context_snapshots",
+      "owner": "agents",
+      "declaration": "services/core/src/accos/adapters/agents/persistence.py",
+      "class": "AgentContextSnapshotRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "agent_run_events",
+      "owner": "agents",
+      "declaration": "services/core/src/accos/adapters/agents/persistence.py",
+      "class": "AgentRunEventRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "agent_runs",
+      "owner": "agents",
+      "declaration": "services/core/src/accos/adapters/agents/persistence.py",
+      "class": "AgentRunRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "asset_upload_sessions",
+      "owner": "assets",
+      "declaration": "services/core/src/accos/adapters/assets/persistence.py",
+      "class": "UploadSessionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "asset_versions",
+      "owner": "assets",
+      "declaration": "services/core/src/accos/adapters/assets/persistence.py",
+      "class": "AssetVersionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "assets",
+      "owner": "assets",
+      "declaration": "services/core/src/accos/adapters/assets/persistence.py",
+      "class": "AssetRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "audit_events",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/persistence.py",
+      "class": "AuditEventRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "consistency_canon_entries",
+      "owner": "consistency",
+      "declaration": "services/core/src/accos/adapters/consistency/persistence.py",
+      "class": "CanonEntryRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "consistency_check_runs",
+      "owner": "consistency",
+      "declaration": "services/core/src/accos/adapters/consistency/persistence.py",
+      "class": "ConsistencyCheckRunRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "consistency_evidence_projection",
+      "owner": "consistency",
+      "declaration": "services/core/src/accos/adapters/consistency/persistence.py",
+      "class": "EvidenceProjectionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "consistency_findings",
+      "owner": "consistency",
+      "declaration": "services/core/src/accos/adapters/consistency/persistence.py",
+      "class": "FindingRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "consistency_resolution_proposals",
+      "owner": "consistency",
+      "declaration": "services/core/src/accos/adapters/consistency/persistence.py",
+      "class": "ResolutionProposalRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "consistency_timeline_events",
+      "owner": "consistency",
+      "declaration": "services/core/src/accos/adapters/consistency/persistence.py",
+      "class": "TimelineEventRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "creative_containers",
+      "owner": "creative",
+      "declaration": "services/core/src/accos/adapters/creative/persistence.py",
+      "class": "CreativeContainerRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "creative_records",
+      "owner": "creative",
+      "declaration": "services/core/src/accos/adapters/creative/persistence.py",
+      "class": "CreativeRecordRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "evolution_audit_entries",
+      "owner": "evolution",
+      "declaration": "services/core/src/accos/adapters/evolution/persistence.py",
+      "class": "EvolutionAuditRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "evolution_improvement_proposals",
+      "owner": "evolution",
+      "declaration": "services/core/src/accos/adapters/evolution/persistence.py",
+      "class": "ImprovementProposalRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "extension_graph_edges",
+      "owner": "extensions",
+      "declaration": "services/core/src/accos/adapters/extensions/graph.py",
+      "class": "ExtensionGraphEdgeRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "extension_graph_nodes",
+      "owner": "extensions",
+      "declaration": "services/core/src/accos/adapters/extensions/graph.py",
+      "class": "ExtensionGraphNodeRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_behavior_consents",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "BehaviorConsentRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_diagnostic_findings",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "DiagnosticFindingRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_events",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "FeedbackEventRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_experiment_samples",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "ExperimentSampleRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_experiment_variants",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "VariantRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_experiments",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "ExperimentRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_metric_definitions",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "MetricDefinitionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_metric_points",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "MetricPointRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "feedback_tombstones",
+      "owner": "feedback",
+      "declaration": "services/core/src/accos/adapters/feedback/persistence.py",
+      "class": "TombstoneRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "idempotency_records",
+      "owner": "persistence",
+      "declaration": "services/core/src/accos/adapters/persistence/models.py",
+      "class": "IdempotencyRecordRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "identity_bootstrap",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "BootstrapRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_control_requests",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/persistence.py",
+      "class": "ControlRequestRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "identity_creator_anchors",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "CreatorAnchorRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_credentials",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "CredentialRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_human_approvals",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/persistence.py",
+      "class": "HumanApprovalRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "identity_local_accounts",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "LocalAccountRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_login_limits",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "LoginAttemptRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_login_sessions",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "LoginSessionRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_memberships",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/persistence.py",
+      "class": "MembershipRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "identity_oidc_flows",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "OidcFlowRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_personal_tokens",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "PersonalTokenRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_scope_grants",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "ScopeGrantRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_service_identities",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/persistence.py",
+      "class": "ServiceIdentityRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "identity_settings_history",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/accounts.py",
+      "class": "WorkspaceSettingsRow",
+      "introduced_in": "stage25"
+    },
+    {
+      "table": "identity_users",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/persistence.py",
+      "class": "UserRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "identity_workspaces",
+      "owner": "identity",
+      "declaration": "services/core/src/accos/adapters/identity/persistence.py",
+      "class": "WorkspaceRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_chunks",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeChunkRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_citations",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeCitationRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_document_versions",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeDocumentVersionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_documents",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeDocumentRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_edges",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeEdgeRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_embedding_refs",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeEmbeddingRefRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_ingestion_runs",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeIngestionRunRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_sources",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeSourceRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "knowledge_vector_index",
+      "owner": "knowledge",
+      "declaration": "services/core/src/accos/adapters/knowledge/persistence.py",
+      "class": "KnowledgeVectorRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "memory_conflicts",
+      "owner": "memory",
+      "declaration": "services/core/src/accos/adapters/memory/persistence.py",
+      "class": "MemoryConflictRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "memory_context_packages",
+      "owner": "memory",
+      "declaration": "services/core/src/accos/adapters/memory/persistence.py",
+      "class": "MemoryContextPackageRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "memory_events",
+      "owner": "memory",
+      "declaration": "services/core/src/accos/adapters/memory/persistence.py",
+      "class": "MemoryEventRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "memory_grants",
+      "owner": "memory",
+      "declaration": "services/core/src/accos/adapters/memory/persistence.py",
+      "class": "MemoryGrantRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "memory_links",
+      "owner": "memory",
+      "declaration": "services/core/src/accos/adapters/memory/persistence.py",
+      "class": "MemoryLinkRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "memory_records",
+      "owner": "memory",
+      "declaration": "services/core/src/accos/adapters/memory/persistence.py",
+      "class": "MemoryRecordRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "model_usage_records",
+      "owner": "models",
+      "declaration": "services/core/src/accos/adapters/models/persistence.py",
+      "class": "ModelUsageRecordRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "outbox_events",
+      "owner": "persistence",
+      "declaration": "services/core/src/accos/adapters/persistence/models.py",
+      "class": "OutboxEventRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "project_artifact_revisions",
+      "owner": "projects",
+      "declaration": "services/core/src/accos/adapters/projects/persistence.py",
+      "class": "ArtifactRevisionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "project_artifacts",
+      "owner": "projects",
+      "declaration": "services/core/src/accos/adapters/projects/persistence.py",
+      "class": "ArtifactRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "projects",
+      "owner": "projects",
+      "declaration": "services/core/src/accos/adapters/projects/persistence.py",
+      "class": "ProjectRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "quality_evaluation_runs",
+      "owner": "quality",
+      "declaration": "services/core/src/accos/adapters/quality/persistence.py",
+      "class": "EvaluationRunRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "quality_results",
+      "owner": "quality",
+      "declaration": "services/core/src/accos/adapters/quality/persistence.py",
+      "class": "QualityResultRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "quality_rubric_versions",
+      "owner": "quality",
+      "declaration": "services/core/src/accos/adapters/quality/persistence.py",
+      "class": "RubricVersionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "schema_metadata",
+      "owner": "persistence",
+      "declaration": "services/core/src/accos/adapters/persistence/models.py",
+      "class": "SchemaMetadataRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "tool_call_records",
+      "owner": "tools",
+      "declaration": "services/core/src/accos/adapters/tools/persistence.py",
+      "class": "ToolCallRecordRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "workflow_approval_decisions",
+      "owner": "workflows",
+      "declaration": "services/core/src/accos/adapters/workflows/persistence.py",
+      "class": "ApprovalDecisionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "workflow_approval_requests",
+      "owner": "workflows",
+      "declaration": "services/core/src/accos/adapters/workflows/persistence.py",
+      "class": "ApprovalRequestRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "workflow_definitions",
+      "owner": "workflows",
+      "declaration": "services/core/src/accos/adapters/workflows/persistence.py",
+      "class": "WorkflowDefinitionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "workflow_run_events",
+      "owner": "workflows",
+      "declaration": "services/core/src/accos/adapters/workflows/persistence.py",
+      "class": "WorkflowRunEventRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "workflow_runs",
+      "owner": "workflows",
+      "declaration": "services/core/src/accos/adapters/workflows/persistence.py",
+      "class": "WorkflowRunRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "workflow_step_definitions",
+      "owner": "workflows",
+      "declaration": "services/core/src/accos/adapters/workflows/persistence.py",
+      "class": "WorkflowStepDefinitionRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "workflow_step_runs",
+      "owner": "workflows",
+      "declaration": "services/core/src/accos/adapters/workflows/persistence.py",
+      "class": "WorkflowStepRunRow",
+      "introduced_in": "legacy_01_23"
+    },
+    {
+      "table": "workflow_task_runs",
+      "owner": "workflows",
+      "declaration": "services/core/src/accos/adapters/workflows/persistence.py",
+      "class": "TaskRunRow",
+      "introduced_in": "legacy_01_23"
+    }
+  ],
+  "read_only_exceptions": [
+    {
+      "module": "accos.adapters.runtime_monitor",
+      "tables": [
+        "outbox_events",
+        "workflow_runs",
+        "knowledge_ingestion_runs",
+        "model_usage_records"
+      ],
+      "reason": "Existing aggregate health metrics only; no text, identities, or writes",
+      "review_step": 43
+    }
+  ]
+}

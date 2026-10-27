@@ -1,3 +1,7 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:7106a0119475ad28015deb504e486977d2ccb6ea2f56962d44f168b918029dfe
-size 201
+import { describe, expect, it } from "vitest";
+
+describe("TypeScript test harness", () => {
+  it("runs deterministic fixtures", () => {
+    expect("fixture-project").toBe("fixture-project");
+  });
+});

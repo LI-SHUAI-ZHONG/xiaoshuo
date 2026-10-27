@@ -1,3 +1,59 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:b273d07fafe40c042d18aa5432ebeb19d836fea9c053e1c54041a795b066d790
-size 2189
+{
+  "name": "accos-workspace",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": "22.23.2",
+    "pnpm": "11.25.0"
+  },
+  "accos": {
+    "toolchain": {
+      "python": "3.12.14",
+      "uv": "0.12.7",
+      "node": "22.23.2",
+      "pnpm": "11.25.0"
+    }
+  },
+  "scripts": {
+    "static:syntax": "node scripts/static-toolchain.mjs syntax",
+    "static:format": "node scripts/static-toolchain.mjs format",
+    "static:types": "node scripts/static-toolchain.mjs types",
+    "static:contracts": "node scripts/static-toolchain.mjs contracts",
+    "install:all": "node scripts/toolchain.mjs install",
+    "format:check": "node scripts/toolchain.mjs format",
+    "lint": "node scripts/toolchain.mjs lint",
+    "typecheck": "node scripts/toolchain.mjs typecheck",
+    "test": "node scripts/toolchain.mjs test",
+    "test:unit": "node scripts/toolchain.mjs test",
+    "test:e2e": "node scripts/toolchain.mjs e2e",
+    "check:quick": "node scripts/toolchain.mjs quick",
+    "check": "node scripts/toolchain.mjs check",
+    "build": "node scripts/toolchain.mjs build",
+    "verify:toolchain": "node scripts/toolchain.mjs verify",
+    "api:export": "uv run --frozen python scripts/export_openapi.py",
+    "api:generate": "node scripts/api-client.mjs write",
+    "api:check": "uv run --frozen python scripts/export_openapi.py --check && node scripts/check-openapi.mjs --self-test && node scripts/api-client.mjs check",
+    "security:local": "uv run --frozen python scripts/security_checks.py && uv run --frozen python scripts/ci_secret_scan.py"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.62.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/node": "22.20.1",
+    "@vitejs/plugin-react": "6.1.1",
+    "@vitest/coverage-v8": "4.1.11",
+    "dependency-cruiser": "18.2.0",
+    "eslint": "10.9.1",
+    "globals": "17.12.0",
+    "jsdom": "30.0.1",
+    "openapi-typescript": "7.13.0",
+    "prettier": "3.9.6",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.69.0",
+    "vitest": "4.1.11"
+  }
+}

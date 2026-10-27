@@ -1,3 +1,53 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:8e74325be7be63ef094a1ab928efc9ee4eb0fbe33880f76e510f78eefa7a1762
-size 1380
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "ACCOS: API",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "accos.entrypoints.api",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "ACCOS_ENV": "${env:ACCOS_ENV}",
+        "PYTHONPATH": "${workspaceFolder}/services/core/src"
+      },
+      "justMyCode": true
+    },
+    {
+      "name": "ACCOS: Worker",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "accos.entrypoints.worker",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "ACCOS_ENV": "${env:ACCOS_ENV}",
+        "PYTHONPATH": "${workspaceFolder}/services/core/src"
+      },
+      "justMyCode": true
+    },
+    {
+      "name": "ACCOS: Python tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["services/core/tests"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/services/core/src"
+      },
+      "justMyCode": true
+    },
+    {
+      "name": "ACCOS: Studio (execution 18 placeholder)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "node scripts/placeholder.mjs studio",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "ACCOS_ENV": "${env:ACCOS_ENV}"
+      }
+    }
+  ]
+}

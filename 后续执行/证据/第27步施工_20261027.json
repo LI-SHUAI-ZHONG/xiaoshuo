@@ -1,3 +1,97 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:dddbcc4b672076bb2552fbf62f750bcf3a16b71c8631818c329b62f921472e51
-size 4149
+{
+  "schema_version": 1,
+  "date": "2026-10-27",
+  "step": 27,
+  "status": "IMPLEMENTED_UNTESTED",
+  "requirements": ["R017", "R018", "R019", "R020", "R021", "R022", "R023"],
+  "tests_registered_not_run": ["T017", "T018", "T019", "T020", "T021", "T022", "T023"],
+  "recovery_baselines": [
+    {
+      "path": ".construction/baselines/stage27-takeover-20260927",
+      "files": 611,
+      "restore_test_status": "NOT_RUN"
+    },
+    {
+      "path": ".construction/baselines/stage27-resume-20260927",
+      "files": 638,
+      "restore_test_status": "NOT_RUN"
+    }
+  ],
+  "migration": {
+    "source_head": "0015_model_execution",
+    "down_revision": "0014_artifact_content",
+    "sha256": "b277ec11c5fda723bc5c354b070a3a6774baa81cec74a515b35343ba0d66cf23",
+    "database_head": "NOT_QUERIED",
+    "executed": false,
+    "next_unallocated_prefix": "0016"
+  },
+  "generated_contracts": {
+    "openapi": "packages/api-client/openapi.json",
+    "openapi_snapshot": "packages/api-client/openapi.snapshot.json",
+    "typescript_client": "packages/api-client/src/generated",
+    "prompt_manifest": "services/core/resources/prompts/manifest.json",
+    "prompt_files_verified": 7,
+    "orm_tables_verified": 8
+  },
+  "static_checks": [
+    {
+      "command": "node scripts/static-toolchain.mjs api",
+      "result": "PASS",
+      "detail": "OpenAPI and generated TypeScript client updated without starting the application"
+    },
+    {
+      "command": "node scripts/static-toolchain.mjs contracts",
+      "result": "PASS",
+      "detail": "Shared schemas generated without starting the application or tests"
+    },
+    {
+      "command": "node scripts/static-toolchain.mjs types",
+      "result": "PASS",
+      "detail": "mypy reported 219 Python source files with no issues and the configured TypeScript projects completed"
+    },
+    {
+      "command": "node scripts/static-toolchain.mjs syntax",
+      "result": "PASS",
+      "detail": "Python, JSON, TOML and Node sources parsed; no project code or tests executed"
+    },
+    {
+      "command": "targeted Ruff format check for 20 stage-27 Python files",
+      "result": "PASS",
+      "detail": "Draft formatting was normalized mechanically, then checked again"
+    },
+    {
+      "command": "targeted Prettier check for stage-27 Studio and contract files",
+      "result": "PASS",
+      "detail": "Prompt JSON bytes were intentionally excluded because the manifest pins exact SHA-256 and byte length"
+    },
+    {
+      "command": "prompt manifest SHA-256/byte-length verification",
+      "result": "PASS",
+      "detail": "All seven packaged prompt resources match the manifest"
+    },
+    {
+      "command": "ORM metadata registration check",
+      "result": "PASS",
+      "detail": "All eight tables introduced by 0015 are registered after importing model and Agent ORM modules"
+    }
+  ],
+  "official_protocol_review": {
+    "openai_responses": "https://developers.openai.com/api/reference/resources/responses/methods/create",
+    "openai_streaming_events": "https://developers.openai.com/api/reference/resources/responses/streaming-events",
+    "openai_embeddings": "https://developers.openai.com/api/reference/resources/embeddings/methods/create",
+    "result": "Request shapes, text.format strict schema, streaming completion events and embedding inputs/dimensions were statically compared; no network model call was made"
+  },
+  "runtime_actions": {
+    "tests_run": false,
+    "application_started": false,
+    "services_started": false,
+    "database_queried": false,
+    "migration_executed": false,
+    "provider_call_made": false
+  },
+  "notes": [
+    "An exploratory strict mypy invocation that included test modules reported existing and new untyped-test diagnostics; the repository source-only type gate passed and no test was executed.",
+    "Real provider credentials, model availability, prices, billing evidence, PostgreSQL/Redis/object storage behavior and browser flows remain NOT_RUN until step 45.",
+    "The installed Node.js version is newer than the repository-pinned engine; TypeScript generation and checks still completed, but step 45 must use the pinned toolchain."
+  ]
+}

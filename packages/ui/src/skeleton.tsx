@@ -1,3 +1,17 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:774c41a3e877298457aaa63b932dbbafd6763c305a4984ac40906817c55c35eb
-size 491
+import { cx } from "./utils.ts";
+
+export interface SkeletonProps {
+  className?: string;
+  label?: string;
+  lines?: number;
+}
+
+export function Skeleton({ className, label = "正在加载", lines = 3 }: SkeletonProps) {
+  return (
+    <div aria-busy="true" aria-label={label} className={cx("ui-skeleton", className)} role="status">
+      {Array.from({ length: lines }, (_, index) => (
+        <span key={index} aria-hidden="true" className="ui-skeleton__line" />
+      ))}
+    </div>
+  );
+}

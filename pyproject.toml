@@ -1,3 +1,135 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:eee55c01a1e1a5e13dc9a61b5b948a2caee131c41420c7bea322fdffb82b4036
-size 2964
+[project]
+name = "accos-workspace"
+version = "0.0.0"
+description = "ACCOS development workspace"
+requires-python = "==3.12.14"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "httpx2==2.12.0",
+    "import-linter==2.14",
+    "mypy==2.3.1",
+    "pre-commit==4.6.2",
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "pyyaml==6.0.3",
+    "ruff==0.16.5",
+]
+
+[tool.uv]
+package = false
+required-version = "==0.12.7"
+
+[tool.uv.workspace]
+members = ["services/core"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["services/core/src", "services/core/tests", "scripts"]
+extend-exclude = ["执行"]
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "ANN",
+    "ARG",
+    "B",
+    "BLE",
+    "C4",
+    "DTZ",
+    "E",
+    "F",
+    "FA",
+    "FBT",
+    "I",
+    "N",
+    "PERF",
+    "PIE",
+    "PL",
+    "PTH",
+    "PYI",
+    "RET",
+    "RUF",
+    "S",
+    "SIM",
+    "SLF",
+    "T10",
+    "T20",
+    "TC",
+    "UP",
+    "W",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"services/core/tests/**/*.py" = ["DTZ001", "FBT003", "PLR2004", "S101", "S105", "S106"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+show_error_codes = true
+pretty = true
+mypy_path = ["services/core/src"]
+exclude = ["^执行/"]
+
+[tool.pytest.ini_options]
+addopts = [
+    "--strict-config",
+    "--strict-markers",
+    "--cov=accos",
+    "--cov-branch",
+    "--cov-report=term-missing:skip-covered",
+    "--cov-fail-under=100",
+]
+testpaths = ["services/core/tests"]
+pythonpath = ["services/core/src", "."]
+markers = [
+    "architecture: dependency and ownership boundary checks",
+    "contract: HTTP, OpenAPI, and generated-client compatibility checks",
+    "integration: tests requiring PostgreSQL, Redis, or S3-compatible storage",
+    "migration: forward and clean-database migration checks",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["accos"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_covered = true
+
+[tool.importlinter]
+root_packages = ["accos"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Kernel remains independent from domain modules and adapters"
+type = "forbidden"
+source_modules = ["accos.kernel"]
+forbidden_modules = ["accos.modules", "accos.adapters", "accos.entrypoints"]
+
+[[tool.importlinter.contracts]]
+name = "Domain modules do not depend on adapters or entrypoints"
+type = "forbidden"
+source_modules = ["accos.modules"]
+forbidden_modules = ["accos.adapters", "accos.entrypoints"]
+
+[[tool.importlinter.contracts]]
+name = "Core contracts do not depend on extension implementations"
+type = "forbidden"
+source_modules = ["accos.kernel", "accos.modules"]
+forbidden_modules = ["accos.extensions", "accos.adapters.extensions"]
+
+[[tool.importlinter.contracts]]
+name = "Extension contracts cannot import core private repositories"
+type = "forbidden"
+source_modules = ["accos.extensions"]
+forbidden_modules = [
+    "accos.adapters",
+    "accos.composition",
+    "accos.entrypoints",
+    "accos.modules",
+]

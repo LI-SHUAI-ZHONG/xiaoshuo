@@ -1,3 +1,745 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:087c7cad812d68162ab1522447803da29901702c4862387b499fac447403cb82
-size 18860
+{
+  "components": {
+    "schemas": {
+      "CapabilityRequirement": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^\\S(?:.*\\S)?$",
+            "title": "Code",
+            "type": "string"
+          },
+          "configuration_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Configuration Path"
+          },
+          "kind": {
+            "enum": [
+              "configuration",
+              "permission",
+              "dependency",
+              "data"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "kind",
+          "message"
+        ],
+        "title": "CapabilityRequirement",
+        "type": "object"
+      },
+      "CapabilityStatus": {
+        "additionalProperties": false,
+        "description": "V2 adds independent axes; it does not replace legacy extension flags.",
+        "properties": {
+          "capability": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^\\S(?:.*\\S)?$",
+            "title": "Capability",
+            "type": "string"
+          },
+          "configuration": {
+            "enum": [
+              "missing",
+              "configured"
+            ],
+            "title": "Configuration",
+            "type": "string"
+          },
+          "data": {
+            "enum": [
+              "empty",
+              "sufficient",
+              "insufficient"
+            ],
+            "title": "Data",
+            "type": "string"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "evidence_refs": {
+            "default": [],
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^\\S(?:.*\\S)?$",
+              "type": "string"
+            },
+            "title": "Evidence Refs",
+            "type": "array"
+          },
+          "health": {
+            "enum": [
+              "unknown",
+              "ready",
+              "degraded",
+              "unavailable"
+            ],
+            "title": "Health",
+            "type": "string"
+          },
+          "implementation": {
+            "enum": [
+              "absent",
+              "port_only",
+              "implemented"
+            ],
+            "title": "Implementation",
+            "type": "string"
+          },
+          "implementation_version": {
+            "anyOf": [
+              {
+                "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Implementation Version"
+          },
+          "requirements": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/CapabilityRequirement"
+            },
+            "title": "Requirements",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": 2,
+            "default": 2,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "verification": {
+            "enum": [
+              "untested",
+              "verified",
+              "failed"
+            ],
+            "title": "Verification",
+            "type": "string"
+          },
+          "verified_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Verified At"
+          }
+        },
+        "required": [
+          "capability",
+          "enabled",
+          "implementation",
+          "implementation_version",
+          "configuration",
+          "health",
+          "verification",
+          "data"
+        ],
+        "title": "CapabilityStatus",
+        "type": "object"
+      },
+      "ContentRef": {
+        "additionalProperties": false,
+        "description": "Immutable bytes owned by assets; hash is computed by the server.",
+        "properties": {
+          "asset_id": {
+            "format": "uuid",
+            "title": "Asset Id",
+            "type": "string"
+          },
+          "asset_version_id": {
+            "format": "uuid",
+            "title": "Asset Version Id",
+            "type": "string"
+          },
+          "byte_length": {
+            "minimum": 0,
+            "title": "Byte Length",
+            "type": "integer"
+          },
+          "media_type": {
+            "pattern": "^[a-z0-9][a-z0-9.+-]*/[a-z0-9][a-z0-9.+-]*$",
+            "title": "Media Type",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "asset_version_id",
+          "sha256",
+          "media_type",
+          "byte_length"
+        ],
+        "title": "ContentRef",
+        "type": "object"
+      },
+      "CursorPageRequest": {
+        "additionalProperties": false,
+        "description": "Keyset pagination for new collections; legacy offset endpoints stay valid.",
+        "properties": {
+          "cursor": {
+            "anyOf": [
+              {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cursor"
+          },
+          "limit": {
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "CursorPageRequest",
+        "type": "object"
+      },
+      "DataOwner": {
+        "enum": [
+          "identity",
+          "projects",
+          "assets",
+          "models",
+          "tools",
+          "workflows",
+          "agents",
+          "knowledge",
+          "memory",
+          "creative.novel",
+          "creative.world",
+          "creative.character",
+          "creative.creator",
+          "consistency",
+          "quality",
+          "feedback",
+          "evolution",
+          "ip",
+          "publishing",
+          "media",
+          "collaboration",
+          "ecosystem"
+        ],
+        "title": "DataOwner",
+        "type": "string"
+      },
+      "EntityRevisionRef": {
+        "additionalProperties": false,
+        "properties": {
+          "branch_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Branch Id"
+          },
+          "entity_type": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "^\\S(?:.*\\S)?$",
+            "title": "Entity Type",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/DataOwner"
+          },
+          "revision_id": {
+            "format": "uuid",
+            "title": "Revision Id",
+            "type": "string"
+          },
+          "version": {
+            "minimum": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "owner",
+          "entity_type",
+          "id",
+          "revision_id",
+          "version",
+          "branch_id"
+        ],
+        "title": "EntityRevisionRef",
+        "type": "object"
+      },
+      "Provenance": {
+        "additionalProperties": false,
+        "properties": {
+          "authority": {
+            "enum": [
+              "author_statement",
+              "accepted_fact",
+              "source_claim",
+              "candidate",
+              "inference"
+            ],
+            "title": "Authority",
+            "type": "string"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Confidence"
+          },
+          "extraction_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Extraction Version"
+          },
+          "license_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EntityRevisionRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "model_profile_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Model Profile Version"
+          },
+          "prompt_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Prompt Version"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Run Id"
+          },
+          "source_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SourceRef"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          },
+          "step_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Step Id"
+          }
+        },
+        "required": [
+          "source_refs",
+          "authority"
+        ],
+        "title": "Provenance",
+        "type": "object"
+      },
+      "RuntimePackageDependency": {
+        "additionalProperties": false,
+        "properties": {
+          "manifest_sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Manifest Sha256",
+            "type": "string"
+          },
+          "package_id": {
+            "pattern": "^[a-z][a-z0-9_.-]{0,199}$",
+            "title": "Package Id",
+            "type": "string"
+          },
+          "version": {
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "package_id",
+          "version",
+          "manifest_sha256"
+        ],
+        "title": "RuntimePackageDependency",
+        "type": "object"
+      },
+      "RuntimePackageFile": {
+        "additionalProperties": false,
+        "properties": {
+          "byte_length": {
+            "minimum": 0,
+            "title": "Byte Length",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "prompt",
+              "workflow",
+              "rubric",
+              "schema",
+              "documentation",
+              "code",
+              "static_asset"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "sha256": {
+            "pattern": "^[a-f0-9]{64}$",
+            "title": "Sha256",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "sha256",
+          "byte_length",
+          "kind"
+        ],
+        "title": "RuntimePackageFile",
+        "type": "object"
+      },
+      "RuntimePackageManifest": {
+        "additionalProperties": false,
+        "description": "Every runtime file is hashed; dependencies pin exact manifests, never latest.",
+        "properties": {
+          "dependencies": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/RuntimePackageDependency"
+            },
+            "title": "Dependencies",
+            "type": "array"
+          },
+          "entrypoints": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "minProperties": 1,
+            "title": "Entrypoints",
+            "type": "object"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/RuntimePackageFile"
+            },
+            "minItems": 1,
+            "title": "Files",
+            "type": "array"
+          },
+          "input_schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Input Schema"
+          },
+          "minimum_contract_version": {
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+            "title": "Minimum Contract Version",
+            "type": "string"
+          },
+          "output_schema": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Output Schema"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/DataOwner"
+          },
+          "package_id": {
+            "pattern": "^[a-z][a-z0-9_.-]{0,199}$",
+            "title": "Package Id",
+            "type": "string"
+          },
+          "package_type": {
+            "enum": [
+              "prompt",
+              "workflow",
+              "rubric",
+              "tool",
+              "agent",
+              "knowledge",
+              "content",
+              "ui-module",
+              "core-change"
+            ],
+            "title": "Package Type",
+            "type": "string"
+          },
+          "required_permissions": {
+            "default": [],
+            "items": {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "^\\S(?:.*\\S)?$",
+              "type": "string"
+            },
+            "title": "Required Permissions",
+            "type": "array"
+          },
+          "schema_version": {
+            "const": 1,
+            "default": 1,
+            "title": "Schema Version",
+            "type": "integer"
+          },
+          "version": {
+            "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)$",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "package_id",
+          "version",
+          "owner",
+          "package_type",
+          "minimum_contract_version",
+          "files",
+          "entrypoints"
+        ],
+        "title": "RuntimePackageManifest",
+        "type": "object"
+      },
+      "ScopeRef": {
+        "additionalProperties": false,
+        "description": "Explicit anchor; the server must resolve grants before using this value.",
+        "properties": {
+          "anchor_id": {
+            "format": "uuid",
+            "title": "Anchor Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "workspace",
+              "project",
+              "universe",
+              "creator"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "workspace_id": {
+            "format": "uuid",
+            "title": "Workspace Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_id",
+          "kind",
+          "anchor_id"
+        ],
+        "title": "ScopeRef",
+        "type": "object"
+      },
+      "SourceRef": {
+        "additionalProperties": false,
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ContentRef"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "revision": {
+            "$ref": "#/components/schemas/EntityRevisionRef"
+          },
+          "span": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SourceSpan"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "required": [
+          "revision"
+        ],
+        "title": "SourceRef",
+        "type": "object"
+      },
+      "SourceSpan": {
+        "additionalProperties": false,
+        "description": "Offsets use Unicode code points, with an exclusive end, not UTF-8 bytes.",
+        "properties": {
+          "block_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Block Id"
+          },
+          "end": {
+            "minimum": 0,
+            "title": "End",
+            "type": "integer"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "minimum": 1,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "start": {
+            "minimum": 0,
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "SourceSpan",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "ACCOS shared value contracts (not implemented HTTP endpoints)",
+    "version": "1.0.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {}
+}

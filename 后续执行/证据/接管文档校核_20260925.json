@@ -1,3 +1,91 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:e774811814b3565d6767f5f7713147449a4d2bc0599e90649b8dc6b2c01dbe03
-size 2885
+{
+  "date": "2026-09-25",
+  "scope": "planning_review_and_handoff_only",
+  "result": "DOCUMENT_CONSISTENT",
+  "project_tests_run": false,
+  "project_compilation_run": false,
+  "database_accessed": false,
+  "counts": {
+    "legacy_step_cards": 23,
+    "construction_cards": 21,
+    "final_acceptance_cards": 1,
+    "main_plan_documents": 14,
+    "markdown_documents": 36,
+    "requirements": 144,
+    "test_packages": 144,
+    "local_links_checked": 350
+  },
+  "step_status_counts": {
+    "IMPLEMENTED_UNTESTED": 1,
+    "IN_PROGRESS": 1,
+    "PLANNED": 20
+  },
+  "requirement_status_counts": {
+    "IMPLEMENTED_UNTESTED": 3,
+    "IN_PROGRESS": 7,
+    "PLANNED": 134
+  },
+  "test_status_counts": {
+    "NOT_RUN": 144
+  },
+  "execution_control": {
+    "mode": "PLANNING_ONLY",
+    "implementation_paused": true,
+    "reason": "�û��Ѿ�����ǰ����ʩ������ǰ������˶ԡ��޶������������������ѷ�����24/25�Ķ���",
+    "resume_rule": "�û���ȷҪ��ʵ�ʴʱ��ִ��10ʩ��ָ���������ͨ����������Ʒ�Χ������������ʩ����",
+    "takeover_document": "����ִ��/13_�ӹ�˵����ʩ���ϵ�.md"
+  },
+  "current_step": 25,
+  "source_line_counts": {
+    "F": 58371,
+    "B": 11816
+  },
+  "original_source_checks": [
+    {
+      "path": "�����.txt",
+      "sha256": "af559149d06f2b16a4e2beb3ac84edd764ef07a5f11736a6e42ad2843bc4ff9c",
+      "matches_original_baseline": true
+    },
+    {
+      "path": "�Ľ�����.txt",
+      "sha256": "7ca15d518653e153df84c9b0d05b7143f2d15614c841f000496333965f302970",
+      "matches_original_baseline": true
+    },
+    {
+      "path": "ִ��.txt",
+      "sha256": "da52b2fdb85e18a10367158b57e4a3aadbe7895fdb59d207edbb4d42370d08f6",
+      "matches_original_baseline": true
+    }
+  ],
+  "runtime_validation": "NOT_RUN",
+  "errors": [],
+  "known_pending_implementation": {
+    "stage25_handoff_exists": false,
+    "registered_requirements": [
+      "R001",
+      "R002",
+      "R003"
+    ],
+    "registered_tests": [
+      "T001",
+      "T002",
+      "T003"
+    ],
+    "source_migration_heads": [
+      "0013_identity_accounts"
+    ],
+    "registered_source_heads": [
+      "0012_extension_graph_projection"
+    ],
+    "database_head": "NOT_QUERIED"
+  },
+  "limitations": [
+    "Document consistency is not software correctness or full semantic proof of all historical requirements.",
+    "Stage25 source was inspected selectively; completeness and runtime validation remain pending.",
+    "External protocol documentation was not revalidated in this takeover review."
+  ],
+  "protected_files_compared_this_turn": 524,
+  "protected_files_unchanged": true,
+  "comparison_report": "接管文件差异_20260925.json"
+}
+

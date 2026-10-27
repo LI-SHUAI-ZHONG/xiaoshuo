@@ -1,3 +1,39 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:372b1e47fbfb239cfca1cba876c239203146a7fd9b970f39bfd9d860f42044f3
-size 909
+"""Application composition root; the only place concrete adapters are assembled."""
+
+from accos.adapters.workflows import CELERY_WORKFLOW_TASK
+from accos.composition.root import (
+    AgentServices,
+    ApplicationContainer,
+    AssetServices,
+    CreativeServices,
+    EvolutionServices,
+    ExtensionServices,
+    FeedbackServices,
+    IdentityServices,
+    KnowledgeServices,
+    ModelServices,
+    ObservabilityServices,
+    ProjectServices,
+    ToolServices,
+    WorkflowServices,
+    build_container,
+)
+
+__all__ = [
+    "CELERY_WORKFLOW_TASK",
+    "AgentServices",
+    "ApplicationContainer",
+    "AssetServices",
+    "CreativeServices",
+    "EvolutionServices",
+    "ExtensionServices",
+    "FeedbackServices",
+    "IdentityServices",
+    "KnowledgeServices",
+    "ModelServices",
+    "ObservabilityServices",
+    "ProjectServices",
+    "ToolServices",
+    "WorkflowServices",
+    "build_container",
+]

@@ -1,3 +1,160 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:22d4cef45c8ee96aca89aae298518f9a4d6c6e15e54c3b041ccb67a9b3d171cb
-size 6755
+{
+  "schema_version": 1,
+  "observed_source_heads": ["0015_model_execution"],
+  "database_head": "NOT_QUERIED",
+  "database_migrations_executed_in_construction": false,
+  "next_unallocated_prefix": "0016",
+  "revisions": [
+    {
+      "revision": "0001_persistence",
+      "down_revision": null,
+      "path": "services/core/migrations/versions/0001_persistence_foundation.py",
+      "sha256": "121c2dfdaeb8da1052bba2566c5c2033e8b98fbc84f9f31040afd83fdacc1038",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0002_identity_security",
+      "down_revision": "0001_persistence",
+      "path": "services/core/migrations/versions/0002_identity_security.py",
+      "sha256": "e2bd667ac53e608552a92a8dcf61ecd9e248e13709174c12d2f414fa2552c807",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0003_projects_assets",
+      "down_revision": "0002_identity_security",
+      "path": "services/core/migrations/versions/0003_projects_assets.py",
+      "sha256": "ca4e860868e9b6ee0a78ddb1d3f17666e33450b65d5e428ba5e348b7d6cb83d4",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0004_workflow_engine",
+      "down_revision": "0003_projects_assets",
+      "path": "services/core/migrations/versions/0004_workflow_engine.py",
+      "sha256": "d3164243b87c38ebc2a062b7e1bfba89febfb5cf5d1432c0085247975a843386",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0005_model_tool_gateways",
+      "down_revision": "0004_workflow_engine",
+      "path": "services/core/migrations/versions/0005_model_tool_gateways.py",
+      "sha256": "f64bc1a07f88ff354441ef5b5df9dcefa5ef1309930a265b750c2b262161ca0c",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0006_agent_runtime",
+      "down_revision": "0005_model_tool_gateways",
+      "path": "services/core/migrations/versions/0006_agent_runtime.py",
+      "sha256": "793ddc424b2b364c14f7aa6aa12f669dde282e642c544947c077a8184b24e16c",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0007_knowledge_pipeline",
+      "down_revision": "0006_agent_runtime",
+      "path": "services/core/migrations/versions/0007_knowledge_pipeline.py",
+      "sha256": "a34a72431859d103e12dc77d4ec71a0faf9daaa656d15229a0a041a2cbd1c51e",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0008_memory_context",
+      "down_revision": "0007_knowledge_pipeline",
+      "path": "services/core/migrations/versions/0008_memory_context.py",
+      "sha256": "3cc3d111b810052d570562c7b81ce62ce226dea0419fd245bcfd6af4cbfd82a7",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0009_creative_domains",
+      "down_revision": "0008_memory_context",
+      "path": "services/core/migrations/versions/0009_creative_domains.py",
+      "sha256": "3022bdf121b9366588cee069fa7c4ecf50a372678460948477f3baf78251a9fe",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0010_consistency_quality",
+      "down_revision": "0009_creative_domains",
+      "path": "services/core/migrations/versions/0010_consistency_quality.py",
+      "sha256": "c33220cab4a2c79601f23a71f0fbec3ff9daf2327f6a38af797321135c6f4a2f",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0011_feedback_evolution",
+      "down_revision": "0010_consistency_quality",
+      "path": "services/core/migrations/versions/0011_feedback_evolution.py",
+      "sha256": "69a2c71e7dc284b0b1e89e113bcb1070973989791b4639ab256f570b62cb166f",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0012_extension_graph_projection",
+      "down_revision": "0011_feedback_evolution",
+      "path": "services/core/migrations/versions/0012_extension_graph_projection.py",
+      "sha256": "eb963008c9a38f631f2ec0296f76a136f8b018af6643b7045ffce97873892ee6",
+      "status": "LEGACY_IMMUTABLE"
+    },
+    {
+      "revision": "0013_identity_accounts",
+      "down_revision": "0012_extension_graph_projection",
+      "path": "services/core/migrations/versions/0013_identity_accounts.py",
+      "sha256": "99a049d9d41ea9464e0f17c626efe510c3cb015623eed4496d23e1021c95a22f",
+      "status": "IMPLEMENTED_UNTESTED",
+      "step": 25,
+      "owner": "identity",
+      "executed": false
+    },
+    {
+      "revision": "0014_artifact_content",
+      "down_revision": "0013_identity_accounts",
+      "path": "services/core/migrations/versions/0014_artifact_content.py",
+      "sha256": "0eab68355ae21cd2ab7c7539b95a36d298f89aafa9c5035a961729b80ef0be94",
+      "status": "IMPLEMENTED_UNTESTED",
+      "step": 26,
+      "owner": "projects/assets",
+      "executed": false
+    },
+    {
+      "revision": "0015_model_execution",
+      "down_revision": "0014_artifact_content",
+      "path": "services/core/migrations/versions/0015_model_execution.py",
+      "sha256": "b277ec11c5fda723bc5c354b070a3a6774baa81cec74a515b35343ba0d66cf23",
+      "status": "IMPLEMENTED_UNTESTED",
+      "step": 27,
+      "owner": "models/agents",
+      "executed": false
+    }
+  ],
+  "appended_revisions": [
+    {
+      "revision": "0013_identity_accounts",
+      "step": 25,
+      "owners": ["identity", "workflows", "evolution"],
+      "phase": "expand",
+      "backfill": "SQL identity anchors; old approvals frozen legacy_dual_control; new workspace initialization explicit",
+      "recovery": "Restore isolated verified pre-migration backup; destructive downgrade blocked",
+      "executed": false
+    },
+    {
+      "revision": "0014_artifact_content",
+      "step": 26,
+      "owners": ["projects", "assets"],
+      "phase": "expand",
+      "backfill": "Classify legacy content references without inventing bytes; create immutable revision edges, branches, working copies, patches and retention holds",
+      "recovery": "Restore an isolated verified pre-migration backup; destructive downgrade is blocked because immutable content history cannot be discarded",
+      "executed": false
+    },
+    {
+      "revision": "0015_model_execution",
+      "step": 27,
+      "owners": ["models", "agents"],
+      "phase": "expand",
+      "backfill": "Add immutable model profiles, policies and prompts plus durable calls, events, budget reservations and Agent jobs; legacy model ledger remains unchanged",
+      "recovery": "Restore an isolated verified pre-migration backup; destructive downgrade is blocked because model billing, call evidence and Agent results are audit records",
+      "executed": false
+    }
+  ],
+  "allocation_rule": "Read source head at step start; append once; record owner/step/expand/backfill/recovery before handoff; never reserve a number from a plan.",
+  "last_source_review": {
+    "date": "2026-10-27",
+    "source_head": "0015_model_execution",
+    "new_revision": true,
+    "database_queried": false,
+    "migrations_executed": false
+  }
+}

@@ -1,3 +1,33 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:d11f39a1bb94ba7803e8242608dfc4eec99aeb1e831d7c246ca906453e70c2a4
-size 991
+"use client";
+
+import { createAccosClient } from "@accos/api-client";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
+
+import { useAuth } from "./auth-provider";
+
+type AccosClient = ReturnType<typeof createAccosClient>;
+
+const ApiContext = createContext<AccosClient | null>(null);
+
+export function ApiProvider({ children }: { children: ReactNode }) {
+  const { session } = useAuth();
+  const client = useMemo(
+    () =>
+      session
+        ? createAccosClient({
+            baseUrl: "",
+            token: session.accessToken,
+            ...(session.csrfToken ? { csrfToken: session.csrfToken } : {}),
+            workspaceId: session.workspaceId,
+          })
+        : null,
+    [session],
+  );
+  return <ApiContext.Provider value={client}>{children}</ApiContext.Provider>;
+}
+
+export function useApiClient(): AccosClient {
+  const client = useContext(ApiContext);
+  if (!client) throw new Error("An authenticated API client is required");
+  return client;
+}

@@ -1,3 +1,18 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:95af5be72fc4d0a3a565ca2d4079f2a0b6dd566637d609cff09125b42386b65a
-size 464
+import type { ReactNode } from "react";
+
+import { ProjectProvider } from "../../../../../../providers/scope-providers";
+
+export default async function ProjectLayout({
+  children,
+  params,
+}: {
+  children: ReactNode;
+  params: Promise<{ projectId: string; workspaceId: string }>;
+}) {
+  const { projectId, workspaceId } = await params;
+  return (
+    <ProjectProvider projectId={projectId} workspaceId={workspaceId}>
+      {children}
+    </ProjectProvider>
+  );
+}

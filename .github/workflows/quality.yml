@@ -1,3 +1,301 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:4cce7c386da9fce320ecf40b7274c3dd79ee13eef372584be3d4cef3636541e1
-size 12264
+name: Stage 23 delivery
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stage23-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ACCOS_VERSION: 0.1.0-skeleton
+  NODE_VERSION: "22.23.2"
+  PNPM_VERSION: "11.25.0"
+  PYTHON_VERSION: "3.12.14"
+  UV_VERSION: "0.12.7"
+
+jobs:
+  supply-chain:
+    name: Locks, secrets, dependencies
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install exact runtimes
+        run: |
+          uv python install "${PYTHON_VERSION}"
+          corepack enable
+          corepack pnpm --version
+
+      - name: Install locked dependencies
+        run: |
+          uv sync --locked --all-packages
+          corepack pnpm install --frozen-lockfile
+
+      - name: Verify locks and scan repository secrets
+        run: |
+          uv lock --check
+          corepack pnpm install --frozen-lockfile --lockfile-only
+          uv run --frozen python scripts/security_checks.py
+          uv run --frozen python scripts/ci_secret_scan.py
+
+      - name: Scan Python and Node production dependencies
+        run: |
+          mkdir -p .tmp-ci-audit
+          uv export --frozen --no-dev --no-hashes --output-file .tmp-ci-audit/requirements.txt
+          uvx --from pip-audit==2.9.0 pip-audit --strict --requirement .tmp-ci-audit/requirements.txt
+          corepack pnpm audit --prod --audit-level high
+
+  quality:
+    name: Lint, type, unit, frontend
+    needs: supply-chain
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install exact runtimes and locked dependencies
+        run: |
+          uv python install "${PYTHON_VERSION}"
+          corepack enable
+          uv sync --locked --all-packages
+          corepack pnpm install --frozen-lockfile
+
+      - name: Run format, lint, architecture, and type gates
+        run: |
+          corepack pnpm run format:check
+          corepack pnpm run lint
+          corepack pnpm run typecheck
+
+      - name: Run service-isolated unit and frontend component tests
+        run: |
+          uv run pytest --no-cov services/core/tests \
+            --ignore=services/core/tests/test_consistency_persistence.py \
+            --ignore=services/core/tests/test_feedback_evolution_persistence.py \
+            --ignore=services/core/tests/test_persistence.py
+          corepack pnpm exec vitest run
+
+      - name: Build Studio and run mocked browser contracts
+        run: |
+          corepack pnpm --filter @accos/studio run build
+          corepack pnpm exec playwright install --with-deps chromium
+          corepack pnpm run test:e2e
+
+  integration:
+    name: Migration, integration, contract
+    needs: quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      ACCOS_COMPOSE_PROJECT_NAME: accos-ci-${{ github.run_id }}-${{ github.run_attempt }}
+      ACCOS_DATABASE_URL: postgresql+psycopg://accos:fixture-postgres-password@127.0.0.1:5432/accos
+      ACCOS_DEV_IDENTITY_ACTOR_ID: 11111111-1111-4111-8111-111111111111
+      ACCOS_DEV_IDENTITY_ENABLED: "true"
+      ACCOS_DEV_IDENTITY_TOKEN: fixture-stage23-token
+      ACCOS_DEV_IDENTITY_WORKSPACE_ID: 22222222-2222-4222-8222-222222222222
+      ACCOS_POSTGRES_DB: accos
+      ACCOS_POSTGRES_PASSWORD: fixture-postgres-password
+      ACCOS_POSTGRES_USER: accos
+      ACCOS_REDIS_PASSWORD: fixture-redis-password
+      ACCOS_REDIS_URL: redis://:fixture-redis-password@127.0.0.1:6379/0
+      ACCOS_S3_ACCESS_KEY: fixture-minio-access
+      ACCOS_S3_BUCKET: accos-ci
+      ACCOS_S3_ENDPOINT: http://127.0.0.1:9000
+      ACCOS_S3_SECRET_KEY: fixture-minio-secret
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install exact runtimes and locked dependencies
+        run: |
+          uv python install "${PYTHON_VERSION}"
+          corepack enable
+          uv sync --locked --all-packages
+          corepack pnpm install --frozen-lockfile
+          cp .env.example .env
+
+      - name: Start disposable PostgreSQL, Redis, and MinIO
+        run: |
+          docker compose --env-file .env -f infra/compose.yaml up --detach --wait --wait-timeout 180 postgres redis minio
+          docker compose --env-file .env -f infra/compose.yaml --profile tools run --rm minio-init
+
+      - name: Prove clean migration and schema head
+        run: |
+          uv run --frozen alembic -c services/core/alembic.ini upgrade head
+          uv run --frozen alembic -c services/core/alembic.ini check
+
+      - name: Run full Python coverage and API contracts
+        run: |
+          uv run --frozen pytest --basetemp=.tmp-pytest-ci -o cache_dir=.tmp-pytest-cache-ci
+          corepack pnpm run api:check
+
+      - name: Stop disposable services
+        if: always()
+        run: docker compose --env-file .env -f infra/compose.yaml down --volumes --remove-orphans
+
+  delivery:
+    name: OCI, live E2E, restore, artifacts
+    needs: integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      ACCOS_COMPOSE_PROJECT_NAME: accos-delivery-${{ github.run_id }}-${{ github.run_attempt }}
+      ACCOS_DATABASE_URL: postgresql+psycopg://accos:fixture-postgres-password@127.0.0.1:5432/accos
+      ACCOS_DEV_IDENTITY_ACTOR_ID: 11111111-1111-4111-8111-111111111111
+      ACCOS_DEV_IDENTITY_APPROVER_ACTOR_ID: 33333333-3333-4333-8333-333333333333
+      ACCOS_DEV_IDENTITY_APPROVER_TOKEN: fixture-stage23-approver-token
+      ACCOS_DEV_IDENTITY_ENABLED: "true"
+      ACCOS_DEV_IDENTITY_TOKEN: fixture-stage23-token
+      ACCOS_DEV_IDENTITY_WORKSPACE_ID: 22222222-2222-4222-8222-222222222222
+      ACCOS_IMAGE_TAG: 0.1.0-skeleton
+      ACCOS_POSTGRES_DB: accos
+      ACCOS_POSTGRES_PASSWORD: fixture-postgres-password
+      ACCOS_POSTGRES_TOOL_MODE: compose
+      ACCOS_POSTGRES_USER: accos
+      ACCOS_REDIS_PASSWORD: fixture-redis-password
+      ACCOS_REDIS_URL: redis://:fixture-redis-password@127.0.0.1:6379/0
+      ACCOS_REVISION: ${{ github.sha }}
+      ACCOS_S3_ACCESS_KEY: fixture-minio-access
+      ACCOS_S3_BUCKET: accos-ci
+      ACCOS_S3_ENDPOINT: http://127.0.0.1:9000
+      ACCOS_S3_SECRET_KEY: fixture-minio-secret
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: ${{ env.UV_VERSION }}
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install exact runtimes and locked dependencies
+        run: |
+          uv python install "${PYTHON_VERSION}"
+          corepack enable
+          uv sync --locked --all-packages
+          corepack pnpm install --frozen-lockfile
+          corepack pnpm exec playwright install --with-deps chromium
+          cp .env.example .env
+
+      - name: Build the three non-root OCI images
+        run: |
+          docker build --file services/core/Dockerfile --target api \
+            --build-arg ACCOS_REVISION="${ACCOS_REVISION}" \
+            --build-arg ACCOS_VERSION="${ACCOS_VERSION}" \
+            --tag "accos-api:${ACCOS_IMAGE_TAG}" .
+          docker build --file services/core/Dockerfile --target worker \
+            --build-arg ACCOS_REVISION="${ACCOS_REVISION}" \
+            --build-arg ACCOS_VERSION="${ACCOS_VERSION}" \
+            --tag "accos-worker:${ACCOS_IMAGE_TAG}" .
+          docker build --file apps/studio/Dockerfile \
+            --build-arg ACCOS_API_ORIGIN=http://api:8000 \
+            --build-arg ACCOS_REVISION="${ACCOS_REVISION}" \
+            --build-arg ACCOS_VERSION="${ACCOS_VERSION}" \
+            --tag "accos-studio:${ACCOS_IMAGE_TAG}" .
+          uv run --frozen python scripts/verify_images.py \
+            --version "${ACCOS_VERSION}" --revision "${ACCOS_REVISION}" \
+            "accos-api:${ACCOS_IMAGE_TAG}" "accos-worker:${ACCOS_IMAGE_TAG}" "accos-studio:${ACCOS_IMAGE_TAG}"
+
+      - name: Start the disposable full stack
+        run: docker compose --env-file .env -f infra/compose.yaml --profile application up --detach --wait --wait-timeout 240
+
+      - name: Run the unique live Fake-provider vertical smoke
+        run: |
+          mkdir -p artifacts
+          uv run --frozen python scripts/full_stack_smoke.py \
+            --workspace-id "${ACCOS_DEV_IDENTITY_WORKSPACE_ID}" \
+            --token "${ACCOS_DEV_IDENTITY_TOKEN}" \
+            --approver-token "${ACCOS_DEV_IDENTITY_APPROVER_TOKEN}" \
+            --evidence artifacts/full-stack-smoke.json
+          echo "ACCOS_FULL_STACK_PROJECT_ID=$(jq -r .project_id artifacts/full-stack-smoke.json)" >> "${GITHUB_ENV}"
+
+      - name: Prove Studio SSE terminal state survives refresh
+        env:
+          ACCOS_E2E_BASE_URL: http://127.0.0.1:3000
+          ACCOS_E2E_SERVER_MANAGED: "1"
+          ACCOS_FULL_STACK_E2E: "1"
+        run: corepack pnpm exec playwright test tests/e2e/studio-full-stack.spec.ts
+
+      - name: Repeat the isolated PostgreSQL and MinIO restore drill
+        run: uv run --frozen python scripts/recovery.py drill --target artifacts/recovery-drill
+
+      - name: Scan images and generate local SBOMs
+        run: |
+          mkdir -p artifacts/sbom
+          for image in accos-api accos-worker accos-studio; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.66.0 \
+              image --exit-code 1 --ignore-unfixed --severity HIGH,CRITICAL "${image}:${ACCOS_IMAGE_TAG}"
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock anchore/syft:v1.33.0 \
+              "${image}:${ACCOS_IMAGE_TAG}" -o spdx-json > "artifacts/sbom/${image}.spdx.json"
+          done
+
+      - name: Write and print the release-candidate artifact manifest
+        run: |
+          uv run --frozen python scripts/release_manifest.py \
+            --output artifacts/release-manifest.json \
+            --revision "${ACCOS_REVISION}" \
+            --version "${ACCOS_VERSION}" \
+            --image "accos-api:${ACCOS_IMAGE_TAG}" \
+            --image "accos-worker:${ACCOS_IMAGE_TAG}" \
+            --image "accos-studio:${ACCOS_IMAGE_TAG}"
+          cp uv.lock pnpm-lock.yaml artifacts/
+          find artifacts -type f -print0 | sort -z | xargs -0 sha256sum
+          cat artifacts/release-manifest.json
+
+      - name: Stop and remove disposable delivery services
+        if: always()
+        run: docker compose --env-file .env -f infra/compose.yaml --profile application down --volumes --remove-orphans

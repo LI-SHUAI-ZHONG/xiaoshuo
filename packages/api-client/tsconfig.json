@@ -1,3 +1,7 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:2135ad3a0f456419fb6486784923880ca41ef9ad944d6615c183b1e0e1c333b8
-size 118
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src"
+  },
+  "include": ["src/**/*.ts"]
+}

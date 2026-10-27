@@ -1,3 +1,24 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:a82ee2dc7f8dbe07a007367a39c6849584d375606cb5c0a5aa5f562120cc26a5
-size 601
+import type { HTMLAttributes } from "react";
+
+import { cx } from "./utils.ts";
+
+export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
+  tone?: "neutral" | "success" | "warning" | "danger" | "info";
+}
+
+const symbols = {
+  danger: "!",
+  info: "i",
+  neutral: "•",
+  success: "✓",
+  warning: "△",
+} as const;
+
+export function Badge({ children, className, tone = "neutral", ...props }: BadgeProps) {
+  return (
+    <span className={cx("ui-badge", `ui-badge--${tone}`, className)} {...props}>
+      <span aria-hidden="true">{symbols[tone]}</span>
+      {children}
+    </span>
+  );
+}

@@ -1,3 +1,556 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:6dbc7cf927de4c09aebb300568f18e129242062ba42f1e206a3f8c8aea7ae63b
-size 43079
+{
+  "schema_version": 1,
+  "steps": [
+    {
+      "id": 24,
+      "title": "基线与契约定版",
+      "deps": [],
+      "inputs": "现有01–23交接、输入基线hash、144项需求、真实工作树；本目录04/05/11。",
+      "paths": "docs/adr/0006及后续；docs/architecture；scripts/toolchain.mjs；新增静态入口；后续执行/进度.json；公共协议文件。",
+      "actions": [
+        "按白名单创建现有源码/配置样板/文档的可恢复副本和hash清单，排除密钥、运行数据、依赖和缓存。不要用Git无提交状态当备份。",
+        "补ADR：完整业务范围、单人/团队批准、内容与正文、DAG/Context、真实Provider、进化/沙箱、协作、市场。记录五层愿景到现模块映射。",
+        "冻结05/11协议与版本演进、表owner、事件、错误码、能力五维；列迁移登记从0013开始，读取真实head分配。只创建当前需要的端口，避免生成一大批假实现。",
+        "拆出可证明无self-test/网络/服务副作用的静态入口。读旧工具脚本每条调用，建立允许/延后命令清单；保留最终质量门槛。",
+        "建立逐步handoff格式、R到T/实现文件的登记格式。进度只标计划或实施，不能把规划写成已实现。"
+      ],
+      "contract": "共用契约版本表、owner表和迁移登记；后续各步骤只能兼容扩展。",
+      "handoff": "docs/handoffs/24.md含基线位置、hash、共同契约/禁止重复模块、静态命令清单。",
+      "risk": "现有全部未提交文件必须保护；不要另建第二个搭建目录，不改历史聊天或旧迁移。"
+    },
+    {
+      "id": 25,
+      "title": "本地身份设置与审批",
+      "deps": [
+        24
+      ],
+      "inputs": "24公开actor/scope、能力和审批契约；既有Identity、workflows/evolution审批实现。",
+      "paths": "modules/identity、adapters/identity、kernel/security/settings；新增auth/settings/capabilities路由；Studio身份providers与setup/login/settings；migrations。",
+      "actions": [
+        "实现一次性本地Owner初始化、安全密码摘要、session登录/退出/撤销/过期；初始化凭据从本地安装入口产生，不给局域网匿名抢Owner机会。",
+        "补成员/角色/项目授权管理与Creator身份anchor；本地会话Cookie、CSRF/Origin/Host限制；HTTPS启用Secure，loopback开发行为显式区分。",
+        "实现OIDC授权码/PKCE/state/nonce和JWKS验证适配器，缺配置不阻止本地登录；PAT按最小scope、期限、撤销且创建只显示一次。",
+        "统一human_owner/dual_control审批policy resolver，旧在途绑定旧策略；API user session和service/PAT主体分开，机器不能批准真人关卡。",
+        "实现可写设置、能力五维、加密SecretProvider/外部secret_ref、配置导入脱敏/轮换。缺主密钥不能保存为明文。",
+        "同步API/生成客户端、登录会话provider、成员设置/审批页操作；扩展permission矩阵和审计。"
+      ],
+      "contract": "审批决策绑定policy/input版本；settings CAS；POST bootstrap/login/logout、GET session、成员/PAT/credentials/capabilities资源。",
+      "handoff": "新迁移、旧审批映射、Creator anchor归属、本地初始化说明、客户端接口与页面路径。",
+      "risk": "不得简单删掉所有separation_of_duties；只有按策略允许的真人自批。禁止token冒充USER。"
+    },
+    {
+      "id": 26,
+      "title": "正文存储版本与编辑基础",
+      "deps": [
+        24,
+        25
+      ],
+      "inputs": "既有projects/assets/S3接口、WritingSpace、25身份和权限；11正文协议。",
+      "paths": "modules/projects、adapters/projects、modules/assets、adapters/assets；content/working-copy/revisions/branches路由；Studio writing与编辑器组件。",
+      "actions": [
+        "引入版本化编辑器JSON与稳定block ID，建立WorkingCopy/CAS、server hash、ContentRef和文本投影。对象确认存在再提交PG指针，孤儿由延迟GC。",
+        "实现正文读取/保存、自动保存幂等client_change_id、不可变Revision、恢复为新版本、分支/父边/diff/三方冲突。大正文用资产，事件只放引用。",
+        "旧studio-input://hash保留元数据并标legacy_content_unavailable，不伪造原文。旧可解析S3引用只在45隔离迁移演练时核验回填。",
+        "写作页实际加载/保存正文，接Tiptap/ProseMirror基础格式、中文IME、保存状态、锁段与候选patch接口；34再完善布局，不更换文档格式。",
+        "IndexedDB按身份/工作区/项目/分支隔离；断网保留本机副本，重连按base版本合并，logout处理未同步提示。",
+        "补项目/资产/修订分页、归档/恢复、受权下载与安全上传。实现后续协作epoch字段，但当前仍solo写通道。"
+      ],
+      "contract": "working-copy If-Match，content/revisions/branches/diffs；ArtifactContentSaved事件；与资产提交的幂等协议。",
+      "handoff": "正文格式schema、旧数据不可恢复清单策略、API/UI接线、保存与恢复的待测路径。",
+      "risk": "这是后续所有内容功能前提；不能只保存哈希。恢复不能覆盖旧Revision或清理用户未同步稿。"
+    },
+    {
+      "id": 27,
+      "title": "真实模型Prompt与Agent执行",
+      "deps": [
+        25,
+        26
+      ],
+      "inputs": "25凭据/预算设置，26内容读写；现有ModelRequest metadata-only和FakeAgentExecutor。",
+      "paths": "modules/models/{application,prompts,registry,budgets}.py；adapters/models；modules/agents；composition factories；services/core/resources/prompts；API/client/Studio配置。",
+      "actions": [
+        "新增内容型ModelInvocation v2并兼容旧测试协议；解析受权ContentRef，真实输入/output存储，不把正文塞日志。",
+        "实现OpenAI Responses、独立Chat Completions兼容、Ollama chat/embed及OpenAI embedding适配器，能力/参数/模型名配置化；按官方协议实现schema/工具/流/拒绝/未完成/错误。",
+        "实现Prompt registry/renderer/版本发布、变量/输出校验，先交director和公共任务协议；后续各步补自己专业模板。wheel/Docker必须包含resources。",
+        "实现真实AgentExecutor：任务/上下文→Prompt→模型/受权工具→有界工具循环→结构化产物。Planner任务与普通角色结果区分，不固定返回framework_smoke。",
+        "PG原子预算预留/结算/unknown和多worker配额；重试/fallback计费、超时对账、cache按scope/版本/隐私；不能以未知价为0费用。",
+        "API/Worker共用factory，正常模式未配置即CONFIG_REQUIRED，Fake只显式测试/演示；写Settings、Prompt/调用历史/模型策略界面。"
+      ],
+      "contract": "invoke/stream/embed公共端口；ProviderProfile能力版本；ModelCallSettled；工具结果call关联；预算reservation持久状态。",
+      "handoff": "每Provider支持矩阵、密钥引用、v1/v2兼容、正常/Fake装配路径、实际通用Prompt列表。",
+      "risk": "施工不发模型试调用。前后端显示已实现与未配置/未测试分开，不能拿Fake顶替真实输出。"
+    },
+    {
+      "id": 28,
+      "title": "依赖工作流调度与总控",
+      "deps": [
+        25,
+        26,
+        27
+      ],
+      "inputs": "26真实内容端口、27Agent/预算、既有Run/Step/Task/Outbox；30的Context端口已于24冻结。",
+      "paths": "modules/workflows、adapters/workflows、modules/agents；worker/runtime；resources/workflows；API routers、Studio workflows/agents。",
+      "actions": [
+        "将definition扩展为有版本DAG：depends_on、IO、executor、受限条件、budget、approval、retry/timeout/compensation；旧position适配线性edges，在途不换定义。",
+        "建立StageRequirement、输入解析/冻结、dependency edges与ReadReceipt协议。基础内容引用能解析，30接唯一ContextBuilder；未就绪必须阻塞，不能假receipt。",
+        "总控输出受限计划，校验无环/权限/资源后执行；角色会议限定轮次/并发/预算/仲裁规则，记录决策摘要而非私有思维链。",
+        "实现租约fencing、并行汇合、幂等outbox/inbox、取消/超时/unknown、副作用operation_key、失败补偿/死信/linked Run重试。",
+        "实现数据库Schedule/唯一due claim、时区/misfire/暂停恢复、审批到期；由同一Worker调度，不增加第二套定时任务系统。",
+        "补流程定义编辑/发布、运行列表、输入/依赖/审批/receipts、历史SSE恢复；角色描述符和工具grant管理页面可操作。"
+      ],
+      "contract": "DAG无环；有限循环以iteration/child Run展开；暂停不等于取消；终态不可回退；事件只含refs。",
+      "handoff": "默认executor和节点schema清单、旧workflow映射、恢复/补偿规则、30待接端口、UI/API登记。",
+      "risk": "不可执行用户/模型提交的Python/JS条件。网页断开不自动取消，真正取消需授权API。"
+    },
+    {
+      "id": 29,
+      "title": "知识采集转译与混合检索",
+      "deps": [
+        26,
+        27,
+        28
+      ],
+      "inputs": "正文/资产、真实model/embed、DAG；现有8维索引及知识模块。",
+      "paths": "modules/knowledge/{application,translation,retrieval}.py；adapters/knowledge；knowledge迁移；resources/prompts/knowledge；Studio knowledge/ideas。",
+      "actions": [
+        "SourceArchive原件不可变，DesignNote/整理稿追加版本；原思想不自动覆盖、不自动全量导入现聊天。",
+        "实现TXT/MD/PDF/DOCX/HTML/EPUB解析、图片OCR适配及格式/大小/编码错误；使用受限解析任务，保留页/标题/段落/offset和提取质量。",
+        "建立raw→extract→abstract→component→application五层转译，事实陈述与创作想象分开；组件purpose/input/output/constraints/类型适用/schema/来源/质量/版本/发布/使用记录齐全。",
+        "实现中文词检索（分词或n-gram策略明确）、真实embedding、图邻域、RRF与可选reranker；先授权过滤，再排序和snippets，离线词检索独立可用。",
+        "索引generation按model/dim/chunker/metric隔离；准备影子重建、checkpoint、checksum、水位、原子切换和回退，绝不改旧8维列直接塞新向量。",
+        "知识图/因果必须带证据，去重/合并保留来源，低质量/冲突/过时可解释；批次导入、暂停/重试/发布/归档、原文定位与组件使用页面全部接线。"
+      ],
+      "contract": "KnowledgeComponentPublished、source revisions、embedding generation；search请求带scope/filter；各转译层typed schema。",
+      "handoff": "解析器支持/系统依赖清单、中文检索策略、向量迁移脚本、组件schema、UI/API与待测夹具说明。",
+      "risk": "无用户语料可为空，但解析/转译/搜索实现不能为空。OCR缺依赖显示缺项，不假提取成功。"
+    },
+    {
+      "id": 30,
+      "title": "七层记忆与强制上下文",
+      "deps": [
+        26,
+        27,
+        28,
+        29
+      ],
+      "inputs": "既有七scope、anchor grants、29来源与索引、28manifest与receipt；24已冻结creative read ports。",
+      "paths": "modules/memory、adapters/memory；creative/knowledge公开读端口；resources/prompts/memory；Studio memory/context。",
+      "actions": [
+        "补七scope与事实/事件/因果/角色/伏笔/经验类型的有效时间/分支/出处/状态，沿用现anchor而不重复建7个库。",
+        "完成唯一ContextBuilder：mandatory前置正文、Canon、角色状态、类型/风格、知识组件、层级摘要联合读取、去重/优先级和解释；按模型计token/保守预留工具与输出。",
+        "输出实际装入文段的ReadReceipt与input digest；缺项/无授权/过时阻塞；mandatory过预算重新规划或受证据摘要，不能静默裁掉。",
+        "实现scene/chapter/volume摘要及事实候选提取、保真检查、源版本失效；语义ranker接真向量，向量故障可解释降级。",
+        "权重/遗忘默认降权归档，冲突保留双候选；正式memory由Accepted事件投影，inbox/watermark防重复乱序。",
+        "grant/consent版本进入缓存，撤回时失效派生/进行调用前复核；接记忆列表/冲突/摘要/档案恢复和Context解释页。"
+      ],
+      "contract": "28生成节点只能经此Builder；未有Universe时该scope为空而非虚构；Creator复用25身份anchor。",
+      "handoff": "scope/type/time/branch映射、摘要规则、cache失效表、31/32需实现的公开创作快照端口。",
+      "risk": "任何工作流/Agent不得再拼第二套上下文；候选与正式状态必须隔离。"
+    },
+    {
+      "id": 31,
+      "title": "类型主题剧情与场景规划",
+      "deps": [
+        26,
+        27,
+        28,
+        29,
+        30
+      ],
+      "inputs": "知识组件和Context、正文版本；CreativeRecord只有metadata，按05追加typed payload。",
+      "paths": "creative/{novel,genre,planning,narrative}.py及新增小模块；creative persistence；resources/prompts/novel；Studio ideas/design/outline。",
+      "actions": [
+        "建立原想法→Brief/缺项→主题/读者/字数/禁限，作者确认与模型推断分开；手工输入可替代生成。",
+        "六维GenreProfile与BlendPlan，区分strength和mixture_weight，主辅/冲突风险/作者例外、卷章适用、类型演变/影响图，实际送入规划和写作上下文。",
+        "实现Series/Work/Volume/Arc/Chapter/Scene树、顺序/重排/引用、central question/transformation/ending/open question；不锁死三幕。",
+        "实现六类冲突、因果Event链、多个StoryThread、交汇点、紧张/情绪目标曲线与证据；理论建议和硬数据约束分开。",
+        "伏笔引入/发展/揭示/回收/放弃/开放结局及期限；Scene五层与目的、POV/参与者/状态变化/必读输入。",
+        "补专业Prompt/公开快照端口/API/客户端/表单、结构树、曲线、伏笔看板；旧空payload标needs_input。默认流程支持世界优先/人物优先/真相优先。"
+      ],
+      "contract": "GenreProfile六维唯一命名见11；世界/人物完整实现32，但31规划引用可等待或手工建前置。",
+      "handoff": "创作schema/默认工作流/理论组件绑定清单、树操作与下游失效规则、32输入。",
+      "risk": "不能把类型做标签，把剧情做一大段无结构文本，或自动写入用户没有提供的正式故事内容。"
+    },
+    {
+      "id": 32,
+      "title": "世界人物时间线与模拟",
+      "deps": [
+        30,
+        31
+      ],
+      "inputs": "31结构/场景引用、30Context读端口、既有world/character/Canon基础。",
+      "paths": "creative/{world,world_components,character,psychology,relationships,simulation}.py；consistency公开口；Studio world/characters/maps。",
+      "actions": [
+        "世界六大系统、规则强度、地理/地点/路线/单位、文明政治经济文化、历史/科技/力量前置、资源/人口状态，全部typed payload与版本。",
+        "实现虚构历法与时间区间；story_time/narrative_order/recorded_at分离，地点/人物状态按时间查询，地图不只是一张图。",
+        "人物identity/personality/psychology/goals/relationships/growth与VoiceProfile；稳定DNA、时变状态、需要/欲望/目标/行动链、成长事件和有向关系历史。",
+        "建立世界真实、角色所知、读者已知、知情来源/时刻；NarrativeProfile/Style/Voice优先级；服务端按POV输出Context。",
+        "世界/人物模拟在ScenarioBranch中执行，固定基线/假设/seed/模型/期限/预算，推导事件/资源/规则约束和传播，允许比较/选择采纳；未校准权重不称真实概率。",
+        "Canon强/软/暂定分层、作者修订和影响传播；补全部编辑/API/图/时间线/模拟对照页，完成30公开快照端口接线。"
+      ],
+      "contract": "Scenario结果是候选，不直写Canon；同名实体不自动合并；模拟agent与Writer共享实际世界/人物版本。",
+      "handoff": "世界/人物/信息权限schema、时间单位/历法定义、模拟停止规则、33可消费完整快照。",
+      "risk": "不能把示例Emotion+50当科学模型；避免不受约束的纯随机模拟假扮推演。"
+    },
+    {
+      "id": 33,
+      "title": "写作审稿修订与接受闭环",
+      "deps": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "inputs": "全部创作前置与真实生成/内容/Context，旧Consistency/Quality与审批。",
+      "paths": "creative/narrative；consistency/validators；quality/evaluators；workflows/acceptance；memory投影；writer/review prompts；Studio writing/quality。",
+      "actions": [
+        "实现标准N01–N18中正文链：Scene→manifest/preflight→Context/receipts→真实Draft；长输出可分场景或安全续段，截断/拒绝/取消保留partial，完成后才交付候选。",
+        "实现续写/扩压/对白/风格/POV/局部patch、锁段、多候选比较与独立预算；人工并发修改按base Revision三方合并。",
+        "真实语义与结构检查器覆盖Canon/时间/空间/角色知情/动机/因果/故事线/伏笔；rubric有尺度/证据/版本/未检查，不把旧structural pass当文学合格。",
+        "编辑委员会/读者模拟有界独立审阅、冲突保留；修订计划→patch→重新检查同版本，max_iterations/预算停止；manual_review明确记录人审范围。",
+        "接受前提取/审阅事实候选，冻结正文/hash/报告/expected versions；通过公开写端口同PG UoW提交正文当前指针/事实/批准/Outbox，S3已存在；失败不部分提交。",
+        "接受后幂等memory/索引/图投影及watermark，下章强依赖等待；修改早期设定产生stale/批量重检，不能整书自动覆写。UI有输入/差异/问题/接受拒绝/恢复。"
+      ],
+      "contract": "AcceptedRevision为正式事实唯一来源；候选自动提取不能未经确认变Canon；接受批次幂等key/版本不可省。",
+      "handoff": "完整写作定义/Prompt/rubric、接受事务清单、投影消费者、UI主链、尚未执行的真实两章验收项。",
+      "risk": "从此不能以模块存在宣称能写书；必须有真实请求到持久正文再到下一章的全部接线，但运行留45。"
+    },
+    {
+      "id": 34,
+      "title": "完整Studio与可视化整合",
+      "deps": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "inputs": "已实现API/生成客户端和07界面清单；apps/studio/AGENTS.md与本地Next文档。",
+      "paths": "apps/studio/src/features/providers/app/lib；packages/ui；packages/api-client；新增搜索/图读取路由。",
+      "actions": [
+        "整理导航/项目上下文/返回路径/权限可见性：Dashboard、思想/类型/大纲/世界/人物/地图/写作/知识/记忆/流程/Agent/质量/设置可直接操作。",
+        "专业三栏写作、章节树、专注、快捷操作、选区任务、候选/审稿/来源侧栏；IME、键盘、读屏、响应式和长文渲染。",
+        "补资源历史集合和稳定游标，不让用户手工输入ID查运行；全局搜索在服务端按scope授权过滤，命令面板映射已授权API。",
+        "实现DAG编辑、关系/时间/因果/伏笔/地图图形，节点直达编辑/证据、分页和表格替代；不要把图形存在当业务实现。",
+        "统一loading/empty/permission/configuration/insufficient/stale/error/retry，显示保存/同步、投影滞后、预算与运行解释，API错误不清空输入。",
+        "为35–43设置扩展导航注册点，但未实现模块显示真实状态；不做假数据预览当功能。"
+      ],
+      "contract": "API类型仅来自生成客户端；Zustand不作服务端事实源；图投影只读权威事件。",
+      "handoff": "页面→query/mutation→API→R项映射，UI组件与可访问性待测项，后续高级页面注册规范。",
+      "risk": "施工不启动浏览器/E2E测页面。静态核对各按钮调用，视觉与真实交互统一45验收。"
+    },
+    {
+      "id": 35,
+      "title": "自主研究多项目计划与战略",
+      "deps": [
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "inputs": "统一调度/角色runtime、知识/来源/预算、Studio导航。",
+      "paths": "knowledge/research + adapters；workflows/production/schedules；feedback/risk；research prompts；Studio research/production。",
+      "actions": [
+        "研究问题→可编辑计划→领域角色组队→资料采集→claim/证据/反证→分析→转译组件→报告；所有子任务用同一DAG，限制深度/迭代/费用。",
+        "实现Brave Search与受限HTTP资料获取、授权API来源/本地导入；限速/体积/超时/重定向/DNS复核，网页文本只是资料。自定义本地模型白名单不授予下载器私网访问。",
+        "来源快照/页段/时间/许可、支持或矛盾、可信度/未知、术语与年代；无证据不生成可信评分，不把工具返回链接等同已读原文。",
+        "知识刷新任务保存新版本并使依赖失效；支持本地证据手动研究，网络不可用不伪成功。",
+        "多项目生命周期/看板/日历/章任务/优先级/截止/资源预算与共享队列，复用28schedule与misfire。风险/市场报告引用可核验来源与时效，不承诺销量。",
+        "站内通知/提醒、暂停/取消、错误恢复、报告导出，研究与生产/战略页面齐全；未变/不可行动状态默认安静。"
+      ],
+      "contract": "ResearchReport引用受权source snapshots；Schedule只有workflows所有者；发现不自动变Canon。",
+      "handoff": "来源connector支持/访问策略、研究模板、计划/通知规则、报告与UI入口。",
+      "risk": "不自行注册外部账号或抓取所有资料。未知领域事实保持待核，不让学术/市场示例分数成为默认值。"
+    },
+    {
+      "id": 36,
+      "title": "作者学习反馈与成长",
+      "deps": [
+        30,
+        33,
+        34,
+        35
+      ],
+      "inputs": "25Creator身份与同意权限、33版本差异/接受信号、既有feedback/evolution基础。",
+      "paths": "creative/{creator,creator_learning}.py；feedback；memory creator scope；learning migrations；creator prompts；Studio creator/feedback。",
+      "actions": [
+        "实现显式同意/范围/版本/撤回，学习样本来自评分/接受拒绝/修订对/用户原因；信号来源、采样时间和派生模型均可追溯。",
+        "修订对分析语言与结构特征，提出StyleProfile/偏好/审美/决策候选；样本数、置信度、适用作品、作者修正与回退，不凭单击推断敏感特征。",
+        "作者模型经确认/政策生效后由唯一ContextBuilder读取；撤回排除数据、失效派生模型/cache、重新计算，不只停止新采集。",
+        "辅助/协作/托管模式绑定用户预授权范围/预算/停止条件；模式不能自动放开Canon、ownership或发布权限。",
+        "质量/失败/时延/费用/记忆指标采用真实分母，空分母显示不足；诊断按收益/可信度/成本/风险排序，连到37候选。",
+        "成长证据/优势薄弱/学习路径可编辑，完整作者/反馈/同意/历史与解释页；无样本保留手工风格，不生成虚假画像。"
+      ],
+      "contract": "creator ownership由25唯一身份anchor承担；学习/评价数据集可导出/撤回；指标更新幂等。",
+      "handoff": "学习特征/信号schema、consent派生影响表、共创模式矩阵、37输入指标/样本协议。",
+      "risk": "作者数字孪生是可解释模型，不默认训练或复制人；没有数据只显示待积累。"
+    },
+    {
+      "id": 37,
+      "title": "实验室受控进化与晋升",
+      "deps": [
+        28,
+        33,
+        35,
+        36
+      ],
+      "inputs": "真实指标/样本/质量评审、版本化Prompt/Workflow/Agent、现DryRun和ReadOnlyVersionManager。",
+      "paths": "modules/evolution、quality eval public ports、agents profiles、knowledge components；resources/prompts/evolution；Studio experiments/evolution。",
+      "actions": [
+        "实现创意孵化：发想/类型组合/方法试验→隔离原型→同一rubric比较→作者选择复制成项目；失败归档保留学习证据。",
+        "SystemObserver/Analyzer/Planner从真实运行产生缺口、假设、候选target/基线/预期/预算/风险/回退；权限/owner/安全上限不作为可优化target。",
+        "替换恒通过DryRun：固定dataset/hash/留出划分/生成参数/评审版本，配对评估与失败/预算停止；样本不足/差异不明停止晋升。",
+        "实现配置包Publisher：有用户预授权低风险政策可自动晋升，否则人审；CAS切active，只新Run用新版；监控质量/故障/费用回退与kill switch。",
+        "Agent成功/失败经验→技能画像/路由权重/新角色候选；知识/检索/方法/Prompt/工作流均可产生受控版本改进，经验与智慧保留来源。",
+        "代码提案仅生成ChangePackage交38隔离，不能Agent自行修改生产代码；补完整实验、比较、批准、发布、回滚和进化报告页面。"
+      ],
+      "contract": "实验评价与升级必须真的执行于产品运行时；本次施工不运行。配置/代码是不同发布器；批准绑定包hash。",
+      "handoff": "target白名单、评估/最小样本/阈值配置、晋升状态机、真实发布适配器、38代码包协议。",
+      "risk": "不允许删样本/改评分者/阈值来制造改善；合成夹具只验机制，不能证明作者质量提升。"
+    },
+    {
+      "id": 38,
+      "title": "插件沙箱工具与模块生成",
+      "deps": [
+        25,
+        27,
+        28,
+        37
+      ],
+      "inputs": "ToolGateway/grants、37 ChangePackage、25秘密/权限、21扩展兼容边界。",
+      "paths": "modules/tools、adapters/{tools,sandbox}；evolution code packages；trusted sandbox controller；infra可选profile；Studio plugins/blueprints。",
+      "actions": [
+        "manifest包含包hash/签名或来源校验、版本/协议/API/依赖/权限、entrypoint、resource limits；安装/升级/禁用/卸载、grant diff与回退。",
+        "受信controller创建隔离Linux任务，无生产secret/数据库/socket/宿主目录，默认禁网，CPU/内存/pids/时间/输出/文件限额；依赖下载与执行分阶段并固定锁与hash。",
+        "自动工具：缺口→输入输出schema/代码/测试→沙箱包→审查→真实注册→受权调用；执行结果按工具schema和权限验证。",
+        "模块蓝图生成owner/API/事件/schema/依赖/迁移/代码/测试/文档及冲突报告，输出可审差异包；不能创建另一套核心数据库或调度器。",
+        "独立发布器核验真人批准hash、兼容/迁移计划后原子安装/启用，失败恢复旧包；核心代码变更交独立维护发布路径，不热修改主进程。",
+        "接API/worker安装版本快照与插件UI、任务日志/资源用量；扩展旧Null边界在composition转真实adapter，核心仍不导入扩展私有实现。"
+      ],
+      "contract": "plugin ABI/version/grants、SandboxJob和ChangePackage；不可信任务只拿必要的输入副本与一次性输出位置。",
+      "handoff": "隔离威胁模型/配置要求、构建与执行网权分离、安装/回退流程、真实工具/蓝图入口。",
+      "risk": "本机无隔离运行时就明确CONFIG_REQUIRED；普通Python子进程不能称安全沙箱，构建时不安装驱动。"
+    },
+    {
+      "id": 39,
+      "title": "宇宙IP出版导入与改编",
+      "deps": [
+        26,
+        30,
+        31,
+        32,
+        34,
+        35
+      ],
+      "inputs": "正文/作品/世界/人物、现anchor grant与project_transfer、07导出/跨媒体需求。",
+      "paths": "新增modules/ip,publishing及adapters；scripts/project_transfer.py；assets/public；publication/adaptation resources；Studio universes/publishing。",
+      "actions": [
+        "Universe实体/成员/作品绑定、别名/variant/跨宇宙连接、copy/reference/derive三种复用；复用Memory anchor而不改旧主键，授权显式。",
+        "IP生命周期、实体资产图/来源/版本、跨作品Canon冲突与影响分析；引用和复制权限、撤回后的派生策略可解释。",
+        "定稿PublicationSnapshot冻结AcceptedRevision，章节序/目录/封面/作者元数据；实现TXT/MD/DOCX/EPUB/PDF及完整项目包。导出器带中文字体/排版与版本manifest。",
+        "旧稿导入拆章、提取世界/人物/风格为候选；项目包实现实际staging→完整性/兼容/权限→ID映射→提交→补偿，不能止于validate-import。",
+        "漫画面板、剧本/镜头、音频脚本、游戏任务/分支/对白、简介/宣传包真实生成schema+导出；映射IP实体，衍生变体不覆写正史。",
+        "实现HTTP Publisher协议上传/查询/撤回能力配置与授权；事件订阅HMAC/重试/死信，UI发布动作绑定定稿版本/批准；无指定平台不虚构专用connector。"
+      ],
+      "contract": "PublicationCreated事件、export/import manifest、ID映射、Universe显式grants；完整project包需包含引用blob。",
+      "handoff": "格式/字体依赖、模板/改编schema、导入映射与恢复说明、40视觉/媒体可用IP实体契约。",
+      "risk": "所有格式要有真实文件生成代码，不能空文件或仅文件名；导入默认新项目，不覆盖用户现有作品。"
+    },
+    {
+      "id": 40,
+      "title": "图音视频3D与跨媒介资产",
+      "deps": [
+        27,
+        32,
+        34,
+        39
+      ],
+      "inputs": "Provider网关/预算、资产/世界/人物/IP版本、07真实媒体适配清单。",
+      "paths": "新增modules/media、adapters/media；tools媒体转换；resources/media/prompts/workflows；Studio media/viewers。",
+      "actions": [
+        "统一MediaJob请求/状态/provider_job_id/operation_key/预算/partial/unknown/取消/查询/归档；创建回包不等于完成，输出归档校验后再发Completed。",
+        "图像：角色/地点/服饰/底图VisualProfile与参考版本，OpenAI Images生成/编辑；ComfyUI模板仅允许已登记节点/可替换字段，不接任意不可信workflow执行。",
+        "音频：speech/transcription、角色/旁白分轨/章节、有声书/字幕；ElevenLabs音乐/音效真实协议，受限媒体转换拼接/音量时间轴与导出。",
+        "视频：Storyboard/shot→Runway或本地ComfyUI→poll/cancel→文件校验/归档；多个镜头部分失败可以续做，避免重复付费任务。",
+        "3D：Meshy preview成功后refine、下载GLB/材质；本地glTF/GLB导入/旋转查看/尺度/场景放置；外部纹理资源受限，不把模型文件作为代码执行。",
+        "多模态编辑/预览/下载/历史、画面与Canon差异/过期引用、成本解释、可配置能力入口；地理实体和地图图像仍分开。"
+      ],
+      "contract": "MediaJob状态与外部任务映射表，所有内容为Asset版本；过期结果URL需及时受权归档，不长期引用供应商临时URL。",
+      "handoff": "每种媒体最小真实adapter、返回格式/模型配置、外部要求、转换器限制、任务/资产/预览完整接线。",
+      "risk": "无需在施工时下载权重或发收费请求。缺供应商条件只标配置待补，不削减已经要求的适配器代码。"
+    },
+    {
+      "id": 41,
+      "title": "团队协作实时编辑与审阅",
+      "deps": [
+        25,
+        26,
+        34,
+        39
+      ],
+      "inputs": "25session/RBAC、26正文schema/epoch、39共享资产；11协作持久协议。",
+      "paths": "新增modules/collaboration/adapters；apps/collab；Studio collaborative-editor/team/comments；Compose可选profile。",
+      "actions": [
+        "团队角色/成员任务/共享资产/讨论/提及/站内通知与邀请链接；成员发现用显式公开技能，不泄露私人Creator模型。",
+        "实现Yjs/Hocuspocus传输、短期有scope ticket、Origin/大小/频率限制、在线态；ticket授权和持续撤权均检查。",
+        "保存Yjs二进制update/snapshot/seq/hash，核心持久API拥有写表权限；增加独立持久回执协议，只有PG写入ack才显示已保存，不能把debounce或广播等同持久。",
+        "solo/collaborative模式与epoch控制单写入通道，切换冻结/快照/提高epoch；旧REST整份覆盖拒绝，离线updates重放幂等并复核权限。",
+        "截至持久seq冻结快照→转换JSON→projects Revision桥；AI patch仍是建议，人类审阅绑定Revision，不能另存一份与正文矛盾的JSON事实。",
+        "评论稳定block/relative range锚点、移动/删除/orphan、解决/重开、任务/建议接受；断线提示、冲突恢复、多设备权限和缓存清理完整。"
+      ],
+      "contract": "协作cache可重建，PG binary为持久事实，projects Revision为正式内容；两个所有者通过公开端口提交桥。",
+      "handoff": "CRDT文档格式/seq/epoch/ack协议、传输服务鉴权和故障恢复、UI协作模式入口。",
+      "risk": "不能直接把Yjs JSON序列化后重建当合并历史。个人关闭协作仍可完整写作。"
+    },
+    {
+      "id": 42,
+      "title": "私有市场权属分成与信誉",
+      "deps": [
+        25,
+        38,
+        39,
+        41
+      ],
+      "inputs": "25身份/secret、38插件安装、39IP/发布、41成员/贡献。",
+      "paths": "新增modules/ecosystem/adapters；payments/ledger；Studio marketplace/rights/orders/reputation；webhook routes。",
+      "actions": [
+        "私有目录listing/package/version/search/review，支持知识、模板、workflow、Agent和资产；预览依赖/兼容/许可，免费领取、购买或手工授权，真实安装/升级/回退。",
+        "作者声明、创作/贡献记录、权属证据、许可范围/有效期/争议、分成比例/生效版本；同一资产引用统一assets/IP，不另建拥有者事实。",
+        "实现订单/支付/退款/争议/对账，Stripe Checkout/Connect适配与manual settlement；沙盒/真实配置隔离，服务端签名webhook和event_id去重。",
+        "双分录账本、币种最小单位/比例/舍入、平台费/应付/已付区分；transfer成功才已付，退款/reversal追加反向分录，未知调用待对账。",
+        "安装与升级权限diff重新授权，包完整性/签名/许可证/来源/依赖校验，内容包不能附带无授权可执行代码。",
+        "成员信誉由实际贡献/合作评价计算，样本数/证据/申诉/更正、技能匹配/成长建议；接完整市场/订单/权属/账本/信誉页面。"
+      ],
+      "contract": "Order/Ledger状态机不可由浏览器success回跳定已付；负退款/部分分成/重复回调保持账本平衡。",
+      "handoff": "支付adapter与回调契约、账本不变量、实际安装链、公开/私密字段、所有页面与配置缺项。",
+      "risk": "本步骤实现能力，不自动开展真实交易/转账/对外营业；作者声明不能包装成法律确权认证。"
+    },
+    {
+      "id": 43,
+      "title": "本地交付运维备份与迁移",
+      "deps": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42
+      ],
+      "inputs": "所有领域/Provider/可选服务、既有infra/scripts/CI和23未完成Docker证据。",
+      "paths": "infra/compose.yaml、Dockerfiles、scripts/install/check/recovery/project_transfer；kernel observability/resilience；Studio system；runbooks；CI。",
+      "actions": [
+        "完整core与可选collab/sandbox/media/observability profiles，API/Worker共享版本、non-root/secret注入/健康/磁盘/端口缺项；固定依赖与许可证，resources/字体打包明确。",
+        "启动/停止/升级/备份入口不依赖硬编码D盘；显式迁移one-shot/单实例锁、schema兼容、checkpoint回填；应用启动不静默改表。",
+        "一致备份：PG快照/对象版本manifest/协作与账本/版本hash、加密key_ref、调度/保留/可选异地复制；GC与备份引用互锁。",
+        "恢复先到新库/桶prefix，校验内容/引用/水位后切换；缓存/向量/图可重建，执行中任务按幂等恢复，应用回退与数据恢复分流程。",
+        "指标/trace/脱敏日志、共享限流/熔断/重试、投影/队列延迟/磁盘告警；系统页可查关联ID、备份/恢复预览和维护任务。",
+        "编排45所需CI分层任务/容器门禁/SBOM/扫描/发布清单，保留现100%覆盖要求与失败证据；施工期不触发这些测试，不永久关闭质量门槛。写完整用户/运维/API手册。"
+      ],
+      "contract": "backup manifest列PG点位/对象版本/应用/schema/package；外部provider不健康不拖垮手工写作。",
+      "handoff": "一键使用/维护文档、可选profile配置、环境缺项、45预先准备的命令矩阵/隔离要求、可恢复版本清单。",
+      "risk": "施工只写脚本不做迁移/启动/灾备演练。不擅自安装系统软件，不删除缓存或真实数据来掩盖问题。"
+    },
+    {
+      "id": 44,
+      "title": "全功能接线与施工完整性复核",
+      "deps": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "inputs": "所有handoff、需求矩阵/测试表、真实composition/routers/worker/UI导航、发布资源。",
+      "paths": "composition factories、API注册、worker executor registry、Studio导航/queries、generated client；README/docs/architecture/runbooks；后续执行/进度.json。",
+      "actions": [
+        "对R001–R139登记实际领域用例/数据迁移/API/worker或事件/UI/恢复/测试代码路径；缺任何必要层就回到所属步骤补齐，不用文档标记代替实现。R140–R144属于45验收，当前只要求测试入口、隔离夹具、预期和环境需求已准备，不提前索要PASS或运行证据。",
+        "静态从页面操作追到API、权限、应用、持久化/任务再到回显；全局缺历史集合/手输ID/固定成功/Null假装真实/Fake默认路由逐项修复。",
+        "核对API/Worker同一Provider/Prompt/Workflow/插件版本策略、依赖声明和资源打包；旧API/事件/迁移兼容，不重复scope/作者/Universe所有者。",
+        "补齐35–43高级页面与empty/config/permission/error状态、用户可见能力清单；测试缺配置状态与实现状态分开登记。",
+        "同步OpenAPI与生成客户端，检查接口/schema名称/事件消费者/所有迁移单head；只作文件/静态核对，不以此声称已运行通过。",
+        "更新现行README/架构入口/内容说明，标旧骨架限制的历史范围而不改旧handoff；写construction-completeness报告、所有T待测和具体外部缺项。"
+      ],
+      "contract": "全范围R行不得缺实现证据；接口/菜单/空返回不能标完成；当前仍IMPLEMENTED_UNTESTED。",
+      "handoff": "docs/handoffs/44.md、施工完整性报告、45测试环境/命令/真实账号缺项、完整可恢复清单。",
+      "risk": "如果发现未实现需求，必须补代码后才到45；没有key不等于实现空缺，只有明确外部测试条件可延期。"
+    },
+    {
+      "id": 45,
+      "title": "统一测试修复与最终验收",
+      "deps": [
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44
+      ],
+      "inputs": "44施工完整性报告、08每个T、现有测试与CI、隔离环境配置；用户授权的真实服务预算。",
+      "paths": "services/core/tests、tests/unit/contract/e2e/integration/performance/security；CI；docs/acceptance-full；证据目录与进度.json。",
+      "actions": [
+        "先确认24–44每R已有实现，明确测试profile/数据命名空间/Provider和费用上限；无Docker或模型时列具体缺项，完成其他可独立项。",
+        "按08顺序：静态/编译→域和契约→空库/旧库迁移→真实基础设施集成→故障/安全→UI/E2E→真实模型/媒体/可选服务→容量/恢复→发布物。",
+        "复用并更新旧测试的正确不变量：单人自批与正文等契约变化需改断言，但不能删失败测试/降coverage门槛；新增关键行为/反向和并发测试。",
+        "用隔离合成资料走空白到两章、接纳/记忆/重启/导出的真实模型流程；外部视频/3D/支付仅在有配置和授权预算时执行，沙盒不冒充真实生产。",
+        "失败回到所属实现修复，再跑对应测试和受影响回归；若改共享契约/鉴权/接受事务/存储，扩大到相关全链路。记录固定版本的可复现证据，不重复无必要的全套测试。",
+        "每T填PASS/FAIL/WAITING_EXTERNAL和证据/环境/版本；真实质量评价与技术可运行分别报告，最后输出完整功能、配置差异、残留风险和发布结论。"
+      ],
+      "contract": "NOT_RUN不计PASS；人工验收需具体操作/结果证据；不得对原用户库做破坏性演练。",
+      "handoff": "docs/handoffs/45.md、统一测试表实测状态、验收报告/manifest、全部能力状态、仅确实通过的VERIFIED记录。",
+      "risk": "没有证据不能宣称全高级功能可用；外部受限只阻相应验收，不伪成功。真数据迁移/真实付款/发布不由测试表自动授权。"
+    }
+  ]
+}

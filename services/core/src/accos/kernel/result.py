@@ -1,3 +1,22 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:1bd97da1de984bac4764d50feb1f8b725e66d73887560130cc09e6cfd4b6666f
-size 383
+"""Explicit success and failure result variants."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True, slots=True)
+class Success[T]:
+    """Successful operation result."""
+
+    value: T
+
+
+@dataclass(frozen=True, slots=True)
+class Failure[E]:
+    """Failed operation result."""
+
+    error: E
+
+
+type Result[T, E] = Success[T] | Failure[E]
