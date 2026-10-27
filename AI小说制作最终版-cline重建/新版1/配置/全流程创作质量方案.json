@@ -1,0 +1,38 @@
+{
+  "schema_version": "scene-to-release-quality-workflow-1.0",
+  "workflow_id": "source_bounded_scene_quality_workflow",
+  "release_status": "draft_only_until_all_gates_pass",
+  "default_decision": "deny",
+  "supersedes": ["full-source-prose-production-plan-activation-1.0"],
+  "inherited_policy_requirements": {
+    "hard_boundaries": [
+      "authorization_is_not_consumption",
+      "classification_required_before_activation",
+      "matched_creative_need_and_stage_evidence_required",
+      "model_required_for_quality_candidate",
+      "deterministic_template_is_nonrelease_test_only",
+      "automatic_draft_requires_semantic_and_literary_review",
+      "formal_release_requires_project_source_confirmation",
+      "type_connection_requires_project_type_confirmation",
+      "formal_fact_approval_is_separate_from_runtime_authorization"
+    ],
+    "forbidden_shortcuts": [
+      "不得仅凭授权账本创建正文批次",
+      "不得将全量资料按同一策略同质化升级",
+      "不得将类型连接写成已确认的类型组合或世界事实",
+      "不得用资料名称、ID、内部字段或来源原文替代场景化转译",
+      "不得把编排、模板、关键词命中或模型生成本身计为正文消费",
+      "不得在语义审校和文学审校未通过时标记 prose_realized",
+      "不得在项目来源确认前开放正式发布"
+    ]
+  },
+  "gates": [
+    {"id": "source_authorization", "required": ["逐条审计授权", "来源可回读", "分类与完整创作策略"]},
+    {"id": "material_capability", "required": ["全资料生产能力门", "章节质量资料就绪度门", "严格隔离审计"]},
+    {"id": "chapter_scene_decision", "required": ["章目标", "阻碍", "选择", "后果", "状态变化", "场景目标", "场景阻碍", "新信息", "跨场行动接口"]},
+    {"id": "semantic_activation", "required": ["场景必需类别", "至少两个匹配术语", "至少一个场景特异词", "逐条激活证据", "因果合同", "类型连接及来源块隔离"]},
+    {"id": "model_candidate_generation", "required": ["前置门全通过", "仅 draft_only", "逐段位置和哈希", "禁止内部术语与来源复述"]},
+    {"id": "dual_review_and_consumption", "required": ["来源语义审校通过", "文学审校通过", "逐段消费验证通过"]},
+    {"id": "formal_release", "required": ["项目来源确认", "正式发布门", "发布预检快照复核"]}
+  ]
+}

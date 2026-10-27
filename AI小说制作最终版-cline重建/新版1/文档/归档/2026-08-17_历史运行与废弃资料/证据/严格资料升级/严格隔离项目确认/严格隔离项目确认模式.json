@@ -1,0 +1,36 @@
+{
+  "schema_version": "strict-quarantine-project-confirmation-schema-1.0",
+  "confirmation_record_schema_version": "strict-quarantine-project-confirmation-1.0",
+  "scope": "explicit_review_only; does_not_grant_formal_fact_eligibility",
+  "required_fields_for_approved_decision": [
+    "schema_version",
+    "upgrade_id",
+    "source_id",
+    "source_object_id",
+    "exact_locator",
+    "source_ref_sha256",
+    "source_object_sha256",
+    "intended_scope",
+    "decision",
+    "approved_by",
+    "approved_at",
+    "decision_rationale"
+  ],
+  "allowed_decisions": [
+    "approved",
+    "rejected"
+  ],
+  "immutable_binding": [
+    "upgrade_id",
+    "source_id",
+    "source_object_id",
+    "exact_locator",
+    "source_ref_sha256",
+    "source_object_sha256"
+  ],
+  "prohibitions": [
+    "不得确认 candidate_identity_missing、locator_invalid_or_out_of_range 或 object_boundary_missing 条目。",
+    "不得以文件名和数组下标推断 source_object_id。",
+    "确认审计通过不自动授予 formal_fact_eligible，也不允许正文写入。"
+  ]
+}

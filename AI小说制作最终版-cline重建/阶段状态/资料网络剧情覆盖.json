@@ -1,0 +1,300 @@
+{
+  "schema_version": "material-story-coverage-1.0",
+  "generated_at": "2026-08-10T18:03:11.114911+00:00",
+  "scope": {
+    "workspace_root": "D:\\AI小说制作最终版-cline重建",
+    "raw_root": "08_原始资料",
+    "index": "00_资料索引/多维资料索引.yaml",
+    "excluded": [
+      "05_正文",
+      "章节设计",
+      "章节状态",
+      "项目快照"
+    ]
+  },
+  "network_inventory": {
+    "dynamic": {
+      "file": "08_原始资料/动态网络.txt",
+      "declared_connections": 2817,
+      "parsed_connections": 483,
+      "status": "parsed"
+    },
+    "static": {
+      "file": "08_原始资料/静态网络.txt",
+      "blocks": 54,
+      "edges": 124,
+      "status": "parsed"
+    },
+    "anchor": {
+      "file": "08_原始资料/锚点网络.txt",
+      "declared_anchors": null,
+      "parsed_table_rows": 1730,
+      "status": "declared_and_sampled"
+    },
+    "type_connection": {
+      "file": "08_原始资料/类型连接.txt",
+      "records_detected": 2100,
+      "candidate_records": 4200,
+      "status": "candidate_records_only"
+    }
+  },
+  "story_dimension_coverage": {
+    "required_dimensions": [
+      "题材",
+      "类型",
+      "读者需求",
+      "故事核心",
+      "世界观",
+      "人物",
+      "人物关系",
+      "冲突",
+      "目标与代价",
+      "主线",
+      "支线",
+      "情绪",
+      "爽点或吸引力",
+      "节奏",
+      "场景",
+      "事件",
+      "伏笔",
+      "叙事结构",
+      "文风",
+      "正文表达"
+    ],
+    "covered_dimensions": [
+      "世界观",
+      "主线",
+      "事件",
+      "人物",
+      "人物关系",
+      "伏笔",
+      "冲突",
+      "叙事结构",
+      "场景",
+      "情绪",
+      "支线",
+      "文风",
+      "正文表达",
+      "爽点或吸引力",
+      "目标与代价",
+      "类型",
+      "节奏",
+      "读者需求",
+      "题材"
+    ],
+    "uncovered_dimensions": [
+      "故事核心"
+    ],
+    "coverage_ratio": 0.95,
+    "by_module": {
+      "MOD-TYPE": {
+        "source_file": "08_原始资料/类型系统.txt",
+        "declared_dimensions": [
+          "情绪",
+          "文风",
+          "爽点或吸引力",
+          "类型",
+          "读者需求",
+          "题材"
+        ],
+        "covered_dimensions": [
+          "情绪",
+          "文风",
+          "爽点或吸引力",
+          "类型",
+          "读者需求",
+          "题材"
+        ],
+        "uncovered_dimensions": [
+          "世界观",
+          "主线",
+          "事件",
+          "人物",
+          "人物关系",
+          "伏笔",
+          "冲突",
+          "叙事结构",
+          "场景",
+          "支线",
+          "故事核心",
+          "正文表达",
+          "目标与代价",
+          "节奏"
+        ],
+        "coverage_status": "dimension_registered"
+      },
+      "MOD-CONNECTION": {
+        "source_file": "08_原始资料/类型连接.txt",
+        "declared_dimensions": [
+          "世界观",
+          "事件",
+          "伏笔",
+          "冲突",
+          "场景",
+          "情绪",
+          "正文表达",
+          "类型"
+        ],
+        "covered_dimensions": [
+          "世界观",
+          "事件",
+          "伏笔",
+          "冲突",
+          "场景",
+          "情绪",
+          "正文表达",
+          "类型"
+        ],
+        "uncovered_dimensions": [
+          "主线",
+          "人物",
+          "人物关系",
+          "叙事结构",
+          "支线",
+          "故事核心",
+          "文风",
+          "爽点或吸引力",
+          "目标与代价",
+          "节奏",
+          "读者需求",
+          "题材"
+        ],
+        "coverage_status": "dimension_registered"
+      },
+      "MOD-STATIC": {
+        "source_file": "08_原始资料/静态网络.txt",
+        "declared_dimensions": [
+          "世界观",
+          "主线",
+          "人物",
+          "人物关系",
+          "叙事结构",
+          "支线"
+        ],
+        "covered_dimensions": [
+          "世界观",
+          "主线",
+          "人物",
+          "人物关系",
+          "叙事结构",
+          "支线"
+        ],
+        "uncovered_dimensions": [
+          "事件",
+          "伏笔",
+          "冲突",
+          "场景",
+          "情绪",
+          "故事核心",
+          "文风",
+          "正文表达",
+          "爽点或吸引力",
+          "目标与代价",
+          "类型",
+          "节奏",
+          "读者需求",
+          "题材"
+        ],
+        "coverage_status": "dimension_registered"
+      },
+      "MOD-DYNAMIC": {
+        "source_file": "08_原始资料/动态网络.txt",
+        "declared_dimensions": [
+          "主线",
+          "事件",
+          "伏笔",
+          "冲突",
+          "情绪",
+          "支线",
+          "目标与代价",
+          "节奏"
+        ],
+        "covered_dimensions": [
+          "主线",
+          "事件",
+          "伏笔",
+          "冲突",
+          "情绪",
+          "支线",
+          "目标与代价",
+          "节奏"
+        ],
+        "uncovered_dimensions": [
+          "世界观",
+          "人物",
+          "人物关系",
+          "叙事结构",
+          "场景",
+          "故事核心",
+          "文风",
+          "正文表达",
+          "爽点或吸引力",
+          "类型",
+          "读者需求",
+          "题材"
+        ],
+        "coverage_status": "dimension_registered"
+      },
+      "MOD-ANCHOR": {
+        "source_file": "08_原始资料/锚点网络.txt",
+        "declared_dimensions": [
+          "事件",
+          "人物",
+          "场景",
+          "情绪",
+          "文风",
+          "正文表达",
+          "节奏"
+        ],
+        "covered_dimensions": [
+          "事件",
+          "人物",
+          "场景",
+          "情绪",
+          "文风",
+          "正文表达",
+          "节奏"
+        ],
+        "uncovered_dimensions": [
+          "世界观",
+          "主线",
+          "人物关系",
+          "伏笔",
+          "冲突",
+          "叙事结构",
+          "支线",
+          "故事核心",
+          "爽点或吸引力",
+          "目标与代价",
+          "类型",
+          "读者需求",
+          "题材"
+        ],
+        "coverage_status": "dimension_registered"
+      }
+    }
+  },
+  "blocking_findings": [
+    {
+      "id": "COVERAGE-001",
+      "status": "blocked",
+      "reason": "动态网络原文声明2817条，但只有成功解析的连接才能进入可调用覆盖；解析量必须等于声明量。"
+    },
+    {
+      "id": "COVERAGE-002",
+      "status": "blocked",
+      "reason": "锚点网络包含模板化说明；声明数量不等于逐条可验证锚点数量。"
+    },
+    {
+      "id": "COVERAGE-003",
+      "status": "blocked",
+      "reason": "类型连接含空块或candidate/template记录，不能作为已确认剧情连接。"
+    },
+    {
+      "id": "COVERAGE-004",
+      "status": "blocked",
+      "reason": "本报告只证明资料网络覆盖剧情维度，不把候选连接升级为故事事实。"
+    }
+  ],
+  "status": "blocked_until_network_records_are_verified"
+}

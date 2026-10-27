@@ -1,0 +1,30 @@
+{
+  "schema_version": "strict-quarantine-recoverability-assessment-1.0",
+  "generated_at": "2026-08-16T06:28:52.761637+00:00",
+  "scope": "read_only_assessment_of_locator_and_object_boundary_quarantines",
+  "input_classification": "文档/证据/严格资料升级/严格隔离分类/严格隔离分类清单.jsonl",
+  "assessed_record_count": 38,
+  "recoverable_by_deterministic_parser_count": 0,
+  "formal_fact_eligible_count": 0,
+  "prose_write_allowed": false,
+  "source_status_modified": false,
+  "project_confirmation_modified": false,
+  "dispositions": [
+    {
+      "disposition": "permanently_unsuitable_unless_replaced",
+      "count": 15,
+      "source_kind_counts": {
+        "类型系统": 15
+      },
+      "reason": "matched_lines 跨越多个不连续位置，不能证明为同一来源对象；必须由具有单一边界和稳定定位的替代来源取代。"
+    },
+    {
+      "disposition": "requires_replacement_or_explicit_project_confirmation",
+      "count": 23,
+      "source_kind_counts": {
+        "类型连接": 23
+      },
+      "reason": "命名来源块可回读为单个 JSON 对象，但原 source_id 不对应对象内可核验标识；不得仅以文件名和 [1] 自动确认。"
+    }
+  ]
+}

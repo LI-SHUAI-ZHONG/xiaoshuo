@@ -1,0 +1,15 @@
+{
+  "artifact_type": "type_style_length_constraints",
+  "status": "retrospective_reconstruction",
+  "source_trace": [
+    {"record_id": "CAP-TYPE-STYLE-LENGTH", "source_file": "08_原始资料/类型系统.txt", "source_labels": ["类型定义", "风格表达", "篇幅/节奏参数"], "stage": "STORY_BIBLE", "effect": "悬疑采用信息冲突和认知冲突；冷峻克制采用有限视角、现场证据和低解释度；中篇采用单卷24章、四段递进。"},
+    {"record_id": "MOD-TYPE", "source_file": "08_原始资料/类型系统.txt", "stage": "STORY_BIBLE", "effect": "限制异常解释必须保留可验证路径。"}
+  ],
+  "inputs": {"type": "悬疑", "style": "冷峻、克制、紧张、具有现场感", "length": "中篇"},
+  "decisions": {"type_expectations": ["立即问题", "信息不对称", "证据递进"], "style_constraints": ["林砚有限视角", "不直接确认诡异屋机制", "以物证和空间细节表达紧张"], "length_rhythm": {"chapter_count": 24, "progression_unit": "每章至少改变问题、认知或资源之一"}, "risks": ["超自然解释过早封闭悬念", "人物只承担调查工具功能"]},
+  "chapter_implications": {"chapter_001": ["前段出现现实资料冲突", "结尾以可观察物证升级"], "chapter_002": ["扩展到三楼和七年前旧案"], "chapter_003": ["围绕307、收据和23:40形成双层压力"]},
+  "writing_requirements": ["动作和选择必须由人物能力、权限、恐惧和当前认知解释"],
+  "acceptance_criteria": ["正文能定位至少一处类型冲突、风格证据和篇幅节奏作用"],
+  "not_used_reasons": ["目标平台和读者未确认，未作为硬约束使用"],
+  "evidence_status": "partial"
+}

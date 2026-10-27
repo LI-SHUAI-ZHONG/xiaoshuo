@@ -1,0 +1,38 @@
+{
+  "schema_version": "human-source-qualification-decision-schema-1.0",
+  "scope": "human_qualification_evidence_only; no_project_selection_or_usage_permission_granted",
+  "allowed_decisions": [
+    "conditionally_qualified",
+    "needs_human_review",
+    "qualified",
+    "rejected"
+  ],
+  "immutable_fields": [
+    "source_kind",
+    "source_file",
+    "input_snapshot_sha256",
+    "model_assessment_sha256",
+    "qualification_status"
+  ],
+  "required_evidence": [
+    "origin_locator",
+    "version_identifier",
+    "responsible_party",
+    "applicability_scope"
+  ],
+  "all_decision_requirements": [
+    "reviewed_by",
+    "reviewed_at",
+    "decision_rationale"
+  ],
+  "approved_decision_requirements": [
+    "all_decision_requirements",
+    "all required_evidence"
+  ],
+  "prohibitions": [
+    "不得将模型建议视为来源资格裁决。",
+    "不得修改原始资料、输入快照或模型评估工件。",
+    "不得通过本裁决授予 project_selection、formal_fact、model_input 或 prose_write 权限。",
+    "qualified 仅表示来源资格证据可供后续独立治理门审查。"
+  ]
+}

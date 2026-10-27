@@ -1,0 +1,18 @@
+{
+  "schema_version": "non-type-source-evidence-backfill-1.0",
+  "generated_at": "2026-08-13T17:16:54.008843Z",
+  "scope": "normalized_shared_non_type_sources_only; no_project_facts_or_permissions_modified",
+  "library_record_count": 590,
+  "anchor_record_count": 1790,
+  "outputs": {
+    "资料库依赖分类日志.jsonl": 590,
+    "资料库示例修复日志.jsonl": 590,
+    "锚点网络场景绑定日志.jsonl": 1790,
+    "锚点网络定义日志.jsonl": 1790,
+    "锚点网络文本位置日志.jsonl": 1790
+  },
+  "type_sources_touched": false,
+  "formal_fact_eligible": false,
+  "model_input_eligible": false,
+  "prose_write_allowed": false
+}

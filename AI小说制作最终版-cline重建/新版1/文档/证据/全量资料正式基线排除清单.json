@@ -1,0 +1,14 @@
+{
+  "schema_version": "full-source-formal-baseline-exclusion-1.0",
+  "generated_at": "2026-08-17T05:16:50.621477+00:00",
+  "binding_file_sha256": "e8324d99fdedbe64ad8fd038ca2ca5fa9cb1f6c71118b7c68859ccb078651db5",
+  "records": [
+    {
+      "binding_id": "TB-05637",
+      "source_id": "TYPE-SOURCE:99",
+      "quarantine_status": "fixture_only_excluded_from_formal_baseline",
+      "reason": "原始对象标记 fixture_only，测试夹具不得进入正式基线",
+      "original_binding_sha256": "5d3406a2fb3edd79d7b4fa83c802664ccbbc99584a5c835ff10759b75ccac052"
+    }
+  ]
+}

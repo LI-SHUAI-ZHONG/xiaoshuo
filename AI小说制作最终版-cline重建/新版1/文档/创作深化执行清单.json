@@ -1,0 +1,104 @@
+{
+  "schema_version": "creative-deepening-work-plan-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "status": "ready_for_authorial_specification",
+  "fact_baseline": {
+    "path": "配置/project_source_confirmation.json",
+    "status": "confirmed",
+    "confirmed_at": "2026-08-14T00:00:00+08:00",
+    "scope": "书名、类型、世界阶段、主线冲突、核心谜团、主角、世界名称、配角、势力与地点和首章计划"
+  },
+  "source_policy": {
+    "allowlist": [
+      "配置/project_source_confirmation.json",
+      "配置/项目创作圣经.json",
+      "文档/创作深化/本轮产生且标明状态的规格文件"
+    ],
+    "forbidden_sources": [
+      "正文及其任何历史试写批次",
+      "归档中的旧正文、派生剧情输入、执行输出、测试日志、回归报告和发布预检材料"
+    ],
+    "rule": "深化只修改文档/创作深化中的资料规格，不读取、引用、摘录或反向校正正文，不修改创作圣经、项目配置、来源确认和现行正文。"
+  },
+  "out_of_scope": [
+    "类型系统与类型连接的来源质量补全",
+    "类型组合正式采用",
+    "原始资料、网络完整数据和资料索引修改",
+    "正文生成、改写、发布和回归运行"
+  ],
+  "work_packages": [
+    {
+      "id": "SPEC-RULE-01",
+      "title": "世界规则规格册",
+      "status": "not_started",
+      "inputs": ["配置/项目创作圣经.json", "配置/project_source_confirmation.json"],
+      "deliverable": "文档/创作深化/规则规格册.json",
+      "acceptance": [
+        "覆盖灵息回声、记忆代价、镇潮阵、潮灾、第三种方法和共担契约",
+        "每条规则含边界、代价、误判、反制、待确认项和影响章节",
+        "未确认细节均标记 proposal"
+      ]
+    },
+    {
+      "id": "SPEC-TIME-01",
+      "title": "三线时间线",
+      "status": "not_started",
+      "depends_on": ["SPEC-RULE-01"],
+      "deliverable": "文档/创作深化/历史与信息时间线.json",
+      "acceptance": [
+        "包含真实发生、公开档案和角色认知三线",
+        "覆盖潮灾、旧域封存、镇潮制度、父亲死亡、名册删改和三卷节点",
+        "每次揭示均含证据、获得者、行动变化和遗留误解"
+      ]
+    },
+    {
+      "id": "SPEC-FACTION-01",
+      "title": "人物与阵营决策网",
+      "status": "not_started",
+      "depends_on": ["SPEC-RULE-01", "SPEC-TIME-01"],
+      "deliverable": "文档/创作深化/人物与阵营决策网.json",
+      "acceptance": [
+        "覆盖沈砚、陆昭、许照微、闻执衡",
+        "覆盖七宗、栖云宗、执律堂、藏卷阁、潮痕会",
+        "包含目标、权限、资源、禁区、交换条件和转向阈值"
+      ]
+    },
+    {
+      "id": "SPEC-ARC-01",
+      "title": "三卷因果骨架",
+      "status": "not_started",
+      "depends_on": ["SPEC-RULE-01", "SPEC-TIME-01", "SPEC-FACTION-01"],
+      "deliverable": "文档/创作深化/三卷因果骨架.json",
+      "acceptance": [
+        "每卷均有承诺、证据、选择、代价和遗留问题",
+        "第三种方法和共担契约具备跨卷递进铺垫",
+        "任何结局解法不依赖未铺垫的万能能力"
+      ]
+    },
+    {
+      "id": "SPEC-CH01-01",
+      "title": "首章规格复核",
+      "status": "not_started",
+      "depends_on": ["SPEC-RULE-01", "SPEC-TIME-01", "SPEC-FACTION-01"],
+      "deliverable": "文档/创作深化/CH01设定层复核.json",
+      "acceptance": [
+        "只核对确认文件中的首章计划和设定资料，不读取、引用或摘录任何正文",
+        "每个场景均能说明目标、证据、选择、后果和账本变化",
+        "输出差距清单，不生成正文"
+      ]
+    },
+    {
+      "id": "REVIEW-BIBLE-01",
+      "title": "设定层冲突与闭合检查",
+      "status": "not_started",
+      "depends_on": ["SPEC-RULE-01", "SPEC-TIME-01", "SPEC-FACTION-01", "SPEC-ARC-01", "SPEC-CH01-01"],
+      "deliverable": "文档/创作深化/设定层闭合检查报告.json",
+      "acceptance": [
+        "检查规则、时间线、人物、阵营、三卷因果和首章计划的一致性",
+        "分类输出 confirmed、proposal、author_confirmation_required",
+        "不将正文、历史试写、测试、回归或执行输出纳入作品设定证据"
+      ]
+    }
+  ],
+  "completion_rule": "仅当各工作包交付物通过设定层验收且所有 proposal 获作者确认或明确保留时，方可声明创作深化规格完成；不等同于正文发布授权。"
+}

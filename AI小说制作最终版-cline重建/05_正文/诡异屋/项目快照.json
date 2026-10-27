@@ -1,0 +1,209 @@
+{
+    "schema_version":  "1.2",
+    "current_state":  "AUTO_CONTINUE",
+    "genre":  "悬疑",
+    "type":  "悬疑",
+    "length":  "中篇",
+    "style":  "冷峻、克制、紧张、具有现场感",
+    "platform":  "",
+    "audience":  "",
+    "story_bible":  {
+        "title": "诡异屋",
+        "premise": "档案修复师进入一栋重新出现的旧屋，发现屋内物件记录着尚未发生的命案，而最后一件遗物写着自己的名字。",
+        "core_mystery": "旧屋的重新出现、七年前失踪案和主角童年记忆之间的关系。",
+        "core_conflict": ["information_conflict", "cognitive_conflict", "relationship_conflict"],
+        "structure": "single_volume_24_chapters",
+        "fact_layer": "cline_decided",
+        "source_trace": ["MOD-CAPABILITY", "MOD-TYPE", "MOD-CONNECTION", "MOD-STATIC", "MOD-DYNAMIC", "MOD-ANCHOR", "MOD-EXECUTION"]
+    },
+    "characters":  [
+        {
+            "character_id": "char_lin_yan",
+            "name": "林砚",
+            "role": "主角",
+            "surface_goal": "完成旧屋遗物清点并确认失踪房主的身份记录",
+            "true_goal": "确认童年记忆是否可信",
+            "cognition": "认为旧屋异常由单一凶手制造",
+            "resources": ["物证修复经验", "空间细节记忆"],
+            "fear_of_cost": "发现自己曾参与或被卷入童年火灾的真相",
+            "fact_layer": "cline_decided"
+        },
+        {
+            "character_id": "char_zhou_jiming",
+            "name": "周既明",
+            "role": "协作者与信息隐瞒者",
+            "surface_goal": "控制七年前失踪案的外溢影响",
+            "hidden_information": "掌握被错误归档的证人线索",
+            "fact_layer": "cline_decided"
+        },
+        {
+            "character_id": "char_xu_tang",
+            "name": "许棠",
+            "role": "房主女儿与产权代理人",
+            "surface_goal": "完成产权清理",
+            "hidden_information": "知道旧屋存在替换门牌的习惯",
+            "fact_layer": "cline_decided"
+        },
+        {
+            "character_id": "char_gu_huaishan",
+            "name": "顾怀山",
+            "role": "缺席者与失踪房主",
+            "fact_layer": "cline_decided"
+        }
+    ],
+    "world":  {
+        "world_state": "旧城改造前的档案、产权和地方记忆互相冲突",
+        "location_states": ["诡异屋", "旧城档案馆", "旧城派出所"],
+        "faction_states": ["拆迁方施压", "警方掌握部分旧案", "房主家属要求封存"],
+        "information_visibility": ["主角掌握物证修复线索", "周既明掌握旧案内部材料", "许棠掌握产权线索"],
+        "noticed_by": [],
+        "affected_locations": ["诡异屋"],
+        "affected_factions": ["警方", "拆迁方", "房主家属"],
+        "fact_layer": "cline_decided"
+    },
+    "chapter_state":  {
+                          "volume":  1,
+                           "chapter":  2,
+                           "scene":  1,
+                           "last_formal_chapter":  "正文/卷01/第002章_三楼门牌与测绘图不一致.md",
+                           "next_chapter":  3,
+                           "last_chapter_hook":  "307门内传出第三声金属碰撞；周既明承认三楼存在，却称其从未登记。"
+                      },
+    "continuity":  {
+                        "timeline":  ["当前日下午四点抵达旧码头路", "当天晚上十一点四十将发生待验证事件"],
+                        "locations":  ["旧城码头路封闭区", "诡异屋一层前厅", "诡异屋三楼走廊"],
+                        "relationships":  ["林砚与周既明从远程协助转为现场封锁关系", "周既明要求林砚交出七年前收据"],
+                        "resources":  ["林砚持有相机、清单、双层手套、清点卡和三楼旧收据"],
+                       "injuries":  [
+
+                                    ],
+                        "clues":  [
+                            "西平码头路十七号在电子地图中不存在但清单有补录章",
+                            "灰墙后存在无门牌门洞，门锁从里面开过",
+                            "前厅断尘显示近期有人经过",
+                            "铁盒内清点卡写有林砚姓名、当天日期和未来死亡预告",
+                            "三楼存在测绘图没有登记的307门牌",
+                            "307门牌覆盖过旧编号，门缝下发现七年前六月十四日的收据"
+                        ],
+                        "character_states":  [
+                            {
+                                "character_id": "char_lin_yan",
+                                "body_state": "短暂手冷和听觉警觉，无外伤",
+                                "emotion_state": "克制下的紧张和确认欲增强",
+                                "needs": "确认现场是否真实存在并找到出口",
+                                "goals": ["完成地址核验", "判断清点卡来源"],
+                                "true_goal": "确认童年记忆与旧屋的关系",
+                                "surface_goal": "完成遗物清点前置核验",
+                                "hidden_need": "获得一个不依赖他人档案的过去解释",
+                                "cognition": "确认异常包含持续替换门牌和记录的现实行为，不再视为单一地址错误",
+                                "known_information": ["旧屋存在", "清点卡写有自己的名字", "今晚十一点四十有待验证预告", "三楼有未登记的307", "七年前失踪日有对应收据"],
+                                "hidden_information": ["童年火灾的完整记忆"],
+                                "misjudgments": ["仍倾向认为存在单一凶手"],
+                                "personality_bias": "证据优先",
+                                "age_bias": "成年",
+                                "identity_pressure": "专业判断可能被视为擅闯现场",
+                                "moral_stance": "先保护现场和可能的受害者",
+                                "relationship_pressure": "周既明要求她离开",
+                                "resources": ["物证修复经验", "相机", "清点卡"],
+                                "time_limit": "当天23:40前确认预告是否对应现实",
+                                "future_expectation": "期待查明清点卡的书写者",
+                                "fear_of_cost": "若卡片与童年有关，个人记忆可能失去可信度"
+                            }
+                        ],
+                       "world_state":  {
+                                            "world_state": "诡异屋被确认存在且有人近期进入，现场尚未公开",
+                                            "location_states": ["前厅门关闭", "走廊断尘被林砚经过", "铁盒已被林砚取出", "三楼307未开启"],
+                                            "faction_states": ["周既明要求封锁并索取收据", "拆迁方暂未注意屋内情况"],
+                                            "resource_states": ["清点卡和三楼收据由林砚持有", "307门内物证未取出"],
+                                            "information_visibility": ["林砚知道清点卡内容和三楼收据", "周既明知道现场风险但未说明旧案细节", "周既明承认三楼存在"],
+                                            "noticed_by": ["林砚", "周既明", "307门内未知声源"],
+                                            "affected_locations": ["诡异屋一层前厅", "诡异屋三楼走廊"],
+                                            "affected_factions": ["警方" ]
+                                       },
+                       "plot_state":  {
+                                           "plot_problem":  "诡异屋为何重新出现，屋内物件为何记录尚未发生的命案？",
+                                           "scene_goal":  "在周既明到达前核对一层和三楼结构并找到异常门牌",
+                                           "obstacle":  "前门关闭、手机信号不稳、楼梯显示有人近期经过",
+                                           "action_choice":  "林砚拍摄楼梯和门牌，以旧测绘图承重墙位置反证307不存在",
+                                           "consequence":  "发现替换门牌、七年前收据和门内金属声，周既明要求交证",
+                                           "new_information": ["三楼存在未登记的307", "收据日期是顾怀山失踪当天", "周既明承认三楼存在"],
+                                           "state_changes": ["林砚确认异常涉及记录替换", "三楼307保持未开启", "第002章正式保存"],
+                                           "new_problem": "谁在七年前设置307，门内金属声来自什么",
+                                           "current_thread": "old_house_case",
+                                           "progress":  "chapter_002_saved",
+                                           "branch_status":  ["mainline_open", "chapter_001_complete", "chapter_002_complete"],
+                                           "open_questions": ["最后一件遗物为何写有林砚姓名", "七年前失踪案的真实结局", "清点卡书写者身份", "307门内金属声来源"],
+                                          "resolved_questions":  [
+
+                                                                 ]
+                                      },
+                        "change_log": [
+                            {
+                                "source_trace": ["chapter_001", "MOD-DYNAMIC", "MOD-ANCHOR"],
+                                "changed_fields": ["chapter_state", "continuity.clues", "character_states", "world_state", "plot_state"],
+                                "previous_value": "AUTO_DESIGN / no formal chapter",
+                                "new_value": "AUTO_CONTINUE / chapter 001 saved",
+                                "decision_source": "cline_decision",
+                                "reversible": true
+                            },
+                            {
+                                "source_trace": ["chapter_002", "MOD-TYPE", "MOD-DYNAMIC", "MOD-ANCHOR"],
+                                "changed_fields": ["chapter_state", "continuity.locations", "continuity.clues", "character_states", "world_state", "plot_state"],
+                                "previous_value": "chapter 001 saved / next chapter 002",
+                                "new_value": "chapter 002 saved / next chapter 003",
+                                "decision_source": "cline_decision",
+                                "reversible": true
+                            }
+                        ]
+                   },
+    "source_status":  "partial",
+    "design_artifacts": {
+        "project": [
+            "规划/资料驱动设计/type_style_length_constraints.json",
+            "规划/资料驱动设计/opening_design.json",
+            "规划/资料驱动设计/golden_three_tasks.json",
+            "规划/资料驱动设计/character_behavior_contract.json"
+        ],
+        "chapter_001": "规划/章节设计/卷01/第001章_清点名单上不存在的房屋/chapter_execution_manifest.json",
+        "audit": "检查报告/资料调用审计.json",
+        "status": "retrospective_reconstruction_partial",
+        "generation_gate": "next chapter requires current chapter execution manifest"
+    },
+    "run_mode":  "autonomous_continuous",
+    "decision_log":  [
+        {"decision": "single_volume_24_chapters", "source": "cline_decision", "reversible": true},
+        {"decision": "evidence_first_realistic_mystery", "source": "cline_decision", "reversible": true}
+    ],
+    "run_log":  [
+        {
+            "state": "AUTO_GENERATE",
+            "status": "completed",
+            "source_trace": ["MOD-TYPE", "MOD-DYNAMIC", "MOD-ANCHOR", "MOD-CAPABILITY"],
+            "changed_fields": ["chapter_state", "continuity", "current_state"],
+            "decision_source": "cline_decision",
+            "reversible": true
+        },
+        {
+            "state": "AUTO_SAVE",
+            "status": "completed",
+            "source_trace": ["chapter_001", "MOD-TYPE", "MOD-DYNAMIC", "MOD-ANCHOR"],
+            "changed_fields": ["formal_chapter", "chapter_state", "continuity", "version_record"],
+            "decision_source": "cline_decision",
+            "reversible": true
+        },
+        {
+            "state": "AUTO_SAVE",
+            "status": "completed",
+            "source_trace": ["chapter_002", "MOD-TYPE", "MOD-DYNAMIC", "MOD-ANCHOR"],
+            "changed_fields": ["formal_chapter", "chapter_state", "continuity", "version_record"],
+            "decision_source": "cline_decision",
+            "reversible": true
+        }
+    ],
+    "save_policy":  {
+                        "atomic_write":  true,
+                        "retry_count":  3,
+                        "never_overwrite_formal_text":  true
+                    },
+    "state_contract":  "项目状态模型与连续性契约.json"
+}

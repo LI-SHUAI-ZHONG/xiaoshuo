@@ -1,0 +1,6031 @@
+{
+  "run_id": "run-20260812T180859Z-966dab14",
+  "blueprint_sha256": "4f8beee1a8e2e1c9cd51979fbf5905ef82f299eb1fe26b334052a903ae543d28",
+  "run_input_snapshot": "文档/证据/运行/run-20260812T180859Z-966dab14/run_input_snapshot.json",
+  "scene_source_selection": "文档/证据/运行/run-20260812T180859Z-966dab14/scene_source_selection.json",
+  "scenes": [
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S1",
+      "beat": "建立表面稳定与异常之间的反差",
+      "paragraphs": [
+        "检测场的石台被晨雾浸得发白，队伍从檐下排到演武坪。沈砚站到第三块青砖上时，陆昭正把袖口往下扯，仍遮不住腕上那截褪色的药绳。那是药堂按月结的记号，颜色越浅，能换的药越少。陆昭冲他抬了抬下巴：\"别磨蹭，过了今天，内门的药额就能先给我妹续上。\"台前的值守弟子敲了敲铜牌，宣布封台后不再复测。沈砚应了一声，目光却落在那块检测石上。它太干净，干净得像刚被人擦去什么。",
+        "掌心贴上石面，灵息沿经络被一点点抽出去。第一息，石心亮白；第六息，光已经熄灭。值守弟子伸手去取他的牌子，沈砚却看见第七息里，石面最细的那道裂纹重新浮出一点青灰。陆昭恰好侧身递牌，替他挡住了半边视线。\"按实了。\"值守弟子不耐烦地催。沈砚把手压回去，指腹摸到裂纹边缘新鲜的涩意，像药灰刚填进石缝，还没来得及吃透潮气。",
+        "沈砚收回手，像是随口问道：\"师兄，药堂的青灰能补检测石的旧裂吗？\"值守弟子的笔尖顿在合格二字上，片刻才说：\"检测石不用药灰。你只管拿牌。\"他说完便合上记录册，手掌压得很紧。陆昭从后面撞了撞沈砚的肩，声音低得发硬：\"你想查，等我妹的药领下来再查。别拿我们两个的路试你的眼力。\"沈砚没有辩解，只接过木牌。那句否认太快，快得像早就有人教过他该怎么答。",
+        "登记簿递到面前时，沈砚用拇指蘸了一点印泥，在掌心划下七道短线，又在最后一笔拖出一个斜角。他写自己的名字写得很慢，借着低头的工夫看清裂纹朝向旧域的那一侧。值守弟子已经把下一人推上石台，铜牌在他身后又响了一记。再要求复测，只会被记成灵息不稳，连木牌也未必保得住。沈砚把掌心攥进袖里。他暂时放过了石头，也把能当场揭开的口子留给了别人。",
+        "午后封台，最后一名弟子走远，石面在阴影里亮了一下。不是白光，而是一缕极细的青色，从裂纹里钻出，贴着地面往西北拖去。沈砚屏住呼吸。那边是旧域外廊，禁线外连杂役都不得靠近。青光只维持了七次心跳便散了，像有人在很远的地方叩了一下门。陆昭在场外等他，见他出来便问：\"拿到牌了，还看什么？\"沈砚摊开掌心，印泥已经被汗洇开。他说：\"看一件不该在第七息出现的东西。\""
+      ],
+      "anchor_ids_used": [
+        "C1.17",
+        "P1.21"
+      ],
+      "chain_id_used": "C00001",
+      "source_records": [
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "C1.17",
+          "anchor_name": "观察_识别_模式_异常",
+          "anchor_application": "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+          "chain_id": "C00001",
+          "source_anchor_id": "C1.17",
+          "source_anchor_name": "观察_识别_模式_异常",
+          "source_chain_id": "C00001",
+          "source_beat": "建立表面稳定与异常之间的反差",
+          "paragraph_index": 0,
+          "paragraph_type": "环境",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00001",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00001",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "130_核心悬念"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:12.11_能量异常->19.1_异常",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:12.11_能量异常->19.1_异常",
+                "score": 2,
+                "matched_tokens": [
+                  "12.11_能量异常",
+                  "19.1_异常"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.21",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；看见近距离必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.21",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_距离_近",
+                  "看见近距离"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "environment",
+          "prose_location": "1-S1#paragraphs[0]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+            "action": "观察现场",
+            "result": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域"
+          },
+          "translation_evidence": {
+            "scene_fact": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "character_action": "完成检测并判断异常是否来自自身修炼",
+            "trigger": "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+            "result": "沈砚确认异常具有重复性和明确方向",
+            "prose_location": "1-S1#paragraphs[0]"
+          },
+          "paragraph_sha256": "1f1042512f250458905f3c709bae569e23fb456df8e4df68beecb86bac46ed4a",
+          "matrix_binding_ids": [
+            "TB-00001",
+            "TB-00004",
+            "TB-00007"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00001",
+              "source_id": "1.1_主角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00004",
+              "source_id": "1.4_背景角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00007",
+              "source_id": "1.7_角色关系网络",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "P1.21",
+          "anchor_name": "视觉_看见_距离_近",
+          "anchor_application": "他贴近检测石，发现最内侧的刻痕并非新裂，而是被人用药灰填过",
+          "chain_id": "C00001",
+          "source_anchor_id": "P1.21",
+          "source_anchor_name": "视觉_看见_距离_近",
+          "source_chain_id": "C00001",
+          "source_beat": "建立表面稳定与异常之间的反差",
+          "paragraph_index": 1,
+          "paragraph_type": "动作",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00001",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00001",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "130_核心悬念"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:12.11_能量异常->19.1_异常",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:12.11_能量异常->19.1_异常",
+                "score": 2,
+                "matched_tokens": [
+                  "12.11_能量异常",
+                  "19.1_异常"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.21",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；看见近距离必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.21",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_距离_近",
+                  "看见近距离"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "action",
+          "prose_location": "1-S1#paragraphs[1]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "他贴近检测石，发现最内侧的刻痕并非新裂，而是被人用药灰填过",
+            "action": "完成检测并判断异常是否来自自身修炼",
+            "result": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域"
+          },
+          "translation_evidence": {
+            "scene_fact": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "character_action": "完成检测并判断异常是否来自自身修炼",
+            "trigger": "他贴近检测石，发现最内侧的刻痕并非新裂，而是被人用药灰填过",
+            "result": "沈砚确认异常具有重复性和明确方向",
+            "prose_location": "1-S1#paragraphs[1]"
+          },
+          "paragraph_sha256": "73927575bcfc66b5267d3434703640331555546d8b1187ed397cdcfd0b87dcc2",
+          "matrix_binding_ids": [
+            "TB-00001",
+            "TB-00004",
+            "TB-00007"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00001",
+              "source_id": "1.1_主角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00004",
+              "source_id": "1.4_背景角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00007",
+              "source_id": "1.7_角色关系网络",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "C1.17",
+          "anchor_name": "观察_识别_模式_异常",
+          "anchor_application": "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+          "chain_id": "C00001",
+          "source_anchor_id": "C1.17",
+          "source_anchor_name": "观察_识别_模式_异常",
+          "source_chain_id": "C00001",
+          "source_beat": "建立表面稳定与异常之间的反差",
+          "paragraph_index": 2,
+          "paragraph_type": "叙述",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00001",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00001",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "130_核心悬念"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:12.11_能量异常->19.1_异常",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:12.11_能量异常->19.1_异常",
+                "score": 2,
+                "matched_tokens": [
+                  "12.11_能量异常",
+                  "19.1_异常"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.21",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；看见近距离必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.21",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_距离_近",
+                  "看见近距离"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "state_change",
+          "prose_location": "1-S1#paragraphs[2]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "action": "改变站位并采取行动",
+            "result": "沈砚确认异常具有重复性和明确方向"
+          },
+          "translation_evidence": {
+            "scene_fact": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "character_action": "完成检测并判断异常是否来自自身修炼",
+            "trigger": "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+            "result": "沈砚确认异常具有重复性和明确方向",
+            "prose_location": "1-S1#paragraphs[2]"
+          },
+          "paragraph_sha256": "9a4f8c88ae09b3099ddee7c70bfadf70e588f7e4190051984be5ce564508d723",
+          "matrix_binding_ids": [
+            "TB-00001",
+            "TB-00004",
+            "TB-00007"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00001",
+              "source_id": "1.1_主角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00004",
+              "source_id": "1.4_背景角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00007",
+              "source_id": "1.7_角色关系网络",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "P1.21",
+          "anchor_name": "视觉_看见_距离_近",
+          "anchor_application": "他贴近检测石，发现最内侧的刻痕并非新裂，而是被人用药灰填过",
+          "chain_id": "C00001",
+          "source_anchor_id": "P1.21",
+          "source_anchor_name": "视觉_看见_距离_近",
+          "source_chain_id": "C00001",
+          "source_beat": "建立表面稳定与异常之间的反差",
+          "paragraph_index": 3,
+          "paragraph_type": "对话",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00001",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00001",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "130_核心悬念"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:12.11_能量异常->19.1_异常",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:12.11_能量异常->19.1_异常",
+                "score": 2,
+                "matched_tokens": [
+                  "12.11_能量异常",
+                  "19.1_异常"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.21",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；看见近距离必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.21",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_距离_近",
+                  "看见近距离"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "consequence",
+          "prose_location": "1-S1#paragraphs[3]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "action": "保留线索并决定下一步",
+            "result": "刻痕显示出与旧宗门记录相同的循环间隔"
+          },
+          "translation_evidence": {
+            "scene_fact": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "character_action": "完成检测并判断异常是否来自自身修炼",
+            "trigger": "他贴近检测石，发现最内侧的刻痕并非新裂，而是被人用药灰填过",
+            "result": "沈砚确认异常具有重复性和明确方向",
+            "prose_location": "1-S1#paragraphs[3]"
+          },
+          "paragraph_sha256": "3491f00a7fb9516e2a04322816ba9b21b61dce33e982463a4ac834411311d708",
+          "matrix_binding_ids": [
+            "TB-00001",
+            "TB-00004",
+            "TB-00007"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00001",
+              "source_id": "1.1_主角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00004",
+              "source_id": "1.4_背景角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00007",
+              "source_id": "1.7_角色关系网络",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "C1.17",
+          "anchor_name": "观察_识别_模式_异常",
+          "anchor_application": "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+          "chain_id": "C00001",
+          "source_anchor_id": "C1.17",
+          "source_anchor_name": "观察_识别_模式_异常",
+          "source_chain_id": "C00001",
+          "source_beat": "建立表面稳定与异常之间的反差",
+          "paragraph_index": 4,
+          "paragraph_type": "对话",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00001",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00001",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "130_核心悬念"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:12.11_能量异常->19.1_异常",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:12.11_能量异常->19.1_异常",
+                "score": 2,
+                "matched_tokens": [
+                  "12.11_能量异常",
+                  "19.1_异常"
+                ],
+                "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.21",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；看见近距离必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.21",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_距离_近",
+                  "看见近距离"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "consequence",
+          "prose_location": "1-S1#paragraphs[4]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "action": "观察现场",
+            "result": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域"
+          },
+          "translation_evidence": {
+            "scene_fact": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "character_action": "完成检测并判断异常是否来自自身修炼",
+            "trigger": "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+            "result": "沈砚确认异常具有重复性和明确方向",
+            "prose_location": "1-S1#paragraphs[4]"
+          },
+          "paragraph_sha256": "9800691efff34e587a2f9c7f328a7ff52fd46c53a0dadf99b4569b872526dbbe",
+          "matrix_binding_ids": [
+            "TB-00001",
+            "TB-00004",
+            "TB-00007"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00001",
+              "source_id": "1.1_主角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00004",
+              "source_id": "1.4_背景角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00007",
+              "source_id": "1.7_角色关系网络",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S1",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        }
+      ],
+      "project_scene_input": {
+        "purpose": "建立表面稳定与异常之间的反差",
+        "location": "宗门能量检测场",
+        "participants": [],
+        "character_goal": "完成检测并判断异常是否来自自身修炼",
+        "obstacle": "检测规则只允许记录合格结果，异常读数会被负责者直接归为误差",
+        "new_information": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+        "state_before": "沈砚相信异常可能只是自身修炼不足造成的误差",
+        "state_after": "沈砚确认异常具有重复性和明确方向",
+        "ending": "检测石上的异常刻痕在众人离场后重新亮起",
+        "hook": "刻痕显示出与旧宗门记录相同的循环间隔"
+      },
+      "method_execution_plan": {
+        "selected_methods": [
+          {
+            "block": 159,
+            "item_id": "159.2_行动中思想描写",
+            "name": "行动中思想描写",
+            "source_ref": "原始资料/资料库.txt:46464",
+            "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+            "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+            "interpretation_terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "存在明确目标",
+              "存在阻碍",
+              "存在可观察信息变化",
+              "行动前先出现观察或线索",
+              "判断必须改变后续行动"
+            ],
+            "allowed_stages": [
+              "大纲",
+              "细纲",
+              "场景卡",
+              "正文",
+              "校验"
+            ],
+            "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+            "evidence_requirements": [
+              "scene_id",
+              "paragraph_index",
+              "prose_location",
+              "trigger",
+              "result"
+            ],
+            "misuse_risks": [
+              "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+            ]
+          }
+        ],
+        "selection": {
+          "mode": "scene_need_retrieval",
+          "query_fields": [
+            "purpose",
+            "location",
+            "character_goal",
+            "obstacle",
+            "new_information",
+            "state_before",
+            "state_after",
+            "ending",
+            "hook"
+          ],
+          "expanded_terms": [
+            "代价",
+            "伏笔",
+            "信息",
+            "冲突",
+            "变化",
+            "后果",
+            "场景",
+            "心理",
+            "悬念",
+            "情绪",
+            "状态",
+            "目标",
+            "空间",
+            "线索",
+            "细节",
+            "结构",
+            "结果",
+            "节奏",
+            "行动",
+            "观察",
+            "计划",
+            "选择",
+            "阻碍",
+            "限制"
+          ],
+          "matched": [
+            {
+              "item_id": "159.2_行动中思想描写",
+              "matched_tokens": [
+                "观察"
+              ],
+              "score": 1
+            }
+          ],
+          "candidate_count": 1
+        }
+      },
+      "method_execution_trace": [
+        {
+          "entry_id": "159.2_行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "method": "行动中思想描写",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "execution": "applied_to_scene_fields",
+          "evidence_fields": [
+            "character_goal",
+            "obstacle",
+            "new_information",
+            "state_before",
+            "state_after",
+            "ending",
+            "hook"
+          ]
+        }
+      ],
+      "writing_plan": {
+        "temperature": "中",
+        "sentence_length": "长句",
+        "narrative_distance": "远距离",
+        "project_type": "玄幻"
+      }
+    },
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S2",
+      "beat": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+      "paragraphs": [
+        "藏卷阁的廊道比外头冷，纸墨和防潮香混在一起，压得人喉咙发干。许照微把三摞错卷放到沈砚面前，指尖沾着朱砂。\"归完这些，你能看一刻钟。只看外门公开卷。\"她抬眼时神色很淡，\"我的过错簿已经两笔，再多一笔，明年就不用在这里抄字了。\"沈砚把卷宗按年月排开，没有立刻提检测石，只道：\"我查潮期。若没东西，我自己走。\"许照微看了他掌心一眼，那里残着一道洗不净的红印。",
+        "第七年的潮期册放在最底层，封皮比旁的薄了一截。沈砚翻到第七息记录，三页纸像被同一把刀齐齐削去，只剩窄窄的纸根。他用指甲拨开毛边，摸到三短一长的凹痕，和检测石上的裂纹方向一模一样。廊外传来木屐声，许照微的肩背立刻绷直。\"归卷。现在。\"她没有看他，手却按在那本册子上。脚步越来越近，像有人正沿着每一格书架数过来。",
+        "沈砚把册子合上，声音压得只够两人听见：\"潮期前后，药堂发过青灰吗？\"许照微的手停在卷边。\"没有。\"她答得很轻，又补了一句，\"至少账上没有。\"管理员的影子已经落到廊口，她低头去理散页，指尖却把一张薄得近乎透明的纸推进沈砚袖口。沈砚没有道谢，只把那叠错卷往前一送：\"这卷少了一页。\"许照微接过去，替他把谎说完：\"潮气咬坏了，待会儿补。\"",
+        "管理员抽走卷宗时，薄页在沈砚袖中硌着手腕。他借着弯腰的工夫扫到上面的墨字：第七息折返，入旧域西廊。还没看完，柜门便在他面前合拢。\"谁动了潮期册？\"管理员问。许照微先一步把错卷抱进怀里：\"我归错层了。\"朱砂笔划过她的过错簿，第三道红线落下去，比前两道更重。沈砚站在书架另一侧，觉得袖里的纸烫得拿不住。他想开口，许照微却隔着柜门看了他一眼，意思很明白：现在承认，谁也保不住。",
+        "离开藏卷阁后，沈砚才展开薄页背面。那里没有名册，只有一行被反复描粗的库位号：西廊，乙七。许照微在墨迹旁留了一个极小的叉，像提醒，也像指路。他把纸折回原样，想起她被记下名字时没有辩解的样子。第七息不再只是他的疑心，西廊也不再只是他一个人的险路。天色压向山脊，沈砚把内门木牌塞进衣襟最里层，转身往弟子舍走去。他得在夜禁前决定，是去，还是先找陆昭把这笔账说清。"
+      ],
+      "anchor_ids_used": [
+        "C1.19",
+        "P1.4"
+      ],
+      "chain_id_used": "C00004",
+      "source_records": [
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "C1.19",
+          "anchor_name": "观察_识别_关联_因果",
+          "anchor_application": "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+          "chain_id": "C00004",
+          "source_anchor_id": "C1.19",
+          "source_anchor_name": "观察_识别_关联_因果",
+          "source_chain_id": "C00004",
+          "source_beat": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+          "paragraph_index": 0,
+          "paragraph_type": "环境",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00004",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00004",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "4.1_弧光"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:32.7_未写明的历史->130_核心悬念",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:32.7_未写明的历史->130_核心悬念",
+                "score": 2,
+                "matched_tokens": [
+                  "32.7_未写明的历史",
+                  "130_核心悬念"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.4",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；全景看见物体必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.4",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_物体_全景",
+                  "全景看见物体"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "environment",
+          "prose_location": "1-S2#paragraphs[0]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+            "action": "观察现场",
+            "result": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化"
+          },
+          "translation_evidence": {
+            "scene_fact": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "character_action": "查找旧区域和异常刻痕的对应记录",
+            "trigger": "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+            "result": "沈砚掌握异常与历史循环可能相关的线索",
+            "prose_location": "1-S2#paragraphs[0]"
+          },
+          "paragraph_sha256": "bf85bf062fc528729866fdcbbbdf43e8e44a5d017329cec74cee95c09e6e7905",
+          "matrix_binding_ids": [
+            "TB-00002",
+            "TB-00005",
+            "TB-00008"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00002",
+              "source_id": "1.2_重要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00005",
+              "source_id": "1.5_缺席者",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00008",
+              "source_id": "1.8_角色分类体系",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "P1.4",
+          "anchor_name": "视觉_看见_物体_全景",
+          "anchor_application": "他把摊开的旧册、封存柜和检测台一并看清，缺页恰好落在三者之间的记录时段",
+          "chain_id": "C00004",
+          "source_anchor_id": "P1.4",
+          "source_anchor_name": "视觉_看见_物体_全景",
+          "source_chain_id": "C00004",
+          "source_beat": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+          "paragraph_index": 1,
+          "paragraph_type": "动作",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00004",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00004",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "4.1_弧光"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:32.7_未写明的历史->130_核心悬念",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:32.7_未写明的历史->130_核心悬念",
+                "score": 2,
+                "matched_tokens": [
+                  "32.7_未写明的历史",
+                  "130_核心悬念"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.4",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；全景看见物体必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.4",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_物体_全景",
+                  "全景看见物体"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "action",
+          "prose_location": "1-S2#paragraphs[1]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "他把摊开的旧册、封存柜和检测台一并看清，缺页恰好落在三者之间的记录时段",
+            "action": "查找旧区域和异常刻痕的对应记录",
+            "result": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化"
+          },
+          "translation_evidence": {
+            "scene_fact": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "character_action": "查找旧区域和异常刻痕的对应记录",
+            "trigger": "他把摊开的旧册、封存柜和检测台一并看清，缺页恰好落在三者之间的记录时段",
+            "result": "沈砚掌握异常与历史循环可能相关的线索",
+            "prose_location": "1-S2#paragraphs[1]"
+          },
+          "paragraph_sha256": "cffeed121124f9d71c99b5d114c9c1ef301e41e2e15af8c740fd63c2a114da06",
+          "matrix_binding_ids": [
+            "TB-00002",
+            "TB-00005",
+            "TB-00008"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00002",
+              "source_id": "1.2_重要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00005",
+              "source_id": "1.5_缺席者",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00008",
+              "source_id": "1.8_角色分类体系",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "C1.19",
+          "anchor_name": "观察_识别_关联_因果",
+          "anchor_application": "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+          "chain_id": "C00004",
+          "source_anchor_id": "C1.19",
+          "source_anchor_name": "观察_识别_关联_因果",
+          "source_chain_id": "C00004",
+          "source_beat": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+          "paragraph_index": 2,
+          "paragraph_type": "叙述",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00004",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00004",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "4.1_弧光"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:32.7_未写明的历史->130_核心悬念",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:32.7_未写明的历史->130_核心悬念",
+                "score": 2,
+                "matched_tokens": [
+                  "32.7_未写明的历史",
+                  "130_核心悬念"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.4",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；全景看见物体必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.4",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_物体_全景",
+                  "全景看见物体"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "state_change",
+          "prose_location": "1-S2#paragraphs[2]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "action": "改变站位并采取行动",
+            "result": "沈砚掌握异常与历史循环可能相关的线索"
+          },
+          "translation_evidence": {
+            "scene_fact": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "character_action": "查找旧区域和异常刻痕的对应记录",
+            "trigger": "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+            "result": "沈砚掌握异常与历史循环可能相关的线索",
+            "prose_location": "1-S2#paragraphs[2]"
+          },
+          "paragraph_sha256": "9bdce41d9cee0fc206d4df21298d499963c35f54bbe9ccaae5d0c1629df4d5e5",
+          "matrix_binding_ids": [
+            "TB-00002",
+            "TB-00005",
+            "TB-00008"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00002",
+              "source_id": "1.2_重要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00005",
+              "source_id": "1.5_缺席者",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00008",
+              "source_id": "1.8_角色分类体系",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "P1.4",
+          "anchor_name": "视觉_看见_物体_全景",
+          "anchor_application": "他把摊开的旧册、封存柜和检测台一并看清，缺页恰好落在三者之间的记录时段",
+          "chain_id": "C00004",
+          "source_anchor_id": "P1.4",
+          "source_anchor_name": "视觉_看见_物体_全景",
+          "source_chain_id": "C00004",
+          "source_beat": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+          "paragraph_index": 3,
+          "paragraph_type": "对话",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00004",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00004",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "4.1_弧光"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:32.7_未写明的历史->130_核心悬念",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:32.7_未写明的历史->130_核心悬念",
+                "score": 2,
+                "matched_tokens": [
+                  "32.7_未写明的历史",
+                  "130_核心悬念"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.4",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；全景看见物体必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.4",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_物体_全景",
+                  "全景看见物体"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "consequence",
+          "prose_location": "1-S2#paragraphs[3]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "action": "保留线索并决定下一步",
+            "result": "缺页边缘留下与检测石相同的刻痕"
+          },
+          "translation_evidence": {
+            "scene_fact": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "character_action": "查找旧区域和异常刻痕的对应记录",
+            "trigger": "他把摊开的旧册、封存柜和检测台一并看清，缺页恰好落在三者之间的记录时段",
+            "result": "沈砚掌握异常与历史循环可能相关的线索",
+            "prose_location": "1-S2#paragraphs[3]"
+          },
+          "paragraph_sha256": "87d06e771d1b8c899f674693ca01f140d6bb1c01354c08178c3d6e031fc8fbb7",
+          "matrix_binding_ids": [
+            "TB-00002",
+            "TB-00005",
+            "TB-00008"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00002",
+              "source_id": "1.2_重要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00005",
+              "source_id": "1.5_缺席者",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00008",
+              "source_id": "1.8_角色分类体系",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "C1.19",
+          "anchor_name": "观察_识别_关联_因果",
+          "anchor_application": "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+          "chain_id": "C00004",
+          "source_anchor_id": "C1.19",
+          "source_anchor_name": "观察_识别_关联_因果",
+          "source_chain_id": "C00004",
+          "source_beat": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+          "paragraph_index": 4,
+          "paragraph_type": "对话",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00004",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00004",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "4.1_弧光"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:32.7_未写明的历史->130_核心悬念",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:32.7_未写明的历史->130_核心悬念",
+                "score": 2,
+                "matched_tokens": [
+                  "32.7_未写明的历史",
+                  "130_核心悬念"
+                ],
+                "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "P1.4",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；全景看见物体必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "P1.4",
+                "score": 2,
+                "matched_tokens": [
+                  "视觉_看见_物体_全景",
+                  "全景看见物体"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "consequence",
+          "prose_location": "1-S2#paragraphs[4]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "action": "观察现场",
+            "result": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化"
+          },
+          "translation_evidence": {
+            "scene_fact": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "character_action": "查找旧区域和异常刻痕的对应记录",
+            "trigger": "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+            "result": "沈砚掌握异常与历史循环可能相关的线索",
+            "prose_location": "1-S2#paragraphs[4]"
+          },
+          "paragraph_sha256": "a4ab02d963d7d6fb4e088eb3666f80d649a0bada2484025edf1c481d901d1ad9",
+          "matrix_binding_ids": [
+            "TB-00002",
+            "TB-00005",
+            "TB-00008"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00002",
+              "source_id": "1.2_重要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00005",
+              "source_id": "1.5_缺席者",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00008",
+              "source_id": "1.8_角色分类体系",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S2",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        }
+      ],
+      "project_scene_input": {
+        "purpose": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+        "location": "宗门档案廊",
+        "participants": [],
+        "character_goal": "查找旧区域和异常刻痕的对应记录",
+        "obstacle": "档案按宗门等级分层，低阶权限只能看到被删改后的稳定期记录",
+        "new_information": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+        "state_before": "沈砚只有现场异常，没有历史证据",
+        "state_after": "沈砚掌握异常与历史循环可能相关的线索",
+        "ending": "档案管理员发现缺页并关闭了对应卷宗",
+        "hook": "缺页边缘留下与检测石相同的刻痕"
+      },
+      "method_execution_plan": {
+        "selected_methods": [
+          {
+            "block": 159,
+            "item_id": "159.2_行动中思想描写",
+            "name": "行动中思想描写",
+            "source_ref": "原始资料/资料库.txt:46464",
+            "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+            "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+            "interpretation_terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "存在明确目标",
+              "存在阻碍",
+              "存在可观察信息变化",
+              "行动前先出现观察或线索",
+              "判断必须改变后续行动"
+            ],
+            "allowed_stages": [
+              "大纲",
+              "细纲",
+              "场景卡",
+              "正文",
+              "校验"
+            ],
+            "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+            "evidence_requirements": [
+              "scene_id",
+              "paragraph_index",
+              "prose_location",
+              "trigger",
+              "result"
+            ],
+            "misuse_risks": [
+              "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+            ]
+          }
+        ],
+        "selection": {
+          "mode": "scene_need_retrieval",
+          "query_fields": [
+            "purpose",
+            "location",
+            "character_goal",
+            "obstacle",
+            "new_information",
+            "state_before",
+            "state_after",
+            "ending",
+            "hook"
+          ],
+          "expanded_terms": [
+            "代价",
+            "伏笔",
+            "信息",
+            "冲突",
+            "变化",
+            "后果",
+            "场景",
+            "心理",
+            "悬念",
+            "情绪",
+            "状态",
+            "目标",
+            "空间",
+            "线索",
+            "细节",
+            "结构",
+            "结果",
+            "节奏",
+            "行动",
+            "观察",
+            "计划",
+            "选择",
+            "阻碍",
+            "限制"
+          ],
+          "matched": [
+            {
+              "item_id": "159.2_行动中思想描写",
+              "matched_tokens": [
+                "观察"
+              ],
+              "score": 1
+            }
+          ],
+          "candidate_count": 1
+        }
+      },
+      "method_execution_trace": [
+        {
+          "entry_id": "159.2_行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "method": "行动中思想描写",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "execution": "applied_to_scene_fields",
+          "evidence_fields": [
+            "character_goal",
+            "obstacle",
+            "new_information",
+            "state_before",
+            "state_after",
+            "ending",
+            "hook"
+          ]
+        }
+      ],
+      "writing_plan": {
+        "temperature": "中",
+        "sentence_length": "中句",
+        "narrative_distance": "中距离",
+        "project_type": "玄幻"
+      }
+    },
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S3",
+      "beat": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+      "paragraphs": [
+        "西廊尽头没有灯，禁线却把石壁照得惨白。沈砚按薄页上的库位数到乙七，墙上果然嵌着一枚生锈的门环。环下刻着八个字：擅入旧域，永失晋升。身后传来急促的脚步，陆昭一把扣住他的手腕。\"把纸给我。\"他喘得很厉害，药绳在袖口一晃，\"明天我去烧了它，今天就当我们没来过。\"沈砚没有挣开，只问：\"你看见检测石第七息了吗？\"陆昭的手指一紧，随即松开。",
+        "沈砚把掌心贴上门环，七道印泥早已模糊，只剩最后一笔斜斜黏在纹路里。他照着记忆轻叩，一下、两下，石墙没有反应。第六下落定时，巡夜铃从廊角响起来，铃声被长廊拉得又细又冷。第七下，他没有再用力，门环却自己往里缩了一寸。禁线没有把灵息挡在外面，反而像一张张开的口，吸走了他指尖散出的那一点热。陆昭脸色发白：\"它在吃东西。\"沈砚点头，目光越过墙缝，那里有一线青光正往更深处流。",
+        "陆昭拦到他身前，声音压得几乎是在咬字：\"我妹等不起你证明宗门错了。她明天就要领药，你也要拿牌。\"沈砚看着他腕上的药绳，想说自己明白，却发现这句话太轻。\"我不带你进去。\"他说，\"薄页也不毁。\"陆昭盯了他很久，笑了一下，笑意全是冷的：\"你每次都这样。先把路走断，再告诉别人你是一个人走的。\"他退开半步，让出禁线前的空处，也把两人之间最后那点默契留在了原地。",
+        "巡夜铃已经转过廊角。沈砚从衣襟里摸出内门木牌，牌背还刻着母亲遗物的兑取印。只要明日过审，他就能把那只被扣了六年的旧匣领回来。禁线在他面前轻轻起伏，像等着下一口灵息。他把木牌按上去。第一道裂声很轻，第二道却像骨头断开。木牌碎成两半，禁线随之暗了一瞬。陆昭骂了他一句，伸手去拉，已经迟了。沈砚掌心被碎屑割破，血落在石砖上。他失去了唯一能按规矩走回母亲身边的路。",
+        "禁线暗下去的那一瞬，石墙后响起第二声叩击。不是巡夜铃，也不是门环回弹，而是三短一长，停顿恰好落在第七息。沈砚的呼吸断了一拍。父亲活着时，曾在雨夜教他用这个节拍敲家门，说潮声太大，母亲听不见喊话。那人死在潮期后，这声音就再没人敲过。陆昭也听见了，脸上的怒意一点点退下去。\"里面是谁？\"他问。沈砚没有回答。他把沾血的半枚木牌攥紧，侧身穿过刚刚裂开的缝隙。旧域的冷气扑上来，像有人隔了很多年，终于替他把门打开。"
+      ],
+      "anchor_ids_used": [
+        "S2.24",
+        "S2.29"
+      ],
+      "chain_id_used": "C00005",
+      "source_records": [
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "S2.24",
+          "anchor_name": "空间状态_封锁",
+          "anchor_application": "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+          "chain_id": "C00005",
+          "source_anchor_id": "S2.24",
+          "source_anchor_name": "空间状态_封锁",
+          "source_chain_id": "C00005",
+          "source_beat": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+          "paragraph_index": 0,
+          "paragraph_type": "环境",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00005",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00005",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:1.1_主角->119.1_共鸣点",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:1.1_主角->119.1_共鸣点",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "S2.29",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；空间有回声必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "S2.29",
+                "score": 2,
+                "matched_tokens": [
+                  "空间状态_有声_回响",
+                  "空间有回声"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "environment",
+          "prose_location": "1-S3#paragraphs[0]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+            "action": "观察现场",
+            "result": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量"
+          },
+          "translation_evidence": {
+            "scene_fact": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "character_action": "在不惊动宗门管理者的情况下确认刻痕来源",
+            "trigger": "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+            "result": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+            "prose_location": "1-S3#paragraphs[0]"
+          },
+          "paragraph_sha256": "111ac54c85170f214e1d05b3ab7d63b59f0b6f1a3fefdad0a37c3ec662421f06",
+          "matrix_binding_ids": [
+            "TB-00003",
+            "TB-00006",
+            "TB-00009"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00003",
+              "source_id": "1.3_次要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00006",
+              "source_id": "1.6_反派_对立角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00009",
+              "source_id": "2.1_角色外貌",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "S2.29",
+          "anchor_name": "空间状态_有声_回响",
+          "anchor_application": "他敲了一下门环，回声从门后折回三次，最后一次来自更深的甬道",
+          "chain_id": "C00005",
+          "source_anchor_id": "S2.29",
+          "source_anchor_name": "空间状态_有声_回响",
+          "source_chain_id": "C00005",
+          "source_beat": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+          "paragraph_index": 1,
+          "paragraph_type": "动作",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00005",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00005",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:1.1_主角->119.1_共鸣点",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:1.1_主角->119.1_共鸣点",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "S2.29",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；空间有回声必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "S2.29",
+                "score": 2,
+                "matched_tokens": [
+                  "空间状态_有声_回响",
+                  "空间有回声"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "action",
+          "prose_location": "1-S3#paragraphs[1]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "他敲了一下门环，回声从门后折回三次，最后一次来自更深的甬道",
+            "action": "在不惊动宗门管理者的情况下确认刻痕来源",
+            "result": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量"
+          },
+          "translation_evidence": {
+            "scene_fact": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "character_action": "在不惊动宗门管理者的情况下确认刻痕来源",
+            "trigger": "他敲了一下门环，回声从门后折回三次，最后一次来自更深的甬道",
+            "result": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+            "prose_location": "1-S3#paragraphs[1]"
+          },
+          "paragraph_sha256": "1f9dabcf6b61d728b187a79f7c4d15edefc26fbd164a136f62fbd4afdc8b69be",
+          "matrix_binding_ids": [
+            "TB-00003",
+            "TB-00006",
+            "TB-00009"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00003",
+              "source_id": "1.3_次要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00006",
+              "source_id": "1.6_反派_对立角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00009",
+              "source_id": "2.1_角色外貌",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "S2.24",
+          "anchor_name": "空间状态_封锁",
+          "anchor_application": "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+          "chain_id": "C00005",
+          "source_anchor_id": "S2.24",
+          "source_anchor_name": "空间状态_封锁",
+          "source_chain_id": "C00005",
+          "source_beat": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+          "paragraph_index": 2,
+          "paragraph_type": "叙述",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00005",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00005",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:1.1_主角->119.1_共鸣点",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:1.1_主角->119.1_共鸣点",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "S2.29",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；空间有回声必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "S2.29",
+                "score": 2,
+                "matched_tokens": [
+                  "空间状态_有声_回响",
+                  "空间有回声"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "state_change",
+          "prose_location": "1-S3#paragraphs[2]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "action": "改变站位并采取行动",
+            "result": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面"
+          },
+          "translation_evidence": {
+            "scene_fact": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "character_action": "在不惊动宗门管理者的情况下确认刻痕来源",
+            "trigger": "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+            "result": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+            "prose_location": "1-S3#paragraphs[2]"
+          },
+          "paragraph_sha256": "da5719450a99368cf04ae4dec823ca1d983aa645a247b98621eeab666cbc538e",
+          "matrix_binding_ids": [
+            "TB-00003",
+            "TB-00006",
+            "TB-00009"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00003",
+              "source_id": "1.3_次要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00006",
+              "source_id": "1.6_反派_对立角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00009",
+              "source_id": "2.1_角色外貌",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "S2.29",
+          "anchor_name": "空间状态_有声_回响",
+          "anchor_application": "他敲了一下门环，回声从门后折回三次，最后一次来自更深的甬道",
+          "chain_id": "C00005",
+          "source_anchor_id": "S2.29",
+          "source_anchor_name": "空间状态_有声_回响",
+          "source_chain_id": "C00005",
+          "source_beat": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+          "paragraph_index": 3,
+          "paragraph_type": "对话",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00005",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00005",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:1.1_主角->119.1_共鸣点",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:1.1_主角->119.1_共鸣点",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "S2.29",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；空间有回声必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "S2.29",
+                "score": 2,
+                "matched_tokens": [
+                  "空间状态_有声_回响",
+                  "空间有回声"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "consequence",
+          "prose_location": "1-S3#paragraphs[3]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "action": "保留线索并决定下一步",
+            "result": "回响中出现只有沈砚能辨认的重复信号"
+          },
+          "translation_evidence": {
+            "scene_fact": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "character_action": "在不惊动宗门管理者的情况下确认刻痕来源",
+            "trigger": "他敲了一下门环，回声从门后折回三次，最后一次来自更深的甬道",
+            "result": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+            "prose_location": "1-S3#paragraphs[3]"
+          },
+          "paragraph_sha256": "37d06f529bd3c44008cdb68718f1b09a62aa00d4fa794dc951a0cab7ec579a2b",
+          "matrix_binding_ids": [
+            "TB-00003",
+            "TB-00006",
+            "TB-00009"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00003",
+              "source_id": "1.3_次要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00006",
+              "source_id": "1.6_反派_对立角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00009",
+              "source_id": "2.1_角色外貌",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        },
+        {
+          "source_id": "159.2_行动中思想描写",
+          "anchor_id": "S2.24",
+          "anchor_name": "空间状态_封锁",
+          "anchor_application": "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+          "chain_id": "C00005",
+          "source_anchor_id": "S2.24",
+          "source_anchor_name": "空间状态_封锁",
+          "source_chain_id": "C00005",
+          "source_beat": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+          "paragraph_index": 4,
+          "paragraph_type": "对话",
+          "design_bindings": {
+            "dynamic_chain": {
+              "source_kind": "dynamic_chain",
+              "source_id": "C00005",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；动态链明确连接 state_before→action→state_after。",
+              "selection_rationale": {
+                "id": "C00005",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "static_edge": {
+              "source_kind": "static_edge",
+              "source_id": "STATIC:1.1_主角->119.1_共鸣点",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；静态连接作为本场景的规则约束或关系后果。",
+              "selection_rationale": {
+                "id": "STATIC:1.1_主角->119.1_共鸣点",
+                "score": 2,
+                "matched_tokens": [
+                  "1.1_主角",
+                  "119.1_共鸣点"
+                ],
+                "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+              }
+            },
+            "anchor": {
+              "source_kind": "anchor",
+              "source_id": "S2.29",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；空间有回声必须改变正文中的观察、判断或选择。",
+              "selection_rationale": {
+                "id": "S2.29",
+                "score": 2,
+                "matched_tokens": [
+                  "空间状态_有声_回响",
+                  "空间有回声"
+                ],
+                "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+              }
+            }
+          },
+          "paragraph_role": "consequence",
+          "prose_location": "1-S3#paragraphs[4]",
+          "library_entry_id": "159.2_行动中思想描写",
+          "source_status": "draft_usable",
+          "draft_prose": true,
+          "translation_status": "narrativized",
+          "interpretation_trace": {
+            "terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "判断必须改变后续行动",
+              "存在可观察信息变化",
+              "存在明确目标",
+              "存在阻碍",
+              "行动前先出现观察或线索"
+            ],
+            "prerequisites_satisfied": true,
+            "trigger": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "action": "观察现场",
+            "result": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量"
+          },
+          "translation_evidence": {
+            "scene_fact": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "character_action": "在不惊动宗门管理者的情况下确认刻痕来源",
+            "trigger": "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+            "result": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+            "prose_location": "1-S3#paragraphs[4]"
+          },
+          "paragraph_sha256": "f70a544cad8a1470dab75498de9eee8d732d219266d525bfb3e588099cdf1905",
+          "matrix_binding_ids": [
+            "TB-00003",
+            "TB-00006",
+            "TB-00009"
+          ],
+          "matrix_bindings": [
+            {
+              "binding_id": "TB-00003",
+              "source_id": "1.3_次要配角",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00006",
+              "source_id": "1.6_反派_对立角色",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            },
+            {
+              "binding_id": "TB-00009",
+              "source_id": "2.1_角色外貌",
+              "source_kind": "资料库",
+              "chapter_id": "1",
+              "scene_id": "1-S3",
+              "activation_class": "candidate_retrieval",
+              "creative_job": "角色行为与弧光",
+              "creative_action": "让角色在目标、判断、动作和代价中体现该意义",
+              "status": "planned"
+            }
+          ],
+          "source_ref": {
+            "project_id": "trial-玄幻-沈砚",
+            "path": "原始资料/资料库.txt",
+            "location": "159.2_行动中思想描写",
+            "artifact_type": "library"
+          }
+        }
+      ],
+      "project_scene_input": {
+        "purpose": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+        "location": "通往封闭旧区域的外廊",
+        "participants": [],
+        "character_goal": "在不惊动宗门管理者的情况下确认刻痕来源",
+        "obstacle": "旧区域由宗门禁令封锁，进入会失去现有晋升资格",
+        "new_information": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+        "state_before": "沈砚仍可把异常当作偶发事件上报并回到原有秩序",
+        "state_after": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+        "ending": "封锁阵列短暂失效，旧区域内部传来第二次能量回响",
+        "hook": "回响中出现只有沈砚能辨认的重复信号"
+      },
+      "method_execution_plan": {
+        "selected_methods": [
+          {
+            "block": 159,
+            "item_id": "159.2_行动中思想描写",
+            "name": "行动中思想描写",
+            "source_ref": "原始资料/资料库.txt:46464",
+            "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+            "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+            "interpretation_terms": [
+              "判断",
+              "前因",
+              "行动中思想描写",
+              "行动结果",
+              "观察",
+              "调整"
+            ],
+            "prerequisites": [
+              "存在明确目标",
+              "存在阻碍",
+              "存在可观察信息变化",
+              "行动前先出现观察或线索",
+              "判断必须改变后续行动"
+            ],
+            "allowed_stages": [
+              "大纲",
+              "细纲",
+              "场景卡",
+              "正文",
+              "校验"
+            ],
+            "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+            "evidence_requirements": [
+              "scene_id",
+              "paragraph_index",
+              "prose_location",
+              "trigger",
+              "result"
+            ],
+            "misuse_risks": [
+              "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+            ]
+          }
+        ],
+        "selection": {
+          "mode": "scene_need_retrieval",
+          "query_fields": [
+            "purpose",
+            "location",
+            "character_goal",
+            "obstacle",
+            "new_information",
+            "state_before",
+            "state_after",
+            "ending",
+            "hook"
+          ],
+          "expanded_terms": [
+            "代价",
+            "伏笔",
+            "信息",
+            "冲突",
+            "变化",
+            "后果",
+            "场景",
+            "心理",
+            "悬念",
+            "情绪",
+            "状态",
+            "目标",
+            "空间",
+            "线索",
+            "细节",
+            "结构",
+            "结果",
+            "节奏",
+            "行动",
+            "观察",
+            "计划",
+            "选择",
+            "阻碍",
+            "限制"
+          ],
+          "matched": [
+            {
+              "item_id": "159.2_行动中思想描写",
+              "matched_tokens": [
+                "观察"
+              ],
+              "score": 1
+            }
+          ],
+          "candidate_count": 1
+        }
+      },
+      "method_execution_trace": [
+        {
+          "entry_id": "159.2_行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "method": "行动中思想描写",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "execution": "applied_to_scene_fields",
+          "evidence_fields": [
+            "character_goal",
+            "obstacle",
+            "new_information",
+            "state_before",
+            "state_after",
+            "ending",
+            "hook"
+          ]
+        }
+      ],
+      "writing_plan": {
+        "temperature": "高",
+        "sentence_length": "短句",
+        "narrative_distance": "近距离",
+        "project_type": "玄幻"
+      }
+    }
+  ],
+  "total_scenes": 3,
+  "total_paragraphs": 15,
+  "self_check": {
+    "passed": true,
+    "status": "passed",
+    "details": [
+      "项目场景已逐一生成正文并写入隔离章节文件"
+    ]
+  },
+  "status": "success",
+  "project_type": "玄幻",
+  "protagonist_name": "沈砚",
+  "book_title": "暗流玄境",
+  "project_chapter_plan": [
+    {
+      "chapter_id": "1",
+      "chapter_goal": "在宗门日常秩序中确认一次无法被既有规则解释的能量异常，并取得第一条可追踪线索。",
+      "scenes": [
+        {
+          "scene_id": "1-S1",
+          "purpose": "建立表面稳定与异常之间的反差",
+          "location": "宗门能量检测场",
+          "character_goal": "完成检测并判断异常是否来自自身修炼",
+          "obstacle": "检测规则只允许记录合格结果，异常读数会被负责者直接归为误差",
+          "new_information": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+          "state_before": "沈砚相信异常可能只是自身修炼不足造成的误差",
+          "state_after": "沈砚确认异常具有重复性和明确方向",
+          "ending": "检测石上的异常刻痕在众人离场后重新亮起",
+          "hook": "刻痕显示出与旧宗门记录相同的循环间隔"
+        },
+        {
+          "scene_id": "1-S2",
+          "purpose": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+          "location": "宗门档案廊",
+          "character_goal": "查找旧区域和异常刻痕的对应记录",
+          "obstacle": "档案按宗门等级分层，低阶权限只能看到被删改后的稳定期记录",
+          "new_information": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+          "state_before": "沈砚只有现场异常，没有历史证据",
+          "state_after": "沈砚掌握异常与历史循环可能相关的线索",
+          "ending": "档案管理员发现缺页并关闭了对应卷宗",
+          "hook": "缺页边缘留下与检测石相同的刻痕"
+        },
+        {
+          "scene_id": "1-S3",
+          "purpose": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+          "location": "通往封闭旧区域的外廊",
+          "character_goal": "在不惊动宗门管理者的情况下确认刻痕来源",
+          "obstacle": "旧区域由宗门禁令封锁，进入会失去现有晋升资格",
+          "new_information": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+          "state_before": "沈砚仍可把异常当作偶发事件上报并回到原有秩序",
+          "state_after": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+          "ending": "封锁阵列短暂失效，旧区域内部传来第二次能量回响",
+          "hook": "回响中出现只有沈砚能辨认的重复信号"
+        }
+      ],
+      "target_words": 2000
+    }
+  ],
+  "writing_methods": {
+    "88": [
+      {
+        "block": 88,
+        "item_id": "88",
+        "name": "写手模式",
+        "source_ref": "原始资料/资料库.txt:22657",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "写手模式"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 88,
+        "item_id": "88.1_输入",
+        "name": "输入",
+        "source_ref": "原始资料/资料库.txt:22659",
+        "definition": "规划师模式输出的4个场景节拍卡。",
+        "instruction": "规划师模式输出的4个场景节拍卡。",
+        "evidence": "",
+        "interpretation_terms": [
+          "输入"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 88,
+        "item_id": "88.2_输出",
+        "name": "输出",
+        "source_ref": "原始资料/资料库.txt:22669",
+        "definition": "4个场景正文。",
+        "instruction": "4个场景正文。",
+        "evidence": "",
+        "interpretation_terms": [
+          "输出"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 88,
+        "item_id": "88.3_自查",
+        "name": "自查",
+        "source_ref": "原始资料/资料库.txt:22679",
+        "definition": "写作完成后立即自查。",
+        "instruction": "",
+        "evidence": "- 自查相关禁用表达",
+        "interpretation_terms": [
+          "自查"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 88,
+        "item_id": "88.4_重写",
+        "name": "重写",
+        "source_ref": "原始资料/资料库.txt:22690",
+        "definition": "自查不通过时的重写。",
+        "instruction": "自查不通过时的重写。",
+        "evidence": "",
+        "interpretation_terms": [
+          "重写"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "156": [],
+    "158": [],
+    "159": [],
+    "49": [
+      {
+        "block": 49,
+        "item_id": "49",
+        "name": "句子控制",
+        "source_ref": "原始资料/资料库.txt:18090",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "句子控制"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 49,
+        "item_id": "49.1_句子长度控制",
+        "name": "句子长度控制",
+        "source_ref": "原始资料/资料库.txt:18092",
+        "definition": "短句、中句、长句交替使用。",
+        "instruction": "在写作阶段按句子长度控制规则逐条执行",
+        "evidence": "\\- 同一段落内，短中长句交替出现\n\\- 连续3个同样长度的句子会让读者感到单调\n\\- 关键语句（情感",
+        "interpretation_terms": [
+          "句子长度控制"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 49,
+        "item_id": "49.2_短句使用时机",
+        "name": "短句使用时机",
+        "source_ref": "原始资料/资料库.txt:18117",
+        "definition": "特定场景优先使用短句。",
+        "instruction": "在写作阶段按短句使用时机规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "短句使用时机"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 49,
+        "item_id": "49.3_句长比例",
+        "name": "句长比例",
+        "source_ref": "原始资料/资料库.txt:18136",
+        "definition": "全篇句子长度的比例。",
+        "instruction": "在写作阶段按句长比例规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "句长比例"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "50": [
+      {
+        "block": 50,
+        "item_id": "50",
+        "name": "词汇控制",
+        "source_ref": "原始资料/资料库.txt:18155",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "词汇控制"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 50,
+        "item_id": "50.1_精确动词",
+        "name": "精确动词",
+        "source_ref": "原始资料/资料库.txt:18157",
+        "definition": "每100字至少1个精确动词。",
+        "instruction": "在写作阶段按精确动词规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "精确动词"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 50,
+        "item_id": "50.2_通用动词限制使用",
+        "name": "通用动词限制使用",
+        "source_ref": "原始资料/资料库.txt:18176",
+        "definition": "限制使用走/看/说/拿/放/做/有/是等通用动词。",
+        "instruction": "在写作阶段按通用动词限制使用规则逐条执行",
+        "evidence": "\\- 每段对话中，“说”最多使用1次（其余用精确动词替代或省略）\n\\- 描述动作时，优先使用精确动词而非",
+        "interpretation_terms": [
+          "通用动词限制使用"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 50,
+        "item_id": "50.3_精确动词鼓励使用",
+        "name": "精确动词鼓励使用",
+        "source_ref": "原始资料/资料库.txt:18199",
+        "definition": "优先使用的精确动词列表。",
+        "instruction": "在写作阶段按精确动词鼓励使用规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "精确动词鼓励使用"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "51": [
+      {
+        "block": 51,
+        "item_id": "51",
+        "name": "禁止词汇",
+        "source_ref": "原始资料/资料库.txt:18218",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "禁止词汇"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 51,
+        "item_id": "51.1_无因词汇",
+        "name": "无因词汇",
+        "source_ref": "原始资料/资料库.txt:18220",
+        "definition": "禁止使用无明确起因的突发性词汇。",
+        "instruction": "",
+        "evidence": "- 无因词汇相关禁用表达",
+        "interpretation_terms": [
+          "无因词汇"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 51,
+        "item_id": "51.2_巧合词汇",
+        "name": "巧合词汇",
+        "source_ref": "原始资料/资料库.txt:18231",
+        "definition": "禁止使用解释事件巧合发生的词汇。",
+        "instruction": "",
+        "evidence": "- 巧合词汇相关禁用表达",
+        "interpretation_terms": [
+          "巧合词汇"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 51,
+        "item_id": "51.3_偶然词汇",
+        "name": "偶然词汇",
+        "source_ref": "原始资料/资料库.txt:18242",
+        "definition": "禁止使用解释事件偶然发生的词汇。",
+        "instruction": "",
+        "evidence": "- 偶然词汇相关禁用表达",
+        "interpretation_terms": [
+          "偶然词汇"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 51,
+        "item_id": "51.4_模糊词汇",
+        "name": "模糊词汇",
+        "source_ref": "原始资料/资料库.txt:18253",
+        "definition": "禁止使用原因不明的模糊表达。",
+        "instruction": "",
+        "evidence": "- 模糊词汇相关禁用表达",
+        "interpretation_terms": [
+          "模糊词汇"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 51,
+        "item_id": "51.5_时间断层",
+        "name": "时间断层",
+        "source_ref": "原始资料/资料库.txt:18264",
+        "definition": "禁止使用中断时间感的定位词汇。",
+        "instruction": "",
+        "evidence": "- 时间断层相关禁用表达",
+        "interpretation_terms": [
+          "时间断层"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 51,
+        "item_id": "51.6_主观评价",
+        "name": "主观评价",
+        "source_ref": "原始资料/资料库.txt:18275",
+        "definition": "禁止使用作者主观评价角色的词汇。",
+        "instruction": "",
+        "evidence": "- 主观评价相关禁用表达",
+        "interpretation_terms": [
+          "主观评价"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 51,
+        "item_id": "51.7_总结句",
+        "name": "总结句",
+        "source_ref": "原始资料/资料库.txt:18286",
+        "definition": "禁止使用总结性、解释性的句子。",
+        "instruction": "",
+        "evidence": "- 总结句相关禁用表达",
+        "interpretation_terms": [
+          "总结句"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 51,
+        "item_id": "51.8_禁止词汇检查规则",
+        "name": "禁止词汇检查规则",
+        "source_ref": "原始资料/资料库.txt:18297",
+        "definition": "每章完成后检查禁止词汇是否出现。",
+        "instruction": "",
+        "evidence": "- 禁止词汇检查规则相关禁用表达",
+        "interpretation_terms": [
+          "禁止词汇检查规则"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "52": [
+      {
+        "block": 52,
+        "item_id": "52",
+        "name": "感官描写",
+        "source_ref": "原始资料/资料库.txt:18308",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "感官描写"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 52,
+        "item_id": "52.1_视觉描写",
+        "name": "视觉描写",
+        "source_ref": "原始资料/资料库.txt:18310",
+        "definition": "读者“看到”场景的方式。",
+        "instruction": "在写作阶段按视觉描写规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "视觉描写"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 52,
+        "item_id": "52.2_听觉描写",
+        "name": "听觉描写",
+        "source_ref": "原始资料/资料库.txt:18329",
+        "definition": "读者“听到”场景的方式。",
+        "instruction": "在写作阶段按听觉描写规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "听觉描写"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 52,
+        "item_id": "52.3_触觉描写",
+        "name": "触觉描写",
+        "source_ref": "原始资料/资料库.txt:18348",
+        "definition": "读者“感受到”场景的方式。",
+        "instruction": "在写作阶段按触觉描写规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "触觉描写"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 52,
+        "item_id": "52.4_嗅觉描写",
+        "name": "嗅觉描写",
+        "source_ref": "原始资料/资料库.txt:18367",
+        "definition": "读者“闻到”场景的方式。",
+        "instruction": "在写作阶段按嗅觉描写规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "嗅觉描写"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 52,
+        "item_id": "52.5_味觉描写",
+        "name": "味觉描写",
+        "source_ref": "原始资料/资料库.txt:18386",
+        "definition": "读者“尝到”场景的方式。",
+        "instruction": "在写作阶段按味觉描写规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "味觉描写"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 52,
+        "item_id": "52.6_五感规则",
+        "name": "五感规则",
+        "source_ref": "原始资料/资料库.txt:18405",
+        "definition": "每章至少使用3种感官描写。",
+        "instruction": "在写作阶段按五感规则规则逐条执行",
+        "evidence": "\\- 每章至少包含视觉+听觉+触觉（三种基础感官）\n\\- 嗅觉和味觉是加分项，每2-3章至少出现1次",
+        "interpretation_terms": [
+          "五感规则"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "53": [
+      {
+        "block": 53,
+        "item_id": "53",
+        "name": "叙述距离",
+        "source_ref": "原始资料/资料库.txt:18430",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "叙述距离"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 53,
+        "item_id": "53.1_近距离叙述",
+        "name": "近距离叙述",
+        "source_ref": "原始资料/资料库.txt:18432",
+        "definition": "紧贴角色，短句、感官词多、节奏快。",
+        "instruction": "在写作阶段按近距离叙述规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "近距离叙述"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 53,
+        "item_id": "53.2_中距离叙述",
+        "name": "中距离叙述",
+        "source_ref": "原始资料/资料库.txt:18451",
+        "definition": "有观察和判断，对角色和场景有距离感的描述。",
+        "instruction": "在写作阶段按中距离叙述规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "中距离叙述"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 53,
+        "item_id": "53.3_远距离叙述",
+        "name": "远距离叙述",
+        "source_ref": "原始资料/资料库.txt:18470",
+        "definition": "疏离的、长句的、有环境全景和时间流逝感的叙述。",
+        "instruction": "在写作阶段按远距离叙述规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "远距离叙述"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 53,
+        "item_id": "53.4_距离变化规则",
+        "name": "距离变化规则",
+        "source_ref": "原始资料/资料库.txt:18489",
+        "definition": "每章至少使用2种叙述距离。",
+        "instruction": "在写作阶段按距离变化规则规则逐条执行",
+        "evidence": "\\- 每种距离最少连续使用1个段落\n\\- 距离变化是节奏变化的信号（远→近=加速，近→远=减速）\n\\-",
+        "interpretation_terms": [
+          "距离变化规则"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "54": [
+      {
+        "block": 54,
+        "item_id": "54",
+        "name": "语言质感轮换",
+        "source_ref": "原始资料/资料库.txt:18514",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "语言质感轮换"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 54,
+        "item_id": "54.1_快节奏场景语言",
+        "name": "快节奏场景语言",
+        "source_ref": "原始资料/资料库.txt:18516",
+        "definition": "短句、动词密集、少描写。",
+        "instruction": "在写作阶段按快节奏场景语言规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "快节奏场景语言"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 54,
+        "item_id": "54.2_中节奏场景语言",
+        "name": "中节奏场景语言",
+        "source_ref": "原始资料/资料库.txt:18535",
+        "definition": "中等句长、有观察、叙述和描写均衡。",
+        "instruction": "在写作阶段按中节奏场景语言规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "中节奏场景语言"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 54,
+        "item_id": "54.3_慢节奏场景语言",
+        "name": "慢节奏场景语言",
+        "source_ref": "原始资料/资料库.txt:18554",
+        "definition": "长句、多描写、有停顿。",
+        "instruction": "在写作阶段按慢节奏场景语言规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "慢节奏场景语言"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "55": [
+      {
+        "block": 55,
+        "item_id": "55",
+        "name": "语言风格",
+        "source_ref": "原始资料/资料库.txt:18573",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "语言风格"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 55,
+        "item_id": "55.1_语言陌生化技巧",
+        "name": "语言陌生化技巧",
+        "source_ref": "原始资料/资料库.txt:18575",
+        "definition": "用不寻常的方式描述寻常事物。",
+        "instruction": "在写作阶段按语言陌生化技巧规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "语言陌生化技巧"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 55,
+        "item_id": "55.2_音律与节奏控制",
+        "name": "音律与节奏控制",
+        "source_ref": "原始资料/资料库.txt:18594",
+        "definition": "语言的音乐感。",
+        "instruction": "在写作阶段按音律与节奏控制规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "音律与节奏控制"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 55,
+        "item_id": "55.3_语言风格锚点",
+        "name": "语言风格锚点",
+        "source_ref": "原始资料/资料库.txt:18613",
+        "definition": "全篇保持统一的语言风格。",
+        "instruction": "在写作阶段按语言风格锚点规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "语言风格锚点"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 55,
+        "item_id": "55.4_永恒感语言设计",
+        "name": "永恒感语言设计",
+        "source_ref": "原始资料/资料库.txt:18632",
+        "definition": "让读者感到“这句话在合上书后还会被记住”。",
+        "instruction": "在写作阶段按永恒感语言设计规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "永恒感语言设计"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "56": [
+      {
+        "block": 56,
+        "item_id": "56",
+        "name": "对话目的",
+        "source_ref": "原始资料/资料库.txt:18651",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "对话目的"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.1_试探",
+        "name": "试探",
+        "source_ref": "原始资料/资料库.txt:18653",
+        "definition": "测试对方的立场、底线或信息掌握程度。",
+        "instruction": "在写作阶段按试探规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "试探"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.2_隐瞒",
+        "name": "隐瞒",
+        "source_ref": "原始资料/资料库.txt:18672",
+        "definition": "不释放真实信息。",
+        "instruction": "在写作阶段按隐瞒规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "隐瞒"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.3_施压",
+        "name": "施压",
+        "source_ref": "原始资料/资料库.txt:18691",
+        "definition": "迫使对方让步或做出选择。",
+        "instruction": "在写作阶段按施压规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "施压"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.4_示弱",
+        "name": "示弱",
+        "source_ref": "原始资料/资料库.txt:18710",
+        "definition": "降低姿态以获取信息或让步。",
+        "instruction": "在写作阶段按示弱规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "示弱"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.5_转移",
+        "name": "转移",
+        "source_ref": "原始资料/资料库.txt:18729",
+        "definition": "将对话从不利方向引开。",
+        "instruction": "在写作阶段按转移规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "转移"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.6_挑衅",
+        "name": "挑衅",
+        "source_ref": "原始资料/资料库.txt:18748",
+        "definition": "激怒对方以获取反应信息或制造冲突。",
+        "instruction": "在写作阶段按挑衅规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "挑衅"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.7_拉拢",
+        "name": "拉拢",
+        "source_ref": "原始资料/资料库.txt:18767",
+        "definition": "建立关系或获取信任。",
+        "instruction": "在写作阶段按拉拢规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "拉拢"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.8_威胁",
+        "name": "威胁",
+        "source_ref": "原始资料/资料库.txt:18786",
+        "definition": "以伤害可能性迫使对方服从。",
+        "instruction": "在写作阶段按威胁规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "威胁"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 56,
+        "item_id": "56.9_对话目的规则",
+        "name": "对话目的规则",
+        "source_ref": "原始资料/资料库.txt:18805",
+        "definition": "每段对话必须有至少1个明确目的。",
+        "instruction": "在写作阶段按对话目的规则规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "对话目的规则"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "57": [
+      {
+        "block": 57,
+        "item_id": "57",
+        "name": "对话技术",
+        "source_ref": "原始资料/资料库.txt:18824",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "对话技术"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 57,
+        "item_id": "57.1_潜台词设计",
+        "name": "潜台词设计",
+        "source_ref": "原始资料/资料库.txt:18826",
+        "definition": "每句对话至少有1层未说出口的含义。",
+        "instruction": "在写作阶段按潜台词设计规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "潜台词设计"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 57,
+        "item_id": "57.2_非直接回答",
+        "name": "非直接回答",
+        "source_ref": "原始资料/资料库.txt:18845",
+        "definition": "每场对话至少1次非直接回答。",
+        "instruction": "在写作阶段按非直接回答规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "非直接回答"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 57,
+        "item_id": "57.3_非台词元素",
+        "name": "非台词元素",
+        "source_ref": "原始资料/资料库.txt:18864",
+        "definition": "每段对话至少1个非台词元素。",
+        "instruction": "在写作阶段按非台词元素规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "非台词元素"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 57,
+        "item_id": "57.4_对话速度控制",
+        "name": "对话速度控制",
+        "source_ref": "原始资料/资料库.txt:18883",
+        "definition": "对话的快慢节奏。",
+        "instruction": "在写作阶段按对话速度控制规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "对话速度控制"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 57,
+        "item_id": "57.5_说话风格一致性",
+        "name": "说话风格一致性",
+        "source_ref": "原始资料/资料库.txt:18902",
+        "definition": "每个角色的说话风格在全篇保持统一。",
+        "instruction": "在写作阶段按说话风格一致性规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "说话风格一致性"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 57,
+        "item_id": "57.6_对话停顿标记",
+        "name": "对话停顿标记",
+        "source_ref": "原始资料/资料库.txt:18921",
+        "definition": "停顿的标点符号使用。",
+        "instruction": "在写作阶段按对话停顿标记规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "对话停顿标记"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 57,
+        "item_id": "57.7_对话关系信息",
+        "name": "对话关系信息",
+        "source_ref": "原始资料/资料库.txt:18940",
+        "definition": "对话展示的权力关系和距离关系。",
+        "instruction": "在写作阶段按对话关系信息规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "对话关系信息"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 57,
+        "item_id": "57.8_未说之言设计",
+        "name": "未说之言设计",
+        "source_ref": "原始资料/资料库.txt:18959",
+        "definition": "对话中未被说出但读者能感受到的内容。",
+        "instruction": "在写作阶段按未说之言设计规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "未说之言设计"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "58": [
+      {
+        "block": 58,
+        "item_id": "58",
+        "name": "视角类型",
+        "source_ref": "原始资料/资料库.txt:18978",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "视角类型"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 58,
+        "item_id": "58.1_第一人称",
+        "name": "第一人称",
+        "source_ref": "原始资料/资料库.txt:18980",
+        "definition": "叙述者=主角，“我”讲述。",
+        "instruction": "在写作阶段按第一人称规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "第一人称"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 58,
+        "item_id": "58.2_第二人称",
+        "name": "第二人称",
+        "source_ref": "原始资料/资料库.txt:18999",
+        "definition": "叙述者直接称呼读者为“你”。",
+        "instruction": "在写作阶段按第二人称规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "第二人称"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 58,
+        "item_id": "58.3_第三人称有限",
+        "name": "第三人称有限",
+        "source_ref": "原始资料/资料库.txt:19018",
+        "definition": "叙述者跟随一个角色，用“他/她”。",
+        "instruction": "在写作阶段按第三人称有限规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "第三人称有限"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 58,
+        "item_id": "58.4_全知视角",
+        "name": "全知视角",
+        "source_ref": "原始资料/资料库.txt:19037",
+        "definition": "叙述者知道一切。",
+        "instruction": "在写作阶段按全知视角规则逐条执行",
+        "evidence": "\\- 但选择性向读者释放信息\n\\- “叙述者知道但我不知道”是主要的悬念来源\n\\*\\*优势\\*\\*：信",
+        "interpretation_terms": [
+          "全知视角"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 58,
+        "item_id": "58.5_受限视角",
+        "name": "受限视角",
+        "source_ref": "原始资料/资料库.txt:19064",
+        "definition": "读者被限制在特定角色的认知边界内。",
+        "instruction": "在写作阶段按受限视角规则逐条执行",
+        "evidence": "视角使用的约束",
+        "interpretation_terms": [
+          "受限视角"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "59": [
+      {
+        "block": 59,
+        "item_id": "59",
+        "name": "视角规则",
+        "source_ref": "原始资料/资料库.txt:19087",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "视角规则"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.1_主角POV功能",
+        "name": "主角POV功能",
+        "source_ref": "原始资料/资料库.txt:19089",
+        "definition": "主角视角承担主要叙事功能。",
+        "instruction": "在写作阶段按主角POV功能规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "主角POV功能"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.2_配角POV功能",
+        "name": "配角POV功能",
+        "source_ref": "原始资料/资料库.txt:19108",
+        "definition": "配角视角在特定功能下使用。",
+        "instruction": "在写作阶段按配角POV功能规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "配角POV功能"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.3_配角POV前500字限制",
+        "name": "配角POV前500字限制",
+        "source_ref": "原始资料/资料库.txt:19127",
+        "definition": "配角POV场景前500字不得出现主角的感官描写。",
+        "instruction": "在写作阶段按配角POV前500字限制规则逐条执行",
+        "evidence": "\\- 前500字中，不能使用“韩立”“他（主角）”作为感知主体\n\\- 前500字中，不能出现主角的视觉、",
+        "interpretation_terms": [
+          "配角POV前500字限制"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.4_配角POV强制性内容",
+        "name": "配角POV强制性内容",
+        "source_ref": "原始资料/资料库.txt:19150",
+        "definition": "配角POV中配角必须做出主角不会做的行动。",
+        "instruction": "在写作阶段按配角POV强制性内容规则逐条执行",
+        "evidence": "\\- 配角POV存在的意义是让读者看到“主角之外的人在做什么”\n\\- 如果配角POV中配角只是在做主角也",
+        "interpretation_terms": [
+          "配角POV强制性内容"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.5_视角切换条件",
+        "name": "视角切换条件",
+        "source_ref": "原始资料/资料库.txt:19173",
+        "definition": "什么情况下可以切换视角。",
+        "instruction": "在写作阶段按视角切换条件规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "视角切换条件"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.6_视角切换标记",
+        "name": "视角切换标记",
+        "source_ref": "原始资料/资料库.txt:19192",
+        "definition": "视角切换时必须有可识别的标记。",
+        "instruction": "在写作阶段按视角切换标记规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "视角切换标记"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.7_场景内视角一致",
+        "name": "场景内视角一致",
+        "source_ref": "原始资料/资料库.txt:19211",
+        "definition": "场景内视角不切换。",
+        "instruction": "在写作阶段按场景内视角一致规则逐条执行",
+        "evidence": "\\- 一个场景（一个持续的时间-空间单元）内，视角保持一致\n\\- 不允许在场景中途切换POV\n\\- 切",
+        "interpretation_terms": [
+          "场景内视角一致"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.8_视角与不可见信息",
+        "name": "视角与不可见信息",
+        "source_ref": "原始资料/资料库.txt:19236",
+        "definition": "读者与主角的信息差。",
+        "instruction": "在写作阶段按视角与不可见信息规则逐条执行",
+        "evidence": "\\- 第三人称有限：读者=主角 或 读者>主角（主要依赖戏剧反讽）\n\\- 第一人称：读者=主角 或 读者",
+        "interpretation_terms": [
+          "视角与不可见信息"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 59,
+        "item_id": "59.9_信息差设计",
+        "name": "信息差设计",
+        "source_ref": "原始资料/资料库.txt:19259",
+        "definition": "视角选择如何制造信息差。",
+        "instruction": "在写作阶段按信息差设计规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "信息差设计"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "60": [
+      {
+        "block": 60,
+        "item_id": "60",
+        "name": "镜头类型",
+        "source_ref": "原始资料/资料库.txt:19278",
+        "definition": "",
+        "instruction": "",
+        "evidence": "",
+        "interpretation_terms": [
+          "镜头类型"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.1_远景镜头",
+        "name": "远景镜头",
+        "source_ref": "原始资料/资料库.txt:19280",
+        "definition": "建立环境，展示空间全貌。",
+        "instruction": "在写作阶段按远景镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "远景镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.2_中景镜头",
+        "name": "中景镜头",
+        "source_ref": "原始资料/资料库.txt:19299",
+        "definition": "人物与环境互动，展示关系。",
+        "instruction": "在写作阶段按中景镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "中景镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.3_近景镜头",
+        "name": "近景镜头",
+        "source_ref": "原始资料/资料库.txt:19318",
+        "definition": "动作和表情的聚焦。",
+        "instruction": "在写作阶段按近景镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "近景镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.4_特写镜头",
+        "name": "特写镜头",
+        "source_ref": "原始资料/资料库.txt:19337",
+        "definition": "关键细节的极端放大。",
+        "instruction": "在写作阶段按特写镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "特写镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.5_主观镜头",
+        "name": "主观镜头",
+        "source_ref": "原始资料/资料库.txt:19356",
+        "definition": "角色的视角——他看到了什么。",
+        "instruction": "在写作阶段按主观镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "主观镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.6_过肩镜头",
+        "name": "过肩镜头",
+        "source_ref": "原始资料/资料库.txt:19375",
+        "definition": "一个角色观看另一个角色的视角。",
+        "instruction": "在写作阶段按过肩镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "过肩镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.7_推镜头",
+        "name": "推镜头",
+        "source_ref": "原始资料/资料库.txt:19394",
+        "definition": "从远到近，逐步聚焦。",
+        "instruction": "在写作阶段按推镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "推镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.8_拉镜头",
+        "name": "拉镜头",
+        "source_ref": "原始资料/资料库.txt:19413",
+        "definition": "从近到远，逐步拉开。",
+        "instruction": "在写作阶段按拉镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "拉镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.9_摇镜头",
+        "name": "摇镜头",
+        "source_ref": "原始资料/资料库.txt:19432",
+        "definition": "扫视环境。",
+        "instruction": "在写作阶段按摇镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "摇镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.10_移镜头",
+        "name": "移镜头",
+        "source_ref": "原始资料/资料库.txt:19451",
+        "definition": "跟随角色移动。",
+        "instruction": "在写作阶段按移镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "移镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.11_升镜头",
+        "name": "升镜头",
+        "source_ref": "原始资料/资料库.txt:19470",
+        "definition": "向上移动。",
+        "instruction": "在写作阶段按升镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "升镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.12_降镜头",
+        "name": "降镜头",
+        "source_ref": "原始资料/资料库.txt:19489",
+        "definition": "向下移动。",
+        "instruction": "在写作阶段按降镜头规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "降镜头"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.13_快速切换",
+        "name": "快速切换",
+        "source_ref": "原始资料/资料库.txt:19508",
+        "definition": "短镜头的快速切换。",
+        "instruction": "在写作阶段按快速切换规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "快速切换"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.14_缓慢切换",
+        "name": "缓慢切换",
+        "source_ref": "原始资料/资料库.txt:19527",
+        "definition": "长镜头的缓慢交替。",
+        "instruction": "在写作阶段按缓慢切换规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "缓慢切换"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "block": 60,
+        "item_id": "60.15_定格",
+        "name": "定格",
+        "source_ref": "原始资料/资料库.txt:19546",
+        "definition": "强调关键瞬间。",
+        "instruction": "在写作阶段按定格规则逐条执行",
+        "evidence": "",
+        "interpretation_terms": [
+          "定格"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ]
+  },
+  "writing_method_count": 94,
+  "anchor_total": 1680,
+  "anchor_category_counts": {
+    "M": 180,
+    "S": 110,
+    "P": 200,
+    "B": 160,
+    "E": 240,
+    "A": 200,
+    "L": 100
+  },
+  "source_files": [
+    "原始资料\\资料库.txt",
+    "原始资料\\锚点网络.txt",
+    "配置\\project_config.json"
+  ],
+  "prose_files": [
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\正文\\运行\\run-20260812T180859Z-966dab14\\章节_1.md",
+      "relative_path": "正文\\运行\\run-20260812T180859Z-966dab14\\章节_1.md",
+      "chapter_id": "1",
+      "scene_count": 3,
+      "word_count": 2634,
+      "sha256": "66f4a60a6c9cf92a9ca01860bc3631aeaee1ff5e9d4c0d3525a631ca34fd92c7",
+      "version": "run-20260812T180859Z-966dab14"
+    }
+  ],
+  "material_use_record": "文档/证据/运行资料使用记录/run-20260812T180859Z-966dab14.json",
+  "draft_status": "draft_passed",
+  "delivery_audit": {
+    "status": "pending",
+    "provenance_errors": []
+  },
+  "chapter_id": "1"
+}

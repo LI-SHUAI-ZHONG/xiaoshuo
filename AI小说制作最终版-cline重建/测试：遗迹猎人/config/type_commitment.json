@@ -1,0 +1,25 @@
+{
+  "schema_version": "type-commitment-1.0",
+  "project_id": "TEST-RELIC-HUNTER",
+  "project_name": "测试：遗迹猎人",
+  "genre": "悬疑_灵异",
+  "type_commitment": {
+    "primary_type": "悬疑",
+    "secondary_type": "灵异",
+    "commitment": "以遗迹调查和证据揭示作为主线驱动，灵异现象必须服务于谜团推进，不替代因果解释。",
+    "hard_constraints": [
+      "每章至少推进一条可验证线索。",
+      "超自然现象必须留下可回溯的物证或行为后果。",
+      "主角的专业判断影响调查路径，不以偶然信息直接解决核心谜团。"
+    ]
+  },
+  "design_task_ids": [
+    "TASK-CHARACTER-001",
+    "TASK-MAINLINE-001"
+  ],
+  "evidence_files": [
+    "docs/evidence/library_adoption.jsonl",
+    "docs/evidence/chain_consumption.jsonl"
+  ],
+  "output": "docs/evidence/design_decisions.jsonl"
+}

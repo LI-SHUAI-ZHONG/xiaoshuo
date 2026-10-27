@@ -1,0 +1,95 @@
+{
+  "schema_version": "project-creative-production-policy-1.2",
+  "policy_id": "high_quality_classified_material_upgrade",
+  "purpose": "固化高质量作品的资料分类升级、正文候选生产、审校和发布边界，避免把授权误当成正文消费。",
+  "workflow": [
+    "source_authorization",
+    "classified_material_upgrade",
+    "creative_activation_with_stage_evidence",
+    "model_assisted_source_improvement_and_candidate_prose_generation",
+    "automatic_semantic_source_validation",
+    "automatic_literary_validation",
+    "formal_release_gate"
+  ],
+  "source_kinds": {
+    "资料库": "角色、故事结构与写作执行",
+    "动态网络": "事件顺序、触发条件与因果结果",
+    "静态网络": "角色、势力、地点和事件关系约束",
+    "锚点网络": "感官、空间、身体和动作等可观察细节",
+    "类型系统": "类型名称索引，仅作未选择类型参考，不得绑定为项目小说类型",
+    "类型系统来源块": "可绑定的类型规则来源资料，不确认项目小说类型",
+    "类型连接": "类型组合兼容机制与冲突处理，仅在组合确认后激活"
+  },
+  "required_binding_fields": [
+    "source_kind",
+    "semantic_interpretation",
+    "creation_binding.creative_strategy",
+    "creation_binding.activation_policy",
+    "evidence_contract"
+  ],
+  "required_strategy_fields": [
+    "source_specific_trigger",
+    "observable_action",
+    "observable_result",
+    "cost_or_change",
+    "semantic_anchor",
+    "evidence_location",
+    "quality_rule"
+  ],
+  "hard_boundaries": {
+    "authorization_is_not_consumption": true,
+    "classification_required_before_activation": true,
+    "matched_creative_need_and_stage_evidence_required": true,
+    "model_required_for_quality_candidate": true,
+    "deterministic_template_is_nonrelease_test_only": true,
+    "automatic_draft_requires_semantic_and_literary_review": false,
+    "automatic_validation_required_before_derived_batch": true,
+    "formal_release_requires_project_source_confirmation": true,
+    "type_connection_requires_project_type_confirmation": true,
+    "formal_fact_approval_is_separate_from_runtime_authorization": true,
+    "full_material_improvement_requires_original_object_readback": true,
+    "full_material_improvement_covers_all_source_kinds": true,
+    "type_selection_blocks_activation_not_source_improvement": true,
+    "type_rule_material_binding_does_not_require_project_type_confirmation": true,
+    "experimental_summary_candidates_are_nonrelease": true
+  },
+  "full_material_improvement_policy": {
+    "contract": "配置/全量模型资料改进方案.json",
+    "required_before_new_improvement_batch": true,
+    "validator": "全量模型资料改进方案.py",
+    "boundary": "新资料改进批次必须通过全量模型资料改进方案验证；已签核资料发布批次不因该新流程被回溯重判。"
+  },
+  "release_scope_policy": {
+    "current_scope": "material_batch_release",
+    "material_batch_release": {
+      "description": "只改资料时，资料批次发布门只验证资料、正文消费、自动文学验证、哈希绑定、严格隔离和预检；不要求类型绑定。",
+      "requires_type_combination": false,
+      "type_combination_is_out_of_scope": true,
+      "gate": "全量资料发布预检.py"
+    },
+    "authored_run_delivery": {
+      "description": "完整写作运行交付时，才验证类型组合、运行清单、来源认证和正式交付批准。",
+      "requires_type_combination": true,
+      "type_combination_is_out_of_scope": false,
+      "gate": "正式交付审批.py"
+    }
+  },
+  "forbidden_shortcuts": [
+    "不得仅凭授权账本创建正文批次",
+    "不得将全量资料按同一策略同质化升级",
+    "不得将类型系统资料绑定误写成已确认的项目类型组合或世界事实",
+    "不得将类型连接写成已确认的类型组合或世界事实",
+    "不得用资料名称、ID、内部字段或来源原文替代场景化转译",
+    "不得把编排、模板、关键词命中或模型生成本身计为正文消费",
+    "不得在语义审校和文学审校未通过时标记 prose_realized",
+    "不得在项目来源确认前开放正式发布"
+  ],
+  "quality_statuses": {
+    "model_candidate": "automatic_draft_requires_semantic_editorial_review",
+    "literary_review_pending": "pending_automatic_literary_validation",
+    "template_test_only": "deterministic_template_nonrelease",
+    "realized_only_after_reviews": "semantic_editorial_review_passed"
+  },
+  "release_status": "draft_only_until_all_gates_pass",
+  "scope_rule": "资料批次发布与完整写作运行交付是两条独立流程；不得用 authored_run_delivery 的类型绑定条件阻断 material_batch_release。"
+}

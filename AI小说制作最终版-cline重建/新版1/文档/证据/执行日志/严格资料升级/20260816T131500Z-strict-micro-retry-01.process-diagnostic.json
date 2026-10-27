@@ -1,0 +1,2047 @@
+﻿{
+    "captured_at":  "2026-08-16T16:00:10.2455249Z",
+    "cim":  {
+                "CimClass":  {
+                                 "CimSuperClassName":  "CIM_Process",
+                                 "CimSuperClass":  {
+                                                       "CimSuperClassName":  "CIM_LogicalElement",
+                                                       "CimSuperClass":  {
+                                                                             "CimSuperClassName":  "CIM_ManagedSystemElement",
+                                                                             "CimSuperClass":  {
+                                                                                                   "CimSuperClassName":  null,
+                                                                                                   "CimSuperClass":  null,
+                                                                                                   "CimClassProperties":  [
+                                                                                                                              "Caption",
+                                                                                                                              "Description",
+                                                                                                                              "InstallDate",
+                                                                                                                              "Name",
+                                                                                                                              "Status"
+                                                                                                                          ],
+                                                                                                   "CimClassQualifiers":  [
+                                                                                                                              "Abstract = True",
+                                                                                                                              "Locale = 1033",
+                                                                                                                              "UUID = \"{8502C517-5FBB-11D2-AAC1-006008C78BC7}\""
+                                                                                                                          ],
+                                                                                                   "CimClassMethods":  [
+
+                                                                                                                       ],
+                                                                                                   "CimSystemProperties":  {
+                                                                                                                               "Namespace":  "ROOT/cimv2",
+                                                                                                                               "ServerName":  "SMXDIY-PC",
+                                                                                                                               "ClassName":  "CIM_ManagedSystemElement",
+                                                                                                                               "Path":  null
+                                                                                                                           }
+                                                                                               },
+                                                                             "CimClassProperties":  [
+                                                                                                        {
+                                                                                                            "Name":  "Caption",
+                                                                                                            "Value":  null,
+                                                                                                            "CimType":  14,
+                                                                                                            "Flags":  "Property, ReadOnly, NullValue",
+                                                                                                            "Qualifiers":  "MaxLen = 64 read = True",
+                                                                                                            "ReferenceClassName":  null
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "Name":  "Description",
+                                                                                                            "Value":  null,
+                                                                                                            "CimType":  14,
+                                                                                                            "Flags":  "Property, ReadOnly, NullValue",
+                                                                                                            "Qualifiers":  "read = True",
+                                                                                                            "ReferenceClassName":  null
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "Name":  "InstallDate",
+                                                                                                            "Value":  null,
+                                                                                                            "CimType":  13,
+                                                                                                            "Flags":  "Property, ReadOnly, NullValue",
+                                                                                                            "Qualifiers":  "MappingStrings = ... read = True",
+                                                                                                            "ReferenceClassName":  null
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "Name":  "Name",
+                                                                                                            "Value":  null,
+                                                                                                            "CimType":  14,
+                                                                                                            "Flags":  "Property, ReadOnly, NullValue",
+                                                                                                            "Qualifiers":  "read = True",
+                                                                                                            "ReferenceClassName":  null
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "Name":  "Status",
+                                                                                                            "Value":  null,
+                                                                                                            "CimType":  14,
+                                                                                                            "Flags":  "Property, ReadOnly, NullValue",
+                                                                                                            "Qualifiers":  "MaxLen = 10 read = True ValueMap = ...",
+                                                                                                            "ReferenceClassName":  null
+                                                                                                        }
+                                                                                                    ],
+                                                                             "CimClassQualifiers":  [
+                                                                                                        {
+                                                                                                            "Name":  "Locale",
+                                                                                                            "Value":  1033,
+                                                                                                            "CimType":  7,
+                                                                                                            "Flags":  "EnableOverride, ToSubclass"
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "Name":  "UUID",
+                                                                                                            "Value":  "{8502C518-5FBB-11D2-AAC1-006008C78BC7}",
+                                                                                                            "CimType":  14,
+                                                                                                            "Flags":  "EnableOverride, ToSubclass"
+                                                                                                        },
+                                                                                                        {
+                                                                                                            "Name":  "Abstract",
+                                                                                                            "Value":  true,
+                                                                                                            "CimType":  1,
+                                                                                                            "Flags":  "EnableOverride, Restricted"
+                                                                                                        }
+                                                                                                    ],
+                                                                             "CimClassMethods":  [
+
+                                                                                                 ],
+                                                                             "CimSystemProperties":  {
+                                                                                                         "Namespace":  "ROOT/cimv2",
+                                                                                                         "ServerName":  "SMXDIY-PC",
+                                                                                                         "ClassName":  "CIM_LogicalElement",
+                                                                                                         "Path":  null
+                                                                                                     }
+                                                                         },
+                                                       "CimClassProperties":  [
+                                                                                  {
+                                                                                      "Name":  "Caption",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "MaxLen = 64",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "Description",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "InstallDate",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  13,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "MappingStrings = ...",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "Name",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "Status",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "MaxLen = 10",
+                                                                                                         "read = True",
+                                                                                                         "ValueMap = ..."
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "CreationClassName",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "CIM_Key = True",
+                                                                                                         "MaxLen = 256",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "CreationDate",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  13,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "Fixed = True",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "CSCreationClassName",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "CIM_Key = True",
+                                                                                                         "MaxLen = 256",
+                                                                                                         "Propagated = \"CIM_OperatingSystem.CSCreationClassName...",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "CSName",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "CIM_Key = True",
+                                                                                                         "MaxLen = 256",
+                                                                                                         "Propagated = \"CIM_OperatingSystem.CSName\"",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "ExecutionState",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  4,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "Handle",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, Key, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "key = True",
+                                                                                                         "MaxLen = 256",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "KernelModeTime",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  8,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "OSCreationClassName",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "CIM_Key = True",
+                                                                                                         "MaxLen = 256",
+                                                                                                         "Propagated = \"CIM_OperatingSystem.CreationClassName\"",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "OSName",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "CIM_Key = True",
+                                                                                                         "MaxLen = 256",
+                                                                                                         "Propagated = \"CIM_OperatingSystem.Name\"",
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "Priority",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  6,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "TerminationDate",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  13,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "UserModeTime",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  8,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "WorkingSetSize",
+                                                                                      "Value":  null,
+                                                                                      "CimType":  8,
+                                                                                      "Flags":  "Property, ReadOnly, NullValue",
+                                                                                      "Qualifiers":  [
+                                                                                                         "read = True"
+                                                                                                     ],
+                                                                                      "ReferenceClassName":  null
+                                                                                  }
+                                                                              ],
+                                                       "CimClassQualifiers":  [
+                                                                                  {
+                                                                                      "Name":  "Locale",
+                                                                                      "Value":  1033,
+                                                                                      "CimType":  7,
+                                                                                      "Flags":  "EnableOverride, ToSubclass"
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "UUID",
+                                                                                      "Value":  "{8502C566-5FBB-11D2-AAC1-006008C78BC7}",
+                                                                                      "CimType":  14,
+                                                                                      "Flags":  "EnableOverride, ToSubclass"
+                                                                                  },
+                                                                                  {
+                                                                                      "Name":  "Abstract",
+                                                                                      "Value":  true,
+                                                                                      "CimType":  1,
+                                                                                      "Flags":  "EnableOverride, Restricted"
+                                                                                  }
+                                                                              ],
+                                                       "CimClassMethods":  [
+
+                                                                           ],
+                                                       "CimSystemProperties":  {
+                                                                                   "Namespace":  "ROOT/cimv2",
+                                                                                   "ServerName":  "SMXDIY-PC",
+                                                                                   "ClassName":  "CIM_Process",
+                                                                                   "Path":  null
+                                                                               }
+                                                   },
+                                 "CimClassProperties":  [
+                                                            {
+                                                                "Name":  "Caption",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MaxLen",
+                                                                                       "Value":  64,
+                                                                                       "CimType":  7,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "Description",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "InstallDate",
+                                                                "Value":  null,
+                                                                "CimType":  13,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "MIF.DMTF|ComponentID|001.5",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "Name",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "Status",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MaxLen",
+                                                                                       "Value":  10,
+                                                                                       "CimType":  7,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "ValueMap",
+                                                                                       "Value":  "OK Error Degraded Unknown Pred Fail Starting Stopping Service Stressed NonRecover No Contact Lost Comm",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "CreationClassName",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "CIM_Key",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "MaxLen",
+                                                                                       "Value":  256,
+                                                                                       "CimType":  7,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "CreationDate",
+                                                                "Value":  null,
+                                                                "CimType":  13,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "Fixed",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "CSCreationClassName",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "CIM_Key",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "MaxLen",
+                                                                                       "Value":  256,
+                                                                                       "CimType":  7,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Propagated",
+                                                                                       "Value":  "CIM_OperatingSystem.CSCreationClassName",
+                                                                                       "CimType":  14,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "CSName",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "CIM_Key",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "MaxLen",
+                                                                                       "Value":  256,
+                                                                                       "CimType":  7,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Propagated",
+                                                                                       "Value":  "CIM_OperatingSystem.CSName",
+                                                                                       "CimType":  14,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "ExecutionState",
+                                                                "Value":  null,
+                                                                "CimType":  4,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "Handle",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, Key, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "key",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "DisableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "MaxLen",
+                                                                                       "Value":  256,
+                                                                                       "CimType":  7,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "KernelModeTime",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Override",
+                                                                                       "Value":  "KernelModeTime",
+                                                                                       "CimType":  14,
+                                                                                       "Flags":  "EnableOverride, Restricted"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "OSCreationClassName",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "CIM_Key",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "MaxLen",
+                                                                                       "Value":  256,
+                                                                                       "CimType":  7,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Propagated",
+                                                                                       "Value":  "CIM_OperatingSystem.CreationClassName",
+                                                                                       "CimType":  14,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "OSName",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "CIM_Key",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "MaxLen",
+                                                                                       "Value":  256,
+                                                                                       "CimType":  7,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Propagated",
+                                                                                       "Value":  "CIM_OperatingSystem.Name",
+                                                                                       "CimType":  14,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "Priority",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|BasePriority",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Override",
+                                                                                       "Value":  "Priority",
+                                                                                       "CimType":  14,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "TerminationDate",
+                                                                "Value":  null,
+                                                                "CimType":  13,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "UserModeTime",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Override",
+                                                                                       "Value":  "UserModeTime",
+                                                                                       "CimType":  14,
+                                                                                       "Flags":  "EnableOverride, Restricted"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "WorkingSetSize",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "CommandLine",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "ExecutablePath",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Tool Help Structures|MODULEENTRY32|szExePath",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Privileges",
+                                                                                       "Value":  "SeDebugPrivilege",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "HandleCount",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|HandleCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "MaximumWorkingSetSize",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32|WINNT.H|QUOTA_LIMITS|MaximumWorkingSetSize",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Privileges",
+                                                                                       "Value":  "SeDebugPrivilege",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "MinimumWorkingSetSize",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32|WINNT.H|QUOTA_LIMITS|MinimumWorkingSetSize",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "Privileges",
+                                                                                       "Value":  "SeDebugPrivilege",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "OtherOperationCount",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process and Thread Structures|SYSTEM_PROCESS_INFORMATION|OtherOperationCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "OtherTransferCount",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process and Thread Structures|SYSTEM_PROCESS_INFORMATION|OtherTransferCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "PageFaults",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|PageFaultCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "PageFileUsage",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|PagefileUsage",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "ParentProcessId",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|InheritedFromUniqueProcessId",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "PeakPageFileUsage",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|PeakPagefileUsage",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "PeakVirtualSize",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|PeakVirtualSize",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "PeakWorkingSetSize",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|PeakWorkingSetSize",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "PrivatePageCount",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|PrivatePageCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "ProcessId",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process and Thread Structures|PROCESS_INFORMATION|dwProcessId ",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "QuotaNonPagedPoolUsage",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|QuotaNonPagedPoolUsage",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "QuotaPagedPoolUsage",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|QuotaPagedPoolUsage",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "QuotaPeakNonPagedPoolUsage",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|QuotaPeakNonPagedPoolUsage",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "QuotaPeakPagedPoolUsage",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|QuotaPeakPagedPoolUsage",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "ReadOperationCount",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process and Thread Structures|SYSTEM_PROCESS_INFORMATION|ReadOperationCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "ReadTransferCount",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process and Thread Structures|SYSTEM_PROCESS_INFORMATION|ReadTransferCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "SessionId",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|SessionId",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "ThreadCount",
+                                                                "Value":  null,
+                                                                "CimType":  6,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|NumberOfThreads",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "VirtualSize",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process Status|SYSTEM_PROCESS_INFORMATION|VirtualSize",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "WindowsVersion",
+                                                                "Value":  null,
+                                                                "CimType":  14,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process and Thread Functions|GetProcessVersion",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "WriteOperationCount",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process and Thread Structures|SYSTEM_PROCESS_INFORMATION|WriteOperationCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            },
+                                                            {
+                                                                "Name":  "WriteTransferCount",
+                                                                "Value":  null,
+                                                                "CimType":  8,
+                                                                "Flags":  "Property, ReadOnly, NullValue",
+                                                                "Qualifiers":  [
+                                                                                   {
+                                                                                       "Name":  "MappingStrings",
+                                                                                       "Value":  "Win32API|Process and Thread Structures|SYSTEM_PROCESS_INFORMATION|WriteTransferCount",
+                                                                                       "CimType":  30,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   },
+                                                                                   {
+                                                                                       "Name":  "read",
+                                                                                       "Value":  true,
+                                                                                       "CimType":  1,
+                                                                                       "Flags":  "EnableOverride, ToSubclass"
+                                                                                   }
+                                                                               ],
+                                                                "ReferenceClassName":  null
+                                                            }
+                                                        ],
+                                 "CimClassQualifiers":  [
+                                                            {
+                                                                "Name":  "Locale",
+                                                                "Value":  1033,
+                                                                "CimType":  7,
+                                                                "Flags":  "EnableOverride, ToSubclass"
+                                                            },
+                                                            {
+                                                                "Name":  "UUID",
+                                                                "Value":  "{8502C4DC-5FBB-11D2-AAC1-006008C78BC7}",
+                                                                "CimType":  14,
+                                                                "Flags":  "EnableOverride, ToSubclass"
+                                                            },
+                                                            {
+                                                                "Name":  "CreateBy",
+                                                                "Value":  "Create",
+                                                                "CimType":  14,
+                                                                "Flags":  "EnableOverride, Restricted"
+                                                            },
+                                                            {
+                                                                "Name":  "DeleteBy",
+                                                                "Value":  "DeleteInstance",
+                                                                "CimType":  14,
+                                                                "Flags":  "EnableOverride, Restricted"
+                                                            },
+                                                            {
+                                                                "Name":  "dynamic",
+                                                                "Value":  true,
+                                                                "CimType":  1,
+                                                                "Flags":  "EnableOverride, ToSubclass"
+                                                            },
+                                                            {
+                                                                "Name":  "provider",
+                                                                "Value":  "CIMWin32",
+                                                                "CimType":  14,
+                                                                "Flags":  "EnableOverride, ToSubclass"
+                                                            },
+                                                            {
+                                                                "Name":  "SupportsCreate",
+                                                                "Value":  true,
+                                                                "CimType":  1,
+                                                                "Flags":  "EnableOverride, Restricted"
+                                                            },
+                                                            {
+                                                                "Name":  "SupportsDelete",
+                                                                "Value":  true,
+                                                                "CimType":  1,
+                                                                "Flags":  "EnableOverride, Restricted"
+                                                            }
+                                                        ],
+                                 "CimClassMethods":  [
+                                                         {
+                                                             "Name":  "Create",
+                                                             "ReturnType":  6,
+                                                             "Parameters":  [
+                                                                                {
+                                                                                    "Name":  "CommandLine",
+                                                                                    "CimType":  14,
+                                                                                    "Qualifiers":  "ID = 0 In = True MappingStrings = ...",
+                                                                                    "ReferenceClassName":  null
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "CurrentDirectory",
+                                                                                    "CimType":  14,
+                                                                                    "Qualifiers":  "ID = 1 In = True MappingStrings = ...",
+                                                                                    "ReferenceClassName":  null
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ProcessStartupInformation",
+                                                                                    "CimType":  16,
+                                                                                    "Qualifiers":  "EmbeddedInstance = \"Win32_ProcessStartup\" ID = 2 In = True MappingStrings = ...",
+                                                                                    "ReferenceClassName":  null
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ProcessId",
+                                                                                    "CimType":  6,
+                                                                                    "Qualifiers":  "ID = 3 MappingStrings = ... Out = True",
+                                                                                    "ReferenceClassName":  null
+                                                                                }
+                                                                            ],
+                                                             "Qualifiers":  [
+                                                                                {
+                                                                                    "Name":  "Constructor",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "Implemented",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "MappingStrings",
+                                                                                    "Value":  "Win32API|Process and Thread Functions|CreateProcess",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "Privileges",
+                                                                                    "Value":  "SeAssignPrimaryTokenPrivilege SeIncreaseQuotaPrivilege SeRestorePrivilege",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "Static",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "DisableOverride, ToSubclass"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ValueMap",
+                                                                                    "Value":  "0 2 3 8 9 21 ..",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                }
+                                                                            ]
+                                                         },
+                                                         {
+                                                             "Name":  "Terminate",
+                                                             "ReturnType":  6,
+                                                             "Parameters":  [
+                                                                                {
+                                                                                    "Name":  "Reason",
+                                                                                    "CimType":  6,
+                                                                                    "Qualifiers":  "ID = 0 In = True MappingStrings = ...",
+                                                                                    "ReferenceClassName":  null
+                                                                                }
+                                                                            ],
+                                                             "Qualifiers":  [
+                                                                                {
+                                                                                    "Name":  "Destructor",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "Implemented",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "MappingStrings",
+                                                                                    "Value":  "Win32API|Process and Thread Functions|TerminateProcess",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "Privileges",
+                                                                                    "Value":  "SeDebugPrivilege",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ValueMap",
+                                                                                    "Value":  "0 2 3 8 9 21 ..",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                }
+                                                                            ]
+                                                         },
+                                                         {
+                                                             "Name":  "GetOwner",
+                                                             "ReturnType":  6,
+                                                             "Parameters":  [
+                                                                                {
+                                                                                    "Name":  "Domain",
+                                                                                    "CimType":  14,
+                                                                                    "Qualifiers":  "ID = 1 MappingStrings = ... Out = True",
+                                                                                    "ReferenceClassName":  null
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "User",
+                                                                                    "CimType":  14,
+                                                                                    "Qualifiers":  "ID = 0 MappingStrings = ... Out = True",
+                                                                                    "ReferenceClassName":  null
+                                                                                }
+                                                                            ],
+                                                             "Qualifiers":  [
+                                                                                {
+                                                                                    "Name":  "Implemented",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "MappingStrings",
+                                                                                    "Value":  "WMI",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ValueMap",
+                                                                                    "Value":  "0 2 3 8 9 21 ..",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                }
+                                                                            ]
+                                                         },
+                                                         {
+                                                             "Name":  "GetOwnerSid",
+                                                             "ReturnType":  6,
+                                                             "Parameters":  [
+                                                                                {
+                                                                                    "Name":  "Sid",
+                                                                                    "CimType":  14,
+                                                                                    "Qualifiers":  "ID = 0 MappingStrings = ... Out = True",
+                                                                                    "ReferenceClassName":  null
+                                                                                }
+                                                                            ],
+                                                             "Qualifiers":  [
+                                                                                {
+                                                                                    "Name":  "Implemented",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "MappingStrings",
+                                                                                    "Value":  "WMI",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ValueMap",
+                                                                                    "Value":  "0 2 3 8 9 21 ..",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                }
+                                                                            ]
+                                                         },
+                                                         {
+                                                             "Name":  "SetPriority",
+                                                             "ReturnType":  6,
+                                                             "Parameters":  [
+                                                                                {
+                                                                                    "Name":  "Priority",
+                                                                                    "CimType":  7,
+                                                                                    "Qualifiers":  "ID = 0 in = True MappingStrings = ... ValueMap = ...",
+                                                                                    "ReferenceClassName":  null
+                                                                                }
+                                                                            ],
+                                                             "Qualifiers":  [
+                                                                                {
+                                                                                    "Name":  "Implemented",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "MappingStrings",
+                                                                                    "Value":  "Win32API|Process and Thread Functions|SetPriorityClass",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ValueMap",
+                                                                                    "Value":  "0 2 3 8 9 21 ..",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                }
+                                                                            ]
+                                                         },
+                                                         {
+                                                             "Name":  "AttachDebugger",
+                                                             "ReturnType":  6,
+                                                             "Parameters":  [
+
+                                                                            ],
+                                                             "Qualifiers":  [
+                                                                                {
+                                                                                    "Name":  "Implemented",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ValueMap",
+                                                                                    "Value":  "0 2 3 8 9 21 ..",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                }
+                                                                            ]
+                                                         },
+                                                         {
+                                                             "Name":  "GetAvailableVirtualSize",
+                                                             "ReturnType":  6,
+                                                             "Parameters":  [
+                                                                                {
+                                                                                    "Name":  "AvailableVirtualSize",
+                                                                                    "CimType":  8,
+                                                                                    "Qualifiers":  "ID = 0 MappingStrings = ... Out = True",
+                                                                                    "ReferenceClassName":  null
+                                                                                }
+                                                                            ],
+                                                             "Qualifiers":  [
+                                                                                {
+                                                                                    "Name":  "Implemented",
+                                                                                    "Value":  true,
+                                                                                    "CimType":  1,
+                                                                                    "Flags":  "EnableOverride, Restricted"
+                                                                                },
+                                                                                {
+                                                                                    "Name":  "ValueMap",
+                                                                                    "Value":  "0 2 3 8 9 21 ..",
+                                                                                    "CimType":  30,
+                                                                                    "Flags":  "EnableOverride, ToSubclass"
+                                                                                }
+                                                                            ]
+                                                         }
+                                                     ],
+                                 "CimSystemProperties":  {
+                                                             "Namespace":  "root/cimv2",
+                                                             "ServerName":  "SMXDIY-PC",
+                                                             "ClassName":  "Win32_Process",
+                                                             "Path":  null
+                                                         }
+                             },
+                "CimInstanceProperties":  [
+                                              {
+                                                  "Name":  "Caption",
+                                                  "Value":  "py.exe",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "Description",
+                                                  "Value":  "py.exe",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "InstallDate",
+                                                  "Value":  null,
+                                                  "CimType":  13,
+                                                  "Flags":  "Property, ReadOnly, NotModified, NullValue",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "Name",
+                                                  "Value":  "py.exe",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "Status",
+                                                  "Value":  null,
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified, NullValue",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "CreationClassName",
+                                                  "Value":  "Win32_Process",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "CreationDate",
+                                                  "Value":  "\/Date(1786895730366)\/",
+                                                  "CimType":  13,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "CSCreationClassName",
+                                                  "Value":  "Win32_ComputerSystem",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "CSName",
+                                                  "Value":  "SMXDIY-PC",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "ExecutionState",
+                                                  "Value":  null,
+                                                  "CimType":  4,
+                                                  "Flags":  "Property, ReadOnly, NotModified, NullValue",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "Handle",
+                                                  "Value":  "16072",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, Key, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "KernelModeTime",
+                                                  "Value":  312500,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "OSCreationClassName",
+                                                  "Value":  "Win32_OperatingSystem",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "OSName",
+                                                  "Value":  "Microsoft Windows 11 专业版|C:\\WINDOWS|\\Device\\Harddisk0\\Partition3",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "Priority",
+                                                  "Value":  8,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "TerminationDate",
+                                                  "Value":  null,
+                                                  "CimType":  13,
+                                                  "Flags":  "Property, ReadOnly, NotModified, NullValue",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "UserModeTime",
+                                                  "Value":  0,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "WorkingSetSize",
+                                                  "Value":  9338880,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "CommandLine",
+                                                  "Value":  "\"C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe\" -3.14 D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\严格全量资料模型升级.py --project-root D:\\AI小说制作最终版-cline重建\\新版1 --run-id 20260816T131500Z-strict-micro-retry-01 --parent-run-id 20260816T083100Z-strict-micro-01 --start 0 --limit 5 ",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "ExecutablePath",
+                                                  "Value":  "C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "HandleCount",
+                                                  "Value":  151,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "MaximumWorkingSetSize",
+                                                  "Value":  1380,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "MinimumWorkingSetSize",
+                                                  "Value":  200,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "OtherOperationCount",
+                                                  "Value":  81,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "OtherTransferCount",
+                                                  "Value":  1580,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "PageFaults",
+                                                  "Value":  2387,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "PageFileUsage",
+                                                  "Value":  1480,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "ParentProcessId",
+                                                  "Value":  8324,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "PeakPageFileUsage",
+                                                  "Value":  1704,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "PeakVirtualSize",
+                                                  "Value":  73101312,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "PeakWorkingSetSize",
+                                                  "Value":  9220,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "PrivatePageCount",
+                                                  "Value":  1515520,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "ProcessId",
+                                                  "Value":  16072,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "QuotaNonPagedPoolUsage",
+                                                  "Value":  10,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "QuotaPagedPoolUsage",
+                                                  "Value":  149,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "QuotaPeakNonPagedPoolUsage",
+                                                  "Value":  20,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "QuotaPeakPagedPoolUsage",
+                                                  "Value":  150,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "ReadOperationCount",
+                                                  "Value":  5,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "ReadTransferCount",
+                                                  "Value":  2685777,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "SessionId",
+                                                  "Value":  2,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "ThreadCount",
+                                                  "Value":  1,
+                                                  "CimType":  6,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "VirtualSize",
+                                                  "Value":  69169152,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "WindowsVersion",
+                                                  "Value":  "10.0.26200",
+                                                  "CimType":  14,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "WriteOperationCount",
+                                                  "Value":  0,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              },
+                                              {
+                                                  "Name":  "WriteTransferCount",
+                                                  "Value":  0,
+                                                  "CimType":  8,
+                                                  "Flags":  "Property, ReadOnly, NotModified",
+                                                  "IsValueModified":  false
+                                              }
+                                          ],
+                "CimSystemProperties":  {
+                                            "Namespace":  "root/cimv2",
+                                            "ServerName":  "SMXDIY-PC",
+                                            "ClassName":  "Win32_Process",
+                                            "Path":  null
+                                        },
+                "ProcessName":  "py.exe",
+                "Handles":  151,
+                "VM":  69169152,
+                "WS":  9338880,
+                "Path":  "C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe",
+                "Caption":  "py.exe",
+                "Description":  "py.exe",
+                "InstallDate":  null,
+                "Name":  "py.exe",
+                "Status":  null,
+                "CreationClassName":  "Win32_Process",
+                "CreationDate":  "\/Date(1786895730366)\/",
+                "CSCreationClassName":  "Win32_ComputerSystem",
+                "CSName":  "SMXDIY-PC",
+                "ExecutionState":  null,
+                "Handle":  "16072",
+                "KernelModeTime":  312500,
+                "OSCreationClassName":  "Win32_OperatingSystem",
+                "OSName":  "Microsoft Windows 11 专业版|C:\\WINDOWS|\\Device\\Harddisk0\\Partition3",
+                "Priority":  8,
+                "TerminationDate":  null,
+                "UserModeTime":  0,
+                "WorkingSetSize":  9338880,
+                "CommandLine":  "\"C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe\" -3.14 D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\严格全量资料模型升级.py --project-root D:\\AI小说制作最终版-cline重建\\新版1 --run-id 20260816T131500Z-strict-micro-retry-01 --parent-run-id 20260816T083100Z-strict-micro-01 --start 0 --limit 5 ",
+                "ExecutablePath":  "C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe",
+                "HandleCount":  151,
+                "MaximumWorkingSetSize":  1380,
+                "MinimumWorkingSetSize":  200,
+                "OtherOperationCount":  81,
+                "OtherTransferCount":  1580,
+                "PageFaults":  2387,
+                "PageFileUsage":  1480,
+                "ParentProcessId":  8324,
+                "PeakPageFileUsage":  1704,
+                "PeakVirtualSize":  73101312,
+                "PeakWorkingSetSize":  9220,
+                "PrivatePageCount":  1515520,
+                "ProcessId":  16072,
+                "QuotaNonPagedPoolUsage":  10,
+                "QuotaPagedPoolUsage":  149,
+                "QuotaPeakNonPagedPoolUsage":  20,
+                "QuotaPeakPagedPoolUsage":  150,
+                "ReadOperationCount":  5,
+                "ReadTransferCount":  2685777,
+                "SessionId":  2,
+                "ThreadCount":  1,
+                "VirtualSize":  69169152,
+                "WindowsVersion":  "10.0.26200",
+                "WriteOperationCount":  0,
+                "WriteTransferCount":  0,
+                "PSComputerName":  null
+            },
+    "process":  {
+                    "Id":  16072,
+                    "ProcessName":  "py",
+                    "StartTime":  "2026-08-16T15:55:30.3660500Z",
+                    "CPU":  0.03125,
+                    "Threads":  1,
+                    "WorkingSet64":  9338880
+                },
+    "connections":  [
+
+                    ]
+}

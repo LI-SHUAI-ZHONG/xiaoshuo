@@ -1,0 +1,138 @@
+{
+  "schema_version": "route-audit-1.0",
+  "generated_at": "2026-08-13T04:59:42.993669+00:00",
+  "routes": [
+    {
+      "line": 12,
+      "path": "原始资料/资料库.txt",
+      "exists": true
+    },
+    {
+      "line": 24,
+      "path": "原始资料/类型系统.txt",
+      "exists": true
+    },
+    {
+      "line": 36,
+      "path": "原始资料/类型连接.txt",
+      "exists": true
+    },
+    {
+      "line": 48,
+      "path": "原始资料/静态网络.txt",
+      "exists": true
+    },
+    {
+      "line": 60,
+      "path": "原始资料/动态网络.txt",
+      "exists": true
+    },
+    {
+      "line": 72,
+      "path": "原始资料/锚点网络.txt",
+      "exists": true
+    },
+    {
+      "line": 84,
+      "path": "脚本/执行管道.py",
+      "exists": true
+    },
+    {
+      "line": 85,
+      "path": "脚本/执行管道.py",
+      "exists": true
+    },
+    {
+      "line": 98,
+      "path": "原始资料/资料库.txt",
+      "exists": true
+    },
+    {
+      "line": 113,
+      "path": "原始资料/资料库.txt",
+      "exists": true
+    },
+    {
+      "line": 128,
+      "path": "原始资料/资料库.txt",
+      "exists": true
+    },
+    {
+      "line": 143,
+      "path": "原始资料/资料库.txt",
+      "exists": true
+    },
+    {
+      "line": 158,
+      "path": "原始资料/类型系统.txt",
+      "exists": true
+    },
+    {
+      "line": 173,
+      "path": "原始资料/资料库.txt",
+      "exists": true
+    },
+    {
+      "line": 188,
+      "path": "资料索引/索引调用映射契约.json",
+      "exists": true
+    },
+    {
+      "line": 200,
+      "path": "资料索引/索引调用映射契约.json",
+      "exists": true
+    },
+    {
+      "line": 201,
+      "path": "资料索引/索引调用映射契约.json",
+      "exists": true
+    },
+    {
+      "line": 214,
+      "path": "资料索引/资料网络调用路由索引.json",
+      "exists": true
+    },
+    {
+      "line": 228,
+      "path": "网络完整数据/静态连接完整数据.json",
+      "exists": true
+    },
+    {
+      "line": 237,
+      "path": "网络完整数据/动态连接完整数据.json",
+      "exists": true
+    },
+    {
+      "line": 246,
+      "path": "文档/证据/动态链索引.jsonl",
+      "exists": true
+    },
+    {
+      "line": 256,
+      "path": "文档/证据/静态网络索引.json",
+      "exists": true
+    },
+    {
+      "line": 266,
+      "path": "网络完整数据/静态连接完整数据.json",
+      "exists": true
+    },
+    {
+      "line": 276,
+      "path": "文档/证据/静态网络索引.json",
+      "exists": true
+    },
+    {
+      "line": 286,
+      "path": "文档/证据/静态网络绑定摘要.json",
+      "exists": true
+    },
+    {
+      "line": 297,
+      "path": "文档/证据/动态网络状态摘要.json",
+      "exists": true
+    }
+  ],
+  "missing": [],
+  "status": "passed"
+}

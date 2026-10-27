@@ -1,0 +1,24 @@
+{
+  "schema_version": "project-source-confirmation-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "status": "confirmed",
+  "confirmed_by": "",
+  "confirmed_at": "",
+  "source_quality_ack": false,
+  "accepted_fields": [
+    "project_id",
+    "genre_selection",
+    "book_title",
+    "world_stage",
+    "mainline_conflict",
+    "core_mystery",
+    "protagonist",
+    "chapter_plan"
+  ],
+  "unresolved_fields": [
+    "world_name",
+    "supporting_characters",
+    "factions_and_locations"
+  ],
+  "confirmation_basis": "项目所有者须逐项核验 project_config.json 与项目创作圣经.json 后填写。未完成字段必须保留在 unresolved_fields，且不得标记 source_quality_ack=true。"
+}

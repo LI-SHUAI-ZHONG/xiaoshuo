@@ -1,0 +1,20 @@
+{
+  "schema_version": "full-source-literary-review-1.0",
+  "archived_at": "2026-08-14T00:00:00+08:00",
+  "archive_reason": "旧裁决的 consumption_id 未绑定 RPL-20260814-01 批次，且审校人不是本批次的真实具名人工审校人；仅作历史审计保留，禁止作为活动文学审校输入或发布依据。",
+  "original_document": {
+    "reviewer": "Cline（用户授权的辅助人工审校）",
+    "reviewed_at": "2026-08-14T00:00:00+08:00",
+    "policy": "仅对已通过来源语义审校的候选作文学裁决；批准不等于正式发布许可，退回项不得进入正文消费完成状态。"
+  },
+  "decisions": [
+    {"consumption_id": "CH01-S02-TB-00533", "decision": "approved", "reviewer": "Cline（用户授权的辅助人工审校）", "rationale": "场景进入、灵兽袭击、沈砚迎战、受伤代价和新的可疑身影形成清晰行动链；人物反应具体，段落收束自然，未见明显截断或视角混乱。"},
+    {"consumption_id": "CH01-S03-TB-00533", "decision": "approved", "reviewer": "Cline（用户授权的辅助人工审校）", "rationale": "环境、开门动作、气味与身体损伤相互衔接，沈砚的疲惫和继续前行构成明确人物状态变化；虽然语言偏常规，但叙事完整且可读。"},
+    {"consumption_id": "CH01-S03-TB-00639", "decision": "approved", "reviewer": "Cline（用户授权的辅助人工审校）", "rationale": "书房场景建立清楚，沈砚入场后通过古籍、旁观者注视和最后的决定形成递进；人物关系反应可感，段落结尾留下有效叙事推动。"},
+    {"consumption_id": "CH01-S03-TB-04971", "decision": "approved", "reviewer": "Cline（用户授权的辅助人工审校）", "rationale": "血腥味引发警觉，感知、行进、发现闻执衡和拔剑动作连续推进；环境异动服务于紧张感，结尾动作明确，没有明显文学结构缺陷。"},
+    {"consumption_id": "CH01-S03-TB-04972", "decision": "approved", "reviewer": "Cline（用户授权的辅助人工审校）", "rationale": "沈砚察觉异常、转动铜环、听见摩擦声并调整呼吸寻找线索，感官细节和心理警觉相互支撑；段落完整，悬念落点清楚。"},
+    {"consumption_id": "CH01-S03-TB-00071", "decision": "rejected", "reviewer": "Cline（用户授权的辅助人工审校）", "rationale": "核心冲突停留在说明层面，沈砚只是决定暂缓炼化，窗外雨声与时间紧迫没有转化为有效行动；代价字段虽被说明，但人物选择后的戏剧变化不足，退回增强场景事件。"},
+    {"consumption_id": "CH01-S03-TB-01939", "decision": "rejected", "reviewer": "Cline（用户授权的辅助人工审校）", "rationale": "段落主要承担氛围铺陈，疾行、紧张和握剑出血都没有导向具体事件或关系变化；结尾停在准备状态，作为正文批次消费的行动链不够完整，退回补足抵达或遭遇。"},
+    {"consumption_id": "CH01-S03-TB-02009", "decision": "rejected", "reviewer": "Cline（用户授权的辅助人工审校）", "rationale": "对话和说明重复铺陈，闻执衡进入后冲突没有实质推进；末尾突然出现开门后手掌留下血痕，代价与前文缺乏因果铺垫，且整体收束偏冗长，退回重写。"}
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "schema_version": "strict-source-upgrade-batch-1.0",
+  "batch_id": "SOURCE-UPGRADE-01217",
+  "record_limit": 6,
+  "prose_write_allowed": false,
+  "records": [
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-07297",
+      "consumption_id": "PC-07297",
+      "binding_id": "TB-10996",
+      "source_id": "类型静态搭配库.json:1819",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[1819]",
+      "source_ref_sha256": "8f57827e4b66bbb6a91d2ba42f915e899ecf54b3dad11ca33e51d9632bbf5cf5",
+      "source_item_sha256": "6a45536f4b0d80a8270ad5d638da5c217d2e1aab26fa0f81fff412f021540039",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate",
+        "类型连接对象缺少可核验标识"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-07298",
+      "consumption_id": "PC-07298",
+      "binding_id": "TB-10997",
+      "source_id": "类型静态搭配库.json:1820",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[1820]",
+      "source_ref_sha256": "1b427c1d4b929d2145170b31a27a18a47d9146ed2f9ee513f6aed8585fd25f57",
+      "source_item_sha256": "134916afefe536ba269925199ff7145b2234a689feea9c50cbc5e8aed3aae5fc",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate",
+        "类型连接对象缺少可核验标识"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-07299",
+      "consumption_id": "PC-07299",
+      "binding_id": "TB-10998",
+      "source_id": "类型静态搭配库.json:1821",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[1821]",
+      "source_ref_sha256": "6f5eb7a65ceb6efa70ae0364683866d883d50830dfcc644c630b4d684e3943e8",
+      "source_item_sha256": "29964b1f26eca9a4f6de355fbc0afcd3c38a30189ce0a35b25355c694758dea0",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate",
+        "类型连接对象缺少可核验标识"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-07300",
+      "consumption_id": "PC-07300",
+      "binding_id": "TB-10999",
+      "source_id": "类型静态搭配库.json:1822",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[1822]",
+      "source_ref_sha256": "008672df7803ec6103d65a246e3ac1ec906e9c0b853897de3cfd9da142468a9c",
+      "source_item_sha256": "16582802c1de6ef93e099b6f9a50c6e03f136deb56b8a15d5c88deb0a6bbc0a1",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate",
+        "类型连接对象缺少可核验标识"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-07301",
+      "consumption_id": "PC-07301",
+      "binding_id": "TB-11000",
+      "source_id": "类型静态搭配库.json:1823",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[1823]",
+      "source_ref_sha256": "2ae85247c075e9aa45a7205ffa5138a47ff7507e4c9760577f12364847f99922",
+      "source_item_sha256": "24f8b61613d551e961599297efc2e5b9cf55d6198c53e14fd1fab441de4cc6c1",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate",
+        "类型连接对象缺少可核验标识"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-07302",
+      "consumption_id": "PC-07302",
+      "binding_id": "TB-11001",
+      "source_id": "类型静态搭配库.json:1824",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[1824]",
+      "source_ref_sha256": "5aaeb3fccb43a7d2896c02f9bcf89153d076107731599b66f5087694d20f0e37",
+      "source_item_sha256": "f3e6f2d11e1782d74deb320fe054b947f208ff580e4c644ec55718c0d998a906",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate",
+        "类型连接对象缺少可核验标识"
+      ]
+    }
+  ]
+}

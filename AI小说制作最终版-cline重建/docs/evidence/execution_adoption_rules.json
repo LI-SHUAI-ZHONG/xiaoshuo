@@ -1,0 +1,39 @@
+{
+  "rules": [
+    {
+      "id": "EX-R1",
+      "condition": "每个项目必须记录其执行管道运行记录，包括调用了哪些模块。",
+      "action": "为每次项目执行管道运行创建一条运行记录，并列出实际调用的模块编号。",
+      "blocking_level": "high"
+    },
+    {
+      "id": "EX-R2",
+      "condition": "执行管道运行记录必须写入docs/evidence/execution_consumption.jsonl。",
+      "action": "将项目ID、运行时间、执行模块列表、模块总数和运行状态写入execution_consumption.jsonl。",
+      "blocking_level": "high"
+    },
+    {
+      "id": "EX-R3",
+      "condition": "正文生成前，运行器必须检查execution_consumption.jsonl中是否存在当前项目的运行记录。",
+      "action": "当前项目运行记录缺失时，阻断正文生成。",
+      "blocking_level": "blocker"
+    },
+    {
+      "id": "EX-R4",
+      "condition": "每次执行管道运行结束后，必须更新execution_consumption.jsonl。",
+      "action": "追加或更新当前项目的最新运行记录，准确反映本次管道运行结果。",
+      "blocking_level": "medium"
+    }
+  ],
+  "consumption_schema": {
+    "project_id": "string",
+    "run_timestamp": "ISO时间",
+    "modules_executed": [
+      "01",
+      "02",
+      "..."
+    ],
+    "total_modules": 154,
+    "status": "completed|partial|failed"
+  }
+}

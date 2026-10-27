@@ -1,0 +1,70 @@
+{
+  "schema_version": "volume-chapter-blueprint-candidate-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "artifact_status": "author_confirmed_draft_only",
+  "formal_fact_usable": false,
+  "volumes": [
+    {
+      "volume_id": "V1",
+      "title": "潮痕入骨",
+      "dramatic_question": "为揭露制度性牺牲，沈砚愿意先失去什么？",
+      "opening_state": "沈砚相信只要取得晋升资格，就能用合法路径换回母亲遗物并追查父亲死因。",
+      "midpoint_reversal": "父亲并非单纯死于失控，而是与旧域封存有关；合法路径本身在遮蔽证据。",
+      "ending_state": "沈砚公开破坏检测救下陆昭，晋升资格作废，转为被追查的违规者。",
+      "consequence_chain": "异常检测 -> 私下查证 -> 同伴卷入 -> 制度施压 -> 为救人公开选择 -> 合法身份失效。",
+      "mystery_progression": [
+        "检测石第七息回亮不是偶发失控。",
+        "异常与潮期、父亲旧案、缺失名册存在同一模式。",
+        "镇潮阵并非只隔绝灾息，也在转移低阶修士的灵息。",
+        "旧域阵眼仍有幸存者，破阵与维持现状都会伤及无辜者。"
+      ],
+      "foreshadowing_ledger": [
+        {
+          "id": "F-V1-01",
+          "seed": "第七息回亮",
+          "initial_reading": "检测石故障或沈砚修行不稳",
+          "payoff": "检测流程在固定潮期抽取并导流灵息",
+          "planned_reveal": "V1 中段"
+        },
+        {
+          "id": "F-V1-02",
+          "seed": "刻痕缺页",
+          "initial_reading": "档案损坏留下的无意义残片",
+          "payoff": "缺页可与潮灾原始名册及父亲留下的阵钥对应",
+          "planned_reveal": "V1 后段"
+        },
+        {
+          "id": "F-V1-03",
+          "seed": "闻执衡对程序异常的过度熟悉",
+          "initial_reading": "执律堂执事的冷酷和控制欲",
+          "payoff": "他知道阵眼幸存者的存在，并以隐瞒换取潮期稳定",
+          "planned_reveal": "V2"
+        }
+      ],
+      "chapter_blueprint": [
+        {
+          "chapter_id": "CH-01",
+          "working_title": "第七息",
+          "chapter_goal": "让沈砚在晋升检测中确认一个不能用修行失控解释的异常，并获得一条会危及同伴的档案线索。",
+          "reversal_or_discovery": "异常不是沈砚独有；程序正在主动抹平某类回声。",
+          "end_consequence": "陆昭因掩护沈砚进入执律堂视线，沈砚持有一页来源不明的刻痕缺页。",
+          "mystery_delta": "从个人疑虑推进到可复核的制度异常。",
+          "foreshadowing_ids": ["F-V1-01", "F-V1-02", "F-V1-03"],
+          "status": "editorial_approved_for_authorization_preparation"
+        }
+      ]
+    },
+    {
+      "volume_id": "V2",
+      "title": "旧域燃灯",
+      "chapter_level_intent": "让沈砚在破阵与保城之间认识到揭露真相不能免除维护后果。",
+      "ending_choice": "以记忆换取七日缓冲，拒绝立刻破阵。"
+    },
+    {
+      "volume_id": "V3",
+      "title": "衡渊无夜",
+      "chapter_level_intent": "让所有受益者看见被隐藏的代价，并将秘密牺牲改为可拒绝、可共担的选择。",
+      "ending_choice": "放弃独占回声之力，以公开共担契约取代阵眼制度。"
+    }
+  ]
+}

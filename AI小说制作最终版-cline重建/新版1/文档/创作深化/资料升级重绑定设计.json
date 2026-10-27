@@ -1,0 +1,246 @@
+{
+  "schema_version": "creative-deepening-material-rebinding-design-1.0",
+  "design_id": "DESIGN-MATERIAL-REBIND-01",
+  "project_id": "trial-玄幻-沈砚",
+  "status": "proposal",
+  "purpose": "在不读取、不引用或不迁移任何旧正文、历史试写、历史消费、执行输出或预检结论的前提下，为已确认项目事实设计资料升级体系的重新采用接口。该设计只定义治理与数据契约，不激活具体资料，不产生正文输入或正文。",
+  "fact_authority": {
+    "primary": {
+      "path": "配置/project_source_confirmation.json",
+      "status": "confirmed",
+      "authority": "唯一已确认作品事实基线"
+    },
+    "comparison_only": {
+      "path": "配置/项目创作圣经.json",
+      "status": "authorial_draft",
+      "authority": "可用于提出规格化建议，不得覆盖 confirmed 事实"
+    },
+    "precedence": [
+      "confirmed",
+      "confirmed_input",
+      "authorial_draft",
+      "proposal",
+      "chapter_verified"
+    ]
+  },
+  "source_policy": {
+    "allowed_inputs": [
+      "配置/project_source_confirmation.json",
+      "配置/项目创作圣经.json",
+      "文档/创作深化/中本轮生成且带有状态字段的规格文件"
+    ],
+    "forbidden_inputs": [
+      "正文及其任何版本",
+      "历史试写批次",
+      "归档中的旧正文",
+      "派生剧情输入",
+      "执行输出",
+      "测试日志",
+      "回归报告",
+      "发布预检材料",
+      "历史资料激活矩阵、生产编排、消费证据和旧批次结论"
+    ],
+    "enforcement": [
+      "不得从禁止输入提取、复述、归纳或反向校正任何具体设定、场景、资料条目、绑定关系或结论。",
+      "禁止输入只能用于文件迁移追溯，不得作为本设计或后续规格的 evidence、basis、source_ref 或 conflict_check 依据。",
+      "发现任何禁止来源引用时，受影响产物状态必须设为 blocked，删除引用后重新执行来源审计。"
+    ]
+  },
+  "design_principles": [
+    "资料升级必须把已验证的定义、规则、边界、要求和使用方法写入对应原版资料，形成创作可直接读取的最终资料；它不向正文直接写入项目事实。",
+    "每次采用必须从当前 confirmed 事实或明确标记的 proposal 出发，不能继承旧批次的具体选择。",
+    "资料条目的检索可用性、场景输入资格、候选正文资格、正式事实资格和发布资格必须分别记录，任何一项不得自动推导另一项。",
+    "正文只能消费经当前章节规格明确选择、具备来源与因果证据且通过人工授权的资料包；本设计本身不授予正文权限。",
+    "场景中未列入资料包的项目不得因同章、同角色、同主题或旧记录相似而自动进入上下文。"
+  ],
+  "binding_roles": {
+    "direct_creation": {
+      "definition": "直接约束当前规格中的角色目标、可观察信息、行动选择或外部后果。",
+      "requires": [
+        "confirmed 或 proposal 的当前依据",
+        "明确 chapter_id 和 scene_id",
+        "可核对的因果用途",
+        "人工授权"
+      ],
+      "prose_effect": "仅在章节资料包获准后可作为候选正文的创作输入；不等于正文事实或发布许可。"
+    },
+    "indirect_constraint": {
+      "definition": "限制当前场景不能发生什么，或约束能力边界、制度反应、视角边界与代价。",
+      "requires": [
+        "对应规则规格或人物/阵营决策规格",
+        "可验证的冲突检查",
+        "人工授权"
+      ],
+      "prose_effect": "只能约束写作，不应被转写为资料名称、网络名称或元数据。"
+    },
+    "candidate_retrieval": {
+      "definition": "为尚未决定是否采用的细节提供检索候选。",
+      "requires": [
+        "检索问题",
+        "当前规格中的使用边界",
+        "未超出 confirmed 与 proposal 的状态范围"
+      ],
+      "prose_effect": "不得自动进入模型上下文、章节资料包或候选正文。"
+    },
+    "deferred_activation": {
+      "definition": "与当前章节无直接需求、保留给后续明确创作问题重新评估的资料。",
+      "requires": [
+        "延后理由",
+        "重新评估触发条件"
+      ],
+      "prose_effect": "当前章节禁止消费。"
+    }
+  },
+  "required_record_schema": {
+    "record_identity": [
+      "rebinding_id",
+      "status",
+      "created_at",
+      "specification_version"
+    ],
+    "current_basis": [
+      "basis.source_path",
+      "basis.confirmed_field_or_proposal_id",
+      "basis.statement",
+      "basis.status"
+    ],
+    "activation_scope": [
+      "binding_role",
+      "chapter_id",
+      "scene_id",
+      "creative_question",
+      "allowed_stage"
+    ],
+    "governance_evidence": [
+      "source_ref",
+      "source_ref_sha256",
+      "conflict_check.status",
+      "conflict_check.checked_against",
+      "causal_contract.trigger",
+      "causal_contract.required_choice",
+      "causal_contract.required_consequence",
+      "authorization.status"
+    ],
+    "eligibility_flags": [
+      "retrieval_eligible",
+      "scene_package_eligible",
+      "candidate_prose_eligible",
+      "formal_fact_eligible",
+      "formal_release_eligible"
+    ]
+  },
+  "state_machine": {
+    "states": {
+      "unassessed": "尚未依据当前事实基线评估。",
+      "proposal": "已提出重绑定方案，但其中的新增解释、规则细节或采用决定未获作者确认。",
+      "confirmed": "作者已确认其事实陈述或采用决定。",
+      "chapter_verified": "已通过当前章节的来源、冲突、因果和视角核对；不使新增设定自动成为 confirmed。",
+      "authorized_for_scene_package": "已由人工授权纳入指定章节与场景资料包。",
+      "candidate_prose_allowed": "可用于生成可审校候选正文，不等于正式发布。",
+      "blocked": "存在禁止来源、状态越权、冲突未解、因果缺失、未授权或审计失败。"
+    },
+    "allowed_transitions": [
+      "unassessed -> proposal",
+      "proposal -> confirmed",
+      "proposal -> blocked",
+      "confirmed -> chapter_verified",
+      "chapter_verified -> authorized_for_scene_package",
+      "authorized_for_scene_package -> candidate_prose_allowed",
+      "任意非发布状态 -> blocked"
+    ],
+    "prohibited_transitions": [
+      "unassessed -> authorized_for_scene_package",
+      "proposal -> candidate_prose_allowed",
+      "chapter_verified -> confirmed",
+      "任意状态 -> formal_release_eligible"
+    ]
+  },
+  "mandatory_gates": [
+    {
+      "id": "GATE-REBIND-01",
+      "name": "当前依据门",
+      "pass_condition": "每一项 basis 仅指向允许输入，且其陈述可追溯至 confirmed 字段或明确标记的 proposal。"
+    },
+    {
+      "id": "GATE-REBIND-02",
+      "name": "禁止来源门",
+      "pass_condition": "source_ref、basis、conflict_check 与说明文本均不含禁止输入路径、内容、旧条目 ID 或旧场景/消费标识。"
+    },
+    {
+      "id": "GATE-REBIND-03",
+      "name": "状态边界门",
+      "pass_condition": "proposal 不得被标记为 confirmed、chapter_verified、authorized_for_scene_package 或 candidate_prose_allowed。"
+    },
+    {
+      "id": "GATE-REBIND-04",
+      "name": "冲突门",
+      "pass_condition": "逐项检查其与确认事实、已确认规则规格和已确认章节规格的冲突；未完成检查即 blocked。"
+    },
+    {
+      "id": "GATE-REBIND-05",
+      "name": "场景因果门",
+      "pass_condition": "直接创作或间接约束项均能说明触发、角色选择、不可抵消后果与后续约束。"
+    },
+    {
+      "id": "GATE-REBIND-06",
+      "name": "最小资料包门",
+      "pass_condition": "仅明确列入指定 scene_id 的条目可进入该场景；候选检索与延后激活项默认排除。"
+    },
+    {
+      "id": "GATE-REBIND-07",
+      "name": "人工授权门",
+      "pass_condition": "作者或指定责任人记录授权主体、时间、范围、理由、资料包哈希与撤销条件。"
+    },
+    {
+      "id": "GATE-REBIND-08",
+      "name": "正文隔离门",
+      "pass_condition": "在独立的正文生产任务获明确授权前，candidate_prose_eligible、formal_fact_eligible 与 formal_release_eligible 均为 false。"
+    }
+  ],
+  "non_goals": [
+    "不复用、恢复、校验或修改任何历史正文、历史场景、旧资料包、旧消费记录或旧生产编排。",
+    "不将资料升级体系的旧授权、旧成功标记、旧失败报告或旧哈希视作当前授权、当前事实或当前验证结果。",
+    "不在本文件中创建具体资料条目、绑定 ID、章节资料包、作者确认、正文候选或发布记录。",
+    "不修改 project_source_confirmation.json、项目创作圣经.json 或 project_config.json；原始资料仅能由独立的字段级融合写回批次修改，并保留写回前快照、字段变更账本和前后哈希。"
+  ],
+  "next_artifact_order": [
+    {
+      "id": "SPEC-RULE-01",
+      "artifact": "文档/创作深化/规则规格册.json",
+      "constraint": "只对 confirmed 基础做字段化；所有新增机制细节保持 proposal。"
+    },
+    {
+      "id": "SPEC-TIME-01",
+      "artifact": "文档/创作深化/历史与信息时间线.json",
+      "constraint": "只使用确认事实、创作圣经与已生成规则规格；不填补绝对年份或未确认历史细节。"
+    },
+    {
+      "id": "SPEC-FACTION-01",
+      "artifact": "文档/创作深化/人物与阵营决策网.json",
+      "constraint": "权力、资源、禁区和转向条件中未获确认的内容必须逐项标记 proposal。"
+    },
+    {
+      "id": "SPEC-ARC-01",
+      "artifact": "文档/创作深化/三卷因果骨架.json",
+      "constraint": "仅将已有卷级承诺结构化，不以旧章节或旧消费路径补全因果。"
+    },
+    {
+      "id": "AUTHOR-CONFIRM-01",
+      "artifact": "文档/创作深化/作者确认记录.json",
+      "constraint": "作者明确确认后，才允许将相应 proposal 进入章节验证。"
+    },
+    {
+      "id": "CHAPTER-PACKAGE-01",
+      "artifact": "文档/创作深化/章节/CH01章节资料包.json",
+      "constraint": "仅在规则、时间线、人物阵营与作者确认均满足后建立；不得生成正文。"
+    }
+  ],
+  "current_execution_state": {
+    "specific_materials_assessed": 0,
+    "specific_materials_activated": 0,
+    "scene_packages_created": 0,
+    "candidate_prose_authorized": false,
+    "formal_release_authorized": false,
+    "status": "blocked_pending_authorial_specification"
+  }
+}

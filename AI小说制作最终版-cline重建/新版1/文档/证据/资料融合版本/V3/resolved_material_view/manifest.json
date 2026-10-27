@@ -1,0 +1,8 @@
+{
+  "version": "V3",
+  "baseline_file": "文档/证据/全量资料治理/资料库_规范化.json",
+  "baseline_file_sha256": "b1596ce166cdf22180d98b22ba1c0f1381105a594a027204c87d32072d51c5ca",
+  "overlay_file": "../validated_overlay.jsonl",
+  "overlay_sha256": "74b148ef209490c2df8b8f5542a067bda67baf7bd4e43959a23bb0fc512ea5ca",
+  "consumption_contract": "必须显式绑定该 resolved_material_view 版本；不得回写原版。"
+}

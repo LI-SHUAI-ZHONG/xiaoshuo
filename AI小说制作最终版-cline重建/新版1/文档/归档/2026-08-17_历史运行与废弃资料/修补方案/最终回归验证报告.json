@@ -1,0 +1,49 @@
+{
+  "schema_version": "creative-repair-regression-1.0",
+  "validated_at": "2026-08-12T00:00:00Z",
+  "validation_mode": "isolated_project_copy",
+  "original_project_modified_by_regression": false,
+  "compile": "passed",
+  "negative_resource_gate": "passed; missing 原始资料/资料库.txt returned exit code 1",
+  "project_source_confirmation_gate": "passed_negative; missing 配置/project_source_confirmation.json returned exit code 1 and kept draft_only; accepted derived candidates still leave world_name/supporting_characters/factions_and_locations unresolved",
+  "pipeline": {
+    "module_06": "passed",
+    "module_08": "passed",
+    "module_09": "passed",
+    "module_10": "failed_by_quality_gate_only",
+    "module_11": "failed_by_module_10_and_quality_gate",
+    "delivery_status": "draft_only",
+    "module_11_delivery_status": "draft_only",
+    "blocking_failures": [
+      "原始资料仍有 partial/pending 或占位字段，禁止作为已验收成品依据"
+    ]
+  },
+  "consumption_records": {
+    "类型连接采用.jsonl": 10,
+    "动态链消费.jsonl": 6,
+    "静态连接消费.jsonl": 45,
+    "锚点消费.jsonl": 4
+  },
+  "design_bindings": {
+    "dynamic_chain": 3,
+    "static_edge": 3,
+    "anchor": 3,
+    "scenes": 3
+  },
+  "verified_properties": [
+    "动态链按有效 condition/effect 过滤，数量不足时阻断，不再按序号补无效链",
+    "静态边生成稳定 STATIC:source->target 标识",
+    "设计阶段写入来源采用记录，正文阶段追加正文落点记录",
+    "正文使用项目主角、地点、目标、阻碍、信息、代价和钩子",
+    "锚点原名和规划元数据禁止进入正文",
+    "来源质量门只能降级交付状态，不能被后续模块升级绕过",
+    "回归使用隔离项目副本，未覆盖正式正文目录"
+  ],
+  "remaining_work": [
+    "由项目所有者填写配置/project_source_confirmation.json，逐字段确认或明确保留为未解决；不得直接修改确认报告绕过门禁",
+    "完成资料库、类型系统、类型连接、动态网络、静态网络、锚点网络的 partial/pending/placeholder 清理或确认",
+    "补充真实类型组合采用的具体 decision_statement，而不是仅使用 selected_types 兜底记录",
+    "继续扩大模块10语义验收，尤其是场景不可替代性、方法执行效果和跨章因果",
+    "完成项目专属世界名、配角、势力与地点等非派生事实确认后，再运行正向正式候选回归"
+  ]
+}

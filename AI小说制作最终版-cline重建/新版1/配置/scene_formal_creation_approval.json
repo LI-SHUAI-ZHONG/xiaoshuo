@@ -1,0 +1,15 @@
+{
+  "schema_version": "scene-formal-creation-approval-1.0",
+  "status": "approved",
+  "approved_by": "用户（本次会话明确要求放行正式创作）",
+  "approved_at": "2026-08-17T11:15:00Z",
+  "approved_scene_ids": [
+    "CH01-S01"
+  ],
+  "formal_release_allowed": false,
+  "project_config_sha256": "c979d27994ff9be78dc5dae8b8538c51cd5375aeafbbbe213829feaa707d0026",
+  "scene_brief_sha256": "db28866ca084fb7c0fd3cd5594b909a957a376dc20105106bfb684de7109c495",
+  "binding_baseline_sha256": "7dbf26a357627dd683ac78de6a32bba4c871743383d4eec32d881bb970e05264",
+  "authorization_audit_sha256": "df93c2c9db6ff00c1a61243acb3f5ab85ed2a69d543a5910123a7d73961b6201",
+  "scope": "仅允许已逐条授权、已按场景需求匹配、具有来源溯源和完整因果契约的 CH01-S01 候选进入正式创作输入；该批准重新绑定 2026-08-17 当前已审计的资料绑定基线，不改变第七息回亮的剧情需求、候选筛选条件或批准范围；不授予全量资料正式发布或其他场景创作许可。"
+}

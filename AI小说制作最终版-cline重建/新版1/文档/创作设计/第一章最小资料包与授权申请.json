@@ -1,0 +1,63 @@
+{
+  "schema_version": "scene-material-package-authorization-candidate-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "artifact_status": "project_owner_confirmed_pending_machine_audit",
+  "authorization_effect": "pending_machine_audit_only",
+  "formal_fact_usable": false,
+  "submission_destination": "不得直接写入 配置/全量资料输入与正文授权.jsonl；人工确认后须补齐 source_ref_sha256、授权主体和授权时间，再经授权脚本审计。",
+  "global_constraints": [
+    "每场只取直接材料 3 至 8 条、约束材料 2 至 5 条、检索细节 0 至 3 条。",
+    "未列入场景包的绑定不得因同章归属自动进入模型上下文。",
+    "所有候选项的 model_input_eligible 和 prose_write_allowed 均为 false，直至独立人工授权。"
+  ],
+  "scene_packages": [
+    {
+      "scene_id": "CH-01-S1",
+      "direct_creation_bindings": ["TB-00001", "TB-00007"],
+      "indirect_constraint_bindings": ["TB-00002", "TB-00006"],
+      "candidate_retrieval_bindings": ["TB-00112", "TB-00121"],
+      "request_reason": "限定沈砚在检测异常中的目标、判断与可观察环境，不请求世界真相或后续卷信息。"
+    },
+    {
+      "scene_id": "CH-01-S2",
+      "direct_creation_bindings": ["TB-00001", "TB-00002", "TB-00007"],
+      "indirect_constraint_bindings": ["TB-00005", "TB-00113"],
+      "candidate_retrieval_bindings": ["TB-00116"],
+      "request_reason": "限定沈砚与陆昭的利益冲突、保密选择及其对检测异常的第二样本价值。"
+    },
+    {
+      "scene_id": "CH-01-S3",
+      "direct_creation_bindings": ["TB-00001", "TB-00002", "TB-00005"],
+      "indirect_constraint_bindings": ["TB-00006", "TB-00008"],
+      "candidate_retrieval_bindings": ["TB-00003"],
+      "request_reason": "限定档案权限冲突、缺席者线索和闻执衡的程序压力，不授予档案真相的推断权。"
+    },
+    {
+      "scene_id": "CH-01-S4",
+      "direct_creation_bindings": ["TB-00001", "TB-00005", "TB-00007"],
+      "indirect_constraint_bindings": ["TB-00115", "TB-00121"],
+      "candidate_retrieval_bindings": ["TB-00112"],
+      "request_reason": "限定一次回声追听的代价、实物线索比对和陆昭关系后果。"
+    }
+  ],
+  "per_binding_authorization_requests": [
+    {"binding_id": "TB-00001", "proposed_scope": ["CH-01-S1", "CH-01-S2", "CH-01-S3", "CH-01-S4"], "requested_role": "direct_creation", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00002", "proposed_scope": ["CH-01-S1", "CH-01-S2", "CH-01-S3"], "requested_role": "direct_creation_or_constraint", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00003", "proposed_scope": ["CH-01-S3"], "requested_role": "optional_retrieval", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00005", "proposed_scope": ["CH-01-S2", "CH-01-S3", "CH-01-S4"], "requested_role": "direct_creation_or_constraint", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00006", "proposed_scope": ["CH-01-S1", "CH-01-S3"], "requested_role": "constraint", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00007", "proposed_scope": ["CH-01-S1", "CH-01-S2", "CH-01-S4"], "requested_role": "direct_creation", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00008", "proposed_scope": ["CH-01-S3"], "requested_role": "constraint", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00112", "proposed_scope": ["CH-01-S1", "CH-01-S4"], "requested_role": "optional_retrieval", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00113", "proposed_scope": ["CH-01-S2"], "requested_role": "constraint", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00115", "proposed_scope": ["CH-01-S4"], "requested_role": "constraint", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00116", "proposed_scope": ["CH-01-S2"], "requested_role": "optional_retrieval", "model_input_eligible": false, "prose_write_allowed": false},
+    {"binding_id": "TB-00121", "proposed_scope": ["CH-01-S1", "CH-01-S4"], "requested_role": "constraint", "model_input_eligible": false, "prose_write_allowed": false}
+  ],
+  "approval_prerequisites": [
+    "候选创作圣经中的四项创作假设已由项目作者确认。",
+    "逐条核对绑定的 source_id 与 source_ref_sha256。",
+    "明确授权主体、时间、理由及仅限场景范围。",
+    "将获准记录复制到正式提交位置后运行 全量资料输入与正文授权.py --audit。"
+  ]
+}

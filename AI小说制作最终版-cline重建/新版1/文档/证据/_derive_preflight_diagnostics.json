@@ -1,0 +1,33 @@
+{
+  "schema_version": "derived-material-preflight-1.0",
+  "run_id": "20260816T061711Z-fb0cf077",
+  "generated_at": "2026-08-16T08:46:53.272634Z",
+  "project_id": "trial-Ðþ»Ã-ÉòÑâ",
+  "binding_count": 13345,
+  "manifest_sha256": "8f38f6c4da6d4c9ee1d6bf4e84b353ffd4416d8c0a45c21f2feb13e8b9d7e7a0",
+  "excluded_quarantined_count": 0,
+  "scenes": [
+    {
+      "scene_id": "CH01-S01",
+      "selected_count": 0,
+      "candidate_bindings": []
+    },
+    {
+      "scene_id": "CH01-S02",
+      "selected_count": 0,
+      "candidate_bindings": []
+    },
+    {
+      "scene_id": "CH01-S03",
+      "selected_count": 0,
+      "candidate_bindings": []
+    }
+  ],
+  "errors": [
+    "CH01-S01",
+    "CH01-S02",
+    "CH01-S03"
+  ],
+  "status": "blocked",
+  "formal_release_allowed": false
+}

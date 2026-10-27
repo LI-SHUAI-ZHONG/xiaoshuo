@@ -1,0 +1,25 @@
+{
+  "schema_version": "original-upgrade-material-field-fusion-1.0",
+  "version": "V2",
+  "generated_at": "2026-08-17T19:55:53.284355Z",
+  "baseline": "original_material",
+  "upgrade_input": "文档/证据/全量资料升级派生定位/已验证候选映射.jsonl",
+  "input_mapping_sha256": "1681cbee7c1d75297eb23f2fddfa8bc84dc2c88b90b57c4c113efaa8e9a02e6c",
+  "status": "blocked_pending_field_evidence",
+  "formal_fact_eligible": false,
+  "formal_release_allowed": false,
+  "material_fused": {
+    "change_count": 0,
+    "file": "field_changes.jsonl"
+  },
+  "pending_evidence": {
+    "count": 38,
+    "file": "pending_evidence.jsonl"
+  },
+  "unresolved_conflicts": {
+    "count": 0,
+    "file": "unresolved_conflicts.jsonl"
+  },
+  "merge_preview": "merge_preview.json",
+  "manifest_sha256": "028a2df2f754e1cbcabc4e46b68fa5b8ce87f8f626d9200dc1adbfdd9cbe7dd5"
+}

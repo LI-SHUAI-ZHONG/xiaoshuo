@@ -1,0 +1,102 @@
+{
+  "schema_version": "network-derived-index-contract-2.0",
+  "role": "derived_network_retrieval",
+  "root": "四网络连接，剧情覆盖",
+  "runtime_policy": {
+    "index_access": "可检索不等于可采用",
+    "confirmed_levels": ["confirmed_raw", "cross_confirmed"],
+    "candidate_levels": ["reconstructed", "unconfirmed"],
+    "needs_review_is_runtime_fact": true,
+    "derived_rule_policy": {
+      "contract_id": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "status": "explicit_derivation_allowed",
+      "required_fields": ["condition", "effect", "valid_types", "source_refs", "validation_status", "derivation_contract"],
+      "required_validation_status": "derived_contract_validated",
+      "meaning": "静态关系可派生为通用动态状态规则，但不声称具有原始动态来源；具体故事采用仍须绑定故事对象和当前情境。"
+    },
+    "migration_is_story_fact": false,
+    "alias_is_story_fact": false
+  },
+  "artifacts": [
+    {
+      "id": "NET-STATIC-FULL",
+      "path": "四网络连接，剧情覆盖/static_connections.full.json",
+      "kind": "static_connections",
+      "record_path": "source_index",
+      "lookup_fields": ["source", "target", "type", "condition"],
+      "evidence_level": "reconstructed",
+      "default_status": "candidate"
+    },
+    {
+      "id": "NET-DYNAMIC-FULL",
+      "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+      "kind": "dynamic_connections",
+      "record_path": "connections",
+      "lookup_fields": ["id", "source", "target", "type", "condition", "effect", "valid_types"],
+      "evidence_level": "reconstructed",
+      "default_status": "candidate",
+      "review_field": "needs_review"
+    },
+    {
+      "id": "NET-DYNAMIC-MIGRATION",
+      "path": "四网络连接，剧情覆盖/dynamic_id_migration.json",
+      "kind": "id_migration",
+      "record_path": "migrations",
+      "lookup_fields": ["old_id", "new_id", "source", "target", "type"],
+      "evidence_level": "cross_confirmed",
+      "default_status": "candidate",
+      "migration_only": true
+    },
+    {
+      "id": "NET-CONNECTION-TYPES",
+      "path": "四网络连接，剧情覆盖/connection_type_mapping.json",
+      "kind": "connection_type_mapping",
+      "record_path": "mappings",
+      "lookup_fields": ["static_type", "dynamic_type", "status"],
+      "evidence_level": "cross_confirmed",
+      "default_status": "selected",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "id": "NET-GENERATION-METRICS",
+      "path": "四网络连接，剧情覆盖/network_generation_metrics.json",
+      "kind": "generation_metrics",
+      "record_path": "",
+      "lookup_fields": ["static_original_connections", "dynamic_original_connections", "dynamic_generated_connections", "dynamic_final_connections", "dynamic_conflicts"],
+      "evidence_level": "confirmed_raw",
+      "default_status": "selected",
+      "metadata_only": true
+    },
+    {
+      "id": "NET-NODE-ALIASES",
+      "path": "四网络连接，剧情覆盖/node_aliases.json",
+      "kind": "node_aliases",
+      "record_path": "unresolved_similar",
+      "lookup_fields": ["names", "reason"],
+      "evidence_level": "unconfirmed",
+      "default_status": "candidate",
+      "alias_only": true
+    },
+    {
+      "id": "NET-COVERAGE-REPORT",
+      "path": "阶段状态/资料网络剧情覆盖.json",
+      "kind": "coverage_report",
+      "record_path": "network_inventory",
+      "lookup_fields": ["file", "declared_connections", "parsed_connections", "status"],
+      "evidence_level": "confirmed_raw",
+      "default_status": "selected",
+      "metadata_only": true
+    }
+  ],
+  "retrieval_indexes": ["by_connection_id", "by_legacy_id", "by_anchor_id", "by_source", "by_target", "by_connection_type", "by_condition", "by_alias", "by_artifact"],
+  "anchor_record_contract": {
+    "artifact_id": "NET-ANCHOR-SOURCE",
+    "source_path": "08_原始资料/锚点网络.txt",
+    "record_path": "markdown_table_rows",
+    "required_fields": ["id", "anchor_name", "content", "condition", "source_ref", "classification"],
+    "lookup_fields": ["id", "anchor_name", "content", "condition"],
+    "status": "source_rows_indexed",
+    "declared_count_note": "原文声明‘约2120个’是B级粒度拆分规模估算，不是逐条记录清单；当前正式表格可解析1790个唯一ID，审计以可解析唯一ID及路由完整性为准。"
+  },
+  "required_trace": "network_artifact -> selected_network_evidence -> synthesis_decision -> design -> text -> verification"
+}

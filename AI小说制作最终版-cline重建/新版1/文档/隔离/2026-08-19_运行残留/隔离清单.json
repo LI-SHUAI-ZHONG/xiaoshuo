@@ -1,0 +1,184 @@
+﻿{
+    "schema_version":  "quarantine-manifest-1.0",
+    "generated_at":  "2026-08-18T18:39:32.6616609Z",
+    "scope":  "explicit_root_runtime_residue_only",
+    "moved_count":  16,
+    "items":  [
+                  {
+                      "original_relative_path":  "all-tests-final.out",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/all-tests-final.out",
+                      "bytes":  19726,
+                      "sha256":  "AEE737FC7986E48E0CE897496F7684FC41B94BC28907A3E9908A3976091FD8B6",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "all-tests.out",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/all-tests.out",
+                      "bytes":  389,
+                      "sha256":  "ADB83DBE20963021DA142FAB5539BFAB1FBF222FCCA4BA5FC5B90D33E09907B7",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "compileall.out",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/compileall.out",
+                      "bytes":  0,
+                      "sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "_audit-unittest.out",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/_audit-unittest.out",
+                      "bytes":  40017,
+                      "sha256":  "B1DE90C6B2DC657804DF85CF5396AECFDCD219BE0B38437E7C682D7074D16EC3",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "_executor_dis.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/_executor_dis.txt",
+                      "bytes":  257655,
+                      "sha256":  "8289FBBE314BD10741AF9E147B6CE9C8468AE652845C6C4825CF03A78790E079",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "_model_run_exit.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/_model_run_exit.txt",
+                      "bytes":  4,
+                      "sha256":  "9ACA8DFCE962538FB8131D73F84CADA05E4DC79F5A0D3612C511B1150F3E33E2",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "_model_run_stderr.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/_model_run_stderr.txt",
+                      "bytes":  127,
+                      "sha256":  "7CC2FA1C9A052200CC6A6EB0D29DB4E4EB0B01D0FAF04ED78367FACE20D62AAA",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "_model_run_stdout.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/_model_run_stdout.txt",
+                      "bytes":  0,
+                      "sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "正文清单.tmp",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/正文清单.tmp",
+                      "bytes":  751,
+                      "sha256":  "039ACE57798380890E98B2DD2E2506321F34825289ADBC6B9261AFC23BC29645",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "管道重跑日志.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/管道重跑日志.txt",
+                      "bytes":  5521,
+                      "sha256":  "5D5C4244C035A24D97E63F65DCB360EEF3289E6420A18DA94FA4018BD2EE5720",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "脚本清单.tmp",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/脚本清单.tmp",
+                      "bytes":  7806,
+                      "sha256":  "525598FB24CD48A2758CDA16DCF0119FAF991272F524016C916B4F7D8C8FE2CA",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "证据清单.tmp",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/证据清单.tmp",
+                      "bytes":  683860,
+                      "sha256":  "C698E546D9EA595D6A30082A5FE3ED549F6649314C277C14E040F3B99017F6C8",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "资料可用性审计.files.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/资料可用性审计.files.txt",
+                      "bytes":  0,
+                      "sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "资料可用性审计.git-status.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/资料可用性审计.git-status.txt",
+                      "bytes":  0,
+                      "sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "资料可用性审计.python-version.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/资料可用性审计.python-version.txt",
+                      "bytes":  15,
+                      "sha256":  "7C4C5588F4CFC8388240EFF9D1C33BC7CFB24D52A440F4367B6C4199C558BE80",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  },
+                  {
+                      "original_relative_path":  "资料可用性审计.references.txt",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_运行残留/资料可用性审计.references.txt",
+                      "bytes":  0,
+                      "sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+                      "classification":  "quarantined_runtime_residue",
+                      "reasons":  [
+                                      "根目录运行或测试残留",
+                                      "不属于当前正式输入"
+                                  ]
+                  }
+              ]
+}

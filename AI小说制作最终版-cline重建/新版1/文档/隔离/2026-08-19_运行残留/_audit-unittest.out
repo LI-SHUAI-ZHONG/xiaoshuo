@@ -1,0 +1,397 @@
+test_accepts_complete_source_bounded_three_chapter_plan (test_三章金样本闸门.GoldenThreeChapterGateTests.test_accepts_complete_source_bounded_three_chapter_plan) ... ok
+test_micro_batches_are_six_or_less_and_cannot_write_prose (test_三章金样本闸门.GoldenThreeChapterGateTests.test_micro_batches_are_six_or_less_and_cannot_write_prose) ... ok
+test_rejects_broken_cross_chapter_action_interface (test_三章金样本闸门.GoldenThreeChapterGateTests.test_rejects_broken_cross_chapter_action_interface) ... ok
+test_rejects_candidate_source (test_三章金样本闸门.GoldenThreeChapterGateTests.test_rejects_candidate_source) ... ok
+test_rejects_missing_scene_consequence (test_三章金样本闸门.GoldenThreeChapterGateTests.test_rejects_missing_scene_consequence) ... ok
+test_严格全量资料升级最终审核 (unittest.loader._FailedTest.test_严格全量资料升级最终审核) ... ERROR
+test_严格全量资料连续编排 (unittest.loader._FailedTest.test_严格全量资料连续编排) ... ERROR
+test_binds_unique_identity_and_quarantines_ambiguous_matches (test_严格升级原版对象绑定.StrictUpgradeBindingTests.test_binds_unique_identity_and_quarantines_ambiguous_matches) ... ok
+test_严格隔离内容分流 (unittest.loader._FailedTest.test_严格隔离内容分流) ... ERROR
+test_严格隔离内容处置画像 (unittest.loader._FailedTest.test_严格隔离内容处置画像) ... ERROR
+test_candidate_with_missing_identity_is_not_downgraded (test_严格隔离分类报告.StrictQuarantineClassificationTests.test_candidate_with_missing_identity_is_not_downgraded) ... ok
+test_invalid_locator_is_recoverable_only_with_proof (test_严格隔离分类报告.StrictQuarantineClassificationTests.test_invalid_locator_is_recoverable_only_with_proof) ... ok
+test_pending_requires_confirmation (test_严格隔离分类报告.StrictQuarantineClassificationTests.test_pending_requires_confirmation) ... ok
+test_named_object_block_still_requires_identity_confirmation (test_严格隔离可恢复性评估.StrictQuarantineRecoverabilityTests.test_named_object_block_still_requires_identity_confirmation) ... ok
+test_unbounded_multi_line_reference_requires_replacement (test_严格隔离可恢复性评估.StrictQuarantineRecoverabilityTests.test_unbounded_multi_line_reference_requires_replacement) ... ok
+test_严格隔离替代来源方案 (unittest.loader._FailedTest.test_严格隔离替代来源方案) ... ERROR
+test_mismatched_replacement_object_is_rejected (test_严格隔离替代来源重审.StrictQuarantineReplacementReauditTests.test_mismatched_replacement_object_is_rejected) ... ok
+test_valid_replacement_is_only_a_later_review_candidate (test_严格隔离替代来源重审.StrictQuarantineReplacementReauditTests.test_valid_replacement_is_only_a_later_review_candidate) ... ok
+test_rejects_hash_mismatch (test_严格隔离项目确认.StrictQuarantineProjectConfirmationTests.test_rejects_hash_mismatch) ... ok
+test_rejects_mutable_locator (test_严格隔离项目确认.StrictQuarantineProjectConfirmationTests.test_rejects_mutable_locator) ... ok
+test_rejects_unconfirmable_identity_missing_record (test_严格隔离项目确认.StrictQuarantineProjectConfirmationTests.test_rejects_unconfirmable_identity_missing_record) ... ok
+test_valid_explicit_approval_is_accepted_only_for_later_reaudit (test_严格隔离项目确认.StrictQuarantineProjectConfirmationTests.test_valid_explicit_approval_is_accepted_only_for_later_reaudit) ... ok
+test_active_production_projection_has_matching_queue_and_batches (test_全流程创作质量门.FullWorkflowTests.test_active_production_projection_has_matching_queue_and_batches) ... ok
+test_current_quality_status_only_allows_writing_after_all_preconditions (test_全流程创作质量门.FullWorkflowTests.test_current_quality_status_only_allows_writing_after_all_preconditions) ... ok
+test_failed_isolation_is_reaudited_after_the_production_surface_is_cleared (test_全流程创作质量门.FullWorkflowTests.test_failed_isolation_is_reaudited_after_the_production_surface_is_cleared) ... ok
+test_generic_only_match_is_blocked (test_全流程创作质量门.FullWorkflowTests.test_generic_only_match_is_blocked) ... ok
+test_ineligible_candidates_are_not_projected_to_the_production_surface (test_全流程创作质量门.FullWorkflowTests.test_ineligible_candidates_are_not_projected_to_the_production_surface) ... ok
+test_old_tasks_are_archived_and_cleared (test_全流程创作质量门.FullWorkflowTests.test_old_tasks_are_archived_and_cleared) ... ok
+test_全绑定来源完整性审计 (unittest.loader._FailedTest.test_全绑定来源完整性审计) ... ERROR
+test_audited_semantic_conditions_exclude_source_qualification (test_全资料生产能力门.FullSourceProductionCapabilityTests.test_audited_semantic_conditions_exclude_source_qualification) ... ok
+test_candidate_constraints_remain_in_creation_contract (test_全资料生产能力门.FullSourceProductionCapabilityTests.test_candidate_constraints_remain_in_creation_contract) ... ok
+test_partial_source_is_notice_when_every_contract_is_complete (test_全资料生产能力门.FullSourceProductionCapabilityTests.test_partial_source_is_notice_when_every_contract_is_complete) ... ok
+test_bound_contract_passes (test_全量模型资料改进方案.FullModelMaterialImprovementContractTests.test_bound_contract_passes) ... ok
+test_excluding_type_material_is_blocked (test_全量模型资料改进方案.FullModelMaterialImprovementContractTests.test_excluding_type_material_is_blocked) ... ok
+test_human_review_is_not_a_required_stage (test_全量模型资料改进方案.FullModelMaterialImprovementContractTests.test_human_review_is_not_a_required_stage) ... ok
+test_missing_automatic_gate_is_blocked (test_全量模型资料改进方案.FullModelMaterialImprovementContractTests.test_missing_automatic_gate_is_blocked) ... ok
+test_missing_field_fusion_boundary_is_blocked (test_全量模型资料改进方案.FullModelMaterialImprovementContractTests.test_missing_field_fusion_boundary_is_blocked) ... ok
+test_same_source_derived_auto_fusion_is_blocked (test_全量模型资料改进方案.FullModelMaterialImprovementContractTests.test_same_source_derived_auto_fusion_is_blocked) ... ok
+test_summary_only_input_is_blocked (test_全量模型资料改进方案.FullModelMaterialImprovementContractTests.test_summary_only_input_is_blocked) ... ok
+test_untyped_array_merge_boundary_is_blocked (test_全量模型资料改进方案.FullModelMaterialImprovementContractTests.test_untyped_array_merge_boundary_is_blocked) ... ok
+test_archive_drift_remains_nonrelease_but_is_not_active_production (test_全量资料严格隔离审计.FullSourceStrictIsolationAuditTests.test_archive_drift_remains_nonrelease_but_is_not_active_production) ... ok
+test_empty_audited_authorization_and_empty_queues_are_safe (test_全量资料严格隔离审计.FullSourceStrictIsolationAuditTests.test_empty_audited_authorization_and_empty_queues_are_safe) ... ok
+test_opt_in_archive_repair_registers_only_existing_archive_records (test_全量资料严格隔离审计.FullSourceStrictIsolationAuditTests.test_opt_in_archive_repair_registers_only_existing_archive_records) ... ok
+test_permission_projection_sync_uses_only_the_audited_ledger (test_全量资料严格隔离审计.FullSourceStrictIsolationAuditTests.test_permission_projection_sync_uses_only_the_audited_ledger) ... ok
+test_rebuild_does_not_quarantine_consumption_added_after_initial_freeze (test_全量资料严格隔离审计.FullSourceStrictIsolationAuditTests.test_rebuild_does_not_quarantine_consumption_added_after_initial_freeze) ... ok
+test_registered_historical_consumption_is_not_a_current_production_issue (test_全量资料严格隔离审计.FullSourceStrictIsolationAuditTests.test_registered_historical_consumption_is_not_a_current_production_issue) ... ok
+test_rejects_historical_record_reentering_current_consumption_evidence (test_全量资料严格隔离审计.FullSourceStrictIsolationAuditTests.test_rejects_historical_record_reentering_current_consumption_evidence) ... ok
+test_requires_registered_historical_consumption_to_remain_nonrelease (test_全量资料严格隔离审计.FullSourceStrictIsolationAuditTests.test_requires_registered_historical_consumption_to_remain_nonrelease) ... ok
+test_keeps_candidates_and_quarantine_out_of_fact_changes (test_全量资料升级审查包.UpgradeReviewPackageTests.test_keeps_candidates_and_quarantine_out_of_fact_changes) ... ok
+test_全量资料升级异常审计 (unittest.loader._FailedTest.test_全量资料升级异常审计) ... ERROR
+test_全量资料升级模型错误隔离 (unittest.loader._FailedTest.test_全量资料升级模型错误隔离) ... ERROR
+test_summarizes_records_and_detects_manifest_mismatch (test_全量资料升级运行报告.UpgradeRunReportTests.test_summarizes_records_and_detects_manifest_mismatch) ... ok
+test_deterministic_template_is_written_only_to_nonrelease_draft (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_deterministic_template_is_written_only_to_nonrelease_draft) ... ok
+test_does_not_retry_model_transport_error (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_does_not_retry_model_transport_error) ... ok
+test_extracts_quotes_without_rewriting_valid_paragraph (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_extracts_quotes_without_rewriting_valid_paragraph) ... ok
+test_local_field_quotes_are_nonempty_and_verbatim (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_local_field_quotes_are_nonempty_and_verbatim) ... ok
+test_model_accepts_fields_quoted_from_paragraph (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_model_accepts_fields_quoted_from_paragraph) ... ok
+test_model_prompts_include_each_causal_contract_stage (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_model_prompts_include_each_causal_contract_stage) ... ok
+test_model_repairs_missing_action_stage (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_model_repairs_missing_action_stage) ... ok
+test_model_requires_approved_quality_gate_status (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_model_requires_approved_quality_gate_status) ... ok
+test_model_retries_short_plain_text_once (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_model_retries_short_plain_text_once) ... ok
+test_old_or_blocked_plan_cannot_authorize_prose (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_old_or_blocked_plan_cannot_authorize_prose) ... ok
+test_rejects_plan_when_mutable_permissions_lack_audited_grant (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_rejects_plan_when_mutable_permissions_lack_audited_grant) ... ok
+test_rejects_tampered_plan_without_binding_authorization (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_rejects_tampered_plan_without_binding_authorization) ... ok
+test_retries_only_malformed_json_responses (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_retries_only_malformed_json_responses) ... ok
+test_selected_consumption_id_must_belong_to_batch (test_全量资料批次正文升级.FullSourceBatchUpgradeAuthorizationTests.test_selected_consumption_id_must_belong_to_batch) ... ok
+test_accepts_explicit_derived_audit_inputs (test_全量资料新版构建.VersionBuilderTests.test_accepts_explicit_derived_audit_inputs) ... ok
+test_approved_contract_changes_only_mirror (test_全量资料新版构建.VersionBuilderTests.test_approved_contract_changes_only_mirror) ... ok
+test_builds_immutable_mirror_and_isolates_candidates (test_全量资料新版构建.VersionBuilderTests.test_builds_immutable_mirror_and_isolates_candidates) ... ok
+test_ineligible_duplicate_candidates_are_automatically_isolated (test_全量资料新版构建.VersionBuilderTests.test_ineligible_duplicate_candidates_are_automatically_isolated) ... ok
+test_rejects_forged_review_and_hash_mismatch (test_全量资料正文消费验证.FullSourceProseConsumptionValidationTests.test_rejects_forged_review_and_hash_mismatch) ... ok
+test_rejects_metadata_rule_repetition_and_truncation (test_全量资料正文消费验证.FullSourceProseConsumptionValidationTests.test_rejects_metadata_rule_repetition_and_truncation) ... ok
+test_scene_approval_does_not_require_full_material_release_gate (test_全量资料正文消费验证.FullSourceProseConsumptionValidationTests.test_scene_approval_does_not_require_full_material_release_gate) ... ok
+test_repairs_each_precisely_located_object_with_hash_identity (test_全量资料类型连接身份修复.TypeConnectionIdentityRepairTests.test_repairs_each_precisely_located_object_with_hash_identity) ... ok
+test_repairs_root_object_only_at_index_one (test_全量资料类型连接身份修复.TypeConnectionIdentityRepairTests.test_repairs_root_object_only_at_index_one) ... ok
+test_repairs_only_verified_library_locator (test_全量资料资料库定位修复.LibraryLocatorRepairTests.test_repairs_only_verified_library_locator) ... ok
+test_audit_emits_only_complete_explicit_dual_permission (test_全量资料输入与正文授权.FullSourceUseAuthorizationTests.test_audit_emits_only_complete_explicit_dual_permission) ... ok
+test_rejects_single_permission_and_binding_drift (test_全量资料输入与正文授权.FullSourceUseAuthorizationTests.test_rejects_single_permission_and_binding_drift) ... ok
+test_template_initialization_refuses_to_replace_existing_audit_directory (test_全量资料输入与正文授权.FullSourceUseAuthorizationTests.test_template_initialization_refuses_to_replace_existing_audit_directory) ... ok
+test_separates_revisions_from_advisory_and_runtime_evidence (test_升级成果追溯审计.UpgradeArtifactTraceAuditTests.test_separates_revisions_from_advisory_and_runtime_evidence) ... ok
+test_preview_preserves_pending_evidence_without_fact_change (test_原版升级资料字段级融合.FieldFusionPreviewTests.test_preview_preserves_pending_evidence_without_fact_change) ... ok
+test_rejects_source_hash_drift (test_原版升级资料字段级融合.FieldFusionPreviewTests.test_rejects_source_hash_drift) ... ok
+test_rejects_untyped_rule_candidate (test_原版升级资料字段级融合.FieldFusionPreviewTests.test_rejects_untyped_rule_candidate) ... ok
+test_same_source_overlay_blocks_cycles (test_原版升级资料字段级融合.FieldFusionPreviewTests.test_same_source_overlay_blocks_cycles) ... ok
+test_same_source_overlay_builds_immutable_resolved_view (test_原版升级资料字段级融合.FieldFusionPreviewTests.test_same_source_overlay_builds_immutable_resolved_view) ... ok
+test_semantic_rule_unit_preserves_condition_and_effect (test_原版升级资料字段级融合.FieldFusionPreviewTests.test_semantic_rule_unit_preserves_condition_and_effect) ... ok
+test_apply_creates_rollback_and_manifest (test_原版新版资料合并.OriginalMaterialMergeTests.test_apply_creates_rollback_and_manifest) ... ok
+test_preview_never_writes_source (test_原版新版资料合并.OriginalMaterialMergeTests.test_preview_never_writes_source) ... ok
+test_rejects_creative_or_report_source_reference (test_原版新版资料合并.OriginalMaterialMergeTests.test_rejects_creative_or_report_source_reference) ... ok
+test_rejects_duplicate_addition_and_context_drift (test_原版新版资料合并.OriginalMaterialMergeTests.test_rejects_duplicate_addition_and_context_drift) ... ok
+test_rejects_empty_changeset_apply (test_原版新版资料合并.OriginalMaterialMergeTests.test_rejects_empty_changeset_apply) ... ok
+test_rejects_incomplete_semantic_contract (test_原版新版资料合并.OriginalMaterialMergeTests.test_rejects_incomplete_semantic_contract) ... ok
+test_rejects_stale_source_hash (test_原版新版资料合并.OriginalMaterialMergeTests.test_rejects_stale_source_hash) ... ok
+test_rejects_type_system_target (test_原版新版资料合并.OriginalMaterialMergeTests.test_rejects_type_system_target) ... ok
+test_rejects_changes_to_static_derived_fields_and_preserves_safe_candidates (test_原版资料升级审查闸门.OriginalMaterialUpgradeReviewGateTests.test_rejects_changes_to_static_derived_fields_and_preserves_safe_candidates) ... ok
+test_creates_review_only_before_after_record (test_原版资料升级执行.OriginalMaterialUpgradeExecutionTests.test_creates_review_only_before_after_record) ... ok
+test_indexes_headings_source_blocks_json_and_anchor_rows (test_原版资料对象索引.OriginalMaterialObjectIndexTests.test_indexes_headings_source_blocks_json_and_anchor_rows) ... ok
+test_activation_version_distinguishes_current_candidates_from_legacy_ids (test_场景创作激活.SceneActivationTests.test_activation_version_distinguishes_current_candidates_from_legacy_ids) ... ok
+test_all_required_categories_are_needed_for_ready_status (test_场景创作激活.SceneActivationTests.test_all_required_categories_are_needed_for_ready_status) ... ok
+test_authorized_network_binding_can_use_a_source_specific_term_with_cost (test_场景创作激活.SceneActivationTests.test_authorized_network_binding_can_use_a_source_specific_term_with_cost) ... ok
+test_candidates_require_two_terms_including_scene_specific_term (test_场景创作激活.SceneActivationTests.test_candidates_require_two_terms_including_scene_specific_term) ... ok
+test_evaluate_does_not_write_the_production_surface (test_场景创作激活.SceneActivationTests.test_evaluate_does_not_write_the_production_surface) ... ok
+test_formal_gate_quarantines_even_explicitly_authorized_binding (test_场景创作激活.SceneActivationTests.test_formal_gate_quarantines_even_explicitly_authorized_binding) ... ok
+test_non_draft_brief_is_rejected (test_场景创作激活.SceneActivationTests.test_non_draft_brief_is_rejected) ... ok
+test_only_matching_authorized_categories_become_tasks (test_场景创作激活.SceneActivationTests.test_only_matching_authorized_categories_become_tasks) ... ok
+test_scene_formal_gate_allows_only_hash_bound_approved_scene (test_场景创作激活.SceneActivationTests.test_scene_formal_gate_allows_only_hash_bound_approved_scene) ... ok
+test_type_source_block_requires_complete_source_reference (test_场景创作激活.SceneActivationTests.test_type_source_block_requires_complete_source_reference) ... ok
+test_type_source_blocks_bind_without_project_type_selection (test_场景创作激活.SceneActivationTests.test_type_source_blocks_bind_without_project_type_selection) ... ok
+test_执行契约 (unittest.loader._FailedTest.test_执行契约) ... ERROR
+test_confirmation_categories_use_confirmation_queue (test_持续资料升级调度.ContinuousSourceUpgradeLedgerTests.test_confirmation_categories_use_confirmation_queue) ... ok
+test_identity_missing_uses_bounded_replacement_reaudit (test_持续资料升级调度.ContinuousSourceUpgradeLedgerTests.test_identity_missing_uses_bounded_replacement_reaudit) ... ok
+test_missing_boundary_requires_new_replacement (test_持续资料升级调度.ContinuousSourceUpgradeLedgerTests.test_missing_boundary_requires_new_replacement) ... ok
+test_unknown_category_fails_closed (test_持续资料升级调度.ContinuousSourceUpgradeLedgerTests.test_unknown_category_fails_closed) ... ok
+test_applies_explicit_human_approval_only_after_semantic_pass (test_文学审校.LiteraryReviewTests.test_applies_explicit_human_approval_only_after_semantic_pass) ... ok
+test_duplicate_decisions_block_approval (test_文学审校.LiteraryReviewTests.test_duplicate_decisions_block_approval) ... ok
+test_named_hash_bound_rejection_is_retained_for_revision (test_文学审校.LiteraryReviewTests.test_named_hash_bound_rejection_is_retained_for_revision) ... ok
+test_rejects_approval_bound_to_superseded_paragraph (test_文学审校.LiteraryReviewTests.test_rejects_approval_bound_to_superseded_paragraph) ... ok
+test_requires_named_human_decision (test_文学审校.LiteraryReviewTests.test_requires_named_human_decision) ... ok
+test_ollama_maps_output_token_budget_to_num_predict (test_文本生成模型.TextGenerationModelTests.test_ollama_maps_output_token_budget_to_num_predict) ... ok
+test_omits_output_token_budget_when_not_configured (test_文本生成模型.TextGenerationModelTests.test_omits_output_token_budget_when_not_configured) ... ok
+test_plain_text_ollama_request_does_not_enforce_json_format (test_文本生成模型.TextGenerationModelTests.test_plain_text_ollama_request_does_not_enforce_json_format) ... ok
+test_migrates_lines_to_deduplicated_source_refs_and_keeps_legacy (test_来源引用审计与迁移.SourceReferenceMigrationTests.test_migrates_lines_to_deduplicated_source_refs_and_keeps_legacy) ... ok
+test_quarantines_out_of_range_lines_without_modifying_selection (test_来源引用审计与迁移.SourceReferenceMigrationTests.test_quarantines_out_of_range_lines_without_modifying_selection) ... ok
+test_blocks_internal_rule_leakage (test_来源语义审校.SemanticEditorialReviewTests.test_blocks_internal_rule_leakage) ... ok
+test_passes_complete_traceable_draft (test_来源语义审校.SemanticEditorialReviewTests.test_passes_complete_traceable_draft) ... ok
+test_anchor_requires_both_evidence_logs (test_来源质量自主分析.SourceQualityAnalysisTests.test_anchor_requires_both_evidence_logs) ... ok
+test_duplicate_library_ids_do_not_count_as_complete_coverage (test_来源质量自主分析.SourceQualityAnalysisTests.test_duplicate_library_ids_do_not_count_as_complete_coverage) ... ok
+test_library_requires_full_object_level_backfill (test_来源质量自主分析.SourceQualityAnalysisTests.test_library_requires_full_object_level_backfill) ... ok
+test_type_profile_does_not_claim_unsupported_reader_params (test_来源质量自主分析.SourceQualityAnalysisTests.test_type_profile_does_not_claim_unsupported_reader_params) ... ok
+test_hash_drift_is_reported_without_permission_change (test_来源资格证据线索盘点.SourceQualificationClueTests.test_hash_drift_is_reported_without_permission_change) ... ok
+test_local_snapshot_is_not_qualification_evidence (test_来源资格证据线索盘点.SourceQualificationClueTests.test_local_snapshot_is_not_qualification_evidence) ... ok
+test_model_result_cannot_grant_permissions (test_模型辅助来源资格评估.ModelQualificationReviewTests.test_model_result_cannot_grant_permissions) ... ok
+test_rejects_model_evidence_outside_package (test_模型辅助来源资格评估.ModelQualificationReviewTests.test_rejects_model_evidence_outside_package) ... ok
+test_resume_does_not_call_model_twice (test_模型辅助资料改进候选.MaterialImprovementCandidateTests.test_resume_does_not_call_model_twice) ... ok
+test_writes_candidate_without_changing_binding (test_模型辅助资料改进候选.MaterialImprovementCandidateTests.test_writes_candidate_without_changing_binding) ... ok
+test_blocked_source_metadata_is_isolated_without_paragraph (test_派生资料失败样本隔离.FailureSampleIsolationTests.test_blocked_source_metadata_is_isolated_without_paragraph) ... ok
+test_clean_draft_record_without_source_metadata_passes (test_派生资料失败样本隔离.FailureSampleIsolationTests.test_clean_draft_record_without_source_metadata_passes) ... ok
+test_hashless_record_blocks_batch (test_派生资料批次回归.DerivedBatchRegressionTests.test_hashless_record_blocks_batch) ... ok
+test_mapped_derived_object_hash_is_accepted (test_派生资料批次回归.DerivedBatchRegressionTests.test_mapped_derived_object_hash_is_accepted) ... ok
+test_nested_derived_object_hash_is_accepted (test_派生资料批次回归.DerivedBatchRegressionTests.test_nested_derived_object_hash_is_accepted) ... ok
+test_quarantined_unresolved_object_requires_an_error_but_not_a_hash (test_派生资料批次回归.DerivedBatchRegressionTests.test_quarantined_unresolved_object_requires_an_error_but_not_a_hash) ... ok
+test_quarantined_unresolved_object_without_error_blocks_batch (test_派生资料批次回归.DerivedBatchRegressionTests.test_quarantined_unresolved_object_without_error_blocks_batch) ... ok
+test_snapshot_does_not_require_its_parent_chain (test_派生资料批次回归.DerivedBatchRegressionTests.test_snapshot_does_not_require_its_parent_chain) ... ok
+test_valid_full_batch_passes_without_creating_or_reading_prose (test_派生资料批次回归.DerivedBatchRegressionTests.test_valid_full_batch_passes_without_creating_or_reading_prose) ... ok
+test_apply_writes_project_only_append_only_decision (test_派生资料项目采用.ProjectOnlyAdoptionTests.test_apply_writes_project_only_append_only_decision) ... ok
+test_missing_baseline_hash_uses_locked_upgrade_hash (test_派生资料项目采用.ProjectOnlyAdoptionTests.test_missing_baseline_hash_uses_locked_upgrade_hash) ... ok
+test_missing_project_request_blocks_without_writing_anything (test_派生资料项目采用.ProjectOnlyAdoptionTests.test_missing_project_request_blocks_without_writing_anything) ... ok
+test_present_baseline_hash_must_match_locked_upgrade_hash (test_派生资料项目采用.ProjectOnlyAdoptionTests.test_present_baseline_hash_must_match_locked_upgrade_hash) ... ok
+test_staging_validation_rejects_tampered_decision (test_派生资料项目采用.ProjectOnlyAdoptionTests.test_staging_validation_rejects_tampered_decision) ... ok
+test_inventory_preserves_evidence_and_blocks_release_without_units (test_生成升级能力清单.UpgradeCapabilityInventoryTests.test_inventory_preserves_evidence_and_blocks_release_without_units) ... ok
+test_locator_repair_is_explicitly_blocked (test_生成升级能力清单.UpgradeCapabilityInventoryTests.test_locator_repair_is_explicitly_blocked) ... ok
+test_readback_hash_drift_is_recorded_as_blocking_evidence (test_生成升级能力清单.UpgradeCapabilityInventoryTests.test_readback_hash_drift_is_recorded_as_blocking_evidence) ... ok
+test_readback_verifies_exact_source_range_and_hash (test_生成升级能力清单.UpgradeCapabilityInventoryTests.test_readback_verifies_exact_source_range_and_hash) ... ok
+test_valid_mapping_revision_replaces_only_its_bound_base_mapping (test_生成升级能力清单.UpgradeCapabilityInventoryTests.test_valid_mapping_revision_replaces_only_its_bound_base_mapping) ... ok
+test_complete_opening_method_contract_passes_without_formal_fact_promotion (test_章节质量资料就绪度门.ChapterQualityMaterialReadinessTests.test_complete_opening_method_contract_passes_without_formal_fact_promotion) ... ok
+test_missing_observable_result_is_a_material_gap (test_章节质量资料就绪度门.ChapterQualityMaterialReadinessTests.test_missing_observable_result_is_a_material_gap) ... ok
+test_类型连接对象分类审计 (unittest.loader._FailedTest.test_类型连接对象分类审计) ... ERROR
+test_类型连接结构对象引用审计 (unittest.loader._FailedTest.test_类型连接结构对象引用审计) ... ERROR
+test_类型连接身份复核审计 (unittest.loader._FailedTest.test_类型连接身份复核审计) ... ERROR
+test_incomplete_binding_is_rejected_before_prose (test_项目创作生产政策.ProjectCreativeProductionPolicyTests.test_incomplete_binding_is_rejected_before_prose) ... ok
+test_policy_is_present_and_covers_all_source_kinds (test_项目创作生产政策.ProjectCreativeProductionPolicyTests.test_policy_is_present_and_covers_all_source_kinds) ... ok
+test_type_connections_remain_unconfirmed (test_项目创作生产政策.ProjectCreativeProductionPolicyTests.test_type_connections_remain_unconfirmed) ... ok
+
+======================================================================
+ERROR: test_严格全量资料升级最终审核 (unittest.loader._FailedTest.test_严格全量资料升级最终审核)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_严格全量资料升级最终审核
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_严格全量资料升级最终审核.py", line 10, in <module>
+    import 严格全量资料升级最终审核 as final_audit
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\严格全量资料升级最终审核.py", line 12, in <module>
+    import 严格全量资料模型升级 as strict
+ModuleNotFoundError: No module named '严格全量资料模型升级'
+
+
+======================================================================
+ERROR: test_严格全量资料连续编排 (unittest.loader._FailedTest.test_严格全量资料连续编排)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_严格全量资料连续编排
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_严格全量资料连续编排.py", line 11, in <module>
+    from 严格全量资料连续编排 import binding_baseline, load_bindings, next_window, parent_chain_summary, pending_indexes, require_matching_baseline, review_entry, review_records
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\严格全量资料连续编排.py", line 18, in <module>
+    import 严格全量资料模型升级 as strict
+ModuleNotFoundError: No module named '严格全量资料模型升级'
+
+
+======================================================================
+ERROR: test_严格隔离内容分流 (unittest.loader._FailedTest.test_严格隔离内容分流)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_严格隔离内容分流
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_严格隔离内容分流.py", line 8, in <module>
+    from 严格隔离内容分流 import _route
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\严格隔离内容分流.py", line 18, in <module>
+    import 严格资料升级 as strict_upgrade
+ModuleNotFoundError: No module named '严格资料升级'
+
+
+======================================================================
+ERROR: test_严格隔离内容处置画像 (unittest.loader._FailedTest.test_严格隔离内容处置画像)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_严格隔离内容处置画像
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_严格隔离内容处置画像.py", line 8, in <module>
+    from 严格隔离内容处置画像 import _profile, _strategy
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\严格隔离内容处置画像.py", line 12, in <module>
+    import 严格资料升级 as strict_upgrade
+ModuleNotFoundError: No module named '严格资料升级'
+
+
+======================================================================
+ERROR: test_严格隔离替代来源方案 (unittest.loader._FailedTest.test_严格隔离替代来源方案)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_严格隔离替代来源方案
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_严格隔离替代来源方案.py", line 8, in <module>
+    from 严格隔离替代来源方案 import _draft
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\严格隔离替代来源方案.py", line 16, in <module>
+    import 严格资料升级 as strict_upgrade
+ModuleNotFoundError: No module named '严格资料升级'
+
+
+======================================================================
+ERROR: test_全绑定来源完整性审计 (unittest.loader._FailedTest.test_全绑定来源完整性审计)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_全绑定来源完整性审计
+Traceback (most recent call last):
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\全绑定来源完整性审计.py", line 12, in <module>
+    from .严格资料升级 import SOURCE_FILE_BY_KIND, _identity_error, _resolve_ref
+ImportError: attempted relative import with no known parent package
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_全绑定来源完整性审计.py", line 10, in <module>
+    from 全绑定来源完整性审计 import audit
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\全绑定来源完整性审计.py", line 14, in <module>
+    from 严格资料升级 import SOURCE_FILE_BY_KIND, _identity_error, _resolve_ref
+ModuleNotFoundError: No module named '严格资料升级'
+
+
+======================================================================
+ERROR: test_全量资料升级异常审计 (unittest.loader._FailedTest.test_全量资料升级异常审计)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_全量资料升级异常审计
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_全量资料升级异常审计.py", line 10, in <module>
+    from 全量资料升级异常审计 import audit
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\全量资料升级异常审计.py", line 12, in <module>
+    from 全量资料升级执行器 import _binding_summary, _load_resume_selected_records, _read_json
+ModuleNotFoundError: No module named '全量资料升级执行器'
+
+
+======================================================================
+ERROR: test_全量资料升级模型错误隔离 (unittest.loader._FailedTest.test_全量资料升级模型错误隔离)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_全量资料升级模型错误隔离
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_全量资料升级模型错误隔离.py", line 10, in <module>
+    import 全量资料升级模型错误隔离 as isolate
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\全量资料升级模型错误隔离.py", line 10, in <module>
+    import 严格全量资料模型升级 as strict
+ModuleNotFoundError: No module named '严格全量资料模型升级'
+
+
+======================================================================
+ERROR: test_执行契约 (unittest.loader._FailedTest.test_执行契约)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_执行契约
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_执行契约.py", line 11, in <module>
+    from 正式交付审批 import MATERIAL_BATCH_RELEASE_SCOPE, validate_formal_release
+ModuleNotFoundError: No module named '正式交付审批'
+
+
+======================================================================
+ERROR: test_类型连接对象分类审计 (unittest.loader._FailedTest.test_类型连接对象分类审计)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_类型连接对象分类审计
+Traceback (most recent call last):
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\类型连接对象分类审计.py", line 14, in <module>
+    from .严格资料升级 import _resolve_ref
+ImportError: attempted relative import with no known parent package
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_类型连接对象分类审计.py", line 10, in <module>
+    from 类型连接对象分类审计 import audit
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\类型连接对象分类审计.py", line 16, in <module>
+    from 严格资料升级 import _resolve_ref
+ModuleNotFoundError: No module named '严格资料升级'
+
+
+======================================================================
+ERROR: test_类型连接结构对象引用审计 (unittest.loader._FailedTest.test_类型连接结构对象引用审计)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_类型连接结构对象引用审计
+Traceback (most recent call last):
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\类型连接结构对象引用审计.py", line 14, in <module>
+    from .严格资料升级 import _resolve_ref
+ImportError: attempted relative import with no known parent package
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_类型连接结构对象引用审计.py", line 10, in <module>
+    from 类型连接结构对象引用审计 import audit
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\类型连接结构对象引用审计.py", line 16, in <module>
+    from 严格资料升级 import _resolve_ref
+ModuleNotFoundError: No module named '严格资料升级'
+
+
+======================================================================
+ERROR: test_类型连接身份复核审计 (unittest.loader._FailedTest.test_类型连接身份复核审计)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_类型连接身份复核审计
+Traceback (most recent call last):
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\类型连接身份复核审计.py", line 12, in <module>
+    from .严格资料升级 import _resolve_ref
+ImportError: attempted relative import with no known parent package
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\test_类型连接身份复核审计.py", line 10, in <module>
+    from 类型连接身份复核审计 import audit
+  File "D:\AI小说制作最终版-cline重建\新版1\脚本\类型连接身份复核审计.py", line 14, in <module>
+    from 严格资料升级 import _resolve_ref
+ModuleNotFoundError: No module named '严格资料升级'
+
+
+----------------------------------------------------------------------
+Ran 162 tests in 2.172s
+
+FAILED (errors=12)

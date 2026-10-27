@@ -1,0 +1,51 @@
+{
+  "schema_version": "source-translation-binding-1.2",
+  "generated_at": "2026-08-16T07:24:49.659709Z",
+  "scope": "every_registered_source_item",
+  "source_count": 13345,
+  "translated_count": 13345,
+  "binding_count": 13345,
+  "stage_counts": {
+    "剧情创建": 8296,
+    "场景卡": 1869,
+    "大纲": 1341,
+    "分纲": 1824,
+    "剧情": 15
+  },
+  "source_kind_counts": {
+    "资料库": 568,
+    "静态网络": 1341,
+    "动态网络": 1824,
+    "锚点网络": 1790,
+    "类型系统": 15,
+    "类型系统来源块": 449,
+    "类型连接": 7358
+  },
+  "coverage_policy": "每条资料必须完成语义反推和分类；只有满足激活条件并产生阶段或场景证据后，才标记为 activated 或 narrativized。",
+  "activation_policy": {
+    "mode": "项目类型选择、风格选择或类型冲突条件匹配后激活",
+    "conditions": [
+      "类型组合已确定；连接条件已满足；project_selection_required"
+    ],
+    "source_declared_conditions": [
+      "类型组合已确定",
+      "连接条件已满足",
+      "project_selection_required"
+    ],
+    "candidate_effect_policy": "不适用",
+    "inference_targets": [
+      "剧情创建",
+      "剧情",
+      "大纲",
+      "分纲",
+      "校验"
+    ],
+    "allow_repeated_inference": true,
+    "activation_evidence": [
+      "matched_stage",
+      "matched_project_terms",
+      "creative_need",
+      "activation_reason"
+    ]
+  }
+}

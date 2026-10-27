@@ -1,0 +1,24 @@
+{
+  "schema_version": "source-reference-audit-1.0",
+  "generated_at": "2026-08-14T03:44:48.528110Z",
+  "selection_file": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\小说资料选择清单.json",
+  "source_file": "原始资料/类型系统.txt",
+  "source_block_count": 449,
+  "migration_applied": true,
+  "migrated_profile_count": 1,
+  "findings": [
+    {
+      "profile": "玄幻",
+      "status": "migrated",
+      "matched_line_count": 20,
+      "source_ref_count": 4,
+      "source_refs": [
+        "原始资料/类型系统.txt:SOURCE[17]",
+        "原始资料/类型系统.txt:SOURCE[18]",
+        "原始资料/类型系统.txt:SOURCE[20]",
+        "原始资料/类型系统.txt:SOURCE[22]"
+      ]
+    }
+  ],
+  "status": "passed"
+}

@@ -1,0 +1,248 @@
+{
+  "schema_version": "source-quality-analysis-1.0",
+  "generated_at": "2026-08-13T17:17:47.280753Z",
+  "policy": "分层放宽创作使用，不把未核验资料标记为正式事实",
+  "levels": {
+    "blocked": "不可使用，必须先修复解析或身份问题",
+    "candidate": "可检索、比较和头脑风暴，不得直接写成事实",
+    "draft_usable": "可进入大纲、分纲、场景和草稿，必须保留 source_ref 与不确定性",
+    "verified": "可作为正式事实，仅在字段完整、无占位且项目来源已确认时成立"
+  },
+  "source_count": 6,
+  "level_counts": {
+    "draft_usable": 6
+  },
+  "sources": [
+    {
+      "source": "资料库.txt",
+      "parse_status": "parseable",
+      "extractable_rate": 1.0,
+      "identity_coverage": 1.0,
+      "evidence_coverage": 1.0,
+      "missing_fields": [],
+      "placeholder_count": 0,
+      "placeholder_rate": 0.0,
+      "legacy_placeholder_count": 5126,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [
+          "dependencies",
+          "examples"
+        ],
+        "traces": [
+          "文档/证据/资料库依赖分类日志.jsonl",
+          "文档/证据/资料库示例修复日志.jsonl"
+        ]
+      },
+      "source_report_status": "complete",
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "project_confirmation",
+          "action": "完成项目来源确认后才能升级 verified"
+        }
+      ]
+    },
+    {
+      "source": "类型系统.txt",
+      "parse_status": "parseable",
+      "extractable_rate": 1.0,
+      "identity_coverage": 1.0,
+      "evidence_coverage": 0.8,
+      "missing_fields": [
+        "reader_params"
+      ],
+      "placeholder_count": 0,
+      "placeholder_rate": 0.0,
+      "legacy_placeholder_count": 2620,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [
+          "core_elements",
+          "style_constraints"
+        ],
+        "traces": [
+          "配置/类型配置模板.json"
+        ]
+      },
+      "source_report_status": "partial",
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "reader_params",
+          "action": "补齐字段并附可核验 source_ref"
+        },
+        {
+          "field": "source_confirmation",
+          "action": "确认原始来源、版本、责任人和适用范围"
+        }
+      ]
+    },
+    {
+      "source": "类型连接.txt",
+      "parse_status": "parseable",
+      "extractable_rate": 1.0,
+      "identity_coverage": 1.0,
+      "evidence_coverage": 0.6,
+      "missing_fields": [
+        "conflict_details",
+        "recommended_mechanism_explanation"
+      ],
+      "placeholder_count": 0,
+      "placeholder_rate": 0.0,
+      "legacy_placeholder_count": 5991,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [
+          "source_connection_id"
+        ],
+        "traces": [
+          "文档/证据/全量资料治理/类型连接_规范化.json"
+        ]
+      },
+      "source_report_status": "partial",
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "conflict_details",
+          "action": "补齐字段并附可核验 source_ref"
+        },
+        {
+          "field": "recommended_mechanism_explanation",
+          "action": "补齐字段并附可核验 source_ref"
+        },
+        {
+          "field": "source_confirmation",
+          "action": "确认原始来源、版本、责任人和适用范围"
+        }
+      ]
+    },
+    {
+      "source": "动态网络.txt",
+      "parse_status": "parseable",
+      "extractable_rate": 1.0,
+      "identity_coverage": 1.0,
+      "evidence_coverage": 1.0,
+      "missing_fields": [],
+      "placeholder_count": 0,
+      "placeholder_rate": 0.0,
+      "legacy_placeholder_count": 22,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [],
+        "traces": []
+      },
+      "source_report_status": "complete",
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "project_confirmation",
+          "action": "完成项目来源确认后才能升级 verified"
+        }
+      ]
+    },
+    {
+      "source": "静态网络.txt",
+      "parse_status": "parseable",
+      "extractable_rate": 1.0,
+      "identity_coverage": 1.0,
+      "evidence_coverage": 1.0,
+      "missing_fields": [],
+      "placeholder_count": 0,
+      "placeholder_rate": 0.0,
+      "legacy_placeholder_count": 19,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [],
+        "traces": []
+      },
+      "source_report_status": "complete",
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "project_confirmation",
+          "action": "完成项目来源确认后才能升级 verified"
+        }
+      ]
+    },
+    {
+      "source": "锚点网络.txt",
+      "parse_status": "parseable",
+      "extractable_rate": 1.0,
+      "identity_coverage": 1.0,
+      "evidence_coverage": 1.0,
+      "missing_fields": [],
+      "placeholder_count": 0,
+      "placeholder_rate": 0.0,
+      "legacy_placeholder_count": 42,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [
+          "anchor_definition",
+          "scene_binding",
+          "text_location"
+        ],
+        "traces": [
+          "文档/证据/锚点网络定义日志.jsonl",
+          "文档/证据/锚点网络场景绑定日志.jsonl",
+          "文档/证据/锚点网络文本位置日志.jsonl"
+        ]
+      },
+      "source_report_status": "complete",
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "project_confirmation",
+          "action": "完成项目来源确认后才能升级 verified"
+        }
+      ]
+    }
+  ],
+  "next_actions": [
+    "完成项目来源确认后才能升级 verified",
+    "确认原始来源、版本、责任人和适用范围",
+    "补齐字段并附可核验 source_ref"
+  ]
+}

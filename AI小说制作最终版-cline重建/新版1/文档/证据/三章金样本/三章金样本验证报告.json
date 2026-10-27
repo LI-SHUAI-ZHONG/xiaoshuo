@@ -1,0 +1,11 @@
+{
+  "schema_version": "golden-three-chapter-validation-1.0",
+  "status": "planning_gate_passed",
+  "prose_authorization": "draft_only_not_formal_fact",
+  "errors": [],
+  "chapter_count": 3,
+  "next_step": "以每批6条资料建立章节决策包；不得直接续跑旧的24条自动正文批次。",
+  "micro_batch_size": 6,
+  "micro_batch_count": 2225,
+  "micro_batch_policy": "每批只能产生资料选择和章节决策候选；禁止生成或覆盖正文。"
+}

@@ -1,0 +1,760 @@
+{
+  "schema_version": "2.4",
+  "run_id": "RUN-20260810-233827",
+  "mode": "Audit",
+  "request": "按当前路径检索网络连接和资料来源",
+  "project_path": null,
+  "source_scope": {
+    "root": "08_原始资料",
+    "external_paths_allowed": false,
+    "indexed_records": 24,
+    "contract": "00_资料索引/索引调用映射契约.json",
+    "network_contract": "00_资料索引/网络派生索引契约.json",
+    "network_artifacts": 7,
+    "layer_status": "partial_blocked"
+  },
+  "selected_modules": [
+    {
+      "id": "MOD-CAPABILITY",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "method_and_constraint",
+      "related": [
+        "MOD-TYPE",
+        "MOD-STATIC",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR"
+      ]
+    },
+    {
+      "id": "MOD-TYPE",
+      "path": "08_原始资料/类型系统.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "direction_filter_and_constraint",
+      "related": [
+        "MOD-CONNECTION",
+        "MOD-CAPABILITY"
+      ]
+    },
+    {
+      "id": "MOD-CONNECTION",
+      "path": "08_原始资料/类型连接.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "combination_and_conflict_filter",
+      "related": [
+        "MOD-TYPE",
+        "MOD-STATIC",
+        "MOD-DYNAMIC"
+      ]
+    },
+    {
+      "id": "MOD-STATIC",
+      "path": "08_原始资料/静态网络.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "dependency_and_structure",
+      "related": [
+        "MOD-CAPABILITY",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR"
+      ]
+    },
+    {
+      "id": "MOD-DYNAMIC",
+      "path": "08_原始资料/动态网络.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "causal_state_and_propagation",
+      "related": [
+        "MOD-STATIC",
+        "MOD-ANCHOR",
+        "MOD-CAPABILITY"
+      ]
+    },
+    {
+      "id": "MOD-ANCHOR",
+      "path": "08_原始资料/锚点网络.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "concretization_and_expression_anchor",
+      "related": [
+        "MOD-DYNAMIC",
+        "MOD-CAPABILITY"
+      ]
+    },
+    {
+      "id": "MOD-EXECUTION",
+      "path": "08_原始资料/执行正文.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "stage_order_and_output_conversion",
+      "related": [
+        "MOD-CAPABILITY",
+        "MOD-TYPE",
+        "MOD-STATIC",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR"
+      ]
+    },
+    {
+      "id": "CAP-OPENING-DESIGN",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "opening_design_parameters",
+      "related": [
+        "CAP-GOLDEN-THREE",
+        "CAP-OPENING-ATTRACTION",
+        "CAP-TYPE-STYLE-LENGTH"
+      ]
+    },
+    {
+      "id": "CAP-GOLDEN-THREE",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "three_chapter_task_contract",
+      "related": [
+        "CAP-OPENING-DESIGN",
+        "CAP-OPENING-ATTRACTION",
+        "CAP-CHARACTER-CHAIN",
+        "CAP-TYPE-STYLE-LENGTH"
+      ]
+    },
+    {
+      "id": "CAP-OPENING-ATTRACTION",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "opening_acceptance_criteria",
+      "related": [
+        "CAP-GOLDEN-THREE",
+        "CAP-OPENING-DESIGN"
+      ]
+    },
+    {
+      "id": "CAP-CHARACTER-CHAIN",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "persistent_character_behavior_contract",
+      "related": [
+        "CAP-GOLDEN-THREE",
+        "CAP-DESIGN-TO-DRAFT",
+        "MOD-STATIC",
+        "MOD-DYNAMIC"
+      ]
+    },
+    {
+      "id": "CAP-TYPE-STYLE-LENGTH",
+      "path": "08_原始资料/类型系统.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "production_parameter_constraints",
+      "related": [
+        "MOD-TYPE",
+        "CAP-GOLDEN-THREE",
+        "CAP-OPENING-DESIGN"
+      ]
+    },
+    {
+      "id": "CAP-DESIGN-TO-DRAFT",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "design_to_text_traceability",
+      "related": [
+        "CAP-CHARACTER-CHAIN",
+        "CAP-GOLDEN-THREE",
+        "CAP-OPENING-ATTRACTION"
+      ]
+    },
+    {
+      "id": "MOD-INDEX-MAPPING",
+      "path": "00_资料索引/索引调用映射契约.json",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "runtime_routing_and_retrieval_contract",
+      "related": [
+        "MOD-TYPE",
+        "MOD-CONNECTION",
+        "MOD-STATIC",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR",
+        "MOD-EXECUTION"
+      ]
+    },
+    {
+      "id": "NET-DERIVED-INDEX",
+      "path": "00_资料索引/网络派生索引契约.json",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "network_artifact_retrieval_and_status_gate",
+      "related": [
+        "MOD-STATIC",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR",
+        "MOD-INDEX-MAPPING"
+      ]
+    }
+  ],
+  "selection_decisions": [
+    {
+      "id": "MOD-CAPABILITY",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-TYPE",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-CONNECTION",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-STATIC",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-DYNAMIC",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-ANCHOR",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-EXECUTION",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-OPENING-DESIGN",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-GOLDEN-THREE",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-OPENING-ATTRACTION",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-CHARACTER-CHAIN",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-TYPE-STYLE-LENGTH",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-DESIGN-TO-DRAFT",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-LEGACY-MAP",
+      "status": "not_applicable",
+      "reason": "migration_only"
+    },
+    {
+      "id": "MOD-INDEX-MAPPING",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "NET-DERIVED-INDEX",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "NET-STATIC-FULL",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-DYNAMIC-FULL",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-DYNAMIC-MIGRATION",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-CONNECTION-TYPES",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-GENERATION-METRICS",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-NODE-ALIASES",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-COVERAGE-REPORT",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "MOD-LEGACY-STATE",
+      "status": "not_applicable",
+      "reason": "migration_only"
+    }
+  ],
+  "dependency_edges": [
+    {
+      "from": "MOD-TYPE",
+      "to": "MOD-CAPABILITY",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-CAPABILITY",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-CAPABILITY",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-CAPABILITY",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CONNECTION",
+      "to": "MOD-TYPE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-TYPE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-TYPE",
+      "to": "MOD-CONNECTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-CONNECTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-CONNECTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-STATIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-STATIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-STATIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-DYNAMIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-DYNAMIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-DYNAMIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-ANCHOR",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-ANCHOR",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-TYPE",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-OPENING-DESIGN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-ATTRACTION",
+      "to": "CAP-OPENING-DESIGN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-TYPE-STYLE-LENGTH",
+      "to": "CAP-OPENING-DESIGN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-DESIGN",
+      "to": "CAP-GOLDEN-THREE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-ATTRACTION",
+      "to": "CAP-GOLDEN-THREE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-CHARACTER-CHAIN",
+      "to": "CAP-GOLDEN-THREE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-TYPE-STYLE-LENGTH",
+      "to": "CAP-GOLDEN-THREE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-OPENING-ATTRACTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-DESIGN",
+      "to": "CAP-OPENING-ATTRACTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-CHARACTER-CHAIN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-DESIGN-TO-DRAFT",
+      "to": "CAP-CHARACTER-CHAIN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "CAP-CHARACTER-CHAIN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "CAP-CHARACTER-CHAIN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-TYPE",
+      "to": "CAP-TYPE-STYLE-LENGTH",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-TYPE-STYLE-LENGTH",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-DESIGN",
+      "to": "CAP-TYPE-STYLE-LENGTH",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-CHARACTER-CHAIN",
+      "to": "CAP-DESIGN-TO-DRAFT",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-DESIGN-TO-DRAFT",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-ATTRACTION",
+      "to": "CAP-DESIGN-TO-DRAFT",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-TYPE",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CONNECTION",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-EXECUTION",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "NET-DERIVED-INDEX",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "NET-DERIVED-INDEX",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "NET-DERIVED-INDEX",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-INDEX-MAPPING",
+      "to": "NET-DERIVED-INDEX",
+      "relation": "indexed_dependency"
+    }
+  ],
+  "selected_network_evidence": {
+    "contract": "00_资料索引/网络派生索引契约.json",
+    "query_terms": [
+      "按当前路径检索网络连接和资料来源"
+    ],
+    "artifacts": [
+      {
+        "id": "NET-STATIC-FULL",
+        "path": "四网络连接，剧情覆盖/static_connections.full.json",
+        "kind": "static_connections",
+        "status": "candidate",
+        "bytes": 476085
+      },
+      {
+        "id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "kind": "dynamic_connections",
+        "status": "candidate",
+        "bytes": 2256094
+      },
+      {
+        "id": "NET-DYNAMIC-MIGRATION",
+        "path": "四网络连接，剧情覆盖/dynamic_id_migration.json",
+        "kind": "id_migration",
+        "status": "candidate",
+        "bytes": 81196
+      },
+      {
+        "id": "NET-CONNECTION-TYPES",
+        "path": "四网络连接，剧情覆盖/connection_type_mapping.json",
+        "kind": "connection_type_mapping",
+        "status": "blocked",
+        "bytes": 1707
+      },
+      {
+        "id": "NET-GENERATION-METRICS",
+        "path": "四网络连接，剧情覆盖/network_generation_metrics.json",
+        "kind": "generation_metrics",
+        "status": "selected",
+        "bytes": 186
+      },
+      {
+        "id": "NET-NODE-ALIASES",
+        "path": "四网络连接，剧情覆盖/node_aliases.json",
+        "kind": "node_aliases",
+        "status": "candidate",
+        "bytes": 31062
+      },
+      {
+        "id": "NET-COVERAGE-REPORT",
+        "path": "阶段状态/资料网络剧情覆盖.json",
+        "kind": "coverage_report",
+        "status": "selected",
+        "bytes": 7536
+      }
+    ],
+    "matches": [],
+    "truncated": false
+  },
+  "routing_contract": {
+    "entrypoint_first": true,
+    "selection_mode": "task_and_state_driven",
+    "type_sequence": [
+      "MOD-TYPE",
+      "MOD-CONNECTION"
+    ],
+    "network_sequence": [
+      "MOD-STATIC",
+      "MOD-DYNAMIC",
+      "MOD-ANCHOR"
+    ],
+    "execution_sequence": [
+      "MOD-EXECUTION"
+    ],
+    "dependency_rules": [
+      {
+        "from": "MOD-TYPE",
+        "to": "MOD-CONNECTION",
+        "reason": "先确定类型边界，再裁决组合兼容性"
+      },
+      {
+        "from": "MOD-STATIC",
+        "to": "MOD-DYNAMIC",
+        "reason": "先确认稳定对象关系，再生成动态候选"
+      },
+      {
+        "from": "MOD-DYNAMIC",
+        "to": "MOD-ANCHOR",
+        "reason": "先确认事件和状态候选，再落到表达锚点"
+      },
+      {
+        "from": "MOD-EXECUTION",
+        "to": "chapter_execution_manifest",
+        "reason": "把有效证据和设计决策传递到正文执行"
+      }
+    ]
+  },
+  "retrieval_indexes": {
+    "concept": [
+      "by_id",
+      "by_chinese_name",
+      "by_original_name",
+      "by_category",
+      "by_legacy_id"
+    ],
+    "lookup": [
+      "keyword",
+      "type",
+      "body",
+      "sensory",
+      "psychological",
+      "action",
+      "verbal",
+      "social",
+      "resource"
+    ],
+    "conflict": [
+      "moral_conflict",
+      "human_nature_conflict",
+      "interest_conflict"
+    ],
+    "decision": [
+      "possible_choice",
+      "possible_outcome",
+      "trigger_condition",
+      "state_change"
+    ],
+    "network_mapping": [
+      "static_network_mappings",
+      "connection_type",
+      "source",
+      "target"
+    ]
+  },
+  "evidence_contract": {
+    "formal_levels": [
+      "confirmed_raw",
+      "cross_confirmed"
+    ],
+    "candidate_levels": [
+      "reconstructed",
+      "unconfirmed"
+    ],
+    "required_trace": "index_mapping -> selected_evidence -> synthesis_decision -> design -> text -> verification",
+    "selection_statuses": [
+      "selected",
+      "candidate",
+      "blocked",
+      "not_applicable"
+    ]
+  },
+  "synthesis_contract": {
+    "required_inputs": [
+      "task_context",
+      "project_snapshot",
+      "selected_evidence"
+    ],
+    "required_outputs": [
+      "decisions",
+      "conflicts",
+      "state_changes",
+      "writing_requirements",
+      "source_trace",
+      "not_used_reasons"
+    ],
+    "handoff_chain": [
+      "task_context",
+      "evidence_bundle",
+      "synthesis",
+      "chapter_design",
+      "execution_manifest",
+      "chapter_text",
+      "state_update",
+      "verification"
+    ]
+  },
+  "status": "PARTIAL"
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "derived-source-mapping-audit-1.0",
+  "version": "V3",
+  "generated_at": "2026-08-17T21:11:43.224871Z",
+  "mapping_input": "文档/证据/全量资料升级派生定位/已验证候选映射.jsonl",
+  "increment_input": "文档/证据/全量资料增量升级/20260817T061417Z-c75fb8a7/changes.jsonl",
+  "mapping_count": 38,
+  "change_count": 64,
+  "missing_mapping_count": 26,
+  "audited_clean_count": 0,
+  "blocked_mapping_count": 38,
+  "reason_counts": {
+    "mapped_object_sha256_invalid;source_object_sha256_mismatch": 38,
+    "mapping_missing": 26
+  },
+  "formal_release_allowed": false,
+  "mapping_audit_file": "mapping_audit.jsonl",
+  "mapping_missing_file": "mapping_missing.jsonl",
+  "manifest_sha256": "1e5af2e43895abcb53b34a5185442a281d6dcd5375ca64b82e4351ec26240d3c"
+}

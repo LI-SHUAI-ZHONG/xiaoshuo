@@ -1,0 +1,17 @@
+{
+  "artifact_type": "chapter_execution_manifest",
+  "status": "retrospective_regression_manifest",
+  "chapter": 1,
+  "chapter_file": "正文/卷01/第001章_清点名单上不存在的房屋.md",
+  "source_trace": ["CAP-TYPE-STYLE-LENGTH", "CAP-OPENING-DESIGN", "CAP-GOLDEN-THREE", "CAP-OPENING-ATTRACTION", "CAP-CHARACTER-CHAIN", "CAP-DESIGN-TO-DRAFT"],
+  "inputs": ["项目元数据.json", "项目快照.json", "规划/资料驱动设计/golden_three_tasks.json", "规划/资料驱动设计/character_behavior_contract.json", "规划/章节大纲/卷01/第001章_清点名单上不存在的房屋.md"],
+  "decisions": {"chapter_goal": "发现不存在地址并让林砚承担个人被指向的证据压力", "pov": "林砚有限视角", "information_boundary": "不确认死亡对象、书写者和诡异屋机制", "ending_upgrade": "清点卡给出23:40和厨房刀，门在身后关闭"},
+  "must_show": ["第一段具体地址冲突", "林砚用修复经验行动", "周既明施加离开压力", "清点卡写有林砚姓名和未来时间"],
+  "must_not_confirm": ["超自然机制", "死亡对象", "清点卡书写者", "顾怀山真实结局"],
+  "character_actions": [{"character": "林砚", "action": "进入现场并触碰铁盒", "reason": "证据优先、无执法权限但对记录缺口敏感", "cost": "被未知证据锁定并错过撤离"}, {"character": "周既明", "action": "命令离开并封锁现场", "reason": "掌握旧案风险且保护错误归档证人", "cost": "与林砚信任下降"}],
+  "hook_execution": {"p0_hook": "清单存在但地图不存在的地址", "p3_question": "这栋不存在的房屋为何有近期补录和内部回弹", "emotion_scene": "清点卡写有林砚姓名、未来死亡时间和厨房刀", "chapter_interface": "23:40时限与清点卡推动第002章调查"},
+  "evidence_map": [{"requirement": "type", "text_anchor": "不存在地址、物证冲突", "status": "pass"}, {"requirement": "style", "text_anchor": "有限视角、潮气、消毒水、断尘和门轴", "status": "pass"}, {"requirement": "character", "text_anchor": "林砚依据门牌孔位找入口并先拍照", "status": "partial", "gap": "性格与成长没有在章前结构化记录"}, {"requirement": "golden_three_chapter_ch1", "text_anchor": "地址异常和清点卡钩子", "status": "partial", "gap": "当时未保存黄金三章任务表，无法证明生成前调用"}],
+  "acceptance_criteria": ["第1章完成钩子而非解释答案", "结尾留下下一章可行动问题", "正文规则体现可以定位到文本锚点"],
+  "not_used_reasons": ["CAP-GOLDEN-THREE、CAP-OPENING-ATTRACTION、CAP-CHARACTER-CHAIN在原生成记录中未以条目级调用和输出文件保存"],
+  "evidence_status": "partial"
+}

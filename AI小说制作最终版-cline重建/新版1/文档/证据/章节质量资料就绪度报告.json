@@ -1,0 +1,824 @@
+{
+  "schema_version": "chapter-quality-material-readiness-1.0",
+  "scope": "all_translated_source_contracts; no_story_facts_or_prose_generated",
+  "policy": "资料达到章节质量标准，指每条资料具备可回读来源、可执行创作策略、激活边界和可验证验收合同；这不等同于资料已被写入章节，更不授予正式事实资格。",
+  "binding_count": 13345,
+  "ready_count": 13345,
+  "gap_count": 0,
+  "kind_summary": {
+    "资料库": {
+      "total": 568,
+      "ready": 568,
+      "gaps": 0
+    },
+    "静态网络": {
+      "total": 1341,
+      "ready": 1341,
+      "gaps": 0
+    },
+    "动态网络": {
+      "total": 1824,
+      "ready": 1824,
+      "gaps": 0
+    },
+    "锚点网络": {
+      "total": 1790,
+      "ready": 1790,
+      "gaps": 0
+    },
+    "类型系统": {
+      "total": 15,
+      "ready": 15,
+      "gaps": 0
+    },
+    "类型系统来源块": {
+      "total": 449,
+      "ready": 449,
+      "gaps": 0
+    },
+    "类型连接": {
+      "total": 7358,
+      "ready": 7358,
+      "gaps": 0
+    }
+  },
+  "opening_method_materials": {
+    "matched_count": 96,
+    "ready_count": 96,
+    "gaps": [],
+    "records": [
+      {
+        "binding_id": "TB-00168",
+        "source_id": "31.4_世界基调",
+        "name": "世界基调",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '31.4_世界基调', 'line_start': 11419}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00222",
+        "source_id": "41.5_闭环结构",
+        "name": "闭环结构",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '41.5_闭环结构', 'line_start': 14979}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00254",
+        "source_id": "101.2_完整性",
+        "name": "完整性",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '101.2_完整性', 'line_start': 23935}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00310",
+        "source_id": "112.2_第一页信息释放",
+        "name": "第一页信息释放",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '112.2_第一页信息释放', 'line_start': 25614}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00311",
+        "source_id": "112.3_开篇场景选择",
+        "name": "开篇场景选择",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '112.3_开篇场景选择', 'line_start': 25650}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00312",
+        "source_id": "112.4_开篇承诺",
+        "name": "开篇承诺",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '112.4_开篇承诺', 'line_start': 25688}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00316",
+        "source_id": "112.8_结尾与开篇呼应",
+        "name": "结尾与开篇呼应",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '112.8_结尾与开篇呼应', 'line_start': 25836}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00317",
+        "source_id": "112.9_结尾的不可逆性",
+        "name": "结尾的不可逆性",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '112.9_结尾的不可逆性', 'line_start': 25874}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00331",
+        "source_id": "114.6_类型承诺的兑现",
+        "name": "类型承诺的兑现",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '114.6_类型承诺的兑现', 'line_start': 26404}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00429",
+        "source_id": "122.17_推进的不可逆性量化检查",
+        "name": "推进的不可逆性量化检查",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '122.17_推进的不可逆性量化检查', 'line_start': 39458}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00452",
+        "source_id": "123.16_连载节奏设计",
+        "name": "连载节奏设计",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '123.16_连载节奏设计', 'line_start': 40656}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00462",
+        "source_id": "123.4_黄金三章规则",
+        "name": "黄金三章规则",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '123.4_黄金三章规则', 'line_start': 40032}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00463",
+        "source_id": "123.5_开篇吸引力指标",
+        "name": "开篇吸引力指标",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '123.5_开篇吸引力指标', 'line_start': 40084}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00502",
+        "source_id": "126.12_创作前一次性模板调用",
+        "name": "创作前一次性模板调用",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '126.12_创作前一次性模板调用', 'line_start': 43265}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00508",
+        "source_id": "126.3_按章节类型的模板调用",
+        "name": "按章节类型的模板调用",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '126.3_按章节类型的模板调用', 'line_start': 42794}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00512",
+        "source_id": "126.7_按读者体验目标的模板调用",
+        "name": "按读者体验目标的模板调用",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '126.7_按读者体验目标的模板调用', 'line_start': 43002}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00520",
+        "source_id": "127.14_设计转化中的节奏控制",
+        "name": "设计转化中的节奏控制",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '127.14_设计转化中的节奏控制', 'line_start': 44233}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00558",
+        "source_id": "144_配角级别出场分类",
+        "name": "配角级别出场分类",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '144_配角级别出场分类', 'line_start': 45405}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00562",
+        "source_id": "148_观察·细节·做法",
+        "name": "观察·细节·做法",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '148_观察·细节·做法', 'line_start': 45590}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00568",
+        "source_id": "154_主线支线与任务目标",
+        "name": "主线支线与任务目标",
+        "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '154_主线支线与任务目标', 'line_start': 45830}",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00622",
+        "source_id": "STATIC:114.1_类型必备元素->123.4_黄金三章#54",
+        "name": "114.1_类型必备元素->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[53]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00624",
+        "source_id": "STATIC:114.2_类型惯例->123.4_黄金三章#56",
+        "name": "114.2_类型惯例->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[55]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00631",
+        "source_id": "STATIC:119.1_共鸣点->123.4_黄金三章#63",
+        "name": "119.1_共鸣点->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[62]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00634",
+        "source_id": "STATIC:119.2_爽点->123.4_黄金三章#66",
+        "name": "119.2_爽点->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[65]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00636",
+        "source_id": "STATIC:119.3_软弱点->123.4_黄金三章#68",
+        "name": "119.3_软弱点->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[67]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00666",
+        "source_id": "STATIC:123.12_读者留存曲线->123.4_黄金三章#98",
+        "name": "123.12_读者留存曲线->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[97]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00671",
+        "source_id": "STATIC:123.16_连载节奏->48.4_章尾钩子#103",
+        "name": "123.16_连载节奏->48.4_章尾钩子",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[102]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00685",
+        "source_id": "STATIC:123.4_黄金三章->112.1_开篇设计#117",
+        "name": "123.4_黄金三章->112.1_开篇设计",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[116]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00686",
+        "source_id": "STATIC:123.4_黄金三章->65.1_代入感#118",
+        "name": "123.4_黄金三章->65.1_代入感",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[117]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00687",
+        "source_id": "STATIC:123.4_黄金三章->123.5_开篇吸引力#119",
+        "name": "123.4_黄金三章->123.5_开篇吸引力",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[118]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00688",
+        "source_id": "STATIC:123.5_开篇吸引力->123.4_黄金三章#120",
+        "name": "123.5_开篇吸引力->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[119]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00689",
+        "source_id": "STATIC:123.5_开篇吸引力->65.1_代入感#121",
+        "name": "123.5_开篇吸引力->65.1_代入感",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[120]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-00782",
+        "source_id": "STATIC:147.3_锚点建立窗口->123.4_黄金三章#214",
+        "name": "147.3_锚点建立窗口->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[213]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01186",
+        "source_id": "STATIC:41.1_三幕结构->123.4_黄金三章#618",
+        "name": "41.1_三幕结构->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[617]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01192",
+        "source_id": "STATIC:41.2_15节拍结构->48.4_章尾钩子#624",
+        "name": "41.2_15节拍结构->48.4_章尾钩子",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[623]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01195",
+        "source_id": "STATIC:41.5_闭环结构->112.1_开篇设计#627",
+        "name": "41.5_闭环结构->112.1_开篇设计",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[626]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01310",
+        "source_id": "STATIC:46.10_场景与下一场景因果->46.3_场景过渡#742",
+        "name": "46.10_场景与下一场景因果->46.3_场景过渡",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[741]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01311",
+        "source_id": "STATIC:46.10_场景与下一场景因果->48.4_章尾钩子#743",
+        "name": "46.10_场景与下一场景因果->48.4_章尾钩子",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[742]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01312",
+        "source_id": "STATIC:46.10_场景与下一场景因果->122.5_跨章连续性#744",
+        "name": "46.10_场景与下一场景因果->122.5_跨章连续性",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[743]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01313",
+        "source_id": "STATIC:46.11_场景结局不可逆->122.1_推进#745",
+        "name": "46.11_场景结局不可逆->122.1_推进",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[744]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01314",
+        "source_id": "STATIC:46.11_场景结局不可逆->42.5_余波链#746",
+        "name": "46.11_场景结局不可逆->42.5_余波链",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[745]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01315",
+        "source_id": "STATIC:46.12_场景尾钩子->48.4_章尾钩子#747",
+        "name": "46.12_场景尾钩子->48.4_章尾钩子",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[746]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01327",
+        "source_id": "STATIC:46.5_场景内部因果链->145.1_目标#759",
+        "name": "46.5_场景内部因果链->145.1_目标",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[758]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01328",
+        "source_id": "STATIC:46.5_场景内部因果链->145.4_动作#760",
+        "name": "46.5_场景内部因果链->145.4_动作",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[759]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01329",
+        "source_id": "STATIC:46.5_场景内部因果链->145.5_结果#761",
+        "name": "46.5_场景内部因果链->145.5_结果",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[760]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01357",
+        "source_id": "STATIC:48.13_章节连续性->48.4_章尾钩子#789",
+        "name": "48.13_章节连续性->48.4_章尾钩子",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[788]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01360",
+        "source_id": "STATIC:48.1_起承转合->48.2_开篇规则#792",
+        "name": "48.1_起承转合->48.2_开篇规则",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[791]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01363",
+        "source_id": "STATIC:48.2_开篇规则->145.4_动作#795",
+        "name": "48.2_开篇规则->145.4_动作",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[794]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01364",
+        "source_id": "STATIC:48.2_开篇规则->56.1_试探#796",
+        "name": "48.2_开篇规则->56.1_试探",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[795]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01365",
+        "source_id": "STATIC:48.3_结尾规则->48.4_章尾钩子#797",
+        "name": "48.3_结尾规则->48.4_章尾钩子",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[796]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01367",
+        "source_id": "STATIC:48.4_章尾钩子->123.16_连载节奏#799",
+        "name": "48.4_章尾钩子->123.16_连载节奏",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[798]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01368",
+        "source_id": "STATIC:48.4_章尾钩子->65.2_不确定性#800",
+        "name": "48.4_章尾钩子->65.2_不确定性",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[799]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01369",
+        "source_id": "STATIC:48.4_章尾钩子->48.13_章节连续性#801",
+        "name": "48.4_章尾钩子->48.13_章节连续性",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[800]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01589",
+        "source_id": "STATIC:65.1_读者代入感->123.4_黄金三章#1021",
+        "name": "65.1_读者代入感->123.4_黄金三章",
+        "source_ref": "网络完整数据/静态连接完整数据.json:connections[1020]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01983",
+        "source_id": "C00074",
+        "name": "C00074",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[73]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01987",
+        "source_id": "C00078",
+        "name": "C00078",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[77]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-01989",
+        "source_id": "C00080",
+        "name": "C00080",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[79]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02000",
+        "source_id": "C00091",
+        "name": "C00091",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[90]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02004",
+        "source_id": "C00095",
+        "name": "C00095",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[94]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02006",
+        "source_id": "C00097",
+        "name": "C00097",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[96]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02054",
+        "source_id": "C00145",
+        "name": "C00145",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[144]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02059",
+        "source_id": "C00150",
+        "name": "C00150",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[149]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02073",
+        "source_id": "C00164",
+        "name": "C00164",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[163]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02074",
+        "source_id": "C00165",
+        "name": "C00165",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[164]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02075",
+        "source_id": "C00166",
+        "name": "C00166",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[165]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02076",
+        "source_id": "C00167",
+        "name": "C00167",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[166]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02077",
+        "source_id": "C00168",
+        "name": "C00168",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[167]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02078",
+        "source_id": "C00169",
+        "name": "C00169",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[168]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02208",
+        "source_id": "C00299",
+        "name": "C00299",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[298]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02556",
+        "source_id": "C00647",
+        "name": "C00647",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[646]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02794",
+        "source_id": "C00885",
+        "name": "C00885",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[884]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02803",
+        "source_id": "C00894",
+        "name": "C00894",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[893]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02806",
+        "source_id": "C00897",
+        "name": "C00897",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[896]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02964",
+        "source_id": "C01055",
+        "name": "C01055",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1054]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02965",
+        "source_id": "C01056",
+        "name": "C01056",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1055]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02966",
+        "source_id": "C01057",
+        "name": "C01057",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1056]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02967",
+        "source_id": "C01058",
+        "name": "C01058",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1057]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02968",
+        "source_id": "C01059",
+        "name": "C01059",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1058]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02969",
+        "source_id": "C01060",
+        "name": "C01060",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1059]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02970",
+        "source_id": "C01061",
+        "name": "C01061",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1060]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02971",
+        "source_id": "C01062",
+        "name": "C01062",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1061]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02989",
+        "source_id": "C01080",
+        "name": "C01080",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1079]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02990",
+        "source_id": "C01081",
+        "name": "C01081",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1080]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02991",
+        "source_id": "C01082",
+        "name": "C01082",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1081]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-02992",
+        "source_id": "C01083",
+        "name": "C01083",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1082]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03024",
+        "source_id": "C01115",
+        "name": "C01115",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1114]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03028",
+        "source_id": "C01119",
+        "name": "C01119",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1118]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03029",
+        "source_id": "C01120",
+        "name": "C01120",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1119]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03033",
+        "source_id": "C01124",
+        "name": "C01124",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1123]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03034",
+        "source_id": "C01125",
+        "name": "C01125",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1124]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03035",
+        "source_id": "C01126",
+        "name": "C01126",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1125]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03038",
+        "source_id": "C01129",
+        "name": "C01129",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1128]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03039",
+        "source_id": "C01130",
+        "name": "C01130",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1129]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03040",
+        "source_id": "C01131",
+        "name": "C01131",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1130]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-03312",
+        "source_id": "C01403",
+        "name": "C01403",
+        "source_ref": "网络完整数据/动态连接完整数据.json:connections[1402]",
+        "status": "ready",
+        "errors": []
+      },
+      {
+        "binding_id": "TB-05542",
+        "source_id": "TYPE-SOURCE:4",
+        "name": "创作路径\\商业爆款路径.json",
+        "source_ref": "原始资料/类型系统.txt:SOURCE[4]",
+        "status": "ready",
+        "errors": []
+      }
+    ]
+  },
+  "failures": [],
+  "formal_fact_eligible": false,
+  "status": "passed",
+  "next_step": "仅在后续项目创作请求中按合同检索和激活资料；不得将本报告当作章节已完成或项目事实已确认。"
+}

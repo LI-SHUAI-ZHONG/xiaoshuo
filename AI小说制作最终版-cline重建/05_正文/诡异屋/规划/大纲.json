@@ -1,0 +1,27 @@
+{
+    "status": "AUTO_DESIGN",
+    "story_core": {
+        "title": "诡异屋",
+        "premise": "档案修复师进入一栋重新出现的旧屋，发现屋内物件记录着尚未发生的命案，而最后一件遗物写着自己的名字。",
+        "type": "悬疑",
+        "style": "冷峻、克制、紧张、具有现场感",
+        "length": "中篇",
+        "fact_layer": "cline_decided"
+    },
+    "volumes": [
+        {
+            "volume": 1,
+            "title": "诡异屋",
+            "chapter_range": "001-024",
+            "structure": "进入旧屋 / 物证错位 / 记忆反证 / 终局清点"
+        }
+    ],
+    "chapters": [
+        {"range": "001-006", "goal": "建立旧屋异常规则、失踪案和主角个人牵连"},
+        {"range": "007-012", "goal": "扩大调查并形成第一轮身份误导"},
+        {"range": "013-018", "goal": "用火灾与旧档案反证主角记忆"},
+        {"range": "019-024", "goal": "重组物证链、公开可验证真相并承担代价"}
+    ],
+    "scenes": [],
+    "source_trace": ["MOD-CAPABILITY", "MOD-TYPE", "MOD-CONNECTION", "MOD-STATIC", "MOD-DYNAMIC", "MOD-ANCHOR", "MOD-EXECUTION"]
+}

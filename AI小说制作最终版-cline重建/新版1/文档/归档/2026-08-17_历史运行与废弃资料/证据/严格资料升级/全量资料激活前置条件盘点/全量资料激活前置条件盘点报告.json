@@ -1,0 +1,138 @@
+{
+  "schema_version": "bound-material-activation-prerequisite-inventory-1.0",
+  "generated_at": "2026-08-13T02:09:44.205382+00:00",
+  "scope": "bound_source_semantic_prerequisites_only; no_qualification_or_creative_artifact_modified",
+  "bound_record_count": 13345,
+  "input_snapshots": {
+    "创作绑定": {
+      "path": "文档/证据/全量资料解释词创作绑定.json",
+      "sha256": "236397c8fd4dea45a6feaa8818e3a7d0ff6040b37e5c31dd9f05db6b2eee928e",
+      "bytes": 63631791,
+      "record_count": 13345
+    },
+    "资料库": {
+      "path": "原始资料/资料库.txt",
+      "sha256": "1fa20a116003cf356d797a7aae73586e3ffd42fa5459f3c1f81358170267383e",
+      "bytes": 1335562,
+      "line_count": 46668
+    },
+    "类型系统": {
+      "path": "原始资料/类型系统.txt",
+      "sha256": "e9ea89fd332d75fddb176c4de59bf7af52b3f5716aef3f05819bafecebfd0bb3",
+      "bytes": 16785181,
+      "line_count": 626701
+    },
+    "类型连接": {
+      "path": "原始资料/类型连接.txt",
+      "sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "bytes": 13864095,
+      "line_count": 502097
+    },
+    "动态网络": {
+      "path": "原始资料/动态网络.txt",
+      "sha256": "6210e0b720a66d1369811632d7fa35b531aa52f180afc881774a9e50b8e29351",
+      "bytes": 3488164,
+      "line_count": 95415
+    },
+    "静态网络": {
+      "path": "原始资料/静态网络.txt",
+      "sha256": "21b25fa76405e67428367cd7aec3e2176f1a4a01b259daaae82b58c6f3fc72c9",
+      "bytes": 654149,
+      "line_count": 23652
+    },
+    "锚点网络": {
+      "path": "原始资料/锚点网络.txt",
+      "sha256": "e14382a6351d9d9183871195a644d25eaa5e37f4a8d659732f45963e9ed1b8b8",
+      "bytes": 144928,
+      "line_count": 2124
+    }
+  },
+  "binding_manifest_validation": {
+    "declared_record_counts": {
+      "source_count": 13345,
+      "translated_count": 13345,
+      "binding_count": 13345
+    },
+    "actual_record_count": 13345,
+    "actual_translated_record_count": 13345,
+    "declared_source_kind_counts": {
+      "资料库": 568,
+      "静态网络": 1341,
+      "动态网络": 1824,
+      "锚点网络": 1790,
+      "类型系统": 15,
+      "类型系统来源块": 449,
+      "类型连接": 7358
+    },
+    "actual_source_kind_counts": {
+      "动态网络": 1824,
+      "类型系统": 15,
+      "类型系统来源块": 449,
+      "类型连接": 7358,
+      "资料库": 568,
+      "锚点网络": 1790,
+      "静态网络": 1341
+    },
+    "declared_stage_counts": {
+      "剧情创建": 8296,
+      "场景卡": 1869,
+      "大纲": 1341,
+      "分纲": 1824,
+      "剧情": 15
+    },
+    "actual_stage_counts": {
+      "分纲": 1824,
+      "剧情": 15,
+      "剧情创建": 8296,
+      "场景卡": 1869,
+      "大纲": 1341
+    }
+  },
+  "object_resolution_status_counts": {
+    "resolved_by_binding_locator": 2123,
+    "resolved_by_intrinsic_id": 11222
+  },
+  "semantic_activation_status_counts": {
+    "conditions_declared": 10201,
+    "no_explicit_conditions_declared": 3144
+  },
+  "by_source_kind": {
+    "动态网络": {
+      "resolved_by_intrinsic_id": 1824
+    },
+    "类型系统": {
+      "resolved_by_intrinsic_id": 15
+    },
+    "类型系统来源块": {
+      "resolved_by_intrinsic_id": 449
+    },
+    "类型连接": {
+      "resolved_by_intrinsic_id": 5235,
+      "resolved_by_binding_locator": 2123
+    },
+    "资料库": {
+      "resolved_by_intrinsic_id": 568
+    },
+    "锚点网络": {
+      "resolved_by_intrinsic_id": 1790
+    },
+    "静态网络": {
+      "resolved_by_intrinsic_id": 1341
+    }
+  },
+  "identity_recovery_queue_count": 0,
+  "integrity_validation": {
+    "expected_bound_record_count": 13345,
+    "actual_bound_record_count": 13345,
+    "duplicate_binding_count": 0,
+    "missing_locator_count": 0,
+    "empty_source_ref_count": 0,
+    "semantic_invariant_failure_count": 0,
+    "permission_isolation_failure_count": 0
+  },
+  "policy": "对象解析或条件提取不构成来源资格批准、正式事实准入、模型输入准入或正文写作许可。",
+  "formal_fact_eligible_count": 0,
+  "model_input_eligible_count": 0,
+  "prose_write_allowed": false,
+  "project_artifacts_modified": false
+}

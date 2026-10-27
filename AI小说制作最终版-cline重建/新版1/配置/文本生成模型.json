@@ -1,0 +1,26 @@
+{
+  "schema_version": "text-generation-provider-1.0",
+  "provider": "ollama",
+  "ollama": {
+    "base_url": "http://127.0.0.1:11434",
+    "model": "qwen2.5:7b",
+    "timeout_seconds": 90,
+    "temperature": 0,
+    "max_output_tokens": 384
+  },
+  "openai_compatible": {
+    "base_url_env": "OPENAI_BASE_URL",
+    "api_key_env": "OPENAI_API_KEY",
+    "model_env": "OPENAI_MODEL",
+    "timeout_seconds": 90,
+    "temperature": 0,
+    "max_output_tokens": 384
+  },
+  "generation_policy": {
+    "response_format": "strict_json",
+    "json_max_attempts": 2,
+    "minimum_paragraph_characters": 80,
+    "forbid_source_metadata_in_prose": true,
+    "require_human_literary_review": true
+  }
+}

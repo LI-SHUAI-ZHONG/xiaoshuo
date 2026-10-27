@@ -1,0 +1,18 @@
+{
+  "schema_version": "approved-fact-changeset-1.0",
+  "status": "template_only_not_approved",
+  "changes": [],
+  "required_change_fields": [
+    "change_id",
+    "status",
+    "target",
+    "expected_source_sha256",
+    "anchor",
+    "expected_anchor_sha256",
+    "old_text",
+    "new_text",
+    "rationale"
+  ],
+  "required_status": "approved_for_fact_merge",
+  "policy": "候选正文不得直接复制到此文件。每条事实修订须由人工依据原始资料重新确定精确旧文本、新文本、唯一锚点、哈希与审批记录。"
+}

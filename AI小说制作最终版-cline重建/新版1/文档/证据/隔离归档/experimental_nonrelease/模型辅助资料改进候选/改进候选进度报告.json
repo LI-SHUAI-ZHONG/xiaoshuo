@@ -1,0 +1,23 @@
+{
+  "schema_version": "model-assisted-material-improvement-candidates-1.0",
+  "generated_at": "2026-08-14T01:43:17.539628+00:00",
+  "scope": "advisory_model_candidates_only; no_original_source_or_binding_modification",
+  "eligible_binding_count": 5523,
+  "deferred_type_selection_count": 7822,
+  "completed_binding_count": 1,
+  "processed_this_run": 1,
+  "remaining_eligible_count": 5522,
+  "status_counts": {
+    "ready_for_human_review": 1
+  },
+  "deferred_source_kind_counts": {
+    "类型系统": 15,
+    "类型系统来源块": 449,
+    "类型连接": 7358
+  },
+  "ledger": "文档/证据/模型辅助资料改进候选/改进候选台账.jsonl",
+  "original_source_modified": false,
+  "binding_modified": false,
+  "formal_fact_eligible_count": 0,
+  "formal_publication_allowed": false
+}

@@ -1,0 +1,4990 @@
+{
+  "schema_version": "2.4",
+  "run_id": "RUN-20260811-021906",
+  "mode": "Verify",
+  "request": "核验静态网络、动态网络、锚点网络和类型连接的创作应用",
+  "project_path": null,
+  "source_scope": {
+    "root": "08_原始资料",
+    "external_paths_allowed": false,
+    "indexed_records": 24,
+    "contract": "00_资料索引/索引调用映射契约.json",
+    "network_contract": "00_资料索引/网络派生索引契约.json",
+    "network_artifacts": 2,
+    "layer_status": "partial_blocked"
+  },
+  "selected_modules": [
+    {
+      "id": "MOD-CAPABILITY",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "method_and_constraint",
+      "related": [
+        "MOD-TYPE",
+        "MOD-STATIC",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR"
+      ]
+    },
+    {
+      "id": "MOD-TYPE",
+      "path": "08_原始资料/类型系统.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "direction_filter_and_constraint",
+      "related": [
+        "MOD-CONNECTION",
+        "MOD-CAPABILITY"
+      ]
+    },
+    {
+      "id": "MOD-CONNECTION",
+      "path": "08_原始资料/类型连接.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "combination_and_conflict_filter",
+      "related": [
+        "MOD-TYPE",
+        "MOD-STATIC",
+        "MOD-DYNAMIC"
+      ]
+    },
+    {
+      "id": "MOD-STATIC",
+      "path": "08_原始资料/静态网络.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "dependency_and_structure",
+      "related": [
+        "MOD-CAPABILITY",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR"
+      ]
+    },
+    {
+      "id": "MOD-DYNAMIC",
+      "path": "08_原始资料/动态网络.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "causal_state_and_propagation",
+      "related": [
+        "MOD-STATIC",
+        "MOD-ANCHOR",
+        "MOD-CAPABILITY"
+      ]
+    },
+    {
+      "id": "MOD-ANCHOR",
+      "path": "08_原始资料/锚点网络.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "concretization_and_expression_anchor",
+      "related": [
+        "MOD-DYNAMIC",
+        "MOD-CAPABILITY"
+      ]
+    },
+    {
+      "id": "MOD-EXECUTION",
+      "path": "08_原始资料/执行正文.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "stage_order_and_output_conversion",
+      "related": [
+        "MOD-CAPABILITY",
+        "MOD-TYPE",
+        "MOD-STATIC",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR"
+      ]
+    },
+    {
+      "id": "CAP-OPENING-DESIGN",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "opening_design_parameters",
+      "related": [
+        "CAP-GOLDEN-THREE",
+        "CAP-OPENING-ATTRACTION",
+        "CAP-TYPE-STYLE-LENGTH"
+      ]
+    },
+    {
+      "id": "CAP-GOLDEN-THREE",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "three_chapter_task_contract",
+      "related": [
+        "CAP-OPENING-DESIGN",
+        "CAP-OPENING-ATTRACTION",
+        "CAP-CHARACTER-CHAIN",
+        "CAP-TYPE-STYLE-LENGTH"
+      ]
+    },
+    {
+      "id": "CAP-OPENING-ATTRACTION",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "opening_acceptance_criteria",
+      "related": [
+        "CAP-GOLDEN-THREE",
+        "CAP-OPENING-DESIGN"
+      ]
+    },
+    {
+      "id": "CAP-CHARACTER-CHAIN",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "persistent_character_behavior_contract",
+      "related": [
+        "CAP-GOLDEN-THREE",
+        "CAP-DESIGN-TO-DRAFT",
+        "MOD-STATIC",
+        "MOD-DYNAMIC"
+      ]
+    },
+    {
+      "id": "CAP-TYPE-STYLE-LENGTH",
+      "path": "08_原始资料/类型系统.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "production_parameter_constraints",
+      "related": [
+        "MOD-TYPE",
+        "CAP-GOLDEN-THREE",
+        "CAP-OPENING-DESIGN"
+      ]
+    },
+    {
+      "id": "CAP-DESIGN-TO-DRAFT",
+      "path": "08_原始资料/资料库.txt",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "design_to_text_traceability",
+      "related": [
+        "CAP-CHARACTER-CHAIN",
+        "CAP-GOLDEN-THREE",
+        "CAP-OPENING-ATTRACTION"
+      ]
+    },
+    {
+      "id": "MOD-INDEX-MAPPING",
+      "path": "00_资料索引/索引调用映射契约.json",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "runtime_routing_and_retrieval_contract",
+      "related": [
+        "MOD-TYPE",
+        "MOD-CONNECTION",
+        "MOD-STATIC",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR",
+        "MOD-EXECUTION"
+      ]
+    },
+    {
+      "id": "NET-DERIVED-INDEX",
+      "path": "00_资料索引/网络派生索引契约.json",
+      "status": "selected",
+      "matched_dimensions": [],
+      "role": "network_artifact_retrieval_and_status_gate",
+      "related": [
+        "MOD-STATIC",
+        "MOD-DYNAMIC",
+        "MOD-ANCHOR",
+        "MOD-INDEX-MAPPING"
+      ]
+    }
+  ],
+  "selection_decisions": [
+    {
+      "id": "MOD-CAPABILITY",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-TYPE",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-CONNECTION",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-STATIC",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-DYNAMIC",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-ANCHOR",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-EXECUTION",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-OPENING-DESIGN",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-GOLDEN-THREE",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-OPENING-ATTRACTION",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-CHARACTER-CHAIN",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-TYPE-STYLE-LENGTH",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "CAP-DESIGN-TO-DRAFT",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "MOD-LEGACY-MAP",
+      "status": "not_applicable",
+      "reason": "migration_only"
+    },
+    {
+      "id": "MOD-INDEX-MAPPING",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "NET-DERIVED-INDEX",
+      "status": "selected",
+      "matched_dimensions": []
+    },
+    {
+      "id": "NET-STATIC-FULL",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-DYNAMIC-FULL",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-DYNAMIC-MIGRATION",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-CONNECTION-TYPES",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-GENERATION-METRICS",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-NODE-ALIASES",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "NET-COVERAGE-REPORT",
+      "status": "not_applicable",
+      "reason": "no_task_or_state_match"
+    },
+    {
+      "id": "MOD-LEGACY-STATE",
+      "status": "not_applicable",
+      "reason": "migration_only"
+    }
+  ],
+  "dependency_edges": [
+    {
+      "from": "MOD-TYPE",
+      "to": "MOD-CAPABILITY",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-CAPABILITY",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-CAPABILITY",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-CAPABILITY",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CONNECTION",
+      "to": "MOD-TYPE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-TYPE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-TYPE",
+      "to": "MOD-CONNECTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-CONNECTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-CONNECTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-STATIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-STATIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-STATIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-DYNAMIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-DYNAMIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-DYNAMIC",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-ANCHOR",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-ANCHOR",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CAPABILITY",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-TYPE",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-EXECUTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-OPENING-DESIGN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-ATTRACTION",
+      "to": "CAP-OPENING-DESIGN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-TYPE-STYLE-LENGTH",
+      "to": "CAP-OPENING-DESIGN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-DESIGN",
+      "to": "CAP-GOLDEN-THREE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-ATTRACTION",
+      "to": "CAP-GOLDEN-THREE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-CHARACTER-CHAIN",
+      "to": "CAP-GOLDEN-THREE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-TYPE-STYLE-LENGTH",
+      "to": "CAP-GOLDEN-THREE",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-OPENING-ATTRACTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-DESIGN",
+      "to": "CAP-OPENING-ATTRACTION",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-CHARACTER-CHAIN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-DESIGN-TO-DRAFT",
+      "to": "CAP-CHARACTER-CHAIN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "CAP-CHARACTER-CHAIN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "CAP-CHARACTER-CHAIN",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-TYPE",
+      "to": "CAP-TYPE-STYLE-LENGTH",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-TYPE-STYLE-LENGTH",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-DESIGN",
+      "to": "CAP-TYPE-STYLE-LENGTH",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-CHARACTER-CHAIN",
+      "to": "CAP-DESIGN-TO-DRAFT",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-GOLDEN-THREE",
+      "to": "CAP-DESIGN-TO-DRAFT",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "CAP-OPENING-ATTRACTION",
+      "to": "CAP-DESIGN-TO-DRAFT",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-TYPE",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-CONNECTION",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-EXECUTION",
+      "to": "MOD-INDEX-MAPPING",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-STATIC",
+      "to": "NET-DERIVED-INDEX",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-DYNAMIC",
+      "to": "NET-DERIVED-INDEX",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-ANCHOR",
+      "to": "NET-DERIVED-INDEX",
+      "relation": "indexed_dependency"
+    },
+    {
+      "from": "MOD-INDEX-MAPPING",
+      "to": "NET-DERIVED-INDEX",
+      "relation": "indexed_dependency"
+    }
+  ],
+  "selected_network_evidence": {
+    "contract": "00_资料索引/网络派生索引契约.json",
+    "query_terms": [
+      "核验静态网络",
+      "动态网络",
+      "锚点网络和类型连接的创作应用"
+    ],
+    "artifacts": [
+      {
+        "id": "NET-STATIC-FULL",
+        "path": "四网络连接，剧情覆盖/static_connections.full.json",
+        "kind": "static_connections",
+        "status": "candidate",
+        "bytes": 476085
+      },
+      {
+        "id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "kind": "dynamic_connections",
+        "status": "candidate",
+        "bytes": 2256094
+      }
+    ],
+    "matches": [
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00024",
+          "source": "10.1_能量总量",
+          "source_layer": "引擎层",
+          "target": "12.10_能量临界值",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "能量达到临界值",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量总量影响临界值",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.1_能量总量",
+          "original_target": "12.10_能量临界值",
+          "normalized_source": "10.1_能量总量",
+          "normalized_target": "12.10_能量临界值",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00026",
+          "source": "10.1_能量总量",
+          "source_layer": "引擎层",
+          "target": "16.1_消耗速率",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "能量被消耗",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量总量影响消耗速率",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.1_能量总量",
+          "original_target": "16.1_消耗速率",
+          "normalized_source": "10.1_能量总量",
+          "normalized_target": "16.1_消耗速率",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00027",
+          "source": "10.1_能量总量",
+          "source_layer": "引擎层",
+          "target": "8.3_能量状态",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "能量总量变化",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量总量决定能量状态",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.1_能量总量",
+          "original_target": "8.3_能量状态",
+          "normalized_source": "10.1_能量总量",
+          "normalized_target": "8.3_能量状态",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00033",
+          "source": "10.2_能量纯度",
+          "source_layer": "引擎层",
+          "target": "10.3_能量运用技巧",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "纯度影响技巧效果",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "纯度影响技巧效果",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.2_能量纯度",
+          "original_target": "10.3_能量运用技巧",
+          "normalized_source": "10.2_能量纯度",
+          "normalized_target": "10.3_能量运用技巧",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00036",
+          "source": "10.3_能量运用技巧",
+          "source_layer": "引擎层",
+          "target": "14.3_显能期",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "技巧在显能期展现",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "技巧在显能期展现",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.3_能量运用技巧",
+          "original_target": "14.3_显能期",
+          "normalized_source": "10.3_能量运用技巧",
+          "normalized_target": "14.3_显能期",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00038",
+          "source": "10.3_能量运用技巧",
+          "source_layer": "引擎层",
+          "target": "15.1_进阶四条件",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "技巧是进阶条件之一",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "技巧是进阶的条件",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.3_能量运用技巧",
+          "original_target": "15.1_进阶四条件",
+          "normalized_source": "10.3_能量运用技巧",
+          "normalized_target": "15.1_进阶四条件",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00042",
+          "source": "10.4_天赋品质",
+          "source_layer": "引擎层",
+          "target": "13.1_等级划分",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "天赋决定等级",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "天赋品质决定等级",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.4_天赋品质",
+          "original_target": "13.1_等级划分",
+          "normalized_source": "10.4_天赋品质",
+          "normalized_target": "13.1_等级划分",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00043",
+          "source": "10.4_天赋品质",
+          "source_layer": "引擎层",
+          "target": "13.4_上限瓶颈",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "天赋决定上限",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "天赋品质决定上限",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.4_天赋品质",
+          "original_target": "13.4_上限瓶颈",
+          "normalized_source": "10.4_天赋品质",
+          "normalized_target": "13.4_上限瓶颈",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00046",
+          "source": "10.5_力量公式",
+          "source_layer": "引擎层",
+          "target": "15.1_进阶四条件",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "公式决定进阶条件",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "力量公式决定进阶",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.5_力量公式",
+          "original_target": "15.1_进阶四条件",
+          "normalized_source": "10.5_力量公式",
+          "normalized_target": "15.1_进阶四条件",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00049",
+          "source": "109.1_叙述者类型",
+          "source_layer": "表达层",
+          "target": "58.1_第一人称",
+          "target_layer": "交互层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "类型决定人称",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "叙述者类型决定人称",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "109.1_叙述者类型",
+          "original_target": "58.1_第一人称",
+          "normalized_source": "109.1_叙述者类型",
+          "normalized_target": "58.1_第一人称",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00052",
+          "source": "11.1_游离态",
+          "source_layer": "引擎层",
+          "target": "12.4_能量浓度分布",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "游离态决定浓度",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "游离态决定能量浓度",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.1_游离态",
+          "original_target": "12.4_能量浓度分布",
+          "normalized_source": "11.1_游离态",
+          "normalized_target": "12.4_能量浓度分布",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00054",
+          "source": "11.1_游离态",
+          "source_layer": "引擎层",
+          "target": "13.2_吸收速度",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "游离态影响吸收速度",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "游离态浓度影响吸收速度",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.1_游离态",
+          "original_target": "13.2_吸收速度",
+          "normalized_source": "11.1_游离态",
+          "normalized_target": "13.2_吸收速度",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00057",
+          "source": "11.2_凝聚态",
+          "source_layer": "引擎层",
+          "target": "10.1_能量总量",
+          "target_layer": "引擎层",
+          "type": "转化链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "凝聚态可转化为总量",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "凝聚态转化为能量总量",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.2_凝聚态",
+          "original_target": "10.1_能量总量",
+          "normalized_source": "11.2_凝聚态",
+          "normalized_target": "10.1_能量总量",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00059",
+          "source": "11.2_凝聚态",
+          "source_layer": "引擎层",
+          "target": "24.1_资源类型",
+          "target_layer": "生成层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "凝聚态是资源类型",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "凝聚态是资源的一种",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.2_凝聚态",
+          "original_target": "24.1_资源类型",
+          "normalized_source": "11.2_凝聚态",
+          "normalized_target": "24.1_资源类型",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00063",
+          "source": "11.3_固化态",
+          "source_layer": "引擎层",
+          "target": "28.1_道具生命史",
+          "target_layer": "生成层",
+          "type": "转化链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "固化态可作为道具",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "固化态转化为道具",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.3_固化态",
+          "original_target": "28.1_道具生命史",
+          "normalized_source": "11.3_固化态",
+          "normalized_target": "28.1_道具生命史",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00065",
+          "source": "11.4_能量转化路径",
+          "source_layer": "引擎层",
+          "target": "27.1_资源循环",
+          "target_layer": "生成层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "转化是资源循环的一部分",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量转化是资源循环的一部分",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.4_能量转化路径",
+          "original_target": "27.1_资源循环",
+          "normalized_source": "11.4_能量转化路径",
+          "normalized_target": "27.1_资源循环",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00068",
+          "source": "11.5_转化效率",
+          "source_layer": "引擎层",
+          "target": "10.1_能量总量",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "效率影响总量",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "转化效率影响能量总量",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.5_转化效率",
+          "original_target": "10.1_能量总量",
+          "normalized_source": "11.5_转化效率",
+          "normalized_target": "10.1_能量总量",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00070",
+          "source": "110.1_场景氛围",
+          "source_layer": "表达层",
+          "target": "52.1_视觉描写",
+          "target_layer": "表达层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "氛围通过视觉呈现",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "氛围通过视觉描写呈现",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "110.1_场景氛围",
+          "original_target": "52.1_视觉描写",
+          "normalized_source": "110.1_场景氛围",
+          "normalized_target": "52.1_视觉描写",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00071",
+          "source": "110.2_氛围与角色情绪映射",
+          "source_layer": "表达层",
+          "target": "7.4_情感与身体反应",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "氛围映射情绪",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "氛围变化反映情绪变化",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "110.2_氛围与角色情绪映射",
+          "original_target": "7.4_情感与身体反应",
+          "normalized_source": "110.2_氛围与角色情绪映射",
+          "normalized_target": "7.4_情感与身体反应",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00072",
+          "source": "111.1_核心象征物",
+          "source_layer": "表达层",
+          "target": "28.6_道具象征化",
+          "target_layer": "生成层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "道具可成为象征",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "道具成为核心象征物",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "111.1_核心象征物",
+          "original_target": "28.6_道具象征化",
+          "normalized_source": "111.1_核心象征物",
+          "normalized_target": "28.6_道具象征化",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00073",
+          "source": "111.1_核心象征物",
+          "source_layer": "表达层",
+          "target": "63.1_核心主题",
+          "target_layer": "组织层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "象征连接主题",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "象征连接主题",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "111.1_核心象征物",
+          "original_target": "63.1_核心主题",
+          "normalized_source": "111.1_核心象征物",
+          "normalized_target": "63.1_核心主题",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00074",
+          "source": "112.1_开篇设计",
+          "source_layer": "表达层",
+          "target": "48.2_开篇规则",
+          "target_layer": "组织层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "开篇设计是规则",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "开篇设计是开篇规则的一部分",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "112.1_开篇设计",
+          "original_target": "48.2_开篇规则",
+          "normalized_source": "112.1_开篇设计",
+          "normalized_target": "48.2_开篇规则",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00075",
+          "source": "112.5_收尾设计",
+          "source_layer": "表达层",
+          "target": "130_核心悬念",
+          "target_layer": "执行层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "收尾解决悬念",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "收尾解决核心悬念",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "112.5_收尾设计",
+          "original_target": "130_核心悬念",
+          "normalized_source": "112.5_收尾设计",
+          "normalized_target": "130_核心悬念",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00076",
+          "source": "113.1_叙事顺序",
+          "source_layer": "表达层",
+          "target": "45.1_伏笔埋设",
+          "target_layer": "组织层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "倒叙是伏笔",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 2,
+          "effect": "倒叙是伏笔的一种",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "113.1_叙事顺序",
+          "original_target": "45.1_伏笔埋设",
+          "normalized_source": "113.1_叙事顺序",
+          "normalized_target": "45.1_伏笔埋设",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00087",
+          "source": "115.1_场景空间结构",
+          "source_layer": "表达层",
+          "target": "60.1_远景镜头",
+          "target_layer": "交互层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "空间结构通过远景呈现",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "空间结构通过远景呈现",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "115.1_场景空间结构",
+          "original_target": "60.1_远景镜头",
+          "normalized_source": "115.1_场景空间结构",
+          "normalized_target": "60.1_远景镜头",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00088",
+          "source": "116.1_遗漏信息",
+          "source_layer": "执行层",
+          "target": "65.2_读者不确定性管理",
+          "target_layer": "读者层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "遗漏制造不确定性",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "遗漏信息制造不确定性",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "116.1_遗漏信息",
+          "original_target": "65.2_读者不确定性管理",
+          "normalized_source": "116.1_遗漏信息",
+          "normalized_target": "65.2_读者不确定性管理",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00089",
+          "source": "117.1_错位",
+          "source_layer": "执行层",
+          "target": "45.11_反转类型",
+          "target_layer": "组织层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "错位是反转",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "错位是反转的一种",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "117.1_错位",
+          "original_target": "45.11_反转类型",
+          "normalized_source": "117.1_错位",
+          "normalized_target": "45.11_反转类型",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00090",
+          "source": "118.1_代价追踪",
+          "source_layer": "执行层",
+          "target": "4.4_成长代价",
+          "target_layer": "生成层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "代价需要追踪",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "代价追踪是成长代价的管理",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "118.1_代价追踪",
+          "original_target": "4.4_成长代价",
+          "normalized_source": "118.1_代价追踪",
+          "normalized_target": "4.4_成长代价",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00093",
+          "source": "119.1_共鸣点",
+          "source_layer": "读者层",
+          "target": "65.1_读者代入感",
+          "target_layer": "读者层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "共鸣影响代入感",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "共鸣点影响代入感",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "119.1_共鸣点",
+          "original_target": "65.1_读者代入感",
+          "normalized_source": "119.1_共鸣点",
+          "normalized_target": "65.1_读者代入感",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00101",
+          "source": "12.10_能量临界值",
+          "source_layer": "引擎层",
+          "target": "14.6_结晶期",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "临界值是结晶期标志",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "临界值是结晶期的标志",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.10_能量临界值",
+          "original_target": "14.6_结晶期",
+          "normalized_source": "12.10_能量临界值",
+          "normalized_target": "14.6_结晶期",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00102",
+          "source": "12.10_能量临界值",
+          "source_layer": "引擎层",
+          "target": "15.1_进阶四条件",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "临界值是进阶条件",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "临界值是进阶的条件",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.10_能量临界值",
+          "original_target": "15.1_进阶四条件",
+          "normalized_source": "12.10_能量临界值",
+          "normalized_target": "15.1_进阶四条件",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00105",
+          "source": "12.1_能量守恒",
+          "source_layer": "引擎层",
+          "target": "11.4_能量转化路径",
+          "target_layer": "引擎层",
+          "type": "抑制链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "守恒决定转化",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量守恒决定转化路径",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.1_能量守恒",
+          "original_target": "11.4_能量转化路径",
+          "normalized_source": "12.1_能量守恒",
+          "normalized_target": "11.4_能量转化路径",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00108",
+          "source": "12.1_能量守恒",
+          "source_layer": "引擎层",
+          "target": "17.1_能量守恒定律",
+          "target_layer": "引擎层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "始终有效",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量守恒的物理基础",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.1_能量守恒",
+          "original_target": "17.1_能量守恒定律",
+          "normalized_source": "12.1_能量守恒",
+          "normalized_target": "17.1_能量守恒定律",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00111",
+          "source": "12.2_能量流动规律",
+          "source_layer": "引擎层",
+          "target": "12.4_能量浓度分布",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "流动决定浓度",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量流动决定浓度分布",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.2_能量流动规律",
+          "original_target": "12.4_能量浓度分布",
+          "normalized_source": "12.2_能量流动规律",
+          "normalized_target": "12.4_能量浓度分布",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00114",
+          "source": "12.3_能量传导系数",
+          "source_layer": "引擎层",
+          "target": "12.4_能量浓度分布",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "传导影响浓度",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "传导系数影响浓度",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.3_能量传导系数",
+          "original_target": "12.4_能量浓度分布",
+          "normalized_source": "12.3_能量传导系数",
+          "normalized_target": "12.4_能量浓度分布",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00118",
+          "source": "12.4_能量浓度分布",
+          "source_layer": "引擎层",
+          "target": "11.1_游离态",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "浓度决定游离态",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "浓度决定游离态分布",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.4_能量浓度分布",
+          "original_target": "11.1_游离态",
+          "normalized_source": "12.4_能量浓度分布",
+          "normalized_target": "11.1_游离态",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00119",
+          "source": "12.4_能量浓度分布",
+          "source_layer": "引擎层",
+          "target": "24.1_资源类型",
+          "target_layer": "生成层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "浓度决定资源",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "浓度决定资源分布",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.4_能量浓度分布",
+          "original_target": "24.1_资源类型",
+          "normalized_source": "12.4_能量浓度分布",
+          "normalized_target": "24.1_资源类型",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00120",
+          "source": "12.4_能量浓度分布",
+          "source_layer": "引擎层",
+          "target": "83.1_探索",
+          "target_layer": "交互层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "浓度决定探索方向",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "浓度决定探索方向",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.4_能量浓度分布",
+          "original_target": "83.1_探索",
+          "normalized_source": "12.4_能量浓度分布",
+          "normalized_target": "83.1_探索",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00123",
+          "source": "12.5_能量浓度时间变化",
+          "source_layer": "引擎层",
+          "target": "12.6_能量潮汐",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "时间变化产生潮汐",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "时间变化产生能量潮汐",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.5_能量浓度时间变化",
+          "original_target": "12.6_能量潮汐",
+          "normalized_source": "12.5_能量浓度时间变化",
+          "normalized_target": "12.6_能量潮汐",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00125",
+          "source": "12.6_能量潮汐",
+          "source_layer": "引擎层",
+          "target": "14.2_聚能期",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "潮汐影响聚能",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "能量潮汐影响聚能效率",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.6_能量潮汐",
+          "original_target": "14.2_聚能期",
+          "normalized_source": "12.6_能量潮汐",
+          "normalized_target": "14.2_聚能期",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00129",
+          "source": "12.7_能量感知规则",
+          "source_layer": "引擎层",
+          "target": "12.8_能量感知范围",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "规则决定范围",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "感知规则决定感知范围",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.7_能量感知规则",
+          "original_target": "12.8_能量感知范围",
+          "normalized_source": "12.7_能量感知规则",
+          "normalized_target": "12.8_能量感知范围",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00130",
+          "source": "12.7_能量感知规则",
+          "source_layer": "引擎层",
+          "target": "67.1_感知",
+          "target_layer": "引擎层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "能量感知是感知的一部分",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "能量感知属于感知范畴",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.7_能量感知规则",
+          "original_target": "67.1_感知",
+          "normalized_source": "12.7_能量感知规则",
+          "normalized_target": "67.1_感知",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00133",
+          "source": "12.8_能量感知范围",
+          "source_layer": "引擎层",
+          "target": "67.2_注意",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "感知范围决定注意",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "感知范围影响注意力分配",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.8_能量感知范围",
+          "original_target": "67.2_注意",
+          "normalized_source": "12.8_能量感知范围",
+          "normalized_target": "67.2_注意",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00136",
+          "source": "12.9_能量干扰规则",
+          "source_layer": "引擎层",
+          "target": "12.7_能量感知规则",
+          "target_layer": "引擎层",
+          "type": "抑制链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "干扰影响感知",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "干扰影响能量感知",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.9_能量干扰规则",
+          "original_target": "12.7_能量感知规则",
+          "normalized_source": "12.9_能量干扰规则",
+          "normalized_target": "12.7_能量感知规则",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00137",
+          "source": "120.1_多视角必要性",
+          "source_layer": "交互层",
+          "target": "59.5_视角切换条件",
+          "target_layer": "交互层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "必要性决定切换条件",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "多视角必要性决定切换条件",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "120.1_多视角必要性",
+          "original_target": "59.5_视角切换条件",
+          "normalized_source": "120.1_多视角必要性",
+          "normalized_target": "59.5_视角切换条件",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00138",
+          "source": "121.9_配角独立行动",
+          "source_layer": "执行层",
+          "target": "42.7_配角发起转折",
+          "target_layer": "组织层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "独立行动发起转折",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "配角独立行动发起转折",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "121.9_配角独立行动",
+          "original_target": "42.7_配角发起转折",
+          "normalized_source": "121.9_配角独立行动",
+          "normalized_target": "42.7_配角发起转折",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00139",
+          "source": "122.1_剧情推进",
+          "source_layer": "组织层",
+          "target": "48.1_起承转合",
+          "target_layer": "组织层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "推进是起承转合",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "剧情推进是起承转合的一部分",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "122.1_剧情推进",
+          "original_target": "48.1_起承转合",
+          "normalized_source": "122.1_剧情推进",
+          "normalized_target": "48.1_起承转合",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00164",
+          "source": "123.4_黄金三章",
+          "source_layer": "读者层",
+          "target": "112.1_开篇设计",
+          "target_layer": "表达层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "黄金三章是开篇",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "黄金三章是开篇的一部分",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "123.4_黄金三章",
+          "original_target": "112.1_开篇设计",
+          "normalized_source": "123.4_黄金三章",
+          "normalized_target": "112.1_开篇设计",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00178",
+          "source": "124.1_小说种类",
+          "source_layer": "读者层",
+          "target": "114.1_类型必备元素",
+          "target_layer": "读者层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "种类决定必备元素",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "小说种类决定必备元素",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "124.1_小说种类",
+          "original_target": "114.1_类型必备元素",
+          "normalized_source": "124.1_小说种类",
+          "normalized_target": "114.1_类型必备元素",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "artifact_id": "NET-DYNAMIC-FULL",
+        "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "status": "candidate",
+        "evidence_level": "reconstructed",
+        "record": {
+          "id": "C00189",
+          "source": "125.1_资源库",
+          "source_layer": "执行层",
+          "target": "24.1_资源类型",
+          "target_layer": "生成层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "资源库包含资源",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "资源库是资源的集合",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "125.1_资源库",
+          "original_target": "24.1_资源类型",
+          "normalized_source": "125.1_资源库",
+          "normalized_target": "24.1_资源类型",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      }
+    ],
+    "truncated": true
+  },
+  "evidence_bundle": {
+    "schema_version": "evidence-bundle-1.0",
+    "request": "核验静态网络、动态网络、锚点网络和类型连接的创作应用",
+    "source_scope": {
+      "raw_root": "08_原始资料",
+      "external_paths_allowed": false
+    },
+    "evidence": [
+      {
+        "evidence_id": "E-MOD-CAPABILITY-000001",
+        "module_id": "MOD-CAPABILITY",
+        "source_path": "08_原始资料/资料库.txt",
+        "source_sha256": "e99aee95801284f98d43ab5badf33c4c822ce1b116f302da6a91a80be252f850",
+        "line_start": 1,
+        "line_end": 5,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# 资料库一 —— 改造完成\n\n> 源文件：d:/AI小说创作系统/第1份.md"
+      },
+      {
+        "evidence_id": "E-MOD-CAPABILITY-000003",
+        "module_id": "MOD-CAPABILITY",
+        "source_path": "08_原始资料/资料库.txt",
+        "source_sha256": "e99aee95801284f98d43ab5badf33c4c822ce1b116f302da6a91a80be252f850",
+        "line_start": 3,
+        "line_end": 7,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# 资料库一 —— 改造完成\n\n> 源文件：d:/AI小说创作系统/第1份.md\n\n> 生成时间：2026-07-29"
+      },
+      {
+        "evidence_id": "E-MOD-CAPABILITY-000005",
+        "module_id": "MOD-CAPABILITY",
+        "source_path": "08_原始资料/资料库.txt",
+        "source_sha256": "e99aee95801284f98d43ab5badf33c4c822ce1b116f302da6a91a80be252f850",
+        "line_start": 5,
+        "line_end": 9,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "> 源文件：d:/AI小说创作系统/第1份.md\n\n> 生成时间：2026-07-29\n\n> 条目总数：252"
+      },
+      {
+        "evidence_id": "E-MOD-CAPABILITY-000007",
+        "module_id": "MOD-CAPABILITY",
+        "source_path": "08_原始资料/资料库.txt",
+        "source_sha256": "e99aee95801284f98d43ab5badf33c4c822ce1b116f302da6a91a80be252f850",
+        "line_start": 7,
+        "line_end": 11,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "> 生成时间：2026-07-29\n\n> 条目总数：252\n> 类型分布：可执行型 241 | 概念型 4 | 流程型 7 | 规则型 0 | 列表型 0 | 映射型 0"
+      },
+      {
+        "evidence_id": "E-MOD-CAPABILITY-000008",
+        "module_id": "MOD-CAPABILITY",
+        "source_path": "08_原始资料/资料库.txt",
+        "source_sha256": "e99aee95801284f98d43ab5badf33c4c822ce1b116f302da6a91a80be252f850",
+        "line_start": 8,
+        "line_end": 12,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "> 条目总数：252\n> 类型分布：可执行型 241 | 概念型 4 | 流程型 7 | 规则型 0 | 列表型 0 | 映射型 0"
+      },
+      {
+        "evidence_id": "E-MOD-TYPE-000001",
+        "module_id": "MOD-TYPE",
+        "source_path": "08_原始资料/类型系统.txt",
+        "source_sha256": "472066d7ea8c2dca8b8e96877c9c93c15e77bf525edc7adf2329e29a7b959d21",
+        "line_start": 1,
+        "line_end": 5,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# 类型系统`r`n`r`n涓昏祫鏂欐帴鍙ｏ細鎻愪緵绫诲瀷瀹氫箟銆佸瓧娈点€佸眰绾с€佺被鍨嬭鍒欍€侀€傞厤瑙勫垯鍜岀被鍨嬬姸鎬併€傜敱绱㈠紩璋冪敤鏄犲皠.txt瀹氫綅锛屾寜鎵ц姝ｆ枃.txt褰撳墠姝ラ鎸夐渶璋冪敤銆俙r`n`r`n鏉ユ簮鏂囦欢鍧囧湪涓嬫枃鎸夊師濮嬬浉瀵硅矾寰勪繚鐣欍€俙r`n`r`n# Type System\n\nMASTER DOCUMENT ASSEMBLED FROM SOURCE FILES"
+      },
+      {
+        "evidence_id": "E-MOD-TYPE-000003",
+        "module_id": "MOD-TYPE",
+        "source_path": "08_原始资料/类型系统.txt",
+        "source_sha256": "472066d7ea8c2dca8b8e96877c9c93c15e77bf525edc7adf2329e29a7b959d21",
+        "line_start": 3,
+        "line_end": 7,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# 类型系统`r`n`r`n涓昏祫鏂欐帴鍙ｏ細鎻愪緵绫诲瀷瀹氫箟銆佸瓧娈点€佸眰绾с€佺被鍨嬭鍒欍€侀€傞厤瑙勫垯鍜岀被鍨嬬姸鎬併€傜敱绱㈠紩璋冪敤鏄犲皠.txt瀹氫綅锛屾寜鎵ц姝ｆ枃.txt褰撳墠姝ラ鎸夐渶璋冪敤銆俙r`n`r`n鏉ユ簮鏂囦欢鍧囧湪涓嬫枃鎸夊師濮嬬浉瀵硅矾寰勪繚鐣欍€俙r`n`r`n# Type System\n\nMASTER DOCUMENT ASSEMBLED FROM SOURCE FILES\n\nSOURCE: 案例重复风险规则.json"
+      },
+      {
+        "evidence_id": "E-MOD-TYPE-000005",
+        "module_id": "MOD-TYPE",
+        "source_path": "08_原始资料/类型系统.txt",
+        "source_sha256": "472066d7ea8c2dca8b8e96877c9c93c15e77bf525edc7adf2329e29a7b959d21",
+        "line_start": 5,
+        "line_end": 9,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "MASTER DOCUMENT ASSEMBLED FROM SOURCE FILES\n\nSOURCE: 案例重复风险规则.json\n============================================================\n{"
+      },
+      {
+        "evidence_id": "E-MOD-TYPE-000006",
+        "module_id": "MOD-TYPE",
+        "source_path": "08_原始资料/类型系统.txt",
+        "source_sha256": "472066d7ea8c2dca8b8e96877c9c93c15e77bf525edc7adf2329e29a7b959d21",
+        "line_start": 6,
+        "line_end": 10,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "SOURCE: 案例重复风险规则.json\n============================================================\n{\n  \"schema_name\": \"案例重复风险规则\","
+      },
+      {
+        "evidence_id": "E-MOD-TYPE-000007",
+        "module_id": "MOD-TYPE",
+        "source_path": "08_原始资料/类型系统.txt",
+        "source_sha256": "472066d7ea8c2dca8b8e96877c9c93c15e77bf525edc7adf2329e29a7b959d21",
+        "line_start": 7,
+        "line_end": 11,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "SOURCE: 案例重复风险规则.json\n============================================================\n{\n  \"schema_name\": \"案例重复风险规则\",\n  \"schema_version\": \"TYPE_F-1.0.0\","
+      },
+      {
+        "evidence_id": "E-MOD-CONNECTION-000001",
+        "module_id": "MOD-CONNECTION",
+        "source_path": "08_原始资料/类型连接.txt",
+        "source_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+        "line_start": 1,
+        "line_end": 5,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# 类型连接`r`n`r`n涓昏祫鏂欐帴鍙ｏ細鎻愪緵绫诲瀷杩炴帴銆佸吋瀹瑰叧绯汇€佸啿绐佸叧绯汇€佽繛鎺ュ瓧娈靛拰楠岃瘉瑙勫垯銆傜敱绱㈠紩璋冪敤鏄犲皠.txt瀹氫綅锛岀被鍨嬬郴缁?txt瀹屾垚绫诲瀷鍒ゆ柇鍚庤皟鐢ㄣ€俙r`n`r`n鏉ユ簮鏂囦欢鍧囧湪涓嬫枃鎸夊師濮嬬浉瀵硅矾寰勪繚鐣欍€俙r`n`r`n# Type Connections\n\nMASTER DOCUMENT ASSEMBLED FROM SOURCE FILES"
+      },
+      {
+        "evidence_id": "E-MOD-CONNECTION-000003",
+        "module_id": "MOD-CONNECTION",
+        "source_path": "08_原始资料/类型连接.txt",
+        "source_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+        "line_start": 3,
+        "line_end": 7,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# 类型连接`r`n`r`n涓昏祫鏂欐帴鍙ｏ細鎻愪緵绫诲瀷杩炴帴銆佸吋瀹瑰叧绯汇€佸啿绐佸叧绯汇€佽繛鎺ュ瓧娈靛拰楠岃瘉瑙勫垯銆傜敱绱㈠紩璋冪敤鏄犲皠.txt瀹氫綅锛岀被鍨嬬郴缁?txt瀹屾垚绫诲瀷鍒ゆ柇鍚庤皟鐢ㄣ€俙r`n`r`n鏉ユ簮鏂囦欢鍧囧湪涓嬫枃鎸夊師濮嬬浉瀵硅矾寰勪繚鐣欍€俙r`n`r`n# Type Connections\n\nMASTER DOCUMENT ASSEMBLED FROM SOURCE FILES\n\nSOURCE: 类型场景静态连接.json"
+      },
+      {
+        "evidence_id": "E-MOD-CONNECTION-000005",
+        "module_id": "MOD-CONNECTION",
+        "source_path": "08_原始资料/类型连接.txt",
+        "source_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+        "line_start": 5,
+        "line_end": 9,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "MASTER DOCUMENT ASSEMBLED FROM SOURCE FILES\n\nSOURCE: 类型场景静态连接.json\n============================================================\n[]"
+      },
+      {
+        "evidence_id": "E-MOD-CONNECTION-000006",
+        "module_id": "MOD-CONNECTION",
+        "source_path": "08_原始资料/类型连接.txt",
+        "source_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+        "line_start": 6,
+        "line_end": 10,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "SOURCE: 类型场景静态连接.json\n============================================================\n[]"
+      },
+      {
+        "evidence_id": "E-MOD-CONNECTION-000007",
+        "module_id": "MOD-CONNECTION",
+        "source_path": "08_原始资料/类型连接.txt",
+        "source_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+        "line_start": 7,
+        "line_end": 11,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "SOURCE: 类型场景静态连接.json\n============================================================\n[]\n\nSOURCE: 类型冲突关系.json"
+      },
+      {
+        "evidence_id": "E-MOD-STATIC-000001",
+        "module_id": "MOD-STATIC",
+        "source_path": "08_原始资料/静态网络.txt",
+        "source_sha256": "60960725c948aefbef2c753ce17448aa525419cf4e8ec2eff0196c18b9e7e359",
+        "line_start": 1,
+        "line_end": 5,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "{\n  \"version\": \"2.0-final\",\n  \"type\": \"static_connection_map_full\","
+      },
+      {
+        "evidence_id": "E-MOD-STATIC-000002",
+        "module_id": "MOD-STATIC",
+        "source_path": "08_原始资料/静态网络.txt",
+        "source_sha256": "60960725c948aefbef2c753ce17448aa525419cf4e8ec2eff0196c18b9e7e359",
+        "line_start": 2,
+        "line_end": 6,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "{\n  \"version\": \"2.0-final\",\n  \"type\": \"static_connection_map_full\",\n  \"total_blocks\": 17,"
+      },
+      {
+        "evidence_id": "E-MOD-STATIC-000003",
+        "module_id": "MOD-STATIC",
+        "source_path": "08_原始资料/静态网络.txt",
+        "source_sha256": "60960725c948aefbef2c753ce17448aa525419cf4e8ec2eff0196c18b9e7e359",
+        "line_start": 3,
+        "line_end": 7,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "{\n  \"version\": \"2.0-final\",\n  \"type\": \"static_connection_map_full\",\n  \"total_blocks\": 17,\n  \"block\": \"01_人物基础与驱动\","
+      },
+      {
+        "evidence_id": "E-MOD-STATIC-000004",
+        "module_id": "MOD-STATIC",
+        "source_path": "08_原始资料/静态网络.txt",
+        "source_sha256": "60960725c948aefbef2c753ce17448aa525419cf4e8ec2eff0196c18b9e7e359",
+        "line_start": 4,
+        "line_end": 8,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "\"version\": \"2.0-final\",\n  \"type\": \"static_connection_map_full\",\n  \"total_blocks\": 17,\n  \"block\": \"01_人物基础与驱动\",\n  \"source_index\": {"
+      },
+      {
+        "evidence_id": "E-MOD-STATIC-000005",
+        "module_id": "MOD-STATIC",
+        "source_path": "08_原始资料/静态网络.txt",
+        "source_sha256": "60960725c948aefbef2c753ce17448aa525419cf4e8ec2eff0196c18b9e7e359",
+        "line_start": 5,
+        "line_end": 9,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "\"type\": \"static_connection_map_full\",\n  \"total_blocks\": 17,\n  \"block\": \"01_人物基础与驱动\",\n  \"source_index\": {\n    \"1.1_主角\": {"
+      },
+      {
+        "evidence_id": "E-MOD-DYNAMIC-000001",
+        "module_id": "MOD-DYNAMIC",
+        "source_path": "08_原始资料/动态网络.txt",
+        "source_sha256": "c0f99b8ac1effd0f6fea5996fa681aded7eab2ef1ed85691c7976f850d31a4a4",
+        "line_start": 1,
+        "line_end": 5,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "好。懂了。直接给内容。\n\n---"
+      },
+      {
+        "evidence_id": "E-MOD-DYNAMIC-000003",
+        "module_id": "MOD-DYNAMIC",
+        "source_path": "08_原始资料/动态网络.txt",
+        "source_sha256": "c0f99b8ac1effd0f6fea5996fa681aded7eab2ef1ed85691c7976f850d31a4a4",
+        "line_start": 3,
+        "line_end": 7,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "好。懂了。直接给内容。\n\n---\n\n```json"
+      },
+      {
+        "evidence_id": "E-MOD-DYNAMIC-000005",
+        "module_id": "MOD-DYNAMIC",
+        "source_path": "08_原始资料/动态网络.txt",
+        "source_sha256": "c0f99b8ac1effd0f6fea5996fa681aded7eab2ef1ed85691c7976f850d31a4a4",
+        "line_start": 5,
+        "line_end": 9,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "---\n\n```json\n{\n  \"动态网络连接_完整版\": {"
+      },
+      {
+        "evidence_id": "E-MOD-DYNAMIC-000006",
+        "module_id": "MOD-DYNAMIC",
+        "source_path": "08_原始资料/动态网络.txt",
+        "source_sha256": "c0f99b8ac1effd0f6fea5996fa681aded7eab2ef1ed85691c7976f850d31a4a4",
+        "line_start": 6,
+        "line_end": 10,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "```json\n{\n  \"动态网络连接_完整版\": {\n    \"版本\": \"1.0\","
+      },
+      {
+        "evidence_id": "E-MOD-DYNAMIC-000007",
+        "module_id": "MOD-DYNAMIC",
+        "source_path": "08_原始资料/动态网络.txt",
+        "source_sha256": "c0f99b8ac1effd0f6fea5996fa681aded7eab2ef1ed85691c7976f850d31a4a4",
+        "line_start": 7,
+        "line_end": 11,
+        "matched_terms": [
+          "动态网络"
+        ],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "```json\n{\n  \"动态网络连接_完整版\": {\n    \"版本\": \"1.0\",\n    \"生成时间\": \"2026-07-30\","
+      },
+      {
+        "evidence_id": "E-MOD-ANCHOR-000001",
+        "module_id": "MOD-ANCHOR",
+        "source_path": "08_原始资料/锚点网络.txt",
+        "source_sha256": "8c0294089abf2ea184d5aa565513fed9f43554dd387790c8b1a137f4ac19b384",
+        "line_start": 1,
+        "line_end": 5,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "好的。**选项1：把锚点网络扩展到2000个以上（B级粒度拆分）** ——现在交付。\n\n这意味着我把195个核心锚点，按“每个子项的具体状态级别”拆分成更细的粒度。"
+      },
+      {
+        "evidence_id": "E-MOD-ANCHOR-000003",
+        "module_id": "MOD-ANCHOR",
+        "source_path": "08_原始资料/锚点网络.txt",
+        "source_sha256": "8c0294089abf2ea184d5aa565513fed9f43554dd387790c8b1a137f4ac19b384",
+        "line_start": 3,
+        "line_end": 7,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "好的。**选项1：把锚点网络扩展到2000个以上（B级粒度拆分）** ——现在交付。\n\n这意味着我把195个核心锚点，按“每个子项的具体状态级别”拆分成更细的粒度。\n\n---"
+      },
+      {
+        "evidence_id": "E-MOD-ANCHOR-000005",
+        "module_id": "MOD-ANCHOR",
+        "source_path": "08_原始资料/锚点网络.txt",
+        "source_sha256": "8c0294089abf2ea184d5aa565513fed9f43554dd387790c8b1a137f4ac19b384",
+        "line_start": 5,
+        "line_end": 9,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "这意味着我把195个核心锚点，按“每个子项的具体状态级别”拆分成更细的粒度。\n\n---\n\n## 锚点网络完整版（B级粒度拆分）"
+      },
+      {
+        "evidence_id": "E-MOD-ANCHOR-000007",
+        "module_id": "MOD-ANCHOR",
+        "source_path": "08_原始资料/锚点网络.txt",
+        "source_sha256": "8c0294089abf2ea184d5aa565513fed9f43554dd387790c8b1a137f4ac19b384",
+        "line_start": 7,
+        "line_end": 11,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "---\n\n## 锚点网络完整版（B级粒度拆分）\n\n### 一、扩展后的锚点规模"
+      },
+      {
+        "evidence_id": "E-MOD-ANCHOR-000009",
+        "module_id": "MOD-ANCHOR",
+        "source_path": "08_原始资料/锚点网络.txt",
+        "source_sha256": "8c0294089abf2ea184d5aa565513fed9f43554dd387790c8b1a137f4ac19b384",
+        "line_start": 9,
+        "line_end": 13,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "## 锚点网络完整版（B级粒度拆分）\n\n### 一、扩展后的锚点规模\n\n| 大类 | 锚点数量 | 粒度级别 |"
+      },
+      {
+        "evidence_id": "E-MOD-EXECUTION-000001",
+        "module_id": "MOD-EXECUTION",
+        "source_path": "08_原始资料/执行正文.txt",
+        "source_sha256": "f2e7725e845dcc349cb54df79992a411bbd034197fb811b287e8066993a04ef8",
+        "line_start": 1,
+        "line_end": 5,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# NovaWriter 完整执行方案 · 全文件读取 + 精准子项分配版\n\n版本：v25.0 | 面向：Cline/Claude"
+      },
+      {
+        "evidence_id": "E-MOD-EXECUTION-000003",
+        "module_id": "MOD-EXECUTION",
+        "source_path": "08_原始资料/执行正文.txt",
+        "source_sha256": "f2e7725e845dcc349cb54df79992a411bbd034197fb811b287e8066993a04ef8",
+        "line_start": 3,
+        "line_end": 7,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# NovaWriter 完整执行方案 · 全文件读取 + 精准子项分配版\n\n版本：v25.0 | 面向：Cline/Claude\n\n---"
+      },
+      {
+        "evidence_id": "E-MOD-EXECUTION-000005",
+        "module_id": "MOD-EXECUTION",
+        "source_path": "08_原始资料/执行正文.txt",
+        "source_sha256": "f2e7725e845dcc349cb54df79992a411bbd034197fb811b287e8066993a04ef8",
+        "line_start": 5,
+        "line_end": 9,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "版本：v25.0 | 面向：Cline/Claude\n\n---\n\n## 一、第1段：步骤0+1（系统启动+前置决策）"
+      },
+      {
+        "evidence_id": "E-MOD-EXECUTION-000007",
+        "module_id": "MOD-EXECUTION",
+        "source_path": "08_原始资料/执行正文.txt",
+        "source_sha256": "f2e7725e845dcc349cb54df79992a411bbd034197fb811b287e8066993a04ef8",
+        "line_start": 7,
+        "line_end": 11,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "---\n\n## 一、第1段：步骤0+1（系统启动+前置决策）\n\n【本步骤独立执行单元：步骤0+1】"
+      },
+      {
+        "evidence_id": "E-MOD-EXECUTION-000009",
+        "module_id": "MOD-EXECUTION",
+        "source_path": "08_原始资料/执行正文.txt",
+        "source_sha256": "f2e7725e845dcc349cb54df79992a411bbd034197fb811b287e8066993a04ef8",
+        "line_start": 9,
+        "line_end": 13,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "## 一、第1段：步骤0+1（系统启动+前置决策）\n\n【本步骤独立执行单元：步骤0+1】\n【依赖文件】：无\n【输出文件】：运行输出/类型调用清单.txt、运行输出/核心悬念设计.txt、运行输出/爽点频率表.txt"
+      },
+      {
+        "evidence_id": "E-MOD-INDEX-MAPPING-000001",
+        "module_id": "MOD-INDEX-MAPPING",
+        "source_path": "08_原始资料/索引调用映射.txt",
+        "source_sha256": "08c6cfa89460d69fc73de0f990add49328348da170539c2ff721ee112a55a5ef",
+        "line_start": 1,
+        "line_end": 5,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# 索引调用映射`r`n`r`n涓昏祫鏂欏叆鍙ｏ細鎵ц姝ｆ枃.txt銆佽祫鏂欏簱.txt銆侀潤鎬佺綉缁?txt銆佸姩鎬佺綉缁?txt銆侀敋鐐圭綉缁?txt銆佺储寮曡皟鐢ㄦ槧灏?txt銆佺被鍨嬬郴缁?txt銆佺被鍨嬭繛鎺?txt銆俙r`n`r`n璋冪敤鎺ュ彛锛氬厛璇绘湰鏂囦欢锛涙寜鎵ц姝ｆ枃.txt璇诲彇璧勬枡搴撴寚瀹氭澘鍧楋紱绫诲瀷鍒ゆ柇璇荤被鍨嬬郴缁?txt锛涚被鍨嬪叧绯绘牎楠岃绫诲瀷杩炴帴.txt锛涚綉缁滃拰閿氱偣鎸夋楠ゆ寜闇€璇诲彇銆俙r`n`r`n鍙傝€冭祫鏂欎綅浜?D:\\鍙傝€僜鍘熷璧勬枡锛屼粎鐢ㄤ簬鎷嗚В銆佽ˉ鍏呫€佹瘮瀵瑰拰鏍￠獙锛涙牳蹇冭祫鏂欏ぇ鍖呮殏涓嶅鐞嗭紝涓嶅緱鏁翠綋杞藉叆銆俙r`n`r`n# Index Call Mapping\n\nMASTER DOCUMENT ASSEMBLED FROM SOURCE FILES"
+      },
+      {
+        "evidence_id": "E-MOD-INDEX-MAPPING-000003",
+        "module_id": "MOD-INDEX-MAPPING",
+        "source_path": "08_原始资料/索引调用映射.txt",
+        "source_sha256": "08c6cfa89460d69fc73de0f990add49328348da170539c2ff721ee112a55a5ef",
+        "line_start": 3,
+        "line_end": 7,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "# 索引调用映射`r`n`r`n涓昏祫鏂欏叆鍙ｏ細鎵ц姝ｆ枃.txt銆佽祫鏂欏簱.txt銆侀潤鎬佺綉缁?txt銆佸姩鎬佺綉缁?txt銆侀敋鐐圭綉缁?txt銆佺储寮曡皟鐢ㄦ槧灏?txt銆佺被鍨嬬郴缁?txt銆佺被鍨嬭繛鎺?txt銆俙r`n`r`n璋冪敤鎺ュ彛锛氬厛璇绘湰鏂囦欢锛涙寜鎵ц姝ｆ枃.txt璇诲彇璧勬枡搴撴寚瀹氭澘鍧楋紱绫诲瀷鍒ゆ柇璇荤被鍨嬬郴缁?txt锛涚被鍨嬪叧绯绘牎楠岃绫诲瀷杩炴帴.txt锛涚綉缁滃拰閿氱偣鎸夋楠ゆ寜闇€璇诲彇銆俙r`n`r`n鍙傝€冭祫鏂欎綅浜?D:\\鍙傝€僜鍘熷璧勬枡锛屼粎鐢ㄤ簬鎷嗚В銆佽ˉ鍏呫€佹瘮瀵瑰拰鏍￠獙锛涙牳蹇冭祫鏂欏ぇ鍖呮殏涓嶅鐞嗭紝涓嶅緱鏁翠綋杞藉叆銆俙r`n`r`n# Index Call Mapping\n\nMASTER DOCUMENT ASSEMBLED FROM SOURCE FILES\n\nSOURCE: 统一索引原版\\build_unified_index.py"
+      },
+      {
+        "evidence_id": "E-MOD-INDEX-MAPPING-000005",
+        "module_id": "MOD-INDEX-MAPPING",
+        "source_path": "08_原始资料/索引调用映射.txt",
+        "source_sha256": "08c6cfa89460d69fc73de0f990add49328348da170539c2ff721ee112a55a5ef",
+        "line_start": 5,
+        "line_end": 9,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "MASTER DOCUMENT ASSEMBLED FROM SOURCE FILES\n\nSOURCE: 统一索引原版\\build_unified_index.py\n============================================================\n#!/usr/bin/env python3"
+      },
+      {
+        "evidence_id": "E-MOD-INDEX-MAPPING-000006",
+        "module_id": "MOD-INDEX-MAPPING",
+        "source_path": "08_原始资料/索引调用映射.txt",
+        "source_sha256": "08c6cfa89460d69fc73de0f990add49328348da170539c2ff721ee112a55a5ef",
+        "line_start": 6,
+        "line_end": 10,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "SOURCE: 统一索引原版\\build_unified_index.py\n============================================================\n#!/usr/bin/env python3\n# -*- coding: utf-8 -*-"
+      },
+      {
+        "evidence_id": "E-MOD-INDEX-MAPPING-000007",
+        "module_id": "MOD-INDEX-MAPPING",
+        "source_path": "08_原始资料/索引调用映射.txt",
+        "source_sha256": "08c6cfa89460d69fc73de0f990add49328348da170539c2ff721ee112a55a5ef",
+        "line_start": 7,
+        "line_end": 11,
+        "matched_terms": [],
+        "evidence_level": "confirmed_raw",
+        "status": "selected",
+        "runtime_usable": true,
+        "text": "SOURCE: 统一索引原版\\build_unified_index.py\n============================================================\n#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\n\"\"\""
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000024",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 23,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00024",
+          "source": "10.1_能量总量",
+          "source_layer": "引擎层",
+          "target": "12.10_能量临界值",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "能量达到临界值",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量总量影响临界值",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.1_能量总量",
+          "original_target": "12.10_能量临界值",
+          "normalized_source": "10.1_能量总量",
+          "normalized_target": "12.10_能量临界值",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000026",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 25,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00026",
+          "source": "10.1_能量总量",
+          "source_layer": "引擎层",
+          "target": "16.1_消耗速率",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "能量被消耗",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量总量影响消耗速率",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.1_能量总量",
+          "original_target": "16.1_消耗速率",
+          "normalized_source": "10.1_能量总量",
+          "normalized_target": "16.1_消耗速率",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000027",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 26,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00027",
+          "source": "10.1_能量总量",
+          "source_layer": "引擎层",
+          "target": "8.3_能量状态",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "能量总量变化",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量总量决定能量状态",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.1_能量总量",
+          "original_target": "8.3_能量状态",
+          "normalized_source": "10.1_能量总量",
+          "normalized_target": "8.3_能量状态",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000033",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 32,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00033",
+          "source": "10.2_能量纯度",
+          "source_layer": "引擎层",
+          "target": "10.3_能量运用技巧",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "纯度影响技巧效果",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "纯度影响技巧效果",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.2_能量纯度",
+          "original_target": "10.3_能量运用技巧",
+          "normalized_source": "10.2_能量纯度",
+          "normalized_target": "10.3_能量运用技巧",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000036",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 35,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00036",
+          "source": "10.3_能量运用技巧",
+          "source_layer": "引擎层",
+          "target": "14.3_显能期",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "技巧在显能期展现",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "技巧在显能期展现",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.3_能量运用技巧",
+          "original_target": "14.3_显能期",
+          "normalized_source": "10.3_能量运用技巧",
+          "normalized_target": "14.3_显能期",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000038",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 37,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00038",
+          "source": "10.3_能量运用技巧",
+          "source_layer": "引擎层",
+          "target": "15.1_进阶四条件",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "技巧是进阶条件之一",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "技巧是进阶的条件",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.3_能量运用技巧",
+          "original_target": "15.1_进阶四条件",
+          "normalized_source": "10.3_能量运用技巧",
+          "normalized_target": "15.1_进阶四条件",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000042",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 41,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00042",
+          "source": "10.4_天赋品质",
+          "source_layer": "引擎层",
+          "target": "13.1_等级划分",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "天赋决定等级",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "天赋品质决定等级",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.4_天赋品质",
+          "original_target": "13.1_等级划分",
+          "normalized_source": "10.4_天赋品质",
+          "normalized_target": "13.1_等级划分",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000043",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 42,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00043",
+          "source": "10.4_天赋品质",
+          "source_layer": "引擎层",
+          "target": "13.4_上限瓶颈",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "天赋决定上限",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "天赋品质决定上限",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.4_天赋品质",
+          "original_target": "13.4_上限瓶颈",
+          "normalized_source": "10.4_天赋品质",
+          "normalized_target": "13.4_上限瓶颈",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000046",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 45,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00046",
+          "source": "10.5_力量公式",
+          "source_layer": "引擎层",
+          "target": "15.1_进阶四条件",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "公式决定进阶条件",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "力量公式决定进阶",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "10.5_力量公式",
+          "original_target": "15.1_进阶四条件",
+          "normalized_source": "10.5_力量公式",
+          "normalized_target": "15.1_进阶四条件",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000049",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 48,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00049",
+          "source": "109.1_叙述者类型",
+          "source_layer": "表达层",
+          "target": "58.1_第一人称",
+          "target_layer": "交互层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "类型决定人称",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "叙述者类型决定人称",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "109.1_叙述者类型",
+          "original_target": "58.1_第一人称",
+          "normalized_source": "109.1_叙述者类型",
+          "normalized_target": "58.1_第一人称",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000052",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 51,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00052",
+          "source": "11.1_游离态",
+          "source_layer": "引擎层",
+          "target": "12.4_能量浓度分布",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "游离态决定浓度",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "游离态决定能量浓度",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.1_游离态",
+          "original_target": "12.4_能量浓度分布",
+          "normalized_source": "11.1_游离态",
+          "normalized_target": "12.4_能量浓度分布",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000054",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 53,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00054",
+          "source": "11.1_游离态",
+          "source_layer": "引擎层",
+          "target": "13.2_吸收速度",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "游离态影响吸收速度",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "游离态浓度影响吸收速度",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.1_游离态",
+          "original_target": "13.2_吸收速度",
+          "normalized_source": "11.1_游离态",
+          "normalized_target": "13.2_吸收速度",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000057",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 56,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00057",
+          "source": "11.2_凝聚态",
+          "source_layer": "引擎层",
+          "target": "10.1_能量总量",
+          "target_layer": "引擎层",
+          "type": "转化链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "凝聚态可转化为总量",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "凝聚态转化为能量总量",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.2_凝聚态",
+          "original_target": "10.1_能量总量",
+          "normalized_source": "11.2_凝聚态",
+          "normalized_target": "10.1_能量总量",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000059",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 58,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00059",
+          "source": "11.2_凝聚态",
+          "source_layer": "引擎层",
+          "target": "24.1_资源类型",
+          "target_layer": "生成层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "凝聚态是资源类型",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "凝聚态是资源的一种",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.2_凝聚态",
+          "original_target": "24.1_资源类型",
+          "normalized_source": "11.2_凝聚态",
+          "normalized_target": "24.1_资源类型",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000063",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 62,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00063",
+          "source": "11.3_固化态",
+          "source_layer": "引擎层",
+          "target": "28.1_道具生命史",
+          "target_layer": "生成层",
+          "type": "转化链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "固化态可作为道具",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "固化态转化为道具",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.3_固化态",
+          "original_target": "28.1_道具生命史",
+          "normalized_source": "11.3_固化态",
+          "normalized_target": "28.1_道具生命史",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000065",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 64,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00065",
+          "source": "11.4_能量转化路径",
+          "source_layer": "引擎层",
+          "target": "27.1_资源循环",
+          "target_layer": "生成层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "转化是资源循环的一部分",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量转化是资源循环的一部分",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.4_能量转化路径",
+          "original_target": "27.1_资源循环",
+          "normalized_source": "11.4_能量转化路径",
+          "normalized_target": "27.1_资源循环",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000068",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 67,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00068",
+          "source": "11.5_转化效率",
+          "source_layer": "引擎层",
+          "target": "10.1_能量总量",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "效率影响总量",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "转化效率影响能量总量",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "11.5_转化效率",
+          "original_target": "10.1_能量总量",
+          "normalized_source": "11.5_转化效率",
+          "normalized_target": "10.1_能量总量",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000070",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 69,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00070",
+          "source": "110.1_场景氛围",
+          "source_layer": "表达层",
+          "target": "52.1_视觉描写",
+          "target_layer": "表达层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "氛围通过视觉呈现",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "氛围通过视觉描写呈现",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "110.1_场景氛围",
+          "original_target": "52.1_视觉描写",
+          "normalized_source": "110.1_场景氛围",
+          "normalized_target": "52.1_视觉描写",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000071",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 70,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00071",
+          "source": "110.2_氛围与角色情绪映射",
+          "source_layer": "表达层",
+          "target": "7.4_情感与身体反应",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "氛围映射情绪",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "氛围变化反映情绪变化",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "110.2_氛围与角色情绪映射",
+          "original_target": "7.4_情感与身体反应",
+          "normalized_source": "110.2_氛围与角色情绪映射",
+          "normalized_target": "7.4_情感与身体反应",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000072",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 71,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00072",
+          "source": "111.1_核心象征物",
+          "source_layer": "表达层",
+          "target": "28.6_道具象征化",
+          "target_layer": "生成层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "道具可成为象征",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "道具成为核心象征物",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "111.1_核心象征物",
+          "original_target": "28.6_道具象征化",
+          "normalized_source": "111.1_核心象征物",
+          "normalized_target": "28.6_道具象征化",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000073",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 72,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00073",
+          "source": "111.1_核心象征物",
+          "source_layer": "表达层",
+          "target": "63.1_核心主题",
+          "target_layer": "组织层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "象征连接主题",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "象征连接主题",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "111.1_核心象征物",
+          "original_target": "63.1_核心主题",
+          "normalized_source": "111.1_核心象征物",
+          "normalized_target": "63.1_核心主题",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000074",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 73,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00074",
+          "source": "112.1_开篇设计",
+          "source_layer": "表达层",
+          "target": "48.2_开篇规则",
+          "target_layer": "组织层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "开篇设计是规则",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "开篇设计是开篇规则的一部分",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "112.1_开篇设计",
+          "original_target": "48.2_开篇规则",
+          "normalized_source": "112.1_开篇设计",
+          "normalized_target": "48.2_开篇规则",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000075",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 74,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00075",
+          "source": "112.5_收尾设计",
+          "source_layer": "表达层",
+          "target": "130_核心悬念",
+          "target_layer": "执行层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "收尾解决悬念",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "收尾解决核心悬念",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "112.5_收尾设计",
+          "original_target": "130_核心悬念",
+          "normalized_source": "112.5_收尾设计",
+          "normalized_target": "130_核心悬念",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000076",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 75,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00076",
+          "source": "113.1_叙事顺序",
+          "source_layer": "表达层",
+          "target": "45.1_伏笔埋设",
+          "target_layer": "组织层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "倒叙是伏笔",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 2,
+          "effect": "倒叙是伏笔的一种",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "113.1_叙事顺序",
+          "original_target": "45.1_伏笔埋设",
+          "normalized_source": "113.1_叙事顺序",
+          "normalized_target": "45.1_伏笔埋设",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000087",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 86,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00087",
+          "source": "115.1_场景空间结构",
+          "source_layer": "表达层",
+          "target": "60.1_远景镜头",
+          "target_layer": "交互层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "空间结构通过远景呈现",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "空间结构通过远景呈现",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "115.1_场景空间结构",
+          "original_target": "60.1_远景镜头",
+          "normalized_source": "115.1_场景空间结构",
+          "normalized_target": "60.1_远景镜头",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000088",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 87,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00088",
+          "source": "116.1_遗漏信息",
+          "source_layer": "执行层",
+          "target": "65.2_读者不确定性管理",
+          "target_layer": "读者层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "遗漏制造不确定性",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "遗漏信息制造不确定性",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "116.1_遗漏信息",
+          "original_target": "65.2_读者不确定性管理",
+          "normalized_source": "116.1_遗漏信息",
+          "normalized_target": "65.2_读者不确定性管理",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000089",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 88,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00089",
+          "source": "117.1_错位",
+          "source_layer": "执行层",
+          "target": "45.11_反转类型",
+          "target_layer": "组织层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "错位是反转",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "错位是反转的一种",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "117.1_错位",
+          "original_target": "45.11_反转类型",
+          "normalized_source": "117.1_错位",
+          "normalized_target": "45.11_反转类型",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000090",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 89,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00090",
+          "source": "118.1_代价追踪",
+          "source_layer": "执行层",
+          "target": "4.4_成长代价",
+          "target_layer": "生成层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "代价需要追踪",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "代价追踪是成长代价的管理",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "118.1_代价追踪",
+          "original_target": "4.4_成长代价",
+          "normalized_source": "118.1_代价追踪",
+          "normalized_target": "4.4_成长代价",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000093",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 92,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00093",
+          "source": "119.1_共鸣点",
+          "source_layer": "读者层",
+          "target": "65.1_读者代入感",
+          "target_layer": "读者层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "共鸣影响代入感",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "都市",
+            "科幻",
+            "悬疑",
+            "言情",
+            "历史",
+            "军事",
+            "游戏",
+            "体育",
+            "灵异",
+            "同人",
+            "二次元",
+            "耽美",
+            "轻小说"
+          ],
+          "priority": 1,
+          "effect": "共鸣点影响代入感",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "119.1_共鸣点",
+          "original_target": "65.1_读者代入感",
+          "normalized_source": "119.1_共鸣点",
+          "normalized_target": "65.1_读者代入感",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000101",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 100,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00101",
+          "source": "12.10_能量临界值",
+          "source_layer": "引擎层",
+          "target": "14.6_结晶期",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "临界值是结晶期标志",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "临界值是结晶期的标志",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.10_能量临界值",
+          "original_target": "14.6_结晶期",
+          "normalized_source": "12.10_能量临界值",
+          "normalized_target": "14.6_结晶期",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000102",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 101,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00102",
+          "source": "12.10_能量临界值",
+          "source_layer": "引擎层",
+          "target": "15.1_进阶四条件",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "临界值是进阶条件",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "临界值是进阶的条件",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.10_能量临界值",
+          "original_target": "15.1_进阶四条件",
+          "normalized_source": "12.10_能量临界值",
+          "normalized_target": "15.1_进阶四条件",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000105",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 104,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00105",
+          "source": "12.1_能量守恒",
+          "source_layer": "引擎层",
+          "target": "11.4_能量转化路径",
+          "target_layer": "引擎层",
+          "type": "抑制链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "守恒决定转化",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量守恒决定转化路径",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.1_能量守恒",
+          "original_target": "11.4_能量转化路径",
+          "normalized_source": "12.1_能量守恒",
+          "normalized_target": "11.4_能量转化路径",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000108",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 107,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00108",
+          "source": "12.1_能量守恒",
+          "source_layer": "引擎层",
+          "target": "17.1_能量守恒定律",
+          "target_layer": "引擎层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "始终有效",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量守恒的物理基础",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.1_能量守恒",
+          "original_target": "17.1_能量守恒定律",
+          "normalized_source": "12.1_能量守恒",
+          "normalized_target": "17.1_能量守恒定律",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000111",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 110,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00111",
+          "source": "12.2_能量流动规律",
+          "source_layer": "引擎层",
+          "target": "12.4_能量浓度分布",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "流动决定浓度",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "能量流动决定浓度分布",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.2_能量流动规律",
+          "original_target": "12.4_能量浓度分布",
+          "normalized_source": "12.2_能量流动规律",
+          "normalized_target": "12.4_能量浓度分布",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000114",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 113,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00114",
+          "source": "12.3_能量传导系数",
+          "source_layer": "引擎层",
+          "target": "12.4_能量浓度分布",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "传导影响浓度",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "传导系数影响浓度",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.3_能量传导系数",
+          "original_target": "12.4_能量浓度分布",
+          "normalized_source": "12.3_能量传导系数",
+          "normalized_target": "12.4_能量浓度分布",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000118",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 117,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00118",
+          "source": "12.4_能量浓度分布",
+          "source_layer": "引擎层",
+          "target": "11.1_游离态",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "双向",
+          "strength": "强",
+          "condition": "浓度决定游离态",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "浓度决定游离态分布",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.4_能量浓度分布",
+          "original_target": "11.1_游离态",
+          "normalized_source": "12.4_能量浓度分布",
+          "normalized_target": "11.1_游离态",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000119",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 118,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00119",
+          "source": "12.4_能量浓度分布",
+          "source_layer": "引擎层",
+          "target": "24.1_资源类型",
+          "target_layer": "生成层",
+          "type": "嵌套链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "浓度决定资源",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "浓度决定资源分布",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.4_能量浓度分布",
+          "original_target": "24.1_资源类型",
+          "normalized_source": "12.4_能量浓度分布",
+          "normalized_target": "24.1_资源类型",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000120",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 119,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00120",
+          "source": "12.4_能量浓度分布",
+          "source_layer": "引擎层",
+          "target": "83.1_探索",
+          "target_layer": "交互层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "浓度决定探索方向",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "浓度决定探索方向",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.4_能量浓度分布",
+          "original_target": "83.1_探索",
+          "normalized_source": "12.4_能量浓度分布",
+          "normalized_target": "83.1_探索",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000123",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 122,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00123",
+          "source": "12.5_能量浓度时间变化",
+          "source_layer": "引擎层",
+          "target": "12.6_能量潮汐",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "强",
+          "condition": "时间变化产生潮汐",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 1,
+          "effect": "时间变化产生能量潮汐",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.5_能量浓度时间变化",
+          "original_target": "12.6_能量潮汐",
+          "normalized_source": "12.5_能量浓度时间变化",
+          "normalized_target": "12.6_能量潮汐",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      },
+      {
+        "evidence_id": "E-NET-DYNAMIC-FULL-000125",
+        "module_id": "NET-DYNAMIC-FULL",
+        "source_path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+        "source_sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+        "record_index": 124,
+        "evidence_level": "reconstructed",
+        "status": "candidate",
+        "runtime_usable": false,
+        "record": {
+          "id": "C00125",
+          "source": "12.6_能量潮汐",
+          "source_layer": "引擎层",
+          "target": "14.2_聚能期",
+          "target_layer": "引擎层",
+          "type": "触发链",
+          "direction": "单向",
+          "strength": "中",
+          "condition": "潮汐影响聚能",
+          "valid_types": [
+            "玄幻",
+            "仙侠",
+            "科幻",
+            "游戏",
+            "军事"
+          ],
+          "priority": 2,
+          "effect": "能量潮汐影响聚能效率",
+          "generated_from_static": false,
+          "needs_review": false,
+          "original_source": "12.6_能量潮汐",
+          "original_target": "14.2_聚能期",
+          "normalized_source": "12.6_能量潮汐",
+          "normalized_target": "14.2_聚能期",
+          "field_source": {
+            "source": "动态网络.txt 原始连接记录"
+          }
+        }
+      }
+    ],
+    "usable_evidence_ids": [
+      "E-MOD-CAPABILITY-000001",
+      "E-MOD-CAPABILITY-000003",
+      "E-MOD-CAPABILITY-000005",
+      "E-MOD-CAPABILITY-000007",
+      "E-MOD-CAPABILITY-000008",
+      "E-MOD-TYPE-000001",
+      "E-MOD-TYPE-000003",
+      "E-MOD-TYPE-000005",
+      "E-MOD-TYPE-000006",
+      "E-MOD-TYPE-000007",
+      "E-MOD-CONNECTION-000001",
+      "E-MOD-CONNECTION-000003",
+      "E-MOD-CONNECTION-000005",
+      "E-MOD-CONNECTION-000006",
+      "E-MOD-CONNECTION-000007",
+      "E-MOD-STATIC-000001",
+      "E-MOD-STATIC-000002",
+      "E-MOD-STATIC-000003",
+      "E-MOD-STATIC-000004",
+      "E-MOD-STATIC-000005",
+      "E-MOD-DYNAMIC-000001",
+      "E-MOD-DYNAMIC-000003",
+      "E-MOD-DYNAMIC-000005",
+      "E-MOD-DYNAMIC-000006",
+      "E-MOD-DYNAMIC-000007",
+      "E-MOD-ANCHOR-000001",
+      "E-MOD-ANCHOR-000003",
+      "E-MOD-ANCHOR-000005",
+      "E-MOD-ANCHOR-000007",
+      "E-MOD-ANCHOR-000009",
+      "E-MOD-EXECUTION-000001",
+      "E-MOD-EXECUTION-000003",
+      "E-MOD-EXECUTION-000005",
+      "E-MOD-EXECUTION-000007",
+      "E-MOD-EXECUTION-000009",
+      "E-MOD-INDEX-MAPPING-000001",
+      "E-MOD-INDEX-MAPPING-000003",
+      "E-MOD-INDEX-MAPPING-000005",
+      "E-MOD-INDEX-MAPPING-000006",
+      "E-MOD-INDEX-MAPPING-000007"
+    ],
+    "candidate_evidence_ids": [
+      "E-NET-DYNAMIC-FULL-000024",
+      "E-NET-DYNAMIC-FULL-000026",
+      "E-NET-DYNAMIC-FULL-000027",
+      "E-NET-DYNAMIC-FULL-000033",
+      "E-NET-DYNAMIC-FULL-000036",
+      "E-NET-DYNAMIC-FULL-000038",
+      "E-NET-DYNAMIC-FULL-000042",
+      "E-NET-DYNAMIC-FULL-000043",
+      "E-NET-DYNAMIC-FULL-000046",
+      "E-NET-DYNAMIC-FULL-000049",
+      "E-NET-DYNAMIC-FULL-000052",
+      "E-NET-DYNAMIC-FULL-000054",
+      "E-NET-DYNAMIC-FULL-000057",
+      "E-NET-DYNAMIC-FULL-000059",
+      "E-NET-DYNAMIC-FULL-000063",
+      "E-NET-DYNAMIC-FULL-000065",
+      "E-NET-DYNAMIC-FULL-000068",
+      "E-NET-DYNAMIC-FULL-000070",
+      "E-NET-DYNAMIC-FULL-000071",
+      "E-NET-DYNAMIC-FULL-000072",
+      "E-NET-DYNAMIC-FULL-000073",
+      "E-NET-DYNAMIC-FULL-000074",
+      "E-NET-DYNAMIC-FULL-000075",
+      "E-NET-DYNAMIC-FULL-000076",
+      "E-NET-DYNAMIC-FULL-000087",
+      "E-NET-DYNAMIC-FULL-000088",
+      "E-NET-DYNAMIC-FULL-000089",
+      "E-NET-DYNAMIC-FULL-000090",
+      "E-NET-DYNAMIC-FULL-000093",
+      "E-NET-DYNAMIC-FULL-000101",
+      "E-NET-DYNAMIC-FULL-000102",
+      "E-NET-DYNAMIC-FULL-000105",
+      "E-NET-DYNAMIC-FULL-000108",
+      "E-NET-DYNAMIC-FULL-000111",
+      "E-NET-DYNAMIC-FULL-000114",
+      "E-NET-DYNAMIC-FULL-000118",
+      "E-NET-DYNAMIC-FULL-000119",
+      "E-NET-DYNAMIC-FULL-000120",
+      "E-NET-DYNAMIC-FULL-000123",
+      "E-NET-DYNAMIC-FULL-000125"
+    ],
+    "read_modules": [
+      "MOD-ANCHOR",
+      "MOD-CAPABILITY",
+      "MOD-CONNECTION",
+      "MOD-DYNAMIC",
+      "MOD-EXECUTION",
+      "MOD-INDEX-MAPPING",
+      "MOD-STATIC",
+      "MOD-TYPE",
+      "NET-DYNAMIC-FULL"
+    ],
+    "status": "READY",
+    "limitations": [
+      "原始资料仍作为只读来源；候选、模板、fixture、needs_review 记录不得约束正文。",
+      "证据包只提供可追溯材料，不替代模型对故事事实的综合和冲突裁决。"
+    ]
+  },
+  "routing_contract": {
+    "entrypoint_first": true,
+    "selection_mode": "task_and_state_driven",
+    "type_sequence": [
+      "MOD-TYPE",
+      "MOD-CONNECTION"
+    ],
+    "network_sequence": [
+      "MOD-STATIC",
+      "MOD-DYNAMIC",
+      "MOD-ANCHOR"
+    ],
+    "execution_sequence": [
+      "MOD-EXECUTION"
+    ],
+    "dependency_rules": [
+      {
+        "from": "MOD-TYPE",
+        "to": "MOD-CONNECTION",
+        "reason": "先确定类型边界，再裁决组合兼容性"
+      },
+      {
+        "from": "MOD-STATIC",
+        "to": "MOD-DYNAMIC",
+        "reason": "先确认稳定对象关系，再生成动态候选"
+      },
+      {
+        "from": "MOD-DYNAMIC",
+        "to": "MOD-ANCHOR",
+        "reason": "先确认事件和状态候选，再落到表达锚点"
+      },
+      {
+        "from": "MOD-EXECUTION",
+        "to": "chapter_execution_manifest",
+        "reason": "把有效证据和设计决策传递到正文执行"
+      }
+    ]
+  },
+  "retrieval_indexes": {
+    "concept": [
+      "by_id",
+      "by_chinese_name",
+      "by_original_name",
+      "by_category",
+      "by_legacy_id"
+    ],
+    "lookup": [
+      "keyword",
+      "type",
+      "body",
+      "sensory",
+      "psychological",
+      "action",
+      "verbal",
+      "social",
+      "resource"
+    ],
+    "conflict": [
+      "moral_conflict",
+      "human_nature_conflict",
+      "interest_conflict"
+    ],
+    "decision": [
+      "possible_choice",
+      "possible_outcome",
+      "trigger_condition",
+      "state_change"
+    ],
+    "network_mapping": [
+      "static_network_mappings",
+      "connection_type",
+      "source",
+      "target"
+    ]
+  },
+  "evidence_contract": {
+    "formal_levels": [
+      "confirmed_raw",
+      "cross_confirmed"
+    ],
+    "candidate_levels": [
+      "reconstructed",
+      "unconfirmed"
+    ],
+    "required_trace": "index_mapping -> selected_evidence -> synthesis_decision -> design -> text -> verification",
+    "selection_statuses": [
+      "selected",
+      "candidate",
+      "blocked",
+      "not_applicable"
+    ]
+  },
+  "synthesis_contract": {
+    "required_inputs": [
+      "task_context",
+      "project_snapshot",
+      "selected_evidence"
+    ],
+    "required_outputs": [
+      "decisions",
+      "conflicts",
+      "state_changes",
+      "writing_requirements",
+      "source_trace",
+      "not_used_reasons"
+    ],
+    "handoff_chain": [
+      "task_context",
+      "evidence_bundle",
+      "synthesis",
+      "chapter_design",
+      "execution_manifest",
+      "chapter_text",
+      "state_update",
+      "verification"
+    ]
+  },
+  "status": "BLOCKED_WITH_REVIEW"
+}

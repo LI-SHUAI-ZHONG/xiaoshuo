@@ -1,0 +1,24 @@
+{
+  "schema_version": "human-source-qualification-decision-audit-report-1.0",
+  "generated_at": "2026-08-13T03:30:17.665362+00:00",
+  "scope": "human_decision_validation_only; no_qualification_or_usage_permission_modified",
+  "submission_path": "D:\\AI小说制作最终版-cline重建\\新版1\\配置\\来源资格人工裁决.jsonl",
+  "expected_source_kind_count": 7,
+  "submitted_record_count": 0,
+  "missing_source_kinds": [
+    "动态网络",
+    "类型系统",
+    "类型系统来源块",
+    "类型连接",
+    "资料库",
+    "锚点网络",
+    "静态网络"
+  ],
+  "submission_coverage_complete": false,
+  "decision_counts": {},
+  "submission_valid_count": 0,
+  "accepted_for_later_governance_review_count": 0,
+  "formal_fact_eligible_count": 0,
+  "model_input_eligible_count": 0,
+  "prose_write_allowed": false
+}

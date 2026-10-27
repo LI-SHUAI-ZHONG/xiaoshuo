@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "duplicate_binding_ids": [],
+  "duplicate_record_counts": {},
+  "auto_isolated_candidate_binding_ids": [
+    "TB-00071",
+    "TB-00533",
+    "TB-00607",
+    "TB-00639",
+    "TB-01938",
+    "TB-01939",
+    "TB-01957",
+    "TB-02009",
+    "TB-04971",
+    "TB-04972",
+    "TB-04974",
+    "TB-05533"
+  ],
+  "policy": "仅当重复候选的 upgrade.application_status 全部精确为 automatic_draft_requires_semantic_editorial_review 时自动拒绝事实合并并保留隔离；其他状态构建失败。"
+}

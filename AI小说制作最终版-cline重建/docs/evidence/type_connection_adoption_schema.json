@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/schemas/type-connection-adoption.schema.json",
+  "title": "Type Connection Adoption Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id",
+    "project_id",
+    "combination_id",
+    "source_type",
+    "source_connection_ids",
+    "selected_mechanisms",
+    "selected_reason",
+    "rejected_mechanisms",
+    "rejection_reason",
+    "conflict_resolutions",
+    "status",
+    "adopted_at"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "pattern": "^TCA-[0-9]{4}$"
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "combination_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "自由文本，不限枚举。"
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "from_type_system",
+        "from_type_connection",
+        "project_defined",
+        "unknown"
+      ]
+    },
+    "source_connection_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "source_connection_empty_reason": {
+      "type": "string",
+      "minLength": 1,
+      "description": "当source_type为from_type_connection且source_connection_ids为空时的原因。"
+    },
+    "selected_mechanisms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "selected_reason": {
+      "type": "string",
+      "minLength": 50
+    },
+    "rejected_mechanisms": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "rejection_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "conflict_resolutions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "adopted",
+        "rejected",
+        "pending"
+      ]
+    },
+    "adopted_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "source_type": {
+            "const": "from_type_connection"
+          },
+          "source_connection_ids": {
+            "maxItems": 0
+          }
+        },
+        "required": [
+          "source_type",
+          "source_connection_ids"
+        ]
+      },
+      "then": {
+        "required": [
+          "source_connection_empty_reason"
+        ],
+        "properties": {
+          "source_connection_empty_reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "rejected"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "rejection_reason"
+        ],
+        "properties": {
+          "rejection_reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  ]
+}

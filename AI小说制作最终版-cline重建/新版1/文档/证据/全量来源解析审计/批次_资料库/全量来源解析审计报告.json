@@ -1,0 +1,32 @@
+{
+  "schema_version": "canonical-source-resolution-audit-1.0",
+  "generated_at": "2026-08-18T17:34:01.108104Z",
+  "scope": "all_current_bindings_read_only; no_source_binding_or_workflow_changes",
+  "binding_file": "D:/AI小说制作最终版-cline重建/新版1/文档/证据/全量资料解释词创作绑定.json",
+  "binding_count": 568,
+  "source_kinds_scope": [
+    "资料库"
+  ],
+  "prepared_sources": {
+    "资料库": {
+      "file": "原始资料/资料库.txt",
+      "reachable": true,
+      "sha256": "3bff90bc342bb2ff3194cc7c1e673d4d7899d07ec091ea7873d7640144ed7cbc"
+    }
+  },
+  "status_counts": {
+    "resolved": 568
+  },
+  "source_kind_status_counts": {
+    "资料库": {
+      "resolved": 568
+    }
+  },
+  "resolution_method_counts": {
+    "heading_exact": 568
+  },
+  "error_counts": {},
+  "workflow_allowed_count": 0,
+  "policy": "resolved 只表示当前来源文件、内容和对象边界已可核验；不自动授予正式事实、正文消费或流程激活权限。ambiguous 与 readable_needs_review 不得强行放行。",
+  "status": "passed"
+}

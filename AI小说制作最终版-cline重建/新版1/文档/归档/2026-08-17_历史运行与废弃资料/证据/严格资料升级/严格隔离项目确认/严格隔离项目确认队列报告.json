@@ -1,0 +1,21 @@
+{
+  "schema_version": "strict-quarantine-project-confirmation-queue-report-1.0",
+  "generated_at": "2026-08-16T06:49:56.182551+00:00",
+  "scope": "read_only_queue_for_explicit_project_confirmation",
+  "input_classification": "文档/证据/严格资料升级/严格隔离分类/严格隔离分类清单.jsonl",
+  "confirmable_record_count": 5097,
+  "replacement_required_record_count": 2138,
+  "confirmable_category_counts": {
+    "candidate_requires_project_confirmation": 2106,
+    "pending_requires_project_confirmation": 2991
+  },
+  "replacement_category_counts": {
+    "candidate_identity_missing": 2100,
+    "locator_invalid_or_out_of_range": 23,
+    "object_boundary_missing": 15
+  },
+  "formal_fact_eligible_count": 0,
+  "prose_write_allowed": false,
+  "source_status_modified": false,
+  "project_confirmation_modified": false
+}

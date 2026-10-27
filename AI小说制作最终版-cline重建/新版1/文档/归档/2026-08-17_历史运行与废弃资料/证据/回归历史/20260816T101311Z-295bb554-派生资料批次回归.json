@@ -1,0 +1,26 @@
+{
+  "schema_version": "derived-material-batch-regression-1.0",
+  "run_id": "20260816T101311Z-295bb554",
+  "checked_at": "2026-08-16T10:17:57.686703Z",
+  "scope": "material_batch_only_no_scene_or_prose_read",
+  "quality_status": "passed",
+  "formal_release_allowed": false,
+  "downstream_status": "project_design_only; scene_and_prose_consumption_not_authorized",
+  "counts": {
+    "baseline": 13345,
+    "records": 13345,
+    "chain_terminal_statuses": {
+      "validated_candidate": 7167,
+      "validated_no_change": 6139,
+      "quarantined": 39
+    },
+    "chain_quarantined": 39,
+    "declared_status_counts": {
+      "validated_candidate": 7167,
+      "validated_no_change": 6139,
+      "quarantined": 39
+    }
+  },
+  "project_task_declaration": "present",
+  "errors": []
+}

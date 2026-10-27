@@ -1,0 +1,217 @@
+{
+  "schema_version": "full-source-model-assisted-material-improvement-2.0",
+  "policy_id": "full_source_model_assisted_material_improvement",
+  "status": "bound_before_execution",
+  "governing_method": {
+    "primary_plan": "文档/修补方案/创作资料全量调取修补主计划.md",
+    "fusion_plan": "文档/修补方案/原版升级资料字段级融合固定方案.md",
+    "rule": "模型是全量调取、项目采用、场景转译与正文验收主方法中的受控执行器；本合同不建立替代流程。",
+    "fusion_rule": "原版资料是历史基线，升级资料是可验证的改进证据；必须按 canonical_object_id 和字段级裁决生成新的 material_fused 版本。升级资料不得被降级为仅索引，项目消费不得写入资料事实。",
+    "immutable_method_order": [
+      "unified_resource_registration_and_integrity_gate",
+      "full_source_object_readback",
+      "model_source_diagnosis_and_candidate_improvement",
+      "automatic_candidate_validation_and_derived_batch",
+      "original_upgrade_object_mapping_and_field_level_fusion",
+      "project_adoption_decision",
+      "scene_translation_and_consumption_evidence",
+      "automatic_prose_and_release_gates"
+    ]
+  },
+  "scope": {
+    "binding_baseline": "文档/证据/全量资料解释词创作绑定.json",
+    "expected_binding_count": 13345,
+    "coverage_mode": "every_registered_binding",
+    "included_source_kinds": [
+      "资料库",
+      "动态网络",
+      "静态网络",
+      "锚点网络",
+      "类型系统",
+      "类型系统来源块",
+      "类型连接"
+    ]
+  },
+  "source_object_readback": {
+    "required": true,
+    "required_input_fields": [
+      "binding_id",
+      "source_id",
+      "source_kind",
+      "source_ref",
+      "original_object",
+      "original_object_sha256",
+      "existing_creation_binding"
+    ],
+    "forbid_summary_only_model_input": true,
+    "rule": "模型输入必须由 source_ref 定位并回读原始对象；仅输入 semantic_anchor、摘要或绑定策略的候选一律为实验性非发布输出。"
+  },
+  "type_boundary": {
+    "all_type_material_is_included_in_improvement": true,
+    "project_type_confirmation_required_only_for_activation": true,
+    "forbid_inferred_type_combination": true,
+    "rule": "类型系统中的类型名称仅作未选择索引并保持隔离；类型系统来源块必须接受来源级质量诊断、候选修订及逐条场景资料绑定，该绑定不得推断或确认项目小说类型。类型连接必须接受来源级质量诊断与候选修订，但 type_combination 未确认时不得项目化激活、采用或正文消费。"
+  },
+  "workflow": [
+    "unified_resource_registration_and_integrity_gate",
+    "original_object_readback_and_hash",
+    "model_diagnosis",
+    "model_revision_candidate_for_diagnosed_issue_only",
+    "deterministic_safety_provenance_and_consistency_validation",
+    "automatic_derived_material_batch",
+    "original_upgrade_object_mapping_and_field_level_fusion",
+    "project_adoption_and_scene_translation",
+    "automatic_prose_and_material_release_gates"
+  ],
+  "model_requirements": {
+    "diagnosis_before_revision": true,
+    "revision_only_for_diagnosed_issue": true,
+    "forbid_invented_facts": true,
+    "unknown_or_unverified_must_remain_explicit": true,
+    "batch_size_range": [5, 10],
+    "resumable_by_binding_id": true,
+    "resume_policy": "续跑必须校验完整绑定基线哈希；创建新 run_id 并记录 parent_run_id；不得覆盖旧运行证据；dry-run 的模型未执行隔离记录在显式 execute 续跑时重新处理。",
+    "model_must_return_structured_json_only": true,
+    "maximum_repair_attempts_per_binding": 1,
+    "no_change_when_no_diagnosed_issue": true
+  },
+  "automatic_assurance": {
+    "human_review_is_not_a_required_stage": true,
+    "required_gates": [
+      "contract_validation_before_model_call",
+      "resource_registry_path_and_hash_match",
+      "binding_coverage_and_uniqueness",
+      "source_ref_resolution_and_original_object_hash",
+      "model_input_hash_matches_locked_object",
+      "candidate_schema_and_diagnosis_link",
+      "no_invented_or_unverified_facts",
+      "source_kind_specific_required_fields",
+      "cross_item_duplicate_and_conflict_detection",
+      "derived_batch_manifest_and_append_only_evidence",
+      "downstream_adoption_scene_and_release_gates"
+    ],
+    "failure_behavior": "任何门失败均不得写入派生资料批次、不得自动重写原始资料或绑定；记录失败证据并按 binding_id 隔离，后续依赖阶段跳过。",
+    "completion_rule": "每条基线 binding 必须恰有一个终态：validated_no_change、validated_candidate、quarantined 或 model_error；不得以未处理、摘要候选或类型未确认作为完成。"
+  },
+  "required_per_item_evidence": [
+    "batch_id",
+    "binding_id",
+    "source_ref",
+    "original_object_sha256",
+    "model_input_sha256",
+    "diagnosis",
+    "revision_candidate_or_no_change_reason",
+    "deterministic_validation",
+    "automatic_validation",
+    "terminal_status",
+    "model_metadata"
+  ],
+  "derived_batch_requirements": {
+    "versioned_batch_id_required": true,
+    "original_sources_immutable": true,
+    "existing_bindings_immutable": true,
+    "candidate_status_before_automatic_validation": "pending_automatic_validation",
+    "release_eligible_only_after_all_automatic_gates": true,
+    "formal_fact_eligible_before_approval": false,
+    "formal_publication_allowed_before_release_gate": false
+  },
+  "fusion_requirements": {
+    "required": true,
+    "plan": "文档/修补方案/原版升级资料字段级融合固定方案.md",
+    "baseline_role": "original_material",
+    "upgrade_role": "verified_improvement_evidence",
+    "object_identity_field": "canonical_object_id",
+    "allowed_field_actions": [
+      "retain",
+      "correct",
+      "complete",
+      "extend",
+      "restructure",
+      "conflict"
+    ],
+    "semantic_unit_kinds": [
+      "scalar",
+      "set_member",
+      "relation",
+      "condition",
+      "effect",
+      "constraint",
+      "exception",
+      "guarantee_boundary",
+      "structure"
+    ],
+    "semantic_merge_required": true,
+    "forbid_untyped_array_append": true,
+    "rule_unit_required_fields": [
+      "unit_id",
+      "unit_kind",
+      "field_path",
+      "semantic_key",
+      "baseline_value",
+      "candidate_value",
+      "source_refs",
+      "derivation_rule"
+    ],
+    "source_kind_semantic_keys": {
+      "资料库": "entry_id + dependency.entry_id + dependency.type for relations; field-specific keys for conditions, constraints and examples",
+      "静态网络": "source + target + type; condition and priority remain relation attributes",
+      "动态网络": "normalized_id or source + target + type + condition",
+      "类型连接": "dynamic_combination_id; rule, trigger, effect, constraint, exception and guarantee sets remain distinct",
+      "锚点网络": "anchor_id/category/name plus semantic field path"
+    },
+    "rule_conflict_policy": "same semantic key with incompatible condition, effect, constraint or guarantee boundary becomes conflict or restructure; never extend as plain text",
+    "output_layers": [
+      "material_fused",
+      "validated_overlay",
+      "index_derived",
+      "project_consumption"
+    ],
+    "resolved_material_view_required": true,
+    "same_source_derived_improvement": {
+      "allowed": true,
+      "source_class": "same_source_derived_improvement",
+      "may_enter": "validated_overlay",
+      "must_not_auto_enter": "material_fused",
+      "required_checks": [
+        "baseline_object_sha256_match",
+        "entry_id_and_dependency_target_exist",
+        "no_self_dependency",
+        "dependency_cycle_detection",
+        "semantic_key_duplicate_and_conflict_detection",
+        "source_locator_and_derivation_rule"
+      ]
+    },
+    "required_artifacts": [
+      "manifest.json",
+      "field_changes.jsonl",
+      "unresolved_conflicts.jsonl",
+      "merge_preview.json"
+    ],
+    "direct_merge_requires": [
+      "original_object_readback",
+      "original_object_sha256_match",
+      "upgrade_source_ref_and_sha256",
+      "canonical_object_identity_match",
+      "field_schema_validation",
+      "dependency_and_conflict_validation",
+      "project_consumption_isolation"
+    ],
+    "default_conflict_behavior": "retain_original_and_record_unresolved_conflict",
+    "original_sources_immutable": true,
+    "upgrade_candidates_not_discarded": true,
+    "project_consumption_must_not_enter_material_fused": true
+  },
+  "forbidden_paths": [
+    "summary_only_candidate_as_improvement",
+    "exclude_type_material_because_type_combination_is_null",
+    "automatic_merge_without_all_required_gates",
+    "overwrite_original_source",
+    "overwrite_signed_release_evidence"
+  ],
+  "legacy_experiment": {
+    "path": "文档/证据/隔离归档/experimental_nonrelease/模型辅助资料改进候选",
+    "classification": "experimental_nonrelease",
+    "may_not_enter_derived_batch": true,
+    "reason": "该流程仅向模型提供绑定摘要，未对每条记录回读可验证的原始对象。"
+  }
+}

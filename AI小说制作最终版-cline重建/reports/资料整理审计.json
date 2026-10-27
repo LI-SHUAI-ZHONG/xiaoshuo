@@ -1,0 +1,1045 @@
+{
+  "schema_version": "material-organization-audit-1.0",
+  "generated_at": "2026-08-10T17:35:58.438923+00:00",
+  "workspace_root_policy": "运行资料统一使用工作区相对路径；历史外部路径仅允许出现在 legacy_source_refs 或 migration 审计字段",
+  "file_count": 128,
+  "cache_files_excluded": "*.pyc and __pycache__ are disposable runtime cache and are not organization sources",
+  "files": [
+    {
+      "path": ".clinerules/00-总规则.md",
+      "bytes": 7234,
+      "sha256": "f7e56875ecb4f304a2203b6eae576db41d101344793fa4e75251035242d68dc5",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": ".clinerules/00-总规则.md"
+    },
+    {
+      "path": ".clinerules/01-小说唯一入口.md",
+      "bytes": 3807,
+      "sha256": "6d12696dbf55f6f602df1340b8c49922f3700520fdc050b1f97f6aa8d9e0302f",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": ".clinerules/01-小说唯一入口.md"
+    },
+    {
+      "path": "00_资料索引/多维资料索引.yaml",
+      "bytes": 16136,
+      "sha256": "d05ba96838201deff4263513c172891e6386024abcad94d79f21be4d1a698ba5",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "00_资料索引/多维资料索引.yaml"
+    },
+    {
+      "path": "00_资料索引/多维资料索引说明.md",
+      "bytes": 1321,
+      "sha256": "1d85e98b66125384f24215090567ce717b6a28ccb3559d9e2afd91623447a433",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "00_资料索引/多维资料索引说明.md"
+    },
+    {
+      "path": "00_资料索引/索引调用映射契约.json",
+      "bytes": 2635,
+      "sha256": "479e56d14bf46bbd6ce47ac2bcd57c9b7ca234229a9f8f80c88f2b4bb46eea7c",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "00_资料索引/索引调用映射契约.json"
+    },
+    {
+      "path": "00_资料索引/网络派生索引契约.json",
+      "bytes": 3940,
+      "sha256": "08d1cb41820c300027cef8f56e00f6202bf6a2ef61e9a1bdeb379cbc859af2c2",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "00_资料索引/网络派生索引契约.json"
+    },
+    {
+      "path": "00_资料索引/资料网络调用路由索引.json",
+      "bytes": 12749544,
+      "sha256": "cfb85013bdcba466d10e2f87dc31e68ac1e78e1ac7df812a7833ebfffda23834",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "00_资料索引/资料网络调用路由索引.json"
+    },
+    {
+      "path": "01_系统核心/持续生产状态机.md",
+      "bytes": 3356,
+      "sha256": "bac816a8d09530f458bc815fa22c158c4b07ea4ca6936f32886680592269baa9",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "01_系统核心/持续生产状态机.md"
+    },
+    {
+      "path": "01_系统核心/用户需求输入模板.md",
+      "bytes": 1207,
+      "sha256": "6d9e8c4dd141cf7de5828da06fa686901bf2aee3f587a096799366b62a2ca394",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "01_系统核心/用户需求输入模板.md"
+    },
+    {
+      "path": "01_系统核心/资料组合机制.md",
+      "bytes": 2632,
+      "sha256": "9716b1164702ac8dc206f9c75cc81d34f6405b71bb3f086c45d9b5cd695413e4",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "01_系统核心/资料组合机制.md"
+    },
+    {
+      "path": "01_系统核心/项目初始化流程.md",
+      "bytes": 967,
+      "sha256": "d4c6330467648d83e6de64fbf7728e34fe99717afde1b71473c0fe2b8323a2ba",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "01_系统核心/项目初始化流程.md"
+    },
+    {
+      "path": "02_生产流程/小说一次生成总流程.md",
+      "bytes": 2185,
+      "sha256": "bd097c3371b6e45c53b1837826476efeabd7cc4790ce70f2487c3503fd6ac50c",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "02_生产流程/小说一次生成总流程.md"
+    },
+    {
+      "path": "03_调用协议/一次性小说生产指令.md",
+      "bytes": 1313,
+      "sha256": "1eaa653c954076c5010d3793e14ee3432396ed021db26d3a67fb71deeb8d5a27",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "03_调用协议/一次性小说生产指令.md"
+    },
+    {
+      "path": "03_调用协议/持续小说生产指令.md",
+      "bytes": 4893,
+      "sha256": "d19d5811b2ee665b5e8c1ea32c400800045bc5f94147e91f811b13b528f4d4d0",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "03_调用协议/持续小说生产指令.md"
+    },
+    {
+      "path": "04_综合设计/综合设计输出模板.md",
+      "bytes": 574,
+      "sha256": "2fc7a2cef09af0899015b1cc2d23a17246876746c939afc4cbca1485f395d701",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "04_综合设计/综合设计输出模板.md"
+    },
+    {
+      "path": "04_综合设计/项目状态与检查接口.md",
+      "bytes": 2294,
+      "sha256": "45bc94f511477fa8811c09af6f587b9665fe55c53cbf57803c1f33cc89f3f91b",
+      "decision": "保留为当前规范资料",
+      "reason": "属于运行规则、索引契约或生产协议",
+      "current_path": "04_综合设计/项目状态与检查接口.md"
+    },
+    {
+      "path": "05_正文/正文生成规则.md",
+      "bytes": 511,
+      "sha256": "9af0068b8c45476cae0c9964179fba71fbb21b7af261dcc7e9a1e27c5b135357",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/正文生成规则.md"
+    },
+    {
+      "path": "05_正文/诡异屋/README.md",
+      "bytes": 2618,
+      "sha256": "ac62e11afb97bde9656e057bee146bfcfb5f21c6ec548e871363e1325c4a03cc",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/README.md"
+    },
+    {
+      "path": "05_正文/诡异屋/创建参数.yaml",
+      "bytes": 299,
+      "sha256": "e8c2572aadad9c99d77996f1ae31982755422d0734de606e138c89b50dd28b17",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/创建参数.yaml"
+    },
+    {
+      "path": "05_正文/诡异屋/检查报告/一致性检查.json",
+      "bytes": 5555,
+      "sha256": "ec7660c14a3665a0a20e45ae93df8646e9e3de75dce3e298a96fee5d948edc7f",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/检查报告/一致性检查.json"
+    },
+    {
+      "path": "05_正文/诡异屋/检查报告/资料调用审计.json",
+      "bytes": 5076,
+      "sha256": "8801f322ee821b2c74ad8012b4a2c3036d80595d7301cff913e73937762a6e87",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/检查报告/资料调用审计.json"
+    },
+    {
+      "path": "05_正文/诡异屋/正文/卷01/第001章_清点名单上不存在的房屋.md",
+      "bytes": 4722,
+      "sha256": "325abc627e2bc909261a453835bdc68c390ca1ac8c673dc57eb359c9067903f1",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/正文/卷01/第001章_清点名单上不存在的房屋.md"
+    },
+    {
+      "path": "05_正文/诡异屋/正文/卷01/第002章_三楼门牌与测绘图不一致.md",
+      "bytes": 4793,
+      "sha256": "f7984e464deb07e9babd866955284c251de7600f573d08a9804bb2d14c9491bb",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/正文/卷01/第002章_三楼门牌与测绘图不一致.md"
+    },
+    {
+      "path": "05_正文/诡异屋/版本记录.json",
+      "bytes": 2406,
+      "sha256": "f80febe5e50b8bb23b58bbd19bb8bcfc09d5a0f15a85773c4726f59058178ad2",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/版本记录.json"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/大纲.json",
+      "bytes": 1173,
+      "sha256": "cabedd7eb025e07846c5fafd5f9996a9daea08fa07d23fa998b82311f6740b57",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/大纲.json"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/大纲.md",
+      "bytes": 1788,
+      "sha256": "f2ace73cb94e82b4a3bb78390be8cf84faeaa068efee48a5e15fff16fae7b94a",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/大纲.md"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/章节大纲/卷01/第001章_清点名单上不存在的房屋.md",
+      "bytes": 2234,
+      "sha256": "de75151ebf3aa8f86987c38ab1e10cea014923b661b27714400aa6ff4baf9d0b",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/章节大纲/卷01/第001章_清点名单上不存在的房屋.md"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/章节大纲/卷01/第002章_三楼门牌与测绘图不一致.md",
+      "bytes": 1862,
+      "sha256": "af4dffe1a229cc9ddef2fd7bce3b2913171db968aad9b08aa6d6bc331b215d65",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/章节大纲/卷01/第002章_三楼门牌与测绘图不一致.md"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/章节设计/卷01/第001章_清点名单上不存在的房屋/chapter_execution_manifest.json",
+      "bytes": 2762,
+      "sha256": "a07418873632c91e9da355d6ad3967aa23c07350b00edebcc6c32b0efd16d587",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/章节设计/卷01/第001章_清点名单上不存在的房屋/chapter_execution_manifest.json"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/资料调用记录.md",
+      "bytes": 1701,
+      "sha256": "2b03cfab2c5c74528991c1e49c7d621ce96fa5d9388c33b35b03fd66e050bdb7",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/资料调用记录.md"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/资料驱动设计/character_behavior_contract.json",
+      "bytes": 2988,
+      "sha256": "f510a79cd01e6f4634ac39084dcc6b9fcb51a60f6746ee3f6cd2e1ef3d0ac098",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/资料驱动设计/character_behavior_contract.json"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/资料驱动设计/golden_three_tasks.json",
+      "bytes": 2576,
+      "sha256": "dc13f1d14782dfe4c1bf5d1df17d14b49bba948371a76d500901ee4d89524881",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/资料驱动设计/golden_three_tasks.json"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/资料驱动设计/opening_design.json",
+      "bytes": 1781,
+      "sha256": "f762e43f35f73b88ae849363afe1cf5a68b7cbbff5c0184720eaace17a76a345",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/资料驱动设计/opening_design.json"
+    },
+    {
+      "path": "05_正文/诡异屋/规划/资料驱动设计/type_style_length_constraints.json",
+      "bytes": 1719,
+      "sha256": "975b4def5765a03338a53141070d9a4b016a0f205c873787076ae2fca3528970",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/规划/资料驱动设计/type_style_length_constraints.json"
+    },
+    {
+      "path": "05_正文/诡异屋/设定/世界观与规则.md",
+      "bytes": 1371,
+      "sha256": "881c495e1edeb5f63e3fbbbfca809f3bba2bdfa38cac6a71212c2bd817b89747",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/设定/世界观与规则.md"
+    },
+    {
+      "path": "05_正文/诡异屋/设定/人物与关系.md",
+      "bytes": 1635,
+      "sha256": "52e7437004180c66514fab1e79ac80277925635ced2ffe93d07d7a5bee263f83",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/设定/人物与关系.md"
+    },
+    {
+      "path": "05_正文/诡异屋/设定/启动参数.md",
+      "bytes": 450,
+      "sha256": "18bfe1f820b619128becd5028c05e655719149d83ff739ae2ab12b4fbe5facc6",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/设定/启动参数.md"
+    },
+    {
+      "path": "05_正文/诡异屋/设定/故事核心.md",
+      "bytes": 2338,
+      "sha256": "94c69dc1e91ef7cf7fb1778876d25b369d5d86a70da81ff125bd9a5512d21a1f",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/设定/故事核心.md"
+    },
+    {
+      "path": "05_正文/诡异屋/项目元数据.json",
+      "bytes": 1436,
+      "sha256": "25c529010aab65455631690e3f628dc8886b139e5e78862d72fa759b4f754dd6",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/项目元数据.json"
+    },
+    {
+      "path": "05_正文/诡异屋/项目快照.json",
+      "bytes": 13362,
+      "sha256": "8e1b0ec0ab56b06b9db9e092b552fb3be05328ada872f5f631647e44a74b96dd",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/项目快照.json"
+    },
+    {
+      "path": "05_正文/诡异屋/项目状态模型与连续性契约.json",
+      "bytes": 2976,
+      "sha256": "634126cfaa87039330148952fec95a9d32ff48242553a5a6a53bedece9835db8",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "05_正文/诡异屋/项目状态模型与连续性契约.json"
+    },
+    {
+      "path": "06_测试验证/动态需求模拟.yaml",
+      "bytes": 1602,
+      "sha256": "9f2c528a188e7d0372fb01c304d994775cb4c9cd0b7571e38c5d8e708a39a35e",
+      "decision": "待人工确认",
+      "reason": "未能仅凭目录职责确认替代关系",
+      "current_path": "06_测试验证/动态需求模拟.yaml"
+    },
+    {
+      "path": "06_测试验证/模拟综合设计结果.md",
+      "bytes": 1439,
+      "sha256": "b4fbe103dcea9f822cdf03ff324b4930025e5317c96bfe7e5aead1d0fc3acb69",
+      "decision": "待人工确认",
+      "reason": "未能仅凭目录职责确认替代关系",
+      "current_path": "06_测试验证/模拟综合设计结果.md"
+    },
+    {
+      "path": "06_测试验证/模拟调用记录.yaml",
+      "bytes": 1080,
+      "sha256": "0e589f556720264ac0f691d07495ea8fd7ec77feae5c5d030b46a87d09239a87",
+      "decision": "待人工确认",
+      "reason": "未能仅凭目录职责确认替代关系",
+      "current_path": "06_测试验证/模拟调用记录.yaml"
+    },
+    {
+      "path": "06_测试验证/模拟需求.yaml",
+      "bytes": 569,
+      "sha256": "f14c78e6ada3eca51bf34b793158b4763d3a794285283545db496fbdc8b75b6c",
+      "decision": "待人工确认",
+      "reason": "未能仅凭目录职责确认替代关系",
+      "current_path": "06_测试验证/模拟需求.yaml"
+    },
+    {
+      "path": "07_项目模板/正式项目模板/README.md",
+      "bytes": 2618,
+      "sha256": "ac62e11afb97bde9656e057bee146bfcfb5f21c6ec548e871363e1325c4a03cc",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "07_项目模板/正式项目模板/README.md"
+    },
+    {
+      "path": "07_项目模板/正式项目模板/检查报告/一致性检查.json",
+      "bytes": 148,
+      "sha256": "9216f786382a40ef7d1108be33da930ca7c8a59a31fa64e2a38d9e3d345368c3",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "07_项目模板/正式项目模板/检查报告/一致性检查.json"
+    },
+    {
+      "path": "07_项目模板/正式项目模板/版本记录.json",
+      "bytes": 146,
+      "sha256": "8ce2ef16f49bef6259c91146ef6f28dd57e02883e5e60f044df25c04cafe0c4c",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "07_项目模板/正式项目模板/版本记录.json"
+    },
+    {
+      "path": "07_项目模板/正式项目模板/规划/大纲.json",
+      "bytes": 104,
+      "sha256": "3e9e577263b8d6ba5d95106aad029a42cca455fa087d15f333e5740a833b728a",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "07_项目模板/正式项目模板/规划/大纲.json"
+    },
+    {
+      "path": "07_项目模板/正式项目模板/项目元数据.json",
+      "bytes": 501,
+      "sha256": "aea0cf1df019b51bc7c395e4ff3aabcef6566315913d2296f5de4281e9e79773",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "07_项目模板/正式项目模板/项目元数据.json"
+    },
+    {
+      "path": "07_项目模板/正式项目模板/项目快照.json",
+      "bytes": 1534,
+      "sha256": "73991358d8a9b7fd5c3b800b416982aeb20a8bf77c2e390982c592021b7e85fa",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "07_项目模板/正式项目模板/项目快照.json"
+    },
+    {
+      "path": "07_项目模板/正式项目模板/项目状态模型与连续性契约.json",
+      "bytes": 3566,
+      "sha256": "e89868be92f41e1c7e6dfc1bdce99e0d4bf2185fd9e9e11aac200f2a897c7b2d",
+      "decision": "保留为项目或模板资料",
+      "reason": "属于正文状态、设计产物或可复制项目结构",
+      "current_path": "07_项目模板/正式项目模板/项目状态模型与连续性契约.json"
+    },
+    {
+      "path": "08_原始资料/动态网络.txt",
+      "bytes": 301254,
+      "sha256": "c0f99b8ac1effd0f6fea5996fa681aded7eab2ef1ed85691c7976f850d31a4a4",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/动态网络.txt"
+    },
+    {
+      "path": "08_原始资料/执行正文.txt",
+      "bytes": 105885,
+      "sha256": "f2e7725e845dcc349cb54df79992a411bbd034197fb811b287e8066993a04ef8",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/执行正文.txt"
+    },
+    {
+      "path": "08_原始资料/类型系统.txt",
+      "bytes": 16763245,
+      "sha256": "472066d7ea8c2dca8b8e96877c9c93c15e77bf525edc7adf2329e29a7b959d21",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/类型系统.txt"
+    },
+    {
+      "path": "08_原始资料/类型连接.txt",
+      "bytes": 13864095,
+      "sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/类型连接.txt"
+    },
+    {
+      "path": "08_原始资料/索引调用映射.txt",
+      "bytes": 3495739,
+      "sha256": "08c6cfa89460d69fc73de0f990add49328348da170539c2ff721ee112a55a5ef",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/索引调用映射.txt"
+    },
+    {
+      "path": "08_原始资料/资料库.txt",
+      "bytes": 819697,
+      "sha256": "e99aee95801284f98d43ab5badf33c4c822ce1b116f302da6a91a80be252f850",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/资料库.txt"
+    },
+    {
+      "path": "08_原始资料/运行状态.json",
+      "bytes": 82,
+      "sha256": "e6df26a7dc66e28aad2d1577fc4766860ac6cb12ed4ce3fb5f4f6500b51b5fa9",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/运行状态.json"
+    },
+    {
+      "path": "08_原始资料/锚点网络.txt",
+      "bytes": 128002,
+      "sha256": "8c0294089abf2ea184d5aa565513fed9f43554dd387790c8b1a137f4ac19b384",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/锚点网络.txt"
+    },
+    {
+      "path": "08_原始资料/静态网络.txt",
+      "bytes": 183718,
+      "sha256": "60960725c948aefbef2c753ce17448aa525419cf4e8ec2eff0196c18b9e7e359",
+      "decision": "保留为权威原始资料",
+      "reason": "索引主入口或历史来源，不能以派生产物替代",
+      "current_path": "08_原始资料/静态网络.txt"
+    },
+    {
+      "path": "docs/_参考资料结构扫描.json",
+      "bytes": 1309715,
+      "sha256": "8a08b2d42f32cf6d51df15b4405c3c8a53f2f209d06c81947366822e856688d6",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/_参考资料结构扫描.json"
+    },
+    {
+      "path": "docs/原资料功能分析.md",
+      "bytes": 5494,
+      "sha256": "04ea7fa82ef5c54177f859d8c72f7015853d38de0ed2db5e65f0cc0595e7e9bb",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/原资料功能分析.md"
+    },
+    {
+      "path": "docs/参考资料筛选报告.md",
+      "bytes": 2759,
+      "sha256": "b824fa830875b161ae5a8e534bccc9e6c5547c069eb059b2c6f217df26b1eaf0",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/参考资料筛选报告.md"
+    },
+    {
+      "path": "docs/当前文件清单.tmp.txt",
+      "bytes": 7534,
+      "sha256": "60230b903013c418aad4b7ae9b20a79ebccd35464ebbff751c66c4fc876a9b49",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/当前文件清单.tmp.txt"
+    },
+    {
+      "path": "docs/当前系统运行复核报告.md",
+      "bytes": 7639,
+      "sha256": "d9a542a844c65b709461b803bf1e47446d1316e2ad3fd126dfa812b213100d90",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/当前系统运行复核报告.md"
+    },
+    {
+      "path": "docs/本轮自主检查修正报告.md",
+      "bytes": 2226,
+      "sha256": "c1e5586a57105269f68ffa59909884ce9a186bf478b5cab47329f7b2b95285c8",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/本轮自主检查修正报告.md"
+    },
+    {
+      "path": "docs/核心资料融合验证报告.md",
+      "bytes": 3243,
+      "sha256": "813455b8a3ae80c9dc7d771a89a7d8af58d0d56c8e6e6eb5768b745e2fd07215",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/核心资料融合验证报告.md"
+    },
+    {
+      "path": "docs/第二阶段扫描基线.txt",
+      "bytes": 1561,
+      "sha256": "57496934f54038770f77427f4c41b38d9f672ae54c7021e8c76e31dd26e44a32",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/第二阶段扫描基线.txt"
+    },
+    {
+      "path": "docs/系统改造验收报告.md",
+      "bytes": 6978,
+      "sha256": "7654f45ff2021f16b157c49e681a5b3d4dd6d1d9c6bb83c40904022746f03bda",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/系统改造验收报告.md"
+    },
+    {
+      "path": "docs/自主持续生产融合报告.md",
+      "bytes": 4455,
+      "sha256": "8e8024388fa4595a6a6b545ba9771cae319f293b75775e82e35d0d172ab6a3c0",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/自主持续生产融合报告.md"
+    },
+    {
+      "path": "docs/行为复核报告.md",
+      "bytes": 5310,
+      "sha256": "a3d32fa3b1788d3e3f0d120d035f4c1e341df9b15c7d75a1a48c8ea33c61d19f",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/行为复核报告.md"
+    },
+    {
+      "path": "docs/资料全面排查报告.md",
+      "bytes": 2480,
+      "sha256": "5e6e72f0957de4222abbc76b812a82ced6d67a2125faa7e1ac40d367ef377264",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料全面排查报告.md"
+    },
+    {
+      "path": "docs/资料改造记录.md",
+      "bytes": 5530,
+      "sha256": "29c652608ba847739e8704016264b0ddf04d2a1140d81a4540481acc32d9c603",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料改造记录.md"
+    },
+    {
+      "path": "docs/资料整理审计报告.md",
+      "bytes": 929,
+      "sha256": "5f9ac8fd9453fd817a1776ac95e68ed7bb9dc3966fc05eeefd05c8879ca10cd6",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料整理审计报告.md"
+    },
+    {
+      "path": "docs/资料盘点报告.md",
+      "bytes": 5412,
+      "sha256": "8063d2edfc33f61466247406e0041dd63608f51734d821ec90b9b400d01a46a1",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料盘点报告.md"
+    },
+    {
+      "path": "docs/资料缺失清单.md",
+      "bytes": 1195,
+      "sha256": "5928855db2142ccdb4a7b93b2b29f1cc6a527699e3e1b78be7d61d7b0a715f38",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料缺失清单.md"
+    },
+    {
+      "path": "docs/资料闭环-audit.json",
+      "bytes": 15145,
+      "sha256": "bacfc40c94c9c114ab10dee5a79ce8d685bde4ad8bdd305d52c2d1b1e114f75e",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料闭环-audit.json"
+    },
+    {
+      "path": "docs/资料闭环-network-id-test.json",
+      "bytes": 48221,
+      "sha256": "8227deaa7e3c99193eb51020c634845c524e9dc32c11caf489d3c3dc7f96427c",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料闭环-network-id-test.json"
+    },
+    {
+      "path": "docs/资料闭环-network-migration-test.json",
+      "bytes": 61963,
+      "sha256": "0cec3e39d0c6079d6198517dad151234af323c88a46600acc5b48cc68ac33acb",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料闭环-network-migration-test.json"
+    },
+    {
+      "path": "docs/资料闭环-path-audit.json",
+      "bytes": 18962,
+      "sha256": "03361204c7709110bf235591c58d27b1b36c0550836a293a544c5f7095463dde",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料闭环-path-audit.json"
+    },
+    {
+      "path": "docs/资料闭环-plan.json",
+      "bytes": 15210,
+      "sha256": "ca60847268651a052be769015e954a43d11fbce29f232c657959d2230b3097a4",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料闭环-plan.json"
+    },
+    {
+      "path": "docs/资料闭环根因调查与重构报告.md",
+      "bytes": 7000,
+      "sha256": "19210ca32b69c93577cd967831e502cf64a6a4c0dfbd6ef031f8649af9b23341",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "docs/资料闭环根因调查与重构报告.md"
+    },
+    {
+      "path": "README.md",
+      "bytes": 5721,
+      "sha256": "0fb7f7f1fda8fbcad5e2ec3e521a146e3ba858126ed6a2dfeeab7f1a98e66aa9",
+      "decision": "待人工确认",
+      "reason": "未能仅凭目录职责确认替代关系",
+      "current_path": "README.md"
+    },
+    {
+      "path": "reports/connection_semantic_conflicts.json",
+      "bytes": 36,
+      "sha256": "084e7e6c65791b508fde33445c2d86e06780801625cc4913f890bf2703ccd07d",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/connection_semantic_conflicts.json"
+    },
+    {
+      "path": "reports/dynamic_only_connections.json",
+      "bytes": 202202,
+      "sha256": "7ca73c4ed62a98ca6f884bdae0c5a46a4c2566e0bf76e358ff37d7fbca026939",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/dynamic_only_connections.json"
+    },
+    {
+      "path": "reports/file_inventory.md",
+      "bytes": 4702,
+      "sha256": "91bef1984f7f45d41b63faac7c995ecbcd25c0580de0e5dbddd1d0fbcc9d1112",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/file_inventory.md"
+    },
+    {
+      "path": "reports/generated_connections_review.json",
+      "bytes": 1341332,
+      "sha256": "05e8468f5a860b123ad2c6975504c05eac03c0bbd8ded79de48fff0372efabd4",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/generated_connections_review.json"
+    },
+    {
+      "path": "reports/network_connection_audit.json",
+      "bytes": 31962,
+      "sha256": "eb7a7bcc5d8ee50cb5acda006e52edfd291e9da861d4baaa16f8b656c63ec114",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/network_connection_audit.json"
+    },
+    {
+      "path": "reports/network_connection_audit.md",
+      "bytes": 748,
+      "sha256": "2c3a4607c2e5564bd1390b874927f0eb4626287b6614582bdf2edc193953550b",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/network_connection_audit.md"
+    },
+    {
+      "path": "reports/repair_log.md",
+      "bytes": 153,
+      "sha256": "cdc49eff3c5e61c757158863fbd9530aa871748c62cf02be82f4a72419596ba2",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/repair_log.md"
+    },
+    {
+      "path": "reports/static_connection_candidates.json",
+      "bytes": 479728,
+      "sha256": "a3f08677dfc18c557ac19b554454d8bc24ad63532d8f84418559b808fd2b1e03",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/static_connection_candidates.json"
+    },
+    {
+      "path": "reports/static_only_connections.json",
+      "bytes": 38,
+      "sha256": "9b102e81a0f825fd37ccee66170532f1b3db509f5753b5a940346604173c7cc1",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/static_only_connections.json"
+    },
+    {
+      "path": "reports/unresolved_node_aliases.json",
+      "bytes": 47683,
+      "sha256": "389759bb42f77656644e0502333be9c41127e4383b79b1a9b1d9c5a0802fc979",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/unresolved_node_aliases.json"
+    },
+    {
+      "path": "reports/四网络连接审计.json",
+      "bytes": 1501,
+      "sha256": "ddf562f51c3da36c0d5a3f9de856871549e5151fc32600e0f8874cfea859c032",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/四网络连接审计.json"
+    },
+    {
+      "path": "reports/网络未决项逐条确认.json",
+      "bytes": 343948,
+      "sha256": "7a788c49c39c45a8eead61e4d5ba48668f95588f5fcf581de5db19b1fcfa8122",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/网络未决项逐条确认.json"
+    },
+    {
+      "path": "reports/资料整理审计.json",
+      "bytes": 46677,
+      "sha256": "533e9e87aa24253ef487a3253bf370dde1dda338cd618d382ac5b565e160bc60",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "reports/资料整理审计.json"
+    },
+    {
+      "path": "scripts/generate_network_connections.py",
+      "bytes": 20230,
+      "sha256": "221374702b5736752cf939028199598b14835c929710649f4ecbf36fb2517653",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "scripts/generate_network_connections.py"
+    },
+    {
+      "path": "scripts/validate_network_connections.py",
+      "bytes": 9739,
+      "sha256": "32f45ac35f710b3f1188b9ac38a6b17007b3266985c2b25efaf0e41f5e4d6fb3",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "scripts/validate_network_connections.py"
+    },
+    {
+      "path": "tests/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "tests/__init__.py"
+    },
+    {
+      "path": "tests/test_network_connections.py",
+      "bytes": 2043,
+      "sha256": "967a7f1ef0e4df5d1f264fc8acb5c449066393ccc3a99f6e43027dda5a3b811d",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "tests/test_network_connections.py"
+    },
+    {
+      "path": "tests/test_network_integrity.py",
+      "bytes": 3783,
+      "sha256": "9a78e218e63be5617f393870043e59950662d56410c014db54854c708dc894a1",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "tests/test_network_integrity.py"
+    },
+    {
+      "path": "tests/test_novel_runtime.py",
+      "bytes": 2821,
+      "sha256": "cf230cbee6e3ff0aeb9cc53e1db119025facb95732fd51a2772efb4bedf89a56",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "tests/test_novel_runtime.py"
+    },
+    {
+      "path": "四网络连接，剧情覆盖/connection_type_mapping.json",
+      "bytes": 1707,
+      "sha256": "ad0122e84e7b3c76ed2ff20afcfa3271a2e97f79030b746d13b553cdf6bc3bbf",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "四网络连接，剧情覆盖/connection_type_mapping.json"
+    },
+    {
+      "path": "四网络连接，剧情覆盖/dynamic_connections.full.json",
+      "bytes": 2256094,
+      "sha256": "43bd0841e76ec39f385acd55f64e2a04a37cac853de571ff232d0be06190e177",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "四网络连接，剧情覆盖/dynamic_connections.full.json"
+    },
+    {
+      "path": "四网络连接，剧情覆盖/dynamic_id_migration.json",
+      "bytes": 81196,
+      "sha256": "2074ea755fe8eaf00d5276b9ec2264630c0f9c7d1b4f5c98050e302906b57bfe",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "四网络连接，剧情覆盖/dynamic_id_migration.json"
+    },
+    {
+      "path": "四网络连接，剧情覆盖/network_generation_metrics.json",
+      "bytes": 186,
+      "sha256": "dc1db538cc589877e8cef9637563c65c8b162a7eae0c4c45f7822dcaa089cf5d",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "四网络连接，剧情覆盖/network_generation_metrics.json"
+    },
+    {
+      "path": "四网络连接，剧情覆盖/node_aliases.json",
+      "bytes": 31062,
+      "sha256": "4814272c5ed9641b75e05778515b0da9440e42234d93b8f245cf8c0c0bf6de8b",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "四网络连接，剧情覆盖/node_aliases.json"
+    },
+    {
+      "path": "四网络连接，剧情覆盖/static_connections.full.json",
+      "bytes": 476085,
+      "sha256": "0fcf8d3d829ed3beefbba55f5039426bd99bfd81ce65d9f7b732c57336f16a64",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "四网络连接，剧情覆盖/static_connections.full.json"
+    },
+    {
+      "path": "工具/审计四网络连接.py",
+      "bytes": 6085,
+      "sha256": "5e485811c3e1ea266768df5b6b795797c2937c374b33e3a6b5655327fe935205",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/审计四网络连接.py"
+    },
+    {
+      "path": "工具/审计资料剧情覆盖.py",
+      "bytes": 7146,
+      "sha256": "2be6aeac0bf39c8cc9e634a792ff85e787943434039b332228d054f47908f626",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/审计资料剧情覆盖.py"
+    },
+    {
+      "path": "工具/小说生产运行时.py",
+      "bytes": 22130,
+      "sha256": "055eb59c1043d050fc73f60f86f5359876a22b875786045abc80c4160ae04b3c",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/小说生产运行时.py"
+    },
+    {
+      "path": "工具/建立资料网络调用分类.py",
+      "bytes": 25115,
+      "sha256": "68f8411a3a9fa6d3656f69daf8fcea96832effba1f96ead02276c6d992eedb82",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/建立资料网络调用分类.py"
+    },
+    {
+      "path": "工具/按全效果规则生成三网络.py",
+      "bytes": 7297,
+      "sha256": "10646a5beadbd6bf2a4261c23172cdf315accee2bcc34c963b3764fd22cb85a7",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/按全效果规则生成三网络.py"
+    },
+    {
+      "path": "工具/新建小说项目.ps1",
+      "bytes": 8919,
+      "sha256": "f121abf7c7ae612e57eb693edc3a79c438d5be9666c4974158c30840cb81829d",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/新建小说项目.ps1"
+    },
+    {
+      "path": "工具/检查系统.ps1",
+      "bytes": 11552,
+      "sha256": "4ba2113f7d03c9dddb84654b0a55abb22d98544e519ddb4f0f70a78abced95fb",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/检查系统.ps1"
+    },
+    {
+      "path": "工具/确认网络未决项.py",
+      "bytes": 6381,
+      "sha256": "d6964fab9b7343185bcb74393d790f08c5bb49314162bdbd31148e652135bb30",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/确认网络未决项.py"
+    },
+    {
+      "path": "工具/资料内容审计.py",
+      "bytes": 5224,
+      "sha256": "71b380e94aee3c5979f79446f9d92ecd99e6abfc15eec72be3033cbc047c6768",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/资料内容审计.py"
+    },
+    {
+      "path": "工具/资料整理审计.py",
+      "bytes": 4601,
+      "sha256": "34d1c4fc6482659b8a61b08787ec989840bda890614f33867d00a28a1c246a6a",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/资料整理审计.py"
+    },
+    {
+      "path": "工具/运行资料闭环.ps1",
+      "bytes": 885,
+      "sha256": "a6397d3d5f67deee1dc0addf564312080e5348ab6d6245ad05699a90f2be85cc",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/运行资料闭环.ps1"
+    },
+    {
+      "path": "工具/运行资料闭环.py",
+      "bytes": 9470,
+      "sha256": "cd7d5607d0d062e3fddbb6b23055e78c0190d4172713c6ccda492b8e18a7e324",
+      "decision": "保留为当前工具或验证入口",
+      "reason": "代码或测试仍承担生成、校验、检索或初始化作用",
+      "current_path": "工具/运行资料闭环.py"
+    },
+    {
+      "path": "阶段状态/规范化资料层.json",
+      "bytes": 4365,
+      "sha256": "2b9b3d3d11082b1537d685405978d50ebcc0b65f557608c3d2fe976e3a616d19",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "阶段状态/规范化资料层.json"
+    },
+    {
+      "path": "阶段状态/规范化资料层.schema.json",
+      "bytes": 1203,
+      "sha256": "654790db530f51822640f4895e5bf7d3fc7bf9383011e73bbb0bded9065d1a48",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "阶段状态/规范化资料层.schema.json"
+    },
+    {
+      "path": "阶段状态/规范化资料证据包.json",
+      "bytes": 3699,
+      "sha256": "b7157f7e125bf1f15c3fe6b65c5ffd67701c9329900a26ac8c555339225b1a40",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "阶段状态/规范化资料证据包.json"
+    },
+    {
+      "path": "阶段状态/资料内容审计基线.json",
+      "bytes": 73343,
+      "sha256": "d2af362c9784c64c470ad7cb2765054fb75495f97f7ab5d35d0111a5a74313c1",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "阶段状态/资料内容审计基线.json"
+    },
+    {
+      "path": "阶段状态/资料内容缺陷与证据报告.md",
+      "bytes": 4139,
+      "sha256": "53a0a13e3ebee91d7e5612a532d2d9a7cafc144357c2a88d3af1d7e391e54168",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "阶段状态/资料内容缺陷与证据报告.md"
+    },
+    {
+      "path": "阶段状态/资料网络剧情覆盖.json",
+      "bytes": 7536,
+      "sha256": "0adb4cc1ea139892ecb520ef068365ccbf33fd57f3e50ec1db3ef7a60d8b0df6",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "阶段状态/资料网络剧情覆盖.json"
+    },
+    {
+      "path": "阶段状态/资料网络调用分类.json",
+      "bytes": 9406022,
+      "sha256": "92a39af61c914a49be9a73ea8ebf21a7fa9919af89982db953b49ddd4c812fa6",
+      "decision": "保留为当前派生/审计资料",
+      "reason": "被索引、运行闭环、网络校验或审计流程使用",
+      "current_path": "阶段状态/资料网络调用分类.json"
+    }
+  ],
+  "exact_duplicate_groups": [
+    {
+      "sha256": "ac62e11afb97bde9656e057bee146bfcfb5f21c6ec548e871363e1325c4a03cc",
+      "paths": [
+        "05_正文/诡异屋/README.md",
+        "07_项目模板/正式项目模板/README.md"
+      ],
+      "action": "保留一份前需人工确认引用"
+    }
+  ],
+  "deletion_candidates": [],
+  "blocking_rule": "未确认权威版本、引用关系或内容替代关系前，不自动删除资料"
+}

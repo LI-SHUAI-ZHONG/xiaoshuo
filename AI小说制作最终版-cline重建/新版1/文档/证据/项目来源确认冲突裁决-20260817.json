@@ -1,0 +1,51 @@
+{
+  "schema_version": "project-source-confirmation-conflict-resolution-1.0",
+  "resolution_id": "PSCCR-20260817-01",
+  "resolved_at": "2026-08-17T00:00:00Z",
+  "project_id": "trial-玄幻-沈砚",
+  "decision": "current_versioned_confirmation_authoritative",
+  "decision_basis": "当前配置/project_source_confirmation.json 由 project_owner 明确确认，覆盖正式发布门所需全部项目来源字段，且当前机器校验生成的项目来源确认报告为 confirmed 并允许正式流水线。",
+  "authoritative_evidence": {
+    "confirmation_config": {
+      "path": "配置/project_source_confirmation.json",
+      "sha256": "6c27fcbc05f807e75c6f311e7b86b425b1fccb83c5e26cb1393f9b25f9c73a09",
+      "schema_version": "project-source-confirmation-1.0",
+      "status": "confirmed",
+      "confirmed_by": "project_owner",
+      "confirmed_at": "2026-08-14T00:00:00+08:00",
+      "source_quality_ack": true,
+      "formal_fact_approval": true,
+      "unresolved_fields": []
+    },
+    "validation_report": {
+      "path": "文档/证据/项目来源确认报告.json",
+      "sha256": "62193c63c7c199e42bf7748046941ba6b59477da262fe7cb1e21ff7636c9b44a",
+      "schema_version": "project-source-confirmation-report-1.0",
+      "status": "confirmed",
+      "allow_formal_pipeline": true,
+      "derived_or_unresolved_fields": []
+    }
+  },
+  "historical_evidence_treatment": {
+    "status": "retained_non_authoritative_for_current_confirmation",
+    "rule": "任何早于当前确认配置、或未能通过当前项目来源确认校验的“来源未确认”结论，保留为历史诊断证据，不得覆盖当前确认状态；不得删除、改写或伪造为当前通过证据。",
+    "supersession_scope": "仅限项目来源确认冲突。该裁决不替代资料升级、严格隔离、正文消费、文学审校、资料就绪度、异常审计或正式发布门。"
+  },
+  "operational_rule": {
+    "current_source_confirmation_authority": "后续门禁必须重新执行 脚本/项目来源确认.py，并以其输出的 文档/证据/项目来源确认报告.json 为唯一机器判定输入。",
+    "hash_drift_rule": "若当前确认配置或确认报告 SHA-256 与本裁决不一致，必须重新核验并生成新的版本化裁决；不得复用本裁决放行。",
+    "release_exception": false,
+    "formal_release_allowed_by_this_resolution": false
+  },
+  "current_non_source_release_blockers": [
+    "严格连续资料升级运行 20260817T070000Z-strict-resume-from-tb00011 的 formal_fact_eligible=false、prose_write_allowed=false、formal_release_allowed=false",
+    "严格连续资料升级最终审计中 12808 条 binding 处于 quarantined，另有 4 条 model_error",
+    "全量资料正文消费验证尚未完成，必须以重新执行结果为准",
+    "正式发布门仍须通过全部独立门禁及当前绑定基线一致的零异常升级审计"
+  ],
+  "audit_constraints": [
+    "原始资料、既有绑定、历史报告和隔离记录保持不变",
+    "本裁决不得作为正文消费证据、资料采用证据或正式发布批准",
+    "任何正式发布必须由全量资料正式发布门重新计算并明确返回 formal_release_allowed=true"
+  ]
+}

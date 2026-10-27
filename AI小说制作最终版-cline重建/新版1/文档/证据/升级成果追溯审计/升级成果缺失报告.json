@@ -1,0 +1,23 @@
+{
+  "schema_version": "material-upgrade-artifact-trace-audit-1.0",
+  "generated_at": "2026-08-18T01:22:38.286823Z",
+  "scanned_json_or_jsonl_file_count": 2599,
+  "skipped_file_count": 0,
+  "artifact_count": 504729,
+  "classification_counts": {
+    "advisory_material_revision": 1,
+    "audit_metadata_only": 504221,
+    "creative_contract_only": 30,
+    "recoverable_material_revision": 477
+  },
+  "recoverable_material_revision_count": 477,
+  "advisory_material_revision_count": 1,
+  "next_route": "bind_and_merge_recoverable_revisions",
+  "boundary": "creative_contract_only 和 audit_metadata_only 不得直接写回原始资料。",
+  "files": {
+    "assets": "升级成果资产清单.jsonl",
+    "recoverable": "可融合升级成果.jsonl",
+    "advisory": "人工采用改进建议.jsonl",
+    "missing": "升级成果缺失清单.jsonl"
+  }
+}

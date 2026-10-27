@@ -1,0 +1,56 @@
+{
+  "schema_version": "all-binding-source-integrity-audit-1.1",
+  "started_at": "2026-08-14T04:04:38.162490Z",
+  "generated_at": "2026-08-17T17:26:14.387363+00:00",
+  "audit_state": "completed",
+  "binding_file": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料解释词创作绑定.json",
+  "binding_count": 13345,
+  "processed_count": 13345,
+  "last_processed_binding_id": "TB-13345",
+  "status_counts": {
+    "passed": 13330,
+    "quarantined": 0,
+    "isolated_legacy_index": 15
+  },
+  "source_kind_status_counts": {
+    "动态网络": {
+      "passed": 1824
+    },
+    "类型系统": {
+      "isolated_legacy_index": 15
+    },
+    "类型系统来源块": {
+      "passed": 449
+    },
+    "类型连接": {
+      "passed": 7358,
+      "quarantined": 0
+    },
+    "资料库": {
+      "passed": 568,
+      "quarantined": 0
+    },
+    "锚点网络": {
+      "passed": 1790
+    },
+    "静态网络": {
+      "passed": 1341
+    }
+  },
+  "quarantined_findings": [],
+  "isolated_type_index_count": 15,
+  "policy": "类型系统名称索引的 matched_lines 保持隔离；其余来源必须具备可回读的完整对象边界和可核验身份。审计不修改来源、绑定或项目类型。",
+  "status": "passed",
+  "derived_from": {
+    "bindings_path": "文档\\证据\\来源完整性修复\\20260818-type-identity-v2\\全量资料解释词创作绑定.类型连接身份修复.json",
+    "audit_path": "文档\\证据\\来源完整性修复\\20260818-type-identity-v2\\全绑定来源完整性审计报告.类型连接身份修复.json",
+    "repair_id": "20260818-type-root-final"
+  },
+  "partial_repair": {
+    "status": "passed",
+    "repaired_binding_count": 23,
+    "remaining_quarantined_binding_count": 0,
+    "unresolved": [],
+    "policy": "仅当来源分段、数组元素或 [1] 对象根、规范对象哈希全部可回读时解除隔离；稳定身份由这些证据共同构成，业务 ID 仅为可选附加证据。"
+  }
+}

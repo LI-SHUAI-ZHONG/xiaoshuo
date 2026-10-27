@@ -1,0 +1,665 @@
+[
+  {
+    "type_name": "玄幻",
+    "core_elements": [
+      "能量",
+      "修炼",
+      "境界",
+      "法宝",
+      "宗门"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1824,
+        1825,
+        1837,
+        1839,
+        1850,
+        1860,
+        1873,
+        2049,
+        2052,
+        2121,
+        2122,
+        2926,
+        2927,
+        2935,
+        2976,
+        2977,
+        2985,
+        3351,
+        3352,
+        3360
+      ]
+    },
+    "source_status": "cross_confirmed",
+    "formal_fact_usable": true
+  },
+  {
+    "type_name": "仙侠",
+    "core_elements": [
+      "修仙",
+      "仙缘",
+      "灵根"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1655,
+        1881,
+        2049,
+        2055,
+        2167,
+        2168,
+        3626,
+        3627,
+        3635,
+        3651,
+        3652,
+        3660,
+        4001,
+        4002,
+        4010,
+        4026,
+        4027,
+        4035,
+        4051,
+        4052
+      ]
+    },
+    "source_status": "cross_confirmed",
+    "formal_fact_usable": true
+  },
+  {
+    "type_name": "科幻",
+    "core_elements": [
+      "能量",
+      "物理",
+      "科技",
+      "基因"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1695,
+        1696,
+        1708,
+        1732,
+        1901,
+        2282,
+        2283,
+        5076,
+        5077,
+        5085,
+        6651,
+        6652,
+        6660,
+        6801,
+        6802,
+        6810,
+        6826,
+        6827,
+        6835,
+        6926
+      ]
+    },
+    "source_status": "cross_confirmed",
+    "formal_fact_usable": true
+  },
+  {
+    "type_name": "悬疑",
+    "core_elements": [
+      "悬念",
+      "信息",
+      "信任",
+      "反转",
+      "隐藏"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        79,
+        1482,
+        1695,
+        1696,
+        1708,
+        1710,
+        1711,
+        1722,
+        1732,
+        1738,
+        1739,
+        1751,
+        1753,
+        1764,
+        1774,
+        1905,
+        2058,
+        2305,
+        2306,
+        2903
+      ]
+    },
+    "source_status": "cross_confirmed",
+    "formal_fact_usable": true
+  },
+  {
+    "type_name": "言情",
+    "core_elements": [
+      "言情类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        560,
+        690,
+        1652,
+        1653,
+        1655,
+        1665,
+        1689,
+        1933,
+        1937,
+        1941,
+        2067,
+        2070,
+        2466,
+        2467,
+        2489,
+        2490,
+        2496,
+        2512,
+        2513,
+        2519
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "都市",
+    "core_elements": [
+      "社会",
+      "阶层",
+      "职业",
+      "资源"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1738,
+        1739,
+        1751,
+        1764,
+        1774,
+        1889,
+        2213,
+        2214,
+        2220,
+        2496,
+        4526,
+        4527,
+        4535,
+        5226,
+        5227,
+        5235,
+        5251,
+        5252,
+        5260,
+        5276
+      ]
+    },
+    "source_status": "cross_confirmed",
+    "formal_fact_usable": true
+  },
+  {
+    "type_name": "历史",
+    "core_elements": [
+      "历史类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        317,
+        1780,
+        1781,
+        1783,
+        1794,
+        1796,
+        1807,
+        1818,
+        1893,
+        2236,
+        2237,
+        2243,
+        2519,
+        4926,
+        4927,
+        4935,
+        5976,
+        5977,
+        5985,
+        6001
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "军事",
+    "core_elements": [
+      "军事类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1897,
+        2259,
+        2260,
+        2266,
+        6576,
+        6577,
+        6585,
+        6626,
+        6627,
+        6635,
+        6651,
+        6652,
+        6660,
+        6676,
+        6677,
+        6685,
+        6701,
+        6702,
+        6710,
+        6726
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "游戏",
+    "core_elements": [
+      "游戏类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1921,
+        2061,
+        2397,
+        2398,
+        2404,
+        7226,
+        7227,
+        7235,
+        8476,
+        8477,
+        8485,
+        8501,
+        8502,
+        8510,
+        8526,
+        8527,
+        8535,
+        11526,
+        11527,
+        11535
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "体育",
+    "core_elements": [
+      "体育类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1929,
+        2061,
+        2443,
+        2444,
+        2450,
+        5876,
+        5877,
+        5885,
+        8951,
+        8952,
+        8960,
+        10226,
+        10227,
+        10235,
+        16524,
+        16525,
+        16531,
+        17007,
+        17008,
+        17014
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "灵异",
+    "core_elements": [
+      "灵异类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1913,
+        2058,
+        2351,
+        2352,
+        2358,
+        5701,
+        5702,
+        5710,
+        8026,
+        8027,
+        8035,
+        8051,
+        8052,
+        8060,
+        8076,
+        8077,
+        8085,
+        8226,
+        8227,
+        8235
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "同人",
+    "core_elements": [
+      "同人类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1961,
+        2627,
+        2628,
+        5101,
+        5102,
+        5110,
+        11476,
+        11477,
+        11485,
+        11501,
+        11502,
+        11510,
+        11526,
+        11527,
+        11535,
+        11551,
+        11552,
+        11560,
+        15375,
+        15376
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "二次元",
+    "core_elements": [
+      "二次元类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1953,
+        2581,
+        2582,
+        2588,
+        10976,
+        10977,
+        10985,
+        626634
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "耽美",
+    "core_elements": [
+      "耽美类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        11226,
+        11227,
+        11235,
+        626657
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  },
+  {
+    "type_name": "轻小说",
+    "core_elements": [
+      "轻小说类型规则待从原始资料确认"
+    ],
+    "reader_params": {
+      "status": "pending",
+      "reason": "原始资料未提供可核验的读者画像字段"
+    },
+    "style_constraints": [
+      "遵守类型系统中的已确认规则",
+      "未确认的类型偏好不得自动写入正文"
+    ],
+    "length_rhythm": {
+      "status": "pending",
+      "reason": "原始资料未提供该类型的统一篇幅参数"
+    },
+    "source_ref": {
+      "file": "原始资料/类型系统.txt",
+      "matched_lines": [
+        1957,
+        2604,
+        2605,
+        11251,
+        11252,
+        11260,
+        15311,
+        15312,
+        15318,
+        15334,
+        15343,
+        15344,
+        15350,
+        15366,
+        33577,
+        33581,
+        469173,
+        469174,
+        469178,
+        626680
+      ]
+    },
+    "source_status": "pending",
+    "formal_fact_usable": false
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "schema_version": "bulk-runtime-creative-material-upgrade-validation-1.0",
+  "validated_at": "2026-08-13T08:00:22.142505Z",
+  "project_id": null,
+  "status": "passed",
+  "checks": {
+    "baseline_count": 13345,
+    "matrix_count": 13345,
+    "audited_ledger_count": 13345,
+    "plan_count": 0,
+    "pending_activation_count": 13345,
+    "queue_count": 0,
+    "batch_count": 0,
+    "unique_batch_count": 0,
+    "prepared_unbound_type_material_count": 7822,
+    "prepared_unbound_type_material_by_kind": {
+      "类型系统": 15,
+      "类型系统来源块": 449,
+      "类型连接": 7358
+    }
+  },
+  "formal_fact_approval": false,
+  "formal_publication_allowed": false,
+  "errors": [],
+  "conclusion": "全部已登记资料已完成运行期创作授权和条件感知调度登记；类型资料保持未绑定，正文队列为空，尚未生成正文，正式发布保持关闭。"
+}

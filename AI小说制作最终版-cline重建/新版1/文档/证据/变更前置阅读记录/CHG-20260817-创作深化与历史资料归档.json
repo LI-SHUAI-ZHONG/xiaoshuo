@@ -1,0 +1,116 @@
+{
+  "change_id": "CHG-20260817-创作深化与历史资料归档",
+  "recorded_at_utc": "2026-08-17T00:00:00Z",
+  "project_root": "D:/AI小说制作最终版-cline重建/新版1",
+  "purpose": "将已失去当前结论资格的历史运行产物转移至独立归档，保留可追溯清单；建立不修改既有作品事实的创作深化执行方案。",
+  "planned_changes": [
+    "D:/AI小说制作最终版-cline重建/新版1/文档/归档/2026-08-17_历史运行与废弃资料",
+    "D:/AI小说制作最终版-cline重建/新版1/文档/创作深化执行方案.md",
+    "D:/AI小说制作最终版-cline重建/新版1/文档/创作深化执行清单.json"
+  ],
+  "read_evidence": [
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/AGENTS.md",
+      "sha256": "C11AF4A79DBE8DB7A0CCA440FB2D103671332A57FF76329F615BBEB288104DB6",
+      "conclusion": "变更前需完成方案与状态阅读，写入不可覆盖的前置阅读记录；不得将历史失败状态改写为通过，且未授权时不得运行写入型流程。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/文档/修补方案/创作资料全量调取修补主计划.md",
+      "sha256": "F2F6DEEB740267298EB1454F489DAFE04366F54633AD90790D93C4571EE56A64",
+      "conclusion": "历史执行输出应保留且与正式资料隔离；本次不执行其 P6 回归或改变来源资料治理结论。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/文档/修补方案/全量资料模型受控改进最新版方案.md",
+      "sha256": "3B4E0C86D117614423A44AA5E366EA76DED6291A075A8751D5EC57D288966402",
+      "conclusion": "原始资料、既有绑定、既有正文和签核证据不可变；资料质量门与项目设定确认是不同问题。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/文档/修补方案/修补状态.json",
+      "sha256": "A133F38136ECE97EA2846C9F6E9722100CB5EB068AC5A02D842F90BDCFDAC53B",
+      "conclusion": "P6 的阻断结论基于早于项目确认的隔离回归，不能作为当前作品设定的否定依据。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/文档/修补方案/最终回归验证报告.json",
+      "sha256": "90FAB9AEED93D6DE6715987827BBE41D1870D0C9DD4E9E84D47C3BA869A3056E",
+      "conclusion": "报告验证时间为 2026-08-12，且明确世界名、配角、势力地点尚未确认，已被后续确认记录取代。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/配置/项目创作圣经.json",
+      "sha256": "FE2ACCC98E0098C9C3FB8C42BE35709D9463793D276E921C9BEB44A391DBE791",
+      "conclusion": "书名、世界、规则核心、势力、人物及三卷主线已存在；当前缺口是规则规格化和可执行的卷章因果，而非核心设定重建。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/配置/project_config.json",
+      "sha256": "C979D27994FF9BE78DC5DAE8B8538C51CD5375AEAFBBBE213829FEAA707D0026",
+      "conclusion": "具体项目输入标为 confirmed_input，但类型组合仍未确认；本次不修改其状态字段或类型范围。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/配置/project_source_confirmation.json",
+      "sha256": "6C27FCBC05F807E75C6F311E7B86B425B1FCCB83C5E26CB1393F9B25F9C73A09",
+      "conclusion": "项目所有者于 2026-08-14 正式确认书名、世界、冲突、谜团、人物、势力、地点和首章计划；unresolved_fields 为空。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/文档/证据/资源注册表.json",
+      "sha256": "51A86BA7FE6EDB85DEF2625BE4FAD63B7DEC1F37BF4BB49FDBEBFF22BCA3B56C",
+      "conclusion": "类型系统与类型连接质量仍为 partial，只限制其作为正式来源事实的用途，不撤销项目所有者已确认的作品事实。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/文档/证据/来源深度检查报告.json",
+      "sha256": "8BEC8ECCB42DEF3D50391D64D9136DAF9E056BDE23D90031AD63117FE2032C3D",
+      "conclusion": "资料质量问题属于来源治理遗留项，与本次作品设定深化分离处理。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/文档/证据/来源质量自主分析报告.json",
+      "sha256": "15CE97ECA51145EE1E0B45B7471C1B99080E6E2569593D528064823238112F49",
+      "conclusion": "资料当前可作草稿检索但不作正式来源事实；本次方案不改动该结论。"
+    },
+    {
+      "path": "D:/AI小说制作最终版-cline重建/新版1/文档/证据/派生剧情输入.json",
+      "sha256": "ACF1B44175A762A0C75E566262598EE3D397EB10ADA8F2FCCF53E45799586D56",
+      "conclusion": "其派生候选状态早于正式项目确认，保留为历史推导材料，不用于覆盖当前作品事实。"
+    }
+  ],
+  "confirmed_facts": [
+    "项目所有者已确认当前项目的核心作品事实，确认范围见 配置/project_source_confirmation.json。",
+    "类型系统和类型连接尚有来源质量缺口，但不阻碍已确认作品设定成立。"
+  ],
+  "unconfirmed_or_deferred": [
+    "灵息回声、记忆代价、镇潮阵、潮灾、第三种方法、共担契约、阵营权限和关键历史时间线的细则。",
+    "类型组合及类型连接的正式采用。"
+  ],
+  "conflicts_and_decisions": [
+    {
+      "conflict": "2026-08-12 旧回归报告将具体世界名、配角和势力地点列为未解决；2026-08-14 项目确认文件将这些字段列为已确认。",
+      "decision": "按时间与确认权限，将旧报告归档为历史运行证据；以项目所有者确认作为当前作品事实的唯一依据。"
+    },
+    {
+      "conflict": "创作圣经使用 authorial_draft，配置使用 confirmed_input，确认文件使用 confirmed。",
+      "decision": "本次不擅自统一状态语义；在深化方案中建立状态模型建议，待后续治理变更单独确认。"
+    }
+  ],
+  "authorization_boundary": {
+    "may_move": [
+      "旧修补状态与回归报告",
+      "历史 execution_outputs、回归历史、测试和回归日志",
+      "正文目录下的历史试写批次",
+      "严格资料升级的测试结果与隔离处置报告"
+    ],
+    "must_not_modify": [
+      "原始资料",
+      "网络完整数据",
+      "资料索引",
+      "配置/project_config.json",
+      "配置/项目创作圣经.json",
+      "配置/project_source_confirmation.json",
+      "现有采用、场景、正文、发布状态"
+    ],
+    "must_not_run": [
+      "资料升级",
+      "回归",
+      "采用",
+      "场景生成",
+      "正文生成",
+      "发布"
+    ]
+  }
+}

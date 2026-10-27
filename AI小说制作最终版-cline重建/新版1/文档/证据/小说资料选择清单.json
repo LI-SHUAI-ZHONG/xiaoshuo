@@ -1,0 +1,70 @@
+{
+  "schema_version": "novel-source-selection-1.1",
+  "generated_at": "2026-08-12T00:00:00Z",
+  "project_id": "trial-玄幻-沈砚",
+  "selection_inputs": {
+    "primary_type": "玄幻",
+    "theme_combination": [],
+    "target_words": null,
+    "target_chapter_count": 1
+  },
+  "selected_type_profiles": {
+    "玄幻": {
+      "type_name": "玄幻",
+      "core_elements": [
+        "能量",
+        "修炼",
+        "境界",
+        "法宝",
+        "宗门"
+      ],
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "source_refs": [
+          "原始资料/类型系统.txt:SOURCE[17]",
+          "原始资料/类型系统.txt:SOURCE[18]",
+          "原始资料/类型系统.txt:SOURCE[20]",
+          "原始资料/类型系统.txt:SOURCE[22]"
+        ],
+        "legacy_matched_lines": [
+          1824,
+          1825,
+          1837,
+          1839,
+          1850,
+          1860,
+          1873,
+          2049,
+          2052,
+          2121,
+          2122,
+          2926,
+          2927,
+          2935,
+          2976,
+          2977,
+          2985,
+          3351,
+          3352,
+          3360
+        ],
+        "boundary_policy": "每个行号必须唯一落入一个 SOURCE 块；source_refs 为完整来源块引用。"
+      },
+      "source_status": "cross_confirmed"
+    }
+  },
+  "selected_type_combination": null,
+  "shared_sources": [
+    "原始资料/资料库.txt",
+    "原始资料/静态网络.txt",
+    "原始资料/动态网络.txt",
+    "原始资料/锚点网络.txt"
+  ],
+  "selection_policy": "规划和创作仅从本清单声明的类型资料、组合资料和共享叙事资料检索；未选类型不得作为项目事实或正文约束。",
+  "next_stage": "project_planning",
+  "source_reference_policy": "类型画像使用完整 SOURCE 块引用；legacy_matched_lines 仅保留审计，不得作为模型或创作定位。"
+}

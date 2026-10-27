@@ -1,0 +1,146 @@
+{
+  "schema_version": "strict-source-upgrade-batch-1.0",
+  "batch_id": "SOURCE-UPGRADE-00480",
+  "record_limit": 6,
+  "prose_write_allowed": false,
+  "records": [
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-02875",
+      "consumption_id": "PC-02875",
+      "binding_id": "TB-06574",
+      "source_id": "DYNAMIC_COMBO_GENRE_YANQING_0587",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[587]",
+      "source_ref_sha256": "924f2319c3c59177a5b163da7036a8d47da8ee2bae2d3c32e88d32ab0e5387cd",
+      "source_item_sha256": "455fb4437e3f36c445f8ce5caefb65d74e88ffb68860c05d02d1d13d7fd7b488",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-02876",
+      "consumption_id": "PC-02876",
+      "binding_id": "TB-06575",
+      "source_id": "DYNAMIC_COMBO_GENRE_YANQING_0588",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[588]",
+      "source_ref_sha256": "c6c706e2174426f6376256ef15e04b9ff11f430055da9f1c906726a4fe58eebb",
+      "source_item_sha256": "9ede15f2fba3b049e121fbf24d75bbdd470d42c3d697c123a2262d25f1cd35e9",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-02877",
+      "consumption_id": "PC-02877",
+      "binding_id": "TB-06576",
+      "source_id": "DYNAMIC_COMBO_GENRE_YANQING_0589",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[589]",
+      "source_ref_sha256": "a9984eeeac51aea8c4d1a3c7cfe65a10284f1f9b67818cd1a50e1a74ed3f63de",
+      "source_item_sha256": "09fc5a3c26f57f2962127714c278932a2975bb468cb44d89af92092389145d34",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-02878",
+      "consumption_id": "PC-02878",
+      "binding_id": "TB-06577",
+      "source_id": "DYNAMIC_COMBO_GENRE_YANQING_0590",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[590]",
+      "source_ref_sha256": "87f48a21db0e69e9eddff5263c8ec39840b2ecdf7ae55f0c46f932e01fe766ba",
+      "source_item_sha256": "f95ef087d184af5f651249e19ca3465ceaad193c68b6a31a8ebf4a141af91969",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-02879",
+      "consumption_id": "PC-02879",
+      "binding_id": "TB-06578",
+      "source_id": "DYNAMIC_COMBO_GENRE_YANQING_0591",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[591]",
+      "source_ref_sha256": "bf2a3a1b5224177a304fc5239ce0e0a1c3cfab47a00c942a2b5f3f51612cb49e",
+      "source_item_sha256": "f0927985ac137f7c4de60bba07d623808f8ef9908f459141be88d08c52789771",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-02880",
+      "consumption_id": "PC-02880",
+      "binding_id": "TB-06579",
+      "source_id": "DYNAMIC_COMBO_GENRE_YANQING_0592",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[592]",
+      "source_ref_sha256": "1b61137ecd042b243fba32432c978f021ae857a20bd8a2b93fc69193772a79f8",
+      "source_item_sha256": "8f03a93f43ea98febb387659604ef31d4c87e8ecc3fbf939ff31c3c9357964b8",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 candidate"
+      ]
+    }
+  ]
+}

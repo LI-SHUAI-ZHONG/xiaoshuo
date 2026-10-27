@@ -1,0 +1,17 @@
+{
+  "schema_version": "strict-upgrade-original-object-binding-1.0",
+  "generated_at": "2026-08-18T01:35:14.693735Z",
+  "strict_upgrade_record_count": 13345,
+  "binding_status_counts": {
+    "conflict": 175,
+    "unmatched": 11346,
+    "verified": 1824
+  },
+  "writeback_allowed_count": 0,
+  "files": {
+    "bindings": "bindings.jsonl",
+    "unmatched": "unmatched.jsonl",
+    "conflicts": "conflicts.jsonl"
+  },
+  "original_sources_modified": false
+}

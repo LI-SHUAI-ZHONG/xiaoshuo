@@ -1,0 +1,36 @@
+{
+  "schema_version": "canonical-source-resolution-audit-1.0",
+  "generated_at": "2026-08-18T17:46:24.584854Z",
+  "scope": "all_current_bindings_read_only; no_source_binding_or_workflow_changes",
+  "binding_file": "D:/AI小说制作最终版-cline重建/新版1/文档/证据/全量资料解释词创作绑定.json",
+  "binding_count": 15,
+  "batch_start": 0,
+  "batch_total_count": 15,
+  "source_kinds_scope": [
+    "类型系统"
+  ],
+  "prepared_sources": {
+    "类型系统": {
+      "file": "原始资料/类型系统.txt",
+      "reachable": true,
+      "sha256": "8c316d1863da85a5ae5584deadcfcb0429f2019078f9540ccd1966e0e38cce45",
+      "source_block_count": 449,
+      "section_count": 0
+    }
+  },
+  "status_counts": {
+    "ambiguous": 15
+  },
+  "source_kind_status_counts": {
+    "类型系统": {
+      "ambiguous": 15
+    }
+  },
+  "resolution_method_counts": {},
+  "error_counts": {
+    "类型系统 SECTION 无法唯一定位": 15
+  },
+  "workflow_allowed_count": 0,
+  "policy": "resolved 只表示当前来源文件、内容和对象边界已可核验；不自动授予正式事实、正文消费或流程激活权限。ambiguous 与 readable_needs_review 不得强行放行。",
+  "status": "needs_review"
+}

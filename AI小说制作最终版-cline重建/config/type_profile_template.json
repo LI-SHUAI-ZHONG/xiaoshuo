@@ -1,0 +1,341 @@
+{
+  "schema_version": "type-profile-template-1.0",
+  "source_policy": {
+    "project_independent": true,
+    "source_files": [
+      "08_原始资料/类型系统.txt",
+      "08_原始资料/类型连接.txt"
+    ]
+  },
+  "types": {
+    "玄幻": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "仙侠": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "科幻": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "悬疑": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "言情": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "都市": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "历史": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "军事": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "游戏": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "体育": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "灵异": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "同人": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "二次元": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "耽美": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    },
+    "轻小说": {
+      "core_elements": [],
+      "reader_params": {},
+      "source_status": "template"
+    }
+  },
+  "combinations": [
+    {
+      "combination_id": "玄幻_仙侠",
+      "types": [
+        "玄幻",
+        "仙侠"
+      ],
+      "core_elements": {
+        "玄幻": [],
+        "仙侠": []
+      },
+      "reader_params": {
+        "玄幻": {},
+        "仙侠": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以玄幻提供核心驱动，以仙侠提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "科幻_悬疑",
+      "types": [
+        "科幻",
+        "悬疑"
+      ],
+      "core_elements": {
+        "科幻": [],
+        "悬疑": []
+      },
+      "reader_params": {
+        "科幻": {},
+        "悬疑": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以科幻提供核心驱动，以悬疑提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "都市_言情",
+      "types": [
+        "都市",
+        "言情"
+      ],
+      "core_elements": {
+        "都市": [],
+        "言情": []
+      },
+      "reader_params": {
+        "都市": {},
+        "言情": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以都市提供核心驱动，以言情提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "历史_军事",
+      "types": [
+        "历史",
+        "军事"
+      ],
+      "core_elements": {
+        "历史": [],
+        "军事": []
+      },
+      "reader_params": {
+        "历史": {},
+        "军事": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以历史提供核心驱动，以军事提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "灵异_悬疑",
+      "types": [
+        "灵异",
+        "悬疑"
+      ],
+      "core_elements": {
+        "灵异": [],
+        "悬疑": []
+      },
+      "reader_params": {
+        "灵异": {},
+        "悬疑": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以灵异提供核心驱动，以悬疑提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "游戏_二次元",
+      "types": [
+        "游戏",
+        "二次元"
+      ],
+      "core_elements": {
+        "游戏": [],
+        "二次元": []
+      },
+      "reader_params": {
+        "游戏": {},
+        "二次元": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以游戏提供核心驱动，以二次元提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "轻小说_二次元",
+      "types": [
+        "轻小说",
+        "二次元"
+      ],
+      "core_elements": {
+        "轻小说": [],
+        "二次元": []
+      },
+      "reader_params": {
+        "轻小说": {},
+        "二次元": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以轻小说提供核心驱动，以二次元提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "科幻_都市",
+      "types": [
+        "科幻",
+        "都市"
+      ],
+      "core_elements": {
+        "科幻": [],
+        "都市": []
+      },
+      "reader_params": {
+        "科幻": {},
+        "都市": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以科幻提供核心驱动，以都市提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "玄幻_历史",
+      "types": [
+        "玄幻",
+        "历史"
+      ],
+      "core_elements": {
+        "玄幻": [],
+        "历史": []
+      },
+      "reader_params": {
+        "玄幻": {},
+        "历史": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以玄幻提供核心驱动，以历史提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "言情_耽美",
+      "types": [
+        "言情",
+        "耽美"
+      ],
+      "core_elements": {
+        "言情": [],
+        "耽美": []
+      },
+      "reader_params": {
+        "言情": {},
+        "耽美": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以言情提供核心驱动，以耽美提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "同人_二次元",
+      "types": [
+        "同人",
+        "二次元"
+      ],
+      "core_elements": {
+        "同人": [],
+        "二次元": []
+      },
+      "reader_params": {
+        "同人": {},
+        "二次元": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以同人提供核心驱动，以二次元提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    },
+    {
+      "combination_id": "体育_都市",
+      "types": [
+        "体育",
+        "都市"
+      ],
+      "core_elements": {
+        "体育": [],
+        "都市": []
+      },
+      "reader_params": {
+        "体育": {},
+        "都市": {}
+      },
+      "conflicts": [],
+      "resolutions": [],
+      "recommended_mechanisms": [
+        "以体育提供核心驱动，以都市提供结构或表达机制，并在阶段边界记录融合权重"
+      ],
+      "source_status": "template"
+    }
+  ]
+}

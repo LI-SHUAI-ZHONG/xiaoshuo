@@ -1,0 +1,36 @@
+{
+  "schema_version": "formal-release-approval-1.0",
+  "status": "approved",
+  "approved_by": "用户（本次会话确认）",
+  "approved_at": "2026-08-13T00:00:00Z",
+  "run_id": "run-20260812T170628Z-74ccbf5f",
+  "manifest_sha256": "2660197819b4be32b1445b93b1e8cd7fb593df2a720b885d200de30feea88d73",
+  "accepted_fields": [
+    "project_id",
+    "genre_selection",
+    "book_title",
+    "world_stage",
+    "mainline_conflict",
+    "core_mystery",
+    "protagonist",
+    "chapter_plan"
+  ],
+  "approved_source_ids": [
+    "C00001",
+    "C00004",
+    "C00005",
+    "C1.17",
+    "C1.19",
+    "P1.21",
+    "P1.4",
+    "S2.24",
+    "S2.29"
+  ],
+  "review_basis": {
+    "confirmation_channel": "用户在本次会话中的明确批准",
+    "runtime_evidence": "文档/证据/资料写作证据验证报告.json",
+    "chapter_file": "正文/运行/run-20260812T170628Z-74ccbf5f/章节_1.md",
+    "chapter_word_count": 4718,
+    "draft_validation": "passed"
+  }
+}

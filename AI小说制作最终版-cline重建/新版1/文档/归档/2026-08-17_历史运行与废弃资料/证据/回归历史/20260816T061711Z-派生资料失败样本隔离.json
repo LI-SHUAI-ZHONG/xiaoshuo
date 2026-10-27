@@ -1,0 +1,107 @@
+{
+  "schema_version": "derived-material-failure-sample-isolation-1.0",
+  "run_id": "20260816T061711Z-fb0cf077",
+  "checked_at": "2026-08-16T09:51:12.916153Z",
+  "scope": "consumption_evidence_metadata_only_no_prose_retained",
+  "quality_status": "blocked",
+  "formal_release_allowed": false,
+  "source_evidence": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\派生资料正文消费证据.json",
+  "counts": {
+    "input_records": 7,
+    "isolated_samples": 7,
+    "blocked_samples": 6
+  },
+  "errors": [],
+  "failure_samples": [
+    {
+      "consumption_id": "CONS-20260816T061711Z-fb0cf077-CH01-S01-TB-01938",
+      "binding_id": "TB-01938",
+      "quality_status": "blocked",
+      "release_status": "draft_only",
+      "isolation_reasons": [
+        "blocked_consumption",
+        "source_metadata_field:source_id",
+        "source_metadata_field:source_kind",
+        "source_metadata_field:source_ref",
+        "source_metadata_field:matched_terms"
+      ]
+    },
+    {
+      "consumption_id": "CONS-20260816T061711Z-fb0cf077-CH01-S01-TB-01943",
+      "binding_id": "TB-01943",
+      "quality_status": "blocked",
+      "release_status": "draft_only",
+      "isolation_reasons": [
+        "blocked_consumption",
+        "source_metadata_field:source_id",
+        "source_metadata_field:source_kind",
+        "source_metadata_field:source_ref",
+        "source_metadata_field:matched_terms"
+      ]
+    },
+    {
+      "consumption_id": "CONS-20260816T061711Z-fb0cf077-CH01-S01-TB-01948",
+      "binding_id": "TB-01948",
+      "quality_status": "blocked",
+      "release_status": "draft_only",
+      "isolation_reasons": [
+        "blocked_consumption",
+        "source_metadata_field:source_id",
+        "source_metadata_field:source_kind",
+        "source_metadata_field:source_ref",
+        "source_metadata_field:matched_terms"
+      ]
+    },
+    {
+      "consumption_id": "CONS-20260816T061711Z-fb0cf077-CH01-S02-TB-00001",
+      "binding_id": "TB-00001",
+      "quality_status": "blocked",
+      "release_status": "draft_only",
+      "isolation_reasons": [
+        "blocked_consumption",
+        "source_metadata_field:source_id",
+        "source_metadata_field:source_kind",
+        "source_metadata_field:source_ref",
+        "source_metadata_field:matched_terms"
+      ]
+    },
+    {
+      "consumption_id": "CONS-20260816T061711Z-fb0cf077-CH01-S03-TB-00563",
+      "binding_id": "TB-00563",
+      "quality_status": "passed_for_draft_only",
+      "release_status": "draft_only",
+      "isolation_reasons": [
+        "source_metadata_field:source_id",
+        "source_metadata_field:source_kind",
+        "source_metadata_field:source_ref",
+        "source_metadata_field:matched_terms"
+      ]
+    },
+    {
+      "consumption_id": "CONS-20260816T061711Z-fb0cf077-CH01-S03-TB-01939",
+      "binding_id": "TB-01939",
+      "quality_status": "blocked",
+      "release_status": "draft_only",
+      "isolation_reasons": [
+        "blocked_consumption",
+        "source_metadata_field:source_id",
+        "source_metadata_field:source_kind",
+        "source_metadata_field:source_ref",
+        "source_metadata_field:matched_terms"
+      ]
+    },
+    {
+      "consumption_id": "CONS-20260816T061711Z-fb0cf077-CH01-S03-TB-02007",
+      "binding_id": "TB-02007",
+      "quality_status": "blocked",
+      "release_status": "draft_only",
+      "isolation_reasons": [
+        "blocked_consumption",
+        "source_metadata_field:source_id",
+        "source_metadata_field:source_kind",
+        "source_metadata_field:source_ref",
+        "source_metadata_field:matched_terms"
+      ]
+    }
+  ]
+}

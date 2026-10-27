@@ -1,0 +1,132 @@
+{
+  "schema_version": "deterministic-template-draft-1.0",
+  "release_status": "deterministic_template_nonrelease",
+  "records": [
+    {
+      "consumption_id": "CH01-S01-TB-01957",
+      "binding_id": "TB-01957",
+      "source_id": "C00048",
+      "scene_id": "CH01-S01",
+      "prose_file": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md",
+      "prose_location": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md#lines[3]",
+      "paragraph": "外门检测场的雾气贴着石面上爬，沈砚先看见裂纹铜牌边缘在第七息重新亮了一下。那一点光没有持续，却让他记住了出现的顺序。他按住想要上前的陆昭，先让许照微记下位置，再用指腹沿着裂痕摸过去。裂纹铜牌随即传出一声极轻的回响，另一侧的阵纹跟着暗了半寸。闻执衡的脚步从廊外逼近，沈砚没有把痕迹交回执律堂，而是将半枚阵钥压在石缝旁。这样做保住了证据，却暴露了他们曾经来过；陆昭不得不替他挡住巡查，也失去了当晚领取药额的时机。",
+      "paragraph_sha256": "d3e5587c4b1344408f42eb6996cf6dd74c31757cc782adaa2461d27687d9978b",
+      "quality_status": "deterministic_template_nonrelease",
+      "literary_review_status": "pending_human_literary_review",
+      "generation": {
+        "provider": "deterministic_draft",
+        "model": "none"
+      },
+      "trigger": "第七息重新亮了一下",
+      "action": "把完整卷宗留在原处",
+      "observable_result": "另一侧的阵纹跟着暗了半寸",
+      "cost_or_change": "暴露了他们曾经来过",
+      "semantic_support": "将来源约束转化为检测异常、人物选择、可见阵纹变化和晋升或关系代价。"
+    },
+    {
+      "consumption_id": "CH01-S01-TB-01938",
+      "binding_id": "TB-01938",
+      "source_id": "C00029",
+      "scene_id": "CH01-S01",
+      "prose_file": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md",
+      "prose_location": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md#lines[5]",
+      "paragraph": "许照微在封闭旧区域外廊停下时，沈砚正用指腹擦过潮期名册上的灰痕。灰下露出一行被刮去的名字，字口仍在往外渗冷意。陆昭催他离开，沈砚却先问许照微是否记下了纸页编号，随后把潮期名册转向灯火。被遮住的纹路在灯下显出两道相反的刻痕，证明这不是普通的磨损。闻执衡的声音已经到了门外，沈砚只能撕下一角带编号的纸页，把完整卷宗留在原处。线索因此留下，许照微却必须承担缺页的过失，三个人往后的退路都比来时更窄。",
+      "paragraph_sha256": "6cdf31df069d5e5ce1662503e5a8ed96abb271e96c9de27d32e27a95d6758f9d",
+      "quality_status": "deterministic_template_nonrelease",
+      "literary_review_status": "pending_human_literary_review",
+      "generation": {
+        "provider": "deterministic_draft",
+        "model": "none"
+      },
+      "trigger": "被遮住的纹路在灯下显出两道相反的刻痕",
+      "action": "把完整卷宗留在原处",
+      "observable_result": "回声没有散去，反而沿着石阶传向旧域入口",
+      "cost_or_change": "失去当夜参加晋升复核的资格",
+      "semantic_support": "将来源约束转化为检测异常、人物选择、可见阵纹变化和晋升或关系代价。"
+    },
+    {
+      "consumption_id": "CH01-S01-TB-00533",
+      "binding_id": "TB-00533",
+      "source_id": "127.8_设计转化为叙述文字的操作规则",
+      "scene_id": "CH01-S01",
+      "prose_file": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md",
+      "prose_location": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md#lines[7]",
+      "paragraph": "外门检测场原本只剩风声，沈砚却从潮期名册的停顿里辨出人为遮掩。第一次亮起时陆昭站在左侧，第二次亮起时阵纹却把光推向右侧。沈砚让许照微记下顺序，自己才把潮期名册移离检测石。石缝立刻渗出一线潮水，水面映出旧域的门形，随后又被镇潮阵压回黑暗。闻执衡命人封住回廊，陆昭替沈砚挡下第一道盘问，因而被记入违令名册。沈砚得到了一条能复查的方向，却再也不能假装这只是一次普通检测。",
+      "paragraph_sha256": "25e6d6ffcb01552ea84d47be175d321b00fbe4cd6f1c4c986960d4dd8dfd0dfb",
+      "quality_status": "deterministic_template_nonrelease",
+      "literary_review_status": "pending_human_literary_review",
+      "generation": {
+        "provider": "deterministic_draft",
+        "model": "none"
+      },
+      "trigger": "被遮住的纹路在灯下显出两道相反的刻痕",
+      "action": "把完整卷宗留在原处",
+      "observable_result": "回声没有散去，反而沿着石阶传向旧域入口",
+      "cost_or_change": "失去当夜参加晋升复核的资格",
+      "semantic_support": "将来源约束转化为检测异常、人物选择、可见阵纹变化和晋升或关系代价。"
+    },
+    {
+      "consumption_id": "CH01-S01-TB-04971",
+      "binding_id": "TB-04971",
+      "source_id": "D1.18",
+      "scene_id": "CH01-S01",
+      "prose_file": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md",
+      "prose_location": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md#lines[9]",
+      "paragraph": "外门检测场的雾气贴着石面上爬，沈砚先看见测息盘边缘在第七息重新亮了一下。那一点光没有持续，却让他记住了出现的顺序。他按住想要上前的陆昭，先让许照微记下位置，再用指腹沿着裂痕摸过去。测息盘随即传出一声极轻的回响，另一侧的阵纹跟着暗了半寸。闻执衡的脚步从廊外逼近，沈砚没有把痕迹交回执律堂，而是将半枚阵钥压在石缝旁。这样做保住了证据，却暴露了他们曾经来过；陆昭不得不替他挡住巡查，也失去了当晚领取药额的时机。",
+      "paragraph_sha256": "26669f0a46b13edc20159af4a3644a95855e7cf86c6e4974468ab9229e3af298",
+      "quality_status": "deterministic_template_nonrelease",
+      "literary_review_status": "pending_human_literary_review",
+      "generation": {
+        "provider": "deterministic_draft",
+        "model": "none"
+      },
+      "trigger": "第七息重新亮了一下",
+      "action": "把完整卷宗留在原处",
+      "observable_result": "另一侧的阵纹跟着暗了半寸",
+      "cost_or_change": "暴露了他们曾经来过",
+      "semantic_support": "将来源约束转化为检测异常、人物选择、可见阵纹变化和晋升或关系代价。"
+    },
+    {
+      "consumption_id": "CH01-S01-TB-04974",
+      "binding_id": "TB-04974",
+      "source_id": "D1.21",
+      "scene_id": "CH01-S01",
+      "prose_file": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md",
+      "prose_location": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md#lines[11]",
+      "paragraph": "许照微在藏卷阁档案廊停下时，沈砚正用指腹擦过半枚阵钥上的灰痕。灰下露出一行被刮去的名字，字口仍在往外渗冷意。陆昭催他离开，沈砚却先问许照微是否记下了纸页编号，随后把半枚阵钥转向灯火。被遮住的纹路在灯下显出两道相反的刻痕，证明这不是普通的磨损。闻执衡的声音已经到了门外，沈砚只能撕下一角带编号的纸页，把完整卷宗留在原处。线索因此留下，许照微却必须承担缺页的过失，三个人往后的退路都比来时更窄。",
+      "paragraph_sha256": "d52ff91a9f16558698338c8d19035ee74a9ecf1c3ccd0de5be9f6d6710b6eb5c",
+      "quality_status": "deterministic_template_nonrelease",
+      "literary_review_status": "pending_human_literary_review",
+      "generation": {
+        "provider": "deterministic_draft",
+        "model": "none"
+      },
+      "trigger": "被遮住的纹路在灯下显出两道相反的刻痕",
+      "action": "把完整卷宗留在原处",
+      "observable_result": "回声没有散去，反而沿着石阶传向旧域入口",
+      "cost_or_change": "失去当夜参加晋升复核的资格",
+      "semantic_support": "将来源约束转化为检测异常、人物选择、可见阵纹变化和晋升或关系代价。"
+    },
+    {
+      "consumption_id": "CH01-S01-TB-00607",
+      "binding_id": "TB-00607",
+      "source_id": "STATIC:10.5_力量公式->44.3_爽点-代价#39",
+      "scene_id": "CH01-S01",
+      "prose_file": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md",
+      "prose_location": "非正式草稿/全量资料确定性模板/ACT-CH01-S01.md#lines[13]",
+      "paragraph": "许照微在藏卷阁档案廊停下时，沈砚正用指腹擦过测息盘上的灰痕。灰下露出一行被刮去的名字，字口仍在往外渗冷意。陆昭催他离开，沈砚却先问许照微是否记下了纸页编号，随后把测息盘转向灯火。被遮住的纹路在灯下显出两道相反的刻痕，证明这不是普通的磨损。闻执衡的声音已经到了门外，沈砚只能撕下一角带编号的纸页，把完整卷宗留在原处。线索因此留下，许照微却必须承担缺页的过失，三个人往后的退路都比来时更窄。",
+      "paragraph_sha256": "7c2f02b8d6e8bbe471a0c0de13a01af416f0c1f6d8d8aee5f08938ee28addeed",
+      "quality_status": "deterministic_template_nonrelease",
+      "literary_review_status": "pending_human_literary_review",
+      "generation": {
+        "provider": "deterministic_draft",
+        "model": "none"
+      },
+      "trigger": "被遮住的纹路在灯下显出两道相反的刻痕",
+      "action": "把完整卷宗留在原处",
+      "observable_result": "回声没有散去，反而沿着石阶传向旧域入口",
+      "cost_or_change": "失去当夜参加晋升复核的资格",
+      "semantic_support": "将来源约束转化为检测异常、人物选择、可见阵纹变化和晋升或关系代价。"
+    }
+  ]
+}

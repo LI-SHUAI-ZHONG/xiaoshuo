@@ -1,0 +1,16 @@
+{
+  "schema_version": "full-source-prose-consumption-validation-1.0",
+  "policy": "不得以编排、模板或资料关键词替代正文消费；每条记录必须有独立段落、因果字段、语义支持、可复算哈希，并通过来源语义与叙事质量审校。",
+  "planned_count": 0,
+  "prose_realized_count": 0,
+  "queued_or_missing_count": 0,
+  "status_counts": {
+    "prose_realized": 0,
+    "queued_or_missing": 0,
+    "invalid_evidence": 0
+  },
+  "missing_consumption_ids": [],
+  "findings": [],
+  "scene_formal_creation_gates": {},
+  "status": "in_progress"
+}

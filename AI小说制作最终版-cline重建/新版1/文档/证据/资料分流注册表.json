@@ -1,0 +1,63 @@
+{
+  "schema_version": "material-evidence-routing-register-1.0",
+  "policy": "资料归属由受控合同、现行执行器输出约定、绑定基线和可验证引用关系决定；不得依据文件时间、目录名称或恢复游标推断资料新旧。归档只隔离已明确不可进入发布链且不存在现行链路引用的资料，保留原始内容和可追溯路径。",
+  "authoritative_current_inputs": [
+    {
+      "path": "文档/证据/全量资料解释词创作绑定.json",
+      "role": "全量资料升级绑定基线",
+      "authority": "配置/全量模型资料改进方案.json:scope.binding_baseline"
+    },
+    {
+      "path": "配置/全量模型资料改进方案.json",
+      "role": "全量资料改进合同",
+      "authority": "项目创作生产政策.json:full_material_improvement_policy.contract"
+    }
+  ],
+  "current_execution_evidence": [
+    {
+      "path": "文档/证据/全量资料升级运行",
+      "role": "现行全量升级执行器的规范运行输出",
+      "authority": "脚本/全量资料升级执行器.py"
+    },
+    {
+      "path": "文档/证据/全量资料增量升级",
+      "role": "增量升级批次证据",
+      "authority": "运行目录内 manifest.json 与 changes.jsonl"
+    },
+    {
+      "path": "文档/证据/全量资料升级派生定位",
+      "role": "已验证候选到派生资料的定位证据",
+      "authority": "派生定位重建报告"
+    }
+  ],
+  "retained_history": [
+    {
+      "path": "文档/证据/严格连续资料升级运行",
+      "classification": "historical_traceability_pending_reference_audit",
+      "release_eligibility": "not_an_authoritative_release_input",
+      "reason": "该目录不是现行执行器的规范输出根目录，但包含历史批次、基线和审计汇总。主计划要求保留历史输出；在逐项核验 parent_run_id、基线哈希和现行引用前不得迁移或删除。"
+    },
+    {
+      "path": "文档/证据/失败运行",
+      "classification": "failure_evidence_retained",
+      "release_eligibility": "nonrelease",
+      "reason": "失败报告用于可复现性和阻断证据，不得作为当前资料来源或发布凭证。"
+    }
+  ],
+  "quarantined": [
+    {
+      "original_path": "文档/证据/模型辅助资料改进候选",
+      "path": "文档/证据/隔离归档/experimental_nonrelease/模型辅助资料改进候选",
+      "classification": "experimental_nonrelease",
+      "release_eligibility": "forbidden",
+      "reason": "该流程只向模型提供绑定摘要，未按 source_ref 回读完整原始对象；合同明确禁止其进入派生批次。",
+      "authority": "配置/全量模型资料改进方案.json:legacy_experiment"
+    }
+  ],
+  "migration_rules": {
+    "delete_forbidden": true,
+    "move_requires_explicit_classification": true,
+    "current_execution_evidence_must_not_be_moved_by_name_or_timestamp": true,
+    "retained_history_requires_reference_and_baseline_audit_before_reclassification": true
+  }
+}

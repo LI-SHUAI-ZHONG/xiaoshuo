@@ -1,0 +1,49 @@
+½Å±¾\test_ÈıÕÂ½ğÑù±¾Õ¢ÃÅ.py:39:        self.assertTrue(all(len(batch["records"]) <= 6 and batch["prose_write_allowed"] is False for batch in batches))
+½Å±¾\test_ÑÏ¸ñ×ÊÁÏÉı¼¶.py:29:        self.assertFalse(record["prose_write_allowed"])
+½Å±¾\test_ÑÏ¸ñ×ÊÁÏÉı¼¶.py:34:        self.assertFalse(record["formal_fact_eligible"])
+½Å±¾\test_ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:23:        self.assertFalse(route["formal_fact_eligible"])
+½Å±¾\test_ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:24:        self.assertFalse(route["prose_write_allowed"])
+½Å±¾\test_ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:31:        self.assertFalse(route["formal_fact_eligible"])
+½Å±¾\test_ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´·½°¸.py:25:        self.assertFalse(draft["formal_fact_eligible"])
+½Å±¾\ÈıÕÂ½ğÑù±¾Õ¢ÃÅ.py:173:        packets.append({"micro_batch_id": f"DECISION-{offset // batch_size + 1:05d}", "status": "queued_for_chapter_decision_only", "chapter_scope": ["1", "2", "3"], "prose_write_allowed": False, "max_records": batch_size, "records": entries, "acceptance_criteria": ["é€æ¡ç»™å‡ºé€‰ä¸­æˆ–æ’é™¤å†³å®š", "candidate/blocked æ¥æºåªèƒ½è¢«æ’é™¤æˆ–è¯·æ±‚æ ¸éªŒ", "æ¯ä¸ªé€‰ä¸­é¡¹å¿…é¡»æŒ‡å‘ä¸€ä¸ªå…·ä½“åœºæ™¯å†³ç­–å­—æ®µ", "ä¸å¾—ç”Ÿæˆæ­£æ–‡æ®µè½æˆ–å£°ç§°å·²å®ç°"]})
+½Å±¾\ÑÏ¸ñ×ÊÁÏÉı¼¶.py:248:        "formal_fact_eligible": bool(project_confirmed and level in FORMAL_FACT_LEVELS),
+½Å±¾\ÑÏ¸ñ×ÊÁÏÉı¼¶.py:250:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ×ÊÁÏÉı¼¶.py:274:    report = {"schema_version": "strict-source-upgrade-report-1.0", "generated_at": datetime.now(timezone.utc).isoformat(), "scope": "source_audit_and_normalized_reference_validation_only", "input_record_count": len(records), "batch_size": batch_size, "batch_count": (len(records) + batch_size - 1) // batch_size, "status_counts": dict(counts), "quality_level_counts": dict(Counter(record["source_quality_level"] for record in records)), "attested_item_count": sum(record["item_attested"] for record in records), "formal_fact_eligible_count": sum(record["formal_fact_eligible"] for record in records), "project_source_confirmed": project_confirmed, "prose_write_allowed": False, "legacy_prose_or_archive_modified": False, "policy": "æ¡ç›®è®¤è¯ä¸èƒ½æ›¿ä»£é¡¹ç›®æ¥æºç¡®è®¤ï¼›ä»»ä½• candidate/pending/unconfirmed/blockedã€èº«ä»½ä¸ä¸€è‡´æˆ–ä¸å¯å›è¯»æ¥æºå‡éš”ç¦»ã€‚"}
+½Å±¾\ÑÏ¸ñ×ÊÁÏÉı¼¶.py:280:        payload = {"schema_version": "strict-source-upgrade-batch-1.0", "batch_id": f"SOURCE-UPGRADE-{offset // batch_size + 1:05d}", "record_limit": batch_size, "prose_write_allowed": False, "records": chunk}
+½Å±¾\ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:71:        "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:72:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:123:            "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:124:            "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:136:        "formal_fact_eligible_count": 0,
+½Å±¾\ÑÏ¸ñ¸ôÀëÄÚÈİ·ÖÁ÷.py:137:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÄÚÈİ´¦ÖÃ»­Ïñ.py:69:            "formal_fact_eligible": False, "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÄÚÈİ´¦ÖÃ»­Ïñ.py:77:        "formal_fact_eligible_count": 0, "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀë·ÖÀà±¨¸æ.py:57:            "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀë·ÖÀà±¨¸æ.py:58:            "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀë·ÖÀà±¨¸æ.py:82:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀë·ÖÀà±¨¸æ.py:83:        "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀë¿É»Ö¸´ĞÔÆÀ¹À.py:54:            "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀë¿É»Ö¸´ĞÔÆÀ¹À.py:55:            "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀë¿É»Ö¸´ĞÔÆÀ¹À.py:67:        "formal_fact_eligible_count": 0,
+½Å±¾\ÑÏ¸ñ¸ôÀë¿É»Ö¸´ĞÔÆÀ¹À.py:68:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´·½°¸.py:59:        "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´·½°¸.py:60:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´·½°¸.py:85:        "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´·½°¸.py:86:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´·½°¸.py:96:        "formal_fact_eligible_count": 0,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´·½°¸.py:97:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´ÖØÉó.py:58:        "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´ÖØÉó.py:59:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´ÖØÉó.py:77:        "formal_fact_eligible_count": 0, "model_input_eligible_count": 0, "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´ÖØÉó.py:134:        result = {"replacement_draft_id": row.get("replacement_draft_id"), "replacement_source_id": row.get("replacement_source_id"), "accepted_for_model_input": accepted, "errors": errors, "formal_fact_eligible": accepted, "prose_write_allowed": False}
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´ÖØÉó.py:144:                "formal_fact_eligible": True, "model_input_eligible": True, "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÌæ´úÀ´Ô´ÖØÉó.py:152:        "formal_fact_eligible_count": len(eligible), "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:57:        "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:58:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:80:            "ç¡®è®¤å®¡è®¡é€šè¿‡ä¸è‡ªåŠ¨æˆäºˆ formal_fact_eligibleï¼Œä¹Ÿä¸å…è®¸æ­£æ–‡å†™å…¥ã€‚",
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:110:        "formal_fact_eligible_count": 0,
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:111:        "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:180:            "formal_fact_eligible": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:181:            "prose_write_allowed": False,
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:192:        "formal_fact_eligible_count": 0,
+½Å±¾\ÑÏ¸ñ¸ôÀëÏîÄ¿È·ÈÏ.py:193:        "prose_write_allowed": False,

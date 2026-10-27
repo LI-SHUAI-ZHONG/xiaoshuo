@@ -1,0 +1,45 @@
+{
+    "schema_version":  "1.2",
+    "versions":  [
+                     {
+                         "version":  "v0.1",
+                         "action":  "AUTO_INIT",
+                         "timestamp":  "2026-08-09T09:14:23.4844788+08:00",
+                         "state":  "AUTO_INIT",
+                         "note":  "project initialized in autonomous_continuous mode"
+                     }
+                      ,
+                      {
+                          "version": "v0.2",
+                          "action": "AUTO_DESIGN",
+                          "timestamp": "2026-08-09T09:20:00+08:00",
+                          "state": "AUTO_DESIGN",
+                          "note": "saved story bible, world rules, characters, one-volume outline and source trace"
+                      },
+                      {
+                          "version": "v0.3",
+                          "action": "AUTO_SAVE",
+                          "timestamp": "2026-08-09T09:30:00+08:00",
+                          "state": "AUTO_CONTINUE",
+                          "note": "saved chapter 001 and synchronized snapshot; next chapter is 002"
+                      },
+                      {
+                          "version": "v0.4",
+                          "action": "AUTO_SAVE",
+                          "timestamp": "2026-08-09T09:45:00+08:00",
+                          "state": "AUTO_CONTINUE",
+                          "note": "saved chapter 002 and synchronized snapshot; next chapter is 003"
+                      },
+                      {
+                          "version": "v0.5",
+                          "action": "SYSTEM_REPAIR_AND_AUDIT",
+                          "timestamp": "2026-08-09T10:20:00+08:00",
+                          "state": "AUTO_CONTINUE",
+                          "note": "repaired executable source index, added opening/person/parameter/design-to-draft artifacts, and audited chapter 001 without rewriting formal text",
+                          "artifacts": ["规划/资料驱动设计/", "规划/章节设计/卷01/第001章_清点名单上不存在的房屋/chapter_execution_manifest.json", "检查报告/资料调用审计.json"],
+                          "reversible": true
+                      }
+                  ],
+    "rule":  "append_major_changes_without_overwriting_history",
+    "state_contract":  "项目状态模型与连续性契约.json"
+}

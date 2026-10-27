@@ -1,0 +1,97 @@
+{
+  "schema_version": "ordered-material-difference-report-1.0",
+  "scope": "按 source_kind 保持 SOURCE-UPGRADE 记录顺序；只识别可验证差异，不向原版写入内容。",
+  "original_material_shapes": {
+    "动态网络.txt": {
+      "format": "fenced_json",
+      "top_level_type": "dict",
+      "top_level_keys": [
+        "动态网络连接_完整版"
+      ],
+      "top_level_array_lengths": {},
+      "source_block_count": 0,
+      "heading_count": 0,
+      "line_count": null
+    },
+    "类型系统.txt": {
+      "format": "markdown_or_assembled_text",
+      "top_level_type": "str",
+      "top_level_keys": null,
+      "top_level_array_lengths": {},
+      "source_block_count": 449,
+      "heading_count": 90,
+      "line_count": 626701
+    },
+    "类型连接.txt": {
+      "format": "markdown_or_assembled_text",
+      "top_level_type": "str",
+      "top_level_keys": null,
+      "top_level_array_lengths": {},
+      "source_block_count": 36,
+      "heading_count": 1,
+      "line_count": 502097
+    },
+    "资料库.txt": {
+      "format": "markdown_or_assembled_text",
+      "top_level_type": "str",
+      "top_level_keys": null,
+      "top_level_array_lengths": {},
+      "source_block_count": 0,
+      "heading_count": 1506,
+      "line_count": 46668
+    },
+    "锚点网络.txt": {
+      "format": "markdown_or_assembled_text",
+      "top_level_type": "str",
+      "top_level_keys": null,
+      "top_level_array_lengths": {},
+      "source_block_count": 0,
+      "heading_count": 16,
+      "line_count": 2124
+    },
+    "静态网络.txt": {
+      "format": "json",
+      "top_level_type": "dict",
+      "top_level_keys": [
+        "connection_types",
+        "connections",
+        "source_file",
+        "source_index",
+        "total_blocks",
+        "total_connections",
+        "total_sources",
+        "version"
+      ],
+      "top_level_array_lengths": {
+        "connection_types": 15,
+        "connections": 1341
+      },
+      "source_block_count": 0,
+      "heading_count": 0,
+      "line_count": null
+    }
+  },
+  "record_count": 13345,
+  "ordered_record_counts": {
+    "动态网络": 1824,
+    "类型系统": 15,
+    "类型系统来源块": 449,
+    "类型连接": 7358,
+    "资料库": 568,
+    "锚点网络": 1790,
+    "静态网络": 1341
+  },
+  "comparison_counts": {
+    "historical_source_not_json": 9597,
+    "historical_source_unavailable": 583,
+    "source_item_hash_matches": 3165
+  },
+  "status_counts": {
+    "quarantined": 7235,
+    "upgraded_for_draft_audit": 6110
+  },
+  "candidate_value_count": 0,
+  "fusion_ready_count": 0,
+  "reason": "SOURCE-UPGRADE 记录提供对象顺序、来源定位、哈希和审计状态，但不含可写入的升级字段值。",
+  "detail_file": "同序对象对照.jsonl"
+}

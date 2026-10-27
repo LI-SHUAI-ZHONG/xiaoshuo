@@ -1,0 +1,39 @@
+{
+    "project_id":  "guiyiwu-20260809",
+    "project_name":  "诡异屋",
+    "status":  "AUTO_CONTINUE",
+    "schema_version":  "1.2",
+    "created_at":  "2026-08-09T09:14:23.4844788+08:00",
+    "current_state":  "AUTO_CONTINUE",
+    "genre":  "悬疑",
+    "type":  "悬疑",
+    "length":  "中篇",
+    "style":  "冷峻、克制、紧张、具有现场感",
+    "platform":  "",
+    "audience":  "",
+    "locked_facts":  [
+
+                     ],
+    "pending_questions":  [
+        "目标平台和目标读者未提供，按普通缺失记录，不阻断设计。"
+    ],
+    "decision_log":  [
+        {
+            "decision": "中篇采用单卷24章、四段结构",
+            "source": "cline_decision",
+            "basis": "用户确认的悬疑类型、冷峻克制风格和中篇规模"
+        },
+        {
+            "decision": "异常现象优先采用可验证的空间、档案和信息机制解释",
+            "source": "cline_decision",
+            "basis": "悬疑类型的信息冲突与认知冲突约束"
+        },
+        {
+            "decision": "将资料调用从宏模块读取升级为条目级调用和中间产物门槛",
+            "source": "system_repair",
+            "basis": "第001章资料调用审计发现黄金三章、人物链和设计到正文没有可验证传递"
+        }
+    ],
+    "run_mode":  "autonomous_continuous",
+    "stop_policy":  "block_only_or_goal_complete"
+}

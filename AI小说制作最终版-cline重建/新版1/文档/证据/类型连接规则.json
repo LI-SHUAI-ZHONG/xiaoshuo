@@ -1,0 +1,31 @@
+{
+  "schema_version": "type-connection-rules-1.0",
+  "rules": [
+    {
+      "rule_id": "R1",
+      "name": "组合确定后必须记录",
+      "requirement": "项目确定类型组合后，必须创建类型连接采用记录。"
+    },
+    {
+      "rule_id": "R2",
+      "name": "来源连接缺失说明",
+      "requirement": "当source_type为from_type_connection且source_connection_ids为空时，必须在记录中说明原因。"
+    },
+    {
+      "rule_id": "R3",
+      "name": "项目定义更新全局索引",
+      "requirement": "当source_type为project_defined时，必须更新全局类型组合索引。"
+    },
+    {
+      "rule_id": "R4",
+      "name": "拒绝理由必填",
+      "requirement": "拒绝某组合或机制时，必须记录明确的拒绝理由。"
+    },
+    {
+      "rule_id": "R5",
+      "name": "正文前置阻断",
+      "requirement": "正文生成前必须已有类型连接记录；不存在记录时阻断正文生成。",
+      "blocking": true
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "validation_date": "2026-08-11T02:06:33.388213Z",
+  "execution_pipeline": {
+    "success": true,
+    "modules": 11,
+    "failed": 0
+  },
+  "data_flow": {
+    "module_02": true,
+    "module_04": true,
+    "module_05": true,
+    "module_06": true,
+    "module_08": true,
+    "module_09": true,
+    "module_11": true
+  },
+  "output_files": {
+    "generated": 11,
+    "expected": 11
+  },
+  "consumption_records": {
+    "execution": 11,
+    "type_connection": 3,
+    "dynamic": 3,
+    "static": 3,
+    "anchor": 3
+  },
+  "source_traceability": {
+    "type_connection": true,
+    "dynamic": true,
+    "static": true,
+    "anchor": true
+  },
+  "conclusion": "CLOSED"
+}
+

@@ -1,0 +1,57 @@
+{
+  "change_id": "CHG-20260819-library-title-normalization",
+  "recorded_at_utc": "2026-08-19T00:00:00Z",
+  "purpose": "仅规范原始资料/资料库.txt 中板块129至154的标题标识，使其与既有资料库绑定的 locator 格式精确一致。",
+  "planned_changes": [
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\原始资料\\资料库.txt",
+      "pre_change_sha256": "3BFF90BC342BB2FF3194CC7C1E673D4D7899D07EC091EA7873D7640144ED7CBC",
+      "change": "将26个标题从“## 板块N 标题”规范为“## N_标题”；不改动定义、指令、示例、调用标签或其他资料内容。"
+    }
+  ],
+  "read_evidence": [
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\AGENTS.md",
+      "sha256": "C11AF4A79DBE8DB7A0CCA440FB2D103671332A57FF76329F615BBEB288104DB6",
+      "conclusion": "原始资料可仅在受控写回、记录前态哈希并回读校验的条件下修改。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\创作资料全量调取修补主计划.md",
+      "sha256": "251E39B265723FC46F89B2A5B456F2BF0A55912F5D5C6626DC37FE21656034F1",
+      "conclusion": "资料库对象需要可精确定位；写回必须保留前后哈希和回读核对。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\全量资料模型受控改进最新版方案.md",
+      "sha256": "7D825ED63B18152085E105E1664778197F7522CBB5BC0BE4DCF0AD3B493AE3C8",
+      "conclusion": "字段级、可回读的资料修补可写回原始资料，不得补造事实。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\修补状态.json",
+      "sha256": "54D6DA6C26CEBD2E0434C35D816B09C4ED85C0DDDF5B73C666DFB537CAF3F86A",
+      "conclusion": "允许受控写回原始资料；不得改变采用、场景、正文或发布状态。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\来源完整性修复\\20260818-library-locator\\全绑定来源完整性审计报告.资料库定位修复.json",
+      "conclusion": "修复后资料库568条绑定全部可定位，原先26条定位失败已解除。"
+    }
+  ],
+  "confirmed_facts": [
+    "资料库原文第45040至45830行的26个标题使用“板块N 空格 标题”格式。",
+    "历史绑定定位器使用“N_标题”格式。",
+    "本次修改只替换标题前缀，不改变任何资料语义内容。"
+  ],
+  "unconfirmed_facts": [],
+  "conflicts": [],
+  "authorization_boundary": {
+    "does_not_change": [
+      "创作流程",
+      "场景",
+      "正文",
+      "项目采用",
+      "发布状态",
+      "配置",
+      "脚本",
+      "类型连接及其他原始资料"
+    ]
+  }
+}

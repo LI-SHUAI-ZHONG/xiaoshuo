@@ -1,0 +1,18 @@
+﻿{
+    "schema_version":  "quarantine-manifest-1.0",
+    "generated_at":  "2026-08-18T18:44:42.2758693Z",
+    "status":  "restored",
+    "retraction":  "此前将初始化小说项目.py判定为无用并隔离的结论已撤销。该工具虽非执行管道直接依赖，却负责新项目创作基础配置、规则索引和消费记录初始化，具有间接流程作用。",
+    "restored_at":  "2026-08-18T18:48:31.1407426Z",
+    "items":  [
+                  {
+                      "original_relative_path":  "脚本/初始化小说项目.py",
+                      "quarantined_relative_path":  "文档/隔离/2026-08-19_非当前流程工具/初始化小说项目.py",
+                      "restored_relative_path":  "脚本/初始化小说项目.py",
+                      "bytes":  6330,
+                      "sha256":  "4BA8CDD6A1C27D2E3A88609D583B3616D8C91D22968C06C6C6A5486D85F4531F",
+                      "classification":  "restored_project_initialization_tool",
+                      "reason":  "新项目创作基础设施初始化工具"
+                  }
+              ]
+}

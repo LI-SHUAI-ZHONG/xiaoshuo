@@ -1,0 +1,980 @@
+{
+  "schema_version": "strict-quarantine-classification-report-1.0",
+  "generated_at": "2026-08-13T00:26:24.523897+00:00",
+  "scope": "read_only_classification_of_existing_strict_quarantines",
+  "input_archive": "文档/证据/严格资料升级/严格资料升级档案.jsonl",
+  "quarantined_record_count": 7235,
+  "category_count": 5,
+  "prose_write_allowed": false,
+  "formal_fact_eligible": false,
+  "source_status_modified": false,
+  "project_confirmation_modified": false,
+  "categories": [
+    {
+      "category_id": "candidate_identity_missing",
+      "category_label": "候选且对象标识缺失",
+      "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+      "count": 2100,
+      "source_kind_counts": {
+        "类型连接": 2100
+      },
+      "samples": [
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05479",
+          "consumption_id": "PC-05479",
+          "binding_id": "TB-09178",
+          "source_id": "类型静态搭配库.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[1]",
+          "source_ref_sha256": "5795de1282ec39e84e7ae513acea462c6f42d0af447e5a6a53e92ddf66515676",
+          "source_item_sha256": "83e784c673baf3ad3cb83cc88f97a1c3eb09df28140670153857e851cb444873",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05480",
+          "consumption_id": "PC-05480",
+          "binding_id": "TB-09179",
+          "source_id": "类型静态搭配库.json:2",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[2]",
+          "source_ref_sha256": "e497f06c7c7c4a41c6d845bf817041b0a3eb34cfe2f064d02e3a2e60290eddf6",
+          "source_item_sha256": "85bb863e1709495e69579c261618d8e13b43b10e3d1b9fa731afc573c6ffce47",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05481",
+          "consumption_id": "PC-05481",
+          "binding_id": "TB-09180",
+          "source_id": "类型静态搭配库.json:3",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[3]",
+          "source_ref_sha256": "d843a444877ef13d6a7f42959a02acba47d4202b286a387a51091422a5c12010",
+          "source_item_sha256": "0a482f8ba0fba124f3181c8009e3b33adb25c77a484bfeb703f6ead07d88191d",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05482",
+          "consumption_id": "PC-05482",
+          "binding_id": "TB-09181",
+          "source_id": "类型静态搭配库.json:4",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[4]",
+          "source_ref_sha256": "75618b459532ae64e296b6677765f0734999fb40d5366ed080c118056c9beb52",
+          "source_item_sha256": "244f8871bfbf98d88c4b8488e2d560d17cc9d9a18b753ec486f94b95a1c7f3f9",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05483",
+          "consumption_id": "PC-05483",
+          "binding_id": "TB-09182",
+          "source_id": "类型静态搭配库.json:5",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[5]",
+          "source_ref_sha256": "c45ed6a6a974c6aae7329cfd973f697282752e26b4feb7fb5a08edd7785be66e",
+          "source_item_sha256": "3a8c66f2456d15cd8304ba71da878bdf5c949afd45b0f337d6f9ebd806d087c9",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05484",
+          "consumption_id": "PC-05484",
+          "binding_id": "TB-09183",
+          "source_id": "类型静态搭配库.json:6",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[6]",
+          "source_ref_sha256": "d0c39143eb79266dabaabf2fbd8c62f8c789b55b99649fe335ba471b12d255f4",
+          "source_item_sha256": "67011ded2876df0c4511843b9a6d8ee0ea3b92f5ed5c0bc78227bdd0802bc42a",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05485",
+          "consumption_id": "PC-05485",
+          "binding_id": "TB-09184",
+          "source_id": "类型静态搭配库.json:7",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[7]",
+          "source_ref_sha256": "f3151cbd724ee83252d6a12d3806c21b675f0d5fbdbfb2e17bebc9cb2f51ca9d",
+          "source_item_sha256": "331198be26e86b9ca549c2b8e093ac4868ee9ee8edd47b787219023abceff7d7",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05486",
+          "consumption_id": "PC-05486",
+          "binding_id": "TB-09185",
+          "source_id": "类型静态搭配库.json:8",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[8]",
+          "source_ref_sha256": "29980d91a789caf5c02e64b8b1b1c29345cef0fe4ae1152f5d3004042f9760db",
+          "source_item_sha256": "bbaa03fe477b201998a57dd8d46bc28be72b810005da1fb4ad232844dbeb9ea0",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05487",
+          "consumption_id": "PC-05487",
+          "binding_id": "TB-09186",
+          "source_id": "类型静态搭配库.json:9",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[9]",
+          "source_ref_sha256": "32adbb0bd400f2299ccb13999861e4bc9a67b0e3ca2b25dd70e4fd52539ed54d",
+          "source_item_sha256": "2e735b4dc8678caf854daf43cd8b75a33640d72ac6ebdeb559401a73cd5d8d91",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_identity_missing",
+          "category_label": "候选且对象标识缺失",
+          "required_disposition": "candidate source must be replaced or explicitly confirmed; add a stable object identifier before any re-audit",
+          "upgrade_id": "SU-PC-05488",
+          "consumption_id": "PC-05488",
+          "binding_id": "TB-09187",
+          "source_id": "类型静态搭配库.json:10",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态搭配库.json[10]",
+          "source_ref_sha256": "fcc604fc3279b8b537f250bca6837b7c99ace57dff8f368135cab3990f281e9b",
+          "source_item_sha256": "45f0ecb888b0516300fe9411e36966e3ab4bd9aa8ee831ac1cf0826a69047e75",
+          "errors": [
+            "来源对象状态为 candidate",
+            "类型连接对象缺少可核验标识"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        }
+      ]
+    },
+    {
+      "category_id": "candidate_requires_project_confirmation",
+      "category_label": "候选状态",
+      "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+      "count": 2106,
+      "source_kind_counts": {
+        "类型系统来源块": 6,
+        "类型连接": 2100
+      },
+      "samples": [
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-01895",
+          "consumption_id": "PC-01895",
+          "binding_id": "TB-05594",
+          "source_id": "TYPE-SOURCE:56",
+          "source_kind": "类型系统来源块",
+          "source_ref": "原始资料/类型系统.txt:SOURCE[56]",
+          "source_ref_sha256": "372a7bc22dc7089d8d380a98fe89674f073d80a813de902bce252cb89f7e79d7",
+          "source_item_sha256": "a5807c050943be9df91d4a87bfaa1cffcf726c99afad64f8f81caa28256fe186",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02168",
+          "consumption_id": "PC-02168",
+          "binding_id": "TB-05867",
+          "source_id": "TYPE-SOURCE:329",
+          "source_kind": "类型系统来源块",
+          "source_ref": "原始资料/类型系统.txt:SOURCE[329]",
+          "source_ref_sha256": "4ca5c7c19f2d8edee40aad9c2817d8ef3a3eeb9edfa7c0f4a3a4450a1724b5a0",
+          "source_item_sha256": "0e08d4beb5bacd6e72abd025d167d8a1a03e62150384917ab552607f540584bd",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02170",
+          "consumption_id": "PC-02170",
+          "binding_id": "TB-05869",
+          "source_id": "TYPE-SOURCE:331",
+          "source_kind": "类型系统来源块",
+          "source_ref": "原始资料/类型系统.txt:SOURCE[331]",
+          "source_ref_sha256": "ce1dfd90a44fd20508d1915ba26cc06bf2a186c06d03e649a359340c63aad2dd",
+          "source_item_sha256": "4e87d6468b22e02b022f1f5c69a75698fac32f6710a4a9c9b6a854c7007618da",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02173",
+          "consumption_id": "PC-02173",
+          "binding_id": "TB-05872",
+          "source_id": "TYPE-SOURCE:334",
+          "source_kind": "类型系统来源块",
+          "source_ref": "原始资料/类型系统.txt:SOURCE[334]",
+          "source_ref_sha256": "1c80153ab13531698494e478b0fb2700ad5e2659ed5ee7e4f4f883b081d4581b",
+          "source_item_sha256": "ec5166d4df86dd0ead9c0b2b4d0aa9e019b9a104bd98df4e5cdb4612732087f7",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02175",
+          "consumption_id": "PC-02175",
+          "binding_id": "TB-05874",
+          "source_id": "TYPE-SOURCE:336",
+          "source_kind": "类型系统来源块",
+          "source_ref": "原始资料/类型系统.txt:SOURCE[336]",
+          "source_ref_sha256": "b2c2e5f23086fa4f459bd9d1243b2645bece6821859620e29395b6279573bc18",
+          "source_item_sha256": "c1bc9af4b91bc3e41850a8b12de835e1d7b2f6d7b4539a506140e16a912baf22",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02288",
+          "consumption_id": "PC-02288",
+          "binding_id": "TB-05987",
+          "source_id": "TYPE-SOURCE:449",
+          "source_kind": "类型系统来源块",
+          "source_ref": "原始资料/类型系统.txt:SOURCE[449]",
+          "source_ref_sha256": "b08f046c34e111453f507aa22073ab092efdfaa9732f22589674e1f7b210550e",
+          "source_item_sha256": "78ce19ea3de4fd564a276a19dcfa3add96bbbea08fabc8584cff997e63a01565",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02289",
+          "consumption_id": "PC-02289",
+          "binding_id": "TB-05988",
+          "source_id": "DYNAMIC_COMBO_GENRE_XIANXIA_0001",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[1]",
+          "source_ref_sha256": "1910f4e273ed1df671f58ff1f429dfbcafc5dd48e618cb427f827e32884edffa",
+          "source_item_sha256": "700174884cd0da1693a919ebb142591ccc4b10ff86dcb1d11cacdb1c4a740f81",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02290",
+          "consumption_id": "PC-02290",
+          "binding_id": "TB-05989",
+          "source_id": "DYNAMIC_COMBO_GENRE_XIANXIA_0002",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[2]",
+          "source_ref_sha256": "6a91049cc5af24c3e21abb0626fbb0abd93cf347d9720375cd8bc1ea57527ff0",
+          "source_item_sha256": "467190974c0514347caabf335b654b439150b34e8e60fb41e385dbff1da4bd1d",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02291",
+          "consumption_id": "PC-02291",
+          "binding_id": "TB-05990",
+          "source_id": "DYNAMIC_COMBO_GENRE_XIANXIA_0003",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[3]",
+          "source_ref_sha256": "bbe558c4edc50e39c97bd17b115aedd5b1971ee3fe642bcc69fa95952e8b6be1",
+          "source_item_sha256": "80cbf6f71705073ce4ded6b9fa1ef69a465fbf42a5b4c707b69e64b70ce6f48a",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "candidate_requires_project_confirmation",
+          "category_label": "候选状态",
+          "required_disposition": "candidate source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-02292",
+          "consumption_id": "PC-02292",
+          "binding_id": "TB-05991",
+          "source_id": "DYNAMIC_COMBO_GENRE_XIANXIA_0004",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型动态搭配库.json[4]",
+          "source_ref_sha256": "bfb18ee76281db99ded82f6d3518fdc60a8f6adec728934a60d1e8639c2bed1d",
+          "source_item_sha256": "6efedd2e2efc6478d6910efa6c11597ce554136ab0b6e67082d5f2b8e7e138c5",
+          "errors": [
+            "来源对象状态为 candidate"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        }
+      ]
+    },
+    {
+      "category_id": "locator_invalid_or_out_of_range",
+      "category_label": "定位无效或越界",
+      "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+      "count": 23,
+      "source_kind_counts": {
+        "类型连接": 23
+      },
+      "samples": [
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-07579",
+          "consumption_id": "PC-07579",
+          "binding_id": "TB-11278",
+          "source_id": "{'type': 'string', 'format': 'TSC_XXXXXX', 'description': '类型静态连接唯一标识'}",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型静态连接字段说明.json[1]",
+          "source_ref_sha256": "d24cb6ee113df5c8ed94503eb6c0e021d876117b28d20f1cd12812b604371982",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09625",
+          "consumption_id": "PC-09625",
+          "binding_id": "TB-13324",
+          "source_id": "类型连接枚举.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型连接枚举.json[1]",
+          "source_ref_sha256": "6ec150a93f381716adaa8aca31b6ecd32fba2af6de03afa323a87dc5acfc5149",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09626",
+          "consumption_id": "PC-09626",
+          "binding_id": "TB-13325",
+          "source_id": "类型连接验证规则.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型连接验证规则.json[1]",
+          "source_ref_sha256": "52ef9b09512e2c19eff1bd247dfaf574dcd7a0a4981ddbd14886218eed738724",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09627",
+          "consumption_id": "PC-09627",
+          "binding_id": "TB-13326",
+          "source_id": "类型组合约束.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型组合约束.json[1]",
+          "source_ref_sha256": "ea1cfeb089808496a1f2ea5ddc534bf7405473efb269cceacd82f356c014eb70",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09628",
+          "consumption_id": "PC-09628",
+          "binding_id": "TB-13327",
+          "source_id": "作品表达连接搭配库.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:作品表达连接搭配库.json[1]",
+          "source_ref_sha256": "912d81913671665a6d92aec6f3442b06965f020e041df855d0e193cadbc3e467",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09629",
+          "consumption_id": "PC-09629",
+          "binding_id": "TB-13328",
+          "source_id": "作品场景连接搭配库.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:作品场景连接搭配库.json[1]",
+          "source_ref_sha256": "d35729a5f80e14a246f74ef51b7da2c9c9f04d030ec97fb0a37b0ecd0ff3a062",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09630",
+          "consumption_id": "PC-09630",
+          "binding_id": "TB-13329",
+          "source_id": "作品场景模式库.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:作品场景模式库.json[1]",
+          "source_ref_sha256": "efc834219eeada34893491f782f286bc4c1bdf2b43d93e230c236408e6cae2a8",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09631",
+          "consumption_id": "PC-09631",
+          "binding_id": "TB-13330",
+          "source_id": "作品动态连接搭配库.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:作品动态连接搭配库.json[1]",
+          "source_ref_sha256": "6db393e0ecbca37cdbf48e06dbce8afd4d1a8510c1279485afb3fe2feb19a3b4",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09632",
+          "consumption_id": "PC-09632",
+          "binding_id": "TB-13331",
+          "source_id": "作品动态模式库.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:作品动态模式库.json[1]",
+          "source_ref_sha256": "762761ed6657c1ab32f02ae606e979258ce00084bdfaf1b542cced857f9298d3",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "locator_invalid_or_out_of_range",
+          "category_label": "定位无效或越界",
+          "required_disposition": "repair only with an exact source locator and object-identity proof, then re-audit",
+          "upgrade_id": "SU-PC-09633",
+          "consumption_id": "PC-09633",
+          "binding_id": "TB-13332",
+          "source_id": "作品动态模式验证规则.json:1",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:作品动态模式验证规则.json[1]",
+          "source_ref_sha256": "cd6f3bcd3e0d7d6d2ed2c42d89e4d1a709335e4bcf0ab23b5f90e2e1bed737f0",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 文本数组或下标无效"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        }
+      ]
+    },
+    {
+      "category_id": "object_boundary_missing",
+      "category_label": "对象边界缺失",
+      "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+      "count": 15,
+      "source_kind_counts": {
+        "类型系统": 15
+      },
+      "samples": [
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01825",
+          "consumption_id": "PC-01825",
+          "binding_id": "TB-05524",
+          "source_id": "二次元",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1953, 2581, 2582, 2588, 10976, 10977, 10985, 626634]}",
+          "source_ref_sha256": "b381511bd46a7810cd7e6c282a1cc1e61365dd68c7f71183f08cfcd279b35451",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01826",
+          "consumption_id": "PC-01826",
+          "binding_id": "TB-05525",
+          "source_id": "仙侠",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1655, 1881, 2049, 2055, 2167, 2168, 3626, 3627, 3635, 3651, 3652, 3660, 4001, 4002, 4010, 4026, 4027, 4035, 4051, 4052]}",
+          "source_ref_sha256": "f2e715be60776684d83435a54ac3f55ddf2a531fef5904643855526b1cf16baf",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01827",
+          "consumption_id": "PC-01827",
+          "binding_id": "TB-05526",
+          "source_id": "体育",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1929, 2061, 2443, 2444, 2450, 5876, 5877, 5885, 8951, 8952, 8960, 10226, 10227, 10235, 16524, 16525, 16531, 17007, 17008, 17014]}",
+          "source_ref_sha256": "bc63a2abda607c26b9c0c821143121052f19692237c28bb2e432968b4e10f3b1",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01828",
+          "consumption_id": "PC-01828",
+          "binding_id": "TB-05527",
+          "source_id": "军事",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1897, 2259, 2260, 2266, 6576, 6577, 6585, 6626, 6627, 6635, 6651, 6652, 6660, 6676, 6677, 6685, 6701, 6702, 6710, 6726]}",
+          "source_ref_sha256": "0b9c03315f82b1458b01b67875d0bbbaca11686e7fb48bc1927f808f37868dcb",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01829",
+          "consumption_id": "PC-01829",
+          "binding_id": "TB-05528",
+          "source_id": "历史",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [317, 1780, 1781, 1783, 1794, 1796, 1807, 1818, 1893, 2236, 2237, 2243, 2519, 4926, 4927, 4935, 5976, 5977, 5985, 6001]}",
+          "source_ref_sha256": "12ad7c7102d29a9d97346fad2ce75abcab4471d871dab2d61b76de01df60bff6",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01830",
+          "consumption_id": "PC-01830",
+          "binding_id": "TB-05529",
+          "source_id": "同人",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1961, 2627, 2628, 5101, 5102, 5110, 11476, 11477, 11485, 11501, 11502, 11510, 11526, 11527, 11535, 11551, 11552, 11560, 15375, 15376]}",
+          "source_ref_sha256": "9acce9a4977652a36273c33e70a1349750c23c209a74c118dc45a558b25b2065",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01831",
+          "consumption_id": "PC-01831",
+          "binding_id": "TB-05530",
+          "source_id": "悬疑",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [79, 1482, 1695, 1696, 1708, 1710, 1711, 1722, 1732, 1738, 1739, 1751, 1753, 1764, 1774, 1905, 2058, 2305, 2306, 2903]}",
+          "source_ref_sha256": "9645dee7526fb6def9abfb09c077ee17bed1e22b08ac101f77d4b0064479ff3c",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01832",
+          "consumption_id": "PC-01832",
+          "binding_id": "TB-05531",
+          "source_id": "游戏",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1921, 2061, 2397, 2398, 2404, 7226, 7227, 7235, 8476, 8477, 8485, 8501, 8502, 8510, 8526, 8527, 8535, 11526, 11527, 11535]}",
+          "source_ref_sha256": "3de52c1a4cff27179446814c8840586f86eff204d3c4ba2333f680fa0cd41a22",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01833",
+          "consumption_id": "PC-01833",
+          "binding_id": "TB-05532",
+          "source_id": "灵异",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1913, 2058, 2351, 2352, 2358, 5701, 5702, 5710, 8026, 8027, 8035, 8051, 8052, 8060, 8076, 8077, 8085, 8226, 8227, 8235]}",
+          "source_ref_sha256": "03cfc9a373139f9afbf74bb49d629c564a58daa6c95a9eb46a84ce645089464e",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "object_boundary_missing",
+          "category_label": "对象边界缺失",
+          "required_disposition": "define one exact source object boundary with stable locator and object hash, then re-audit",
+          "upgrade_id": "SU-PC-01834",
+          "consumption_id": "PC-01834",
+          "binding_id": "TB-05533",
+          "source_id": "玄幻",
+          "source_kind": "类型系统",
+          "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1824, 1825, 1837, 1839, 1850, 1860, 1873, 2049, 2052, 2121, 2122, 2926, 2927, 2935, 2976, 2977, 2985, 3351, 3352, 3360]}",
+          "source_ref_sha256": "520c6e31897c489b045f85a58c36f22202c95d00e075519ebdd5c9953959ffdd",
+          "source_item_sha256": null,
+          "errors": [
+            "source_ref 不具备可精确回读的受控定位格式"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        }
+      ]
+    },
+    {
+      "category_id": "pending_requires_project_confirmation",
+      "category_label": "待定状态",
+      "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+      "count": 2991,
+      "source_kind_counts": {
+        "类型连接": 2991
+      },
+      "samples": [
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04389",
+          "consumption_id": "PC-04389",
+          "binding_id": "TB-08088",
+          "source_id": "TSC_002761",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[1]",
+          "source_ref_sha256": "7b5129336e59ea61f248bcfa5d2340abcc1552a947ba3461bbe72d7b8feb506b",
+          "source_item_sha256": "c441fe53a4f949fbd3d623567b0f68e5919dc13f8573d59790816987e73a8992",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04390",
+          "consumption_id": "PC-04390",
+          "binding_id": "TB-08089",
+          "source_id": "TSC_002762",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[2]",
+          "source_ref_sha256": "7dad07a803e84471f918657fd36db75f8f5122cdbc38834410ac15708d35018d",
+          "source_item_sha256": "8195a9fe5f0b4af503ed9ccf178131e28fe62318a7460d4d6ccf674aa90db053",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04391",
+          "consumption_id": "PC-04391",
+          "binding_id": "TB-08090",
+          "source_id": "TSC_002763",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[3]",
+          "source_ref_sha256": "f168c13797346335eeba899369f330793377cf3f7aff803e63c82c1c705c074a",
+          "source_item_sha256": "dfad4071797f96437674a8f013a567307305ed273ac08290d20397b29d1deb67",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04392",
+          "consumption_id": "PC-04392",
+          "binding_id": "TB-08091",
+          "source_id": "TSC_002764",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[4]",
+          "source_ref_sha256": "bde37e218dd7447af5010e4dde88eb2193e2ecb1730a22af4b3909c7eed5d47a",
+          "source_item_sha256": "5e1e7c555d70d6e0acdc454f24cec0edc622accde3e45038cabb1e28e0bdb01f",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04393",
+          "consumption_id": "PC-04393",
+          "binding_id": "TB-08092",
+          "source_id": "TSC_002765",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[5]",
+          "source_ref_sha256": "a19e4c98856f1828d6105f8807e99fe409aea40b5c6d98a6dbf05c68b3ba1fbd",
+          "source_item_sha256": "a602414bbeca5c87827ea2891d67ed64cc2e0f06523757c773c45d55030771a8",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04394",
+          "consumption_id": "PC-04394",
+          "binding_id": "TB-08093",
+          "source_id": "TSC_002766",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[6]",
+          "source_ref_sha256": "c93759bf852d0f08c9d530e14c57bd5d90f8e316af6fd79d5689812d391f8a26",
+          "source_item_sha256": "5dc5511d83749beeca19fb0c239fd3b21761eff03d5711bd0e493af341854044",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04395",
+          "consumption_id": "PC-04395",
+          "binding_id": "TB-08094",
+          "source_id": "TSC_002767",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[7]",
+          "source_ref_sha256": "ab378d784bf2136461970605a196ecbfe51b2861694130b31ab0e586d713ed35",
+          "source_item_sha256": "3548f3855cfbf2e4ef05ec78e7f88bae7c5e7e27b8286ac1f32187e79bed3dbf",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04396",
+          "consumption_id": "PC-04396",
+          "binding_id": "TB-08095",
+          "source_id": "TSC_002768",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[8]",
+          "source_ref_sha256": "3c75c53b4d4c59fd46bb99ff803c12a5a762418bc43e1c6f7416c832b6f4b732",
+          "source_item_sha256": "cbd1973980c6cc44096889d61bed2775bae011a83182de60b463ac662f8301bb",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04397",
+          "consumption_id": "PC-04397",
+          "binding_id": "TB-08096",
+          "source_id": "TSC_002769",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[9]",
+          "source_ref_sha256": "31691bfe9c50e7dc9b94615b2925476dca6cc1cb4174f840ac31b93d907b3276",
+          "source_item_sha256": "3a4dc4d16d96265833db7978d40236098f5dbff8867e5adc27b1b5580bf69418",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        },
+        {
+          "category_id": "pending_requires_project_confirmation",
+          "category_label": "待定状态",
+          "required_disposition": "pending source requires explicit project-level confirmation or replacement; it must remain quarantined",
+          "upgrade_id": "SU-PC-04398",
+          "consumption_id": "PC-04398",
+          "binding_id": "TB-08097",
+          "source_id": "TSC_002770",
+          "source_kind": "类型连接",
+          "source_ref": "原始资料/类型连接.txt:类型伏笔静态连接.json[10]",
+          "source_ref_sha256": "17038c4e0fb3ed1a5f42ef291b49dd254ee478b23a036c76197a8a1b19db1420",
+          "source_item_sha256": "b781348c7543ddb8d279185a1e0a5ffbb84e7bb04eb4182fb7df74bece4ef174",
+          "errors": [
+            "来源对象状态为 pending"
+          ],
+          "prose_write_allowed": false,
+          "formal_fact_eligible": false
+        }
+      ]
+    }
+  ]
+}

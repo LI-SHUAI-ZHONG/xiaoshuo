@@ -1,0 +1,238 @@
+{
+  "schema_version": "source-depth-check-1.0",
+  "generated_at": "2026-08-13T04:59:38.723060+00:00",
+  "sources": [
+    {
+      "source": "资料库.txt",
+      "total_items": 542,
+      "extractable": 542,
+      "not_extractable": 0,
+      "missing_fields": [
+        "dependencies",
+        "examples"
+      ],
+      "placeholder_count": 5126,
+      "status": "partial",
+      "line_count": 46668,
+      "sha256": "1fa20a116003cf356d797a7aae73586e3ffd42fa5459f3c1f81358170267383e",
+      "indexed_items": 590,
+      "indexed_missing_dependencies": 173,
+      "indexed_missing_examples": 165,
+      "components": {
+        "expected": [
+          "文档/资料库索引.jsonl",
+          "文档/证据/采用规则.json",
+          "文档/证据/资料库依赖分类日志.jsonl",
+          "文档/证据/资料库示例修复日志.jsonl"
+        ],
+        "present": [
+          "文档/资料库索引.jsonl",
+          "文档/证据/采用规则.json",
+          "文档/证据/资料库依赖分类日志.jsonl",
+          "文档/证据/资料库示例修复日志.jsonl"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "类型系统.txt",
+      "total_items": 15,
+      "extractable": 15,
+      "not_extractable": 0,
+      "missing_fields": [
+        "core_elements",
+        "reader_params",
+        "style_constraints"
+      ],
+      "placeholder_count": 2620,
+      "status": "partial",
+      "line_count": 626701,
+      "sha256": "e9ea89fd332d75fddb176c4de59bf7af52b3f5716aef3f05819bafecebfd0bb3",
+      "type_names": [
+        "二次元",
+        "仙侠",
+        "体育",
+        "军事",
+        "历史",
+        "同人",
+        "悬疑",
+        "游戏",
+        "灵异",
+        "玄幻",
+        "科幻",
+        "耽美",
+        "言情",
+        "轻小说",
+        "都市"
+      ],
+      "complete_profiles": 15,
+      "source_type_tokens": 47,
+      "components": {
+        "expected": [
+          "配置/类型配置模板.json"
+        ],
+        "present": [
+          "配置/类型配置模板.json"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "类型连接.txt",
+      "total_items": 2100,
+      "extractable": 2100,
+      "not_extractable": 0,
+      "missing_fields": [
+        "conflict_details",
+        "recommended_mechanism_explanation",
+        "source_connection_id"
+      ],
+      "placeholder_count": 5991,
+      "status": "partial",
+      "line_count": 502097,
+      "sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "unique_ids": 2100,
+      "conflict_records": 1,
+      "recommendation_records": 4231,
+      "source_index_count": 55,
+      "components": {
+        "expected": [
+          "文档/证据/类型连接全局索引.json",
+          "文档/证据/类型连接规则.json",
+          "文档/证据/类型连接采用结构.json",
+          "文档/证据/类型连接采用.jsonl"
+        ],
+        "present": [
+          "文档/证据/类型连接全局索引.json",
+          "文档/证据/类型连接规则.json",
+          "文档/证据/类型连接采用结构.json",
+          "文档/证据/类型连接采用.jsonl"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "动态网络.txt",
+      "total_items": 1824,
+      "extractable": 1824,
+      "not_extractable": 0,
+      "missing_fields": [],
+      "placeholder_count": 22,
+      "status": "partial",
+      "line_count": 95415,
+      "sha256": "6210e0b720a66d1369811632d7fa35b531aa52f180afc881774a9e50b8e29351",
+      "nonempty_condition": 3165,
+      "nonempty_effect": 3165,
+      "indexed_items": 414,
+      "state_layers": {
+        "original": 4131,
+        "derived": 2682,
+        "candidate": 0,
+        "reconstructed": 0
+      },
+      "components": {
+        "expected": [
+          "网络完整数据/动态连接完整数据.json",
+          "文档/证据/动态链索引.jsonl",
+          "文档/证据/动态链消费规则.json",
+          "文档/证据/动态链消费.jsonl",
+          "文档/证据/动态网络状态摘要.json"
+        ],
+        "present": [
+          "网络完整数据/动态连接完整数据.json",
+          "文档/证据/动态链索引.jsonl",
+          "文档/证据/动态链消费规则.json",
+          "文档/证据/动态链消费.jsonl",
+          "文档/证据/动态网络状态摘要.json"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "静态网络.txt",
+      "total_items": 1341,
+      "extractable": 1341,
+      "not_extractable": 0,
+      "missing_fields": [],
+      "placeholder_count": 19,
+      "status": "partial",
+      "line_count": 23652,
+      "sha256": "21b25fa76405e67428367cd7aec3e2176f1a4a01b259daaae82b58c6f3fc72c9",
+      "indexed_edges": 1341,
+      "source_blocks": 1,
+      "bound_target_type_count": 0,
+      "mainline_mark_count": 1378,
+      "runtime_source": "网络完整数据/静态连接完整数据.json",
+      "components": {
+        "expected": [
+          "文档/证据/静态网络索引.json",
+          "文档/证据/静态连接采用规则.json",
+          "文档/证据/静态连接消费.jsonl"
+        ],
+        "present": [
+          "文档/证据/静态网络索引.json",
+          "文档/证据/静态连接采用规则.json",
+          "文档/证据/静态连接消费.jsonl"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "锚点网络.txt",
+      "total_items": 1790,
+      "extractable": 1790,
+      "not_extractable": 0,
+      "missing_fields": [
+        "anchor_definition",
+        "scene_binding",
+        "text_location"
+      ],
+      "placeholder_count": 42,
+      "status": "partial",
+      "line_count": 2124,
+      "sha256": "e14382a6351d9d9183871195a644d25eaa5e37f4a8d659732f45963e9ed1b8b8",
+      "unique_ids": 1790,
+      "category_extractable": 1790,
+      "category_counts": {
+        "M": 180,
+        "S": 110,
+        "P": 200,
+        "B": 160,
+        "E": 240,
+        "C": 220,
+        "T": 110,
+        "D": 150,
+        "A": 200,
+        "L": 100,
+        "ID": 60,
+        "U": 60
+      },
+      "indexed_anchors": 1680,
+      "id_format": "prefix+major.minor",
+      "components": {
+        "expected": [
+          "文档/证据/锚点分类索引.json",
+          "文档/证据/锚点采用规则.json",
+          "文档/证据/锚点消费.jsonl"
+        ],
+        "present": [
+          "文档/证据/锚点分类索引.json",
+          "文档/证据/锚点采用规则.json",
+          "文档/证据/锚点消费.jsonl"
+        ],
+        "missing": []
+      }
+    }
+  ],
+  "summary": {
+    "source_count": 6,
+    "extractable_rate": {
+      "资料库.txt": 1.0,
+      "类型系统.txt": 1.0,
+      "类型连接.txt": 1.0,
+      "动态网络.txt": 1.0,
+      "静态网络.txt": 1.0,
+      "锚点网络.txt": 1.0
+    }
+  }
+}

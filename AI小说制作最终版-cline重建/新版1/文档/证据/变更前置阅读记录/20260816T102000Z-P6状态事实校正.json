@@ -1,0 +1,79 @@
+{
+  "schema_version": "project-change-preread-1.0",
+  "change_id": "20260816T102000Z-P6-status-fact-correction",
+  "prepared_at": "2026-08-16T10:20:00Z",
+  "change_purpose": "仅校正 P6 状态文件中关于项目采用决策不存在的事实矛盾，并建立后续代理变更的前置阅读门禁。",
+  "planned_modified_paths": [
+    "D:\\AI小说制作最终版-cline重建\\新版1\\AGENTS.md",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\变更前置阅读记录\\20260816T102000Z-P6状态事实校正.json",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\回归历史\\20260816T100000Z-P6状态.json"
+  ],
+  "read_evidence": [
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\创作资料全量调取修补主计划.md",
+      "sha256_at_read": "f2f6deeb740267298eb1454f489dafe04366f54633ad90790d93c4571ee56a64",
+      "conclusion": "P6 只有全部阻断项通过且项目来源确认后才可成为 project_delivery_candidate；当前状态仍应阻断。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\全量资料模型受控改进最新版方案.md",
+      "sha256_at_read": "3b4e0c86d117614423a44aa5e366ea76ded6291a075a8751d5ec57d288966402",
+      "conclusion": "资料批次通过不等于采用、消费或发布；隔离记录不能进入下游路径。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\修补状态.json",
+      "sha256_at_read": "a133f38136ece97ea2846c9f6e9722100cb5eb068ac5a02d842f90bdcfdac53b",
+      "conclusion": "P6 已记录为 in_progress_blocked。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\回归历史\\20260816T100000Z-P6状态.json",
+      "sha256_after_correction": "e2747a94e6a374e8b28450e4d54011b951c21a2c506afa8e29d1b4df17da6ada",
+      "prechange_sha256_at_read": "not_captured_before_this_governance_record_was_created",
+      "conclusion": "包含 no_project_adoption_decision_written，与现存采用证据矛盾。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\派生资料项目采用决策.json",
+      "sha256_at_read": "9c964fd2035e6463ff49053ca9b0333f1ff4f17f5e2f536cf43bbe507d8bf634",
+      "conclusion": "存在历史采用决策，状态为 passed，但记录仅限 adopted_for_draft_only_scene_translation。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\派生资料正文消费证据.json",
+      "sha256_at_read": "b0fc24304bf6ab02c9db80328d0ab2dbc3de152de3c8b7dadb10168a407cb017",
+      "conclusion": "存在历史 draft_only 正文消费证据，不能被描述为未发生消费。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\回归历史\\20260816T061711Z-派生资料失败样本隔离.json",
+      "sha256_at_read": "6e91fec076f430ce6211b16222d05ff327cee4e540f92cbbc39df8069da1cdc4",
+      "conclusion": "7 条历史消费样本均已隔离，其中 6 条 blocked、1 条仅 passed_for_draft_only。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料升级运行\\20260816T101311Z-295bb554\\manifest.json",
+      "sha256_at_read": "24a787b07e58cb871cbca4cb54ef2ff90dcdcd83712ba307efdb75caa234922f",
+      "conclusion": "最新完整 snapshot 覆盖 13345 条，仍明确禁止正文写入和正式发布。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料升级运行\\20260816T101311Z-295bb554-异常审计\\manifest.json",
+      "sha256_at_read": "6eb4a7036d555a0c104454e97a3fbdedf2abfb77f09a115128a95ccde4a80f3b",
+      "conclusion": "39 条 quarantined 异常仍未解决，正式发布不允许。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\回归历史\\20260816T101311Z-295bb554-派生资料批次回归.json",
+      "sha256_at_read": "72b75fdea05ffa4fa75b0d08b9b6c4b5134675720894d8a4c8e2faad04c949b4",
+      "conclusion": "资料批次完整性回归通过，但报告明确 formal_release_allowed 为 false。"
+    }
+  ],
+  "confirmed_facts": [
+    "P6 状态文件中的 no_project_adoption_decision_written 不真实。",
+    "历史项目采用和正文消费仅限 draft_only，且消费失败样本已隔离。",
+    "当前 P6、项目交付候选、场景/正文消费和正式发布仍未获授权。"
+  ],
+  "unconfirmed_facts": [
+    "历史 draft_only 采用是否满足当前项目来源确认要求。",
+    "39 条隔离异常何时或是否能够修复。"
+  ],
+  "authorization_boundary": [
+    "不修改原始资料、网络数据、既有绑定、项目采用决策或正文消费证据。",
+    "不将历史 draft_only 采用升级为当前授权。",
+    "不改变 P6 阻断状态、project_delivery_candidate、场景/正文消费或正式发布状态。",
+    "不运行测试、回归、升级、采用、正文或发布任务。"
+  ]
+}

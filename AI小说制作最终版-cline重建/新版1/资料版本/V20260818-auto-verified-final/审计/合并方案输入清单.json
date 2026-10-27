@@ -1,0 +1,3652 @@
+﻿[
+    {
+        "Path":  "原始资料\\动态网络.txt",
+        "Bytes":  3488164,
+        "Sha256":  "6210E0B720A66D1369811632D7FA35B531AA52F180AFC881774A9E50B8E29351"
+    },
+    {
+        "Path":  "原始资料\\类型系统.txt",
+        "Bytes":  16785181,
+        "Sha256":  "E9EA89FD332D75FDDB176C4DE59BF7AF52B3F5716AEF3F05819BAFECEBFD0BB3"
+    },
+    {
+        "Path":  "原始资料\\类型连接.txt",
+        "Bytes":  13864095,
+        "Sha256":  "C4E9A6BE77728F234A8F8BE6EDC4D77F38E1116E5AA0E2D2C3B124532743DA58"
+    },
+    {
+        "Path":  "原始资料\\资料库.txt",
+        "Bytes":  1335562,
+        "Sha256":  "1FA20A116003CF356D797A7AAE73586E3FFD42FA5459F3C1F81358170267383E"
+    },
+    {
+        "Path":  "原始资料\\锚点网络.txt",
+        "Bytes":  144928,
+        "Sha256":  "E14382A6351D9D9183871195A644D25EAA5E37F4A8D659732F45963E9ED1B8B8"
+    },
+    {
+        "Path":  "原始资料\\静态网络.txt",
+        "Bytes":  654149,
+        "Sha256":  "21B25FA76405E67428367CD7AEC3E2176F1A4A01B259DAAAE82B58C6F3FC72C9"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\release_decision.json",
+        "Bytes":  161,
+        "Sha256":  "9AFAEFD6E54D3BA8761887203673EE3917698E1AB54824DFA253FC0ABDC9BDF7"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\完整性报告.json",
+        "Bytes":  159,
+        "Sha256":  "D3312B338560C635831A8370ED06A6603B511721258CFE13576FD6F1F053FAF0"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\事实资料\\动态网络.txt",
+        "Bytes":  3488164,
+        "Sha256":  "6210E0B720A66D1369811632D7FA35B531AA52F180AFC881774A9E50B8E29351"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\事实资料\\类型系统.txt",
+        "Bytes":  16785181,
+        "Sha256":  "E9EA89FD332D75FDDB176C4DE59BF7AF52B3F5716AEF3F05819BAFECEBFD0BB3"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\事实资料\\类型连接.txt",
+        "Bytes":  13864095,
+        "Sha256":  "C4E9A6BE77728F234A8F8BE6EDC4D77F38E1116E5AA0E2D2C3B124532743DA58"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\事实资料\\资料库.txt",
+        "Bytes":  1335562,
+        "Sha256":  "1FA20A116003CF356D797A7AAE73586E3FFD42FA5459F3C1F81358170267383E"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\事实资料\\锚点网络.txt",
+        "Bytes":  144928,
+        "Sha256":  "E14382A6351D9D9183871195A644D25EAA5E37F4A8D659732F45963E9ED1B8B8"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\事实资料\\静态网络.txt",
+        "Bytes":  654149,
+        "Sha256":  "21B25FA76405E67428367CD7AEC3E2176F1A4A01B259DAAAE82B58C6F3FC72C9"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\候选正文隔离\\candidate_prose.jsonl",
+        "Bytes":  51927,
+        "Sha256":  "D3CBBF8E48972384EACF843418FA32E3D5B0581D49B09963D189596081A52A58"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\创作增强\\causal_contracts.jsonl",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\审计\\merge_ledger.jsonl",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\审计\\冲突报告.json",
+        "Bytes":  48,
+        "Sha256":  "1DE5383A4E16A3F7B4DAB6A4C45683E8B1C42D4DAEA34019B707F9258D813170"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\审计\\原始冻结清单.json",
+        "Bytes":  1028,
+        "Sha256":  "D9577017729E2382268982B6FA668BB6CC80E833E0136CA13AD78340C766C2AA"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\审计\\原始镜像回验报告.json",
+        "Bytes":  81,
+        "Sha256":  "9A3EF151EB9FFAD4D4B0BFB580400423BDF7E0C066FBAFFC3CE8016B12DAA2E8"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\审计\\覆盖报告.json",
+        "Bytes":  223,
+        "Sha256":  "614A70AB14470A9CB9219A732250E9AEBAB18AEB544216C1EF4B1A2F24AD52BF"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\审计\\覆盖账本.jsonl",
+        "Bytes":  1839635,
+        "Sha256":  "43BAC0D98DA8F4EB7F857E2C6099A5C18B6403B1C62C414AC67758547D58BD7B"
+    },
+    {
+        "Path":  "资料版本\\V20260818-auto-verified-final\\审计\\重复报告.json",
+        "Bytes":  552,
+        "Sha256":  "931B804DD1BA011630C61CD72A586F50864F9B7B361056C9963680C42C5AE0D2"
+    },
+    {
+        "Path":  "资料索引\\多维资料索引.yaml",
+        "Bytes":  16384,
+        "Sha256":  "172F457F258B2CA0CD13DC9DE2397854BEEDCF5F28D9C26DE1C1FFB39647E3C9"
+    },
+    {
+        "Path":  "资料索引\\索引调用映射契约.json",
+        "Bytes":  2687,
+        "Sha256":  "6C8E0EB039C13D2A10568D8DF60351A12D17D1F81A8B12D039B9F7A45F195157"
+    },
+    {
+        "Path":  "资料索引\\资料网络调用路由索引.json",
+        "Bytes":  21851955,
+        "Sha256":  "74DF611679B8CD6EB9B43B1B83484F4D82A6268F57A27CE131B4B8AC35750735"
+    },
+    {
+        "Path":  "资料索引\\资料路由审计.json",
+        "Bytes":  2877,
+        "Sha256":  "67B69CFA6184F548BD0D69BF958297BFAA25F92255DE2368CD8D1DFB590A06C8"
+    },
+    {
+        "Path":  "配置\\formal_release_approval.json",
+        "Bytes":  959,
+        "Sha256":  "BB2EAAFEE3B1D03B2F2D12A0BB81A18737E1A2AF69E2B010E056442F047B1D47"
+    },
+    {
+        "Path":  "配置\\project_config.json",
+        "Bytes":  11798,
+        "Sha256":  "C979D27994FF9BE78DC5DAE8B8538C51CD5375AEAFBBBE213829FEAA707D0026"
+    },
+    {
+        "Path":  "配置\\project_source_confirmation.json",
+        "Bytes":  963,
+        "Sha256":  "6C27FCBC05F807E75C6F311E7B86B425B1FCCB83C5E26CB1393F9B25F9C73A09"
+    },
+    {
+        "Path":  "配置\\project_source_confirmation.template.json",
+        "Bytes":  702,
+        "Sha256":  "36F25364DA5FEB93CE2D5A255C36FD4CA32F7EF8FE9BEC10931A21CD5931293D"
+    },
+    {
+        "Path":  "配置\\scene_formal_creation_approval.json",
+        "Bytes":  1032,
+        "Sha256":  "93349C2FD74C663DA261DEC330CF9229E785A414E3AE1C97E31EC8ED6C398EE1"
+    },
+    {
+        "Path":  "配置\\全流程创作质量方案.json",
+        "Bytes":  2452,
+        "Sha256":  "46E86BA20522ED8ACD79626D0F531A8BC0ABDFD30119109846FB482C1C1CEAC7"
+    },
+    {
+        "Path":  "配置\\全量模型资料改进方案.json",
+        "Bytes":  5674,
+        "Sha256":  "B479AC507BBA9181F9A183640545E6C6B0632A9359A913B81A5C0D80149939C7"
+    },
+    {
+        "Path":  "配置\\全量资料输入与正文授权.jsonl",
+        "Bytes":  11205536,
+        "Sha256":  "F7989FE974F096B5AE53CA745F868B74B1578B03CF6578B7E1E24A113BB7F92A"
+    },
+    {
+        "Path":  "配置\\原版新版资料合并变更集.json",
+        "Bytes":  522,
+        "Sha256":  "B79440AF11D8E4BC2F8866992D0D2BEA9478F209EE85011BEB34B9DC67907D62"
+    },
+    {
+        "Path":  "配置\\文本生成模型.json",
+        "Bytes":  684,
+        "Sha256":  "72DF6726A8F732F02C469D01BE018F4A2A3B814EBA10BF3D2B6657F9D58D90FD"
+    },
+    {
+        "Path":  "配置\\类型配置模板.json",
+        "Bytes":  55003,
+        "Sha256":  "3080A280499365F37B23863BB63824A602700D330C8A62AE9A60DB68CC47CF68"
+    },
+    {
+        "Path":  "配置\\项目创作圣经.json",
+        "Bytes":  7693,
+        "Sha256":  "FE2ACCC98E0098C9C3FB8C42BE35709D9463793D276E921C9BEB44A391DBE791"
+    },
+    {
+        "Path":  "配置\\项目创作生产政策.json",
+        "Bytes":  4805,
+        "Sha256":  "45F209632E41821AE95174AD48BDD1BC725A82211CEE74E13C53592FE63859DB"
+    },
+    {
+        "Path":  "配置\\首章场景创作简报.json",
+        "Bytes":  2514,
+        "Sha256":  "DB28866CA084FB7C0FD3CD5594B909A957A376DC20105106BFB684DE7109C495"
+    },
+    {
+        "Path":  "脚本\\inspect_strict_smoke.ps1",
+        "Bytes":  600,
+        "Sha256":  "5E885A04C3C6A5A09C92B9EA9DA43CE08C085744A43798D8F5874FB15F6215F4"
+    },
+    {
+        "Path":  "脚本\\run_strict_smoke.py",
+        "Bytes":  1924,
+        "Sha256":  "E5C143871827C661659256CD96BB6D29B2584CD125FF062CE9B5D6C33769EACB"
+    },
+    {
+        "Path":  "脚本\\start_strict_smoke_background.ps1",
+        "Bytes":  339,
+        "Sha256":  "153D9B1B6B82F3BB858198488DC5E845A3CD9B84EB00EEC6FFA219A42B7168C0"
+    },
+    {
+        "Path":  "脚本\\stop_strict_smoke.ps1",
+        "Bytes":  868,
+        "Sha256":  "54F7D4D8C86EAEB3AC7F016EC23B66413E3EBE54D5FA4C26047AB3611C67DB52"
+    },
+    {
+        "Path":  "脚本\\stop_strict_smoke.py",
+        "Bytes":  1438,
+        "Sha256":  "E6B34241A66C07DC862F3447E88524513EDD1658E4E52A8D79655C64EC45DBEE"
+    },
+    {
+        "Path":  "脚本\\stop_strict_smoke_ascii.ps1",
+        "Bytes":  170,
+        "Sha256":  "D0749F891A8336B145B81605EE4D13452BFB7C25E8D026DE23FEBC8971957142"
+    },
+    {
+        "Path":  "脚本\\strict-smoke-process.json",
+        "Bytes":  345,
+        "Sha256":  "1742BAA1D770D547B53C2A1D9A61951AA7CC1868372346179C5106C77EAC7383"
+    },
+    {
+        "Path":  "脚本\\strict-smoke.pid",
+        "Bytes":  7,
+        "Sha256":  "9ED83B651140AA5BA49138292000FAADD4258F5803C3A15738F72BD662255FC9"
+    },
+    {
+        "Path":  "脚本\\test_三章金样本闸门.py",
+        "Bytes":  2552,
+        "Sha256":  "4C984C346264BA6D5D4BB68481A63414B917B1DD81D1F28D6FA69A7F510F5652"
+    },
+    {
+        "Path":  "脚本\\test_严格全量资料升级最终审核.py",
+        "Bytes":  7154,
+        "Sha256":  "4FC18A77D36033108D38E57A34B6E278B55C44759896212F993E4339C5306631"
+    },
+    {
+        "Path":  "脚本\\test_严格全量资料连续编排.py",
+        "Bytes":  12223,
+        "Sha256":  "5891D14C89171326DB398FD9644A52052BE4686E8CFDCA24237953C4A1F08556"
+    },
+    {
+        "Path":  "脚本\\test_严格隔离内容分流.py",
+        "Bytes":  1664,
+        "Sha256":  "F9566CD425281BA14E0862D4AF6D4653AC57B7ADC9BA6AEB564424AE8FCE09D2"
+    },
+    {
+        "Path":  "脚本\\test_严格隔离内容处置画像.py",
+        "Bytes":  825,
+        "Sha256":  "BD16C617C59226739C170AAA5F3619A5339873783C457665BA72F4F6041492DC"
+    },
+    {
+        "Path":  "脚本\\test_严格隔离分类报告.py",
+        "Bytes":  983,
+        "Sha256":  "2F1F294123E2B6ACAAF5DD6E6E5FA66E55A6B1BB43ED54DFB382807372A6D7D2"
+    },
+    {
+        "Path":  "脚本\\test_严格隔离可恢复性评估.py",
+        "Bytes":  816,
+        "Sha256":  "5D2CFD59D7CA4D8A439C03B4FD00FF6EC0279E9F729CC4D496747D65F43437CD"
+    },
+    {
+        "Path":  "脚本\\test_严格隔离替代来源方案.py",
+        "Bytes":  1615,
+        "Sha256":  "4CE7432AACA3D2AF02996D4C2233C49E0C84708BA305BB531B3DE163236952CF"
+    },
+    {
+        "Path":  "脚本\\test_严格隔离替代来源重审.py",
+        "Bytes":  2464,
+        "Sha256":  "AFC1ECE1BBB04005EE9F60D2A5C41F314C9843211F37A78F83E90A7059E58C8E"
+    },
+    {
+        "Path":  "脚本\\test_严格隔离项目确认.py",
+        "Bytes":  1975,
+        "Sha256":  "4C09EA4514BB79ACA79B9EF5D586AB5D5418D4084E6DF45E11AE8F6018D2FF7D"
+    },
+    {
+        "Path":  "脚本\\test_全流程创作质量门.py",
+        "Bytes":  5694,
+        "Sha256":  "67272450FB7BFA00D075AB7BC17E224F0D2130A81DAFDE9F62202CD534D23971"
+    },
+    {
+        "Path":  "脚本\\test_全绑定来源完整性审计.py",
+        "Bytes":  3774,
+        "Sha256":  "8977DD6FDB7AB514419FE9A6847C1634BA549A38C191D6810C0C13D9779D391A"
+    },
+    {
+        "Path":  "脚本\\test_全资料生产能力门.py",
+        "Bytes":  5043,
+        "Sha256":  "4EB7EAE7C3D6D827164DA4629194603A1A5CF67E51343C6B37CC7410260D5BF1"
+    },
+    {
+        "Path":  "脚本\\test_全量模型资料改进方案.py",
+        "Bytes":  3235,
+        "Sha256":  "735FE90F3AE8E329805D6D9E670B04729D8F27732CCD018DAE25BA33C9607730"
+    },
+    {
+        "Path":  "脚本\\test_全量资料严格隔离审计.py",
+        "Bytes":  12181,
+        "Sha256":  "A8F6909187E6AF14786BB982228A471D509970CDBCDD8A42EB0330868C69B4BE"
+    },
+    {
+        "Path":  "脚本\\test_全量资料升级审查包.py",
+        "Bytes":  2136,
+        "Sha256":  "0A92742DC49F0F579CF17BD0346D982B4C17C88B3813AFAAD1834913D056B58C"
+    },
+    {
+        "Path":  "脚本\\test_全量资料升级异常审计.py",
+        "Bytes":  1894,
+        "Sha256":  "EDEDD217E4DA474CF612FDB71C045CB96262B5A26D4A7AB6D28192FC614565D6"
+    },
+    {
+        "Path":  "脚本\\test_全量资料升级模型错误隔离.py",
+        "Bytes":  1799,
+        "Sha256":  "513C585CD58E2275F84C46AEB1E6A2C6BA1A14091103777F6156DF1FB3C0C91D"
+    },
+    {
+        "Path":  "脚本\\test_全量资料升级运行报告.py",
+        "Bytes":  1861,
+        "Sha256":  "971563E9346EE1C13812B5123FA3AA21A86B3BF99BBFDA5DD55472D2104EC082"
+    },
+    {
+        "Path":  "脚本\\test_全量资料批次正文升级.py",
+        "Bytes":  15889,
+        "Sha256":  "984A7EC15FD205EB526513FCF35B2DAF4F022630E3E97B81037DF10637AD18F5"
+    },
+    {
+        "Path":  "脚本\\test_全量资料新版构建.py",
+        "Bytes":  4961,
+        "Sha256":  "0D11835286E9C74D86A0C5474886C9CA80E8AB3D2E279D5B2865EF9FD7DC569B"
+    },
+    {
+        "Path":  "脚本\\test_全量资料正文消费验证.py",
+        "Bytes":  4197,
+        "Sha256":  "FE6B1DCAB71FCFC60204B88D3AFAEAF273C5A498D9D6B96E23F2826F6C6E5D74"
+    },
+    {
+        "Path":  "脚本\\test_全量资料类型连接身份修复.py",
+        "Bytes":  3991,
+        "Sha256":  "D09D87E1D17F576FE179B80CCFC8A855EB98DAACFE3C856C5F7A52B8E2A11A72"
+    },
+    {
+        "Path":  "脚本\\test_全量资料资料库定位修复.py",
+        "Bytes":  2219,
+        "Sha256":  "064F1DB3C82BF01EAF2F380E0493961F19C6D5274D6A2740C500EE9843D07DB9"
+    },
+    {
+        "Path":  "脚本\\test_全量资料输入与正文授权.py",
+        "Bytes":  2990,
+        "Sha256":  "EBC8A425BAB0468352951038E7D9FB89E716EF4D2DB0C7800C58F206D7E7430C"
+    },
+    {
+        "Path":  "脚本\\test_原版新版资料合并.py",
+        "Bytes":  4720,
+        "Sha256":  "B8C4A00BCCA5CE099BC253CB79B1E80615E194E170B15362E4C841976AE0BBF9"
+    },
+    {
+        "Path":  "脚本\\test_场景创作激活.py",
+        "Bytes":  12479,
+        "Sha256":  "EFA6248D55D45028CDF69F556596C2F8D54009E9EEA561AAA9BA438A4486B5DF"
+    },
+    {
+        "Path":  "脚本\\test_执行契约.py",
+        "Bytes":  17023,
+        "Sha256":  "45CD95BFB6E7E7B24A9918E04CF513B48E926EB78ABBCF7DE320573B28A13297"
+    },
+    {
+        "Path":  "脚本\\test_持续资料升级调度.py",
+        "Bytes":  1484,
+        "Sha256":  "3943198E783836D8D21F7AB32AC8F7B8CBB01A04861028E2E0D4D6FFBF49F3C6"
+    },
+    {
+        "Path":  "脚本\\test_文学审校.py",
+        "Bytes":  3927,
+        "Sha256":  "8E0AF4AC3C58F42E5F3392F2158E054EDBEB214DD47C9FFBC58E15AD476E0188"
+    },
+    {
+        "Path":  "脚本\\test_文本生成模型.py",
+        "Bytes":  2813,
+        "Sha256":  "D7D8F7D7D6F4CD1EB206E7A433B96A1B85FDF003A3B70A94DA92BCE9E92EA7BD"
+    },
+    {
+        "Path":  "脚本\\test_来源引用审计与迁移.py",
+        "Bytes":  2330,
+        "Sha256":  "78AF1E46AA71311AB4AE9B51E3C396C0CE21628212E2552047363FEA53AA0EBA"
+    },
+    {
+        "Path":  "脚本\\test_来源语义审校.py",
+        "Bytes":  2900,
+        "Sha256":  "8FBB807736AEF72FD84B8F5B77DB47667853AD40EF1DFFDEE90AC1B1F55D6777"
+    },
+    {
+        "Path":  "脚本\\test_来源质量自主分析.py",
+        "Bytes":  4373,
+        "Sha256":  "074BF5071EB85C984223AB811F105BAD735FDEE6A1FAF21F65F63491C55140AB"
+    },
+    {
+        "Path":  "脚本\\test_来源资格证据线索盘点.py",
+        "Bytes":  2840,
+        "Sha256":  "8321FC3BB27BFEFB445B83FD8E9944ADD4C7488D0D932528FCAE20DE2C3E5CB1"
+    },
+    {
+        "Path":  "脚本\\test_模型辅助来源资格评估.py",
+        "Bytes":  2898,
+        "Sha256":  "6865A2D1FFF3A0B66EFC1D54818BB024463F8C03FC3BBBD29B2382F7F7C20743"
+    },
+    {
+        "Path":  "脚本\\test_模型辅助资料改进候选.py",
+        "Bytes":  3284,
+        "Sha256":  "BA8E0B58B94E5A24A3D9BDEB32D4F63052872E894BC0B653AB8D93D6D8A991DD"
+    },
+    {
+        "Path":  "脚本\\test_派生资料失败样本隔离.py",
+        "Bytes":  2354,
+        "Sha256":  "C1400A9BB699D96F848D64BC218F62F567F1993CD03FB7795245512C5E9384DA"
+    },
+    {
+        "Path":  "脚本\\test_派生资料批次回归.py",
+        "Bytes":  5464,
+        "Sha256":  "ADB93FC1C153881915AABD6F40DD1C71F355ED30EEAB7E8ECDC7AE69EC83E386"
+    },
+    {
+        "Path":  "脚本\\test_派生资料项目采用.py",
+        "Bytes":  4603,
+        "Sha256":  "28A7D4E3E58E4A31A3824A43C1A7A9623B581D884724C9342C201724648B764F"
+    },
+    {
+        "Path":  "脚本\\test_章节质量资料就绪度门.py",
+        "Bytes":  2976,
+        "Sha256":  "6229FCCC78A20C97F53011E1596146104DD92695AD00AAE144A9B26238A09155"
+    },
+    {
+        "Path":  "脚本\\test_类型连接对象分类审计.py",
+        "Bytes":  1668,
+        "Sha256":  "EE0A5CD8FDD58B35A9C0C788F6994E2ECC86E181D75C92D65E8EC04A399BBBE1"
+    },
+    {
+        "Path":  "脚本\\test_类型连接结构对象引用审计.py",
+        "Bytes":  1710,
+        "Sha256":  "729B121EFDF71642E9EAC7F9971556A9099FD3DBF2DA24F138C7E24792DB2746"
+    },
+    {
+        "Path":  "脚本\\test_类型连接身份复核审计.py",
+        "Bytes":  1684,
+        "Sha256":  "7031D876EA39481EF20C343ED3D86A7D91420C916B675CF9B3CB88F0C0DFA9BF"
+    },
+    {
+        "Path":  "脚本\\test_项目创作生产政策.py",
+        "Bytes":  1921,
+        "Sha256":  "C7E1123A219654B299AED23B9BCB7A79B3CCE29E610D5E4595BA688AF5A32BAE"
+    },
+    {
+        "Path":  "脚本\\verify_strict_smoke.ps1",
+        "Bytes":  172,
+        "Sha256":  "2279DB9ADE94D93DB118D753A14BB6B83D49C947281464299FB174B374D629F5"
+    },
+    {
+        "Path":  "脚本\\verify_strict_smoke.py",
+        "Bytes":  2241,
+        "Sha256":  "1112BB0433BDDE60B0728DBA7A8C12BC9581191A3CB0CFFCC365596421B18578"
+    },
+    {
+        "Path":  "脚本\\三章金样本闸门.py",
+        "Bytes":  15077,
+        "Sha256":  "0A3BF334CEDDCF0B530F19DC76756C7B58A0D39635321EAAE59DA2FDE41B5F53"
+    },
+    {
+        "Path":  "脚本\\严格全量资料升级最终审核.py",
+        "Bytes":  7016,
+        "Sha256":  "27FC7398EC9F1BF955A513D0AE6F91E00875ABB4E8FED32620F29BC7E25DA2AB"
+    },
+    {
+        "Path":  "脚本\\严格全量资料连续编排.py",
+        "Bytes":  15890,
+        "Sha256":  "C0D8621E4F297200257AF6909F309FE71E702FBBAE86FC7A059D17442FC6EDD3"
+    },
+    {
+        "Path":  "脚本\\严格恢复带栈诊断.py",
+        "Bytes":  1046,
+        "Sha256":  "B6645A53FBAFE5AC748C65F007CDDC9E8F8022374726B47752CF11B63B0416DE"
+    },
+    {
+        "Path":  "脚本\\严格连续预检.py",
+        "Bytes":  1023,
+        "Sha256":  "85B289C38082CDB69E1855544155616E845FFE0F2CC7473D71CEDE64F4CD31C5"
+    },
+    {
+        "Path":  "脚本\\严格隔离内容分流.py",
+        "Bytes":  7941,
+        "Sha256":  "9B1330B313880E9CCD39DDE9063FCCE29DD399B963CB949C81A14A22EB7AAB06"
+    },
+    {
+        "Path":  "脚本\\严格隔离内容处置画像.py",
+        "Bytes":  5027,
+        "Sha256":  "64B482719AF5AB829186780DA71F51F58645D1529E60BB9B8CDAAEA9A7AED493"
+    },
+    {
+        "Path":  "脚本\\严格隔离分类报告.py",
+        "Bytes":  5700,
+        "Sha256":  "4FE8053E908646C9FF4CF788A151DBE7A4B0DA23276FED82011AFA6ED3AF6F98"
+    },
+    {
+        "Path":  "脚本\\严格隔离可恢复性评估.py",
+        "Bytes":  4691,
+        "Sha256":  "C659A2ADB50B545599AFF1AF133DB3B1194472C1EC9246AE652E9A8CD1CF878C"
+    },
+    {
+        "Path":  "脚本\\严格隔离替代来源方案.py",
+        "Bytes":  6125,
+        "Sha256":  "3447311925D0E08C553137505B7BF11F6BB94C10999D6CDEACF456454F1E537E"
+    },
+    {
+        "Path":  "脚本\\严格隔离替代来源重审.py",
+        "Bytes":  9510,
+        "Sha256":  "31AB262390358772B395BCCC5DBE0D635E4D8E82B6D835C616477E6B3293D9A6"
+    },
+    {
+        "Path":  "脚本\\严格隔离项目确认.py",
+        "Bytes":  10748,
+        "Sha256":  "F2F394AC268C5F0A09F68C67175536346D45A10128D3A8907CB99F01BCBBB684"
+    },
+    {
+        "Path":  "脚本\\修复全量资料异常引用.py",
+        "Bytes":  3089,
+        "Sha256":  "18A864182517EB81C38309240C68858E50707B2DBA2DF2255F30DFC39B724233"
+    },
+    {
+        "Path":  "脚本\\修复资料库全量索引.py",
+        "Bytes":  7714,
+        "Sha256":  "1C4B17BADC7FEF91155F69DA6AC9A4C9C509840AC8AD047D8DA6C8413F9C2AB6"
+    },
+    {
+        "Path":  "脚本\\全流程创作质量门.py",
+        "Bytes":  10289,
+        "Sha256":  "C31ACA5172105C248E987A14F8D0FA653C0FB0AD1F22A4BCEE1358F43BE2F88A"
+    },
+    {
+        "Path":  "脚本\\全绑定来源完整性审计.py",
+        "Bytes":  6757,
+        "Sha256":  "5A382E7ABD8BF9838AF539CC538C7F07DE87C736F74585DF5962C9FD875187BA"
+    },
+    {
+        "Path":  "脚本\\全资料生产能力门.py",
+        "Bytes":  11979,
+        "Sha256":  "689CD9FE3F9B58B6DFFEEEBCA9A89DC062293219971851DC1101770B4ED09F81"
+    },
+    {
+        "Path":  "脚本\\全量模型资料改进方案.py",
+        "Bytes":  5674,
+        "Sha256":  "46C195CEAFC4810A85AE9554043E7EA648FF6E3AC23A49E925B714DCFBD2CFFB"
+    },
+    {
+        "Path":  "脚本\\全量资料严格隔离审计.py",
+        "Bytes":  11971,
+        "Sha256":  "78E2604885E63D7F14CCA1D3C70DA50FB031EEE49C3D0AB409BDE06AD49E2C5B"
+    },
+    {
+        "Path":  "脚本\\全量资料升级守护.py",
+        "Bytes":  8222,
+        "Sha256":  "F9C91257DA50AF30A26F1DBC860564BF90F56F6DA96EE099033E65819689F6EC"
+    },
+    {
+        "Path":  "脚本\\全量资料升级定位映射.py",
+        "Bytes":  8891,
+        "Sha256":  "C2EBF95D5B1BC215EB08D56B4BCD3EEFFB71DE5F94890301FB5BDF7F0D1413BA"
+    },
+    {
+        "Path":  "脚本\\全量资料升级审查包.py",
+        "Bytes":  6801,
+        "Sha256":  "E7B5D019EEDFA360D7E3879E509A5EC75FEC2346F7C09EBFC1C5387FD0AE38CC"
+    },
+    {
+        "Path":  "脚本\\全量资料升级异常审计.py",
+        "Bytes":  5894,
+        "Sha256":  "DDCB2B8F00C11B79E33686FC926849199C48B443B43A730D1E3076CEAD89B4CF"
+    },
+    {
+        "Path":  "脚本\\全量资料升级快速批处理.py",
+        "Bytes":  5793,
+        "Sha256":  "134C5F71EB16F49259C9E30F68BE92FE291CFE7A8415F63B88AF45726613DBA0"
+    },
+    {
+        "Path":  "脚本\\全量资料升级模型错误隔离.py",
+        "Bytes":  3847,
+        "Sha256":  "AF1F6FD78EF3E28A76F6912B4F2C46A82D05A6FFB8614FD233D099865C9B75FB"
+    },
+    {
+        "Path":  "脚本\\全量资料升级运行报告.py",
+        "Bytes":  4789,
+        "Sha256":  "BF6041F6D27E078B3AC8A3CC5F63FE1C86402691C656ED24D9B3B71E81058560"
+    },
+    {
+        "Path":  "脚本\\全量资料历史消费隔离.py",
+        "Bytes":  7024,
+        "Sha256":  "4BCCE6FF31BA65A6F595D94E0D7AD884527C2BC38471DA66781683BEB94D9912"
+    },
+    {
+        "Path":  "脚本\\全量资料批次正文升级.py",
+        "Bytes":  28823,
+        "Sha256":  "456891A809AC0E5BD6C2E2F3A2B7C19577139A3DB9A8B1957D0305B69553C868"
+    },
+    {
+        "Path":  "脚本\\全量资料新版构建.py",
+        "Bytes":  12499,
+        "Sha256":  "2ED8155F22A57990DDBA595EC3AF71456861683CA10321B4A8B9D9670DB5DBA4"
+    },
+    {
+        "Path":  "脚本\\全量资料检查与修正.py",
+        "Bytes":  15180,
+        "Sha256":  "27B913C0E9B0B93235BA2D8031D41F930F704C3F1B6FF59375311D91D33B7D82"
+    },
+    {
+        "Path":  "脚本\\全量资料正文消费验证.py",
+        "Bytes":  8119,
+        "Sha256":  "C7122B312EADC5291119061B7CE547DE0D08570369B1F38CD2452CB5B4867366"
+    },
+    {
+        "Path":  "脚本\\全量资料正文生产编排.py",
+        "Bytes":  8304,
+        "Sha256":  "B31CC8EEBFAB9C0C415BBCCDD4620E317D9FB3A062F1C12F8E64673A3C87B982"
+    },
+    {
+        "Path":  "脚本\\全量资料激活前置条件盘点.py",
+        "Bytes":  17298,
+        "Sha256":  "A3825B40040B19081E8BC1A7C352B587FDAA709EDC60C51D66A14FAF37650598"
+    },
+    {
+        "Path":  "脚本\\全量资料类型连接身份修复.py",
+        "Bytes":  7416,
+        "Sha256":  "202E6885E23DF1449CE503EDF4323B19253C4F7FAD71C34A186EC543D3CA17D4"
+    },
+    {
+        "Path":  "脚本\\全量资料绑定授权投影同步.py",
+        "Bytes":  1986,
+        "Sha256":  "69937C61C0DA42A357B42C932A9D23CBBAF9165AFBD02FD9676C008028B90A01"
+    },
+    {
+        "Path":  "脚本\\全量资料解释词转译与创作绑定.py",
+        "Bytes":  22203,
+        "Sha256":  "6B1ADB289B56436C997A007F6D6ADE0CA7CF864DDA684C7FF942317D3EAFABBC"
+    },
+    {
+        "Path":  "脚本\\全量资料资料库定位修复.py",
+        "Bytes":  5034,
+        "Sha256":  "FC17EEFDEC302170C4912C717FFE2EC8ACE4CD7008E66589FB2159C878F41C6A"
+    },
+    {
+        "Path":  "脚本\\全量资料输入与正文授权.py",
+        "Bytes":  9980,
+        "Sha256":  "A1D91F0EB284AD45BC8A54826C1D6C909C9B77CB8DBEE91B14F6EA4A784FD979"
+    },
+    {
+        "Path":  "脚本\\写作资料证据验证.py",
+        "Bytes":  16899,
+        "Sha256":  "02CD17E23CA4016D4047040116AB8B0679577991A42F8836FA83CB70CF085AED"
+    },
+    {
+        "Path":  "脚本\\分析新方案与资料.py",
+        "Bytes":  19199,
+        "Sha256":  "D8CECCBC2DC53D764EC7E358C50C4EDEC4119A29B6DF0D78D00CB5D949061DD4"
+    },
+    {
+        "Path":  "脚本\\创建全量资料替代批次.py",
+        "Bytes":  6219,
+        "Sha256":  "3BABEA1B78A7CDF158B0C5D7E98D70C5B9F9F70FED61A2278C92B857E80EA295"
+    },
+    {
+        "Path":  "脚本\\初始化小说项目.py",
+        "Bytes":  6330,
+        "Sha256":  "4BA8CDD6A1C27D2E3A88609D583B3616D8C91D22968C06C6C6A5486D85F4531F"
+    },
+    {
+        "Path":  "脚本\\初始化项目.py",
+        "Bytes":  4239,
+        "Sha256":  "1F56EC8041661167795DA20B4B4F8F50B77D0027170597D93F14E36119FA90F0"
+    },
+    {
+        "Path":  "脚本\\原版新版资料合并.py",
+        "Bytes":  13073,
+        "Sha256":  "DFE17CA6C51C75928C903A2473603EA02F3255A613AD6BB4F1E6B87F8B215ED8"
+    },
+    {
+        "Path":  "脚本\\启动严格烟雾批次.ps1",
+        "Bytes":  169,
+        "Sha256":  "6F017332FB2739CA7F9647C59A1E9D94367B893387589C1F74A326BB20B96FFA"
+    },
+    {
+        "Path":  "脚本\\场景创作激活.py",
+        "Bytes":  10679,
+        "Sha256":  "F28923A4409E1576E4AF8D8AA0E0DD4E9DE6972BD726FA450091B409BDF33646"
+    },
+    {
+        "Path":  "脚本\\恢复全量资料消费证据.py",
+        "Bytes":  4259,
+        "Sha256":  "69866E645341B625AF6620B84A752C63C50B8D65FAD6FB99A5012944E23FB06C"
+    },
+    {
+        "Path":  "脚本\\执行管道.py",
+        "Bytes":  182383,
+        "Sha256":  "B916526F50D45E53037B4D8F2C31D704AF1669B5AC1C49F36E2B289932A5F794"
+    },
+    {
+        "Path":  "脚本\\持续资料升级调度.py",
+        "Bytes":  6524,
+        "Sha256":  "6DCA3C48D842583C9810C8885BA206706E7089B7358C76C7DF3A43F506D674B8"
+    },
+    {
+        "Path":  "脚本\\文学审校.py",
+        "Bytes":  7042,
+        "Sha256":  "CC153433B079C3F183276F7D9FF7584FAEE2580AD779197FB686F28A81FD5CC5"
+    },
+    {
+        "Path":  "脚本\\文本生成模型.py",
+        "Bytes":  8118,
+        "Sha256":  "AABDCE8DCB4BC90B27A19EAECA753A061CF6FBABEECCDFF11CC341EB785A7967"
+    },
+    {
+        "Path":  "脚本\\来源引用审计与迁移.py",
+        "Bytes":  5690,
+        "Sha256":  "706AE782DFC7E221E632A46E619FD31C3CBD8A1384D927ED4A4D417495C6F757"
+    },
+    {
+        "Path":  "脚本\\来源语义审校.py",
+        "Bytes":  6101,
+        "Sha256":  "3F2AE038C2D4929BD6B60618CC502DC1FAC9877241317E1871171CA2BEF907C9"
+    },
+    {
+        "Path":  "脚本\\来源质量自主分析.py",
+        "Bytes":  11368,
+        "Sha256":  "1354C7E5D249E302F9A81FF32CC8177E1B426FC88B937268F62AB5E22A1E92F2"
+    },
+    {
+        "Path":  "脚本\\来源资格证据线索盘点.py",
+        "Bytes":  7534,
+        "Sha256":  "74BC55EEEA81D0EA8DF54A87CE0B1D8EC817223A9B892E7937D04EAC58656A48"
+    },
+    {
+        "Path":  "脚本\\模型辅助来源资格评估.py",
+        "Bytes":  11207,
+        "Sha256":  "D1D41FFCFE55868ADA3BD24BD0D3C0FA3BB1D9E33414D0F94B63CB36069BBE7F"
+    },
+    {
+        "Path":  "脚本\\模型辅助资料改进候选.py",
+        "Bytes":  9527,
+        "Sha256":  "33AEF894A33A358B63C63E32921A5D7FCFB91A71F52D48E96DD203C24EA1C9BE"
+    },
+    {
+        "Path":  "脚本\\派生资料升级证据诊断.py",
+        "Bytes":  4472,
+        "Sha256":  "5DE5B3AFBF0E12B0F3C3C35E55008AD7B82E9C36DDC286D0A974B31DFAF0ED5C"
+    },
+    {
+        "Path":  "脚本\\派生资料失败样本隔离.py",
+        "Bytes":  3539,
+        "Sha256":  "D25EADDC357D57A992A5C5C9A4A4558ECBCE83003E3BA2F43118A5F9E7C05602"
+    },
+    {
+        "Path":  "脚本\\派生资料批次回归.py",
+        "Bytes":  8577,
+        "Sha256":  "5D8A1847044170285D8D37F983C9D15B2ADF19F328F1C6E44B4466F7369DAE41"
+    },
+    {
+        "Path":  "脚本\\派生资料项目采用.py",
+        "Bytes":  11330,
+        "Sha256":  "47A4A62308622EC97EC52ABBEDD82D558E5CDB7C09CC8ACD6FD5AA54D0DE238C"
+    },
+    {
+        "Path":  "脚本\\生成第一章候选草稿消费证据.js",
+        "Bytes":  2927,
+        "Sha256":  "02AF4F3BDD7E315B4E08D44A569AFB80614A00719BBCABD8E094D8791DAD0330"
+    },
+    {
+        "Path":  "脚本\\生成第一章最小授权提交.js",
+        "Bytes":  2238,
+        "Sha256":  "A27CAB20C3B7121A13184C9DB927CFAA64BE680D033879C6664C75D468E60984"
+    },
+    {
+        "Path":  "脚本\\章节质量资料就绪度门.py",
+        "Bytes":  7677,
+        "Sha256":  "97783CEC53219FD3165FADFBBAF6D535D6DB59428D60CB11B23039BC3D6CD926"
+    },
+    {
+        "Path":  "脚本\\类型连接对象分类审计.py",
+        "Bytes":  4666,
+        "Sha256":  "6C3409E1D0CD7DC0DE006B46827AE3E209F46D3BA1D0D86B241B7F1D7E6BEBB9"
+    },
+    {
+        "Path":  "脚本\\类型连接结构对象引用审计.py",
+        "Bytes":  5554,
+        "Sha256":  "1F7FB891B34C894AF08B3456AA1C518B1ADA1D5CA6394551F91ABC08AC850DD6"
+    },
+    {
+        "Path":  "脚本\\类型连接身份复核审计.py",
+        "Bytes":  4546,
+        "Sha256":  "6708DE19438FE3F868495E79D66C2EC8D3DD1501FBAD3AF09616D8A297AE50F9"
+    },
+    {
+        "Path":  "脚本\\编排第一章受控草稿批次.js",
+        "Bytes":  4699,
+        "Sha256":  "419826B32C0F4BED5C749549002066A0CCF70BFEC3E2E5A4798AF021DCE6D67D"
+    },
+    {
+        "Path":  "脚本\\补全资料缺口.py",
+        "Bytes":  4713,
+        "Sha256":  "D5FAC169F368DED6609AA4C8AFA5EC1856B813C605D40BC735352452B81EA49F"
+    },
+    {
+        "Path":  "脚本\\补全非类型资料证据.py",
+        "Bytes":  5210,
+        "Sha256":  "D771F732F7AB38DE029FA2D7777C06B522145D2113728C4A3B63A592FE9F548E"
+    },
+    {
+        "Path":  "脚本\\解释词覆盖审计.py",
+        "Bytes":  18049,
+        "Sha256":  "CA2AF35255187B89A4646BECC0B94E999AFA5E98A4E53947494DA73050FF53F0"
+    },
+    {
+        "Path":  "脚本\\计划锁与正式创作门.py",
+        "Bytes":  14389,
+        "Sha256":  "9867D78921D8C0BA51445FCD812B5EDB4C66662E3AB1AF0A3D38CAAEFD6E72CF"
+    },
+    {
+        "Path":  "脚本\\资料注册与完整性.py",
+        "Bytes":  15566,
+        "Sha256":  "5BDF28A7AD43B42E48A37C1D04802ECC47D43DE5A6A227BFAC53A1AA3CBEB6FF"
+    },
+    {
+        "Path":  "脚本\\资料消费审计.py",
+        "Bytes":  17698,
+        "Sha256":  "6911BE78E4D304359420A128182185F3E68A1ABEFD65C30B9FDD19BFDDCC4071"
+    },
+    {
+        "Path":  "脚本\\资料激活前置条件审计.py",
+        "Bytes":  9508,
+        "Sha256":  "12923B59041C3FD4E258EDE0CF3BFEBD35F69A3FFD27F6F871EB0824B5FD9460"
+    },
+    {
+        "Path":  "脚本\\资料运行准入准备.py",
+        "Bytes":  10464,
+        "Sha256":  "9FBBDFF5704BF86F13F1D906BA11F88F305D64E157FBDCCEE88373E446949372"
+    },
+    {
+        "Path":  "脚本\\运行tb00008隔离.py",
+        "Bytes":  1307,
+        "Sha256":  "5C92C870606154F80D0F37C9312D37A723C33B8C2F9D769934DBD7DE54502370"
+    },
+    {
+        "Path":  "脚本\\运行严格恢复诊断.py",
+        "Bytes":  1550,
+        "Sha256":  "FEC75DDBCD65EF321A35474A580518691ECC6224BDE8B18E7FE6F2828D42FD98"
+    },
+    {
+        "Path":  "脚本\\运行严格连续恢复.py",
+        "Bytes":  1474,
+        "Sha256":  "EA3F135AEFAB3F0955B974F5ACE773A1038B32F25424D6933365E3970ABBFB88"
+    },
+    {
+        "Path":  "脚本\\运行资料审计与模型留档.ps1",
+        "Bytes":  7697,
+        "Sha256":  "840ABC80365EF09ED7EFA2545CFEF37E772E9FEDA3CAC3EB87BEC14E2ABB738E"
+    },
+    {
+        "Path":  "脚本\\重建升级异常派生定位.py",
+        "Bytes":  7249,
+        "Sha256":  "204BF4C7BA8305EA3E55C8533C611E8375C2449621213146E8DEB7E825E08BB2"
+    },
+    {
+        "Path":  "脚本\\项目创作生产政策.py",
+        "Bytes":  5147,
+        "Sha256":  "CEABF7C50F3321D6845E81067B28CB9C1EC2BE530FFE76BC80C07B9B2CC0BCB3"
+    },
+    {
+        "Path":  "脚本\\项目执行边界.py",
+        "Bytes":  13034,
+        "Sha256":  "E479B15F5764B4A1F38F1EB39DE8A88ECECF2B588E018326B60255DA017A285E"
+    },
+    {
+        "Path":  "脚本\\项目来源确认.py",
+        "Bytes":  5093,
+        "Sha256":  "C220D2C3E0852D9083BECC9F45527CAC312FA6418C4AE7B6BBF9162DBF4B64DD"
+    },
+    {
+        "Path":  "脚本\\项目规划.py",
+        "Bytes":  6555,
+        "Sha256":  "3B80A22B8DFD8515A5E3DD846E74FF97C4DDDE3F5DAB950B5EF0C8ED9AC95451"
+    },
+    {
+        "Path":  "脚本\\验证第一章受控草稿批次.js",
+        "Bytes":  1794,
+        "Sha256":  "78069A4B5C7D6192DB37C4928F8FF45C686DC9DBBBE79FD6FD70AB312516A983"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\run_strict_smoke.cpython-312.pyc",
+        "Bytes":  3822,
+        "Sha256":  "5CEE7CC724FE69B78B5143FC765AC35335476A297D1FAD154902E55887C90A63"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\run_strict_smoke.cpython-314.pyc",
+        "Bytes":  4314,
+        "Sha256":  "88B613F51751BC61B4198A0DF360F2985B4B870E9C6B5EF536D181C08A8AB73B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\stop_strict_smoke.cpython-312.pyc",
+        "Bytes":  2595,
+        "Sha256":  "FB3377C140FA72CCE4594CE0869531D7879F42D59F9288D162E8AB40F5EE2B19"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\stop_strict_smoke.cpython-314.pyc",
+        "Bytes":  3090,
+        "Sha256":  "F8EE2737FD2173E2AC7C0CE049434C9CF4F1A778C60FB69FB5AE6B2A11F5C7DF"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_三章金样本闸门.cpython-312.pyc",
+        "Bytes":  4997,
+        "Sha256":  "FF3FBD78AD8FD82F8F9567700923821F30721A59C6A39A8BFFF42099587778C3"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_三章金样本闸门.cpython-314.pyc",
+        "Bytes":  6254,
+        "Sha256":  "3BAF53931D0B753CB01CB85B9B98539EFA308AC793F1B8CA96BB64C45935E9A6"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格全量资料升级最终审核.cpython-314.pyc",
+        "Bytes":  12898,
+        "Sha256":  "B99704875C91BBA049617DE9C3C73FE8EBE09276C49BAD5AC74A8AD8F03AAF14"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格全量资料连续编排.cpython-312.pyc",
+        "Bytes":  6397,
+        "Sha256":  "D3DE4BE3D6A2EB1615010CB35C5A0589262C0E2A5ECD77AEB36CE848CE46D14E"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格全量资料连续编排.cpython-314.pyc",
+        "Bytes":  26173,
+        "Sha256":  "BD44EA27E5103A40F880B59DCC650C0B7438D55B81688EDB9FDC7153AAAB1031"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格资料升级.cpython-312.pyc",
+        "Bytes":  8529,
+        "Sha256":  "1B919AF9535496E96E66C843710D7FA3479F9D7273ABDD34A79DF7B09A4E611A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格资料升级.cpython-314.pyc",
+        "Bytes":  16539,
+        "Sha256":  "B1E834C2694107CD7F2F057293623F6C7C2DB4C526D0CD651772FBF3079C367D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离内容分流.cpython-312.pyc",
+        "Bytes":  3063,
+        "Sha256":  "09FFAD6F09219D3DD237EB82B44AA85F8818A49D27372FDF872F77E6B7046D3A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离内容分流.cpython-314.pyc",
+        "Bytes":  3677,
+        "Sha256":  "90B74438DE7489A36146F39382EE1C8CCDDE01CF61E1CFCE91D0AF8DB3A55D14"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离内容处置画像.cpython-312.pyc",
+        "Bytes":  1918,
+        "Sha256":  "CB5479A6D2B271E95FE5DED3ECC90130FCC2737982F1C13C15B9CE4B56F9B09D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离内容处置画像.cpython-314.pyc",
+        "Bytes":  2345,
+        "Sha256":  "E6DDA65CAA9F68E54047F7B0694B994ADBDD553D31ADF27D29A0201EBBD4EB2F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离分类报告.cpython-312.pyc",
+        "Bytes":  2168,
+        "Sha256":  "B4513AF2D0B6D8E04DF9040B72A076881F30DDE24BAB5D44E260CC0C7A586386"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离分类报告.cpython-314.pyc",
+        "Bytes":  2694,
+        "Sha256":  "9272EFE81D45294EB72265686839C087F386DF86DEA16218C4C0FF58416B83BC"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离可恢复性评估.cpython-312.pyc",
+        "Bytes":  1814,
+        "Sha256":  "66BB509A90A65BD3D3956EBDD6EE59225942F5C8E69F29A8F952506ABAE7A6DF"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离可恢复性评估.cpython-314.pyc",
+        "Bytes":  2198,
+        "Sha256":  "CA9A6F614BF31EA202254C5ACEBA1C8F9F13F4DD217B5A036241EC3C8C42B9F7"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离替代来源方案.cpython-312.pyc",
+        "Bytes":  3039,
+        "Sha256":  "09AC62428A38FF4ECCB5D6F9DD77B9709500656E3469F58B26D71660F25C5402"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离替代来源方案.cpython-314.pyc",
+        "Bytes":  3649,
+        "Sha256":  "CD07A0896097644D74A7C98E83C0CDC3F4E2CDC2DCFDDE8F099B7C4BD9027787"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离替代来源重审.cpython-312.pyc",
+        "Bytes":  2687,
+        "Sha256":  "59E3E30CC335BA9DE0E2C8B358DCD1EFB51D101DE9DFB0A8DEF6008582B8911D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离替代来源重审.cpython-314.pyc",
+        "Bytes":  3239,
+        "Sha256":  "EF55D4E3E48D1760E8A4A8E365EAC562A56FC0B3266EDF5EED0D6C9806F9C0F5"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离项目确认.cpython-312.pyc",
+        "Bytes":  3804,
+        "Sha256":  "FA33F6EFADC6EA2E8D3157E6736236044B3A8A0AC7F45DEAB20162C80E3F9310"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_严格隔离项目确认.cpython-314.pyc",
+        "Bytes":  4664,
+        "Sha256":  "C5CE880C1BFEC51F698012D91213829544CFE585E8CB4262BFC0987E34A2EBEF"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全流程创作质量门.cpython-314.pyc",
+        "Bytes":  12069,
+        "Sha256":  "AAE7CCC1E020D513CDAF7C485AE18CD245B6EFFA34282B4F3ECD936EFEB01BCF"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全绑定来源完整性审计.cpython-314.pyc",
+        "Bytes":  6773,
+        "Sha256":  "DC9B794070A9DAFA820001DA37965ED7BD52894D1AF8B0A2AC209FB833AE5FD9"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全资料生产能力门.cpython-312.pyc",
+        "Bytes":  7139,
+        "Sha256":  "C626A5898961C582A6788B62018A3A04D0917832216FC8D2F83259EEDF66317C"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全资料生产能力门.cpython-314.pyc",
+        "Bytes":  8385,
+        "Sha256":  "4A34DB6D8562261AFC42D4B431551235E374D48CF1183BC49EF2A034E270526D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量模型资料改进方案.cpython-314.pyc",
+        "Bytes":  8658,
+        "Sha256":  "7654EF48ECEA70E0FE9E19ECB39310FB0953CFFDAD505ECD4463DD73313620C8"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料严格隔离审计.cpython-312.pyc",
+        "Bytes":  9037,
+        "Sha256":  "EBCE23D23A6099A0B760F2C1C1C887903C068B4C3FF59D536EE740582F4FD02D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料严格隔离审计.cpython-314.pyc",
+        "Bytes":  17454,
+        "Sha256":  "67E93F8D9B8D66C0CF629E984FACB66DC6098E87609D2B9DDC32B803E9427A9E"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料候选裁决登记册.cpython-314.pyc",
+        "Bytes":  4695,
+        "Sha256":  "E4AF946DA9A8114B4A15A3D545767E66626B0FF3A8677F4417C10185DEB818D9"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料升级审查包.cpython-314.pyc",
+        "Bytes":  4291,
+        "Sha256":  "8BBDFEBE0D07A119300113F83CEDD614749A5ADDEE8A611F2191EB3E47C45D3B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料升级异常审计.cpython-314.pyc",
+        "Bytes":  3667,
+        "Sha256":  "CAB136B2B01F21744A26E8C19189AEDCB7367A370194E21D68F3B1A27DCBA8AE"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料升级执行器.cpython-314.pyc",
+        "Bytes":  44048,
+        "Sha256":  "5C67B864672D2D077A457C9CD6DBAF008FB4E8212C601040D403471F6AD49FAB"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料升级模型错误隔离.cpython-314.pyc",
+        "Bytes":  3495,
+        "Sha256":  "3FC9A5138AB13CED885F8D9D0E56F8F3A6902F25F86DF1693F757A20E183D728"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料升级运行报告.cpython-314.pyc",
+        "Bytes":  3680,
+        "Sha256":  "76C4B9F9158F86DDC60D81D8356864CF0489D73915D9AF9E62E3B9670EDD6DA8"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料发布预检.cpython-312.pyc",
+        "Bytes":  21877,
+        "Sha256":  "E39118DA41519DD75F6F57BCAD97EF69CFC97932A09B1FEA5D1266B271F72A52"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料发布预检.cpython-314.pyc",
+        "Bytes":  26984,
+        "Sha256":  "0026EDDBA3C194F1E36A8DDDA3922121629078873482337D3E6C79AC2C168522"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料受控试运行.cpython-314.pyc",
+        "Bytes":  1794,
+        "Sha256":  "8767A6CBEBC12A11B2430932390CF5CB9D7FEEC204A3525CC15DF12CDDBD851D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料增量升级.cpython-314.pyc",
+        "Bytes":  5378,
+        "Sha256":  "23080B1AD33D1FFE1BBD6DEA5641F03C8089CA72399C637C2ADF9B0441CB4E22"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料批次正文升级.cpython-312.pyc",
+        "Bytes":  7012,
+        "Sha256":  "FD7E28F2E9370C9D26FBB1CE8A05B29E2E22655235B79D151D8161CBA3B7D3A9"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料批次正文升级.cpython-314.pyc",
+        "Bytes":  28042,
+        "Sha256":  "B8EEA6AEEE7B3D710ABD41FBA69C05199396915AE1AC8BC19B0ACA8DE7421B8A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料新版构建.cpython-314.pyc",
+        "Bytes":  10110,
+        "Sha256":  "94A14336AB4A5E86B7A0C4A3D8E5B376CFD9E7617339C4EF616412F0F3E8C7C4"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料正式发布门.cpython-312.pyc",
+        "Bytes":  6233,
+        "Sha256":  "1C68D4EA17A52779EC4180008840B4B2566504F3F24C03F118872FBACA18A6F3"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料正式发布门.cpython-314.pyc",
+        "Bytes":  11234,
+        "Sha256":  "A04E7EA1A6BE0A59DED966FCAE20581304BABC057D529BF69FE86DBE4B4A46BA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料正文消费验证.cpython-312.pyc",
+        "Bytes":  6034,
+        "Sha256":  "2A6DFE941C6A95D795E6E19825F3C52FC7159C8274CD7781DEE18AB2887D5EEC"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料正文消费验证.cpython-314.pyc",
+        "Bytes":  8286,
+        "Sha256":  "02146BE02175A784C2C1FF4D38F65E5B86E1B85613B63A030FC28F65196A9AE0"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料类型连接身份修复.cpython-314.pyc",
+        "Bytes":  6873,
+        "Sha256":  "ABE58E1C94D57266E48AF140F5CD8F45AD4109317B982E8CC093238491D719B1"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料资料库定位修复.cpython-314.pyc",
+        "Bytes":  4153,
+        "Sha256":  "CECA1399F1CEABBD1FF65AC8B9425DA73E3C96E01B38FF81BC5D3AFAEFE72BB8"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料输入与正文授权.cpython-312.pyc",
+        "Bytes":  5063,
+        "Sha256":  "1516CAC375E666635AED3EB66533B15232C22967C85DA2D3D32A87123C344303"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_全量资料输入与正文授权.cpython-314.pyc",
+        "Bytes":  5760,
+        "Sha256":  "5835C5E4574C09F0017F7A2E808C770400CE552607D6744650F1CC7F61B21728"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_原版新版资料合并.cpython-314.pyc",
+        "Bytes":  11053,
+        "Sha256":  "9BF3605C5E8418CE7C8A8810250B64FA8C841E30D5EA7CF9A9C4A5BA28EE7E37"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_场景创作激活.cpython-314.pyc",
+        "Bytes":  19233,
+        "Sha256":  "A83C8BA39C999084EA3CEB8F9D1DD642FE6858920A58779B77DED770CC1E6026"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_执行契约.cpython-312.pyc",
+        "Bytes":  20984,
+        "Sha256":  "13A82E6B737252C94EF3FE8499C4E688B4674F3CEB461F438866DAA3ACAC2E21"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_执行契约.cpython-314.pyc",
+        "Bytes":  26558,
+        "Sha256":  "2A1507F293245E13AF8DCBEB1CC966D565F23179F281ABA07F864BC1F5EABA2F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_持续资料升级调度.cpython-312.pyc",
+        "Bytes":  3082,
+        "Sha256":  "83BCB1A22FC1D54EAA92518C43BCCB59E4E0D211D0826D1F4EF0440938EE2F9B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_持续资料升级调度.cpython-314.pyc",
+        "Bytes":  3798,
+        "Sha256":  "0FF6F034DB876419D940D674D35AFBECD6936BE7AD82917F6CEF56113EF24584"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_文学审校.cpython-314.pyc",
+        "Bytes":  7393,
+        "Sha256":  "B71D60491CDDA03A87624DA23A5C9025F4AA229DA5DED08DD76D3AE2EECA3859"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_文本生成模型.cpython-314.pyc",
+        "Bytes":  6780,
+        "Sha256":  "E181ED5C76CEAC968B05578E1E10003F0D8AA5F3B5C3B236ED2FBBF6020FDD98"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_来源引用审计与迁移.cpython-314.pyc",
+        "Bytes":  4458,
+        "Sha256":  "5D1C176E27D9249E252A1CF8E102ABB2FBF89222BFCC7E4DFBBCDAD7074F5718"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_来源语义审校.cpython-314.pyc",
+        "Bytes":  6599,
+        "Sha256":  "9A793ED495190E849FCBDE290579A8EA10900C263D52FBBC53E143CAE17888B9"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_来源质量自主分析.cpython-312.pyc",
+        "Bytes":  4075,
+        "Sha256":  "7DFD01E4A3083F79530793D782927F40B8F11054BBE2A78451E1DBEC02B2EB19"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_来源质量自主分析.cpython-314.pyc",
+        "Bytes":  7460,
+        "Sha256":  "3EAEC463CBA1E4BF8D5FC53AA47DD77CC37799C16BB0A501B0C40554A972BE02"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_来源资格人工裁决.cpython-312.pyc",
+        "Bytes":  9339,
+        "Sha256":  "A194A9F6FA32F2B1F742DAEE325CD3B940FFCD887F22945E0FAF300946EF8321"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_来源资格人工裁决.cpython-314.pyc",
+        "Bytes":  10464,
+        "Sha256":  "9375EED19E0C7F35654E20A9BD840022E45D2D8E93A06D4E3A65451C74081B7E"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_来源资格证据线索盘点.cpython-312.pyc",
+        "Bytes":  4942,
+        "Sha256":  "B17787A78E0B8BBC267D96C610A0D18A0490E592E99B1B960CEC37DA576603D5"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_来源资格证据线索盘点.cpython-314.pyc",
+        "Bytes":  5726,
+        "Sha256":  "7C2CD8FFF1224DDACC4BF9393F4C6D8DF0BE77F54B9206576A4F52061BFD1AA2"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_模型辅助来源资格评估.cpython-312.pyc",
+        "Bytes":  5343,
+        "Sha256":  "C02B648AF77F5B5CF50AA25E586A92EE97E521D29E7937D4DAD0B0186A499CA9"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_模型辅助来源资格评估.cpython-314.pyc",
+        "Bytes":  6623,
+        "Sha256":  "8E24AF4F298B4CD7E64F0949196EBA018351F8742BFCD34E1BF40A9E85EED9B7"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_模型辅助资料改进候选.cpython-314.pyc",
+        "Bytes":  7078,
+        "Sha256":  "50CBFE7647F24CA733A8912A5042DC3CE803CDCAB2927A4010046CFB63A7E54F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_派生资料失败样本隔离.cpython-314.pyc",
+        "Bytes":  4901,
+        "Sha256":  "B2CF4DFE2B09831C1CBF1D3A1515BA134D3B9B6EF5238067C1B9A838BB447DA2"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_派生资料批次回归.cpython-314.pyc",
+        "Bytes":  12710,
+        "Sha256":  "4E49EC08916BF977A06B809C49F8B360E5879FA5CF3D4A9C10377B2CE0E4D1F4"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_派生资料项目采用.cpython-314.pyc",
+        "Bytes":  9377,
+        "Sha256":  "C0D9BFE7A6C0AABFCDD7640AF06E83C70C8184EDE5DE68F2BD27E98927084C2D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_派生资料项目采用与场景消费.cpython-314.pyc",
+        "Bytes":  7195,
+        "Sha256":  "30FCDD2FEF35349804A7A8F0FE106F9ABCDA645B7D32ED8AAC72DAA9E6D4603F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_章节质量资料就绪度门.cpython-312.pyc",
+        "Bytes":  5209,
+        "Sha256":  "6EE941310D87404E6CE6E843EEE6C415AE5328C992AA4FDC8864BDB5F45FC34E"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_章节质量资料就绪度门.cpython-314.pyc",
+        "Bytes":  6200,
+        "Sha256":  "2363D694E271A20A3AACCC190201CA0EFCAB9949E32B0D46F682104C5B693042"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_类型连接对象分类审计.cpython-314.pyc",
+        "Bytes":  3212,
+        "Sha256":  "B73D549BF6AE445FE9E40A8BF5BFF482689C52DFCBB696953735995DA950C52D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_类型连接结构对象引用审计.cpython-314.pyc",
+        "Bytes":  3398,
+        "Sha256":  "EDB4F81D2FBF9477B68B5B008CCAF67D2B7F5BB57EB8F3D6312FB4ADD762FCC4"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_类型连接身份复核审计.cpython-314.pyc",
+        "Bytes":  3227,
+        "Sha256":  "3E9ABF04F518315D043F733A41E2233214F0C60C3001B1D7870136BB3A7E7D4D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\test_项目创作生产政策.cpython-314.pyc",
+        "Bytes":  4501,
+        "Sha256":  "9E26E655C9D5BBC3D7847ABE4CE43A4F1C595B413CA1508030B7A5EA4C307C10"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\verify_strict_smoke.cpython-314.pyc",
+        "Bytes":  3719,
+        "Sha256":  "BB350FFCD31135E8F329C535AA81604054412AD2B7FB12FA9294058107192460"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\三章金样本闸门.cpython-312.pyc",
+        "Bytes":  18476,
+        "Sha256":  "36A957ABD1E8B4953694B8BC23C37D3FEC563555D2E83D24D01359C65E60916B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\三章金样本闸门.cpython-314.pyc",
+        "Bytes":  20441,
+        "Sha256":  "B42554231BD5BFEB65BE43013D9392BA35D55DB51DAF62B4650FBAEAB09B127F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格全量资料升级最终审核.cpython-314.pyc",
+        "Bytes":  11282,
+        "Sha256":  "FFC826E2E64A2DBB3689A7A5713849F100E8A3BEDFCF88DA9E63CE745C1EEF7C"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格全量资料模型升级.cpython-312.pyc",
+        "Bytes":  20612,
+        "Sha256":  "CD24A9DC2A66E782EFE67D7290996AC48BAA8140AB77631E710486833B898186"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格全量资料模型升级.cpython-314.pyc",
+        "Bytes":  32149,
+        "Sha256":  "CD2537D97C58902000A59044E8C380D86F255730D08C41293BC1FD3F7039AF25"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格全量资料连续编排.cpython-312.pyc",
+        "Bytes":  13266,
+        "Sha256":  "90952CC4C884E2C70AC6FCC406E76199556EF709F29720273A65CF95C191DA91"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格全量资料连续编排.cpython-314.pyc",
+        "Bytes":  22985,
+        "Sha256":  "F538413C3B5FC4A3F50FC25D75302AAFCE7C24035C3736343E4C063CF7268BA2"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格恢复带栈诊断.cpython-314.pyc",
+        "Bytes":  2230,
+        "Sha256":  "3E12B21279D80591D4705465A82B3C218E7E452CC89566692A0DDA5724A02D41"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格资料升级.cpython-312.pyc",
+        "Bytes":  21516,
+        "Sha256":  "66D02183B6BEB8167F7D1D4E84A8134031F68C08940BAB924CF120D54ACC880C"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格资料升级.cpython-314.pyc",
+        "Bytes":  31590,
+        "Sha256":  "040E6CEA31D051CA59E087BDF6019ECBC4B4531FB480B4220E01119C52B0F6BA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格连续预检.cpython-314.pyc",
+        "Bytes":  1799,
+        "Sha256":  "F43DFAA781A66A0BFDD02F72F7E153A3BB06C0C3A55FDD76B46979C49511AC61"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离内容分流.cpython-312.pyc",
+        "Bytes":  11285,
+        "Sha256":  "772FCFA8C326604392A9C4642463C07F2FE3FB3464D57BB9614F7B7FB7131D6F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离内容分流.cpython-314.pyc",
+        "Bytes":  12724,
+        "Sha256":  "73CB81307DD3C6FBF06B685FEF49D6EEE202B2FB549D7EC2076B8119FD4330CD"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离内容处置画像.cpython-312.pyc",
+        "Bytes":  8033,
+        "Sha256":  "269468F3F842404B17BCDA5F8D4CF22F2B7B016D62E2B6235594C138B35F58BF"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离内容处置画像.cpython-314.pyc",
+        "Bytes":  9154,
+        "Sha256":  "3470D74370D9BECB2E84709BC32506CDEEA5F143D79A34C5A09DBEAF11F1F521"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离分类报告.cpython-312.pyc",
+        "Bytes":  8097,
+        "Sha256":  "91839ABE7DF7204C4A78E2300A50122B46DBCF2B2799EBC610D3CD9E763B6D64"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离分类报告.cpython-314.pyc",
+        "Bytes":  8768,
+        "Sha256":  "714AEB29A1D17BE3103F3B6B8244F0195408DB9FCA6CDC2D08B48657E7FA499A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离可恢复性评估.cpython-312.pyc",
+        "Bytes":  6511,
+        "Sha256":  "0879DBACF9FA2C1AE7E86AB2F926C02F80DDD8D4FB40A3EC92B5DC3BAC89232F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离可恢复性评估.cpython-314.pyc",
+        "Bytes":  7248,
+        "Sha256":  "918988C9967F231D896BC970B3554581E596DB7A4506F2539EC5504B00237ACA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离替代来源方案.cpython-312.pyc",
+        "Bytes":  8737,
+        "Sha256":  "182FB9D5D18C8F582E3CDCCB25AB4E88E10A113D26C244F9E77011ECF75F1862"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离替代来源方案.cpython-314.pyc",
+        "Bytes":  9769,
+        "Sha256":  "8FF371719A2997FD805759A8725F19ACB6B8C84F06FFE1EA01F2A55C09C799BC"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离替代来源重审.cpython-312.pyc",
+        "Bytes":  13010,
+        "Sha256":  "A5774801616BE3B75721B73EEB326961E666ACEDA2443B8D1CD222A54E2C1C14"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离替代来源重审.cpython-314.pyc",
+        "Bytes":  14879,
+        "Sha256":  "647E96991B6348A3376EFA80864C233123DA1F8B0F12100C907145BE9B8B15AA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离项目确认.cpython-312.pyc",
+        "Bytes":  15004,
+        "Sha256":  "7D5A70B04BC0370C29F5CFB1C0E03D27056511DAA774426385E303240DBDFDCB"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\严格隔离项目确认.cpython-314.pyc",
+        "Bytes":  16875,
+        "Sha256":  "4FD6B4B28ECFEA642323E7B771BBCFE25C2D6913E51738317AD6CA23CB371240"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\修复全量资料异常引用.cpython-314.pyc",
+        "Bytes":  5501,
+        "Sha256":  "DE432F33F85A8DAD69DDE8928DAAC14002D52513EC22371281AB7B182A899FF1"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\修复资料库全量索引.cpython-312.pyc",
+        "Bytes":  12278,
+        "Sha256":  "3AA54A63F70D73AA3537771840813DFAA7DF643EDF948EF16B82DB930164A15E"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\修复资料库全量索引.cpython-314.pyc",
+        "Bytes":  13938,
+        "Sha256":  "76CF44E955A9B92A79BBAB1AF96AB3292D8C9DE130EE5B5678DB5DA454758F69"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全流程创作质量门.cpython-314.pyc",
+        "Bytes":  16939,
+        "Sha256":  "839916D97CAC05A389C99E0C24C5C8A6FF0F30920756B271BC8F619E134828AB"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全绑定来源完整性审计.cpython-314.pyc",
+        "Bytes":  11616,
+        "Sha256":  "41BAAF5E6D5BD02B49E06DD31F460026214BB05EF6F3E1719B5203DCF39991D9"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全资料生产能力门.cpython-312.pyc",
+        "Bytes":  18534,
+        "Sha256":  "711F423AAC7FCD5F9217D1A42D860FE969B32FE1031D2E40605C391EDB23E150"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全资料生产能力门.cpython-314.pyc",
+        "Bytes":  21633,
+        "Sha256":  "4D950700E2490C38C227465DBD6F595F08B4403D853D89521F7418D414E17A0A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量模型资料改进方案.cpython-314.pyc",
+        "Bytes":  9388,
+        "Sha256":  "B3EDA7D9F5EBAD5C0FB0B7152AF60F4283AD9B11B071028DC1D9DA55DEAFE43C"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料严格隔离审计.cpython-312.pyc",
+        "Bytes":  17155,
+        "Sha256":  "CA66DE88787AA953803EB0A8409AB29E84A168697CFF25B97632F5CB7DF4FA1E"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料严格隔离审计.cpython-314.pyc",
+        "Bytes":  19991,
+        "Sha256":  "9BE8E15C770DB6CA4702E6F9A967A2C742AEC332B7E7BEEE9E72E2059CDEC2C9"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料候选裁决登记册.cpython-314.pyc",
+        "Bytes":  8054,
+        "Sha256":  "79DC36FD187D7B3533CB2AFF1854E6F2A68B61BA347AF7F743869AAE09E58C2A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料升级守护.cpython-314.pyc",
+        "Bytes":  12915,
+        "Sha256":  "EF70FD4B2EE959E0CDE596FE192AD731134EC408C65CB34383E6C2D011CDD796"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料升级定位映射.cpython-314.pyc",
+        "Bytes":  14711,
+        "Sha256":  "4ED9C4E473ADB447B53C52F1B497F34F859B58DA5981997CA31D81268EEAEAFB"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料升级审查包.cpython-314.pyc",
+        "Bytes":  11322,
+        "Sha256":  "E609C73E0BE8DA4DF91A3624A8E0470CE07A795D747C5EB7BA3A0472763D60FE"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料升级异常审计.cpython-314.pyc",
+        "Bytes":  10048,
+        "Sha256":  "860D3100A7502089496759EB929B22E24A8DC4CF6B7EE9CBFC3427F78BB59606"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料升级快速批处理.cpython-314.pyc",
+        "Bytes":  8500,
+        "Sha256":  "A96FC671CEDE45F4BEB495851E68A6335ABBBA213BE5DEC4D80C6B999DBBFDED"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料升级执行器.cpython-314.pyc",
+        "Bytes":  51022,
+        "Sha256":  "78921837B5B5FCB4AF435D99EEBCFDA520798BF2D35F782563EFB783C9912351"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料升级模型错误隔离.cpython-314.pyc",
+        "Bytes":  6691,
+        "Sha256":  "EEB53632B22148CC54C234B98A7668C2CFC29ACFA9B6DDB95F82D486452D97E2"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料升级运行报告.cpython-314.pyc",
+        "Bytes":  9577,
+        "Sha256":  "033E033B834F1E11C2F48B85FAE0B0706FE0BD1A8D1B82FF7C74A899445C4BC1"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料历史消费隔离.cpython-312.pyc",
+        "Bytes":  7612,
+        "Sha256":  "B3D4B0EF5FAF47CC3719D806210AA1DC2F58B9E8752C32E0DD416367244729A3"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料历史消费隔离.cpython-314.pyc",
+        "Bytes":  10378,
+        "Sha256":  "A6F85A76C8A0B0E53D8B79240DE14FF1BECDE3A633DC85A3275678ABB7BA2CB8"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料发布审批请求.cpython-314.pyc",
+        "Bytes":  7822,
+        "Sha256":  "C8B4605CF6B5B4AE15879D3548F319B6B12ACCEFA83B36B5DDE51831F5833E2A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料发布状态纠偏.cpython-314.pyc",
+        "Bytes":  9737,
+        "Sha256":  "1A6F91482BC0C3F3445E24F62AC3E402439610F5AB0996EAA2BD95FACC0A76B2"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料发布预检.cpython-312.pyc",
+        "Bytes":  18288,
+        "Sha256":  "BA254EA9A2B00A219125908FEAE84C6949FD86DB393C958DA78D0184D0978C8C"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料发布预检.cpython-314.pyc",
+        "Bytes":  21185,
+        "Sha256":  "80153AFDEF3536E2D8959534717BA151612CCAD721410B82AB68DA4189EF9B1F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料受控试运行.cpython-314.pyc",
+        "Bytes":  8083,
+        "Sha256":  "43B0AA58D3D91399226E074E1EFB7805621F03222ED146DBE8AFC154419E5555"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料增量升级.cpython-314.pyc",
+        "Bytes":  16477,
+        "Sha256":  "42CC7407AC8196D59A47AF6859E597DDF71F4E8FF7C42D3E76BA63628A2F4DFD"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料批次正文升级.cpython-312.pyc",
+        "Bytes":  24440,
+        "Sha256":  "1DB19651C244C5E22F2DE6F8D255E17722D43A4B144D7B5A4ABC5FE209166278"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料批次正文升级.cpython-314.pyc",
+        "Bytes":  44722,
+        "Sha256":  "5F40461097B84BE0F1BD670FF99FA3D0BD5793073F8602D4CF614D9358582D2F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料新版构建.cpython-314.pyc",
+        "Bytes":  22783,
+        "Sha256":  "493E24BCC6E60079B9AEB7AC9B43C124DD82093BBDAB25536437A40F775C9DE7"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料检查与修正.cpython-312.pyc",
+        "Bytes":  23466,
+        "Sha256":  "74DFFC22ED02052E06656477A5BBD1D69E5089F44B637C83A96EC7CC6F0E5A95"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料检查与修正.cpython-314.pyc",
+        "Bytes":  27184,
+        "Sha256":  "360962F3B6E682A621C59AFBCD419D3536D5A1E744D2ADBD50618C5470FDF36C"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料正式发布.cpython-314.pyc",
+        "Bytes":  8097,
+        "Sha256":  "F8C18FC016FC6054FC7A5092B530043E5F2B982D078D47C85CCC4B37B4C3C4F5"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料正式发布门.cpython-312.pyc",
+        "Bytes":  6718,
+        "Sha256":  "27C03BE7A0DACA5DD3D7E64DD978E3398381EBA37721E15B5BADECC07CFC474E"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料正式发布门.cpython-314.pyc",
+        "Bytes":  12292,
+        "Sha256":  "02B1E08889ABE68717C630E0E2A3EA5150CDC25513D92F8F442167BD26F939D0"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料正文消费验证.cpython-312.pyc",
+        "Bytes":  9946,
+        "Sha256":  "5FA936E584E1FDF58DB53CDFE4CB229786EE0BAC05E52A06988E05A394BB6D66"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料正文消费验证.cpython-314.pyc",
+        "Bytes":  13594,
+        "Sha256":  "F02541F7E4F8E1CA860087F42213F2B17B2290B06C14CEB1A3808383E6C79835"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料正文生产编排.cpython-312.pyc",
+        "Bytes":  11831,
+        "Sha256":  "EB240D2529757FE0E21E0A311624405C975CA27E4F71D3C92B57362264C14BF8"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料正文生产编排.cpython-314.pyc",
+        "Bytes":  12585,
+        "Sha256":  "E7CA68F5F21BAD831688C184BD3CB8038F6E61A95BABFAEC42FB41F05E999D46"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料激活前置条件盘点.cpython-312.pyc",
+        "Bytes":  26360,
+        "Sha256":  "433D60B3858419627933A19D73C963D01D212B2F152B38759270F51E54C2FF09"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料激活前置条件盘点.cpython-314.pyc",
+        "Bytes":  29745,
+        "Sha256":  "598398FA6A5925AAF100468F06E4FFACB95A502394CBE08A5745B5A96FAB53D6"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料类型连接身份修复.cpython-314.pyc",
+        "Bytes":  12607,
+        "Sha256":  "CCC8F506888CE07E3D70454504418574F41F074F2E9171DCFA3F578027BB058B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料绑定授权投影同步.cpython-314.pyc",
+        "Bytes":  3873,
+        "Sha256":  "9C73F6EAAE95530C48D256172F454CDB05425118769E68246C3369A0DED03381"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料解释词转译与创作绑定.cpython-312.pyc",
+        "Bytes":  28767,
+        "Sha256":  "CEC1329D54F32E2E056444643C2456990552D2955A9B28B9560B573B325146BB"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料解释词转译与创作绑定.cpython-314.pyc",
+        "Bytes":  32087,
+        "Sha256":  "9D48AAAAB572E6D017BB528A6644966748A47F5FC2C29DCEB31A4AFCF53D7FAF"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料资料库定位修复.cpython-314.pyc",
+        "Bytes":  8897,
+        "Sha256":  "B5909C1859ADCFAD8E63FFA647DDA4685422B9057B81C73F7FAB8FE025059650"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料输入与正文授权.cpython-312.pyc",
+        "Bytes":  14445,
+        "Sha256":  "4D3A1F8B7FD6E733E10E61AE168421600BB7F0004E45CB18CBDABA0986AE7C13"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\全量资料输入与正文授权.cpython-314.pyc",
+        "Bytes":  16832,
+        "Sha256":  "29003AB1615122EEF8FAD3074F2D50F38E28D8D41B276DD96FCB54814159FD9A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\写作资料证据验证.cpython-312.pyc",
+        "Bytes":  24000,
+        "Sha256":  "377C4B7504D1DE99A1EFE2E6F830CC28AFF2A2AF97B801D44F22E02EA9B3DEA8"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\写作资料证据验证.cpython-314.pyc",
+        "Bytes":  27315,
+        "Sha256":  "F1B4D30D08F551A11F3FA053B481BF59C8E66469BD43DFCB3CB61B7483911A82"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\分析新方案与资料.cpython-312.pyc",
+        "Bytes":  28912,
+        "Sha256":  "2D4B4A208C97456358D1CEA102FD9E364B73307293B9C00BB5355018F90AACE3"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\分析新方案与资料.cpython-314.pyc",
+        "Bytes":  31559,
+        "Sha256":  "1C9E21BFDF03E5E7A43323FD4FDE115ED9E78548DA11F4F38B190F54FEDE0E59"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\创建全量资料替代批次.cpython-314.pyc",
+        "Bytes":  10708,
+        "Sha256":  "517D2A4151890C90BADF53BAF0A3C7839E0C148C4ACCDD63C3DE7996A571F8FC"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\初始化小说项目.cpython-312.pyc",
+        "Bytes":  8904,
+        "Sha256":  "EDF228A46979BFF7165C77DB5429C166682DA87C74D694ECA0A8D7FE25425BAA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\初始化小说项目.cpython-314.pyc",
+        "Bytes":  10117,
+        "Sha256":  "AFFA59492E1ABC67EDED4B4E1B7D99E264B8042F1EDBE16E76DBBBC22627FE87"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\初始化项目.cpython-312.pyc",
+        "Bytes":  5659,
+        "Sha256":  "5224095C17D98F025C43BF63164023F3547160289C0AE0E187B91B6DD6588B20"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\初始化项目.cpython-314.pyc",
+        "Bytes":  6400,
+        "Sha256":  "A490365D2B16045BEBDC6958B03454A3C16C978DC38E455034A34AC947789F4C"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\原版新版资料合并.cpython-314.pyc",
+        "Bytes":  24405,
+        "Sha256":  "6C6369A4454D9DF2370F8DCCC05B456A953BD31B59DBADA811D1C31023811E7A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\场景创作激活.cpython-314.pyc",
+        "Bytes":  17203,
+        "Sha256":  "6C248E8A51163B7DCF16B801B7A8253C6F58E9011ADED092A8BC6F5D91DBE248"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\恢复全量资料消费证据.cpython-314.pyc",
+        "Bytes":  8139,
+        "Sha256":  "3A40F7DA97993B9220A7CBA1FCFDA155E668DCCE2229009590443BDFB1E0E8EF"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\执行管道.cpython-312.pyc",
+        "Bytes":  248914,
+        "Sha256":  "FD27DE93CA5313360A578BD02D2D023D2A1ED3C8DF73751B18B139C3ADF6BC04"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\执行管道.cpython-314.pyc",
+        "Bytes":  283319,
+        "Sha256":  "7E19B96C66ED1A747D3822B96D774F5CCCDEC0761D8BBA09403113EE7744DC0F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\批量升级全量创作资料.cpython-314.pyc",
+        "Bytes":  11408,
+        "Sha256":  "CCDDB08B92939E1397D71752CD3FC7059E7DCC66E31472723CB063530DF5D300"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\持续资料升级调度.cpython-312.pyc",
+        "Bytes":  9268,
+        "Sha256":  "25A2F32247605CC94E18FA42E9A25BF2B6189FBD08839DB229DA763443A2F0B8"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\持续资料升级调度.cpython-314.pyc",
+        "Bytes":  10323,
+        "Sha256":  "D3A1A4E314F6A6DB245C6F0A835527B9FE5A257029FAB0F1BA211D0618C7E0E7"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\文学审校.cpython-314.pyc",
+        "Bytes":  11572,
+        "Sha256":  "AABBF29AD0CB050FA5C026F189EC32FCE6CC86090D4C31EF09FF11520A4F0D8F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\文本生成模型.cpython-312.pyc",
+        "Bytes":  7744,
+        "Sha256":  "9C613730204BEC3EBA51C29CA457CF01D33473FE54860086DE4CD06D7A492D79"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\文本生成模型.cpython-314.pyc",
+        "Bytes":  13579,
+        "Sha256":  "22B5EFE55BC5DAE0F89FC26CE4ACB5ED8BB115D46E000E71B0184E97E4AB0B1A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\来源引用审计与迁移.cpython-314.pyc",
+        "Bytes":  9740,
+        "Sha256":  "FD26A6CB9AE470B3048965E0CBC71507B34264D9D316578236567204F89452F3"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\来源语义审校.cpython-314.pyc",
+        "Bytes":  10795,
+        "Sha256":  "699C97335864994E57C368CF90763225507E4C2F426AFFA12A732AA7A6EA4D0B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\来源质量自主分析.cpython-312.pyc",
+        "Bytes":  13955,
+        "Sha256":  "4F490E922DF2FF0056000647F8E43FD45BB32177E2A7FBD88EA1E6C019BFEDE3"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\来源质量自主分析.cpython-314.pyc",
+        "Bytes":  18671,
+        "Sha256":  "FD0242F3B82CFD833793DB2978099AAEEE43645D787DDA35263994580003094E"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\来源资格人工裁决.cpython-312.pyc",
+        "Bytes":  15674,
+        "Sha256":  "BAAE4C76F0E6560A22606A8882988319126BB70BDE1597EAE7B5F495782A4FB4"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\来源资格人工裁决.cpython-314.pyc",
+        "Bytes":  17846,
+        "Sha256":  "EB6E1D0E281F316F4F3295C0A9FC19B125B74F1BD056FFBD1B71017A16DB7BA6"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\来源资格证据线索盘点.cpython-312.pyc",
+        "Bytes":  11155,
+        "Sha256":  "D305E570D125011A1989E2008D3BF3A7C1E238AE5320CB37D10C7D277AECDA3F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\来源资格证据线索盘点.cpython-314.pyc",
+        "Bytes":  13173,
+        "Sha256":  "24868A3556E99757B7173FE59C8E8B140EC4121BFFFF1E9F5CC2EF1657B2D284"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\模型辅助来源资格评估.cpython-312.pyc",
+        "Bytes":  15597,
+        "Sha256":  "5A0AF1C4D96901589773B9A5659CE96F22AFC25B11A9BE7B4130F258FCE39945"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\模型辅助来源资格评估.cpython-314.pyc",
+        "Bytes":  17970,
+        "Sha256":  "CF80647AB3AFB8EF5B7F0E2E48D6C889E0D94AD673BA5F82199890DE2817323F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\模型辅助资料改进候选.cpython-314.pyc",
+        "Bytes":  16098,
+        "Sha256":  "60E71F5D7937C4749E13DCA886026E55BBE8AD4E735D205EF66DEED3A5B1C3E0"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\正式交付审批.cpython-312.pyc",
+        "Bytes":  14679,
+        "Sha256":  "1900A508F480E42E526AF14C2B6DF16660498397EAB6F4C52EC0EE833F617D1B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\正式交付审批.cpython-314.pyc",
+        "Bytes":  21139,
+        "Sha256":  "FD75A104B1705493647C3B79198248DCBF12ADC0430D6C92E332E12F74EAF1DC"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\派生资料升级证据诊断.cpython-314.pyc",
+        "Bytes":  8824,
+        "Sha256":  "2AFA4B8BCF4F26F9667C2C25925BA8223A2ECB13AA63D16A8B1CDF25C71141AA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\派生资料失败样本隔离.cpython-314.pyc",
+        "Bytes":  6208,
+        "Sha256":  "3B38B6E65077CD69BF883EF71BF96058A7E888B1EFBCE6CC0263089130A8DF3A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\派生资料批次回归.cpython-314.pyc",
+        "Bytes":  14735,
+        "Sha256":  "5B939A51850E517C8E15EE2DFC1F2AB52F4599E71D10A6E6AF8D7808C0815AAA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\派生资料项目采用.cpython-314.pyc",
+        "Bytes":  18535,
+        "Sha256":  "5CE85275A181BCE21F98680C8B7DB0302FC99EB3E2FB88E722F455B52A8463CE"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\派生资料项目采用与场景消费.cpython-314.pyc",
+        "Bytes":  19010,
+        "Sha256":  "F1D07938E930504FAD82FFE88528F7424BCB6B2D1B4712236745D4F5A19D1450"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\生成场景模型候选草稿.cpython-314.pyc",
+        "Bytes":  7177,
+        "Sha256":  "25620982A863FD2AC36CC9742F0EFA8332D23A5684B270D22423463448CF6E44"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\生成场景模型输入包.cpython-314.pyc",
+        "Bytes":  5112,
+        "Sha256":  "14BFB832B6D8017819D0DBE878A77BE33AAB60B6C02DF6C32AEF6A0E3603CA34"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\章节质量资料就绪度门.cpython-312.pyc",
+        "Bytes":  12405,
+        "Sha256":  "B99222D82C2DC0291CA47AB07001065E084894600F92405F02AAD53CB3B7D4FA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\章节质量资料就绪度门.cpython-314.pyc",
+        "Bytes":  14549,
+        "Sha256":  "CF2B82BF623E250EF5DF2671D830D53A205925EA8EC1FE7AB63832F7C96D8CE7"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\类型连接对象分类审计.cpython-314.pyc",
+        "Bytes":  7932,
+        "Sha256":  "4D80D9D35D66089DA6F4EC71E94BCFCC82DA23503998D0D6B68F135D27370FB5"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\类型连接结构对象引用审计.cpython-314.pyc",
+        "Bytes":  9928,
+        "Sha256":  "1EA3B86C1B31BF17727C08C32C489369DF01CFA80EA296D9A5F81A39D182DE74"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\类型连接身份复核审计.cpython-314.pyc",
+        "Bytes":  8065,
+        "Sha256":  "429D10CAFB76C4BAEE53E6679F8D0B13CBE3D69F856D557EE861761C2629ABE0"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\补全资料缺口.cpython-312.pyc",
+        "Bytes":  7302,
+        "Sha256":  "CA694848A0E5D402CDFE4F7D6033F02AB9BBD54FE18A3F15E20AB4E1FBE5516A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\补全资料缺口.cpython-314.pyc",
+        "Bytes":  8518,
+        "Sha256":  "CAC52C48AA7930B385F9E7C3AB20E2E1A0853D1F35F358A3CD0205416C402DB8"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\补全非类型资料证据.cpython-314.pyc",
+        "Bytes":  8152,
+        "Sha256":  "CD62C0F39F138803BF6ED36706FE26D0595BDE818841D60DE266A7AE501FC999"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\解释词覆盖审计.cpython-312.pyc",
+        "Bytes":  27780,
+        "Sha256":  "D16434D8A61E9C74B0C93A9FB5738FD6FF14CA783154557494E59856FF9E13A9"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\解释词覆盖审计.cpython-314.pyc",
+        "Bytes":  30795,
+        "Sha256":  "F27B6FC654BA08978E179AD2815331CE73D258E5E91B2AE20B45E1B9DB1A13C4"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\计划锁与正式创作门.cpython-314.pyc",
+        "Bytes":  23928,
+        "Sha256":  "0041EEE52DFA8D4C926B82471DF8935CC47C84FF82CDFADD4835E188E2854421"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\资料注册与完整性.cpython-312.pyc",
+        "Bytes":  19183,
+        "Sha256":  "BBDC1D716DCF2EF793028252F82A096D7ECD4FEC053D2FC74957C35707D82E6D"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\资料注册与完整性.cpython-314.pyc",
+        "Bytes":  21368,
+        "Sha256":  "A8FDDDD13D77DE673DA4B56A610049142945403EA9F6786E4B2C74DD65B0A804"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\资料消费审计.cpython-312.pyc",
+        "Bytes":  26680,
+        "Sha256":  "64754183F4A414FB6D821AAC3118689AFAAD9E44B5069AB1180409AA400EC291"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\资料消费审计.cpython-314.pyc",
+        "Bytes":  31276,
+        "Sha256":  "9D9A1633991CCCE79C5CB8D8E05888C2537C184BF3C1481C03C0CAB87FCE490A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\资料激活前置条件审计.cpython-312.pyc",
+        "Bytes":  13749,
+        "Sha256":  "D58DF5AA10BCD6CBDB3A42A0DB6BB59D6DF771300DFC32C78D694F027F68A14F"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\资料激活前置条件审计.cpython-314.pyc",
+        "Bytes":  15541,
+        "Sha256":  "520E79DD370BCF028F996AC939FD836693AA0FD04DE3713C69642E570639AF5B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\资料运行准入准备.cpython-312.pyc",
+        "Bytes":  16143,
+        "Sha256":  "60CDAB668B538FBBBCD0F732044CE46DBB6A0ED9EB50B945B43C166A7BFC63FB"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\资料运行准入准备.cpython-314.pyc",
+        "Bytes":  18418,
+        "Sha256":  "F40D7A22F89F6D094359D577BD7A87118CE1B59A637AB340D07C53DC0697C4C3"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\运行tb00008隔离.cpython-314.pyc",
+        "Bytes":  2538,
+        "Sha256":  "3BA3EE74FF2155A1205B62BC7D09F9F6AD793F3EB4635AE45018CF0F18A9ADF1"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\运行严格恢复诊断.cpython-314.pyc",
+        "Bytes":  2730,
+        "Sha256":  "F08F3B84E1168E2F962BAFDB5BFB87374D23A759B30608598BA172EF701A1DFA"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\运行严格连续恢复.cpython-314.pyc",
+        "Bytes":  2693,
+        "Sha256":  "C31008B969FD95CC1B481D2707B6B3BB30EC72406BC9598C0066A4185DF5AC93"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\重建升级异常派生定位.cpython-314.pyc",
+        "Bytes":  13082,
+        "Sha256":  "85D8AC71E784F78B9451CF47E432FAE8E0543106A916CF6660BF9267503B5159"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\项目创作生产政策.cpython-314.pyc",
+        "Bytes":  8667,
+        "Sha256":  "3668B3D2C924540DEB85932FE0DCA49AE65D3652EB13D15E04F5079C42921E82"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\项目执行边界.cpython-312.pyc",
+        "Bytes":  19287,
+        "Sha256":  "8A652F344BE4F2B17BCCB63EAF2445AF2FC0C5F050457C7D104CE34F720CD167"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\项目执行边界.cpython-314.pyc",
+        "Bytes":  22500,
+        "Sha256":  "7CEEDE31CD08E05CCCAFAE5C73DB1154726905FB396B23257D866E62FF56DD0A"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\项目来源确认.cpython-312.pyc",
+        "Bytes":  7550,
+        "Sha256":  "749FBA28B8E48675296A5826014DF5889E998638D5F2F39CC914B185F93C0FE4"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\项目来源确认.cpython-314.pyc",
+        "Bytes":  8672,
+        "Sha256":  "83C799F4C244379CF180E5685EF5BBC1F9D99F12D265398E1BF8C3CA5CCF451B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\项目规划.cpython-312.pyc",
+        "Bytes":  10610,
+        "Sha256":  "1333CECDF0FC541B3AADBFDFC7B234C6F0623A2933460F0A1C1EE6CCBED2A29B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\项目规划.cpython-314.pyc",
+        "Bytes":  12075,
+        "Sha256":  "0EEDFE77E6823817F5AC14BA2D853F75DCFACB5EFF06A8F51733665B070D6E1B"
+    },
+    {
+        "Path":  "脚本\\__pycache__\\验证全量资料批量升级.cpython-314.pyc",
+        "Bytes":  16452,
+        "Sha256":  "44E5F5AE0232F101E05F62874F20ECB02279DFCC4813A97016EDDD9860476FE0"
+    },
+    {
+        "Path":  "文档\\证据\\all-material-files.txt",
+        "Bytes":  22152,
+        "Sha256":  "ACE02D3D46E107E3A60ED1B8E9A79768CAB53E3053683A0B9133708842D2A164"
+    },
+    {
+        "Path":  "文档\\证据\\audit-file-inventory.txt",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\CLI范围拒绝_完整运行缺证据.json",
+        "Bytes":  172,
+        "Sha256":  "EB303D4725885EB5C4AA04E1335AB59463832F6395D94F3DE97198AD3446D316"
+    },
+    {
+        "Path":  "文档\\证据\\CLI范围拒绝_完整运行缺证据.log",
+        "Bytes":  172,
+        "Sha256":  "EB303D4725885EB5C4AA04E1335AB59463832F6395D94F3DE97198AD3446D316"
+    },
+    {
+        "Path":  "文档\\证据\\CLI范围拒绝_资料批次.json",
+        "Bytes":  227,
+        "Sha256":  "5B59887E7CB51F6D062A1101664D4218ECFB3A321D3896160BBAF1F56E0BB693"
+    },
+    {
+        "Path":  "文档\\证据\\CLI范围拒绝_资料批次.log",
+        "Bytes":  227,
+        "Sha256":  "5B59887E7CB51F6D062A1101664D4218ECFB3A321D3896160BBAF1F56E0BB693"
+    },
+    {
+        "Path":  "文档\\证据\\evidence-verify-run.log",
+        "Bytes":  479,
+        "Sha256":  "FDA2880382D56A93E097615E91DD38124FA012BCA790E477AB27CC92B1EA09B6"
+    },
+    {
+        "Path":  "文档\\证据\\generate_text_单句诊断.log",
+        "Bytes":  100,
+        "Sha256":  "C2DE75D49F6575DE5B8CD1020B2E1206E1F9DA0ABEF5412648DF26AEAF4066F4"
+    },
+    {
+        "Path":  "文档\\证据\\incremental-compile-output.txt",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\incremental-execution-output.txt",
+        "Bytes":  438,
+        "Sha256":  "25CC5101E46D3DE754A9A858A5DFBC43ED9E8C01EAE881F624F4647E9CE3E12D"
+    },
+    {
+        "Path":  "文档\\证据\\incremental-final-plan-2.txt",
+        "Bytes":  1454,
+        "Sha256":  "696181077031D509C5E07656E1AB3AA5089C96E8807813DF8B9D856ED2DB2F32"
+    },
+    {
+        "Path":  "文档\\证据\\incremental-final-plan.txt",
+        "Bytes":  1456,
+        "Sha256":  "6D497E0265B7A74259D550CCEBC8254C37A7B844880D48E9C68F05983539676A"
+    },
+    {
+        "Path":  "文档\\证据\\incremental-plan-output.txt",
+        "Bytes":  702,
+        "Sha256":  "E3FB5C36F740D053B5F3D02FCD5549206E285BAEB689381D0BDBBBD522A89092"
+    },
+    {
+        "Path":  "文档\\证据\\incremental-plan-run.txt",
+        "Bytes":  1406,
+        "Sha256":  "B773B22BABB7D255FF8B9D6261C80C2E8F8D132FE88A6133BCEEDF521102B4B3"
+    },
+    {
+        "Path":  "文档\\证据\\incremental-test-output.txt",
+        "Bytes":  1478,
+        "Sha256":  "62AEB039FBD7D130E0B6B87A40891C60CB985C24FDE448EF4656F224A2D62D7C"
+    },
+    {
+        "Path":  "文档\\证据\\module10_diagnostic.json",
+        "Bytes":  7036130,
+        "Sha256":  "08826C4F346CAAE5ECAD3CE2667A65BF07905794700B5C69C0CFC2A49497BD9B"
+    },
+    {
+        "Path":  "文档\\证据\\Ollama_短句响应诊断.log",
+        "Bytes":  80,
+        "Sha256":  "3FAE4E70EC1134912F95ED0C82C56AD34ED855DC5AB646FBDE494DDFB1D38924"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-anchor-quality.log",
+        "Bytes":  5521,
+        "Sha256":  "8B1B561D1EED0E8A3F807DE14E51D3DFB65DFD347EDB9858B0AA6413EF3DB77A"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-final-strict.log",
+        "Bytes":  5572,
+        "Sha256":  "3A260A1C343E92CF8335DC348D73562B49801A1C1FEC1B83E95265862ABF9D93"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-final-verified.log",
+        "Bytes":  5572,
+        "Sha256":  "3A260A1C343E92CF8335DC348D73562B49801A1C1FEC1B83E95265862ABF9D93"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-final.log",
+        "Bytes":  5756,
+        "Sha256":  "46C5BC2E31886F35B9424797651B5039DE31D2C07563E5BFAC80C7E8D17B11E3"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-final2.log",
+        "Bytes":  5610,
+        "Sha256":  "F1801316343AB98B59078E0971FCD475EE858F0BA1DC509917E8877BEB076FA2"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-story-bible-final.log",
+        "Bytes":  6132,
+        "Sha256":  "E0ADF5B9C5CB95F4CAD054C189DF20B597C906150D9D3CFFB634CF01F0A58205"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-story-bible-quality-final.log",
+        "Bytes":  6286,
+        "Sha256":  "FD41F1274792A2EC0485B717A03F35E68B8595E1B04A9F3A3A3B4CA818F6BC14"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-story-bible-quality.log",
+        "Bytes":  6943,
+        "Sha256":  "490C818FAB4D20BF5AE9A3A687A072F3B9C46D46B8FEB12DE22A8916BC47C6B1"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-story-bible-release.log",
+        "Bytes":  5875,
+        "Sha256":  "C4F7106F6AD32CAC6FCE5917A4057E0E107191DD57C7B9D754F26BD19D58A444"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run-story-bible.log",
+        "Bytes":  6371,
+        "Sha256":  "8AFD5012C1D420D5F3AC6603C2B3EBA2C93CF85356F73A6D3226ED8CA581F371"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline-run.log",
+        "Bytes":  5756,
+        "Sha256":  "BB23DFFCB515787B974597A6381E70E48126B509076A79F14895826A26C998DA"
+    },
+    {
+        "Path":  "文档\\证据\\pipeline_full_run.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\project_planning.json",
+        "Bytes":  5398454,
+        "Sha256":  "BDBAF2D7C9E06BCFACB17BBD5ED4F3AC848CE458B10DB7F306D870885B62DD08"
+    },
+    {
+        "Path":  "文档\\证据\\quality-marker-inventory.txt",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\S01-TB-00533_直接生成诊断.log",
+        "Bytes":  624,
+        "Sha256":  "0DEAB2CA34506E80B9A9449DB2AD337CE4EC1C042DDC1BBE4B9C329D0F008581"
+    },
+    {
+        "Path":  "文档\\证据\\S01-TB-01957_直接生成诊断.log",
+        "Bytes":  675,
+        "Sha256":  "7B839CD99E49096122082DC952F3FA8C6A03BE85AD85A0730E2D5800F1F83AEC"
+    },
+    {
+        "Path":  "文档\\证据\\source-binding-regeneration-run-2.log",
+        "Bytes":  96,
+        "Sha256":  "D04214DE5000471650BE6675FEDF67E7D889A35E026161FE4475E6C5BC86D4CE"
+    },
+    {
+        "Path":  "文档\\证据\\source-binding-regeneration.log",
+        "Bytes":  96,
+        "Sha256":  "D04214DE5000471650BE6675FEDF67E7D889A35E026161FE4475E6C5BC86D4CE"
+    },
+    {
+        "Path":  "文档\\证据\\source-capability-gate-run-2.log",
+        "Bytes":  103,
+        "Sha256":  "0AB988A173E4DB50737DA843362FD05A5EFBF746E579481D1459620BA59C3994"
+    },
+    {
+        "Path":  "文档\\证据\\source-capability-gate-run-3.log",
+        "Bytes":  103,
+        "Sha256":  "0AB988A173E4DB50737DA843362FD05A5EFBF746E579481D1459620BA59C3994"
+    },
+    {
+        "Path":  "文档\\证据\\source-capability-gate-run.log",
+        "Bytes":  105,
+        "Sha256":  "8114809FAFE30B2602CED3268815DD6714B177882EA637794083FDB3A6B673AD"
+    },
+    {
+        "Path":  "文档\\证据\\source-capability-pipeline-block.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\source-quality-analysis-run-2.log",
+        "Bytes":  94,
+        "Sha256":  "9852AA781234F88AB44E5C7A96A832385B942FE662A8CAC0897CA50B5F8CC8FA"
+    },
+    {
+        "Path":  "文档\\证据\\source-registry-run-2.log",
+        "Bytes":  10666,
+        "Sha256":  "5B0D604E36B5A1C5A9982CB467584543B860C418F3F3B5BF4D7376D6C762D831"
+    },
+    {
+        "Path":  "文档\\证据\\_binding.pid",
+        "Bytes":  7,
+        "Sha256":  "DD484EEF5031058DB0A2505182A0BDEAD1C360C49AA05CD6950D0E2D15CC4FAA"
+    },
+    {
+        "Path":  "文档\\证据\\_binding.run.err",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\_binding.run.log",
+        "Bytes":  96,
+        "Sha256":  "D04214DE5000471650BE6675FEDF67E7D889A35E026161FE4475E6C5BC86D4CE"
+    },
+    {
+        "Path":  "文档\\证据\\_coverage.run.log",
+        "Bytes":  124,
+        "Sha256":  "DD8ADC3DEBD45E47F71A1C02EA0783C128DB3261A1FD0630B6E1B7DC12B6FD9C"
+    },
+    {
+        "Path":  "文档\\证据\\_derive_preflight_diagnostics.json",
+        "Bytes":  810,
+        "Sha256":  "1B37E1ED8570CE140032E1D3AF2C97DBE09D2AD0D042D460E2C15408D7C09FC2"
+    },
+    {
+        "Path":  "文档\\证据\\_gate.run.err",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\_gate.run.log",
+        "Bytes":  103,
+        "Sha256":  "6BC90FB77C098486F9B9BF4B9D2FCDE8286D8EA1976644479163B10C82A4B060"
+    },
+    {
+        "Path":  "文档\\证据\\_test.run.log",
+        "Bytes":  1710,
+        "Sha256":  "DA1C4A738753108F1506E321278F5DA2AEE91084F4A3E26A47DE0AEC0B62DBF2"
+    },
+    {
+        "Path":  "文档\\证据\\_writing-evidence.run.log",
+        "Bytes":  507,
+        "Sha256":  "B69DEEE16F66EB9FB29FC9D7CE67A0A41DA139070DC51D8668DB1A64321E9F45"
+    },
+    {
+        "Path":  "文档\\证据\\严格资料升级_run.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\严格隔离审计_15条.log",
+        "Bytes":  109,
+        "Sha256":  "68117B03E09EDDE3F64EF46A6F33FA23391A7F6ACE9C50776A014B47DE318D85"
+    },
+    {
+        "Path":  "文档\\证据\\严格隔离审计_李帅众审校后刷新.log",
+        "Bytes":  107,
+        "Sha256":  "4B1B78C376ED02A2F0D7AB832F1BDA2A820D96F68C47E2CF797581F56D91DBCD"
+    },
+    {
+        "Path":  "文档\\证据\\严格隔离审计_策略对齐后.log",
+        "Bytes":  108,
+        "Sha256":  "D4383127603E77B89E542AED4E3AFE50EFF66B310941F5C130A65892051B4DF0"
+    },
+    {
+        "Path":  "文档\\证据\\候选生成进度_当前.log",
+        "Bytes":  92,
+        "Sha256":  "92C03B02F518FE310CF175378D1366FB8CB738A3EBEAB32A9860213CFD204540"
+    },
+    {
+        "Path":  "文档\\证据\\全书创作计划.json",
+        "Bytes":  3009,
+        "Sha256":  "4FF9A5A7F468DDD37C52B6BF7D2E9B7F0F3AAA1AB8CFAA1053D23595DB875E9C"
+    },
+    {
+        "Path":  "文档\\证据\\全绑定来源完整性审计报告.json",
+        "Bytes":  728933,
+        "Sha256":  "FD23FD749260035BD3E2648DE0BC4AB84D12E52CC3F5875401C891E6EB795731"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料严格隔离审计报告.json",
+        "Bytes":  1075,
+        "Sha256":  "23B029407C0466948B204B2279B90800D9737104110B2950D20D1A7F87B0B606"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料严格隔离审计问题清单.jsonl",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料升级_新基线全量续跑.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料升级_新基线全量续跑.log.err",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料升级档案.jsonl",
+        "Bytes":  60797,
+        "Sha256":  "FCDF36BE3BF5DFB370518BCC3140C2549B5027A6064558AF302FA185BEB1A48D"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料异常引用修复记录.json",
+        "Bytes":  18230,
+        "Sha256":  "3B4D00CC7B42D2A6E603A35D9FDDDE3EF9D9E90851FCA75F657ADCE09E175CB2"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料批量升级报告.json",
+        "Bytes":  2031,
+        "Sha256":  "365A4D7F04F52943314DE42C0DB23357BE7FF349DDEBDFD961F8E65DA3A4B263"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料批量升级验证报告.json",
+        "Bytes":  923,
+        "Sha256":  "7B83F0C651953DC681B7BB24911F9476F0CD47EFB20432A408790433665ED909"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料文学审校报告.json",
+        "Bytes":  654,
+        "Sha256":  "3C44B5A4A94B28C3EACFB8417B09C7E427294F62FC7A0E67AB96DFEF871401BC"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料文学审校裁决.json",
+        "Bytes":  5452,
+        "Sha256":  "E5E5A22B9591D8F28BE504B583FDE791ECE098B716DB14B35C9E718FA1C1EFFB"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料文学审校裁决_非本批次旧记录备份.json",
+        "Bytes":  3320,
+        "Sha256":  "AAC29B4D209263ED0D33C74BD6EB3A773E79B86AB03BA050BC6B45D83833CF51"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料替代批次授权.json",
+        "Bytes":  554,
+        "Sha256":  "528591A2D0954B60A7E1128F92E3AC056DF931753F3EFABBE687F53BFA1DFCC6"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料来源语义审校报告.json",
+        "Bytes":  439,
+        "Sha256":  "5F08F92B66554AF9670F69C689EB00CC220E00A935BAB0545CDF5B2123D7A824"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料正式基线排除清单.json",
+        "Bytes":  593,
+        "Sha256":  "0FB16BCFA15F9A46EE40D3470B12B8933000F88C2FAE66D5DF3D64395BCD9C7F"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料确定性模板草稿.json",
+        "Bytes":  10190,
+        "Sha256":  "836D730946D8B8569B3AF58FEC1E4F142CCFC31B1CC9268039D9A8F1A7CE128B"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料解释词创作绑定.json",
+        "Bytes":  81374093,
+        "Sha256":  "7DBF26A357627DD683AC78DE6A32BBA4C871743383D4EEC32D881BB970E05264"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料解释词创作绑定汇总.json",
+        "Bytes":  1504,
+        "Sha256":  "94E77A6D59C723592412873A1FCCB9964B1E59D5EA5B91883C484296EDE7EB21"
+    },
+    {
+        "Path":  "文档\\证据\\动态网络状态修复日志.jsonl",
+        "Bytes":  286688,
+        "Sha256":  "600C4E215F3E73E7A19DC673414E8E293CA12F8CE8480F327B9E552213BBEF50"
+    },
+    {
+        "Path":  "文档\\证据\\动态网络状态摘要.json",
+        "Bytes":  380,
+        "Sha256":  "D7584D320B1C802542B9019A12D9578D463AA781421FEA984EF062029746B89B"
+    },
+    {
+        "Path":  "文档\\证据\\动态链索引.jsonl",
+        "Bytes":  98383,
+        "Sha256":  "F7EC83C6FCE86B5A893BEB2B998EE01B3030F5719D6BE09E724C19E021F0162D"
+    },
+    {
+        "Path":  "文档\\证据\\动态链索引摘要.json",
+        "Bytes":  10021,
+        "Sha256":  "42EAF3EE8336C49BBB1CEF0473D4875CAFE060A77791C7EB0B7C89E12FD49834"
+    },
+    {
+        "Path":  "文档\\证据\\完成计划.json",
+        "Bytes":  4733,
+        "Sha256":  "B3B6C60359FDACDE83A0160A25BC329884274A36AADA1F9873419F67CF837812"
+    },
+    {
+        "Path":  "文档\\证据\\小说资料选择清单.json",
+        "Bytes":  2132,
+        "Sha256":  "43CD1A8B5D26F01CEDAF77E3B3E9621A34AC22090B94CC306FCD736E51CFD7C0"
+    },
+    {
+        "Path":  "文档\\证据\\已清理的过时创作流程产物.txt",
+        "Bytes":  2844,
+        "Sha256":  "731399268BBF6792CB12192F1712EC997251EABA23FF22B0AD16C5A69FAAB488"
+    },
+    {
+        "Path":  "文档\\证据\\执行模块.json",
+        "Bytes":  774,
+        "Sha256":  "F9FCFA052FCD7B4336CB8F4D18F976193E85FC42AA67057910D6F4D9298BAD0D"
+    },
+    {
+        "Path":  "文档\\证据\\来源引用审计报告.json",
+        "Bytes":  793,
+        "Sha256":  "FA00C444BE06E3372E33AE047885A1B716C8D02EBA71AF4C6FEE85083C297FE1"
+    },
+    {
+        "Path":  "文档\\证据\\来源条目认证.jsonl",
+        "Bytes":  4536,
+        "Sha256":  "987EE083304AA36C16EC08F97468931C332FD55DCC3B6986AC89267B2B636F23"
+    },
+    {
+        "Path":  "文档\\证据\\来源深度检查报告.json",
+        "Bytes":  6882,
+        "Sha256":  "8BEC8ECCB42DEF3D50391D64D9136DAF9E056BDE23D90031AD63117FE2032C3D"
+    },
+    {
+        "Path":  "文档\\证据\\来源语义审校_12条候选.log",
+        "Bytes":  85,
+        "Sha256":  "410528BE80358B0434C87776C0AA93D86B8CDCE51D4BC3BFC28C1EEA6242B7A0"
+    },
+    {
+        "Path":  "文档\\证据\\来源语义审校_15条.log",
+        "Bytes":  84,
+        "Sha256":  "8B24A736F5439B0D7D0745D44D02A5B3000982E2EA357B59ED126F9597E2F53D"
+    },
+    {
+        "Path":  "文档\\证据\\来源语义审校_S02_四阶段.log",
+        "Bytes":  83,
+        "Sha256":  "E45F04F8C11EB6A6267ECE857339B47867EC1DCF3F343737976EF8CDCC2C140D"
+    },
+    {
+        "Path":  "文档\\证据\\来源语义审校_位置修复后.log",
+        "Bytes":  83,
+        "Sha256":  "B397333ACD3E3B7A8E9D134C7E49DA345BD0685800DDF651C571FA3E261DA211"
+    },
+    {
+        "Path":  "文档\\证据\\来源语义审校_恢复后.log",
+        "Bytes":  84,
+        "Sha256":  "18C00B04C46933C2583D9F769D355DECF14C31BF619A7C1534901D443F41625F"
+    },
+    {
+        "Path":  "文档\\证据\\来源语义审校_最终当前状态.log",
+        "Bytes":  83,
+        "Sha256":  "E45F04F8C11EB6A6267ECE857339B47867EC1DCF3F343737976EF8CDCC2C140D"
+    },
+    {
+        "Path":  "文档\\证据\\来源质量自主分析报告.json",
+        "Bytes":  7570,
+        "Sha256":  "15CE97ECA51145EE1E0B45B7471C1B99080E6E2569593D528064823238112F49"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S02.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S02.out.log",
+        "Bytes":  407,
+        "Sha256":  "8A68C69920D6CF6AE2D1B62E4CC980CC15D2FFE2D0305EA16433F624C1FD98EC"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_JSON容错重试.err.log",
+        "Bytes":  1685,
+        "Sha256":  "24F7A7929DC43AE494E5CF1CE4E094B0BD9866526199289FB10C69F86C58B8E3"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_JSON容错重试.out.log",
+        "Bytes":  41,
+        "Sha256":  "C4543AF6BC01630AD0D62511B0893087CA52A7AE3FD4BCB4CF64A71152125065"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_字段抽取重试.err.log",
+        "Bytes":  1743,
+        "Sha256":  "DB48160E627B951BD4363C2D2AFE9E5CF6B5B7DEEDA5E77140582D9673C04A3F"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_字段抽取重试.out.log",
+        "Bytes":  41,
+        "Sha256":  "C4543AF6BC01630AD0D62511B0893087CA52A7AE3FD4BCB4CF64A71152125065"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_引文重试.err.log",
+        "Bytes":  2594,
+        "Sha256":  "E6AE5C270E70C8D03B696AB7071BFE208EB06855E2F4056139E8F96D7ADE66DC"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_引文重试.out.log",
+        "Bytes":  41,
+        "Sha256":  "C4543AF6BC01630AD0D62511B0893087CA52A7AE3FD4BCB4CF64A71152125065"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_输出预算重试.err.log",
+        "Bytes":  1737,
+        "Sha256":  "9870C1734AF4580AB27250202EBB27EB5472F47CBE000F94C202CEABA736608D"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_输出预算重试.out.log",
+        "Bytes":  41,
+        "Sha256":  "C4543AF6BC01630AD0D62511B0893087CA52A7AE3FD4BCB4CF64A71152125065"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_重试.err.log",
+        "Bytes":  1779,
+        "Sha256":  "0496CC8AE706E37B72CD7AE5BA8A6E98E6B5C27230E146F458B9806501C5CDD9"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_ACT-CH01-S03_重试.out.log",
+        "Bytes":  41,
+        "Sha256":  "C4543AF6BC01630AD0D62511B0893087CA52A7AE3FD4BCB4CF64A71152125065"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_CH01-S03.log",
+        "Bytes":  43,
+        "Sha256":  "B7CFA3584FDF3E6137682B8FBA4FE695CBFB6FD08E80C7932EE98338D8390189"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_CH01-S03_首条诊断.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-00533.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-00533.out.log",
+        "Bytes":  435,
+        "Sha256":  "500E828B117E4F1D175D9F230AA03A12C142C64176D8B6F1625CCA445666FD19"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-00607.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-00607.out.log",
+        "Bytes":  435,
+        "Sha256":  "9FE57C65B745104B91636958972CCFB7D4451188C7FFCB670B76674FF438B56A"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-01938.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-01938.out.log",
+        "Bytes":  435,
+        "Sha256":  "359CD8CF068A44B9B02D7FA49DC33D8E4AEB882D51CB2A5EE460B0A795AB0363"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-01957.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-01957.out.log",
+        "Bytes":  435,
+        "Sha256":  "66C30E2BDF10051577B314C3E1D77347B1DFBB002F259CFD61AF993C1EB3B25C"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-04971.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-04971.out.log",
+        "Bytes":  435,
+        "Sha256":  "6D0D765DB09E37481DA5DFE561C4E83DBD6222C2979AE262358B93B911596E81"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-04974.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-04974.out.log",
+        "Bytes":  69,
+        "Sha256":  "9CE832A15F23DEA92B2FAFA0E9D9A618DA5990BE1F5A36003A0FFADEE0E3BC38"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-05533.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01-TB-05533.out.log",
+        "Bytes":  435,
+        "Sha256":  "5D43C5137562904CAD6C8248F1D55B734B3A19F6FA4A69DCB8C9716CB240BEB3"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S01.out.log",
+        "Bytes":  69,
+        "Sha256":  "2DCF5FF0B18B78530058D1931E7F5009184B370B5EA679D27EE09B19C119BC61"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S02.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S02.out.log",
+        "Bytes":  435,
+        "Sha256":  "391C03F0A0B5B31437C8EAD86097C452349A63EE21A400905F1885AC3EBB1D03"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00071.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00071.out.log",
+        "Bytes":  69,
+        "Sha256":  "0B8DDC52A0B1A493EFAE68B991D920BC85FD116B3F2D3D9FA1B227F2AF777ABA"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00071_契约提示.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00071_契约提示.out.log",
+        "Bytes":  69,
+        "Sha256":  "0B8DDC52A0B1A493EFAE68B991D920BC85FD116B3F2D3D9FA1B227F2AF777ABA"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00071_契约提示_重试.log",
+        "Bytes":  485,
+        "Sha256":  "5D91BF8DFD99301486FE85464EAAFBBDADE2D76169779714F128D91B9B5E7081"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00071_第三次.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00071_第三次.out.log",
+        "Bytes":  69,
+        "Sha256":  "0B8DDC52A0B1A493EFAE68B991D920BC85FD116B3F2D3D9FA1B227F2AF777ABA"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00533.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00533.out.log",
+        "Bytes":  435,
+        "Sha256":  "EB35FCA06F5E25BEC110823686146B6491B318AA4A401AA54A34F2D52B35B187"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00639.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-00639.out.log",
+        "Bytes":  435,
+        "Sha256":  "AABD0DEE71D6257FF07EA2CDDF64BAD7DBBDCACEFC60B627D01BBDA2BD45F895"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-01939.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-01939.out.log",
+        "Bytes":  435,
+        "Sha256":  "21FE29A8FED774970A255BA61DE0ACC74DB8CC53B98F698225899340BB51FEED"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-02009.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-02009.out.log",
+        "Bytes":  435,
+        "Sha256":  "14D77634A8E5AED57A78C9E88BE4178E92618BCA833A5BC41DA31C8AB1C5F9B1"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-04971.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-04971.out.log",
+        "Bytes":  69,
+        "Sha256":  "BABC7B37F1985118AEB46C6F27E749EB7B63328B154F7F39C3D67A1574B4690F"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-04971_契约提示.log",
+        "Bytes":  71,
+        "Sha256":  "BC89EB2D1704A769401B03865BA151A361B6AC4059BEC6AA28C0DC1F7123F57B"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-04971_契约提示_重试.log",
+        "Bytes":  485,
+        "Sha256":  "4CEB866294C81CFB5BFC7AB6C0CF9C3B2BD0581A6666D1B900300F28C339B948"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-04972.err.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_RPL-CH01-S03-TB-04972.out.log",
+        "Bytes":  435,
+        "Sha256":  "1C5C046F524437828CCD940D7C88EB767B475679519B0F3124D9365C7B6FE34A"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成_剩余串行.log",
+        "Bytes":  111,
+        "Sha256":  "62C04CB9A475548AC0388A180FF0C841CF660DAC6D5FB20B11591F837D756E08"
+    },
+    {
+        "Path":  "文档\\证据\\模型候选生成诊断.log",
+        "Bytes":  653,
+        "Sha256":  "3CD9EF7ED821DC8056057A1CA1DDDCA3D5F7EEE163459F6EC01B8F1C210C1147"
+    },
+    {
+        "Path":  "文档\\证据\\模型最小化提示验证.log",
+        "Bytes":  188,
+        "Sha256":  "49AAE883156C6179757FEF9F6CC38F29FC09FC720F189CA59133FCBFB0414E68"
+    },
+    {
+        "Path":  "文档\\证据\\正式交付审批CLI帮助.log",
+        "Bytes":  765,
+        "Sha256":  "27D0C3B30934BB6E78B20B1DCA51ED859017AE5CA5448B1C901E47F3FC49B6E5"
+    },
+    {
+        "Path":  "文档\\证据\\派生资料项目任务声明.json",
+        "Bytes":  1918,
+        "Sha256":  "DE67FCA072B91A88C2C1069E29F373F858812ADB9D0B1D603FFF997BF0D24214"
+    },
+    {
+        "Path":  "文档\\证据\\章节质量资料就绪度报告.json",
+        "Bytes":  30108,
+        "Sha256":  "CBB4D4DD641EB35C14F4674F8B9FE77F9A2D07C9C84F3D1B8B31CDFB004770BA"
+    },
+    {
+        "Path":  "文档\\证据\\第一章受控草稿批次.json",
+        "Bytes":  13147,
+        "Sha256":  "7F3F42DEAE7ADCC037F215BC340FB5EB1AAA45F71FA2ED11B81B168CE8707E3E"
+    },
+    {
+        "Path":  "文档\\证据\\类型系统修复日志.jsonl",
+        "Bytes":  3916,
+        "Sha256":  "9ABEFC2783A2558D25BEF301FDAAB29381F7CF241DC8845F1C71F6261BD76380"
+    },
+    {
+        "Path":  "文档\\证据\\类型系统完成摘要.json",
+        "Bytes":  386,
+        "Sha256":  "61FA5FC95CE47936059A6A02EA71EA554EDF1CFEB794E265D9F011E3B5EF9803"
+    },
+    {
+        "Path":  "文档\\证据\\类型连接修复日志.jsonl",
+        "Bytes":  11772,
+        "Sha256":  "B45CF6768CBFCEEA8641BFDAE60FD934330D4B2B4C6448E400BB4BC9A848C013"
+    },
+    {
+        "Path":  "文档\\证据\\类型连接全局索引.json",
+        "Bytes":  30047,
+        "Sha256":  "FC5BA089E57E3C44E8271AFAD43E43B0FF82D073127A42D46E22425D19BD010D"
+    },
+    {
+        "Path":  "文档\\证据\\类型连接对象分类审计报告.json",
+        "Bytes":  9561505,
+        "Sha256":  "9A0136193BA1F6CF2C23C2CB4E57D125444C244959D4FCB379904B7D5B9D8CD5"
+    },
+    {
+        "Path":  "文档\\证据\\类型连接摘要.json",
+        "Bytes":  177,
+        "Sha256":  "6DE9A30DB16CFF253DCE4FC3F9E5752CA4DF401DF31C66CF2C9F1D8EAA5F31C6"
+    },
+    {
+        "Path":  "文档\\证据\\类型连接结构对象引用审计报告.json",
+        "Bytes":  4890915,
+        "Sha256":  "1696E891078955DA8CEF2D2B482AC74AC13E3CDE2B2570C2F317AF4AB3E7845B"
+    },
+    {
+        "Path":  "文档\\证据\\类型连接规则.json",
+        "Bytes":  1036,
+        "Sha256":  "B2FF9C22C4D613C1557F300712425C19DCEEE61866B470B5F15B102F094FA3D0"
+    },
+    {
+        "Path":  "文档\\证据\\类型连接身份复核审计报告.json",
+        "Bytes":  4360996,
+        "Sha256":  "4B129998E7F6C6F5F24C2BF0A193C66D950EEAD8CB5A97802D13750E1E3D7846"
+    },
+    {
+        "Path":  "文档\\证据\\解释词覆盖审计报告.json",
+        "Bytes":  31195333,
+        "Sha256":  "AF58587D5F2FDBAAC91F78271F3D600ACA070A614F042DF4BBBDAF5BEB43DA90"
+    },
+    {
+        "Path":  "文档\\证据\\解释词覆盖矩阵.json",
+        "Bytes":  33660293,
+        "Sha256":  "CCC623A9E581088A403E7F9014C502AE3BA487A10429ECD5CB4E15CA4265F575"
+    },
+    {
+        "Path":  "文档\\证据\\解释词转译与绑定执行方案.md",
+        "Bytes":  5447,
+        "Sha256":  "B67C60C595F095596370D75552202D72B4D7C26BAD69DA65A5228F5313B5224C"
+    },
+    {
+        "Path":  "文档\\证据\\资料分流注册表.json",
+        "Bytes":  3016,
+        "Sha256":  "C36B074A4544ADDC2D2123A6FE1587A6233AD3F87FDE5AEC9BEA9DC84B626251"
+    },
+    {
+        "Path":  "文档\\证据\\资料库依赖修复日志.jsonl",
+        "Bytes":  134444,
+        "Sha256":  "3B906AD2C600CF439162677710118915A53501FEA5AE04030F06120BEFAC9BD3"
+    },
+    {
+        "Path":  "文档\\证据\\资料库依赖分类摘要.json",
+        "Bytes":  434,
+        "Sha256":  "A623D396AA69F12A468EDC75DC25AFBA28CAEF15BC63491F238181ED9C443475"
+    },
+    {
+        "Path":  "文档\\证据\\资料库依赖分类日志.jsonl",
+        "Bytes":  233453,
+        "Sha256":  "7D4386F3D61F7CEC479E790B994DEE5F48A43C07FC00EE27017169B29784BADD"
+    },
+    {
+        "Path":  "文档\\证据\\资料库模块分配摘要.json",
+        "Bytes":  293,
+        "Sha256":  "24E45DD59CACC606FB41DCA0015E1895927947BBC0801FC52E30303867B211FE"
+    },
+    {
+        "Path":  "文档\\证据\\资料库模块分配日志.jsonl",
+        "Bytes":  63469,
+        "Sha256":  "828A8E3B3DF8D3C8EF9A5F569C0D3F1AD4D506FA1E98E9162212AC4FC5C1AA03"
+    },
+    {
+        "Path":  "文档\\证据\\资料库示例修复日志.jsonl",
+        "Bytes":  129806,
+        "Sha256":  "EDEC096383D7822FDAD63530EAAEDF2022BC52EDBBD048AAB686BE5CD3C94FF7"
+    },
+    {
+        "Path":  "文档\\证据\\资料库示例摘要.json",
+        "Bytes":  126,
+        "Sha256":  "C546164DC5C5DCE6FF823C3315AA9D553341DA190D6C64366BA396ACA2BE485C"
+    },
+    {
+        "Path":  "文档\\证据\\资料库索引修复报告.json",
+        "Bytes":  385,
+        "Sha256":  "C0367D260B630B2E4C822DE036623C13139C0C68CFC1DB7C312EF102DE99A96D"
+    },
+    {
+        "Path":  "文档\\证据\\资料库索引修复日志.jsonl",
+        "Bytes":  2,
+        "Sha256":  "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6"
+    },
+    {
+        "Path":  "文档\\证据\\资料库语义依赖修复日志-二版.jsonl",
+        "Bytes":  54947,
+        "Sha256":  "084FDEA1A1C40E750B3EF2AB654848F4BB7010BF9D2635B1C3DC967679345DCF"
+    },
+    {
+        "Path":  "文档\\证据\\资料库语义依赖修复日志.jsonl",
+        "Bytes":  90966,
+        "Sha256":  "F5464F602F8AB42F8A668A1545616A9CFB93FA9432B74A65A8CDE07751B37A57"
+    },
+    {
+        "Path":  "文档\\证据\\资料库语义依赖摘要-二版.json",
+        "Bytes":  848,
+        "Sha256":  "477813BFEA8F9162E14D091D27EFD98CA334AA68211FCFE70222701068CECDEB"
+    },
+    {
+        "Path":  "文档\\证据\\资料库语义依赖摘要.json",
+        "Bytes":  459,
+        "Sha256":  "7F7A6260597AC36AF1D10120A48089F14185663F3AB76A948F857813D9D8690C"
+    },
+    {
+        "Path":  "文档\\证据\\资源注册表.json",
+        "Bytes":  14905,
+        "Sha256":  "51A86BA7FE6EDB85DEF2625BE4FAD63B7DEC1F37BF4BB49FDBEBFF22BCA3B56C"
+    },
+    {
+        "Path":  "文档\\证据\\采用模板.jsonl",
+        "Bytes":  124,
+        "Sha256":  "FFAE85D1E3BB8587336E8A87D5E41FE955177A80DDBC2E2E886BBDE805AC2DC5"
+    },
+    {
+        "Path":  "文档\\证据\\采用规则.json",
+        "Bytes":  6280,
+        "Sha256":  "34DFB0260A9BB7B844A87D39229DF8F4B9EDF9859274D5584BD36C3371983FDB"
+    },
+    {
+        "Path":  "文档\\证据\\锚点分类索引.json",
+        "Bytes":  239,
+        "Sha256":  "39E142E4B45CB9E2F182A1AF624865F51C5B2A235361303A8159E7A5611B26D0"
+    },
+    {
+        "Path":  "文档\\证据\\锚点定义与绑定证据.json",
+        "Bytes":  6099,
+        "Sha256":  "050D5D0179040355DE3748B091EAFBC4DE8C832741708F6BF177CFF966CF32EB"
+    },
+    {
+        "Path":  "文档\\证据\\锚点消费.jsonl",
+        "Bytes":  4852,
+        "Sha256":  "2BBD69C7E8DFCA51CC642FB9B3D76CCE21F6651AE494A64082A5701C7055C175"
+    },
+    {
+        "Path":  "文档\\证据\\锚点网络修复日志.jsonl",
+        "Bytes":  240639,
+        "Sha256":  "C46E8E2D4C5110535F354110E32085AF0BC1F933EACB1670ED7152A710FC2A83"
+    },
+    {
+        "Path":  "文档\\证据\\锚点网络场景绑定日志.jsonl",
+        "Bytes":  451494,
+        "Sha256":  "E125BBF77DA93F49ACA82C636B1A63D4A96A2FC7F961D6B16A9E29A32AD9C90B"
+    },
+    {
+        "Path":  "文档\\证据\\锚点网络定义日志.jsonl",
+        "Bytes":  341394,
+        "Sha256":  "070D138A7CCAE64BB449D6EE4972A80DC9E4D3639319EB04DCC520AD5F0253BC"
+    },
+    {
+        "Path":  "文档\\证据\\锚点网络摘要.json",
+        "Bytes":  371,
+        "Sha256":  "7161C0363AEBC2EE0A4C4856F53EDB4814BD258CED4D121D0A478F87C704AC5A"
+    },
+    {
+        "Path":  "文档\\证据\\锚点网络文本位置日志.jsonl",
+        "Bytes":  268609,
+        "Sha256":  "94A78219994DDBA1B14E9AD4D5DF5C8ACE21C62378631F9B47A2B8EE710C8B6E"
+    },
+    {
+        "Path":  "文档\\证据\\锚点采用规则.json",
+        "Bytes":  1988,
+        "Sha256":  "90EC65523D07A91E2450CB764BF318EF16ED711E6943300E40DA650C89B6D1D5"
+    },
+    {
+        "Path":  "文档\\证据\\闭环验证报告.json",
+        "Bytes":  703,
+        "Sha256":  "51E3E09EB5A6A6D7CB01A01C9008C54C0E0518E15D8FE56014E943E0FDE1E71C"
+    },
+    {
+        "Path":  "文档\\证据\\静态网络索引.json",
+        "Bytes":  63508,
+        "Sha256":  "D4197F7A9AB6C3D335674D0A1E8BA469D7E2C1CDC306531CD6864BA605F03E8D"
+    },
+    {
+        "Path":  "文档\\证据\\静态网络绑定修复日志.jsonl",
+        "Bytes":  419392,
+        "Sha256":  "DA986B0E7818967D424FA2950F80A1F7E6F7DE910F0431DFDFDE415E189168E6"
+    },
+    {
+        "Path":  "文档\\证据\\静态网络绑定摘要.json",
+        "Bytes":  320,
+        "Sha256":  "FD87AFFB5427A8C60FB89F0E7782E2FDBE504241077D95031F46263BCA733732"
+    },
+    {
+        "Path":  "文档\\证据\\静态连接消费.jsonl",
+        "Bytes":  39064,
+        "Sha256":  "20C6E107327AD93AA8213E27D3ADC920A9AC0C26A01C38E3EE1CA8E05B497C8A"
+    },
+    {
+        "Path":  "文档\\证据\\静态连接采用规则.json",
+        "Bytes":  2117,
+        "Sha256":  "5E65DCC8F6F47C3938CC87F2804E3868DFE173116BDE6D57E65FFE1D466CD53B"
+    },
+    {
+        "Path":  "文档\\证据\\非类型资料证据补全报告.json",
+        "Bytes":  675,
+        "Sha256":  "9321D012F88334E8FB45CCA45A6557868EB77766F2A5A86203EF93A965FFDFA2"
+    },
+    {
+        "Path":  "文档\\证据\\项目来源确认冲突裁决-20260817.json",
+        "Bytes":  3227,
+        "Sha256":  "62016F2ECF2D4DB039E41E004F94A7BE90DF05DB132F2F0904FA1F308E5C0350"
+    },
+    {
+        "Path":  "文档\\证据\\项目来源确认报告.json",
+        "Bytes":  643,
+        "Sha256":  "62193C63C7C199E42BF7748046941BA6B59477DA262FE7CB1E21FF7636C9B44A"
+    },
+    {
+        "Path":  "文档\\证据\\项目输入缺失清单.json",
+        "Bytes":  4552,
+        "Sha256":  "1E9422902D22D5FCD2B08642E18D8BFDC329E0BA8EBA77F62CD392ADD3DE3E63"
+    },
+    {
+        "Path":  "文档\\证据\\预检刷新_faulthandler.log",
+        "Bytes":  76,
+        "Sha256":  "5D17B15C02588346AED8181985D0F26FA426856E0C44887C6196BE9851FA79A5"
+    },
+    {
+        "Path":  "文档\\证据\\预检刷新_traceback.log",
+        "Bytes":  13,
+        "Sha256":  "C7D0479279A219391EA39F0B9155C10C54669FA0F3FD623DB4978E0C24455589"
+    },
+    {
+        "Path":  "文档\\证据\\预检快照_traceback.log",
+        "Bytes":  45,
+        "Sha256":  "C247F35CE07E9FA2582D7022BD872F9168E80334F7292ADDA5D25FDC1A4781DF"
+    },
+    {
+        "Path":  "文档\\证据\\预检步骤诊断.log",
+        "Bytes":  469,
+        "Sha256":  "4DE60A4408250BB0090896EB861FC77827EC34D4924B35835A930167AD75EA42"
+    },
+    {
+        "Path":  "文档\\证据\\验证_python版本.log",
+        "Bytes":  15,
+        "Sha256":  "2B095B05C4093EBCA54B87BD2C6A6F557935E6B3F8F506A0C2E5E294A763F4AD"
+    },
+    {
+        "Path":  "文档\\证据\\验证_S02_来源语义审校.log",
+        "Bytes":  83,
+        "Sha256":  "E45F04F8C11EB6A6267ECE857339B47867EC1DCF3F343737976EF8CDCC2C140D"
+    },
+    {
+        "Path":  "文档\\证据\\验证_全量治理.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\验证_创作绑定_独立.log",
+        "Bytes":  96,
+        "Sha256":  "D04214DE5000471650BE6675FEDF67E7D889A35E026161FE4475E6C5BC86D4CE"
+    },
+    {
+        "Path":  "文档\\证据\\验证_字段提取_单测.log",
+        "Bytes":  115,
+        "Sha256":  "B797CEF533352B982120FAA29F0312D9DA8975F6EB5CF5833657ACA61D8F105E"
+    },
+    {
+        "Path":  "文档\\证据\\验证_完整执行管道.log",
+        "Bytes":  620,
+        "Sha256":  "AFE4BE92DBEB9286C5303C3AE3F070613FAF506E11B9067251CAAEE6B5852FA7"
+    },
+    {
+        "Path":  "文档\\证据\\验证_执行契约基线.log",
+        "Bytes":  114,
+        "Sha256":  "F408199A78593C55916C2179E9BA9038F3CE9E356DA237248445197B9A135D10"
+    },
+    {
+        "Path":  "文档\\证据\\验证_本次差异.patch",
+        "Bytes":  7440,
+        "Sha256":  "46DCB2015A3BEDF65DC532B46D461F7CAFC4DA529BC2DDE29BDAB63A29D95227"
+    },
+    {
+        "Path":  "文档\\证据\\验证_来源质量_独立.log",
+        "Bytes":  78,
+        "Sha256":  "EE625CE2DDA53ABEA8B586B934530B149C09A7EF263425CEF0F851BA64D2CB5D"
+    },
+    {
+        "Path":  "文档\\证据\\验证_编译.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\验证_编译_纯文本生成.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\验证_资源注册_独立.log",
+        "Bytes":  11125,
+        "Sha256":  "44B0527C0565CDF2F44811F37A303952C6ED53F1622204D5FB16BAFFC4CDC59E"
+    },
+    {
+        "Path":  "文档\\证据\\三章金样本\\三章金样本任务表.json",
+        "Bytes":  1289,
+        "Sha256":  "B4CE7B41C7B66E8DB1FA4AB10000441D0E8F8357D5BCEB119E3995AA1A13FFD7"
+    },
+    {
+        "Path":  "文档\\证据\\三章金样本\\三章金样本验证报告.json",
+        "Bytes":  480,
+        "Sha256":  "96EFD62CCC26C499D9F42D384088A69A394BC580424CE0CF038F5BD532C709AB"
+    },
+    {
+        "Path":  "文档\\证据\\三章金样本\\章节_1_execution_manifest.json",
+        "Bytes":  4870,
+        "Sha256":  "658AB8CF172D0687B7D2F1E79C70FBFE22C7BB2BF274F16DB8C8D866DF20D790"
+    },
+    {
+        "Path":  "文档\\证据\\三章金样本\\章节_2_execution_manifest.json",
+        "Bytes":  5088,
+        "Sha256":  "55C5A67C4510AF9119748D231F95C20832ABF09CAF01717BEA5D796383F8EE6F"
+    },
+    {
+        "Path":  "文档\\证据\\三章金样本\\章节_3_execution_manifest.json",
+        "Bytes":  5184,
+        "Sha256":  "1B3BB8223131B6EC61E336F01D5BD2704CB1A723331110C7259C169EAA657F83"
+    },
+    {
+        "Path":  "文档\\证据\\三章金样本\\资料决策微批次.jsonl",
+        "Bytes":  5936412,
+        "Sha256":  "866E464EC810EBBC4677101606C6EF6D805A367262D7DA217DE4BB783D07EFC8"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料升级派生定位\\已验证候选映射.jsonl",
+        "Bytes":  5978083,
+        "Sha256":  "1681CBEE7C1D75297EB23F2FDDFA8BC84DC2C88B90B57C4C113EFAA8E9A02E6C"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料升级派生定位\\重建报告.json",
+        "Bytes":  367,
+        "Sha256":  "D1C3D290BC8BC88416A8994594579ED20CF37EEFC64EA6CFD1CF9068499B5B73"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T060225Z-2105ebff\\changes.jsonl",
+        "Bytes":  7894522,
+        "Sha256":  "5E33C585541E85379E2D530BFADE81C1199955BF8022395F620B635F25533CE8"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T060225Z-2105ebff\\manifest.json",
+        "Bytes":  641,
+        "Sha256":  "035DF383C12CC8465B5A5645D6B0C9EC365145EA94E7331B5326072C1B982086"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T060338Z-666066c8\\changes.jsonl",
+        "Bytes":  9249082,
+        "Sha256":  "6C665E3D0CED3CFEAA7CB4E0D7423B3CCD9BB795C0C023FC9C4DD0AEA468D750"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T060338Z-666066c8\\manifest.json",
+        "Bytes":  772,
+        "Sha256":  "99B5BB536D23DC78A4BE0B74A4262DC50D47CD7077B585A28E553F72CFE0F12D"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T060721Z-e50d548c\\changes.jsonl",
+        "Bytes":  9249082,
+        "Sha256":  "6C665E3D0CED3CFEAA7CB4E0D7423B3CCD9BB795C0C023FC9C4DD0AEA468D750"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T060721Z-e50d548c\\manifest.json",
+        "Bytes":  772,
+        "Sha256":  "4904A4F1C2D92718F68393DA7A2959180B0ED75D76B6FD36C79D4F2F950BB583"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061038Z-2a66d15b\\binding_ids.txt",
+        "Bytes":  640,
+        "Sha256":  "6A60E9739B966C3D434686B0011F04793266AC14AB726935CB8828C53D6CAFCA"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061038Z-2a66d15b\\changes.jsonl",
+        "Bytes":  9249082,
+        "Sha256":  "6C665E3D0CED3CFEAA7CB4E0D7423B3CCD9BB795C0C023FC9C4DD0AEA468D750"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061038Z-2a66d15b\\manifest.json",
+        "Bytes":  799,
+        "Sha256":  "B5A94B2FDF4F883DD384B1CECAA9FAD3AB5452253F26AEF80E78505A2EFD9AAB"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061234Z-42c47948\\binding_ids.txt",
+        "Bytes":  410,
+        "Sha256":  "D4317C13FFC682619507F38EE763A854398CF69BFC78E3E6AFE198A633A3305B"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061234Z-42c47948\\changes.jsonl",
+        "Bytes":  9248231,
+        "Sha256":  "1B9998406E70E202873613F5ACF40B8B2B9AB09CF858E07D2FA6E28E55ED3DE0"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061234Z-42c47948\\manifest.json",
+        "Bytes":  800,
+        "Sha256":  "0004EDCFEAFF258E638299FF2A39278528A15898550D36616E3D4A34F86A24AA"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061417Z-c75fb8a7\\binding_ids.txt",
+        "Bytes":  640,
+        "Sha256":  "6A60E9739B966C3D434686B0011F04793266AC14AB726935CB8828C53D6CAFCA"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061417Z-c75fb8a7\\changes.jsonl",
+        "Bytes":  9249082,
+        "Sha256":  "6C665E3D0CED3CFEAA7CB4E0D7423B3CCD9BB795C0C023FC9C4DD0AEA468D750"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料增量升级\\20260817T061417Z-c75fb8a7\\manifest.json",
+        "Bytes":  799,
+        "Sha256":  "2578C920B3102DAF31789486C03EF2F563244E7C05683E6886849F8841511A54"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\_run.err",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\_run.log",
+        "Bytes":  712,
+        "Sha256":  "FE90E21FD1334EFD4513BDFC4A32391F2152950201B123277B6FDD8F9DA35C93"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\_run.pid",
+        "Bytes":  7,
+        "Sha256":  "88429DC8BE9C065030A0388148BFDBC6E302D86ED9736E89C0D84C83B8D81D26"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\全量修正账本.jsonl",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\全量检查与修正结果.md",
+        "Bytes":  787,
+        "Sha256":  "8EC5F7252EEB99BC6A58AC5AE8595FD3A521523AE5FF2DCDFC7B6605A25FC174"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\全量检查报告.json",
+        "Bytes":  2517,
+        "Sha256":  "1889371FCD7D18D5139BD00A8AEC8C7931CDF232401F4296C3E585B493108FD4"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\动态网络_规范化.json",
+        "Bytes":  3268716,
+        "Sha256":  "1D869E0C1B2B7B9C8809DAB6C44651223E4A8DFAA50F24B1BEC2D28CEF5A3BA3"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\类型系统_规范化.json",
+        "Bytes":  14866,
+        "Sha256":  "596081FED0AFADA31C681CA3434CD97A0FBB38B762881752DE1C6659305BFF1A"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\类型连接_规范化.json",
+        "Bytes":  12692055,
+        "Sha256":  "650AC2E1A463299F550A2F48A9338A5BB43052FD4FB9ABA533FEBA3D6BAB5BFC"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\资料库_规范化.json",
+        "Bytes":  533032,
+        "Sha256":  "B1596CE166CDF22180D98B22BA1C0F1381105A594A027204C87D32072D51C5CA"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\锚点网络_规范化.json",
+        "Bytes":  611380,
+        "Sha256":  "8DA96DAC3511A54F8477142029DCCD185B12E51878B24EBB61359BDAEB404E85"
+    },
+    {
+        "Path":  "文档\\证据\\全量资料治理\\静态网络_规范化.json",
+        "Bytes":  456021,
+        "Sha256":  "617FA8F0D1174E8D20F60F5049E5FB47725FFFD26653320BA4E6047D81821A9B"
+    },
+    {
+        "Path":  "文档\\证据\\创作流程绑定\\分纲.jsonl",
+        "Bytes":  64312042,
+        "Sha256":  "730769B17B9F6A6BB32611072BE483322AEA351CD715F6D667690257243DE3A4"
+    },
+    {
+        "Path":  "文档\\证据\\创作流程绑定\\剧情.jsonl",
+        "Bytes":  71399,
+        "Sha256":  "D7FF6B4CDC4E56D9B0BDFB2F873B53C2F818BF095C73EE49D0CDC77433B16E19"
+    },
+    {
+        "Path":  "文档\\证据\\创作流程绑定\\剧情创建.jsonl",
+        "Bytes":  64312042,
+        "Sha256":  "730769B17B9F6A6BB32611072BE483322AEA351CD715F6D667690257243DE3A4"
+    },
+    {
+        "Path":  "文档\\证据\\创作流程绑定\\场景卡.jsonl",
+        "Bytes":  64312042,
+        "Sha256":  "730769B17B9F6A6BB32611072BE483322AEA351CD715F6D667690257243DE3A4"
+    },
+    {
+        "Path":  "文档\\证据\\创作流程绑定\\大纲.jsonl",
+        "Bytes":  64312042,
+        "Sha256":  "730769B17B9F6A6BB32611072BE483322AEA351CD715F6D667690257243DE3A4"
+    },
+    {
+        "Path":  "文档\\证据\\创作流程绑定\\校验.jsonl",
+        "Bytes":  64312042,
+        "Sha256":  "730769B17B9F6A6BB32611072BE483322AEA351CD715F6D667690257243DE3A4"
+    },
+    {
+        "Path":  "文档\\证据\\创作流程绑定\\正文.jsonl",
+        "Bytes":  64312042,
+        "Sha256":  "730769B17B9F6A6BB32611072BE483322AEA351CD715F6D667690257243DE3A4"
+    },
+    {
+        "Path":  "文档\\证据\\创作流程绑定\\细纲.jsonl",
+        "Bytes":  64312042,
+        "Sha256":  "730769B17B9F6A6BB32611072BE483322AEA351CD715F6D667690257243DE3A4"
+    },
+    {
+        "Path":  "文档\\证据\\变更前置阅读记录\\20260816T102000Z-P6状态事实校正.json",
+        "Bytes":  5121,
+        "Sha256":  "409F4FE2FBA2DE01A374B8DE9482D6D465B39A5380D024CF3F3CB9EDF5DD5B2B"
+    },
+    {
+        "Path":  "文档\\证据\\变更前置阅读记录\\20260816T103000Z-替代批次活跃投影校正.json",
+        "Bytes":  6906,
+        "Sha256":  "B7E0F0CCA4818816538D46EE2EB101DC859A24331727F26AF7F1E4947367011E"
+    },
+    {
+        "Path":  "文档\\证据\\变更前置阅读记录\\CHG-20260817-创作深化与历史资料归档.json",
+        "Bytes":  6762,
+        "Sha256":  "CD17278A88E170F5D564D5FBCC8E1E875B62D2BDB4ADAE6F9850B2C208FF20A8"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\严格资料升级\\20260816T131500Z-strict-micro-retry-01.pid",
+        "Bytes":  5,
+        "Sha256":  "F1290737472D692676F398AC728F0D67C8DCC2127B4BEA9FA98B8D917EFDDC1C"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\严格资料升级\\20260816T131500Z-strict-micro-retry-01.process-diagnostic.json",
+        "Bytes":  190174,
+        "Sha256":  "BF3F99D54D0D6DC88B302FAED7958FB545E7B4B1B8A552F6BA7C22A4896DAAA4"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\严格资料升级\\20260816T131500Z-strict-micro-retry-01.stderr.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\严格资料升级\\20260816T131500Z-strict-micro-retry-01.stdout.log",
+        "Bytes":  692,
+        "Sha256":  "6C5329FA230A8D49100080C5E9408CDF05D1B62F36055EFE5D40574F94B52124"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\严格资料升级\\20260816T161500Z-strict-micro-retry-02.pid",
+        "Bytes":  5,
+        "Sha256":  "88BE652786975AE8688E0AAAA73D774EFF2E2658AD8BD2CFC9A17F0A9B87C328"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\严格资料升级\\20260816T161500Z-strict-micro-retry-02.stderr.log",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\严格资料升级\\20260816T161500Z-strict-micro-retry-02.stdout.log",
+        "Bytes":  706,
+        "Sha256":  "8D3A0432DB26D4E6DCF2793C14F68EDA87CA5461CEA0BC067A0E8147241E536F"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\formal_release_gate.json",
+        "Bytes":  891,
+        "Sha256":  "E598871DC3EA6EF5014B4CBC5188651D5400EDD20DB84872476FA7A2935D7D63"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\formal_release_gate.stderr.txt",
+        "Bytes":  5,
+        "Sha256":  "F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\formal_release_gate.stdout.txt",
+        "Bytes":  81,
+        "Sha256":  "399B4ED4AE8C062AAA061D5561D455775518E605A692E20E8B3AA0725830C64A"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\model_minimal_json_probe.json",
+        "Bytes":  1051,
+        "Sha256":  "ECD4BF166F010B1A573061A44AD40B706E96B63DF83C8CC677A38D59406091A6"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\model_minimal_json_probe.py",
+        "Bytes":  748,
+        "Sha256":  "90A92A3ED93CA6707EDCCA71DA87D8306ED0BBBBF432DAA7E934FCD695DFB652"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\model_minimal_json_probe.stderr.txt",
+        "Bytes":  5,
+        "Sha256":  "F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\model_minimal_json_probe.stdout.txt",
+        "Bytes":  116,
+        "Sha256":  "7EDAC5584216E58FD5472BA4316C951DC072114C89F556CABA2DBD4292C0D461"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\production_capability_gate.json",
+        "Bytes":  939,
+        "Sha256":  "33244A93FC5F24FA3EC8930CB2361C497E2B3237E5B3D7931FE3BBA2C6A907A7"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\production_capability_gate.stderr.txt",
+        "Bytes":  5,
+        "Sha256":  "F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\production_capability_gate.stdout.txt",
+        "Bytes":  109,
+        "Sha256":  "F2B1A194E0EA097528BCE15F64D4B00986A8923AE48E5666E86E177C9F1D4E49"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\prose_consumption_validation.json",
+        "Bytes":  919,
+        "Sha256":  "D663CE5F63D90475F26BED991F59B7906FA7DF3F798116137FCE506C18708D32"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\prose_consumption_validation.stderr.txt",
+        "Bytes":  5,
+        "Sha256":  "F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\prose_consumption_validation.stdout.txt",
+        "Bytes":  79,
+        "Sha256":  "BA4256EBB1350F92920072850CDAD137B9A591288E76C180A3AE72C336648105"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\strict_isolation_audit.json",
+        "Bytes":  942,
+        "Sha256":  "96229284604B21A78E11E3CC67DB295659E2664ABA4C57AD681D40009F1032FF"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\strict_isolation_audit.stderr.txt",
+        "Bytes":  5,
+        "Sha256":  "F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\strict_isolation_audit.stdout.txt",
+        "Bytes":  118,
+        "Sha256":  "BCEF3A65F0E5A64AC15917B565A4AA409C38F8AFCEC9A1408A5C81D305AFB411"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_continuous_source_upgrade.json",
+        "Bytes":  893,
+        "Sha256":  "F4D6FB7CBD0C79B0279DB2CC741877AE4D0E3300BF9A6F0DEB47DB36E9322DE7"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_continuous_source_upgrade.stderr.txt",
+        "Bytes":  112,
+        "Sha256":  "6A9D33E15A9AF2E96FA3599C07A2AB421CCA59ACBCFC791FC7114DD64DAF8321"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_continuous_source_upgrade.stdout.txt",
+        "Bytes":  5,
+        "Sha256":  "F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_full_source_batch_upgrade.json",
+        "Bytes":  898,
+        "Sha256":  "C7A17931A569D53CE0E7E1DF61FC3D1C5677B514CB37CAB2875234BBBA49706F"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_full_source_batch_upgrade.stderr.txt",
+        "Bytes":  111,
+        "Sha256":  "D9EADAB6886E0634439E565396ED3959B12ADB60D5026D83D3FFE6294AC61F5A"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_full_source_batch_upgrade.stdout.txt",
+        "Bytes":  5,
+        "Sha256":  "F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_strict_source_upgrade.json",
+        "Bytes":  880,
+        "Sha256":  "CBBB4253AD03BD5B43D5D7A2196F5B1572E6A3ECD05F422D22BA511859863DF4"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_strict_source_upgrade.stderr.txt",
+        "Bytes":  117,
+        "Sha256":  "23705582361DA68CA217FFB724C7DBA73A2DD9ECE77B1202583AACFEF3229002"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_strict_source_upgrade.stdout.txt",
+        "Bytes":  5,
+        "Sha256":  "F01A374E9C81E3DB89B3A42940C4D6A5447684986A1296E42BF13F196EED6295"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_涓ユ牸璧勬枡鍗囩骇.stderr.txt",
+        "Bytes":  194,
+        "Sha256":  "1D594C794CF26E66F869110E90271189A466CD5C6B52BD3287F5DB11AEFA5F90"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\test_涓ユ牸璧勬枡鍗囩骇.stdout.txt",
+        "Bytes":  0,
+        "Sha256":  "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\妯″瀷鏈€灏廕SON鎺㈤拡.py",
+        "Bytes":  802,
+        "Sha256":  "D6698BDCFA3CE46D4817C8AFAF2B3258D705FDA5CFC9EE591220C47CAE10E8D3"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\鎵ц鎽樿.json",
+        "Bytes":  2808,
+        "Sha256":  "416362DB9529589365F5EAAA9F3268E031822C6900F837C03C94D760B8717AA0"
+    },
+    {
+        "Path":  "文档\\证据\\执行日志\\资料审计\\__pycache__\\model_minimal_json_probe.cpython-314.pyc",
+        "Bytes":  1491,
+        "Sha256":  "6B14CBE3DBE8521AE9DF3754E3C9FED57F02C2C92FE0DB86E705062B8FBAB361"
+    },
+    {
+        "Path":  "文档\\证据\\新版资料审查包\\20260818-01\\候选正文裁决队列.jsonl",
+        "Bytes":  55913,
+        "Sha256":  "E0834D101016FF9D706D502CD2FEB153D49AB10DD4B64DCC0E7353748806AF6A"
+    },
+    {
+        "Path":  "文档\\证据\\新版资料审查包\\20260818-01\\审查总览.json",
+        "Bytes":  1052,
+        "Sha256":  "E1958643193379B3ADB0E028DB34758E586D02B9DD920E5C2CDC8C155669E050"
+    },
+    {
+        "Path":  "文档\\证据\\新版资料审查包\\20260818-01\\来源隔离修复队列.jsonl",
+        "Bytes":  951120,
+        "Sha256":  "8F32AC3588BAA501AC61D722C65A2E850956DC43DEC88568389A24EF733B9A2E"
+    },
+    {
+        "Path":  "文档\\证据\\新版资料审查包\\20260818-01\\正式事实变更集模板.json",
+        "Bytes":  571,
+        "Sha256":  "B038735B7FCF4DEAB71A4C181192EE35511B16077A5B7493A0AD04A0039808A6"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-library-locator\\全绑定来源完整性审计报告.资料库定位修复.json",
+        "Bytes":  719299,
+        "Sha256":  "AB01F3C8B641D82C466EAD49A5F0F0A380708C9A47B5C0FF109E7387F170F438"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-library-locator\\全量资料解释词创作绑定.资料库定位修复.json",
+        "Bytes":  81385236,
+        "Sha256":  "1DD1823A721354D7074DFFD7BB0668595B69A4D7281F50D65A05381D55641B71"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-library-locator\\资料库定位修复账本.json",
+        "Bytes":  11442,
+        "Sha256":  "7E44CA3FF3F4F765BB892636F57A4E283D292F01D86E3E8D602A524A36B37F79"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-identity\\全绑定来源完整性审计报告.类型连接身份修复.json",
+        "Bytes":  9849,
+        "Sha256":  "AE9FFF448F521C333A6BE20977396CF69225F7C792A3E60E69EBB85EED61D366"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-identity\\全量资料解释词创作绑定.类型连接身份修复.json",
+        "Bytes":  82367285,
+        "Sha256":  "D03DCA7F08E33C687E56EF6E275D76FF8CF31D8ABC4554A389EA4A9295760022"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-identity\\类型连接身份修复账本.json",
+        "Bytes":  715693,
+        "Sha256":  "5CA208C058C1B88FF3DF833A303DAAD0DA6DD81ADC30CC58C95F9A29C17149F3"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-identity-v2\\全绑定来源完整性审计报告.类型连接身份修复.json",
+        "Bytes":  9906,
+        "Sha256":  "3072CCF3F868720FBF2F568F53D0B4CA02E912D1D28B6B938FE9CC17A9056083"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-identity-v2\\全量资料解释词创作绑定.类型连接身份修复.json",
+        "Bytes":  82697981,
+        "Sha256":  "F9D07577BF0A49EA44B68B3D06B9FEDCC7FD36D82BCB02DE3D1E6F89A04BE6AD"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-identity-v2\\类型连接身份修复账本.json",
+        "Bytes":  1342489,
+        "Sha256":  "1A20A7BAD94E7E8E09A3B8531A2448B4BC1ADB74489BFD21047BE30CCA52B3D7"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-root-final\\全绑定来源完整性审计报告.类型连接身份修复.json",
+        "Bytes":  2041,
+        "Sha256":  "43A171B06BFD9325D9566E606D833E7AF0BBEE37A2CE14A325854D432BAA63B1"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-root-final\\全量资料解释词创作绑定.类型连接身份修复.json",
+        "Bytes":  82711585,
+        "Sha256":  "6D51F4427326ED17F6F6DEB05DBBD577ADDF882837C52918637B2CD8A2A60609"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-root-final\\类型连接身份修复账本.json",
+        "Bytes":  14251,
+        "Sha256":  "BB4DE8B0471AB1CD6D1496159D24AEB83B230803C4489F999C0C18A8140121C8"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-root-objects\\全绑定来源完整性审计报告.类型连接身份修复.json",
+        "Bytes":  2048,
+        "Sha256":  "ED1EA48EDA7125543D60E3A832428E8C5DF0DC298144639883AB95F3EE2937C2"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-root-objects\\全量资料解释词创作绑定.类型连接身份修复.json",
+        "Bytes":  82711633,
+        "Sha256":  "A6940B28CE15B868192E6BEDE6200013E4D7EFBB4FB5B1F246CA19628B0682C6"
+    },
+    {
+        "Path":  "文档\\证据\\来源完整性修复\\20260818-type-root-objects\\类型连接身份修复账本.json",
+        "Bytes":  14299,
+        "Sha256":  "5DFB473CEC182553C6350EC0AEAB7D63874FD0B2C17BD0733CB756D97DAAE0D4"
+    },
+    {
+        "Path":  "文档\\证据\\隔离归档\\experimental_nonrelease\\模型辅助资料改进候选\\不可发布声明.json",
+        "Bytes":  674,
+        "Sha256":  "20841B566A736FEA02AA45AB5B843ACD4108D605666EFFE1F7D053330962ADE7"
+    },
+    {
+        "Path":  "文档\\证据\\隔离归档\\experimental_nonrelease\\模型辅助资料改进候选\\改进候选台账.jsonl",
+        "Bytes":  1166,
+        "Sha256":  "4BDEA156D146D0AB2B6210B3812C685AD992966C537D11B9986C3DF6F7002092"
+    },
+    {
+        "Path":  "文档\\证据\\隔离归档\\experimental_nonrelease\\模型辅助资料改进候选\\改进候选进度报告.json",
+        "Bytes":  819,
+        "Sha256":  "74E4DB99A5FCE69AB64FA4949EE4DD297053919AC892B7C41A8DE82EB1E2E9DD"
+    }
+]

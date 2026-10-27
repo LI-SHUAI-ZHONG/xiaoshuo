@@ -1,0 +1,287 @@
+{
+  "schema_version": "all-binding-source-integrity-audit-1.1",
+  "started_at": "2026-08-14T04:04:38.162490Z",
+  "generated_at": "2026-08-17T17:17:27.041801+00:00",
+  "audit_state": "completed",
+  "binding_file": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料解释词创作绑定.json",
+  "binding_count": 13345,
+  "processed_count": 13345,
+  "last_processed_binding_id": "TB-13345",
+  "status_counts": {
+    "passed": 13307,
+    "quarantined": 23,
+    "isolated_legacy_index": 15
+  },
+  "source_kind_status_counts": {
+    "动态网络": {
+      "passed": 1824
+    },
+    "类型系统": {
+      "isolated_legacy_index": 15
+    },
+    "类型系统来源块": {
+      "passed": 449
+    },
+    "类型连接": {
+      "passed": 7335,
+      "quarantined": 23
+    },
+    "资料库": {
+      "passed": 568,
+      "quarantined": 0
+    },
+    "锚点网络": {
+      "passed": 1790
+    },
+    "静态网络": {
+      "passed": 1341
+    }
+  },
+  "quarantined_findings": [
+    {
+      "binding_id": "TB-11278",
+      "source_id": "{'type': 'string', 'format': 'TSC_XXXXXX', 'description': '类型静态连接唯一标识'}",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态连接字段说明.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13324",
+      "source_id": "类型连接枚举.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型连接枚举.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13325",
+      "source_id": "类型连接验证规则.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型连接验证规则.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13326",
+      "source_id": "类型组合约束.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型组合约束.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13327",
+      "source_id": "作品表达连接搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品表达连接搭配库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13328",
+      "source_id": "作品场景连接搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品场景连接搭配库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13329",
+      "source_id": "作品场景模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品场景模式库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13330",
+      "source_id": "作品动态连接搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品动态连接搭配库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13331",
+      "source_id": "作品动态模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品动态模式库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13332",
+      "source_id": "作品动态模式验证规则.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品动态模式验证规则.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13333",
+      "source_id": "作品伏笔模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品伏笔模式库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13334",
+      "source_id": "作品伏笔爽点搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品伏笔爽点搭配库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13335",
+      "source_id": "作品静态连接搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品静态连接搭配库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13336",
+      "source_id": "作品静态模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品静态模式库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13337",
+      "source_id": "作品静态模式验证规则.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品静态模式验证规则.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13338",
+      "source_id": "作品连接搭配模板.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品连接搭配模板.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13339",
+      "source_id": "作品连接搭配验证规则.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品连接搭配验证规则.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13340",
+      "source_id": "作品人物关系搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品人物关系搭配库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13341",
+      "source_id": "作品人物关系模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品人物关系模式库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13342",
+      "source_id": "作品爽点模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品爽点模式库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13343",
+      "source_id": "作品信息传播模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品信息传播模式库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13344",
+      "source_id": "作品信息资源搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品信息资源搭配库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "binding_id": "TB-13345",
+      "source_id": "作品资源流动模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品资源流动模式库.json[1]",
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    }
+  ],
+  "isolated_type_index_count": 15,
+  "policy": "类型系统名称索引的 matched_lines 保持隔离；其余来源必须具备可回读的完整对象边界和可核验身份。审计不修改来源、绑定或项目类型。",
+  "status": "quarantined",
+  "derived_from": {
+    "bindings_path": "文档\\证据\\来源完整性修复\\20260818-library-locator\\全量资料解释词创作绑定.资料库定位修复.json",
+    "audit_path": "文档\\证据\\来源完整性修复\\20260818-library-locator\\全绑定来源完整性审计报告.资料库定位修复.json",
+    "repair_id": "20260818-type-identity"
+  },
+  "partial_repair": {
+    "status": "passed",
+    "repaired_binding_count": 2100,
+    "remaining_quarantined_binding_count": 23,
+    "unresolved": [],
+    "policy": "仅当来源分段、数组下标、稳定业务 ID 和规范对象哈希全部可回读时解除隔离。"
+  }
+}

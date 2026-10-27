@@ -1,0 +1,38 @@
+{
+  "total_processed": 153,
+  "filled": 148,
+  "still_empty": 5,
+  "classification_distribution": {
+    "A": 69,
+    "B": 0,
+    "C": 79,
+    "D": 5
+  },
+  "dependency_type_distribution": {
+    "内容引用": 40,
+    "功能关联": 76,
+    "前置条件": 45,
+    "使用场景": 30,
+    "创作前准备": 14,
+    "大纲细纲设定": 26,
+    "剧情推进需要": 7
+  },
+  "empty_entries": [
+    "28.2_道具功能边界",
+    "29.3_道具反功能",
+    "40.1_制造",
+    "40.4_技能升级条件",
+    "40.5_技能树结构"
+  ],
+  "validation": {
+    "index_entries": 418,
+    "all_dependencies_exist": true,
+    "cycles": 0,
+    "cycles_detected_before_repair": 0,
+    "cycles_removed": 6,
+    "preexisting_cycles": 6,
+    "self_dependencies": 0
+  },
+  "updated_at": "2026-08-11T02:38:03.003909Z"
+}
+

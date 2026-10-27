@@ -1,0 +1,27 @@
+{
+  "schema_version": "continuous-source-upgrade-ledger-1.0",
+  "generated_at": "2026-08-13T03:19:19.593143+00:00",
+  "scope": "exhaustive_governance_dispatch_only; no_source_or_eligibility_promotion",
+  "input_classification": "文档\\证据\\严格资料升级\\严格隔离分类\\严格隔离分类清单.jsonl",
+  "input_archive": "文档\\证据\\严格资料升级\\严格资料升级档案.jsonl",
+  "quarantined_record_count": 7235,
+  "ledger_record_count": 7235,
+  "unassigned_record_count": 0,
+  "next_action_counts": {
+    "obtain_independent_replacement_source": 38,
+    "submit_explicit_project_confirmation": 5097,
+    "submit_independent_bounded_replacement_source": 2100
+  },
+  "category_counts": {
+    "candidate_identity_missing": 2100,
+    "candidate_requires_project_confirmation": 2106,
+    "locator_invalid_or_out_of_range": 23,
+    "object_boundary_missing": 15,
+    "pending_requires_project_confirmation": 2991
+  },
+  "formal_fact_eligible_count": 0,
+  "model_input_eligible_count": 0,
+  "prose_write_allowed": false,
+  "source_status_modified": false,
+  "project_confirmation_modified": false
+}

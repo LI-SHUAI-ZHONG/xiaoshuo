@@ -1,0 +1,54 @@
+{
+  "schema_version": "index-call-mapping-contract-1.0",
+  "source": "原始资料/索引调用映射.txt",
+  "role": "routing_and_retrieval_contract",
+  "runtime_policy": {
+    "usable_for": [
+      "资料模块选择",
+      "依赖排序",
+      "概念和表达维度检索",
+      "旧入口迁移审计",
+      "来源证据链标记"
+    ],
+    "not_usable_for": [
+      "直接生成剧情事实",
+      "确认未审核的类型连接",
+      "恢复历史运行状态",
+      "读取工作区外部绝对路径"
+    ],
+    "template_connection_policy": "candidate_only",
+    "external_path_policy": "audit_only",
+    "historical_mapping_policy": "migration_only"
+  },
+  "routing_contract": {
+    "entrypoint_first": true,
+    "selection_mode": "task_and_state_driven",
+    "type_sequence": ["MOD-TYPE", "MOD-CONNECTION"],
+    "network_sequence": ["MOD-STATIC", "MOD-DYNAMIC", "MOD-ANCHOR"],
+    "execution_sequence": ["MOD-EXECUTION"],
+    "dependency_rules": [
+      {"from": "MOD-TYPE", "to": "MOD-CONNECTION", "reason": "先确定类型边界，再裁决组合兼容性"},
+      {"from": "MOD-STATIC", "to": "MOD-DYNAMIC", "reason": "先确认稳定对象关系，再生成动态候选"},
+      {"from": "MOD-DYNAMIC", "to": "MOD-ANCHOR", "reason": "先确认事件和状态候选，再落到表达锚点"},
+      {"from": "MOD-EXECUTION", "to": "chapter_execution_manifest", "reason": "把有效证据和设计决策传递到正文执行"}
+    ]
+  },
+  "retrieval_indexes": {
+    "concept": ["by_id", "by_chinese_name", "by_original_name", "by_category", "by_legacy_id"],
+    "lookup": ["keyword", "type", "body", "sensory", "psychological", "action", "verbal", "social", "resource"],
+    "conflict": ["moral_conflict", "human_nature_conflict", "interest_conflict"],
+    "decision": ["possible_choice", "possible_outcome", "trigger_condition", "state_change"],
+    "network_mapping": ["static_network_mappings", "connection_type", "source", "target"]
+  },
+  "evidence_rules": {
+    "formal_levels": ["confirmed_raw", "cross_confirmed"],
+    "candidate_levels": ["reconstructed", "unconfirmed"],
+    "required_trace": "index_mapping -> selected_evidence -> synthesis_decision -> design -> text -> verification",
+    "selection_statuses": ["selected", "candidate", "blocked", "not_applicable"]
+  },
+  "migration": {
+    "legacy_source_paths": ["D:/AI小说创作系统/AI小说制作最终版", "D:/AI小说制作最终版/统一索引"],
+    "preserve_for": ["path_comparison", "alias_reconciliation", "old_id_migration"],
+    "never_restore_as": ["current_project_state", "current_story_fact", "runtime_source"]
+  }
+}

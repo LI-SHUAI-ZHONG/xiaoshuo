@@ -1,0 +1,831 @@
+{
+  "last_updated": "2026-08-11T00:56:39.115595+00:00",
+  "total_combinations": 55,
+  "combinations": [
+    {
+      "combination_id": "玄幻_仙侠",
+      "connection_ids": [
+        "CONN-玄幻_仙侠-001"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "medium",
+      "conflicts": [
+        "玄幻的核心元素与仙侠的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收仙侠的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_科幻",
+      "connection_ids": [
+        "CONN-玄幻_科幻-002"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与科幻的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收科幻的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_悬疑",
+      "connection_ids": [
+        "CONN-玄幻_悬疑-003"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与悬疑的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_都市",
+      "connection_ids": [
+        "CONN-玄幻_都市-004"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与都市的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_言情",
+      "connection_ids": [
+        "CONN-玄幻_言情-005"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_历史",
+      "connection_ids": [
+        "CONN-玄幻_历史-006"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_军事",
+      "connection_ids": [
+        "CONN-玄幻_军事-007"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_游戏",
+      "connection_ids": [
+        "CONN-玄幻_游戏-008"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_体育",
+      "connection_ids": [
+        "CONN-玄幻_体育-009"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "玄幻_灵异",
+      "connection_ids": [
+        "CONN-玄幻_灵异-010"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "玄幻的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_科幻",
+      "connection_ids": [
+        "CONN-仙侠_科幻-011"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "仙侠的核心元素与科幻的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收科幻的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_悬疑",
+      "connection_ids": [
+        "CONN-仙侠_悬疑-012"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "仙侠的核心元素与悬疑的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_都市",
+      "connection_ids": [
+        "CONN-仙侠_都市-013"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "仙侠的核心元素与都市的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_言情",
+      "connection_ids": [
+        "CONN-仙侠_言情-014"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "仙侠的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_历史",
+      "connection_ids": [
+        "CONN-仙侠_历史-015"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "medium",
+      "conflicts": [
+        "仙侠的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_军事",
+      "connection_ids": [
+        "CONN-仙侠_军事-016"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "仙侠的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_游戏",
+      "connection_ids": [
+        "CONN-仙侠_游戏-017"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "仙侠的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_体育",
+      "connection_ids": [
+        "CONN-仙侠_体育-018"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "仙侠的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "仙侠_灵异",
+      "connection_ids": [
+        "CONN-仙侠_灵异-019"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "仙侠的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "科幻_悬疑",
+      "connection_ids": [
+        "CONN-科幻_悬疑-020"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "科幻的核心元素与悬疑的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "科幻_都市",
+      "connection_ids": [
+        "CONN-科幻_都市-021"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "科幻的核心元素与都市的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "科幻_言情",
+      "connection_ids": [
+        "CONN-科幻_言情-022"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "科幻的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "科幻_历史",
+      "connection_ids": [
+        "CONN-科幻_历史-023"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "科幻的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "科幻_军事",
+      "connection_ids": [
+        "CONN-科幻_军事-024"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "科幻的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "科幻_游戏",
+      "connection_ids": [
+        "CONN-科幻_游戏-025"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "科幻的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "科幻_体育",
+      "connection_ids": [
+        "CONN-科幻_体育-026"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "科幻的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "科幻_灵异",
+      "connection_ids": [
+        "CONN-科幻_灵异-027"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "科幻的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "悬疑_都市",
+      "connection_ids": [
+        "CONN-悬疑_都市-028"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "悬疑的核心元素与都市的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "悬疑_言情",
+      "connection_ids": [
+        "CONN-悬疑_言情-029"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "悬疑的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "悬疑_历史",
+      "connection_ids": [
+        "CONN-悬疑_历史-030"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "悬疑的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "悬疑_军事",
+      "connection_ids": [
+        "CONN-悬疑_军事-031"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "悬疑的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "悬疑_游戏",
+      "connection_ids": [
+        "CONN-悬疑_游戏-032"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "悬疑的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "悬疑_体育",
+      "connection_ids": [
+        "CONN-悬疑_体育-033"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "悬疑的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "悬疑_灵异",
+      "connection_ids": [
+        "CONN-悬疑_灵异-034"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "high",
+      "conflicts": [
+        "悬疑的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "都市_言情",
+      "connection_ids": [
+        "CONN-都市_言情-035"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "都市的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "都市_历史",
+      "connection_ids": [
+        "CONN-都市_历史-036"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "medium",
+      "conflicts": [
+        "都市的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "都市_军事",
+      "connection_ids": [
+        "CONN-都市_军事-037"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "都市的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "都市_游戏",
+      "connection_ids": [
+        "CONN-都市_游戏-038"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "都市的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "都市_体育",
+      "connection_ids": [
+        "CONN-都市_体育-039"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "都市的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "都市_灵异",
+      "connection_ids": [
+        "CONN-都市_灵异-040"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "都市的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "言情_历史",
+      "connection_ids": [
+        "CONN-言情_历史-041"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "言情的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "言情_军事",
+      "connection_ids": [
+        "CONN-言情_军事-042"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "言情的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "言情_游戏",
+      "connection_ids": [
+        "CONN-言情_游戏-043"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "言情的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "言情_体育",
+      "connection_ids": [
+        "CONN-言情_体育-044"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "言情的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "言情_灵异",
+      "connection_ids": [
+        "CONN-言情_灵异-045"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "言情的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "历史_军事",
+      "connection_ids": [
+        "CONN-历史_军事-046"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "历史的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以历史的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "历史_游戏",
+      "connection_ids": [
+        "CONN-历史_游戏-047"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "历史的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以历史的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "历史_体育",
+      "connection_ids": [
+        "CONN-历史_体育-048"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "历史的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以历史的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "历史_灵异",
+      "connection_ids": [
+        "CONN-历史_灵异-049"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "历史的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以历史的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "军事_游戏",
+      "connection_ids": [
+        "CONN-军事_游戏-050"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "军事的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以军事的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "军事_体育",
+      "connection_ids": [
+        "CONN-军事_体育-051"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "军事的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以军事的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "军事_灵异",
+      "connection_ids": [
+        "CONN-军事_灵异-052"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "军事的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以军事的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "游戏_体育",
+      "connection_ids": [
+        "CONN-游戏_体育-053"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "游戏的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以游戏的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "游戏_灵异",
+      "connection_ids": [
+        "CONN-游戏_灵异-054"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "游戏的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以游戏的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    },
+    {
+      "combination_id": "体育_灵异",
+      "connection_ids": [
+        "CONN-体育_灵异-055"
+      ],
+      "conflict_count": 1,
+      "mechanism_count": 1,
+      "compatibility": "low",
+      "conflicts": [
+        "体育的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "recommended_mechanisms": [
+        "以体育的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ]
+    }
+  ]
+}

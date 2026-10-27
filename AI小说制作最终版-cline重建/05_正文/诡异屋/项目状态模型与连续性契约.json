@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "purpose": "定义项目快照中可恢复状态的字段、变化边界和检查要求，不承载具体小说事实。",
+  "fact_layers": ["locked", "confirmed", "derived", "cline_decided", "candidate", "pending", "blocked"],
+  "run_policy": {
+    "mode": "autonomous_continuous",
+    "automatic_states": ["AUTO_INIT", "AUTO_DESIGN", "AUTO_GENERATE", "AUTO_SAVE", "AUTO_CONTINUE"],
+    "record_only_states": ["WAIT_USER", "WAIT_CONFIRM", "PAUSED_BY_GATE"],
+    "blocking_state": "BLOCKED",
+    "ordinary_pending_does_not_block": true,
+    "retry_count": 3,
+    "stop_when": ["user_goal_complete", "project_plan_complete", "length_or_chapter_target_reached", "marked_complete", "BLOCKED", "irreversible_write_risk"]
+  },
+  "plot_turn": {
+    "required_fields": ["plot_problem", "scene_goal", "obstacle", "action_choice", "consequence", "new_information", "state_changes", "new_problem"],
+    "state_transitions": ["problem_identified", "action_pending", "action_selected", "consequence_calculated", "state_updated"],
+    "mainline_fields": ["current_thread", "progress", "branch_status", "open_questions", "resolved_questions"],
+    "rollback": {"required": true, "scope": "current_round_only"}
+  },
+  "character_current_state": {
+    "required_fields": ["character_id", "body_state", "emotion_state", "needs", "goals", "true_goal", "surface_goal", "hidden_need", "cognition", "known_information", "hidden_information", "misjudgments", "personality_bias", "age_bias", "identity_pressure", "moral_stance", "relationship_pressure", "resources", "time_limit", "future_expectation", "fear_of_cost"],
+    "behavior_rule": "行动必须由当前认知、需求、能力、性格、立场和资源共同约束",
+    "allowed_variation": ["mistake", "hesitation", "misunderstanding", "concealment", "reversal", "new_goal"]
+  },
+  "world_current_state": {
+    "required_fields": ["world_state", "location_states", "faction_states", "resource_states", "information_visibility", "noticed_by", "affected_locations", "affected_factions"],
+    "reaction_checks": ["who_noticed", "relations_changed", "resources_consumed", "information_exposed", "factions_affected", "location_changed", "item_changed", "new_judgments", "old_problems_amplified", "new_problems"]
+  },
+  "change_record": {
+    "required_fields": ["source_trace", "changed_fields", "previous_value", "new_value", "reversible"],
+    "allowed_sources": ["user_confirmation", "locked_project_fact", "confirmed_project_record", "formal_text", "consistency_check", "derived_from_project", "cline_decision"]
+  },
+  "save_gate": ["causality", "character_consistency", "timeline", "location", "information_perspective", "world_rules", "clues", "chapter_goal", "style"],
+  "unknown_policy": "普通缺失字段可按优先级自主补足并标记 derived 或 cline_decided；无法验证的核心字段必须标记为 blocked，不得用推测填充并标记通过。"
+}

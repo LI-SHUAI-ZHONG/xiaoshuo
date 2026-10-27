@@ -1,0 +1,69 @@
+﻿{
+    "schema_version":  "source-audit-run-summary-1.0",
+    "project_root":  "D:\\AI小说制作最终版-cline重建\\新版1",
+    "generated_at":  "2026-08-13T16:11:24.3054101Z",
+    "log_directory":  "D:\\AI小说制作最终版-cline重建\\新版1\\鏂囨。\\璇佹嵁\\鎵ц鏃ュ織\\璧勬枡瀹¤",
+    "commands":  [
+                     {
+                         "name":  "test_strict_source_upgrade",
+                         "exit_code":  0,
+                         "started_at":  "2026-08-13T16:11:06.2066445Z",
+                         "finished_at":  "2026-08-13T16:11:06.7330212Z"
+                     },
+                     {
+                         "name":  "test_full_source_batch_upgrade",
+                         "exit_code":  0,
+                         "started_at":  "2026-08-13T16:11:06.7830476Z",
+                         "finished_at":  "2026-08-13T16:11:07.1996391Z"
+                     },
+                     {
+                         "name":  "test_continuous_source_upgrade",
+                         "exit_code":  0,
+                         "started_at":  "2026-08-13T16:11:07.1996391Z",
+                         "finished_at":  "2026-08-13T16:11:07.4996494Z"
+                     },
+                     {
+                         "name":  "model_minimal_json_probe",
+                         "exit_code":  0,
+                         "started_at":  "2026-08-13T16:11:07.5329344Z",
+                         "finished_at":  "2026-08-13T16:11:09.4611038Z"
+                     },
+                     {
+                         "name":  "full_source_use_authorization_audit",
+                         "exit_code":  0,
+                         "started_at":  "2026-08-13T16:11:09.5491218Z",
+                         "finished_at":  "2026-08-13T16:11:11.0866071Z"
+                     },
+                     {
+                         "name":  "binding_authorization_projection_sync",
+                         "exit_code":  0,
+                         "started_at":  "2026-08-13T16:11:11.0920689Z",
+                         "finished_at":  "2026-08-13T16:11:19.6355041Z"
+                     },
+                     {
+                         "name":  "prose_consumption_validation",
+                         "exit_code":  2,
+                         "started_at":  "2026-08-13T16:11:19.7865282Z",
+                         "finished_at":  "2026-08-13T16:11:20.1946965Z"
+                     },
+                     {
+                         "name":  "strict_isolation_audit",
+                         "exit_code":  0,
+                         "started_at":  "2026-08-13T16:11:20.1984396Z",
+                         "finished_at":  "2026-08-13T16:11:21.5656275Z"
+                     },
+                     {
+                         "name":  "production_capability_gate",
+                         "exit_code":  0,
+                         "started_at":  "2026-08-13T16:11:21.5656275Z",
+                         "finished_at":  "2026-08-13T16:11:24.0031931Z"
+                     },
+                     {
+                         "name":  "formal_release_gate",
+                         "exit_code":  2,
+                         "started_at":  "2026-08-13T16:11:24.0031931Z",
+                         "finished_at":  "2026-08-13T16:11:24.2970418Z"
+                     }
+                 ],
+    "all_commands_passed":  false
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "full-material-upgrade-p6-status-1.0",
+  "run_id": "20260816T061711Z-fb0cf077",
+  "scope": "material_upgrade_regression_and_failure_sample_isolation_only",
+  "p6_status": "in_progress_with_delivery_blocked",
+  "formal_release_allowed": false,
+  "project_delivery_candidate": false,
+  "verified_controls": [
+    "project_design_adoption_tests_passed",
+    "material_batch_regression_unit_tests_passed",
+    "failure_sample_isolation_tests_passed",
+    "legacy_consumption_samples_isolated",
+    "historical_draft_only_project_adoption_decision_exists_but_is_not_current_authorization",
+    "real_batch_regression_reports_written",
+    "full_snapshot_batch_regression_passed",
+    "upgrade_manifest_status_counts_match_snapshot_records"
+  ],
+  "blocking_controls": [
+    "historical_draft_only_adoption_and_consumption_evidence_cannot_authorize_current_flow",
+    "legacy_consumption_evidence_contains_blocked_records",
+    "legacy_consumption_evidence_contains_source_metadata_leakage",
+    "upgrade_exception_audit_has_39_quarantined_records",
+    "scene_and_prose_consumption_not_authorized",
+    "formal_release_not_authorized"
+  ],
+  "failure_sample_report": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\回归历史\\20260816T061711Z-派生资料失败样本隔离.json",
+  "batch_regression_reports": [
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\回归历史\\20260816T095300Z-派生资料批次回归.json",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\回归历史\\20260816T101500Z-派生资料批次回归.json",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\回归历史\\20260816T101311Z-295bb554-派生资料批次回归.json"
+  ],
+  "latest_snapshot_run": "20260816T101311Z-295bb554",
+  "latest_upgrade_exception_audit": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料升级运行\\20260816T101311Z-295bb554-异常审计\\manifest.json",
+  "authorization_boundary": "本状态不构成项目事实确认、场景绑定、正文消费、正式发布或项目采用决策。"
+}

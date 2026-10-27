@@ -1,0 +1,71 @@
+{
+  "schema_version": "full-source-literary-review-1.0",
+  "batch_id": "RPL-20260814-01",
+  "status": "pending_named_human_literary_review",
+  "policy": "每条记录须由实际审读该段落的具名人工填写 decision、reviewer 与 rationale。paragraph_sha256 必须与正文消费证据中的当前段落哈希一致；不得以模型、辅助工具或历史裁决代替人工签核。批准不等于正式发布许可。",
+  "decisions": [
+    {
+      "consumption_id": "RPL-20260814-01-CH01-S01-TB-01957",
+      "paragraph_sha256": "ce6a01a134d1a3c99a4ae45ccfca8ac3fdb4051ebd27add00ce60a29470bbac3",
+      "decision": "approved",
+      "reviewer": "李帅众",
+      "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"
+    },
+    {
+      "consumption_id": "RPL-20260814-01-CH01-S01-TB-01938",
+      "paragraph_sha256": "7dd6e9e67571fbc24198d28c940fed43f6b6862adac4facf90495f39c10988c1",
+      "decision": "approved",
+      "reviewer": "李帅众",
+      "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"
+    },
+    {
+      "consumption_id": "RPL-20260814-01-CH01-S01-TB-05533",
+      "paragraph_sha256": "84a503e9ad9da5ede4f08b4ca1216cf0496558af7900136c16bac06326355e2b",
+      "decision": "approved",
+      "reviewer": "李帅众",
+      "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"
+    },
+    {
+      "consumption_id": "RPL-20260814-01-CH01-S01-TB-00533",
+      "paragraph_sha256": "ddaf928620ff9209e754362f978b4fd28aad53a775fefc220b488b0d85f5fb19",
+      "decision": "approved",
+      "reviewer": "李帅众",
+      "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"
+    },
+    {
+      "consumption_id": "RPL-20260814-01-CH01-S01-TB-04971",
+      "paragraph_sha256": "792523af4264f5383070f09fd03fd84f8078c0d73e402bb4656c912ac93f62d3",
+      "decision": "approved",
+      "reviewer": "李帅众",
+      "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"
+    },
+    {
+      "consumption_id": "RPL-20260814-01-CH01-S01-TB-04974",
+      "paragraph_sha256": "448e2a601bd6259db6c52ac243becbd9d45fde7a566b9b7fb344a882d8c4d749",
+      "decision": "approved",
+      "reviewer": "李帅众",
+      "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"
+    },
+    {
+      "consumption_id": "RPL-20260814-01-CH01-S01-TB-00607",
+      "paragraph_sha256": "cb12aaa2b79630172b32cd02bc0d9a6404dd97544f3e1ca074b1234952c793c7",
+      "decision": "approved",
+      "reviewer": "李帅众",
+      "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"
+    },
+    {
+      "consumption_id": "RPL-20260814-01-CH01-S02-TB-00533",
+      "paragraph_sha256": "ee7fed630b0e12148d965df155fb3230d5b5735f45704a5086e21e6786640cda",
+      "decision": "approved",
+      "reviewer": "李帅众",
+      "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"
+    },
+    {"consumption_id": "RPL-20260814-01-CH01-S03-TB-02009", "paragraph_sha256": "145675fa07aff0d555aa70598420f00b0d343902e4eb3d58d8f7b38ccdda17f0", "decision": "approved", "reviewer": "李帅众", "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"},
+    {"consumption_id": "RPL-20260814-01-CH01-S03-TB-01939", "paragraph_sha256": "9c7e890daf7df60fb175869f4c8e3c6965e25b183b0738d437fa483982acc184", "decision": "approved", "reviewer": "李帅众", "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"},
+    {"consumption_id": "RPL-20260814-01-CH01-S03-TB-00533", "paragraph_sha256": "8a10a2eb86d6e1be5bc31ee3a9fb201afec80ec8fb68dfe640a4180a41ee2136", "decision": "approved", "reviewer": "李帅众", "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"},
+    {"consumption_id": "RPL-20260814-01-CH01-S03-TB-00071", "paragraph_sha256": "76965b07fcb0b9c9f0cb18d69475a96b5ed7e219bd2bba67023333729ac1d36c", "decision": "approved", "reviewer": "李帅众", "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"},
+    {"consumption_id": "RPL-20260814-01-CH01-S03-TB-04971", "paragraph_sha256": "876bf50a47b23f342c6aa51259f6e033fb4da02705e5ab9c027f94a738f47e70", "decision": "approved", "reviewer": "李帅众", "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"},
+    {"consumption_id": "RPL-20260814-01-CH01-S03-TB-04972", "paragraph_sha256": "7d7b1e2a6a37f5d36b2a8a04c9fedbca7c836bc8a0701b87d5b344dc8317bdac", "decision": "approved", "reviewer": "李帅众", "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"},
+    {"consumption_id": "RPL-20260814-01-CH01-S03-TB-00639", "paragraph_sha256": "51c8548dd3df24030a02a996b0b0feb31b91126effdb82384692ee6d8eb85d1f", "decision": "approved", "reviewer": "李帅众", "rationale": "已逐条阅读当前正文，确认本段语言表达、叙事连贯性和文学呈现可接受。"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "change_id": "CHG-20260818-resource-registry-refresh",
+  "recorded_at": "2026-08-18T00:05:00Z",
+  "purpose": "在补齐两个必需规则文件后重建资源注册表，验证资源契约状态。",
+  "planned_paths": ["D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\资源注册表.json"],
+  "target_before_sha256": "2588affc9872acbe4a25269fbb1b4727fd8d2cf0116d817e9109454e2b038bfc",
+  "read_evidence": [
+    {"path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\修补状态.json", "conclusion": "R-001允许在补齐规则后重建注册表；正式交付、正文和采用门保持关闭。"},
+    {"path": "D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\资料注册与完整性.py", "conclusion": "该脚本仅重建资源注册表并重新计算质量与缺失资源状态。"},
+    {"path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\动态链消费规则.json", "conclusion": "已创建为当前执行管道所需资源。"},
+    {"path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行采用规则.json", "conclusion": "已创建为当前执行管道所需资源。"}
+  ],
+  "authorization_boundary": "只更新生成型资源注册表；不改变原始资料、绑定、采用、场景、正文、正式事实或发布状态。"
+}

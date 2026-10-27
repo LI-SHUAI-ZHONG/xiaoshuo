@@ -1,0 +1,102 @@
+{
+  "schema_version": "project-change-preread-1.0",
+  "change_id": "20260816T103000Z-replacement-batch-active-projection-correction",
+  "prepared_at": "2026-08-16T10:30:00Z",
+  "change_purpose": "以项目所有者已授权的 15 条 RPL 替代记录校正滞后的正文生产编排，并令生产队列、生产批次与编排保持同一活跃投影；重新生成严格隔离审计输出。",
+  "planned_modified_paths": [
+    "D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\创建全量资料替代批次.py",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产编排.json",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产队列.jsonl",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产批次.jsonl",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料严格隔离审计报告.json",
+    "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料严格隔离审计问题清单.jsonl"
+  ],
+  "read_evidence": [
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\AGENTS.md",
+      "sha256_at_read": "c11af4a79dbe8db7a0cca440fb2d103671332a57ff76329f615bbeb288104db6",
+      "conclusion": "本次只允许最小修复；隔离状态不得提升，正式发布状态不得因本次修复改变。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\创作资料全量调取修补主计划.md",
+      "sha256_at_read": "f2f6deeb740267298eb1454f489dafe04366f54633ad90790d93c4571ee56a64",
+      "conclusion": "来源不足或未确认时只允许明确标记的草稿候选，正式交付继续阻断。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\全量资料模型受控改进最新版方案.md",
+      "sha256_at_read": "3b4e0c86d117614423a44aa5e366ea76ded6291a075a8751d5ec57d288966402",
+      "conclusion": "隔离记录不得进入正文或发布路径，资料改进与替代候选不构成发布授权。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\修补方案\\修补状态.json",
+      "sha256_at_read": "a133f38136ece97ea2846c9f6e9722100cb5eb068ac5a02d842f90bdcfdac53b",
+      "conclusion": "P6 保持 in_progress_blocked。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料替代批次授权.json",
+      "sha256_at_read": "528591a2d0954b60a7e1128f92e3ac056df931753f3efabbe687f53bfa1dfcc6",
+      "conclusion": "项目所有者授权为历史隔离的 15 条记录创建可重新审校的候选替代批次，历史记录不可修改或复用。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料历史消费隔离清单.json",
+      "sha256_at_read": "3ca4ceaf34991bebec8ff689561b876fd77967d05eec0c3c128cbc280cc68c46",
+      "conclusion": "15 条历史消费均为 historical_unverified_nonrelease，且不得进入当前计划、队列或批次。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文消费证据.json",
+      "sha256_at_read": "not_captured_as_target_not_modified",
+      "conclusion": "当前消费证据已包含同一 RPL 批次的 15 条替代候选；本次不修改该证据或正文。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\创建全量资料替代批次.py",
+      "sha256_at_read": "dec21ac87eaca392e4e934faecc73a0937522941971ed75a192e593adcb35577",
+      "conclusion": "现有实现仅从滞后的 14 条旧计划派生，缺少以授权替代投影为来源的完整性校验。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产编排.json",
+      "sha256_at_read": "a0e7e4c7ac6470694de8980daa8d76fe33f078dc805c942f97bcb20f4acebb34",
+      "conclusion": "旧编排含 14 条原始隔离 ID，未反映已授权 RPL 投影。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产队列.jsonl",
+      "sha256_at_read": "a6bc29fffff88ff7a894d27725aaa6f51b23c85f22c965c13183dc87631f3121",
+      "conclusion": "队列含 15 条 RPL 记录，并补齐 RPL-20260814-01-CH01-S01-TB-05533。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产批次.jsonl",
+      "sha256_at_read": "e6e88ead8233d2b13bc17b521ef5ce3aa69c9d8324f3efaace496695bf126ff3",
+      "conclusion": "批次成员为同一 15 条 RPL 记录。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\全量资料严格隔离审计.py",
+      "sha256_at_read": "59082482dc83a64d30a79f87c0a03ae79b5cae2028bb465b2f5cc21a0998efa2",
+      "conclusion": "审计将计划、队列和批次作为同一生产面，并输出报告和问题清单。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料严格隔离审计报告.json",
+      "sha256_at_read": "6abfc9c8dccb9e10895bc4e445889058461e2b9458e78967c4a5f79ccabcb031",
+      "conclusion": "旧报告确认计划仅 14 条且仍引用历史隔离 ID，导致活跃投影不一致。"
+    },
+    {
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料严格隔离审计问题清单.jsonl",
+      "sha256_at_read": "a1816019e141f24ed56935788dfb233fd8fb7f856cc7c66cfda83f960ec966f6",
+      "conclusion": "问题清单记录了计划、队列和批次错位及历史 ID 泄漏。"
+    }
+  ],
+  "confirmed_facts": [
+    "项目所有者明确确认授权的 15 条替代集为本次活跃生产投影的事实来源。",
+    "RPL-20260814-01-CH01-S01-TB-05533 是缺失历史投影的已授权替代记录。",
+    "所有 15 条原始 consumption_id 仍保持隔离且不可发布。"
+  ],
+  "unconfirmed_facts": [
+    "消费验证是否足以通过正式发布门；本次不对此作结论。",
+    "P6 的其他来源质量与项目事实阻断项何时解决。"
+  ],
+  "conflict_resolution": "用户于本会话明确确认：以 15 条项目所有者授权的 RPL 替代记录为活跃生产投影的权威集合；旧 14 条原始生产编排为滞后投影，必须替换而非合并。",
+  "authorization_boundary": [
+    "不修改历史隔离清单、原始资料、网络数据、既有绑定、消费证据、升级档案或任何正文文件。",
+    "不复用、解冻或将历史 consumption_id 写入活跃生产面。",
+    "不运行升级、采用、场景、正文、发布或回归流程。",
+    "严格隔离审计仅重新生成其报告和问题清单，不改变 formal_release_allowed 或 P6 状态。"
+  ]
+}

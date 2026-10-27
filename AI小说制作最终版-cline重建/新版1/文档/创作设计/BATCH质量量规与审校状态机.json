@@ -1,0 +1,30 @@
+{
+  "schema_version": "draft-batch-quality-rubric-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "artifact_status": "active_for_draft_review_only",
+  "publication_gate": "formal_release_prohibited_until_formal_fact_approval_is_true",
+  "batch_creation_preconditions": [
+    "场景卡状态为 editorial_approved。",
+    "场景资料包中的每个绑定均通过逐条授权审计。",
+    "批次仅包含一个场景或一个不可拆分的连续场景单元。",
+    "批次状态初始为 automatic_draft_requires_semantic_editorial_review。"
+  ],
+  "rubric": [
+    {"id": "R1", "dimension": "场景因果", "pass_condition": "目标、阻力、选择、行动和后果完整，且结尾状态迫使下一场发生。", "blocker": "以巧合、解释或无代价能力替代选择。"},
+    {"id": "R2", "dimension": "视角与人物", "pass_condition": "信息不超过沈砚当下可知范围；其追问、克制和错误判断符合既定人物边界。", "blocker": "全知泄密、人物为交代设定而失真。"},
+    {"id": "R3", "dimension": "资料转译", "pass_condition": "每条已授权材料在场景中形成可观察的约束、动作或后果，不出现资料名称、ID或规则原文。", "blocker": "资料堆砌、内部术语泄漏、未授权材料进入输入或文本。"},
+    {"id": "R4", "dimension": "悬念节奏", "pass_condition": "仅回答本场提出的问题的一部分，并增加一个更高代价的可验证问题。", "blocker": "第一章越过信息上限，或只有拖延而无新信息。"},
+    {"id": "R5", "dimension": "语言与可读性", "pass_condition": "动作、环境和对白承担叙事功能；无模板句、占位符、元叙述和异常重复。", "blocker": "段落截断、占位符、内部术语或明显复述资料。"},
+    {"id": "R6", "dimension": "可追溯性", "pass_condition": "每个消费记录可定位到正文单段，哈希匹配，证据字段与段落一致。", "blocker": "缺少段落位置、哈希、语义支持或人工审校结论。"}
+  ],
+  "state_transitions": [
+    {"from": "scene_card_draft", "to": "editorial_approved", "actor": "human_editor", "evidence": "场景目标、信息上限、因果和伏笔均获确认"},
+    {"from": "editorial_approved", "to": "authorization_pending", "actor": "production_coordinator", "evidence": "最小资料包和逐条申请完整"},
+    {"from": "authorization_pending", "to": "authorized_for_draft", "actor": "authorized_reviewer", "evidence": "授权脚本审计报告列为 accepted_for_use"},
+    {"from": "authorized_for_draft", "to": "automatic_draft_requires_semantic_editorial_review", "actor": "model", "evidence": "仅可生成候选草稿"},
+    {"from": "automatic_draft_requires_semantic_editorial_review", "to": "semantic_editorial_review_passed", "actor": "human_semantic_editor", "evidence": "R1-R4 通过且资料授权范围无越界"},
+    {"from": "semantic_editorial_review_passed", "to": "literary_review_passed", "actor": "human_literary_editor", "evidence": "R5 通过，且角色、节奏与语言可接受"},
+    {"from": "literary_review_passed", "to": "draft_retained_not_publishable", "actor": "production_coordinator", "evidence": "R6 通过；formal_fact_approval 仍为 false"}
+  ],
+  "rejection_handling": "任一 blocker 触发即回退到 scene_card_draft 或 authorization_pending；不得通过改写审校字段绕过问题。"
+}

@@ -1,0 +1,387 @@
+{
+  "schema_version": "source-registry-1.1",
+  "project_root": "D:/AI小说制作最终版-cline重建/新版1",
+  "generated_at": "2026-08-18T06:31:35.370492Z",
+  "resource_count": 18,
+  "resources": {
+    "type_system": {
+      "status": "parseable",
+      "source_quality": "partial",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\原始资料\\类型系统.txt",
+      "relative_path": "原始资料/类型系统.txt",
+      "sha256": "8c316d1863da85a5ae5584deadcfcb0429f2019078f9540ccd1966e0e38cce45",
+      "bytes": 29226190,
+      "item_or_line_count": 637766,
+      "missing_fields": [
+        "reader_params"
+      ],
+      "placeholder_count": 0,
+      "runtime_usable_for_draft": true,
+      "formal_fact_usable": false,
+      "quality_reason": "存在对象级缺失字段或未确认内容",
+      "legacy_placeholder_count": 2620,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [
+          "core_elements",
+          "style_constraints"
+        ],
+        "traces": [
+          "配置/类型配置模板.json"
+        ]
+      },
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "reader_params",
+          "action": "补齐字段并附可核验 source_ref"
+        },
+        {
+          "field": "source_confirmation",
+          "action": "确认原始来源、版本、责任人和适用范围"
+        }
+      ]
+    },
+    "type_connections": {
+      "status": "parseable",
+      "source_quality": "partial",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\类型连接全局索引.json",
+      "relative_path": "文档/证据/类型连接全局索引.json",
+      "sha256": "fc5ba089e57e3c44e8271afad43e43b0ff82d073127a42d46e22425d19bd010d",
+      "bytes": 30047,
+      "item_or_line_count": 55,
+      "missing_fields": [
+        "conflict_details",
+        "recommended_mechanism_explanation"
+      ],
+      "placeholder_count": 0,
+      "runtime_usable_for_draft": true,
+      "formal_fact_usable": false,
+      "quality_reason": "存在对象级缺失字段或未确认内容",
+      "legacy_placeholder_count": 5991,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [
+          "source_connection_id"
+        ],
+        "traces": [
+          "文档/证据/全量资料治理/类型连接_规范化.json"
+        ]
+      },
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "conflict_details",
+          "action": "补齐字段并附可核验 source_ref"
+        },
+        {
+          "field": "recommended_mechanism_explanation",
+          "action": "补齐字段并附可核验 source_ref"
+        },
+        {
+          "field": "source_confirmation",
+          "action": "确认原始来源、版本、责任人和适用范围"
+        }
+      ]
+    },
+    "type_connection_rules": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\类型连接规则.json",
+      "relative_path": "文档/证据/类型连接规则.json",
+      "sha256": "b2ff9c22c4d613c1557f300712425c19dceee61866b470b5f15b102f094fa3d0",
+      "bytes": 1036,
+      "item_or_line_count": 0
+    },
+    "library": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\原始资料\\资料库.txt",
+      "relative_path": "原始资料/资料库.txt",
+      "sha256": "3bff90bc342bb2ff3194cc7c1e673d4d7899d07ec091ea7873d7640144ed7cbc",
+      "bytes": 3261794,
+      "item_or_line_count": 82157,
+      "missing_fields": [],
+      "placeholder_count": 0,
+      "runtime_usable_for_draft": true,
+      "formal_fact_usable": true,
+      "quality_reason": "完整对象级来源，仍须完成项目来源确认才能作为正式项目事实",
+      "legacy_placeholder_count": 5126,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [
+          "dependencies",
+          "examples"
+        ],
+        "traces": [
+          "文档/证据/资料库依赖分类日志.jsonl",
+          "文档/证据/资料库示例修复日志.jsonl"
+        ]
+      },
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "project_confirmation",
+          "action": "完成项目来源确认后才能升级 verified"
+        }
+      ]
+    },
+    "library_index": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\资料库索引.jsonl",
+      "relative_path": "文档/资料库索引.jsonl",
+      "sha256": "62dd91a0b17f276a3597456268194e19d6eaa88b576611a8ad1f927d06e808ac",
+      "bytes": 341651,
+      "item_or_line_count": 590
+    },
+    "library_adoption_rules": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\采用规则.json",
+      "relative_path": "文档/证据/采用规则.json",
+      "sha256": "34dfb0260a9bb7b844a87d39229df8f4b9edf9859274d5584bd36c3371983fdb",
+      "bytes": 6280,
+      "item_or_line_count": 0
+    },
+    "static_network": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\网络完整数据\\静态连接完整数据.json",
+      "relative_path": "网络完整数据/静态连接完整数据.json",
+      "sha256": "21b25fa76405e67428367cd7aec3e2176f1a4a01b259daaae82b58c6f3fc72c9",
+      "bytes": 654149,
+      "item_or_line_count": 1341,
+      "missing_fields": [],
+      "placeholder_count": 0,
+      "runtime_usable_for_draft": true,
+      "formal_fact_usable": true,
+      "quality_reason": "完整对象级来源，仍须完成项目来源确认才能作为正式项目事实",
+      "legacy_placeholder_count": 19,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [],
+        "traces": []
+      },
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "project_confirmation",
+          "action": "完成项目来源确认后才能升级 verified"
+        }
+      ]
+    },
+    "static_network_index": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\静态网络索引.json",
+      "relative_path": "文档/证据/静态网络索引.json",
+      "sha256": "d4197f7a9ab6c3d335674d0a1e8ba469d7e2c1cdc306531cd6864ba605f03e8d",
+      "bytes": 63508,
+      "item_or_line_count": 0
+    },
+    "static_adoption_rules": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\静态连接采用规则.json",
+      "relative_path": "文档/证据/静态连接采用规则.json",
+      "sha256": "5e65dcc8f6f47c3938cc87f2804e3868dfe173116bde6d57e65ffe1d466cd53b",
+      "bytes": 2117,
+      "item_or_line_count": 0
+    },
+    "dynamic_network": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\网络完整数据\\动态连接完整数据.json",
+      "relative_path": "网络完整数据/动态连接完整数据.json",
+      "sha256": "af71e27756c693e1e4fee85feb7ff300780fd7d27c93d4df34f94ac3daebb8e6",
+      "bytes": 3412212,
+      "item_or_line_count": 1824,
+      "missing_fields": [],
+      "placeholder_count": 0,
+      "runtime_usable_for_draft": true,
+      "formal_fact_usable": true,
+      "quality_reason": "完整对象级来源，仍须完成项目来源确认才能作为正式项目事实",
+      "legacy_placeholder_count": 22,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [],
+        "traces": []
+      },
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "project_confirmation",
+          "action": "完成项目来源确认后才能升级 verified"
+        }
+      ]
+    },
+    "dynamic_network_index": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\动态链索引.jsonl",
+      "relative_path": "文档/证据/动态链索引.jsonl",
+      "sha256": "f7ec83c6fce86b5a893beb2b998ee01b3030f5719d6be09e724c19e021f0162d",
+      "bytes": 98383,
+      "item_or_line_count": 414
+    },
+    "dynamic_adoption_rules": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\动态链消费规则.json",
+      "relative_path": "文档/证据/动态链消费规则.json",
+      "sha256": "9e5939e3c3fb8fed12ba0b523557b4f30a90e3fdfc648010f99fc24ce7631180",
+      "bytes": 2368,
+      "item_or_line_count": 0
+    },
+    "anchor_network": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\原始资料\\锚点网络.txt",
+      "relative_path": "原始资料/锚点网络.txt",
+      "sha256": "93cdcad34d41fed843130170cb0987d0c4926a6d63ad06481a8d767c546e980e",
+      "bytes": 1898067,
+      "item_or_line_count": 44582,
+      "missing_fields": [],
+      "placeholder_count": 0,
+      "runtime_usable_for_draft": true,
+      "formal_fact_usable": true,
+      "quality_reason": "完整对象级来源，仍须完成项目来源确认才能作为正式项目事实",
+      "legacy_placeholder_count": 42,
+      "governance_evidence": {
+        "governance_passed": true,
+        "covered_fields": [
+          "anchor_definition",
+          "scene_binding",
+          "text_location"
+        ],
+        "traces": [
+          "文档/证据/锚点网络定义日志.jsonl",
+          "文档/证据/锚点网络场景绑定日志.jsonl",
+          "文档/证据/锚点网络文本位置日志.jsonl"
+        ]
+      },
+      "usage_level": "draft_usable",
+      "allowed_uses": {
+        "search_and_retrieval": true,
+        "brainstorming": true,
+        "draft_structure": true,
+        "draft_prose": true,
+        "formal_fact": false
+      },
+      "improvement_actions": [
+        {
+          "field": "project_confirmation",
+          "action": "完成项目来源确认后才能升级 verified"
+        }
+      ]
+    },
+    "anchor_index": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\锚点分类索引.json",
+      "relative_path": "文档/证据/锚点分类索引.json",
+      "sha256": "39e142e4b45cb9e2f182a1af624865f51c5b2a235361303a8159e7a5611b26d0",
+      "bytes": 239,
+      "item_or_line_count": 0
+    },
+    "anchor_adoption_rules": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\锚点采用规则.json",
+      "relative_path": "文档/证据/锚点采用规则.json",
+      "sha256": "90ec65523d07a91e2450cb764bf318ef16ed711e6943300e40da650c89b6d1d5",
+      "bytes": 1988,
+      "item_or_line_count": 0
+    },
+    "execution_rules": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行采用规则.json",
+      "relative_path": "文档/证据/执行采用规则.json",
+      "sha256": "230cea8a4bd7898ea29abd11f819bfbb00e61ba4f8bb748ef01d308816698ccb",
+      "bytes": 1627,
+      "item_or_line_count": 0
+    },
+    "source_depth_report": {
+      "status": "parseable",
+      "source_quality": "partial",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\来源深度检查报告.json",
+      "relative_path": "文档/证据/来源深度检查报告.json",
+      "sha256": "8bec8eccb42def3d50391d64d9136daf9e056bde23d90031ad63117fe2032c3d",
+      "bytes": 6882,
+      "item_or_line_count": 0
+    },
+    "project_source_confirmation": {
+      "status": "parseable",
+      "source_quality": "complete",
+      "path": "D:\\AI小说制作最终版-cline重建\\新版1\\配置\\project_source_confirmation.json",
+      "relative_path": "配置/project_source_confirmation.json",
+      "report_path": "文档/证据/项目来源确认报告.json"
+    }
+  },
+  "source_quality": "partial",
+  "partial_resources": [
+    "type_connections",
+    "type_system"
+  ],
+  "blocking_errors": [],
+  "quality_blocking_errors": [
+    "存在对象级质量未完成的来源，禁止正式交付；必须补齐可核验来源字段或明确保持 draft_only。"
+  ],
+  "status": "passed",
+  "delivery_status": "draft_only",
+  "usage_policy": {
+    "blocked": "不可消费，先修复解析或身份问题",
+    "candidate": "可检索、比较和头脑风暴，不得直接写成事实",
+    "draft_usable": "可进入创作草稿，必须保留 source_ref 和不确定性",
+    "verified": "可作为正式事实，仅限字段完整且来源已确认的对象"
+  },
+  "quality_analysis_report": "文档/证据/来源质量自主分析报告.json",
+  "library_index_integrity": {
+    "status": "passed",
+    "row_count": 590,
+    "unique_entry_count": 590,
+    "duplicate_entry_ids": [],
+    "malformed_lines": [],
+    "invalid_source_refs": []
+  },
+  "quality_level_counts": {
+    "draft_usable": 6
+  }
+}

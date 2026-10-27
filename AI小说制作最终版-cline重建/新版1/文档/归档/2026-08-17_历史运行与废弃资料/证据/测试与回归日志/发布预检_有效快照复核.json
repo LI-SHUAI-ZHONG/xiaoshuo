@@ -1,0 +1,54 @@
+{
+  "schema_version": "full-source-release-preflight-1.0",
+  "verified_at": "2026-08-14T01:23:26.356988+00:00",
+  "policy": "复核比较预检快照与当前报告和关键输入 SHA-256，并要求已快照的正式发布门同时具有 status=passed 和 formal_release_allowed=true；只接受生成后 900 秒内的预检。不刷新证据，也不因预检报告被单独篡改而忽略哈希漂移、门报告拒绝、无时区时间、未来时间或超期报告。",
+  "preflight_formal_release_allowed": true,
+  "formal_release_gate_confirmed": true,
+  "preflight_age_seconds": 56,
+  "max_preflight_age_seconds": 900,
+  "snapshot_file_count": 29,
+  "snapshot_composition": {
+    "report_files": [
+      "全量资料正式发布门报告.json",
+      "全量资料严格隔离审计报告.json",
+      "全量资料正文消费验证报告.json",
+      "全量资料文学审校报告.json",
+      "项目来源确认报告.json",
+      "全资料生产能力报告.json",
+      "章节质量资料就绪度报告.json",
+      "全量资料历史消费隔离清单.json"
+    ],
+    "fixed_input_files": [
+      "配置/project_config.json",
+      "配置/project_source_confirmation.json",
+      "文档/证据/项目输入缺失清单.json",
+      "文档/证据/资源注册表.json",
+      "文档/证据/全书资料激活矩阵.json",
+      "文档/证据/全量资料治理/全量检查报告.json",
+      "文档/证据/严格资料升级/资料激活前置条件审计/资料激活前置条件清单.jsonl",
+      "文档/证据/全量资料解释词创作绑定.json",
+      "文档/证据/全量资料输入与正文授权/已审计授权清单.jsonl",
+      "文档/证据/全量资料正文生产编排.json",
+      "文档/证据/全量资料正文生产队列.jsonl",
+      "文档/证据/全量资料正文生产批次.jsonl",
+      "文档/证据/全量资料正文消费证据.json",
+      "文档/证据/全量资料文学审校裁决.json",
+      "文档/证据/全量资料升级档案.jsonl"
+    ],
+    "binding_source_files": [
+      "原始资料/类型系统.txt",
+      "原始资料/类型连接.txt",
+      "原始资料/资料库.txt",
+      "原始资料/锚点网络.txt",
+      "网络完整数据/动态连接完整数据.json",
+      "网络完整数据/静态连接完整数据.json"
+    ],
+    "report_file_count": 8,
+    "fixed_input_file_count": 15,
+    "binding_source_file_count": 6,
+    "total_file_count": 29
+  },
+  "errors": [],
+  "formal_release_allowed": true,
+  "status": "passed"
+}

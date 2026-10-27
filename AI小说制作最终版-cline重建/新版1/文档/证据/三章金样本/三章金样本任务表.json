@@ -1,0 +1,26 @@
+{
+  "schema_version": "golden-three-chapter-task-table-1.0",
+  "generated_at": "2026-08-12T23:57:21.921682+00:00",
+  "policy": "先通过章节设计闸门，再以每批 6 条资料生成决策包；决策包未经复核不得改写正文。",
+  "micro_batch_size": 6,
+  "chapters": [
+    {
+      "chapter_id": "1",
+      "progression": "发现异常",
+      "goal": "确认第七息回亮不是自身修炼误差，并取得能复核的旧域指向。",
+      "next_action_interface": "带着父亲留下的节拍进入旧域，查明回响对应的人与阵眼。"
+    },
+    {
+      "chapter_id": "2",
+      "progression": "追查并付代价",
+      "goal": "在旧域西廊确认回响与被抹除名册之间的对应关系，并带出可交叉验证的残页。",
+      "next_action_interface": "残页上的轮值编号将在下一次检测前变化，必须在执律堂封锁前找到原始名册。"
+    },
+    {
+      "chapter_id": "3",
+      "progression": "证据升级且被迫行动",
+      "goal": "在下一轮检测封台前完成证据链交叉验证，并阻止陆昭成为新的灵息供给。",
+      "next_action_interface": "在追捕抵达前带着半枚阵钥返回旧域，决定救人、守阵或寻找第三种方法。"
+    }
+  ]
+}

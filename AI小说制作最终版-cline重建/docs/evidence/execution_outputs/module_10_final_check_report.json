@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "type_connection_global_index.json": "readable",
+    "static_network_index.json": "readable",
+    "dynamic_connections.full.json": "readable",
+    "anchor_category_index.json": "readable",
+    "type_connection_rules.json": "readable",
+    "static_connection_adoption_rules.json": "readable",
+    "anchor_adoption_rules.json": "readable",
+    "execution_adoption_rules.json": "readable"
+  },
+  "blocking_failures": [],
+  "status": "passed"
+}

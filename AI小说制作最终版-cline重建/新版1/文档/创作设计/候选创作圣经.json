@@ -1,0 +1,64 @@
+{
+  "schema_version": "creative-bible-candidate-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "artifact_status": "author_confirmed_draft_only",
+  "formal_fact_usable": false,
+  "prose_generation_allowed": false,
+  "purpose": "为卷章和场景设计提供可审阅的创作边界；不构成项目事实确认、资料授权或正式发布许可。",
+  "confirmed_project_inputs": {
+    "book_title": "暗流玄境",
+    "genre": "玄幻",
+    "narrative_perspective": "受限第三人称，跟随沈砚",
+    "reader_promise": "以制度悬疑驱动成长；每一次获得力量或证据，都改变关系并留下无法以修为抵消的代价。",
+    "world_rule": "镇潮阵维持灵脉稳定，同时压低低阶修士检测时逸散的灵息回声。",
+    "protagonist_start": "沈砚为取回母亲遗物而争取内门晋升资格，并怀疑父亲的潮期死亡结论。",
+    "volume_one_destination": "沈砚为救陆昭公开破坏检测，失去晋升资格，带着父亲的半枚阵钥进入旧域。"
+  },
+  "creative_assumptions_confirmed_by_project_owner": [
+    {
+      "id": "CA-01",
+      "assumption": "第一章发生在栖云宗外门的例行晋升检测日，检测结果会直接影响当期晋升名单。",
+      "reason": "将主角的现实目标与镇潮阵异常置于同一可观察事件。",
+      "confirmation_required_before_prose": false,
+      "confirmation_status": "confirmed_by_project_owner"
+    },
+    {
+      "id": "CA-02",
+      "assumption": "检测石在第七息回亮是可被沈砚捕捉、却会被现场制度语言掩盖的异常。",
+      "reason": "让核心谜题先以现象出现，避免开篇解释世界真相。",
+      "confirmation_required_before_prose": false,
+      "confirmation_status": "confirmed_by_project_owner"
+    },
+    {
+      "id": "CA-03",
+      "assumption": "许照微只能以藏卷阁见习录事的身份接触有限档案，她给出的刻痕缺页不是答案而是检索线索。",
+      "reason": "保留她的越权风险与后续主动性，避免成为信息投递工具。",
+      "confirmation_required_before_prose": false,
+      "confirmation_status": "confirmed_by_project_owner"
+    },
+    {
+      "id": "CA-04",
+      "assumption": "陆昭替沈砚遮挡视线的行为会留下被执律堂注意到的程序风险。",
+      "reason": "使友谊的帮助具有即时成本，并把下一章的关系压力前置。",
+      "confirmation_required_before_prose": false,
+      "confirmation_status": "confirmed_by_project_owner"
+    }
+  ],
+  "nonnegotiable_narrative_rules": [
+    "沈砚先追问可复核细节，再作判断；不能因为推进剧情突然获得完整答案。",
+    "灵息回声的使用必须造成具体且持续的记忆损失或关系代价。",
+    "闻执衡与守序者可以隐瞒和施压，但不能扁平化为无理由的恶。",
+    "每个场景必须改变信息、关系、资源或风险中的至少一项，且变化进入下一场景。",
+    "真相按现象、模式、证据、解释、选择的顺序递进，不得在第一章揭示旧域阵眼全貌。"
+  ],
+  "voice_and_style": {
+    "sentence_behavior": "克制、具体、以感知和动作承载压力；避免百科式设定说明。",
+    "dialogue_behavior": "人物以问题、程序、交换和回避表达立场，不用宣言替代冲突。",
+    "scene_exit_rule": "场景结尾必须留下一个已发生、不能立刻撤回的选择或风险。"
+  },
+  "approval_requirements": [
+    "项目作者已确认全部创作假设；其确认仅适用于隔离草稿设计。",
+    "编辑确认第一章信息揭示上限和人物行为边界（本轮按作者确认进入授权准备）。",
+    "逐场景资料包通过人工资料授权，另行生成可审计的正式提交文件。"
+  ]
+}

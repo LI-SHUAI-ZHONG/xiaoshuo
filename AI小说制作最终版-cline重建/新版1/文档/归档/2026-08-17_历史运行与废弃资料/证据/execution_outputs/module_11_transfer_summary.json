@@ -1,0 +1,50 @@
+{
+  "schema_version": "module-11-transfer-summary-1.2",
+  "modules_received": [
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10"
+  ],
+  "module_count": 10,
+  "output_files": [
+    "文档\\证据\\execution_outputs\\module_01_project_config.json",
+    "文档\\证据\\运行\\run-20260812T180859Z-966dab14\\run_input_snapshot.json",
+    "文档\\证据\\execution_outputs\\module_02_type_decision.json",
+    "文档\\证据\\execution_outputs\\module_03_type_dependency_graph.json",
+    "文档\\证据\\execution_outputs\\module_04_world_setting.json",
+    "文档\\证据\\execution_outputs\\module_05_opening_design.json",
+    "文档\\证据\\execution_outputs\\module_06_人物与剧情核心.json",
+    "文档\\证据\\execution_outputs\\module_06_character_plot_core.json",
+    "文档\\证据\\execution_outputs\\module_07_quality_rules.json",
+    "文档\\证据\\execution_outputs\\module_08_scene_beat_cards.json",
+    "文档\\证据\\运行\\run-20260812T180859Z-966dab14\\scene_source_selection.json",
+    "文档\\证据\\execution_outputs\\module_09_scene_prose.json",
+    "文档\\证据\\运行资料使用记录\\run-20260812T180859Z-966dab14.json",
+    "文档\\证据\\execution_outputs\\module_10_final_check_report.json"
+  ],
+  "status": "success",
+  "transfer_status": "passed",
+  "transfer_failures": [],
+  "failed_modules": [],
+  "missing_modules": [],
+  "unexpected_modules": [],
+  "missing_outputs": [],
+  "final_check_status": "passed",
+  "release_readiness": "blocked",
+  "delivery_status": "draft_only",
+  "delivery_gate": {
+    "status": "draft_only",
+    "formal_release_blockers": [
+      "正式发布批准未绑定当前 run_id 和 manifest_sha256"
+    ],
+    "source_registry_status": "passed"
+  },
+  "delivery_reason": "传递链与运行期验收通过，但当前冻结发布清单尚未完成条目认证或人工签署，只能保持 draft_only。"
+}

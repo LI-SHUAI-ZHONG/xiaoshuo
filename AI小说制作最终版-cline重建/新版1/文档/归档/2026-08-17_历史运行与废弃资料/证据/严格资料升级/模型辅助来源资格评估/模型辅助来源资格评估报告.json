@@ -1,0 +1,24 @@
+{
+  "schema_version": "model-assisted-source-qualification-review-1.0",
+  "generated_at": "2026-08-13T02:22:50.371305+00:00",
+  "scope": "model_assisted_evidence_review_only; no_source_qualification_or_usage_permission_modified",
+  "model_execution_requested": true,
+  "input_reports": {
+    "inventory": "文档/证据/严格资料升级/全量资料激活前置条件盘点/全量资料激活前置条件盘点报告.json",
+    "quality": "文档/证据/来源质量自主分析报告.json",
+    "inventory_sha256": "280bf349bf07512997ace44240c464c21b0f074a7aece4022f35f7c60d927397",
+    "quality_sha256": "24f7b18ae1240ddfa8bd9d3461ed2732dcbcc11036225b5cb74b7f08726d485b"
+  },
+  "source_record_count": 7,
+  "execution_status_counts": {
+    "completed": 7
+  },
+  "recommendation_counts": {
+    "insufficient_evidence": 7
+  },
+  "permission_isolation_failure_count": 0,
+  "formal_fact_eligible_count": 0,
+  "model_input_eligible_count": 0,
+  "prose_write_allowed": false,
+  "policy": "模型意见仅用于人工资格复核准备；不得直接变更来源资格、项目选择、正式事实、模型输入或正文写作权限。"
+}

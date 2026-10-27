@@ -1,0 +1,146 @@
+{
+  "schema_version": "strict-source-upgrade-batch-1.0",
+  "batch_id": "SOURCE-UPGRADE-01605",
+  "record_limit": 6,
+  "prose_write_allowed": false,
+  "records": [
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09625",
+      "consumption_id": "PC-09625",
+      "binding_id": "TB-13324",
+      "source_id": "类型连接枚举.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型连接枚举.json[1]",
+      "source_ref_sha256": "6ec150a93f381716adaa8aca31b6ecd32fba2af6de03afa323a87dc5acfc5149",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09626",
+      "consumption_id": "PC-09626",
+      "binding_id": "TB-13325",
+      "source_id": "类型连接验证规则.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型连接验证规则.json[1]",
+      "source_ref_sha256": "52ef9b09512e2c19eff1bd247dfaf574dcd7a0a4981ddbd14886218eed738724",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09627",
+      "consumption_id": "PC-09627",
+      "binding_id": "TB-13326",
+      "source_id": "类型组合约束.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型组合约束.json[1]",
+      "source_ref_sha256": "ea1cfeb089808496a1f2ea5ddc534bf7405473efb269cceacd82f356c014eb70",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09628",
+      "consumption_id": "PC-09628",
+      "binding_id": "TB-13327",
+      "source_id": "作品表达连接搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品表达连接搭配库.json[1]",
+      "source_ref_sha256": "912d81913671665a6d92aec6f3442b06965f020e041df855d0e193cadbc3e467",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09629",
+      "consumption_id": "PC-09629",
+      "binding_id": "TB-13328",
+      "source_id": "作品场景连接搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品场景连接搭配库.json[1]",
+      "source_ref_sha256": "d35729a5f80e14a246f74ef51b7da2c9c9f04d030ec97fb0a37b0ecd0ff3a062",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09630",
+      "consumption_id": "PC-09630",
+      "binding_id": "TB-13329",
+      "source_id": "作品场景模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品场景模式库.json[1]",
+      "source_ref_sha256": "efc834219eeada34893491f782f286bc4c1bdf2b43d93e230c236408e6cae2a8",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "schema_version": "canonical-source-resolution-merged-audit-1.0",
+  "generated_at": "2026-08-18T17:47:29.715525Z",
+  "scope": "read-only merge of completed current-binding audit batches",
+  "expected_binding_count": 13345,
+  "covered_binding_count": 13345,
+  "status_counts": {
+    "resolved": 13315,
+    "ambiguous": 15,
+    "readable_needs_review": 15
+  },
+  "source_kind_status_counts": {
+    "资料库": {
+      "resolved": 568
+    },
+    "静态网络": {
+      "resolved": 1341
+    },
+    "动态网络": {
+      "resolved": 1824
+    },
+    "锚点网络": {
+      "resolved": 1790
+    },
+    "类型系统": {
+      "ambiguous": 15
+    },
+    "类型系统来源块": {
+      "resolved": 434,
+      "readable_needs_review": 15
+    },
+    "类型连接": {
+      "resolved": 7358
+    }
+  },
+  "coverage": {
+    "资料库": {
+      "expected": 568,
+      "covered": 568,
+      "contiguous": true,
+      "complete": true,
+      "pages": [
+        {
+          "directory": "批次_资料库",
+          "start": 0,
+          "count": 568,
+          "status": "passed"
+        }
+      ]
+    },
+    "静态网络": {
+      "expected": 1341,
+      "covered": 1341,
+      "contiguous": true,
+      "complete": true,
+      "pages": [
+        {
+          "directory": "批次_静态网络",
+          "start": 0,
+          "count": 1341,
+          "status": "passed"
+        }
+      ]
+    },
+    "动态网络": {
+      "expected": 1824,
+      "covered": 1824,
+      "contiguous": true,
+      "complete": true,
+      "pages": [
+        {
+          "directory": "批次_动态网络",
+          "start": 0,
+          "count": 1824,
+          "status": "passed"
+        }
+      ]
+    },
+    "锚点网络": {
+      "expected": 1790,
+      "covered": 1790,
+      "contiguous": true,
+      "complete": true,
+      "pages": [
+        {
+          "directory": "批次_锚点网络",
+          "start": 0,
+          "count": 1790,
+          "status": "passed"
+        }
+      ]
+    },
+    "类型系统": {
+      "expected": 15,
+      "covered": 15,
+      "contiguous": true,
+      "complete": true,
+      "pages": [
+        {
+          "directory": "批次_类型系统",
+          "start": 0,
+          "count": 15,
+          "status": "needs_review"
+        }
+      ]
+    },
+    "类型系统来源块": {
+      "expected": 449,
+      "covered": 449,
+      "contiguous": true,
+      "complete": true,
+      "pages": [
+        {
+          "directory": "批次_类型系统来源块",
+          "start": 0,
+          "count": 449,
+          "status": "passed"
+        }
+      ]
+    },
+    "类型连接": {
+      "expected": 7358,
+      "covered": 7358,
+      "contiguous": true,
+      "complete": true,
+      "pages": [
+        {
+          "directory": "批次_类型连接",
+          "start": 0,
+          "count": 1000,
+          "status": "passed"
+        },
+        {
+          "directory": "批次_类型连接_1000_1000",
+          "start": 1000,
+          "count": 1000,
+          "status": "passed"
+        },
+        {
+          "directory": "批次_类型连接_2000_1000",
+          "start": 2000,
+          "count": 1000,
+          "status": "passed"
+        },
+        {
+          "directory": "批次_类型连接_3000_1000",
+          "start": 3000,
+          "count": 1000,
+          "status": "passed"
+        },
+        {
+          "directory": "批次_类型连接_4000_1000",
+          "start": 4000,
+          "count": 1000,
+          "status": "passed"
+        },
+        {
+          "directory": "批次_类型连接_5000_1000",
+          "start": 5000,
+          "count": 1000,
+          "status": "passed"
+        },
+        {
+          "directory": "批次_类型连接_6000_1000",
+          "start": 6000,
+          "count": 1000,
+          "status": "passed"
+        },
+        {
+          "directory": "批次_类型连接_7000_358",
+          "start": 7000,
+          "count": 358,
+          "status": "passed"
+        }
+      ]
+    }
+  },
+  "policy": "ambiguous/readable_needs_review are retained as non-authorizing states even where file reachability and raw content recovery succeed.",
+  "status": "needs_review"
+}

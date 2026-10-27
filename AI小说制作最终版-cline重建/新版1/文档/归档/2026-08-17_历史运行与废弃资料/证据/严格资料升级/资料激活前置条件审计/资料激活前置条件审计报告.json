@@ -1,0 +1,28 @@
+{
+  "schema_version": "material-activation-prerequisite-audit-1.0",
+  "generated_at": "2026-08-13T01:22:21.763458+00:00",
+  "scope": "source_material_activation_prerequisites_only; no_project_or_prose_artifact_modified",
+  "input": "文档/证据/严格资料升级/严格隔离分类/严格隔离分类清单.jsonl",
+  "audited_quarantine_count": 7235,
+  "semantic_activation_status_counts": {
+    "conditions_declared": 7191,
+    "unavailable": 44
+  },
+  "recommended_classification_counts": {
+    "boundary_source_rereview": 2100,
+    "external_replacement_required": 44,
+    "project_selection_pending": 5091
+  },
+  "prior_quarantine_category_counts": {
+    "candidate_identity_missing": 2100,
+    "candidate_requires_project_confirmation": 2106,
+    "locator_invalid_or_out_of_range": 23,
+    "object_boundary_missing": 15,
+    "pending_requires_project_confirmation": 2991
+  },
+  "policy": "来源资格门、项目选择门与语义激活门必须同时满足；已声明语义条件不等同于资料可用，更不提升任何来源或使用资格。",
+  "formal_fact_eligible_count": 0,
+  "model_input_eligible_count": 0,
+  "prose_write_allowed": false,
+  "project_artifacts_modified": false
+}

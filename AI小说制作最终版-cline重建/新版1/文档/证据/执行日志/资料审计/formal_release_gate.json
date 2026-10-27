@@ -1,0 +1,12 @@
+﻿{
+    "schema_version":  "command-execution-record-1.0",
+    "name":  "formal_release_gate",
+    "command":  "C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\全量资料正式发布门.py --project-root D:\\AI小说制作最终版-cline重建\\新版1",
+    "started_at":  "2026-08-13T16:06:44.6537771Z",
+    "finished_at":  "2026-08-13T16:06:44.9944437Z",
+    "exit_code":  2,
+    "stdout_file":  "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行日志\\资料审计\\formal_release_gate.stdout.txt",
+    "stderr_file":  "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行日志\\资料审计\\formal_release_gate.stderr.txt",
+    "stdout":  "{\"status\": \"blocked\", \"formal_release_allowed\": false, \"blocker_count\": 6}\r\n",
+    "stderr":  ""
+}

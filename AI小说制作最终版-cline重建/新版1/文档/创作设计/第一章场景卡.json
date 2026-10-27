@@ -1,0 +1,67 @@
+{
+  "schema_version": "chapter-scene-cards-candidate-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "chapter_id": "CH-01",
+  "working_title": "第七息",
+  "artifact_status": "author_confirmed_editorial_approved_for_authorization_preparation",
+  "prose_generation_allowed": false,
+  "chapter_information_ceiling": "只能确认检测异常具有程序性；不得确认灵息最终去向、阵眼幸存者身份或父亲死亡真相。",
+  "scenes": [
+    {
+      "scene_id": "CH-01-S1",
+      "viewpoint": "沈砚，受限第三人称",
+      "setting": "栖云宗外门检测场，潮期前的晋升检测队列",
+      "goal": "稳定通过检测，保住晋升资格。",
+      "conflict": "检测石在第七息回亮，负责执事要求他按修行不稳登记并立即离场。",
+      "information_state_before": "沈砚只知道父亲死于被宗门定性为修行失控的潮期。",
+      "action_and_choice": "他不直接指控阵法，而是记下回亮的息数、石面温度和执事改写记录的顺序，选择暂时服从离场。",
+      "information_gain": "异常发生在制度可预期的节点，且现场记录被人为压缩。",
+      "consequence": "他失去当场复测机会，但留下可与后续档案比对的三个细节。",
+      "causality_to_next": "因为不能在检测场继续追问，他转向唯一可能保存旧记录的藏卷阁。",
+      "foreshadowing": ["F-V1-01", "F-V1-03"],
+      "must_not_do": ["不解释镇潮阵原理", "不让沈砚用能力破解检测", "不把执事写成无理由反派"]
+    },
+    {
+      "scene_id": "CH-01-S2",
+      "viewpoint": "沈砚，受限第三人称",
+      "setting": "检测场外的石阶与回廊",
+      "goal": "确认第七息回亮是否只发生在自己身上。",
+      "conflict": "陆昭担心妹妹的药额和自己的晋升，要求沈砚不要把未经证实的怀疑拖累两人。",
+      "information_state_before": "沈砚有异常细节，没有第二个样本，也不知陆昭是否可信。",
+      "action_and_choice": "他以复述检测流程的方式试探陆昭；陆昭承认曾见过相似回亮，却选择替他遮挡执事视线，并要求沈砚承诺不把他写进任何申诉。",
+      "information_gain": "异常并非个例；它会让低阶弟子主动沉默，因为程序后果足以切断现实资源。",
+      "consequence": "两人形成不对等保密约定，陆昭的掩护可能已被执律堂看见。",
+      "causality_to_next": "为履行不牵连陆昭的承诺，沈砚独自前往藏卷阁找旧检测记录。",
+      "foreshadowing": ["F-V1-01"],
+      "must_not_do": ["不让陆昭无条件支持沈砚", "不让两人达成稳固同盟", "不展示完整申诉制度"]
+    },
+    {
+      "scene_id": "CH-01-S3",
+      "viewpoint": "沈砚，受限第三人称",
+      "setting": "藏卷阁档案廊，潮灾卷宗封存区外",
+      "goal": "找到父亲潮期与第七息异常是否存在记录关联。",
+      "conflict": "许照微以权限规定阻止他进入封存区；闻执衡随后出现，要求登记沈砚今日的异常。",
+      "information_state_before": "沈砚知道异常至少出现过两次，并知道公开追问会牵连陆昭。",
+      "action_and_choice": "他不请求破格，而是指出登记簿的年份编号缺口；许照微表面按规矩收走申请，暗中留下带刻痕的缺页。沈砚选择不当场追问来源。",
+      "information_gain": "潮灾相关档案存在可见的编号缺口，且许照微知道缺口不能公开谈论。",
+      "consequence": "沈砚持有一项来源敏感的实物线索，也被闻执衡要求次日复检。",
+      "causality_to_next": "次日复检把沈砚重新送回检测程序，而缺页提供了他在复检前必须验证的图样。",
+      "foreshadowing": ["F-V1-02", "F-V1-03"],
+      "must_not_do": ["不让许照微解释缺页含义", "不揭示父亲真相", "不让闻执衡直接承认真相"]
+    },
+    {
+      "scene_id": "CH-01-S4",
+      "viewpoint": "沈砚，受限第三人称",
+      "setting": "外门居所夜间，窗外可望见镇潮阵方向的微光",
+      "goal": "在复检前确认缺页刻痕与第七息异常是否可比对。",
+      "conflict": "追听灵息回声可能损失与父亲相关的记忆；陆昭来取回被牵连的名字，要求沈砚立刻毁掉缺页。",
+      "information_state_before": "沈砚有异常记录、第二个样本和一页无法解释的刻痕。",
+      "action_and_choice": "他只追听一次，并在回声靠近父亲旧物时主动停下；他拒绝毁页，但把陆昭的名字从自己的记录中划去。",
+      "information_gain": "刻痕与检测石第七息的节律相同，异常可以被制度之外的方式复核。",
+      "consequence": "沈砚失去一段父亲临行前的清晰记忆，陆昭暂时脱离文字证据却更不信任他；次日复检不可回避。",
+      "causality_to_next": "他带着可复核的节律证据进入复检，同时失去一块最私人的判断依托。",
+      "foreshadowing": ["F-V1-01", "F-V1-02"],
+      "must_not_do": ["不让能力给出完整答案", "不让记忆损失立即恢复", "不把镇潮阵微光解释为旧域"]
+    }
+  ]
+}

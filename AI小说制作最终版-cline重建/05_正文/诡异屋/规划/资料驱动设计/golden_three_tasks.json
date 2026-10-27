@@ -1,0 +1,19 @@
+{
+  "artifact_type": "golden_three_tasks",
+  "status": "retrospective_reconstruction_for_regression",
+  "source_trace": [
+    {"record_id": "CAP-GOLDEN-THREE", "source_file": "08_原始资料/资料库.txt", "source_labels": ["123.4_黄金三章规则"], "stage": "STORY_BIBLE", "effect": "将前三章转为连续任务：钩住、扩展深化、升级为双层悬念。"},
+    {"record_id": "CAP-OPENING-ATTRACTION", "source_file": "08_原始资料/资料库.txt", "source_labels": ["123.5_开篇吸引力指标"], "stage": "CHAPTER_OUTLINE", "effect": "将P0钩子、P3具体问题和前三章情绪场景转为检查项。"},
+    {"record_id": "CAP-CHARACTER-CHAIN", "source_file": "08_原始资料/资料库.txt", "source_labels": ["1_人物基础设定", "2_角色属性", "3_角色驱动", "4_角色成长", "121_配角运用"], "stage": "CHAPTER_OUTLINE", "effect": "要求每章任务通过林砚选择、周既明压力和顾怀山缺席线索落地。"}
+  ],
+  "inputs": {"type": "悬疑", "style": "冷峻、克制、紧张、具有现场感", "length": "中篇", "existing_chapters": ["001", "002"]},
+  "chapter_1_task": {"task": "钩住读者", "must_achieve": ["P0内出现不存在地址这一具体异常", "建立林砚个人被证据指向的代价", "章末以清点卡和23:40形成立即问题"], "not_yet_reveal": ["死亡对象", "旧屋机制"], "status": "partially_met"},
+  "chapter_2_task": {"task": "扩展世界并深化冲突", "must_achieve": ["从一层异常推进到三楼307", "引入七年前顾怀山失踪案的物证", "周既明的信息隐瞒成为关系冲突"], "status": "met_in_existing_chapter_002"},
+  "chapter_3_task": {"task": "完成第一轮小高潮或钩子升级", "must_achieve": ["307和七年前收据不能只重复发现", "将23:40时限与人物选择绑定", "形成至少两层悬念且保留声响来源未知", "让林砚付出进入或求证的现实代价"], "status": "next_required"},
+  "progression": "个人被指向的物证 -> 空间和旧案证据 -> 时限、关系隐瞒与人物选择的双层压力",
+  "chapter_checks": ["chapter_task", "no_regression", "hook_upgrade", "information_gap", "character_action_explanation", "next_chapter_interface"],
+  "writing_requirements": ["每章必须改变主角可行动范围或认知，不得只增加氛围"],
+  "acceptance_criteria": ["第1章完成钩子，第2章扩展且不倒退，第3章升级为双层悬念"],
+  "not_used_reasons": ["原第001章生成时未保存该项目级任务表，当前为回归重建"],
+  "evidence_status": "partial"
+}

@@ -1,0 +1,1654 @@
+{
+  "schema_version": "type-profile-1.1",
+  "generated_at": "2026-08-13T04:59:40.722918+00:00",
+  "source_policy": {
+    "project_independent": true,
+    "source_files": [
+      "原始资料/类型系统.txt",
+      "文档/证据/类型连接全局索引.json"
+    ],
+    "unsupported_fields": "pending"
+  },
+  "types": {
+    "玄幻": {
+      "type_name": "玄幻",
+      "core_elements": [
+        "能量",
+        "修炼",
+        "境界",
+        "法宝",
+        "宗门"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1824,
+          1825,
+          1837,
+          1839,
+          1850,
+          1860,
+          1873,
+          2049,
+          2052,
+          2121,
+          2122,
+          2926,
+          2927,
+          2935,
+          2976,
+          2977,
+          2985,
+          3351,
+          3352,
+          3360
+        ]
+      },
+      "source_status": "cross_confirmed"
+    },
+    "仙侠": {
+      "type_name": "仙侠",
+      "core_elements": [
+        "修仙",
+        "仙缘",
+        "灵根"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1655,
+          1881,
+          2049,
+          2055,
+          2167,
+          2168,
+          3626,
+          3627,
+          3635,
+          3651,
+          3652,
+          3660,
+          4001,
+          4002,
+          4010,
+          4026,
+          4027,
+          4035,
+          4051,
+          4052
+        ]
+      },
+      "source_status": "cross_confirmed"
+    },
+    "科幻": {
+      "type_name": "科幻",
+      "core_elements": [
+        "能量",
+        "物理",
+        "科技",
+        "基因"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1695,
+          1696,
+          1708,
+          1732,
+          1901,
+          2282,
+          2283,
+          5076,
+          5077,
+          5085,
+          6651,
+          6652,
+          6660,
+          6801,
+          6802,
+          6810,
+          6826,
+          6827,
+          6835,
+          6926
+        ]
+      },
+      "source_status": "cross_confirmed"
+    },
+    "悬疑": {
+      "type_name": "悬疑",
+      "core_elements": [
+        "悬念",
+        "信息",
+        "信任",
+        "反转",
+        "隐藏"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          79,
+          1482,
+          1695,
+          1696,
+          1708,
+          1710,
+          1711,
+          1722,
+          1732,
+          1738,
+          1739,
+          1751,
+          1753,
+          1764,
+          1774,
+          1905,
+          2058,
+          2305,
+          2306,
+          2903
+        ]
+      },
+      "source_status": "cross_confirmed"
+    },
+    "言情": {
+      "type_name": "言情",
+      "core_elements": [
+        "言情类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          560,
+          690,
+          1652,
+          1653,
+          1655,
+          1665,
+          1689,
+          1933,
+          1937,
+          1941,
+          2067,
+          2070,
+          2466,
+          2467,
+          2489,
+          2490,
+          2496,
+          2512,
+          2513,
+          2519
+        ]
+      },
+      "source_status": "pending"
+    },
+    "都市": {
+      "type_name": "都市",
+      "core_elements": [
+        "社会",
+        "阶层",
+        "职业",
+        "资源"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1738,
+          1739,
+          1751,
+          1764,
+          1774,
+          1889,
+          2213,
+          2214,
+          2220,
+          2496,
+          4526,
+          4527,
+          4535,
+          5226,
+          5227,
+          5235,
+          5251,
+          5252,
+          5260,
+          5276
+        ]
+      },
+      "source_status": "cross_confirmed"
+    },
+    "历史": {
+      "type_name": "历史",
+      "core_elements": [
+        "历史类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          317,
+          1780,
+          1781,
+          1783,
+          1794,
+          1796,
+          1807,
+          1818,
+          1893,
+          2236,
+          2237,
+          2243,
+          2519,
+          4926,
+          4927,
+          4935,
+          5976,
+          5977,
+          5985,
+          6001
+        ]
+      },
+      "source_status": "pending"
+    },
+    "军事": {
+      "type_name": "军事",
+      "core_elements": [
+        "军事类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1897,
+          2259,
+          2260,
+          2266,
+          6576,
+          6577,
+          6585,
+          6626,
+          6627,
+          6635,
+          6651,
+          6652,
+          6660,
+          6676,
+          6677,
+          6685,
+          6701,
+          6702,
+          6710,
+          6726
+        ]
+      },
+      "source_status": "pending"
+    },
+    "游戏": {
+      "type_name": "游戏",
+      "core_elements": [
+        "游戏类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1921,
+          2061,
+          2397,
+          2398,
+          2404,
+          7226,
+          7227,
+          7235,
+          8476,
+          8477,
+          8485,
+          8501,
+          8502,
+          8510,
+          8526,
+          8527,
+          8535,
+          11526,
+          11527,
+          11535
+        ]
+      },
+      "source_status": "pending"
+    },
+    "体育": {
+      "type_name": "体育",
+      "core_elements": [
+        "体育类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1929,
+          2061,
+          2443,
+          2444,
+          2450,
+          5876,
+          5877,
+          5885,
+          8951,
+          8952,
+          8960,
+          10226,
+          10227,
+          10235,
+          16524,
+          16525,
+          16531,
+          17007,
+          17008,
+          17014
+        ]
+      },
+      "source_status": "pending"
+    },
+    "灵异": {
+      "type_name": "灵异",
+      "core_elements": [
+        "灵异类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1913,
+          2058,
+          2351,
+          2352,
+          2358,
+          5701,
+          5702,
+          5710,
+          8026,
+          8027,
+          8035,
+          8051,
+          8052,
+          8060,
+          8076,
+          8077,
+          8085,
+          8226,
+          8227,
+          8235
+        ]
+      },
+      "source_status": "pending"
+    },
+    "同人": {
+      "type_name": "同人",
+      "core_elements": [
+        "同人类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1961,
+          2627,
+          2628,
+          5101,
+          5102,
+          5110,
+          11476,
+          11477,
+          11485,
+          11501,
+          11502,
+          11510,
+          11526,
+          11527,
+          11535,
+          11551,
+          11552,
+          11560,
+          15375,
+          15376
+        ]
+      },
+      "source_status": "pending"
+    },
+    "二次元": {
+      "type_name": "二次元",
+      "core_elements": [
+        "二次元类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1953,
+          2581,
+          2582,
+          2588,
+          10976,
+          10977,
+          10985,
+          626634
+        ]
+      },
+      "source_status": "pending"
+    },
+    "耽美": {
+      "type_name": "耽美",
+      "core_elements": [
+        "耽美类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          11226,
+          11227,
+          11235,
+          626657
+        ]
+      },
+      "source_status": "pending"
+    },
+    "轻小说": {
+      "type_name": "轻小说",
+      "core_elements": [
+        "轻小说类型规则待从原始资料确认"
+      ],
+      "reader_params": {
+        "status": "pending",
+        "reason": "原始资料未提供可核验的读者画像字段"
+      },
+      "style_constraints": [
+        "遵守类型系统中的已确认规则",
+        "未确认的类型偏好不得自动写入正文"
+      ],
+      "length_rhythm": {
+        "status": "pending",
+        "reason": "原始资料未提供该类型的统一篇幅参数"
+      },
+      "source_ref": {
+        "file": "原始资料/类型系统.txt",
+        "matched_lines": [
+          1957,
+          2604,
+          2605,
+          11251,
+          11252,
+          11260,
+          15311,
+          15312,
+          15318,
+          15334,
+          15343,
+          15344,
+          15350,
+          15366,
+          33577,
+          33581,
+          469173,
+          469174,
+          469178,
+          626680
+        ]
+      },
+      "source_status": "pending"
+    }
+  },
+  "combinations": [
+    {
+      "combination_id": "玄幻_仙侠",
+      "types": [
+        "玄幻",
+        "仙侠"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与仙侠的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收仙侠的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收仙侠的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_科幻",
+      "types": [
+        "玄幻",
+        "科幻"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与科幻的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收科幻的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收科幻的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_悬疑",
+      "types": [
+        "玄幻",
+        "悬疑"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与悬疑的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_都市",
+      "types": [
+        "玄幻",
+        "都市"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与都市的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_言情",
+      "types": [
+        "玄幻",
+        "言情"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_历史",
+      "types": [
+        "玄幻",
+        "历史"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_军事",
+      "types": [
+        "玄幻",
+        "军事"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_游戏",
+      "types": [
+        "玄幻",
+        "游戏"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_体育",
+      "types": [
+        "玄幻",
+        "体育"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "玄幻_灵异",
+      "types": [
+        "玄幻",
+        "灵异"
+      ],
+      "conflicts": [
+        "玄幻的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以玄幻的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以玄幻的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_科幻",
+      "types": [
+        "仙侠",
+        "科幻"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与科幻的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收科幻的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收科幻的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_悬疑",
+      "types": [
+        "仙侠",
+        "悬疑"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与悬疑的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_都市",
+      "types": [
+        "仙侠",
+        "都市"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与都市的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_言情",
+      "types": [
+        "仙侠",
+        "言情"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_历史",
+      "types": [
+        "仙侠",
+        "历史"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_军事",
+      "types": [
+        "仙侠",
+        "军事"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_游戏",
+      "types": [
+        "仙侠",
+        "游戏"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_体育",
+      "types": [
+        "仙侠",
+        "体育"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "仙侠_灵异",
+      "types": [
+        "仙侠",
+        "灵异"
+      ],
+      "conflicts": [
+        "仙侠的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以仙侠的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以仙侠的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "科幻_悬疑",
+      "types": [
+        "科幻",
+        "悬疑"
+      ],
+      "conflicts": [
+        "科幻的核心元素与悬疑的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以科幻的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收悬疑的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "科幻_都市",
+      "types": [
+        "科幻",
+        "都市"
+      ],
+      "conflicts": [
+        "科幻的核心元素与都市的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以科幻的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "科幻_言情",
+      "types": [
+        "科幻",
+        "言情"
+      ],
+      "conflicts": [
+        "科幻的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以科幻的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "科幻_历史",
+      "types": [
+        "科幻",
+        "历史"
+      ],
+      "conflicts": [
+        "科幻的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以科幻的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "科幻_军事",
+      "types": [
+        "科幻",
+        "军事"
+      ],
+      "conflicts": [
+        "科幻的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以科幻的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "科幻_游戏",
+      "types": [
+        "科幻",
+        "游戏"
+      ],
+      "conflicts": [
+        "科幻的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以科幻的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "科幻_体育",
+      "types": [
+        "科幻",
+        "体育"
+      ],
+      "conflicts": [
+        "科幻的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以科幻的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "科幻_灵异",
+      "types": [
+        "科幻",
+        "灵异"
+      ],
+      "conflicts": [
+        "科幻的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以科幻的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以科幻的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "悬疑_都市",
+      "types": [
+        "悬疑",
+        "都市"
+      ],
+      "conflicts": [
+        "悬疑的核心元素与都市的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以悬疑的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收都市的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "悬疑_言情",
+      "types": [
+        "悬疑",
+        "言情"
+      ],
+      "conflicts": [
+        "悬疑的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以悬疑的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "悬疑_历史",
+      "types": [
+        "悬疑",
+        "历史"
+      ],
+      "conflicts": [
+        "悬疑的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以悬疑的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "悬疑_军事",
+      "types": [
+        "悬疑",
+        "军事"
+      ],
+      "conflicts": [
+        "悬疑的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以悬疑的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "悬疑_游戏",
+      "types": [
+        "悬疑",
+        "游戏"
+      ],
+      "conflicts": [
+        "悬疑的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以悬疑的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "悬疑_体育",
+      "types": [
+        "悬疑",
+        "体育"
+      ],
+      "conflicts": [
+        "悬疑的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以悬疑的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "悬疑_灵异",
+      "types": [
+        "悬疑",
+        "灵异"
+      ],
+      "conflicts": [
+        "悬疑的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以悬疑的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以悬疑的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "都市_言情",
+      "types": [
+        "都市",
+        "言情"
+      ],
+      "conflicts": [
+        "都市的核心元素与言情的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以都市的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收言情的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "都市_历史",
+      "types": [
+        "都市",
+        "历史"
+      ],
+      "conflicts": [
+        "都市的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以都市的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "都市_军事",
+      "types": [
+        "都市",
+        "军事"
+      ],
+      "conflicts": [
+        "都市的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以都市的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "都市_游戏",
+      "types": [
+        "都市",
+        "游戏"
+      ],
+      "conflicts": [
+        "都市的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以都市的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "都市_体育",
+      "types": [
+        "都市",
+        "体育"
+      ],
+      "conflicts": [
+        "都市的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以都市的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "都市_灵异",
+      "types": [
+        "都市",
+        "灵异"
+      ],
+      "conflicts": [
+        "都市的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以都市的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以都市的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "言情_历史",
+      "types": [
+        "言情",
+        "历史"
+      ],
+      "conflicts": [
+        "言情的核心元素与历史的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以言情的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收历史的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "言情_军事",
+      "types": [
+        "言情",
+        "军事"
+      ],
+      "conflicts": [
+        "言情的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以言情的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "言情_游戏",
+      "types": [
+        "言情",
+        "游戏"
+      ],
+      "conflicts": [
+        "言情的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以言情的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "言情_体育",
+      "types": [
+        "言情",
+        "体育"
+      ],
+      "conflicts": [
+        "言情的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以言情的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "言情_灵异",
+      "types": [
+        "言情",
+        "灵异"
+      ],
+      "conflicts": [
+        "言情的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以言情的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以言情的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "历史_军事",
+      "types": [
+        "历史",
+        "军事"
+      ],
+      "conflicts": [
+        "历史的核心元素与军事的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以历史的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以历史的核心推进线为主体，吸收军事的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "历史_游戏",
+      "types": [
+        "历史",
+        "游戏"
+      ],
+      "conflicts": [
+        "历史的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以历史的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以历史的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "历史_体育",
+      "types": [
+        "历史",
+        "体育"
+      ],
+      "conflicts": [
+        "历史的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以历史的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以历史的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "历史_灵异",
+      "types": [
+        "历史",
+        "灵异"
+      ],
+      "conflicts": [
+        "历史的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以历史的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以历史的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "军事_游戏",
+      "types": [
+        "军事",
+        "游戏"
+      ],
+      "conflicts": [
+        "军事的核心元素与游戏的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以军事的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以军事的核心推进线为主体，吸收游戏的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "军事_体育",
+      "types": [
+        "军事",
+        "体育"
+      ],
+      "conflicts": [
+        "军事的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以军事的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以军事的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "军事_灵异",
+      "types": [
+        "军事",
+        "灵异"
+      ],
+      "conflicts": [
+        "军事的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以军事的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以军事的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "游戏_体育",
+      "types": [
+        "游戏",
+        "体育"
+      ],
+      "conflicts": [
+        "游戏的核心元素与体育的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以游戏的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以游戏的核心推进线为主体，吸收体育的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "游戏_灵异",
+      "types": [
+        "游戏",
+        "灵异"
+      ],
+      "conflicts": [
+        "游戏的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以游戏的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以游戏的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    },
+    {
+      "combination_id": "体育_灵异",
+      "types": [
+        "体育",
+        "灵异"
+      ],
+      "conflicts": [
+        "体育的核心元素与灵异的核心元素在规则边界、节奏或因果尺度上可能冲突"
+      ],
+      "resolutions": [
+        "以体育的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "recommended_mechanisms": [
+        "以体育的核心推进线为主体，吸收灵异的核心元素作为世界观或冲突机制，并在正文中逐场景验证"
+      ],
+      "source_ref": "文档/证据/类型连接全局索引.json",
+      "source_status": "cross_confirmed"
+    }
+  ]
+}

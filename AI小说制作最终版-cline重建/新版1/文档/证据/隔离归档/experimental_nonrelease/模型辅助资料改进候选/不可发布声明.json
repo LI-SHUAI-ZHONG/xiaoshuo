@@ -1,0 +1,13 @@
+{
+  "schema_version": "experimental-candidate-quarantine-1.0",
+  "declared_at": "2026-08-14T01:50:00+00:00",
+  "scope": "文档/证据/模型辅助资料改进候选",
+  "classification": "experimental_nonrelease",
+  "may_not_enter_derived_material_batch": true,
+  "may_not_modify_original_sources": true,
+  "may_not_modify_existing_bindings": true,
+  "may_not_support_formal_fact": true,
+  "may_not_support_formal_release": true,
+  "reason": "该实验仅将绑定摘要提供给模型，未按全量模型资料改进方案对每条记录回读可验证原始对象并记录原始对象哈希。",
+  "superseded_by_contract": "配置/全量模型资料改进方案.json"
+}

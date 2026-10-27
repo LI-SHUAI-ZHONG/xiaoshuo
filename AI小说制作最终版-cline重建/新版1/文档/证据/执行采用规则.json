@@ -1,0 +1,13 @@
+{
+  "schema_version": "execution-adoption-rules-1.1",
+  "purpose": "约束执行运行记录，不将管道启动、模块加载或历史输出误计为当前项目的资料采用或正文消费。",
+  "rules": [
+    {"id": "EX-R1", "condition": "每次执行管道运行必须生成唯一run_id，并记录project_id、输入资源哈希和实际执行模块。", "action": "向文档/证据/执行消费.jsonl追加运行记录；不得覆盖历史run。", "blocking_level": "high"},
+    {"id": "EX-R2", "condition": "任一必需资源、规则文件或模块依赖缺失时，运行必须标记failed并写明阻断原因。", "action": "禁止生成或发布正文；不得以partial、skipped或历史成功记录替代本次失败。", "blocking_level": "blocker"},
+    {"id": "EX-R3", "condition": "正文生成前必须存在当前project_id和run_id的成功前置阶段记录，并由各来源消费记录提供场景和正文落点。", "action": "缺少当前运行链、场景绑定或正文落点时阻断正文和交付。", "blocking_level": "blocker"},
+    {"id": "EX-R4", "condition": "执行记录只能描述本次实际完成模块，不能据此声明资料已采用、已消费、正式事实可用或可发布。", "action": "采用、消费和发布分别由对应证据及审批门决定。", "blocking_level": "high"}
+  ],
+  "record_schema": {
+    "project_id": "string", "run_id": "string", "run_timestamp": "RFC3339", "modules_executed": ["module id"], "resource_hashes": "object", "status": "completed|partial|failed", "blocking_failures": ["string"], "adoption_or_consumption_claim": false
+  }
+}

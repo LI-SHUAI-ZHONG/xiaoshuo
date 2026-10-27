@@ -1,0 +1,22 @@
+{
+  "schema_version": "full-source-material-incremental-upgrade-1.0",
+  "run_id": "20260817T061234Z-42c47948",
+  "baseline_run_id": "20260816T101311Z-295bb554",
+  "input_binding_count": 13345,
+  "change_count": 41,
+  "status_counts": {
+    "reused_unchanged": 13280,
+    "locator_repair": 26,
+    "modified": 15,
+    "fixture_excluded": 24
+  },
+  "model_call_count": 41,
+  "selected_binding_id_count": 41,
+  "legacy_baseline_missing_fingerprint_policy": "assume_unchanged_unless_current_binding_declares_change",
+  "formal_fact_eligible": false,
+  "prose_write_allowed": false,
+  "formal_release_allowed": false,
+  "changes_file": "changes.jsonl",
+  "binding_id_file": "binding_ids.txt",
+  "manifest_sha256": "1a926a60f58ab190e252c9e64ccab88552c7986929c802c468d5f3684426dc5c"
+}

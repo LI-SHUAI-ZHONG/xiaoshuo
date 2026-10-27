@@ -1,0 +1,23 @@
+{
+  "schema_version": "material-upgrade-capability-inventory-1.0",
+  "version": "V1",
+  "generated_at": "2026-08-17T20:55:43.845768Z",
+  "status": "blocked_pending_verified_upgrade_fields",
+  "formal_release_allowed": false,
+  "input": {
+    "increment_manifest": "文档/证据/全量资料增量升级/20260817T061417Z-c75fb8a7/manifest.json",
+    "increment_change_count": 64,
+    "verified_mapping_count": 38,
+    "experimental_candidate_count": 1
+  },
+  "capability_count": 65,
+  "capability_kind_counts": {
+    "content_definition": 1,
+    "unclassified_candidate": 26,
+    "type_definition": 15,
+    "type_connection_rule": 23
+  },
+  "release_eligible_count": 0,
+  "capabilities_file": "upgrade_capabilities.jsonl",
+  "manifest_sha256": "b76c61915e0ce74c4fd8fadea787452990256aacc2ac0bff8dd21a424eaa1c40"
+}

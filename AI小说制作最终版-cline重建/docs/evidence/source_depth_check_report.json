@@ -1,0 +1,238 @@
+{
+  "schema_version": "source-depth-check-1.0",
+  "generated_at": "2026-08-11T00:08:57.373996+00:00",
+  "sources": [
+    {
+      "source": "资料库.txt",
+      "total_items": 418,
+      "extractable": 418,
+      "not_extractable": 0,
+      "missing_fields": [
+        "dependencies",
+        "examples"
+      ],
+      "placeholder_count": 5373,
+      "status": "partial",
+      "line_count": 34467,
+      "sha256": "e99aee95801284f98d43ab5badf33c4c822ce1b116f302da6a91a80be252f850",
+      "indexed_items": 418,
+      "indexed_missing_dependencies": 418,
+      "indexed_missing_examples": 416,
+      "components": {
+        "expected": [
+          "docs/library_index.jsonl",
+          "docs/library_adoption.jsonl",
+          "docs/evidence/adoption_rules.json"
+        ],
+        "present": [
+          "docs/library_index.jsonl",
+          "docs/library_adoption.jsonl",
+          "docs/evidence/adoption_rules.json"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "类型系统.txt",
+      "total_items": 15,
+      "extractable": 15,
+      "not_extractable": 0,
+      "missing_fields": [
+        "core_elements",
+        "reader_params",
+        "style_constraints"
+      ],
+      "placeholder_count": 2605,
+      "status": "partial",
+      "line_count": 626340,
+      "sha256": "472066d7ea8c2dca8b8e96877c9c93c15e77bf525edc7adf2329e29a7b959d21",
+      "type_names": [
+        "二次元",
+        "仙侠",
+        "体育",
+        "军事",
+        "历史",
+        "同人",
+        "悬疑",
+        "游戏",
+        "灵异",
+        "玄幻",
+        "科幻",
+        "耽美",
+        "言情",
+        "轻小说",
+        "都市"
+      ],
+      "complete_profiles": 0,
+      "source_type_tokens": 46,
+      "components": {
+        "expected": [
+          "config/type_profile_template.json"
+        ],
+        "present": [
+          "config/type_profile_template.json"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "类型连接.txt",
+      "total_items": 2100,
+      "extractable": 2100,
+      "not_extractable": 0,
+      "missing_fields": [
+        "conflict_details",
+        "recommended_mechanism_explanation",
+        "source_connection_id"
+      ],
+      "placeholder_count": 5991,
+      "status": "partial",
+      "line_count": 502097,
+      "sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "unique_ids": 2100,
+      "conflict_records": 1,
+      "recommendation_records": 4231,
+      "source_index_count": 0,
+      "components": {
+        "expected": [
+          "docs/evidence/type_connection_global_index.json",
+          "docs/evidence/type_connection_rules.json",
+          "docs/evidence/type_connection_adoption_schema.json",
+          "docs/evidence/type_connection_adoption.jsonl"
+        ],
+        "present": [
+          "docs/evidence/type_connection_global_index.json",
+          "docs/evidence/type_connection_rules.json",
+          "docs/evidence/type_connection_adoption_schema.json",
+          "docs/evidence/type_connection_adoption.jsonl"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "动态网络.txt",
+      "total_items": 483,
+      "extractable": 483,
+      "not_extractable": 0,
+      "missing_fields": [],
+      "placeholder_count": 4,
+      "status": "partial",
+      "line_count": 7323,
+      "sha256": "c0f99b8ac1effd0f6fea5996fa681aded7eab2ef1ed85691c7976f850d31a4a4",
+      "nonempty_condition": 483,
+      "nonempty_effect": 483,
+      "indexed_items": 414,
+      "state_layers": {
+        "original": 0,
+        "derived": 0,
+        "candidate": 0,
+        "reconstructed": 0
+      },
+      "components": {
+        "expected": [
+          "state_dictionary.jsonl",
+          "validated_by_tags.jsonl",
+          "docs/evidence/dynamic_chain_index.jsonl",
+          "docs/evidence/dynamic_chain_consumption_rules.json",
+          "docs/evidence/dynamic_chain_consumption.jsonl"
+        ],
+        "present": [
+          "state_dictionary.jsonl",
+          "validated_by_tags.jsonl",
+          "docs/evidence/dynamic_chain_index.jsonl",
+          "docs/evidence/dynamic_chain_consumption_rules.json",
+          "docs/evidence/dynamic_chain_consumption.jsonl"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "静态网络.txt",
+      "total_items": 1341,
+      "extractable": 1341,
+      "not_extractable": 0,
+      "missing_fields": [
+        "bound_target_type",
+        "mainline_level"
+      ],
+      "placeholder_count": 8,
+      "status": "partial",
+      "line_count": 3591,
+      "sha256": "60960725c948aefbef2c753ce17448aa525419cf4e8ec2eff0196c18b9e7e359",
+      "indexed_edges": 1341,
+      "source_blocks": 11,
+      "bound_target_type_count": 0,
+      "mainline_mark_count": 16,
+      "components": {
+        "expected": [
+          "docs/evidence/static_network_index.json",
+          "docs/evidence/static_connection_adoption_rules.json",
+          "docs/evidence/static_connection_consumption.jsonl"
+        ],
+        "present": [
+          "docs/evidence/static_network_index.json",
+          "docs/evidence/static_connection_adoption_rules.json",
+          "docs/evidence/static_connection_consumption.jsonl"
+        ],
+        "missing": []
+      }
+    },
+    {
+      "source": "锚点网络.txt",
+      "total_items": 1790,
+      "extractable": 1790,
+      "not_extractable": 0,
+      "missing_fields": [
+        "anchor_definition",
+        "scene_binding",
+        "text_location"
+      ],
+      "placeholder_count": 42,
+      "status": "partial",
+      "line_count": 2124,
+      "sha256": "8c0294089abf2ea184d5aa565513fed9f43554dd387790c8b1a137f4ac19b384",
+      "unique_ids": 1790,
+      "category_extractable": 1790,
+      "category_counts": {
+        "M": 180,
+        "S": 110,
+        "P": 200,
+        "B": 160,
+        "E": 240,
+        "C": 220,
+        "T": 110,
+        "D": 150,
+        "A": 200,
+        "L": 100,
+        "ID": 60,
+        "U": 60
+      },
+      "indexed_anchors": 1680,
+      "id_format": "prefix+major.minor",
+      "components": {
+        "expected": [
+          "docs/evidence/anchor_category_index.json",
+          "docs/evidence/anchor_adoption_rules.json",
+          "docs/evidence/anchor_consumption.jsonl"
+        ],
+        "present": [
+          "docs/evidence/anchor_category_index.json",
+          "docs/evidence/anchor_adoption_rules.json",
+          "docs/evidence/anchor_consumption.jsonl"
+        ],
+        "missing": []
+      }
+    }
+  ],
+  "summary": {
+    "source_count": 6,
+    "extractable_rate": {
+      "资料库.txt": 1.0,
+      "类型系统.txt": 1.0,
+      "类型连接.txt": 1.0,
+      "动态网络.txt": 1.0,
+      "静态网络.txt": 1.0,
+      "锚点网络.txt": 1.0
+    }
+  }
+}

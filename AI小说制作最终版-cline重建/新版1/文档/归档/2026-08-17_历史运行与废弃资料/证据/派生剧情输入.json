@@ -1,0 +1,71 @@
+{
+  "schema_version": "derived-story-input-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "status": "derived_candidate",
+  "policy": "仅从现有类型、资料库、静态网络、动态网络和开篇规则派生；不改写原始资料，不将通用模板标记为原始事实。",
+  "derivations": [
+    {
+      "field": "book_title",
+      "value": "暗流玄境",
+      "status": "derived",
+      "confidence": "low",
+      "sources": ["原始资料/资料库.txt:11768", "原始资料/类型系统.txt:玄幻"],
+      "reason": "以玄幻类型和暗流期世界阶段生成可替换标题候选。"
+    },
+    {
+      "field": "world_stage",
+      "value": "暗流期",
+      "status": "derived",
+      "confidence": "medium",
+      "sources": ["原始资料/资料库.txt:11768", "文档/证据/execution_outputs/module_04_world_setting.json:world_history"],
+      "reason": "资料明确规定暗流期是固化期与裂变期之间、表面稳定而矛盾积累的故事时代。"
+    },
+    {
+      "field": "mainline_conflict",
+      "value": "宗门以固化规则垄断能量与晋升路径，正在觉醒的异常力量和不同理念迫使世界在维持旧秩序与进入裂变之间作出选择。",
+      "status": "derived",
+      "confidence": "medium",
+      "sources": ["原始资料/资料库.txt:11348", "原始资料/资料库.txt:11768", "原始资料/资料库.txt:12045", "原始资料/类型系统.txt:玄幻"],
+      "reason": "将核心矛盾的制度僵化、理念冲突、历史负担与玄幻的宗门、能量、修炼、晋升规则组合。"
+    },
+    {
+      "field": "core_mystery",
+      "value": "能量异常为何在表面稳定的世界中反复出现，谁在暗中推动这条循环，以及它与被掩盖的历史遗产有什么关系？",
+      "status": "derived",
+      "confidence": "medium",
+      "sources": ["网络完整数据/动态连接完整数据.json:C00001", "原始资料/资料库.txt:9200", "原始资料/资料库.txt:9269", "原始资料/资料库.txt:9338"],
+      "reason": "由主角绑定核心悬念、隐蔽流、暗线循环和渐进揭示规则派生。"
+    },
+    {
+      "field": "protagonist",
+      "value": "沈砚",
+      "status": "derived_candidate",
+      "confidence": "low",
+      "sources": ["历史项目标识 trial-玄幻-沈砚", "原始资料/资料库.txt:15", "网络完整数据/动态连接完整数据.json:C00002-C00004"],
+      "reason": "姓名沿用历史项目标识；角色驱动按主角必须由执念驱动、欲望连接弧光的规则生成。"
+    },
+    {
+      "field": "chapter_plan.1",
+      "value": "建立能量异常，追查被删改的历史记录，在进入封闭旧区域和维持宗门晋升资格之间作出不可逆选择。",
+      "status": "derived",
+      "confidence": "medium",
+      "sources": ["文档/证据/execution_outputs/module_05_opening_design.json", "原始资料/资料库.txt:12.11_能量异常", "原始资料/资料库.txt:123.4_黄金三章"],
+      "reason": "按建立异常、升级目标、制造悬念的三段开篇节奏生成。"
+    },
+    {
+      "field": "chapter_plan.1.scenes",
+      "value": ["1-S1", "1-S2", "1-S3"],
+      "status": "derived",
+      "confidence": "medium",
+      "sources": ["文档/证据/execution_outputs/module_05_opening_design.json", "原始资料/资料库.txt:12.7_能量感知", "原始资料/资料库.txt:23.1_隐蔽流", "原始资料/资料库.txt:33.1_阶层划分"],
+      "reason": "分别落实异常建立、信息受限下的目标升级、进入封闭区域的悬念钩子。"
+    }
+  ],
+  "excluded_from_derivation": [
+    "配角姓名和个人弧光",
+    "世界正式名称",
+    "具体宗门名称、地理名称和历史事件名称",
+    "读者画像、统一篇幅和节奏参数",
+    "未在资料中出现的具体法宝、势力和人物关系"
+  ]
+}

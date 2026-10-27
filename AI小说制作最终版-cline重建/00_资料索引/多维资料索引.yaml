@@ -1,0 +1,300 @@
+schema_version: "1.0"
+index_type: "multi_dimension_function_index"
+reference_root: null
+reference_policy: "运行时不读取工作区外部目录；历史参考路径仅保留在审计报告中"
+reference_read_only: true
+original_files_preserved: true
+workspace_raw_root: "08_原始资料"
+read_policy: "先读本索引；大文件按 read_mode 局部读取；完整原文只在证据不足时深入读取"
+dimensions: [题材, 类型, 读者需求, 故事核心, 世界观, 人物, 人物关系, 冲突, 目标与代价, 主线, 支线, 情绪, 爽点或吸引力, 节奏, 场景, 事件, 伏笔, 叙事结构, 文风, 正文表达]
+records:
+  - id: "MOD-CAPABILITY"
+    path: "08_原始资料/资料库.txt"
+    dimensions: [故事核心, 人物, 冲突, 目标与代价, 情绪, 场景, 叙事结构, 文风, 正文表达]
+    function: "method_and_constraint"
+    call_when: "需求已解析，需要提出多种设计方向时"
+    input: ["用户需求", "已选题材和类型", "篇幅和目标效果"]
+    output: "创作能力候选、设计方法和约束"
+    related: ["MOD-TYPE", "MOD-STATIC", "MOD-DYNAMIC", "MOD-ANCHOR"]
+    priority: 1
+    parallel: true
+    pre_generation_required: true
+    read_mode: "按能力标题和任务关键词定位；必要时读取命中片段"
+  - id: "MOD-TYPE"
+    path: "08_原始资料/类型系统.txt"
+    dimensions: [题材, 类型, 读者需求, 情绪, 爽点或吸引力, 文风]
+    function: "direction_filter_and_constraint"
+    call_when: "用户给出题材、类型、读者或风格要求时"
+    input: ["题材", "类型", "读者", "风格"]
+    output: "类型候选、读者期待、适配边界和风险"
+    related: ["MOD-CONNECTION", "MOD-CAPABILITY"]
+    priority: 1
+    parallel: true
+    pre_generation_required: true
+    read_mode: "先读类型目录或标题和命中片段；不要启动时全量读取"
+  - id: "MOD-CONNECTION"
+    path: "08_原始资料/类型连接.txt"
+    dimensions: [类型, 世界观, 冲突, 情绪, 场景, 事件, 伏笔, 正文表达]
+    function: "combination_and_conflict_filter"
+    call_when: "已选类型需要组合为独特故事机制时"
+    input: ["候选类型", "故事核心方向", "目标效果"]
+    output: "可组合结构、类型冲突和搭配候选"
+    related: ["MOD-TYPE", "MOD-STATIC", "MOD-DYNAMIC"]
+    priority: 2
+    parallel: false
+    pre_generation_required: true
+    read_mode: "按类型组合和冲突关键词定位；必要时局部读取"
+  - id: "MOD-STATIC"
+    path: "08_原始资料/静态网络.txt"
+    dimensions: [世界观, 人物, 人物关系, 主线, 支线, 叙事结构]
+    function: "dependency_and_structure"
+    call_when: "核心概念、人物和故事对象已经出现时"
+    input: ["创作能力候选", "类型方向", "故事对象清单"]
+    output: "稳定依赖、绑定关系、演化方向和设计缺口"
+    related: ["MOD-CAPABILITY", "MOD-DYNAMIC", "MOD-ANCHOR"]
+    priority: 2
+    parallel: false
+    pre_generation_required: true
+    read_mode: "先读关系节点和相关段落；按对象清单深入"
+  - id: "MOD-DYNAMIC"
+    path: "08_原始资料/动态网络.txt"
+    dimensions: [冲突, 目标与代价, 主线, 支线, 情绪, 事件, 伏笔, 节奏]
+    function: "causal_state_and_propagation"
+    call_when: "需要把设计转为事件链、后果链和信息流时"
+    input: ["静态关系", "人物目标", "世界规则", "事件条件"]
+    output: "触发链、冲突链、状态变化、信息和资源传播候选"
+    related: ["MOD-STATIC", "MOD-ANCHOR", "MOD-CAPABILITY"]
+    priority: 3
+    parallel: true
+    pre_generation_required: true
+    read_mode: "按条件、事件和后果关键词局部读取"
+  - id: "MOD-ANCHOR"
+    path: "08_原始资料/锚点网络.txt"
+    dimensions: [人物, 情绪, 场景, 事件, 节奏, 文风, 正文表达]
+    function: "concretization_and_expression_anchor"
+    call_when: "综合设计需要落到可写场景和具体感知时"
+    input: ["人物状态", "事件链", "地点", "情绪和节奏目标"]
+    output: "物质、空间、感知、身体、认知、行动和语言锚点"
+    related: ["MOD-DYNAMIC", "MOD-CAPABILITY"]
+    priority: 4
+    parallel: true
+    pre_generation_required: true
+    read_mode: "按场景目标读取相关锚点段落"
+  - id: "MOD-EXECUTION"
+    path: "08_原始资料/执行正文.txt"
+    dimensions: [叙事结构, 节奏, 正文表达]
+    function: "stage_order_and_output_conversion"
+    call_when: "前置模块完成，需要确定从设计到正文的顺序时"
+    input: ["需求解析", "多维模块结果"]
+    output: "一次性综合设计顺序和正文生成接口"
+    related: ["MOD-CAPABILITY", "MOD-TYPE", "MOD-STATIC", "MOD-DYNAMIC", "MOD-ANCHOR"]
+    priority: 5
+    parallel: false
+    pre_generation_required: true
+    read_mode: "只在阶段排序或输出转换需要时读取"
+
+  - id: "CAP-OPENING-DESIGN"
+    source_file: "08_原始资料/资料库.txt"
+    source_labels: ["112.1_开篇设计", "112.2_第一句话", "112.3_开篇场景", "112.4_开篇承诺"]
+    dimensions: [开篇, 叙事结构, 类型, 风格, 正文表达]
+    function: "opening_design_parameters"
+    required_stages: ["STORY_BIBLE", "CHAPTER_OUTLINE", "SCENE_OUTLINE", "SCENE_DRAFT", "CHECK"]
+    call_when: "项目首次进入开篇设计，或目标章节属于前三章"
+    input: ["confirmed_type", "confirmed_style", "confirmed_length", "story_core", "chapter_number"]
+    output: "opening_design.json"
+    required_output_fields: ["opening_promise", "first_scene", "information_release", "hook", "chapter_interfaces"]
+    related_records: ["CAP-GOLDEN-THREE", "CAP-OPENING-ATTRACTION", "CAP-TYPE-STYLE-LENGTH"]
+    priority: 1
+    mandatory: true
+    read_mode: "按 source_labels 和开篇关键词读取命中片段"
+
+  - id: "CAP-GOLDEN-THREE"
+    source_file: "08_原始资料/资料库.txt"
+    source_labels: ["123.4_黄金三章规则"]
+    dimensions: [开篇, 叙事结构, 节奏, 爽点或吸引力]
+    function: "three_chapter_task_contract"
+    required_stages: ["STORY_BIBLE", "CHAPTER_OUTLINE", "SCENE_OUTLINE", "SCENE_DRAFT", "CHECK"]
+    call_when: "chapter_number <= 3 或项目尚未生成前三章任务表"
+    input: ["confirmed_type", "confirmed_style", "confirmed_length", "opening_design", "existing_chapters"]
+    output: "golden_three_tasks.json"
+    required_output_fields: ["chapter_1_task", "chapter_2_task", "chapter_3_task", "progression", "chapter_checks"]
+    related_records: ["CAP-OPENING-DESIGN", "CAP-OPENING-ATTRACTION", "CAP-CHARACTER-CHAIN", "CAP-TYPE-STYLE-LENGTH"]
+    priority: 1
+    mandatory: true
+    read_mode: "读取 123.4 条目及其关联的开篇/推进条目"
+
+  - id: "CAP-OPENING-ATTRACTION"
+    source_file: "08_原始资料/资料库.txt"
+    source_labels: ["123.5_开篇吸引力指标"]
+    dimensions: [开篇, 爽点或吸引力, 节奏, 检查]
+    function: "opening_acceptance_criteria"
+    required_stages: ["CHAPTER_OUTLINE", "SCENE_DRAFT", "CHECK"]
+    call_when: "chapter_number <= 3 或检查开篇留存指标"
+    input: ["golden_three_tasks", "chapter_text", "chapter_number"]
+    output: "opening_acceptance.json"
+    required_output_fields: ["p0_hook", "p3_question", "emotion_scene", "pass_fail_rules"]
+    related_records: ["CAP-GOLDEN-THREE", "CAP-OPENING-DESIGN"]
+    priority: 1
+    mandatory: true
+    read_mode: "读取 123.5 条目并转换为章节检查项"
+
+  - id: "CAP-CHARACTER-CHAIN"
+    source_file: "08_原始资料/资料库.txt"
+    source_labels: ["1_人物基础设定", "2_角色属性", "3_角色驱动", "4_角色成长", "121_配角运用"]
+    dimensions: [人物, 人物关系, 冲突, 目标与代价]
+    function: "persistent_character_behavior_contract"
+    required_stages: ["CHARACTER_DESIGN", "CHAPTER_OUTLINE", "SCENE_OUTLINE", "SCENE_DRAFT", "CHECK"]
+    call_when: "角色创建、角色出场、角色关系变化或章节涉及人物选择"
+    input: ["story_core", "world_rules", "current_character_states", "chapter_goal"]
+    output: "character_behavior_contract.json"
+    required_output_fields: ["character_profiles", "relationship_functions", "behavior_constraints", "growth_beats", "chapter_actions"]
+    related_records: ["CAP-GOLDEN-THREE", "CAP-DESIGN-TO-DRAFT", "MOD-STATIC", "MOD-DYNAMIC"]
+    priority: 1
+    mandatory: true
+    read_mode: "按 source_labels、角色名和当前章节目标定位条目"
+
+  - id: "CAP-TYPE-STYLE-LENGTH"
+    source_file: "08_原始资料/类型系统.txt"
+    source_labels: ["类型定义", "风格表达", "篇幅/节奏参数"]
+    dimensions: [题材, 类型, 风格, 读者需求, 节奏]
+    function: "production_parameter_constraints"
+    required_stages: ["INIT", "STORY_BIBLE", "CHAPTER_OUTLINE", "SCENE_DRAFT", "CHECK"]
+    call_when: "项目参数已确认或章节设计需要参数约束"
+    input: ["confirmed_type", "confirmed_style", "confirmed_length"]
+    output: "type_style_length_constraints.json"
+    required_output_fields: ["type_expectations", "style_constraints", "length_rhythm", "risks", "chapter_implications"]
+    related_records: ["MOD-TYPE", "CAP-GOLDEN-THREE", "CAP-OPENING-DESIGN"]
+    priority: 1
+    mandatory: true
+    read_mode: "先定位类型和风格标题，再读取命中片段"
+
+  - id: "CAP-DESIGN-TO-DRAFT"
+    source_file: "08_原始资料/资料库.txt"
+    source_labels: ["127.4_设计到正文的转化路径", "127.6_从设计到应用的三步转化法", "128_精准调用"]
+    dimensions: [正文表达, 章节, 检查]
+    function: "design_to_text_traceability"
+    required_stages: ["SCENE_OUTLINE", "SCENE_DRAFT", "CHECK"]
+    call_when: "任何正式章节正文生成前"
+    input: ["chapter_design", "character_behavior_contract", "effective_rules", "previous_chapter_state"]
+    output: "chapter_execution_manifest.json"
+    required_output_fields: ["must_show", "must_not_confirm", "character_actions", "hook_execution", "evidence_map"]
+    related_records: ["CAP-CHARACTER-CHAIN", "CAP-GOLDEN-THREE", "CAP-OPENING-ATTRACTION"]
+    priority: 1
+    mandatory: true
+    read_mode: "读取转化路径和精准调用条目"
+
+  - id: "MOD-LEGACY-MAP"
+    path: "08_原始资料/索引调用映射.txt"
+    dimensions: [资料转换机制, 调用说明, 历史入口]
+    function: "legacy_reference_only"
+    call_when: "需要解释旧入口、旧路径或迁移关系时"
+    input: ["当前路径", "历史路径或入口"]
+    output: "历史映射和迁移依据"
+    related: ["MOD-EXECUTION"]
+    priority: 9
+    parallel: false
+    pre_generation_required: false
+    read_mode: "仅按迁移关键词局部读取；禁止作为当前入口执行"
+  - id: "MOD-INDEX-MAPPING"
+    path: "00_资料索引/索引调用映射契约.json"
+    source_file: "08_原始资料/索引调用映射.txt"
+    dimensions: [资料路由, 检索索引, 类型裁决, 证据链, 迁移审计]
+    function: "runtime_routing_and_retrieval_contract"
+    call_when: "每次运行资料闭环时读取；需要旧入口或旧编号迁移时读取 migration 部分"
+    input: ["用户创作请求", "章节目标", "项目快照", "资料状态"]
+    output: "资料调用计划、依赖顺序、检索维度和来源追踪规则"
+    related: ["MOD-TYPE", "MOD-CONNECTION", "MOD-STATIC", "MOD-DYNAMIC", "MOD-ANCHOR", "MOD-EXECUTION"]
+    priority: 0
+    parallel: false
+    pre_generation_required: true
+    read_mode: "读取结构化契约；原始长文仅在迁移审计或证据不足时局部读取"
+
+  - id: "NET-DERIVED-INDEX"
+    path: "00_资料索引/网络派生索引契约.json"
+    dimensions: [世界观, 人物, 人物关系, 冲突, 目标与代价, 主线, 支线, 情绪, 节奏, 场景, 事件, 伏笔, 叙事结构, 正文表达]
+    function: "network_artifact_retrieval_and_status_gate"
+    call_when: "请求涉及连接 ID、节点、连接类型、条件、动态后果、旧编号迁移或别名时"
+    input: ["用户请求", "章节目标", "节点或连接关键词", "当前项目状态"]
+    output: "网络记录摘要、候选状态、来源路径和迁移/别名警告"
+    related: ["MOD-STATIC", "MOD-DYNAMIC", "MOD-ANCHOR", "MOD-INDEX-MAPPING"]
+    priority: 1
+    parallel: true
+    pre_generation_required: true
+    read_mode: "先读网络派生契约和元数据；按关键词读取 JSON 记录摘要"
+
+  - id: "NET-STATIC-FULL"
+    path: "四网络连接，剧情覆盖/static_connections.full.json"
+    dimensions: [世界观, 人物, 人物关系, 主线, 支线, 叙事结构]
+    function: "static_connection_lookup"
+    call_when: "需要查稳定节点关系或静态依赖时"
+    output: "静态连接候选"
+    related: ["MOD-STATIC", "NET-DYNAMIC-FULL"]
+    priority: 2
+    read_mode: "按 source、target、type、condition 检索"
+  - id: "NET-DYNAMIC-FULL"
+    path: "四网络连接，剧情覆盖/dynamic_connections.full.json"
+    dimensions: [冲突, 目标与代价, 主线, 支线, 情绪, 事件, 伏笔, 节奏]
+    function: "dynamic_connection_lookup"
+    call_when: "需要查触发链、状态变化、条件和后果候选时"
+    output: "动态连接候选；needs_review 记录不得直接成为事实"
+    related: ["MOD-DYNAMIC", "NET-STATIC-FULL", "NET-DYNAMIC-MIGRATION"]
+    priority: 3
+    read_mode: "按 id、source、target、type、condition、effect 局部检索"
+  - id: "NET-DYNAMIC-MIGRATION"
+    path: "四网络连接，剧情覆盖/dynamic_id_migration.json"
+    dimensions: [资料路由, 迁移审计]
+    function: "legacy_connection_id_lookup"
+    call_when: "需要将旧连接 ID 映射到当前连接 ID 时"
+    output: "旧 ID 到新 ID 的审计映射，不恢复历史事实"
+    related: ["NET-DYNAMIC-FULL", "MOD-INDEX-MAPPING"]
+    priority: 9
+    read_mode: "按 old_id、new_id、source、target 检索"
+  - id: "NET-CONNECTION-TYPES"
+    path: "四网络连接，剧情覆盖/connection_type_mapping.json"
+    dimensions: [类型, 资料路由, 冲突]
+    function: "connection_type_mapping_candidate"
+    call_when: "需要比较静态连接类型与动态连接类型时"
+    output: "待审核类型映射；当前 unresolved 不能作为裁决"
+    related: ["MOD-CONNECTION", "NET-DYNAMIC-FULL"]
+    priority: 9
+    read_mode: "按 static_type、dynamic_type、status 检索"
+  - id: "NET-GENERATION-METRICS"
+    path: "四网络连接，剧情覆盖/network_generation_metrics.json"
+    dimensions: [资料路由, 证据链]
+    function: "network_generation_metadata"
+    call_when: "需要核对生成数量和冲突统计时"
+    output: "网络生成元数据"
+    related: ["NET-STATIC-FULL", "NET-DYNAMIC-FULL"]
+    priority: 9
+    read_mode: "读取 JSON 元数据"
+  - id: "NET-NODE-ALIASES"
+    path: "四网络连接，剧情覆盖/node_aliases.json"
+    dimensions: [资料路由, 检索索引, 人物, 世界观]
+    function: "unresolved_node_alias_lookup"
+    call_when: "需要查同编号不同粒度的节点名称时"
+    output: "未决别名候选；不能自动合并节点"
+    related: ["NET-STATIC-FULL", "NET-DYNAMIC-FULL"]
+    priority: 9
+    read_mode: "按 names 和关键词检索"
+  - id: "NET-COVERAGE-REPORT"
+    path: "阶段状态/资料网络剧情覆盖.json"
+    dimensions: [资料路由, 证据链, 故事核心]
+    function: "network_coverage_gate"
+    call_when: "需要判断网络解析覆盖和阻断原因时"
+    output: "网络覆盖状态和阻断项"
+    related: ["NET-DERIVED-INDEX", "MOD-DYNAMIC", "MOD-ANCHOR", "MOD-CONNECTION"]
+    priority: 1
+    read_mode: "读取 network_inventory、blocking_findings 和 status"
+
+  - id: "MOD-LEGACY-STATE"
+    path: "08_原始资料/运行状态.json"
+    dimensions: [运行架构, 历史状态]
+    function: "legacy_state_reference_only"
+    call_when: "需要比较旧运行状态与当前快照机制时"
+    input: ["当前项目状态", "历史状态字段"]
+    output: "历史状态字段参考"
+    related: ["MOD-EXECUTION"]
+    priority: 9
+    parallel: false
+    pre_generation_required: false
+    read_mode: "仅读取 JSON 字段；禁止恢复为当前项目状态"

@@ -1,0 +1,12 @@
+﻿{
+    "schema_version":  "command-execution-record-1.0",
+    "name":  "strict_isolation_audit",
+    "command":  "C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\全量资料严格隔离审计.py --project-root D:\\AI小说制作最终版-cline重建\\新版1",
+    "started_at":  "2026-08-13T16:06:40.7345447Z",
+    "finished_at":  "2026-08-13T16:06:42.2413320Z",
+    "exit_code":  2,
+    "stdout_file":  "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行日志\\资料审计\\strict_isolation_audit.stdout.txt",
+    "stderr_file":  "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行日志\\资料审计\\strict_isolation_audit.stderr.txt",
+    "stdout":  "{\"status\": \"failed\", \"future_production_allowed\": false, \"formal_release_allowed\": false, \"issue_count\": 13345}\r\n",
+    "stderr":  ""
+}

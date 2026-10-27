@@ -1,0 +1,35 @@
+{
+  "report_type": "source_call_audit",
+  "schema_version": "1.0",
+  "status": "PASS_WITH_REPAIR_GAPS",
+  "audited_at": "2026-08-09T10:20:00+08:00",
+  "project": "诡异屋",
+  "sample": "第001章_清点名单上不存在的房屋",
+  "execution_classification": "先有宏模块记录和正文，再补条目级中间产物；不是可证明的完整资料驱动设计后写作",
+  "parameter_chain": {"confirmed_type": "悬疑", "confirmed_style": "冷峻、克制、紧张、具有现场感", "confirmed_length": "中篇", "passed_to_project": true, "passed_to_design": "partial", "passed_to_text": "partial"},
+  "module_calls": [
+    {"record_id": "MOD-CAPABILITY", "source_file": "08_原始资料/资料库.txt", "original_trace": true, "effect_claimed": "人物代价、关系、伏笔和场景可写性", "transformation_evidence": "规划/资料驱动设计/character_behavior_contract.json", "classification": "called_and_transformed_after_repair"},
+    {"record_id": "MOD-TYPE", "source_file": "08_原始资料/类型系统.txt", "original_trace": true, "effect_claimed": "悬疑的信息冲突和认知冲突", "transformation_evidence": "type_style_length_constraints.json and chapter text", "classification": "called_and_transformed"},
+    {"record_id": "MOD-CONNECTION", "source_file": "08_原始资料/类型连接.txt", "original_trace": true, "effect_claimed": "悬疑、调查、档案和物证组合边界", "transformation_evidence": "记录为partial，未保存组合决策字段", "classification": "called_not_transformed"},
+    {"record_id": "MOD-STATIC", "source_file": "08_原始资料/静态网络.txt", "original_trace": true, "effect_claimed": "人物、地点、关系依赖", "transformation_evidence": "项目快照和人物设定，缺条目级证据", "classification": "called_not_transformed"},
+    {"record_id": "MOD-DYNAMIC", "source_file": "08_原始资料/动态网络.txt", "original_trace": true, "effect_claimed": "事件、物证和后果链", "transformation_evidence": "章纲剧情轮次、结尾钩子", "classification": "called_and_transformed"},
+    {"record_id": "MOD-ANCHOR", "source_file": "08_原始资料/锚点网络.txt", "original_trace": true, "effect_claimed": "现场感、空间和感官锚点", "transformation_evidence": "章纲现场锚点和正文", "classification": "called_and_transformed"},
+    {"record_id": "MOD-EXECUTION", "source_file": "08_原始资料/执行正文.txt", "original_trace": true, "effect_claimed": "设计到正文的顺序", "transformation_evidence": "原章纲存在，但未生成执行清单", "classification": "called_not_transformed"}
+  ],
+  "required_subitem_calls": [
+    {"record_id": "CAP-OPENING-DESIGN", "source_labels": ["112.1_开篇设计"], "required": true, "original_evidence": "missing", "post_repair_artifact": "opening_design.json", "result": "partial"},
+    {"record_id": "CAP-GOLDEN-THREE", "source_labels": ["123.4_黄金三章规则"], "required": true, "original_evidence": "missing", "post_repair_artifact": "golden_three_tasks.json", "result": "chapter_1_partially_met"},
+    {"record_id": "CAP-OPENING-ATTRACTION", "source_labels": ["123.5_开篇吸引力指标"], "required": true, "original_evidence": "missing", "post_repair_artifact": "golden_three_tasks.json", "result": "p0_and_p3_present; formal check added"},
+    {"record_id": "CAP-CHARACTER-CHAIN", "source_labels": ["1-4人物", "121配角"], "required": true, "original_evidence": "missing", "post_repair_artifact": "character_behavior_contract.json", "result": "partial; chapter action evidence present"},
+    {"record_id": "CAP-DESIGN-TO-DRAFT", "source_labels": ["127.4", "127.6", "128"], "required": true, "original_evidence": "missing", "post_repair_artifact": "chapter_execution_manifest.json", "result": "retrospective trace only"}
+  ],
+  "rule_presence": {"golden_three_chapter_1": "partial", "type_style_length": "partial_to_pass", "character_behavior": "partial", "opening_attraction": "partial", "chapter_2_interface": "pass", "chapter_3_interface": "missing_in_chapter_001_but_added_to_project_design": true},
+  "regression_findings": [
+    "第001章满足立即异常、具体问题和章末升级，承担了黄金三章第1章的大部分叙事任务。",
+    "第001章没有在项目产物中证明第2章扩展、第3章升级的连续结构，原链路缺少前三章任务表。",
+    "林砚的能力和限制在正文有动作证据，但性格、驱动、恐惧和成长没有作为生成前输入保存。",
+    "周既明有施压和信息隐瞒功能；顾怀山以缺席物证发挥功能，但关系链没有进入章节执行记录。",
+    "正文关键线索已进入第002章和项目快照；修复后第003章接口绑定307、七年前收据和23:40。"
+  ],
+  "unresolved": ["原始资料条目的空字段仍存在；索引和中间产物现在会把缺失显式标为partial，不把空字段当作可执行规则。", "第001章不重写；如后续需要增强人物成长或黄金三章证据，应创建修订版本，不覆盖正式正文。"]
+}

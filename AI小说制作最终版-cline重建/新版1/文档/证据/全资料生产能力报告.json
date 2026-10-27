@@ -1,0 +1,153 @@
+{
+  "schema_version": "source-production-capability-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "policy": "全量资料必须可解释、可执行、可激活、可验收；未激活资料只能进入递延队列，不得被计为已消费。来源资格不足必须作为风险保留，不得据此静默删除已回链的创作合同或提升正式事实资格。",
+  "required_source_kinds": [
+    "资料库",
+    "类型系统",
+    "类型连接",
+    "动态网络",
+    "静态网络",
+    "锚点网络"
+  ],
+  "binding_count": 13345,
+  "activation_assignment_count": 0,
+  "kind_summary": {
+    "资料库": {
+      "source_records": 568,
+      "ready_contracts": 568,
+      "quality_ready_contracts": 568,
+      "translated_contracts": 568,
+      "failed_contracts": 0,
+      "activation_status_counts": {
+        "translated": 568,
+        "awaiting_stage_evidence": 568
+      },
+      "governance": {
+        "total_objects": 590,
+        "repaired": 0,
+        "pending": 0,
+        "blocking": 0,
+        "status": "passed"
+      },
+      "resource_quality": "complete",
+      "status": "passed"
+    },
+    "类型系统": {
+      "source_records": 15,
+      "ready_contracts": 15,
+      "quality_ready_contracts": 15,
+      "translated_contracts": 15,
+      "failed_contracts": 0,
+      "activation_status_counts": {
+        "translated": 15,
+        "awaiting_stage_evidence": 15
+      },
+      "governance": {
+        "total_objects": 15,
+        "repaired": 0,
+        "pending": 0,
+        "blocking": 0,
+        "status": "passed"
+      },
+      "resource_quality": "partial",
+      "status": "passed"
+    },
+    "类型连接": {
+      "source_records": 7358,
+      "ready_contracts": 7358,
+      "quality_ready_contracts": 7358,
+      "translated_contracts": 7358,
+      "failed_contracts": 0,
+      "activation_status_counts": {
+        "translated": 7358,
+        "awaiting_stage_evidence": 7358
+      },
+      "governance": {
+        "total_objects": 7336,
+        "repaired": 0,
+        "pending": 0,
+        "blocking": 0,
+        "status": "passed"
+      },
+      "resource_quality": "partial",
+      "status": "passed"
+    },
+    "动态网络": {
+      "source_records": 1824,
+      "ready_contracts": 1824,
+      "quality_ready_contracts": 1824,
+      "translated_contracts": 1824,
+      "failed_contracts": 0,
+      "activation_status_counts": {
+        "translated": 1824,
+        "awaiting_stage_evidence": 1824
+      },
+      "governance": {
+        "total_objects": 1824,
+        "repaired": 0,
+        "pending": 0,
+        "blocking": 0,
+        "status": "passed"
+      },
+      "resource_quality": "complete",
+      "status": "passed"
+    },
+    "静态网络": {
+      "source_records": 1341,
+      "ready_contracts": 1341,
+      "quality_ready_contracts": 1341,
+      "translated_contracts": 1341,
+      "failed_contracts": 0,
+      "activation_status_counts": {
+        "translated": 1341,
+        "awaiting_stage_evidence": 1341
+      },
+      "governance": {
+        "total_objects": 1341,
+        "repaired": 0,
+        "pending": 0,
+        "blocking": 0,
+        "status": "passed"
+      },
+      "resource_quality": "complete",
+      "status": "passed"
+    },
+    "锚点网络": {
+      "source_records": 1790,
+      "ready_contracts": 1790,
+      "quality_ready_contracts": 1790,
+      "translated_contracts": 1790,
+      "failed_contracts": 0,
+      "activation_status_counts": {
+        "translated": 1790,
+        "awaiting_stage_evidence": 1790
+      },
+      "governance": {
+        "total_objects": 1790,
+        "repaired": 0,
+        "pending": 0,
+        "blocking": 0,
+        "status": "passed"
+      },
+      "resource_quality": "complete",
+      "status": "passed"
+    }
+  },
+  "source_quality_notices": [
+    {
+      "source_kind": "类型系统",
+      "source_quality": "partial",
+      "notice": "来源证据尚未达到 complete；保持正式事实资格关闭，但不以此删除已回链的创作合同。"
+    },
+    {
+      "source_kind": "类型连接",
+      "source_quality": "partial",
+      "notice": "来源证据尚未达到 complete；保持正式事实资格关闭，但不以此删除已回链的创作合同。"
+    }
+  ],
+  "failure_count": 0,
+  "failures": [],
+  "status": "passed",
+  "production_status": "draft_only_quality_generation_allowed"
+}

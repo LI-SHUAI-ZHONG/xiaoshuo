@@ -1,0 +1,19 @@
+{
+  "artifact_type": "character_behavior_contract",
+  "status": "retrospective_reconstruction",
+  "source_trace": [{"record_id": "CAP-CHARACTER-CHAIN", "source_file": "08_原始资料/资料库.txt", "source_labels": ["1_人物基础设定", "2_角色属性", "3_角色驱动", "4_角色成长", "121_配角运用"], "stage": "CHARACTER_DESIGN", "effect": "将人物资料转为档案、行为限制、关系功能、成长节点和章节行动。"}],
+  "inputs": {"story_core": "档案修复师进入重新出现的旧屋", "current_chapter": 1},
+  "character_profiles": {
+    "林砚": {"function": "有限视角调查者", "surface_goal": "完成清点并确认身份记录", "true_goal": "确认童年记忆是否可信", "fear": "发现自己与童年火灾有关", "personality_bias": "证据优先、克制、对记录缺口敏感", "behavior_constraints": ["无执法权限", "遇焦糊味或相关声音会短暂迟滞", "不接受无证据解释"], "growth_beats": ["从核验错误地址到主动承担个人牵连", "从单一凶手误判转向多层信息冲突"]},
+    "周既明": {"function": "权限提供者与信息隐瞒者", "surface_goal": "控制案件外溢", "hidden_goal": "保护错误归档证人", "relationship_function": "施压、封锁、提供不完整证据", "behavior_constraints": ["不会直接解释旧案", "通过命令和删减信息控制风险"]},
+    "顾怀山": {"function": "缺席者和证据源", "relationship_function": "通过收据、遗物和档案影响当下行动", "behavior_constraints": ["不能直接出场确认事实", "每次出现只提供可争议物证"]}
+  },
+  "relationship_functions": ["林砚与周既明：互相利用起步，信任变化由证据和隐瞒触发", "林砚与顾怀山：调查对象逐渐转为个人记忆的反证来源"],
+  "behavior_constraints": ["正文中的行动必须能回指当前认知、目标、恐惧、能力和权限"],
+  "growth_beats": {"chapter_001": "林砚选择进入现场，首次承担个人被指向的证据压力", "chapter_002": "周既明从远程协助转为封锁和隐瞒", "chapter_003": "林砚在23:40时限下选择求证路径并承担现实代价"},
+  "chapter_actions": {"chapter_001": ["依据门牌孔位和地基痕迹找入口", "先拍照再触碰铁盒", "因证据而无视离开命令"], "chapter_002": ["继续测绘和核对门牌", "把307与七年前收据连接", "面对周既明承认三楼后的信息缺口"]},
+  "writing_requirements": ["配角必须对主角行动施加独立压力或提供有代价的信息", "缺席人物必须通过证据改变当前选择"],
+  "acceptance_criteria": ["每个主要角色至少有一个可定位的剧情功能", "主角行动不是作者方便而是人物约束的结果", "章节末人物状态或关系发生变化"],
+  "not_used_reasons": ["原资料人物子项未被宏索引登记，原第001章只有项目设定层记录，缺少条目级调用证据"],
+  "evidence_status": "partial"
+}

@@ -1,0 +1,183 @@
+﻿{
+    "schema_version":  "project-config-1.0",
+    "project_id":  "trial-玄幻-沈砚",
+    "project_name":  "trial-玄幻-沈砚",
+    "book_title":  "暗流玄境",
+    "world_name":  "衡渊",
+    "story_bible":  "配置/项目创作圣经.json",
+    "created_at":  "2026-08-12T00:00:00Z",
+    "genre_selection":  [
+                            "玄幻"
+                        ],
+    "type_combination":  null,
+    "type_selection_policy":  {
+                                  "mode":  "single_type_draft",
+                                  "selected_primary_type":  "玄幻",
+                                  "type_combination_adopted":  false,
+                                  "draft_prose_allowed":  true,
+                                  "formal_release_allowed":  false,
+                                  "reason":  "类型组合尚未由项目所有者确认；仅以已选主类型生成隔离草稿，不生成或采用类型连接记录。"
+                              },
+    "release_scope_policy":  {
+                              "current_scope":  "material_batch_release",
+                              "material_batch_release":  {
+                                  "description":  "仅发布已完成资料升级、正文消费、人工文学审校、哈希绑定和发布预检的资料批次。",
+                                  "requires_type_combination":  false,
+                                  "type_combination_is_out_of_scope":  true
+                              },
+                              "authored_run_delivery":  {
+                                  "description":  "发布具体写作运行及其正文交付清单。",
+                                  "requires_type_combination":  true,
+                                  "type_combination_is_out_of_scope":  false
+                              }
+                          },
+    "activation_policy":  {
+                              "material_scope":  "按创作需要分层激活，未满足条件的资料进入后续消费队列",
+                              "enabled_binding_classes":  [
+                                                              "direct_creation",
+                                                              "indirect_constraint",
+                                                              "candidate_retrieval",
+                                                              "deferred_activation"
+                                                          ],
+                              "inference_stages":  [
+                                                       "剧情创建",
+                                                       "剧情",
+                                                       "大纲",
+                                                       "分纲",
+                                                       "细纲",
+                                                       "场景卡",
+                                                       "正文",
+                                                       "校验"
+                                                   ],
+                              "recheck_after_artifact":  true,
+                              "require_explicit_evidence_for_prose":  true
+                          },
+    "style_selection":  {
+                            "narrative_perspective":  "限制视角",
+                            "pacing":  "中速递进",
+                            "emotional_density":  "中",
+                            "target_reader":  "喜欢悬念、规则博弈与成长代价的成年玄幻读者"
+                        },
+    "world_stage":  "暗流期",
+    "mainline_conflict":  "栖云宗以镇潮阵和晋升制度维持灵脉稳定，却将低阶弟子的灵息输送给旧域阵眼；沈砚必须在揭露真相、救出幸存者与避免潮灾之间寻找不以秘密牺牲为代价的选择。",
+    "core_mystery":  "检测石为何总在第七息回亮，沈砚父亲当年到底为何死在潮期，而旧域中被持续输送灵息的人是谁？",
+    "protagonist":  {
+                        "name":  "沈砚",
+                        "dynamic_node_id":  "1.1",
+                        "dynamic_node_name":  "主角",
+                        "dynamic_aliases":  [
+
+                                            ],
+                        "personality":  [
+                                            "克制敏锐",
+                                            "不轻信权威",
+                                            "在证据充分后愿意承担后果"
+                                        ],
+                        "desire":  "取得内门晋升资格，换回被宗门扣留的母亲遗物。",
+                        "obsession":  "父亲被定性为修行失控，他拒绝接受这份没有证据的结论。",
+                        "decision_tendency":  [
+                                                  "先把异常化为可复核的细节",
+                                                  "以问题逼人暴露立场",
+                                                  "确认代价后独自承担选择"
+                                              ],
+                        "blind_spots":  [
+                                            "习惯独自取证，常把盟友置于被动",
+                                            "把守序者的恐惧误判为恶意"
+                                        ],
+                        "emotional_reactions":  [
+                                                    "被敷衍时先沉默再追问细节",
+                                                    "看见他人替自己付代价时会失去冷静",
+                                                    "听到父亲相关线索时会短暂失去对灵息回声的判断"
+                                                ]
+                    },
+    "supporting_characters":  [
+                                {
+                                  "name": "陆昭",
+                                  "role": "外门同期，沈砚的室友与竞争者",
+                                  "want": "按部就班进入内门，为病重的妹妹换取药额。",
+                                  "conflict_with_protagonist": "相信规则至少能救下眼前的人，无法接受沈砚拿晋升资格赌尚未证实的真相。"
+                                },
+                                {
+                                  "name": "许照微",
+                                  "role": "藏卷阁见习录事",
+                                  "want": "查清兄长名字为何从潮灾名册中消失。",
+                                  "constraint": "每次越权接触封存卷宗都会被记一次过。"
+                                },
+                                {
+                                  "name": "闻执衡",
+                                  "role": "执律堂执事",
+                                  "want": "避免旧域再次开启，因为他的师父是阵眼幸存者之一。",
+                                  "belief": "认为继续隐瞒比再次掀起潮灾更仁慈。"
+                                }
+                              ],
+    "factions_and_locations":  {
+                                      "factions": [
+                                        {
+                                          "name": "栖云宗",
+                                          "role": "以外门考核和镇潮功绩维持灵脉与晋升秩序的正道宗门。"
+                                        },
+                                        {
+                                          "name": "潮痕会",
+                                          "role": "试图拆阵救出旧域幸存者、但愿意承担新牺牲风险的散修组织。"
+                                        }
+                                      ],
+                                      "locations": [
+                                        "外门检测场",
+                                        "藏卷阁档案廊",
+                                        "封闭旧区域外廊",
+                                        "旧域",
+                                        "镇潮阵"
+                                      ]
+                                    },
+    "status":  "confirmed_input",
+    "input_provenance":  {
+                             "project_id":  {
+                                                "value":  "trial-玄幻-沈砚",
+                                                "source":  "历史模块输出中的项目标识；待项目所有者确认"
+                                            },
+                             "genre_selection":  {
+                                                     "value":  [
+                                                                   "玄幻"
+                                                               ],
+                                                     "source":  "文档/证据/execution_outputs/module_02_type_decision.json:selected_types"
+                                                 },
+                             "world_stage":  {
+                                                 "value":  "暗流期",
+                                                 "source":  "原始资料/资料库.txt:11768；仅为资料中的世界阶段定义，不代表项目事实"
+                                             },
+                             "protagonist_name":  {
+                                                      "value":  "沈砚",
+                                                      "source":  "历史模块输出和项目标识；原始资料未提供可核验的人物档案"
+                                                  },
+                             "dynamic_binding":  {
+                                                     "node_id":  "1.1",
+                                                     "node_name":  "主角",
+                                                     "source":  "网络完整数据/动态连接完整数据.json"
+                                                 }
+                         },
+    "quality_gate":  {
+                           "delivery_status":  "confirmed_candidate",
+                           "reason":  "项目所有者已确认书名、类型、世界阶段、主线冲突、核心谜团、主角、世界名称、配角、势力、地点与首章计划；正文仍须通过独立质量门。",
+                           "allow_formal_pipeline":  true,
+                         "requires_source_quality_gate":  true
+                     },
+    "derivation_policy":  {
+                              "status":  "derived",
+                              "source_file":  "文档/证据/派生剧情输入.json",
+                              "original_facts_unchanged":  true,
+                              "human_confirmation_required_before_delivery":  true
+                          },
+    "project_mode":  "system_runtime_planned",
+    "chapter_plan":  [
+                         {
+                           "chapter_id": "CH01",
+                           "title": "第七息回亮",
+                           "purpose": "完成检测异常建立、目标升级和悬念制造。",
+                           "scenes": [
+                             "CH01-S01：外门检测场，建立可复核异常与陆昭的现实顾虑。",
+                             "CH01-S02：档案廊，推动沈砚取得被遮掩的线索。",
+                             "CH01-S03：封闭旧区域外廊，沈砚保留异常证据，陆昭承担风险，晋升资格受损。"
+                           ]
+                         }
+                      ]
+}

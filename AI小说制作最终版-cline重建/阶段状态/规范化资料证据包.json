@@ -1,0 +1,90 @@
+{
+  "schema_version": "content-evidence-1.0",
+  "status": "partial_blocked",
+  "evidence_policy": {
+    "levels": ["confirmed_raw", "cross_confirmed", "reconstructed", "unconfirmed", "conflict"],
+    "runtime_rule": "only confirmed_raw and cross_confirmed records with source_refs may constrain generation; reconstructed records are candidates and require review",
+    "template_rule": "template, fixture, pending and empty records are never formal facts"
+  },
+  "records": [
+    {
+      "id": "EVID-RUNTIME-001",
+      "domain": "dynamic_rule",
+      "evidence_level": "cross_confirmed",
+      "claim": "动态效果必须经过行动选择、事件证据和连续性验证，不能自动完成事件或状态更新。",
+      "source_refs": [
+        "08_原始资料/动态网络.txt",
+        "08_原始资料/类型系统.txt",
+        "阶段状态/规范化资料层.json"
+      ],
+      "legacy_source_refs": [
+        "D:/AI小说制作最终版/类型系统/类型动态规则总表.json",
+        "D:/AI小说制作最终版/类型系统/类型动态候选效果.json",
+        "D:/AI小说制作最终版/类型系统/类型适配冲突规则.json"
+      ],
+      "runtime_usable": true,
+      "use": "constraint"
+    },
+    {
+      "id": "EVID-RUNTIME-002",
+      "domain": "retrieval",
+      "evidence_level": "cross_confirmed",
+      "claim": "检索应先加载项目配置、当前状态、人物/世界/资源/信息状态，再按条件选择概念、静态连接、动态规则、锚点和验证项。",
+      "source_refs": [
+        "00_资料索引/索引调用映射契约.json",
+        "00_资料索引/多维资料索引.yaml"
+      ],
+      "legacy_source_refs": [
+        "D:/AI小说制作最终版/项目模板/全系统检索协议.json",
+        "D:/AI小说制作最终版/核心资料/索引/统一索引与映射.json"
+      ],
+      "runtime_usable": true,
+      "use": "retrieval_order"
+    },
+    {
+      "id": "EVID-RUNTIME-003",
+      "domain": "type_adaptation",
+      "evidence_level": "cross_confirmed",
+      "claim": "类型适配只能提供方向和候选，不能覆盖人物身份、性格、概念定义、动态规则或生成固定动作。",
+      "source_refs": [
+        "08_原始资料/类型系统.txt",
+        "08_原始资料/动态网络.txt",
+        "阶段状态/规范化资料层.json"
+      ],
+      "legacy_source_refs": [
+        "D:/AI小说制作最终版/类型系统/类型适配冲突规则.json",
+        "D:/AI小说制作最终版/类型系统/类型动态规则总表.json"
+      ],
+      "runtime_usable": true,
+      "use": "constraint"
+    },
+    {
+      "id": "EVID-PROJECT-001",
+      "domain": "existing_project",
+      "evidence_level": "confirmed_raw",
+      "claim": "诡异屋当前是悬疑、中篇、冷峻克制紧张且具有现场感，快照处于第2章后、下一章为第3章。",
+      "source_refs": [
+        "05_正文/诡异屋/项目快照.json",
+        "05_正文/诡异屋/设定/启动参数.md"
+      ],
+      "runtime_usable": true,
+      "use": "validation_fixture_context",
+      "warning": "项目设计产物标记为 retrospective_reconstruction_partial"
+    },
+    {
+      "id": "EVID-BLOCK-001",
+      "domain": "source_library",
+      "evidence_level": "conflict",
+      "claim": "工作区将资料库登记为模块入口，但授权目录明确其未结构化且不可调用。",
+      "source_refs": [
+        "00_资料索引/多维资料索引.yaml",
+        "阶段状态/资料内容审计基线.json"
+      ],
+      "legacy_source_refs": [
+        "D:/AI小说制作最终版/版本信息.json"
+      ],
+      "runtime_usable": false,
+      "use": "blocker"
+    }
+  ]
+}

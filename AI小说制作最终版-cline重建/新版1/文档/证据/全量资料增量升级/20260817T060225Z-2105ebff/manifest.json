@@ -1,0 +1,19 @@
+{
+  "schema_version": "full-source-material-incremental-upgrade-1.0",
+  "run_id": "20260817T060225Z-2105ebff",
+  "baseline_run_id": "20260816T101311Z-295bb554",
+  "generated_at": "2026-08-17T06:02:25.931208Z",
+  "input_binding_count": 13345,
+  "change_count": 13345,
+  "status_counts": {
+    "modified": 13295,
+    "locator_repair": 49,
+    "fixture_excluded": 1
+  },
+  "model_call_count": 13344,
+  "formal_fact_eligible": false,
+  "prose_write_allowed": false,
+  "formal_release_allowed": false,
+  "changes_file": "changes.jsonl",
+  "manifest_sha256": "1aac42527f51ce6aa7182c448b96500b26bddf0393f124619bf0bded66285d7e"
+}

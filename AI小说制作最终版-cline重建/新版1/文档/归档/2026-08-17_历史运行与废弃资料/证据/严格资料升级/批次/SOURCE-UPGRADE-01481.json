@@ -1,0 +1,146 @@
+{
+  "schema_version": "strict-source-upgrade-batch-1.0",
+  "batch_id": "SOURCE-UPGRADE-01481",
+  "record_limit": 6,
+  "prose_write_allowed": false,
+  "records": [
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-08881",
+      "consumption_id": "PC-08881",
+      "binding_id": "TB-12580",
+      "source_id": "TSC_002022",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态连接总表.json[2022]",
+      "source_ref_sha256": "f1a404c630a3e6332766fdd7ffaef0f39c71b8f572367b5109e5e461fa2d7dd3",
+      "source_item_sha256": "c8328fdd023bb59c342e830145b36ccecd6163c32090c37a7d6242637d29f920",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 pending"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-08882",
+      "consumption_id": "PC-08882",
+      "binding_id": "TB-12581",
+      "source_id": "TSC_002023",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态连接总表.json[2023]",
+      "source_ref_sha256": "a8571f64e2634cf3e6267cf46f34941fb4db567fc60d2c23253cd907b2a4edb6",
+      "source_item_sha256": "2e6bc946eeaf1f7cce033e9cd8866343efc5916e86d082ac38aeeb298a7d9e70",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 pending"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-08883",
+      "consumption_id": "PC-08883",
+      "binding_id": "TB-12582",
+      "source_id": "TSC_002024",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态连接总表.json[2024]",
+      "source_ref_sha256": "75207b51c9561415a4ca950e939b5132bf004987a214e7b67fea0bef82bf2058",
+      "source_item_sha256": "6d4680181c702f946188aaccb38cd9f39b5e9e13e9a668254e7b7c4ee0e6611e",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 pending"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-08884",
+      "consumption_id": "PC-08884",
+      "binding_id": "TB-12583",
+      "source_id": "TSC_002025",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态连接总表.json[2025]",
+      "source_ref_sha256": "699b5936a1be56cbc780104f1ecd76bd991d1e1a7a782f5957f986e173c2ab9d",
+      "source_item_sha256": "54c56693c7f275c2522bfd7d0ec27cfa045220472a6a9a7b8cad4e30f18e19a6",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 pending"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-08885",
+      "consumption_id": "PC-08885",
+      "binding_id": "TB-12584",
+      "source_id": "TSC_002026",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态连接总表.json[2026]",
+      "source_ref_sha256": "9199f17f55684d72dab078b9e9656a9f4c94199a98260b971152486d51909d86",
+      "source_item_sha256": "c9850d53fbdd7fd9aad3ee28f6b496ba6f9e7411d349db3fbe97e0b70b457cdb",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 pending"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-08886",
+      "consumption_id": "PC-08886",
+      "binding_id": "TB-12585",
+      "source_id": "TSC_002027",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:类型静态连接总表.json[2027]",
+      "source_ref_sha256": "9c887c7c0e11c69a1358f888634a5123530e4d58a7fa52abb11d901372cd36fe",
+      "source_item_sha256": "c0819d03113096c34c34300fe57f3910a0823a788f853ac6514bff79021cadef",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "来源对象状态为 pending"
+      ]
+    }
+  ]
+}

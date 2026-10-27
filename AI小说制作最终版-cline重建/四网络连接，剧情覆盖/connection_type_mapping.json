@@ -1,0 +1,96 @@
+{
+  "schema_version": "connection-type-mapping-2.0",
+  "mappings": [
+    {
+      "static_type": "共振",
+      "dynamic_type": "共振",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "冲突",
+      "dynamic_type": "冲突",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "嵌套",
+      "dynamic_type": "嵌套",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "扭曲",
+      "dynamic_type": "扭曲",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "抑制",
+      "dynamic_type": "抑制",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "放大",
+      "dynamic_type": "放大",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "映射",
+      "dynamic_type": "映射",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "演化",
+      "dynamic_type": "演化",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "约束",
+      "dynamic_type": "约束",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "绑定",
+      "dynamic_type": "绑定",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "解决",
+      "dynamic_type": "解决",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "触发",
+      "dynamic_type": "触发",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "转化",
+      "dynamic_type": "转化",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "输出",
+      "dynamic_type": "输出",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    },
+    {
+      "static_type": "驱动",
+      "dynamic_type": "驱动",
+      "status": "contract_validated",
+      "source": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0"
+    }
+  ],
+  "reason": "静态关系类型与派生动态关系类型按同名保留，并由 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 定义通用状态语义；不代表存在独立动态原始来源。"
+}

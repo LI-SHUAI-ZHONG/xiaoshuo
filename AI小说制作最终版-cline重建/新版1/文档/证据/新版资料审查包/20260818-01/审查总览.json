@@ -1,0 +1,26 @@
+{
+  "schema_version": "material-upgrade-review-package-1.0",
+  "generated_at": "2026-08-17T17:06:05.895740+00:00",
+  "archive_record_count": 30,
+  "candidate_group_count": 12,
+  "duplicate_group_count": 12,
+  "duplicate_record_excess": 18,
+  "all_archive_records_fact_merge_eligible": false,
+  "quarantined_binding_count": 2149,
+  "quarantine_by_source_kind": {
+    "类型连接": 2123,
+    "资料库": 26
+  },
+  "quarantine_by_error": {
+    "source_ref 文本数组或下标无效": 23,
+    "类型连接对象缺少可核验标识": 2100,
+    "结构化 source_ref 的 locator 未精确命中对象标题": 26
+  },
+  "formal_fact_changeset": "正式事实变更集模板.json",
+  "formal_release_allowed": false,
+  "blockers": [
+    "历史升级档案全部是待人工审校候选，不具备事实合并资格。",
+    "重复候选组必须人工拒绝或基于原始资料建立新的正式事实变更，不能自动择一采用。",
+    "来源隔离绑定在审计重新通过前不得作为正式事实。"
+  ]
+}

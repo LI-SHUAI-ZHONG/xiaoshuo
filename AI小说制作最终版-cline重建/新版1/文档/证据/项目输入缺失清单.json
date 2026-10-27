@@ -1,0 +1,115 @@
+{
+  "schema_version": "project-input-gap-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "status": "derived_candidate",
+  "generated_at": "2026-08-12T00:00:00Z",
+  "policy": "只记录缺失或未确认内容；不得用模板句、通用占位词或推测内容替代。",
+  "confirmed_or_derived": [
+    {
+      "field": "project_id",
+      "value": "trial-玄幻-沈砚",
+      "source": "历史模块输出中的项目标识",
+      "confidence": "medium"
+    },
+    {
+      "field": "genre_selection",
+      "value": [
+        "玄幻"
+      ],
+      "source": "文档/证据/execution_outputs/module_02_type_decision.json:selected_types",
+      "confidence": "high"
+    },
+    {
+      "field": "protagonist.name",
+      "value": "沈砚",
+      "source": "历史模块输出和项目标识",
+      "confidence": "medium"
+    },
+    {
+      "field": "protagonist.dynamic_node_id",
+      "value": "1.1",
+      "source": "网络完整数据/动态连接完整数据.json",
+      "confidence": "high"
+    },
+    {
+      "field": "world_stage",
+      "value": "暗流期",
+      "source": "原始资料/资料库.txt:11768",
+      "confidence": "low",
+      "note": "这是资料中的阶段定义，不是已确认的项目设定。"
+    }
+  ],
+  "derived_candidate_confirmation": [
+    {
+      "field": "book_title",
+      "value": "暗流玄境",
+      "question": "是否接受自动派生的书名候选“暗流玄境”？"
+    },
+    {
+      "field": "mainline_conflict",
+      "value": "宗门以固化规则垄断能量与晋升路径，正在觉醒的异常力量和不同理念迫使世界在维持旧秩序与进入裂变之间作出选择。",
+      "question": "是否接受自动派生的主线冲突？"
+    },
+    {
+      "field": "core_mystery",
+      "value": "能量异常为何在表面稳定的世界中反复出现，谁在暗中推动这条循环，以及它与被掩盖的历史遗产有什么关系？",
+      "question": "是否接受自动派生的核心谜团？"
+    },
+    {
+      "field": "protagonist.personality",
+      "value": ["审慎观察", "对规则保持怀疑", "在关键时刻承担风险"],
+      "question": "是否接受自动派生的主角性格？"
+    },
+    {
+      "field": "protagonist.desire",
+      "value": "查明反复出现的能量异常，并获得足以改变自身处境的修炼突破。",
+      "question": "是否接受自动派生的主角欲望？"
+    },
+    {
+      "field": "protagonist.obsession",
+      "value": "不接受以旧规则掩盖真相、牺牲弱者来维持表面稳定。",
+      "question": "是否接受自动派生的主角执念？"
+    },
+    {
+      "field": "protagonist.decision_tendency",
+      "value": ["先观察异常和代价", "优先验证线索", "确认不可逆后承担风险"],
+      "question": "是否接受自动派生的决策倾向？"
+    },
+    {
+      "field": "protagonist.blind_spots",
+      "value": ["容易把所有秩序都视为需要揭穿的旧规则", "低估他人维护既有利益的真实动机"],
+      "question": "是否接受自动派生的主角盲点？"
+    },
+    {
+      "field": "protagonist.emotional_reactions",
+      "value": ["发现异常被强行解释时产生警惕", "看到弱者因规则受损时产生愤怒", "获得新线索但无法验证时保持压抑和克制"],
+      "question": "是否接受自动派生的情绪反应？"
+    },
+    {
+      "field": "chapter_plan",
+      "value": "第1章包含检测场、档案廊、封闭旧区域外廊三个场景，依次完成异常建立、目标升级和悬念制造。",
+      "question": "是否接受自动派生的首章及场景计划？"
+    }
+  ],
+  "still_missing_not_derivable": [
+    {
+      "field": "world_name",
+      "reason": "资料只提供世界命名规则，没有项目专属名称。"
+    },
+    {
+      "field": "supporting_characters",
+      "reason": "资料只有重要配角的功能规则，没有项目专属姓名、关系和目标。"
+    },
+    {
+      "field": "factions_and_locations",
+      "reason": "资料提供势力、地理和阶层的设计规则，没有项目专属实体。"
+    }
+  ],
+  "source_quality_blockers": [
+    "资料库.txt 存在缺失依赖/示例字段和占位内容",
+    "类型系统.txt 的项目读者参数和统一篇幅参数为 pending",
+    "类型连接.txt 存在缺失冲突细节、机制解释和来源连接 ID",
+    "动态网络.txt、静态网络.txt、锚点网络.txt 均存在占位内容",
+    "未完成资料不得进入 runtime_usable 或正式正文"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "bulk-runtime-creative-material-upgrade-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "executed_at": "2026-08-13T08:10:48.288500Z",
+  "operator": "project_owner_bulk_upgrade_2026-08-13",
+  "operation": "bulk_transfer_and_runtime_creative_upgrade",
+  "source_binding_count": 13345,
+  "authorization": {
+    "schema_version": "full-source-model-input-prose-authorization-1.0",
+    "generated_at": "2026-08-13T08:10:46.763424+00:00",
+    "scope": "per_binding_explicit_use_authorization_audit",
+    "baseline_binding_count": 13345,
+    "submitted_record_count": 13345,
+    "authorized_binding_count": 13345,
+    "rejected_record_count": 0,
+    "unsubmitted_binding_count": 0,
+    "model_input_eligible_count": 13345,
+    "prose_write_allowed_count": 13345
+  },
+  "activation_matrix": "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料激活矩阵.json",
+  "creative_dispatch": {
+    "queued_count": 0,
+    "pending_activation_count": 13345,
+    "prepared_unbound_type_material_count": 7822,
+    "batch_count": 0,
+    "activation_work_batch_count": 557,
+    "activation_work_batch_item_count": 13345,
+    "outputs": [
+      "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产编排.json",
+      "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产队列.jsonl",
+      "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料正文生产批次.jsonl",
+      "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\全量资料激活工作批次.jsonl"
+    ]
+  },
+  "formal_fact_approval": false,
+  "formal_publication_allowed": false,
+  "explicit_boundary": "本次批量升级使资料可进入项目运行期创作规划与检索；不自动绑定章节、人物、场景或类型组合。类型资料仅作为未绑定的创作参考，后续按明确创作选择建立关联；不生成章节、正文或正式发布成品。"
+}

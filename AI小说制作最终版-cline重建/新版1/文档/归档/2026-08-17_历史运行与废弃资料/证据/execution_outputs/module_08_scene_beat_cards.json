@@ -1,0 +1,1612 @@
+{
+  "planner_definition": {
+    "87": [
+      {
+        "item_id": "87.1_输入",
+        "name": "输入",
+        "definition": "本章的规划输入信息。",
+        "instruction": "本章的规划输入信息。",
+        "source_ref": "原始资料/资料库.txt:22627"
+      },
+      {
+        "item_id": "87.2_输出",
+        "name": "输出",
+        "definition": "本章的4个场景节拍卡。",
+        "instruction": "本章的4个场景节拍卡。",
+        "source_ref": "原始资料/资料库.txt:22637"
+      },
+      {
+        "item_id": "87.3_自检",
+        "name": "自检",
+        "definition": "规划完成后的检查。",
+        "instruction": "规划完成后的检查。",
+        "source_ref": "原始资料/资料库.txt:22647"
+      }
+    ],
+    "145": [
+      {
+        "item_id": "145",
+        "name": "五节点链条",
+        "definition": "角色行为的完整闭环：目标→想法→心理→动作→结果，五个节点必须完整衔接形成可追踪的因果链条。",
+        "instruction": "在每个场景中完整展示：目标（角色此刻想达成什么）→ 想法（角色为实现目标而生成的策略或判断）→ 心理（做出判断时的内部状态）→ 动作（想法经过心理处理后产生的外部行为）→ 结果（动作完成后产生的实际变化）。\n1. 表层目标须可追溯到深层目标（执念/渴望/恐惧驱动）\n2. 想法须在场景中至少一次明确外化（说出来/做出来/通过叙述者呈现）\n3. 心理状态须通过可观察的身体信号被读者感知（紧张→手指摩擦衣角/呼吸变浅）\n4. 动作须形成连续回合结构（每个动作是对上一动作的反应同时是下一动作的刺激源）\n5. 结果分三种形态：结果=目标、结果≠目标但未完全反转、结果=目标的反面，全书比例建议2:5:3\n6. 结果须追踪三层后果：对当前场景的直接影响、对后续1-3章的影响、对角色内部的影响\n7. 五节点在主角和重要配角身上全量展示，次要配角至少展示目标、动作、结果三项\n写每个场景时按顺序推进五节点：先确认目标→外化想法→用身体信号展示心理→展示动作回合→追踪三层后果。",
+        "source_ref": "原始资料/资料库.txt:45426",
+        "interpretation_terms": [
+          "五节点链条"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "148": [
+      {
+        "item_id": "148",
+        "name": "观察·细节·做法",
+        "definition": "角色获取信息（观察）、识别细节、选择行动策略（做法）的完整链条。观察是信息进入认知系统的第一道门，细节是场景中可被观察到的具体微小元素，做法是角色基于观察和细节识别后采取的具体行动策略。",
+        "instruction": "1. 观察分两个维度：广度观察（扫视全貌、建立环境定位，场景开篇使用）→深度观察（聚焦特定对象、寻找关键线索，场景中段使用）\n2. 不同人格角色观察到不同东西（谨慎型先观察出口和危险源、热情型先观察人的表情和姿态等）\n3. 观察须通过动作/对话/叙述显性化\n4. 每个场景锚定2-3个细节（环境细节/人物细节/动作细节），比例建议4:3:3\n5. 细节密度控制：重章每300字1个、中章每200字1个、轻章每100字1个、空章每50字1个\n6. 关键细节首次出现须\"轻描淡写\"不放大不强调\n7. 同一细节全书中出现3-5次为最佳频率\n8. 做法是\"怎么做\"而非\"做什么\"，做法的选择本身就是角色塑造\n1. 设计观察内容时须匹配角色人格特质\n2. 设计细节时区分环境细节（温度/光线/声音/气味/空间结构/物体摆放）、人物细节（微表情/手势/衣着状态/身体信号）、动作细节（力度/速度/停顿/重复）\n3. 做法须与角色自身条件、环境条件、目标层级匹配\n4. 做法随弧光阶段变化：起点单一→探索期尝试多种→冲突期偏执化→终点灵活自洽\n5. 做法须外化为可被读者观察到的行为序列\n场景写作中按\"广度观察建立环境→深度观察聚焦关键→细节锚定真实感→做法展示角色如何行动\"的顺序推进。",
+        "source_ref": "原始资料/资料库.txt:45590",
+        "interpretation_terms": [
+          "观察·细节·做法"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "155": [
+      {
+        "item_id": "155.1_情绪缓冲规则",
+        "name": "情绪缓冲规则",
+        "definition": "高强度情节后必须安排低强度段落，给读者消化和恢复的时间。",
+        "instruction": "- 每个重章后必须紧跟1个中章或轻章\n- 连续2章高强度后，第3章必须为缓冲章（轻章或空章）\n- 大爽点/大高潮后至少1.5章为过渡段落（篇幅不低于正常章的60%）\n缓冲章侧重：氛围营造、情感沉淀、内心体验、静默时刻。\n缓冲章仍须有微型推进（见122.13），但不得引入新的大冲突。\n连续高强度后，主动降低冲突密度和情感密度。\n缓冲章中，场景节奏从“升级→高潮”调整为“建立→沉淀→余韵”。",
+        "source_ref": "原始资料/资料库.txt:45939",
+        "interpretation_terms": [
+          "余波",
+          "升级",
+          "建立",
+          "情绪缓冲规则",
+          "高潮"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "四段分别承担建立、升级、高潮、余波，并让高潮改变状态。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "item_id": "155.2_“谁在哪、为什么去”共情铺垫",
+        "name": "“谁在哪、为什么去”共情铺垫",
+        "definition": "角色到达新地点或与新人物互动前，必须完成三步铺垫，让读者提前建立空间预期和人物预期。",
+        "instruction": "三步铺垫：\n1. 前置铺垫（提前1-3章）：提及该地点/人物/事件的存在，哪怕只是一句话\n2. 出发铺垫（本章内）：说明为什么去 + 谁可能在那里 + 预期什么\n3. 抵达确认（到达时）：环境确认 + 在场人员确认 + 预期与现实的落差或吻合\n前置铺垫不得使用突兀的信息倾泻，应融入对话、环境细节、角色回忆。\n角色每次移动/进入新场景前，检查三步是否完整。\n缺少任何一步，读者会产生“怎么突然就到了”的断裂感。",
+        "source_ref": "原始资料/资料库.txt:45981",
+        "interpretation_terms": [
+          "“谁在哪、为什么去”共情铺垫"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      },
+      {
+        "item_id": "155.3_节奏类型与情感密度的强制匹配",
+        "name": "节奏类型与情感密度的强制匹配",
+        "definition": "不同节奏类型的章节，情感密度必须有明确的上限和下限。",
+        "instruction": "- 重章：情感密度3-5个情感点，以驱动情感和冲突情感为主\n- 中章：情感密度2-4个情感点，各类型均衡\n- 轻章：情感密度1-2个情感点，以存在情感和关系情感为主\n- 空章：情感密度1-2个情感点，深度描写，单情感贯穿全章\n情感点定义：一个可以被读者识别和命名的情感触发-反应单元（如“他看到信时手抖了一下”算1个情感点）。\n写完一章后统计情感点数量，确认在对应节奏类型的允许范围内。",
+        "source_ref": "原始资料/资料库.txt:46026",
+        "interpretation_terms": [
+          "节奏类型与情感密度的强制匹配"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ],
+    "159": [
+      {
+        "item_id": "159.1_事前计划显性化",
+        "name": "事前计划显性化",
+        "definition": "角色在行动前，必须有可被读者感知的“计划过程”——让读者知道角色“打算怎么做”。",
+        "instruction": "角色在行动前，通过以下方式之一展示计划：\n- 内部叙述（“他盘算着：先去西街找老周问清楚，再去铁匠铺看那把剑，天黑前必须回来。”）\n- 对话透露（“我打算这样……你看行吗？”）\n- 动作准备（检查装备、确认路线、观察环境）\n计划不必完美，但必须有“预期”和“备选”。\n缺少计划展示的行动是“凭空行动”，读者无法共情。\n在计划展示后，执行过程中让读者看到计划被执行或被修改。",
+        "source_ref": "原始资料/资料库.txt:46432",
+        "interpretation_terms": [
+          "事前计划显性化"
+        ],
+        "prerequisites": [
+          "存在明确目标",
+          "存在阻碍",
+          "存在可观察信息变化"
+        ],
+        "allowed_stages": [
+          "大纲",
+          "细纲",
+          "场景卡",
+          "正文",
+          "校验"
+        ],
+        "application": "将规则转译为角色可观察的动作、判断、结果和后续问题，不写规则原文。",
+        "evidence_requirements": [
+          "scene_id",
+          "paragraph_index",
+          "prose_location",
+          "trigger",
+          "result"
+        ],
+        "misuse_risks": [
+          "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+        ]
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S1",
+      "beat": "建立表面稳定与异常之间的反差",
+      "dynamic_edge_id": "C00001",
+      "source": "1.1_主角",
+      "target": "130_核心悬念",
+      "condition": "绑定主线；且当前故事明确采用该静态关系",
+      "effect": "当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新。",
+      "static_edge_id": "STATIC:12.11_能量异常->19.1_异常",
+      "static_edge": {
+        "source": "12.11_能量异常",
+        "target": "19.1_异常",
+        "type": "转化",
+        "condition": "能量异常是物理例外",
+        "priority": 1,
+        "semantic_score": 2,
+        "matched_tokens": [
+          "12.11_能量异常",
+          "19.1_异常"
+        ]
+      },
+      "anchor_ids": [
+        "C1.17",
+        "P1.21"
+      ],
+      "anchor_names": [
+        "观察_识别_模式_异常",
+        "视觉_看见_距离_近"
+      ],
+      "selection_rationale": {
+        "dynamic_chain": {
+          "id": "C00001",
+          "score": 2,
+          "matched_tokens": [
+            "1.1_主角",
+            "130_核心悬念"
+          ],
+          "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+        },
+        "static_edge": {
+          "id": "STATIC:12.11_能量异常->19.1_异常",
+          "score": 2,
+          "matched_tokens": [
+            "12.11_能量异常",
+            "19.1_异常"
+          ],
+          "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+        },
+        "anchor": {
+          "id": "C1.17",
+          "score": 2,
+          "matched_tokens": [
+            "观察_识别_模式_异常",
+            "发现异常模式"
+          ],
+          "binding_role": "将场景因果转译为可观察的空间、感知或身体表现"
+        }
+      },
+      "purpose": "建立表面稳定与异常之间的反差",
+      "location": "宗门能量检测场",
+      "participants": [],
+      "character_goal": "完成检测并判断异常是否来自自身修炼",
+      "obstacle": "检测规则只允许记录合格结果，异常读数会被负责者直接归为误差",
+      "new_information": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+      "state_before": "沈砚相信异常可能只是自身修炼不足造成的误差",
+      "state_after": "沈砚确认异常具有重复性和明确方向",
+      "ending": "检测石上的异常刻痕在众人离场后重新亮起",
+      "hook": "刻痕显示出与旧宗门记录相同的循环间隔",
+      "library_entry_ids": [
+        "159.2_行动中思想描写"
+      ],
+      "library_entries": [
+        {
+          "block": 159,
+          "item_id": "159.2_行动中思想描写",
+          "name": "行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "interpretation_terms": [
+            "判断",
+            "前因",
+            "行动中思想描写",
+            "行动结果",
+            "观察",
+            "调整"
+          ],
+          "prerequisites": [
+            "存在明确目标",
+            "存在阻碍",
+            "存在可观察信息变化",
+            "行动前先出现观察或线索",
+            "判断必须改变后续行动"
+          ],
+          "allowed_stages": [
+            "大纲",
+            "细纲",
+            "场景卡",
+            "正文",
+            "校验"
+          ],
+          "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+          "evidence_requirements": [
+            "scene_id",
+            "paragraph_index",
+            "prose_location",
+            "trigger",
+            "result"
+          ],
+          "misuse_risks": [
+            "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+          ]
+        }
+      ],
+      "library_selection": {
+        "mode": "scene_need_retrieval",
+        "query_fields": [
+          "purpose",
+          "location",
+          "character_goal",
+          "obstacle",
+          "new_information",
+          "state_before",
+          "state_after",
+          "ending",
+          "hook"
+        ],
+        "expanded_terms": [
+          "代价",
+          "伏笔",
+          "信息",
+          "冲突",
+          "变化",
+          "后果",
+          "场景",
+          "心理",
+          "悬念",
+          "情绪",
+          "状态",
+          "目标",
+          "空间",
+          "线索",
+          "细节",
+          "结构",
+          "结果",
+          "节奏",
+          "行动",
+          "观察",
+          "计划",
+          "选择",
+          "阻碍",
+          "限制"
+        ],
+        "matched": [
+          {
+            "item_id": "159.2_行动中思想描写",
+            "matched_tokens": [
+              "观察"
+            ],
+            "score": 1
+          }
+        ],
+        "candidate_count": 1
+      },
+      "static_edge_ids": [
+        "STATIC:12.11_能量异常->19.1_异常"
+      ],
+      "dynamic_chain_ids": [
+        "C00001"
+      ],
+      "binding_profile": {
+        "dynamic_source": "1.1_主角",
+        "dynamic_target": "130_核心悬念",
+        "static_source": "12.11_能量异常",
+        "static_target": "19.1_异常",
+        "anchor_ids": [
+          "C1.17",
+          "P1.21"
+        ],
+        "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+      },
+      "matrix_binding_ids": [
+        "TB-00001",
+        "TB-00004",
+        "TB-00007"
+      ]
+    },
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S2",
+      "beat": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+      "dynamic_edge_id": "C00004",
+      "source": "1.1_主角",
+      "target": "4.1_弧光",
+      "condition": "全书主线；且当前故事明确采用该静态关系",
+      "effect": "当起点持续或变化时，推动终点按阶段发生状态变化。",
+      "static_edge_id": "STATIC:32.7_未写明的历史->130_核心悬念",
+      "static_edge": {
+        "source": "32.7_未写明的历史",
+        "target": "130_核心悬念",
+        "type": "绑定",
+        "condition": "未写明的历史是悬念",
+        "priority": 1,
+        "semantic_score": 2,
+        "matched_tokens": [
+          "32.7_未写明的历史",
+          "130_核心悬念"
+        ]
+      },
+      "anchor_ids": [
+        "C1.19",
+        "P1.4"
+      ],
+      "anchor_names": [
+        "观察_识别_关联_因果",
+        "视觉_看见_物体_全景"
+      ],
+      "selection_rationale": {
+        "dynamic_chain": {
+          "id": "C00004",
+          "score": 2,
+          "matched_tokens": [
+            "1.1_主角",
+            "4.1_弧光"
+          ],
+          "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+        },
+        "static_edge": {
+          "id": "STATIC:32.7_未写明的历史->130_核心悬念",
+          "score": 2,
+          "matched_tokens": [
+            "32.7_未写明的历史",
+            "130_核心悬念"
+          ],
+          "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+        },
+        "anchor": {
+          "id": "C1.19",
+          "score": 2,
+          "matched_tokens": [
+            "观察_识别_关联_因果",
+            "识别因果关联"
+          ],
+          "binding_role": "将场景因果转译为可观察的空间、感知或身体表现"
+        }
+      },
+      "purpose": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+      "location": "宗门档案廊",
+      "participants": [],
+      "character_goal": "查找旧区域和异常刻痕的对应记录",
+      "obstacle": "档案按宗门等级分层，低阶权限只能看到被删改后的稳定期记录",
+      "new_information": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+      "state_before": "沈砚只有现场异常，没有历史证据",
+      "state_after": "沈砚掌握异常与历史循环可能相关的线索",
+      "ending": "档案管理员发现缺页并关闭了对应卷宗",
+      "hook": "缺页边缘留下与检测石相同的刻痕",
+      "library_entry_ids": [
+        "159.2_行动中思想描写"
+      ],
+      "library_entries": [
+        {
+          "block": 159,
+          "item_id": "159.2_行动中思想描写",
+          "name": "行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "interpretation_terms": [
+            "判断",
+            "前因",
+            "行动中思想描写",
+            "行动结果",
+            "观察",
+            "调整"
+          ],
+          "prerequisites": [
+            "存在明确目标",
+            "存在阻碍",
+            "存在可观察信息变化",
+            "行动前先出现观察或线索",
+            "判断必须改变后续行动"
+          ],
+          "allowed_stages": [
+            "大纲",
+            "细纲",
+            "场景卡",
+            "正文",
+            "校验"
+          ],
+          "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+          "evidence_requirements": [
+            "scene_id",
+            "paragraph_index",
+            "prose_location",
+            "trigger",
+            "result"
+          ],
+          "misuse_risks": [
+            "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+          ]
+        }
+      ],
+      "library_selection": {
+        "mode": "scene_need_retrieval",
+        "query_fields": [
+          "purpose",
+          "location",
+          "character_goal",
+          "obstacle",
+          "new_information",
+          "state_before",
+          "state_after",
+          "ending",
+          "hook"
+        ],
+        "expanded_terms": [
+          "代价",
+          "伏笔",
+          "信息",
+          "冲突",
+          "变化",
+          "后果",
+          "场景",
+          "心理",
+          "悬念",
+          "情绪",
+          "状态",
+          "目标",
+          "空间",
+          "线索",
+          "细节",
+          "结构",
+          "结果",
+          "节奏",
+          "行动",
+          "观察",
+          "计划",
+          "选择",
+          "阻碍",
+          "限制"
+        ],
+        "matched": [
+          {
+            "item_id": "159.2_行动中思想描写",
+            "matched_tokens": [
+              "观察"
+            ],
+            "score": 1
+          }
+        ],
+        "candidate_count": 1
+      },
+      "static_edge_ids": [
+        "STATIC:32.7_未写明的历史->130_核心悬念"
+      ],
+      "dynamic_chain_ids": [
+        "C00004"
+      ],
+      "binding_profile": {
+        "dynamic_source": "1.1_主角",
+        "dynamic_target": "4.1_弧光",
+        "static_source": "32.7_未写明的历史",
+        "static_target": "130_核心悬念",
+        "anchor_ids": [
+          "C1.19",
+          "P1.4"
+        ],
+        "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+      },
+      "matrix_binding_ids": [
+        "TB-00002",
+        "TB-00005",
+        "TB-00008"
+      ]
+    },
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S3",
+      "beat": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+      "dynamic_edge_id": "C00005",
+      "source": "1.1_主角",
+      "target": "119.1_共鸣点",
+      "condition": "开篇建立；且当前故事明确采用该静态关系",
+      "effect": "当起点成立时，限制终点可采取的状态或行为范围。",
+      "static_edge_id": "STATIC:1.1_主角->119.1_共鸣点",
+      "static_edge": {
+        "source": "1.1_主角",
+        "target": "119.1_共鸣点",
+        "type": "约束",
+        "condition": "开篇建立",
+        "priority": 2,
+        "semantic_score": 2,
+        "matched_tokens": [
+          "1.1_主角",
+          "119.1_共鸣点"
+        ]
+      },
+      "anchor_ids": [
+        "S2.24",
+        "S2.29"
+      ],
+      "anchor_names": [
+        "空间状态_封锁",
+        "空间状态_有声_回响"
+      ],
+      "selection_rationale": {
+        "dynamic_chain": {
+          "id": "C00005",
+          "score": 2,
+          "matched_tokens": [
+            "1.1_主角",
+            "119.1_共鸣点"
+          ],
+          "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+        },
+        "static_edge": {
+          "id": "STATIC:1.1_主角->119.1_共鸣点",
+          "score": 2,
+          "matched_tokens": [
+            "1.1_主角",
+            "119.1_共鸣点"
+          ],
+          "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+        },
+        "anchor": {
+          "id": "S2.24",
+          "score": 2,
+          "matched_tokens": [
+            "空间状态_封锁",
+            "空间被封锁"
+          ],
+          "binding_role": "将场景因果转译为可观察的空间、感知或身体表现"
+        }
+      },
+      "purpose": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+      "location": "通往封闭旧区域的外廊",
+      "participants": [],
+      "character_goal": "在不惊动宗门管理者的情况下确认刻痕来源",
+      "obstacle": "旧区域由宗门禁令封锁，进入会失去现有晋升资格",
+      "new_information": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+      "state_before": "沈砚仍可把异常当作偶发事件上报并回到原有秩序",
+      "state_after": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+      "ending": "封锁阵列短暂失效，旧区域内部传来第二次能量回响",
+      "hook": "回响中出现只有沈砚能辨认的重复信号",
+      "library_entry_ids": [
+        "159.2_行动中思想描写"
+      ],
+      "library_entries": [
+        {
+          "block": 159,
+          "item_id": "159.2_行动中思想描写",
+          "name": "行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "interpretation_terms": [
+            "判断",
+            "前因",
+            "行动中思想描写",
+            "行动结果",
+            "观察",
+            "调整"
+          ],
+          "prerequisites": [
+            "存在明确目标",
+            "存在阻碍",
+            "存在可观察信息变化",
+            "行动前先出现观察或线索",
+            "判断必须改变后续行动"
+          ],
+          "allowed_stages": [
+            "大纲",
+            "细纲",
+            "场景卡",
+            "正文",
+            "校验"
+          ],
+          "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+          "evidence_requirements": [
+            "scene_id",
+            "paragraph_index",
+            "prose_location",
+            "trigger",
+            "result"
+          ],
+          "misuse_risks": [
+            "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+          ]
+        }
+      ],
+      "library_selection": {
+        "mode": "scene_need_retrieval",
+        "query_fields": [
+          "purpose",
+          "location",
+          "character_goal",
+          "obstacle",
+          "new_information",
+          "state_before",
+          "state_after",
+          "ending",
+          "hook"
+        ],
+        "expanded_terms": [
+          "代价",
+          "伏笔",
+          "信息",
+          "冲突",
+          "变化",
+          "后果",
+          "场景",
+          "心理",
+          "悬念",
+          "情绪",
+          "状态",
+          "目标",
+          "空间",
+          "线索",
+          "细节",
+          "结构",
+          "结果",
+          "节奏",
+          "行动",
+          "观察",
+          "计划",
+          "选择",
+          "阻碍",
+          "限制"
+        ],
+        "matched": [
+          {
+            "item_id": "159.2_行动中思想描写",
+            "matched_tokens": [
+              "观察"
+            ],
+            "score": 1
+          }
+        ],
+        "candidate_count": 1
+      },
+      "static_edge_ids": [
+        "STATIC:1.1_主角->119.1_共鸣点"
+      ],
+      "dynamic_chain_ids": [
+        "C00005"
+      ],
+      "binding_profile": {
+        "dynamic_source": "1.1_主角",
+        "dynamic_target": "119.1_共鸣点",
+        "static_source": "1.1_主角",
+        "static_target": "119.1_共鸣点",
+        "anchor_ids": [
+          "S2.24",
+          "S2.29"
+        ],
+        "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+      },
+      "matrix_binding_ids": [
+        "TB-00003",
+        "TB-00006",
+        "TB-00009"
+      ]
+    }
+  ],
+  "scene_beat_cards": [
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S1",
+      "beat": "建立表面稳定与异常之间的反差",
+      "dynamic_edge_id": "C00001",
+      "source": "1.1_主角",
+      "target": "130_核心悬念",
+      "condition": "绑定主线；且当前故事明确采用该静态关系",
+      "effect": "当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新。",
+      "static_edge_id": "STATIC:12.11_能量异常->19.1_异常",
+      "static_edge": {
+        "source": "12.11_能量异常",
+        "target": "19.1_异常",
+        "type": "转化",
+        "condition": "能量异常是物理例外",
+        "priority": 1,
+        "semantic_score": 2,
+        "matched_tokens": [
+          "12.11_能量异常",
+          "19.1_异常"
+        ]
+      },
+      "anchor_ids": [
+        "C1.17",
+        "P1.21"
+      ],
+      "anchor_names": [
+        "观察_识别_模式_异常",
+        "视觉_看见_距离_近"
+      ],
+      "selection_rationale": {
+        "dynamic_chain": {
+          "id": "C00001",
+          "score": 2,
+          "matched_tokens": [
+            "1.1_主角",
+            "130_核心悬念"
+          ],
+          "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+        },
+        "static_edge": {
+          "id": "STATIC:12.11_能量异常->19.1_异常",
+          "score": 2,
+          "matched_tokens": [
+            "12.11_能量异常",
+            "19.1_异常"
+          ],
+          "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+        },
+        "anchor": {
+          "id": "C1.17",
+          "score": 2,
+          "matched_tokens": [
+            "观察_识别_模式_异常",
+            "发现异常模式"
+          ],
+          "binding_role": "将场景因果转译为可观察的空间、感知或身体表现"
+        }
+      },
+      "purpose": "建立表面稳定与异常之间的反差",
+      "location": "宗门能量检测场",
+      "participants": [],
+      "character_goal": "完成检测并判断异常是否来自自身修炼",
+      "obstacle": "检测规则只允许记录合格结果，异常读数会被负责者直接归为误差",
+      "new_information": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+      "state_before": "沈砚相信异常可能只是自身修炼不足造成的误差",
+      "state_after": "沈砚确认异常具有重复性和明确方向",
+      "ending": "检测石上的异常刻痕在众人离场后重新亮起",
+      "hook": "刻痕显示出与旧宗门记录相同的循环间隔",
+      "library_entry_ids": [
+        "159.2_行动中思想描写"
+      ],
+      "library_entries": [
+        {
+          "block": 159,
+          "item_id": "159.2_行动中思想描写",
+          "name": "行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "interpretation_terms": [
+            "判断",
+            "前因",
+            "行动中思想描写",
+            "行动结果",
+            "观察",
+            "调整"
+          ],
+          "prerequisites": [
+            "存在明确目标",
+            "存在阻碍",
+            "存在可观察信息变化",
+            "行动前先出现观察或线索",
+            "判断必须改变后续行动"
+          ],
+          "allowed_stages": [
+            "大纲",
+            "细纲",
+            "场景卡",
+            "正文",
+            "校验"
+          ],
+          "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+          "evidence_requirements": [
+            "scene_id",
+            "paragraph_index",
+            "prose_location",
+            "trigger",
+            "result"
+          ],
+          "misuse_risks": [
+            "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+          ]
+        }
+      ],
+      "library_selection": {
+        "mode": "scene_need_retrieval",
+        "query_fields": [
+          "purpose",
+          "location",
+          "character_goal",
+          "obstacle",
+          "new_information",
+          "state_before",
+          "state_after",
+          "ending",
+          "hook"
+        ],
+        "expanded_terms": [
+          "代价",
+          "伏笔",
+          "信息",
+          "冲突",
+          "变化",
+          "后果",
+          "场景",
+          "心理",
+          "悬念",
+          "情绪",
+          "状态",
+          "目标",
+          "空间",
+          "线索",
+          "细节",
+          "结构",
+          "结果",
+          "节奏",
+          "行动",
+          "观察",
+          "计划",
+          "选择",
+          "阻碍",
+          "限制"
+        ],
+        "matched": [
+          {
+            "item_id": "159.2_行动中思想描写",
+            "matched_tokens": [
+              "观察"
+            ],
+            "score": 1
+          }
+        ],
+        "candidate_count": 1
+      },
+      "static_edge_ids": [
+        "STATIC:12.11_能量异常->19.1_异常"
+      ],
+      "dynamic_chain_ids": [
+        "C00001"
+      ],
+      "binding_profile": {
+        "dynamic_source": "1.1_主角",
+        "dynamic_target": "130_核心悬念",
+        "static_source": "12.11_能量异常",
+        "static_target": "19.1_异常",
+        "anchor_ids": [
+          "C1.17",
+          "P1.21"
+        ],
+        "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+      },
+      "matrix_binding_ids": [
+        "TB-00001",
+        "TB-00004",
+        "TB-00007"
+      ]
+    },
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S2",
+      "beat": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+      "dynamic_edge_id": "C00004",
+      "source": "1.1_主角",
+      "target": "4.1_弧光",
+      "condition": "全书主线；且当前故事明确采用该静态关系",
+      "effect": "当起点持续或变化时，推动终点按阶段发生状态变化。",
+      "static_edge_id": "STATIC:32.7_未写明的历史->130_核心悬念",
+      "static_edge": {
+        "source": "32.7_未写明的历史",
+        "target": "130_核心悬念",
+        "type": "绑定",
+        "condition": "未写明的历史是悬念",
+        "priority": 1,
+        "semantic_score": 2,
+        "matched_tokens": [
+          "32.7_未写明的历史",
+          "130_核心悬念"
+        ]
+      },
+      "anchor_ids": [
+        "C1.19",
+        "P1.4"
+      ],
+      "anchor_names": [
+        "观察_识别_关联_因果",
+        "视觉_看见_物体_全景"
+      ],
+      "selection_rationale": {
+        "dynamic_chain": {
+          "id": "C00004",
+          "score": 2,
+          "matched_tokens": [
+            "1.1_主角",
+            "4.1_弧光"
+          ],
+          "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+        },
+        "static_edge": {
+          "id": "STATIC:32.7_未写明的历史->130_核心悬念",
+          "score": 2,
+          "matched_tokens": [
+            "32.7_未写明的历史",
+            "130_核心悬念"
+          ],
+          "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+        },
+        "anchor": {
+          "id": "C1.19",
+          "score": 2,
+          "matched_tokens": [
+            "观察_识别_关联_因果",
+            "识别因果关联"
+          ],
+          "binding_role": "将场景因果转译为可观察的空间、感知或身体表现"
+        }
+      },
+      "purpose": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+      "location": "宗门档案廊",
+      "participants": [],
+      "character_goal": "查找旧区域和异常刻痕的对应记录",
+      "obstacle": "档案按宗门等级分层，低阶权限只能看到被删改后的稳定期记录",
+      "new_information": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+      "state_before": "沈砚只有现场异常，没有历史证据",
+      "state_after": "沈砚掌握异常与历史循环可能相关的线索",
+      "ending": "档案管理员发现缺页并关闭了对应卷宗",
+      "hook": "缺页边缘留下与检测石相同的刻痕",
+      "library_entry_ids": [
+        "159.2_行动中思想描写"
+      ],
+      "library_entries": [
+        {
+          "block": 159,
+          "item_id": "159.2_行动中思想描写",
+          "name": "行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "interpretation_terms": [
+            "判断",
+            "前因",
+            "行动中思想描写",
+            "行动结果",
+            "观察",
+            "调整"
+          ],
+          "prerequisites": [
+            "存在明确目标",
+            "存在阻碍",
+            "存在可观察信息变化",
+            "行动前先出现观察或线索",
+            "判断必须改变后续行动"
+          ],
+          "allowed_stages": [
+            "大纲",
+            "细纲",
+            "场景卡",
+            "正文",
+            "校验"
+          ],
+          "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+          "evidence_requirements": [
+            "scene_id",
+            "paragraph_index",
+            "prose_location",
+            "trigger",
+            "result"
+          ],
+          "misuse_risks": [
+            "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+          ]
+        }
+      ],
+      "library_selection": {
+        "mode": "scene_need_retrieval",
+        "query_fields": [
+          "purpose",
+          "location",
+          "character_goal",
+          "obstacle",
+          "new_information",
+          "state_before",
+          "state_after",
+          "ending",
+          "hook"
+        ],
+        "expanded_terms": [
+          "代价",
+          "伏笔",
+          "信息",
+          "冲突",
+          "变化",
+          "后果",
+          "场景",
+          "心理",
+          "悬念",
+          "情绪",
+          "状态",
+          "目标",
+          "空间",
+          "线索",
+          "细节",
+          "结构",
+          "结果",
+          "节奏",
+          "行动",
+          "观察",
+          "计划",
+          "选择",
+          "阻碍",
+          "限制"
+        ],
+        "matched": [
+          {
+            "item_id": "159.2_行动中思想描写",
+            "matched_tokens": [
+              "观察"
+            ],
+            "score": 1
+          }
+        ],
+        "candidate_count": 1
+      },
+      "static_edge_ids": [
+        "STATIC:32.7_未写明的历史->130_核心悬念"
+      ],
+      "dynamic_chain_ids": [
+        "C00004"
+      ],
+      "binding_profile": {
+        "dynamic_source": "1.1_主角",
+        "dynamic_target": "4.1_弧光",
+        "static_source": "32.7_未写明的历史",
+        "static_target": "130_核心悬念",
+        "anchor_ids": [
+          "C1.19",
+          "P1.4"
+        ],
+        "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+      },
+      "matrix_binding_ids": [
+        "TB-00002",
+        "TB-00005",
+        "TB-00008"
+      ]
+    },
+    {
+      "chapter_id": "1",
+      "scene_id": "1-S3",
+      "beat": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+      "dynamic_edge_id": "C00005",
+      "source": "1.1_主角",
+      "target": "119.1_共鸣点",
+      "condition": "开篇建立；且当前故事明确采用该静态关系",
+      "effect": "当起点成立时，限制终点可采取的状态或行为范围。",
+      "static_edge_id": "STATIC:1.1_主角->119.1_共鸣点",
+      "static_edge": {
+        "source": "1.1_主角",
+        "target": "119.1_共鸣点",
+        "type": "约束",
+        "condition": "开篇建立",
+        "priority": 2,
+        "semantic_score": 2,
+        "matched_tokens": [
+          "1.1_主角",
+          "119.1_共鸣点"
+        ]
+      },
+      "anchor_ids": [
+        "S2.24",
+        "S2.29"
+      ],
+      "anchor_names": [
+        "空间状态_封锁",
+        "空间状态_有声_回响"
+      ],
+      "selection_rationale": {
+        "dynamic_chain": {
+          "id": "C00005",
+          "score": 2,
+          "matched_tokens": [
+            "1.1_主角",
+            "119.1_共鸣点"
+          ],
+          "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+        },
+        "static_edge": {
+          "id": "STATIC:1.1_主角->119.1_共鸣点",
+          "score": 2,
+          "matched_tokens": [
+            "1.1_主角",
+            "119.1_共鸣点"
+          ],
+          "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+        },
+        "anchor": {
+          "id": "S2.24",
+          "score": 2,
+          "matched_tokens": [
+            "空间状态_封锁",
+            "空间被封锁"
+          ],
+          "binding_role": "将场景因果转译为可观察的空间、感知或身体表现"
+        }
+      },
+      "purpose": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+      "location": "通往封闭旧区域的外廊",
+      "participants": [],
+      "character_goal": "在不惊动宗门管理者的情况下确认刻痕来源",
+      "obstacle": "旧区域由宗门禁令封锁，进入会失去现有晋升资格",
+      "new_information": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+      "state_before": "沈砚仍可把异常当作偶发事件上报并回到原有秩序",
+      "state_after": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+      "ending": "封锁阵列短暂失效，旧区域内部传来第二次能量回响",
+      "hook": "回响中出现只有沈砚能辨认的重复信号",
+      "library_entry_ids": [
+        "159.2_行动中思想描写"
+      ],
+      "library_entries": [
+        {
+          "block": 159,
+          "item_id": "159.2_行动中思想描写",
+          "name": "行动中思想描写",
+          "source_ref": "原始资料/资料库.txt:46464",
+          "definition": "行动过程中角色的即时判断和调整——读者看到角色“边做边想”。",
+          "instruction": "- 每个行动回合至少1次“行动中的判断”（“他偏了一下手腕——角度不对，要重新调整”）\n- 行动中的思想须通过动作体现（不能只是心里想，要外化为身体反应或动作调整）\n- 每3个动作后至少1次“观察-判断-调整”循环\n为关键行动回合设计“观察→判断→调整”三阶段。\n动作序列中插入停顿：动作→观察→判断→调整→下一个动作。",
+          "interpretation_terms": [
+            "判断",
+            "前因",
+            "行动中思想描写",
+            "行动结果",
+            "观察",
+            "调整"
+          ],
+          "prerequisites": [
+            "存在明确目标",
+            "存在阻碍",
+            "存在可观察信息变化",
+            "行动前先出现观察或线索",
+            "判断必须改变后续行动"
+          ],
+          "allowed_stages": [
+            "大纲",
+            "细纲",
+            "场景卡",
+            "正文",
+            "校验"
+          ],
+          "application": "在行动回合执行观察→判断→调整；用站位、视线、手势或停顿外化判断。",
+          "evidence_requirements": [
+            "scene_id",
+            "paragraph_index",
+            "prose_location",
+            "trigger",
+            "result"
+          ],
+          "misuse_risks": [
+            "禁止把定义、指令、调用条件或资料 ID 原文写入正文"
+          ]
+        }
+      ],
+      "library_selection": {
+        "mode": "scene_need_retrieval",
+        "query_fields": [
+          "purpose",
+          "location",
+          "character_goal",
+          "obstacle",
+          "new_information",
+          "state_before",
+          "state_after",
+          "ending",
+          "hook"
+        ],
+        "expanded_terms": [
+          "代价",
+          "伏笔",
+          "信息",
+          "冲突",
+          "变化",
+          "后果",
+          "场景",
+          "心理",
+          "悬念",
+          "情绪",
+          "状态",
+          "目标",
+          "空间",
+          "线索",
+          "细节",
+          "结构",
+          "结果",
+          "节奏",
+          "行动",
+          "观察",
+          "计划",
+          "选择",
+          "阻碍",
+          "限制"
+        ],
+        "matched": [
+          {
+            "item_id": "159.2_行动中思想描写",
+            "matched_tokens": [
+              "观察"
+            ],
+            "score": 1
+          }
+        ],
+        "candidate_count": 1
+      },
+      "static_edge_ids": [
+        "STATIC:1.1_主角->119.1_共鸣点"
+      ],
+      "dynamic_chain_ids": [
+        "C00005"
+      ],
+      "binding_profile": {
+        "dynamic_source": "1.1_主角",
+        "dynamic_target": "119.1_共鸣点",
+        "static_source": "1.1_主角",
+        "static_target": "119.1_共鸣点",
+        "anchor_ids": [
+          "S2.24",
+          "S2.29"
+        ],
+        "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+      },
+      "matrix_binding_ids": [
+        "TB-00003",
+        "TB-00006",
+        "TB-00009"
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "chapter_id": "1",
+      "chapter_goal": "在宗门日常秩序中确认一次无法被既有规则解释的能量异常，并取得第一条可追踪线索。",
+      "chapter_end_hook": "",
+      "scene_ids": [
+        "1-S1",
+        "1-S2",
+        "1-S3"
+      ]
+    }
+  ],
+  "self_check": {
+    "status": "passed",
+    "passed": true,
+    "details": [
+      "所有章节场景均具备beat、锚点和动态链"
+    ]
+  },
+  "total_scenes": 3,
+  "bind_to_project_type": "玄幻",
+  "protagonist_name": "沈砚",
+  "fallback_reason": null,
+  "project_chapter_id": "1",
+  "project_chapter_goal": "在宗门日常秩序中确认一次无法被既有规则解释的能量异常，并取得第一条可追踪线索。",
+  "project_chapter_end_hook": "",
+  "dynamic_chain_count_from_module_06": 3,
+  "dynamic_chain_count_used": 3,
+  "anchor_total": 1680,
+  "anchor_category_counts": {
+    "M": 180,
+    "S": 110,
+    "P": 200,
+    "B": 160,
+    "E": 240,
+    "C": 220,
+    "T": 110,
+    "D": 150,
+    "A": 200,
+    "L": 100,
+    "ID": 60,
+    "U": 60
+  },
+  "design_bindings": [
+    {
+      "source_kind": "dynamic_chain",
+      "source_id": "C00001",
+      "chapter_id": "1",
+      "scene_id": "1-S1",
+      "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；动态链明确连接 state_before→action→state_after。",
+      "selection_rationale": {
+        "id": "C00001",
+        "score": 2,
+        "matched_tokens": [
+          "1.1_主角",
+          "130_核心悬念"
+        ],
+        "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+      }
+    },
+    {
+      "source_kind": "static_edge",
+      "source_id": "STATIC:12.11_能量异常->19.1_异常",
+      "chapter_id": "1",
+      "scene_id": "1-S1",
+      "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；静态连接作为本场景的规则约束或关系后果。",
+      "selection_rationale": {
+        "id": "STATIC:12.11_能量异常->19.1_异常",
+        "score": 2,
+        "matched_tokens": [
+          "12.11_能量异常",
+          "19.1_异常"
+        ],
+        "binding_role": "现场异常被主角识别并转化为可追踪的核心悬念"
+      }
+    },
+    {
+      "source_kind": "anchor",
+      "source_id": "C1.17",
+      "chapter_id": "1",
+      "scene_id": "1-S1",
+      "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；发现异常模式必须改变正文中的观察、判断或选择。",
+      "selection_rationale": {
+        "id": "C1.17",
+        "score": 2,
+        "matched_tokens": [
+          "观察_识别_模式_异常",
+          "发现异常模式"
+        ],
+        "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+      }
+    },
+    {
+      "source_kind": "anchor",
+      "source_id": "P1.21",
+      "chapter_id": "1",
+      "scene_id": "1-S1",
+      "decision_statement": "现场异常被主角识别并转化为可追踪的核心悬念；看见近距离必须改变正文中的观察、判断或选择。",
+      "selection_rationale": {
+        "id": "P1.21",
+        "score": 2,
+        "matched_tokens": [
+          "视觉_看见_距离_近",
+          "看见近距离"
+        ],
+        "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+      }
+    },
+    {
+      "source_kind": "dynamic_chain",
+      "source_id": "C00004",
+      "chapter_id": "1",
+      "scene_id": "1-S2",
+      "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；动态链明确连接 state_before→action→state_after。",
+      "selection_rationale": {
+        "id": "C00004",
+        "score": 2,
+        "matched_tokens": [
+          "1.1_主角",
+          "4.1_弧光"
+        ],
+        "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+      }
+    },
+    {
+      "source_kind": "static_edge",
+      "source_id": "STATIC:32.7_未写明的历史->130_核心悬念",
+      "chapter_id": "1",
+      "scene_id": "1-S2",
+      "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；静态连接作为本场景的规则约束或关系后果。",
+      "selection_rationale": {
+        "id": "STATIC:32.7_未写明的历史->130_核心悬念",
+        "score": 2,
+        "matched_tokens": [
+          "32.7_未写明的历史",
+          "130_核心悬念"
+        ],
+        "binding_role": "历史缺口改变主角的调查方向，并把证据保留为悬念"
+      }
+    },
+    {
+      "source_kind": "anchor",
+      "source_id": "C1.19",
+      "chapter_id": "1",
+      "scene_id": "1-S2",
+      "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；识别因果关联必须改变正文中的观察、判断或选择。",
+      "selection_rationale": {
+        "id": "C1.19",
+        "score": 2,
+        "matched_tokens": [
+          "观察_识别_关联_因果",
+          "识别因果关联"
+        ],
+        "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+      }
+    },
+    {
+      "source_kind": "anchor",
+      "source_id": "P1.4",
+      "chapter_id": "1",
+      "scene_id": "1-S2",
+      "decision_statement": "历史缺口改变主角的调查方向，并把证据保留为悬念；全景看见物体必须改变正文中的观察、判断或选择。",
+      "selection_rationale": {
+        "id": "P1.4",
+        "score": 2,
+        "matched_tokens": [
+          "视觉_看见_物体_全景",
+          "全景看见物体"
+        ],
+        "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+      }
+    },
+    {
+      "source_kind": "dynamic_chain",
+      "source_id": "C00005",
+      "chapter_id": "1",
+      "scene_id": "1-S3",
+      "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；动态链明确连接 state_before→action→state_after。",
+      "selection_rationale": {
+        "id": "C00005",
+        "score": 2,
+        "matched_tokens": [
+          "1.1_主角",
+          "119.1_共鸣点"
+        ],
+        "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+      }
+    },
+    {
+      "source_kind": "static_edge",
+      "source_id": "STATIC:1.1_主角->119.1_共鸣点",
+      "chapter_id": "1",
+      "scene_id": "1-S3",
+      "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；静态连接作为本场景的规则约束或关系后果。",
+      "selection_rationale": {
+        "id": "STATIC:1.1_主角->119.1_共鸣点",
+        "score": 2,
+        "matched_tokens": [
+          "1.1_主角",
+          "119.1_共鸣点"
+        ],
+        "binding_role": "封锁空间制造不可逆代价，迫使主角作出越界选择"
+      }
+    },
+    {
+      "source_kind": "anchor",
+      "source_id": "S2.24",
+      "chapter_id": "1",
+      "scene_id": "1-S3",
+      "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；空间被封锁必须改变正文中的观察、判断或选择。",
+      "selection_rationale": {
+        "id": "S2.24",
+        "score": 2,
+        "matched_tokens": [
+          "空间状态_封锁",
+          "空间被封锁"
+        ],
+        "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+      }
+    },
+    {
+      "source_kind": "anchor",
+      "source_id": "S2.29",
+      "chapter_id": "1",
+      "scene_id": "1-S3",
+      "decision_statement": "封锁空间制造不可逆代价，迫使主角作出越界选择；空间有回声必须改变正文中的观察、判断或选择。",
+      "selection_rationale": {
+        "id": "S2.29",
+        "score": 2,
+        "matched_tokens": [
+          "空间状态_有声_回响",
+          "空间有回声"
+        ],
+        "binding_role": "将锚点转译为可观察且影响因果的叙事事实"
+      }
+    }
+  ],
+  "activation_matrix_run_id": "run-20260812T180859Z-966dab14",
+  "activation_matrix_assignment_count": 13345,
+  "adoption_stage": "design",
+  "run_id": "run-20260812T180859Z-966dab14",
+  "scene_source_selection": "文档/证据/运行/run-20260812T180859Z-966dab14/scene_source_selection.json",
+  "scene_source_selection_sha256": "2126c26bb9dfbc31805c389eecd5f9892e237acc1702501fa83af9880d6ec0c9"
+}

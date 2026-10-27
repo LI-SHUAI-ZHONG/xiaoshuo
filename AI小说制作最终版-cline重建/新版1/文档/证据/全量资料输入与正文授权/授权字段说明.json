@@ -1,0 +1,19 @@
+{
+  "schema_version": "full-source-model-input-prose-authorization-1.0",
+  "required_for_any_true_permission": [
+    "authorization_scope",
+    "authorized_by",
+    "authorized_at",
+    "authorization_rationale"
+  ],
+  "immutable_binding": [
+    "binding_id",
+    "source_id",
+    "source_ref_sha256"
+  ],
+  "prohibitions": [
+    "来源资格、项目确认或替代来源重审通过不自动授予模型输入或正文写作权限。",
+    "未由本审计器输出的授权布尔值不得进入模型输入或正文生产。",
+    "两项权限必须同时为 true 才能进入正文生产队列。"
+  ]
+}

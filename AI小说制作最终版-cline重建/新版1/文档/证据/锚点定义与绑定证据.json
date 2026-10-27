@@ -1,0 +1,140 @@
+{
+  "schema_version": "anchor-binding-evidence-1.0",
+  "generated_at": "2026-08-12T18:09:15.283576Z",
+  "policy": "锚点定义来自原始网络；只有在 anchor_ids_used 中声明、正文出现定义/触发条件或专属叙事证据，且该证据改变观察、判断或选择的锚点才计为已消费。",
+  "total_anchor_definitions": 1790,
+  "scene_binding_count": 6,
+  "verified_consumed_count": 0,
+  "candidate_binding_count": 6,
+  "rows": [
+    {
+      "anchor_id": "C1.17",
+      "anchor_name": "观察_识别_模式_异常",
+      "anchor_definition": "发现异常模式",
+      "trigger_condition": "偏差识别",
+      "anchor_category": "认知",
+      "scene_binding": {
+        "chapter_id": "1",
+        "scene_id": "1-S1",
+        "scene_purpose": "建立表面稳定与异常之间的反差",
+        "binding_role": "场景可观察表现候选"
+      },
+      "text_location": [],
+      "narrative_evidence": [
+        "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+        "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差",
+        "检测石的三道细纹每隔六息同时亮起，和先前两次偏差的间隔分毫不差"
+      ],
+      "verification_status": "candidate_binding",
+      "confidence": "candidate",
+      "source_ref": "原始资料/锚点网络.txt"
+    },
+    {
+      "anchor_id": "P1.21",
+      "anchor_name": "视觉_看见_距离_近",
+      "anchor_definition": "看见近距离",
+      "trigger_condition": "近距离观察",
+      "anchor_category": "感知",
+      "scene_binding": {
+        "chapter_id": "1",
+        "scene_id": "1-S1",
+        "scene_purpose": "建立表面稳定与异常之间的反差",
+        "binding_role": "场景可观察表现候选"
+      },
+      "text_location": [],
+      "narrative_evidence": [
+        "他贴近检测石，发现最内侧的刻痕并非新裂，而是被人用药灰填过",
+        "他贴近检测石，发现最内侧的刻痕并非新裂，而是被人用药灰填过"
+      ],
+      "verification_status": "candidate_binding",
+      "confidence": "candidate",
+      "source_ref": "原始资料/锚点网络.txt"
+    },
+    {
+      "anchor_id": "C1.19",
+      "anchor_name": "观察_识别_关联_因果",
+      "anchor_definition": "识别因果关联",
+      "trigger_condition": "逻辑推理",
+      "anchor_category": "认知",
+      "scene_binding": {
+        "chapter_id": "1",
+        "scene_id": "1-S2",
+        "scene_purpose": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+        "binding_role": "场景可观察表现候选"
+      },
+      "text_location": [],
+      "narrative_evidence": [
+        "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+        "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法",
+        "药灰遮住旧刻痕、检测册只留合格结果，两件事指向同一套删改手法"
+      ],
+      "verification_status": "candidate_binding",
+      "confidence": "candidate",
+      "source_ref": "原始资料/锚点网络.txt"
+    },
+    {
+      "anchor_id": "P1.4",
+      "anchor_name": "视觉_看见_物体_全景",
+      "anchor_definition": "全景看见物体",
+      "trigger_condition": "完整视角",
+      "anchor_category": "感知",
+      "scene_binding": {
+        "chapter_id": "1",
+        "scene_id": "1-S2",
+        "scene_purpose": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+        "binding_role": "场景可观察表现候选"
+      },
+      "text_location": [],
+      "narrative_evidence": [
+        "他把摊开的旧册、封存柜和检测台一并看清，缺页恰好落在三者之间的记录时段",
+        "他把摊开的旧册、封存柜和检测台一并看清，缺页恰好落在三者之间的记录时段"
+      ],
+      "verification_status": "candidate_binding",
+      "confidence": "candidate",
+      "source_ref": "原始资料/锚点网络.txt"
+    },
+    {
+      "anchor_id": "S2.24",
+      "anchor_name": "空间状态_封锁",
+      "anchor_definition": "空间被封锁",
+      "trigger_condition": "封锁行为",
+      "anchor_category": "空间",
+      "scene_binding": {
+        "chapter_id": "1",
+        "scene_id": "1-S3",
+        "scene_purpose": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+        "binding_role": "场景可观察表现候选"
+      },
+      "text_location": [],
+      "narrative_evidence": [
+        "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+        "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面",
+        "旧区域门前的禁线合拢，连回廊另一端的灯火也被截在外面"
+      ],
+      "verification_status": "candidate_binding",
+      "confidence": "candidate",
+      "source_ref": "原始资料/锚点网络.txt"
+    },
+    {
+      "anchor_id": "S2.29",
+      "anchor_name": "空间状态_有声_回响",
+      "anchor_definition": "空间有回声",
+      "trigger_condition": "空间特性",
+      "anchor_category": "空间",
+      "scene_binding": {
+        "chapter_id": "1",
+        "scene_id": "1-S3",
+        "scene_purpose": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+        "binding_role": "场景可观察表现候选"
+      },
+      "text_location": [],
+      "narrative_evidence": [
+        "他敲了一下门环，回声从门后折回三次，最后一次来自更深的甬道",
+        "他敲了一下门环，回声从门后折回三次，最后一次来自更深的甬道"
+      ],
+      "verification_status": "candidate_binding",
+      "confidence": "candidate",
+      "source_ref": "原始资料/锚点网络.txt"
+    }
+  ]
+}

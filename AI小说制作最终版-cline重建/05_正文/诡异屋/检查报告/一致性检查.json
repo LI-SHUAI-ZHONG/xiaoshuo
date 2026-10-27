@@ -1,0 +1,132 @@
+{
+  "report_type":  "consistency_and_source_flow_check",
+  "status":  "PASS_WITH_SOURCE_FLOW_REPAIR_PARTIAL",
+    "checked_at":  "2026-08-09T09:45:00+08:00",
+    "current_state":  "AUTO_CONTINUE",
+    "checks":  [
+                     {
+                         "id": "SOURCE-FLOW-001",
+                         "item": "executable_source_records_have_structured_artifacts",
+                         "status": "PASS_REPAIRED",
+                         "evidence": "规划/资料驱动设计/*.json 和 规划/章节设计/卷01/*/chapter_execution_manifest.json"
+                     },
+                     {
+                         "id": "SOURCE-FLOW-002",
+                         "item": "chapter_001_source_call_audit",
+                         "status": "PASS_PARTIAL",
+                         "evidence": "检查报告/资料调用审计.json；原始生成时条目级调用证据缺失，已明确标注"
+                     },
+                     {
+                         "id": "SOURCE-FLOW-003",
+                         "item": "golden_three_task_contract",
+                         "status": "PASS_REPAIRED_PARTIAL",
+                         "evidence": "规划/资料驱动设计/golden_three_tasks.json；第001章任务部分满足，第002章已递进，第003章为下一设计门槛"
+                     },
+                     {
+                         "id": "SOURCE-FLOW-004",
+                         "item": "character_behavior_contract",
+                         "status": "PASS_REPAIRED_PARTIAL",
+                         "evidence": "规划/资料驱动设计/character_behavior_contract.json；第001章行为有文本证据但原生成前传递不可证明"
+                     },
+                     {
+                       "id":  "INIT-001",
+                       "item":  "entry_files_exist",
+                       "status":  "PASS"
+                   },
+                   {
+                       "id":  "INIT-002",
+                       "item":  "project_selection_fields_saved",
+                       "status":  "PASS"
+                   },
+                   {
+                       "id":  "INIT-003",
+                       "item":  "no_unconfirmed_facts_or_draft",
+                       "status":  "PASS"
+                   },
+                   {
+                       "id":  "INIT-004",
+                       "item":  "ordinary_pending_is_record_only",
+                       "status":  "PASS"
+                    },
+                    {
+                        "id": "DESIGN-001",
+                        "item": "story_bible_saved",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "DESIGN-002",
+                        "item": "type_style_length_applied",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "DESIGN-003",
+                        "item": "formal_text_not_generated",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "DESIGN-004",
+                        "item": "source_trace_recorded",
+                        "status": "PASS_PARTIAL"
+                    },
+                    {
+                        "id": "CHAPTER-001-001",
+                        "item": "causality",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-001-002",
+                        "item": "character_consistency",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-001-003",
+                        "item": "timeline_and_location",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-001-004",
+                        "item": "information_perspective",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-001-005",
+                        "item": "world_rules_and_clues",
+                        "status": "PASS_PARTIAL"
+                    },
+                    {
+                        "id": "CHAPTER-001-006",
+                        "item": "chapter_goal_and_style",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-002-001",
+                        "item": "causality",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-002-002",
+                        "item": "character_consistency",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-002-003",
+                        "item": "timeline_and_location",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-002-004",
+                        "item": "information_perspective",
+                        "status": "PASS"
+                    },
+                    {
+                        "id": "CHAPTER-002-005",
+                        "item": "world_rules_and_clues",
+                        "status": "PASS_PARTIAL"
+                    },
+                    {
+                        "id": "CHAPTER-002-006",
+                        "item": "chapter_goal_and_style",
+                        "status": "PASS"
+                    }
+               ]
+}

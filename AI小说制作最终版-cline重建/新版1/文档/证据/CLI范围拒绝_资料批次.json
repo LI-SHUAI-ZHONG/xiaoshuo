@@ -1,0 +1,8 @@
+{
+  "status": "blocked",
+  "release_scope": "material_batch_release",
+  "manifest": null,
+  "blockers": [
+    "资料批次发布必须通过全量资料发布预检.py；正式交付审批.py 不执行该范围"
+  ]
+}

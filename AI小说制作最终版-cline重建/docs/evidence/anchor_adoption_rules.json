@@ -1,0 +1,44 @@
+{
+  "rules": [
+    {
+      "id": "AN-R1",
+      "condition": "每个场景设计必须声明所采用的锚点ID列表，且至少包含1个锚点。",
+      "action": "在场景设计文档中记录一个或多个有效anchor_id；列表为空或缺失时标记为设计不完整。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "AN-R2",
+      "condition": "每个采用的锚点必须绑定到一个具体场景位置，包括章节和段落或场景描述。",
+      "action": "记录bound_to_scene、bound_to_chapter和可定位正文位置的text_location；缺少任一定位信息时不认定为有效绑定。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "AN-R3",
+      "condition": "锚点采用记录必须写入docs/evidence/anchor_consumption.jsonl。",
+      "action": "为每条采用的锚点写入锚点ID、类别、场景绑定、章节路径、设计文档路径、正文位置、confidence和ISO时间戳。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "AN-R4",
+      "condition": "正文生成后，必须验证每个场景是否至少有一个锚点落在正文中，验证方式可以是人工或半自动。",
+      "action": "对每个场景执行锚点正文落点验证，并记录验证结果或关联消费记录。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "AN-R5",
+      "condition": "如果一个场景没有任何锚点正文落点，必须标记为warning。",
+      "action": "提示“场景缺少锚点表现”，但不阻断正文生成。",
+      "blocking_level": "warning"
+    }
+  ],
+  "consumption_schema": {
+    "anchor_id": "string（如B1.1）",
+    "anchor_category": "身体|空间|感知|...",
+    "bound_to_scene": "场景ID",
+    "bound_to_chapter": "章节路径",
+    "used_in_design": "设计文档路径",
+    "text_location": "章节名#段落号或描述",
+    "confidence": "high|medium|low",
+    "consumed_at": "ISO时间"
+  }
+}

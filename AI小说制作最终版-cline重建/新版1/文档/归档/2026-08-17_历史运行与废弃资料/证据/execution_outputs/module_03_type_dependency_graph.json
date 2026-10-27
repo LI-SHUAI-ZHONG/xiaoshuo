@@ -1,0 +1,403 @@
+{
+  "nodes": [
+    "仙侠",
+    "体育",
+    "军事",
+    "历史",
+    "悬疑",
+    "游戏",
+    "灵异",
+    "玄幻",
+    "科幻",
+    "言情",
+    "都市"
+  ],
+  "edges": [
+    {
+      "id": "玄幻_仙侠",
+      "compatibility": "medium",
+      "connections": [
+        "CONN-玄幻_仙侠-001"
+      ]
+    },
+    {
+      "id": "玄幻_科幻",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_科幻-002"
+      ]
+    },
+    {
+      "id": "玄幻_悬疑",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_悬疑-003"
+      ]
+    },
+    {
+      "id": "玄幻_都市",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_都市-004"
+      ]
+    },
+    {
+      "id": "玄幻_言情",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_言情-005"
+      ]
+    },
+    {
+      "id": "玄幻_历史",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_历史-006"
+      ]
+    },
+    {
+      "id": "玄幻_军事",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_军事-007"
+      ]
+    },
+    {
+      "id": "玄幻_游戏",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_游戏-008"
+      ]
+    },
+    {
+      "id": "玄幻_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_体育-009"
+      ]
+    },
+    {
+      "id": "玄幻_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-玄幻_灵异-010"
+      ]
+    },
+    {
+      "id": "仙侠_科幻",
+      "compatibility": "low",
+      "connections": [
+        "CONN-仙侠_科幻-011"
+      ]
+    },
+    {
+      "id": "仙侠_悬疑",
+      "compatibility": "low",
+      "connections": [
+        "CONN-仙侠_悬疑-012"
+      ]
+    },
+    {
+      "id": "仙侠_都市",
+      "compatibility": "low",
+      "connections": [
+        "CONN-仙侠_都市-013"
+      ]
+    },
+    {
+      "id": "仙侠_言情",
+      "compatibility": "low",
+      "connections": [
+        "CONN-仙侠_言情-014"
+      ]
+    },
+    {
+      "id": "仙侠_历史",
+      "compatibility": "medium",
+      "connections": [
+        "CONN-仙侠_历史-015"
+      ]
+    },
+    {
+      "id": "仙侠_军事",
+      "compatibility": "low",
+      "connections": [
+        "CONN-仙侠_军事-016"
+      ]
+    },
+    {
+      "id": "仙侠_游戏",
+      "compatibility": "low",
+      "connections": [
+        "CONN-仙侠_游戏-017"
+      ]
+    },
+    {
+      "id": "仙侠_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-仙侠_体育-018"
+      ]
+    },
+    {
+      "id": "仙侠_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-仙侠_灵异-019"
+      ]
+    },
+    {
+      "id": "科幻_悬疑",
+      "compatibility": "low",
+      "connections": [
+        "CONN-科幻_悬疑-020"
+      ]
+    },
+    {
+      "id": "科幻_都市",
+      "compatibility": "low",
+      "connections": [
+        "CONN-科幻_都市-021"
+      ]
+    },
+    {
+      "id": "科幻_言情",
+      "compatibility": "low",
+      "connections": [
+        "CONN-科幻_言情-022"
+      ]
+    },
+    {
+      "id": "科幻_历史",
+      "compatibility": "low",
+      "connections": [
+        "CONN-科幻_历史-023"
+      ]
+    },
+    {
+      "id": "科幻_军事",
+      "compatibility": "low",
+      "connections": [
+        "CONN-科幻_军事-024"
+      ]
+    },
+    {
+      "id": "科幻_游戏",
+      "compatibility": "low",
+      "connections": [
+        "CONN-科幻_游戏-025"
+      ]
+    },
+    {
+      "id": "科幻_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-科幻_体育-026"
+      ]
+    },
+    {
+      "id": "科幻_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-科幻_灵异-027"
+      ]
+    },
+    {
+      "id": "悬疑_都市",
+      "compatibility": "low",
+      "connections": [
+        "CONN-悬疑_都市-028"
+      ]
+    },
+    {
+      "id": "悬疑_言情",
+      "compatibility": "low",
+      "connections": [
+        "CONN-悬疑_言情-029"
+      ]
+    },
+    {
+      "id": "悬疑_历史",
+      "compatibility": "low",
+      "connections": [
+        "CONN-悬疑_历史-030"
+      ]
+    },
+    {
+      "id": "悬疑_军事",
+      "compatibility": "low",
+      "connections": [
+        "CONN-悬疑_军事-031"
+      ]
+    },
+    {
+      "id": "悬疑_游戏",
+      "compatibility": "low",
+      "connections": [
+        "CONN-悬疑_游戏-032"
+      ]
+    },
+    {
+      "id": "悬疑_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-悬疑_体育-033"
+      ]
+    },
+    {
+      "id": "悬疑_灵异",
+      "compatibility": "high",
+      "connections": [
+        "CONN-悬疑_灵异-034"
+      ]
+    },
+    {
+      "id": "都市_言情",
+      "compatibility": "low",
+      "connections": [
+        "CONN-都市_言情-035"
+      ]
+    },
+    {
+      "id": "都市_历史",
+      "compatibility": "medium",
+      "connections": [
+        "CONN-都市_历史-036"
+      ]
+    },
+    {
+      "id": "都市_军事",
+      "compatibility": "low",
+      "connections": [
+        "CONN-都市_军事-037"
+      ]
+    },
+    {
+      "id": "都市_游戏",
+      "compatibility": "low",
+      "connections": [
+        "CONN-都市_游戏-038"
+      ]
+    },
+    {
+      "id": "都市_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-都市_体育-039"
+      ]
+    },
+    {
+      "id": "都市_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-都市_灵异-040"
+      ]
+    },
+    {
+      "id": "言情_历史",
+      "compatibility": "low",
+      "connections": [
+        "CONN-言情_历史-041"
+      ]
+    },
+    {
+      "id": "言情_军事",
+      "compatibility": "low",
+      "connections": [
+        "CONN-言情_军事-042"
+      ]
+    },
+    {
+      "id": "言情_游戏",
+      "compatibility": "low",
+      "connections": [
+        "CONN-言情_游戏-043"
+      ]
+    },
+    {
+      "id": "言情_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-言情_体育-044"
+      ]
+    },
+    {
+      "id": "言情_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-言情_灵异-045"
+      ]
+    },
+    {
+      "id": "历史_军事",
+      "compatibility": "low",
+      "connections": [
+        "CONN-历史_军事-046"
+      ]
+    },
+    {
+      "id": "历史_游戏",
+      "compatibility": "low",
+      "connections": [
+        "CONN-历史_游戏-047"
+      ]
+    },
+    {
+      "id": "历史_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-历史_体育-048"
+      ]
+    },
+    {
+      "id": "历史_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-历史_灵异-049"
+      ]
+    },
+    {
+      "id": "军事_游戏",
+      "compatibility": "low",
+      "connections": [
+        "CONN-军事_游戏-050"
+      ]
+    },
+    {
+      "id": "军事_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-军事_体育-051"
+      ]
+    },
+    {
+      "id": "军事_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-军事_灵异-052"
+      ]
+    },
+    {
+      "id": "游戏_体育",
+      "compatibility": "low",
+      "connections": [
+        "CONN-游戏_体育-053"
+      ]
+    },
+    {
+      "id": "游戏_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-游戏_灵异-054"
+      ]
+    },
+    {
+      "id": "体育_灵异",
+      "compatibility": "low",
+      "connections": [
+        "CONN-体育_灵异-055"
+      ]
+    }
+  ],
+  "combination_count": 55
+}

@@ -1,0 +1,24 @@
+run_id: "SIM-20260808-001"
+request_file: "06_测试验证/模拟需求.yaml"
+reference_read_only: true
+selected_modules:
+  - id: "MOD-CAPABILITY"
+    reason: "需要故事核心、人物代价、冲突和悬念设计方法"
+  - id: "MOD-TYPE"
+    reason: "需要都市悬疑的读者期待、节奏和类型边界"
+  - id: "MOD-CONNECTION"
+    reason: "需要调查推理与成长线的兼容组合"
+  - id: "MOD-STATIC"
+    reason: "需要建立主角、案件、城市背景和连续线索的稳定关系"
+  - id: "MOD-DYNAMIC"
+    reason: "需要设计异常事件、调查行动、后果和前三章钩子"
+  - id: "MOD-ANCHOR"
+    reason: "需要把现场压迫感和克制风格落到空间、感知和行动"
+  - id: "MOD-EXECUTION"
+    reason: "需要将综合结果转换为前三章大纲输出"
+not_selected_modules:
+  - id: "出版整理"
+    reason: "用户明确本次只验证前三章大纲"
+final_design_output: "06_测试验证/模拟综合设计结果.md"
+final_content_output: null
+status: "流程验证完成，按限制未生成正文"

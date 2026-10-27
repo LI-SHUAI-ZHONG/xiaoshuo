@@ -1,0 +1,29 @@
+{
+  "schema_version": "strict-source-upgrade-batch-1.0",
+  "batch_id": "SOURCE-UPGRADE-02225",
+  "record_limit": 6,
+  "prose_write_allowed": false,
+  "records": [
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-13345",
+      "consumption_id": "PC-13345",
+      "binding_id": "TB-01909",
+      "source_id": "STATIC:9.5_状态追踪->133.1_章节预览#1341",
+      "source_kind": "静态网络",
+      "source_ref": "网络完整数据/静态连接完整数据.json:connections[1340]",
+      "source_ref_sha256": "13e521c7cf43e8260c8e47763188c25c0dd42f9c9237dface1a79e44600a2b27",
+      "source_item_sha256": "8e5e6ebe6a65f3751bb171775164fb42c51e5f9eabc2e3ea7a8ef9ab4bc1d31f",
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "draft_audit_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "upgraded_for_draft_audit",
+      "errors": []
+    }
+  ]
+}

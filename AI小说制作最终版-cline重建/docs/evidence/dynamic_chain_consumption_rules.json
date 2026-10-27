@@ -1,0 +1,50 @@
+{
+  "rules": [
+    {
+      "id": "DC-R1",
+      "condition": "任何角色设计、主线设计或场景设计决策引用动态链时，设计文档必须明确标注对应的chain_id。",
+      "action": "记录设计文档路径及其引用的chain_id；缺少明确chain_id时，不认定为动态链设计引用。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "DC-R2",
+      "condition": "章节计划必须列出该章节使用的动态链chain_id列表。",
+      "action": "在章节计划中保存完整chain_id列表；列表缺失或无法定位时，不能将该章节声明为已消费动态链。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "DC-R3",
+      "condition": "动态链至少被一个设计决策引用，或至少被一个章节计划明确列出，才可认定为采用；设计决策和章节计划同时引用时为高置信度。",
+      "action": "仅设计决策引用或仅章节计划引用时confidence为medium；两者同时引用时confidence为high；没有任一合格引用时不得标记为consumed。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "DC-R4",
+      "condition": "动态链采用记录必须写入docs/evidence/dynamic_chain_consumption.jsonl。",
+      "action": "为每条采用的动态链写入chain_id、设计文档路径、章节路径、confidence和ISO时间戳。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "DC-R5",
+      "condition": "正文生成前，运行器必须检查当前章节是否至少有一条动态链被标记为consumed。",
+      "action": "当当前章节consumed动态链数量为0时阻断正文生成；阻断级别可配置为warning或blocker，当前默认值为blocker。",
+      "blocking_level": "blocker",
+      "default_mode": "blocker",
+      "allowed_modes": [
+        "warning",
+        "blocker"
+      ]
+    }
+  ],
+  "consumption_schema": {
+    "chain_id": "string",
+    "used_in_design": [
+      "设计文档路径"
+    ],
+    "used_in_chapter": [
+      "章节路径"
+    ],
+    "confidence": "high|medium|low",
+    "consumed_at": "ISO时间"
+  }
+}

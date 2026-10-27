@@ -1,0 +1,181 @@
+{
+  "project_id": "trial-玄幻-沈砚",
+  "project_name": "trial-玄幻-沈砚",
+  "book_title": "暗流玄境",
+  "genre_selection": [
+    "玄幻"
+  ],
+  "chapter_target": 1,
+  "protagonist_name": "沈砚",
+  "project_config": {
+    "schema_version": "project-config-1.0",
+    "project_id": "trial-玄幻-沈砚",
+    "project_name": "trial-玄幻-沈砚",
+    "book_title": "暗流玄境",
+    "story_bible": "配置/项目创作圣经.json",
+    "created_at": "2026-08-12T00:00:00Z",
+    "genre_selection": [
+      "玄幻"
+    ],
+    "type_combination": null,
+    "activation_policy": {
+      "material_scope": "按创作需要分层激活，未满足条件的资料进入后续消费队列",
+      "enabled_binding_classes": [
+        "direct_creation",
+        "indirect_constraint",
+        "candidate_retrieval",
+        "deferred_activation"
+      ],
+      "inference_stages": [
+        "剧情创建",
+        "剧情",
+        "大纲",
+        "分纲",
+        "细纲",
+        "场景卡",
+        "正文",
+        "校验"
+      ],
+      "recheck_after_artifact": true,
+      "require_explicit_evidence_for_prose": true
+    },
+    "style_selection": {
+      "narrative_perspective": "限制视角",
+      "pacing": "中速递进",
+      "emotional_density": "中",
+      "target_reader": "喜欢悬念、规则博弈与成长代价的成年玄幻读者"
+    },
+    "world_stage": "暗流期",
+    "mainline_conflict": "栖云宗以镇潮阵和晋升制度维持灵脉稳定，却将低阶弟子的灵息输送给旧域阵眼；沈砚必须在揭露真相、救出幸存者与避免潮灾之间寻找不以秘密牺牲为代价的选择。",
+    "core_mystery": "检测石为何总在第七息回亮，沈砚父亲当年到底为何死在潮期，而旧域中被持续输送灵息的人是谁？",
+    "protagonist": {
+      "name": "沈砚",
+      "dynamic_node_id": "1.1",
+      "dynamic_node_name": "主角",
+      "dynamic_aliases": [],
+      "personality": [
+        "克制敏锐",
+        "不轻信权威",
+        "在证据充分后愿意承担后果"
+      ],
+      "desire": "取得内门晋升资格，换回被宗门扣留的母亲遗物。",
+      "obsession": "父亲被定性为修行失控，他拒绝接受这份没有证据的结论。",
+      "decision_tendency": [
+        "先把异常化为可复核的细节",
+        "以问题逼人暴露立场",
+        "确认代价后独自承担选择"
+      ],
+      "blind_spots": [
+        "习惯独自取证，常把盟友置于被动",
+        "把守序者的恐惧误判为恶意"
+      ],
+      "emotional_reactions": [
+        "被敷衍时先沉默再追问细节",
+        "看见他人替自己付代价时会失去冷静",
+        "听到父亲相关线索时会短暂失去对灵息回声的判断"
+      ]
+    },
+    "chapter_plan": [
+      {
+        "chapter_id": "1",
+        "chapter_goal": "在宗门日常秩序中确认一次无法被既有规则解释的能量异常，并取得第一条可追踪线索。",
+        "scenes": [
+          {
+            "scene_id": "1-S1",
+            "purpose": "建立表面稳定与异常之间的反差",
+            "location": "宗门能量检测场",
+            "character_goal": "完成检测并判断异常是否来自自身修炼",
+            "obstacle": "检测规则只允许记录合格结果，异常读数会被负责者直接归为误差",
+            "new_information": "能量读数在检测结束后再次出现短暂回升，且回升方向指向封闭的旧区域",
+            "state_before": "沈砚相信异常可能只是自身修炼不足造成的误差",
+            "state_after": "沈砚确认异常具有重复性和明确方向",
+            "ending": "检测石上的异常刻痕在众人离场后重新亮起",
+            "hook": "刻痕显示出与旧宗门记录相同的循环间隔"
+          },
+          {
+            "scene_id": "1-S2",
+            "purpose": "迫使沈砚从确认异常转向追查被删改的记录，并展示规则对信息的压制",
+            "location": "宗门档案廊",
+            "character_goal": "查找旧区域和异常刻痕的对应记录",
+            "obstacle": "档案按宗门等级分层，低阶权限只能看到被删改后的稳定期记录",
+            "new_information": "一份残缺记录提到异常发生前后存在固定的能量潮汐变化",
+            "state_before": "沈砚只有现场异常，没有历史证据",
+            "state_after": "沈砚掌握异常与历史循环可能相关的线索",
+            "ending": "档案管理员发现缺页并关闭了对应卷宗",
+            "hook": "缺页边缘留下与检测石相同的刻痕"
+          },
+          {
+            "scene_id": "1-S3",
+            "purpose": "让沈砚面对失去晋升资格的代价并作出进入封闭区域的不可逆选择",
+            "location": "通往封闭旧区域的外廊",
+            "character_goal": "在不惊动宗门管理者的情况下确认刻痕来源",
+            "obstacle": "旧区域由宗门禁令封锁，进入会失去现有晋升资格",
+            "new_information": "封锁阵列并非阻止能量外泄，而是在按固定周期向旧区域输送能量",
+            "state_before": "沈砚仍可把异常当作偶发事件上报并回到原有秩序",
+            "state_after": "沈砚选择保留线索并进入调查，正式站到旧规则的对立面",
+            "ending": "封锁阵列短暂失效，旧区域内部传来第二次能量回响",
+            "hook": "回响中出现只有沈砚能辨认的重复信号"
+          }
+        ],
+        "target_words": 2000
+      }
+    ],
+    "status": "derived_input",
+    "input_provenance": {
+      "project_id": {
+        "value": "trial-玄幻-沈砚",
+        "source": "历史模块输出中的项目标识；待项目所有者确认"
+      },
+      "genre_selection": {
+        "value": [
+          "玄幻"
+        ],
+        "source": "文档/证据/execution_outputs/module_02_type_decision.json:selected_types"
+      },
+      "world_stage": {
+        "value": "暗流期",
+        "source": "原始资料/资料库.txt:11768；仅为资料中的世界阶段定义，不代表项目事实"
+      },
+      "protagonist_name": {
+        "value": "沈砚",
+        "source": "历史模块输出和项目标识；原始资料未提供可核验的人物档案"
+      },
+      "dynamic_binding": {
+        "node_id": "1.1",
+        "node_name": "主角",
+        "source": "网络完整数据/动态连接完整数据.json"
+      }
+    },
+    "quality_gate": {
+      "delivery_status": "derived_candidate",
+      "reason": "关键创作字段由玄幻类型规则、世界板块、动态网络和开篇规则派生，尚未获得项目作者确认；可执行生成但不得标记为最终交付。",
+      "allow_formal_pipeline": false,
+      "requires_source_quality_gate": true
+    },
+    "derivation_policy": {
+      "status": "derived",
+      "source_file": "文档/证据/派生剧情输入.json",
+      "original_facts_unchanged": true,
+      "human_confirmation_required_before_delivery": true
+    },
+    "target_words": 2000,
+    "project_mode": "system_runtime_planned",
+    "runtime_calibration": {
+      "applied": true,
+      "policy": "每场景约 650 字的行动链初稿预算；每段必须推进关系、信息或代价，不以填充句达到篇幅",
+      "target_chapter_count": 1
+    },
+    "target_chapter_count": 1
+  },
+  "project_config_path": "D:\\AI小说制作最终版-cline重建\\新版1\\配置\\project_config.json",
+  "initialized_at": "2026-08-12T18:09:07.400625Z",
+  "status": "success",
+  "blocking_failures": [],
+  "input_contract": {
+    "valid": true,
+    "errors": []
+  },
+  "run_id": "run-20260812T180859Z-966dab14",
+  "run_input_snapshot": "文档/证据/运行/run-20260812T180859Z-966dab14/run_input_snapshot.json",
+  "run_input_snapshot_sha256": "44d1d3d35e2deae6bcb5d9f812f1aefa6dee33b546c63a7aa17a4af715a7a596"
+}

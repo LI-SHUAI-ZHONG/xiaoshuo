@@ -1,0 +1,151 @@
+{
+  "schema_version": "library-adoption-rules-1.0",
+  "purpose": "为新项目建立资料库条目从选择、决策到设计或章节计划的可追溯采用记录。",
+  "source_index": "docs/library_index.jsonl",
+  "baseline": {
+    "indexed_entries_are_not_adopted": true,
+    "current_adoption_baseline": {
+      "source": "docs/library_adoption.jsonl",
+      "scope": "资料库01-10板块",
+      "indexed_entries": 74,
+      "adopted_entries": 0,
+      "not_adopted_entries": 74
+    }
+  },
+  "adoption_definition": {
+    "required_chain": [
+      "entry_id",
+      "task_declaration",
+      "decision_statement",
+      "source_ref"
+    ],
+    "rule": "只有当项目任务明确声明使用entry_id，并且设计文件或章节计划中存在可定位、能说明该条目如何改变方案的具体决策语句，才算采用。",
+    "not_adopted_rule": "只有索引命中、模块被选中、资料被读取、概念名称被提及、审计报告出现或回溯文件能够解释正文，均不足以构成采用；缺少完整采用链时标记为not_adopted。"
+  },
+  "task_requirements": {
+    "task_declaration": {
+      "required_fields": [
+        "task_id",
+        "task_name",
+        "declared_entry_ids",
+        "declared_at"
+      ],
+      "rule": "每个设计任务必须在开始前声明本任务使用的entry_id列表；列表为空时不得声称资料库条目已采用。",
+      "examples": [
+        {
+          "task_id": "TASK-CHARACTER-001",
+          "task_name": "设计主角",
+          "declared_entry_ids": ["1.1_主角", "2.4_角色性格", "3.1_角色欲望_马斯洛层级"],
+          "declared_at": "2026-01-01T00:00:00Z"
+        }
+      ]
+    },
+    "decision_evidence": {
+      "accepted_sources": [
+        "综合设计文件",
+        "章节计划文件",
+        "章节执行清单中明确的设计决策字段"
+      ],
+      "required_properties": [
+        "decision_statement",
+        "source_ref.path",
+        "source_ref.location",
+        "source_ref.project_id",
+        "source_ref.task_id"
+      ],
+      "rule": "决策语句必须描述具体方案、约束、取舍、行动、结构或正文要求，并能回答该entry_id实际改变了什么。"
+    }
+  },
+  "confidence": {
+    "levels": {
+      "high": {
+        "definition": "同一entry_id被两条或以上独立设计决策引用，且每条引用都可定位到设计文件或章节计划。",
+        "minimum_decision_count": 2,
+        "requirements": ["任务已声明", "至少2条具体决策语句", "至少1个有效source_ref"]
+      },
+      "medium": {
+        "definition": "entry_id被一条具体、可验证的设计决策采用，且证据完整，但尚未被多个决策重复引用。",
+        "minimum_decision_count": 1,
+        "requirements": ["任务已声明", "1条具体决策语句", "有效source_ref"]
+      },
+      "low": {
+        "definition": "entry_id只在设计或章节计划中被明确提及，或语句只说明概念存在，不能证明它改变了具体方案。",
+        "minimum_decision_count": 0,
+        "requirements": ["entry_id或名称可定位", "记录提及位置", "不得升级为medium/high"]
+      }
+    },
+    "precedence": "同一entry_id出现多个等级时取最高等级；high需要至少两条独立决策引用，单纯重复同一句话不计数。",
+    "negative_evidence": "只有提及而没有决策影响时记录low；完全没有合格提及时不得生成采用记录，应标记not_adopted。"
+  },
+  "source_ref_rules": {
+    "required_fields": [
+      "project_id",
+      "task_id",
+      "path",
+      "location",
+      "artifact_type"
+    ],
+    "location_format": "行号、JSON路径、Markdown标题或其他可重复定位方式",
+    "path_rule": "优先使用项目根目录下的相对路径；禁止使用无法访问或未经确认的外部绝对路径。",
+    "artifact_types": [
+      "synthesis_design",
+      "chapter_plan",
+      "chapter_execution_manifest"
+    ]
+  },
+  "exclusions": [
+    "仅出现在library_index.jsonl中的条目",
+    "仅被宏模块或资料文件选中的条目",
+    "仅被关键词搜索命中的条目",
+    "只有概念名称、没有决策语句的提及",
+    "retrospective_reconstruction",
+    "retrospective_regression_manifest",
+    "审计报告、覆盖报告、证据包中的解释性回溯记录",
+    "candidate、template、pending、needs_review或unconfirmed记录"
+  ],
+  "generation_workflow": [
+    {
+      "step": 1,
+      "name": "load_index",
+      "action": "读取docs/library_index.jsonl并校验每行JSON，建立entry_id集合。"
+    },
+    {
+      "step": 2,
+      "name": "declare_task",
+      "action": "创建任务声明，列出本任务计划使用的entry_id；不存在于索引的ID进入错误清单。"
+    },
+    {
+      "step": 3,
+      "name": "collect_evidence",
+      "action": "扫描设计文件和章节计划，提取entry_id、具体决策语句和source_ref。"
+    },
+    {
+      "step": 4,
+      "name": "classify",
+      "action": "按任务声明、决策影响和独立引用次数计算not_adopted或low/medium/high。"
+    },
+    {
+      "step": 5,
+      "name": "write_records",
+      "action": "每个已采用entry_id写一条记录；未采用条目写not_adopted清单或由调用方生成对应状态记录。"
+    },
+    {
+      "step": 6,
+      "name": "validate",
+      "action": "检查entry_id存在、时间戳有效、任务列表非空、决策语句和source_ref完整，并确认回溯证据未被接受。"
+    }
+  ],
+  "record_statuses": [
+    "adopted",
+    "not_adopted"
+  ],
+  "record_schema": {
+    "entry_id": "string; 必须存在于library_index.jsonl",
+    "adopted_at": "RFC3339时间戳",
+    "used_for": "非空字符串数组；任务名称或task_id",
+    "influenced_decision": "具体决策语句数组；每条都应能由source_ref定位",
+    "confidence": "high、medium或low；not_adopted时为null",
+    "source_ref": "非空对象数组；包含project_id、task_id、path、location、artifact_type",
+    "status": "adopted或not_adopted"
+  }
+}

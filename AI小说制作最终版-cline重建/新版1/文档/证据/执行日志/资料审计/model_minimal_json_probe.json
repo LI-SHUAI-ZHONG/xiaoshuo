@@ -1,0 +1,12 @@
+﻿{
+    "schema_version":  "command-execution-record-1.0",
+    "name":  "model_minimal_json_probe",
+    "command":  "C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行日志\\资料审计\\model_minimal_json_probe.py D:\\AI小说制作最终版-cline重建\\新版1 D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\文本生成模型.py",
+    "started_at":  "2026-08-13T16:06:38.5456015Z",
+    "finished_at":  "2026-08-13T16:06:40.0237889Z",
+    "exit_code":  0,
+    "stdout_file":  "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行日志\\资料审计\\model_minimal_json_probe.stdout.txt",
+    "stderr_file":  "D:\\AI小说制作最终版-cline重建\\新版1\\文档\\证据\\执行日志\\资料审计\\model_minimal_json_probe.stderr.txt",
+    "stdout":  "{\"status\": \"passed\", \"response\": {\"status\": \"ok\"}, \"metadata\": {\"provider\": \"ollama\", \"model\": \"qwen2.5:7b\"}}\r\n",
+    "stderr":  ""
+}

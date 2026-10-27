@@ -1,0 +1,9 @@
+{
+  "schema_version": "full-source-replacement-batch-authorization-1.0",
+  "status": "authorized",
+  "authorized_by": "project_owner",
+  "authorized_at": "2026-08-14T00:00:00+08:00",
+  "batch_purpose": "为历史隔离的 15 条正文消费记录创建新的、可重新审校的候选批次；不修改、不复用、不解除历史隔离记录。",
+  "replacement_policy": "新消费 ID、重新生成正文、重新执行来源语义审校和文学审校；任何候选未通过全部发布门不得发布。",
+  "historical_records_immutable": true
+}

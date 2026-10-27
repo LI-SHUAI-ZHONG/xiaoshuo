@@ -1,0 +1,261 @@
+{
+  "repair_id": "20260818-type-root-final",
+  "source_file": "D:\\AI小说制作最终版-cline重建\\新版1\\原始资料\\类型连接.txt",
+  "source_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+  "repaired": [
+    {
+      "binding_id": "TB-11278",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "类型静态连接字段说明.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:类型静态连接字段说明.json:root_object:1:a91b18e66b7485a181353e9a24bfe3adaa97a7bfc76e68c6ae719e54027a77f8",
+      "canonical_object_sha256": "a91b18e66b7485a181353e9a24bfe3adaa97a7bfc76e68c6ae719e54027a77f8"
+    },
+    {
+      "binding_id": "TB-13324",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "类型连接枚举.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:类型连接枚举.json:root_object:1:a1a390158acb03c4ca3e2aa15d92d0fb2d20aabd616c1e710f2683c4c4688f95",
+      "canonical_object_sha256": "a1a390158acb03c4ca3e2aa15d92d0fb2d20aabd616c1e710f2683c4c4688f95"
+    },
+    {
+      "binding_id": "TB-13325",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "类型连接验证规则.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:类型连接验证规则.json:root_object:1:414ebd2e98af83dab7f1a62127e9b6afbbe56df59c7e5bafed246d6863975f1c",
+      "canonical_object_sha256": "414ebd2e98af83dab7f1a62127e9b6afbbe56df59c7e5bafed246d6863975f1c"
+    },
+    {
+      "binding_id": "TB-13326",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "类型组合约束.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:类型组合约束.json:root_object:1:bbcfbf4740b7c8bddd3e9a181cd53d906d6255ab74f97d2475b23fbabbf4c4f2",
+      "canonical_object_sha256": "bbcfbf4740b7c8bddd3e9a181cd53d906d6255ab74f97d2475b23fbabbf4c4f2"
+    },
+    {
+      "binding_id": "TB-13327",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品表达连接搭配库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品表达连接搭配库.json:root_object:1:181a5b9e2e7c7e10d51bec686197fc3a87fcab0d6f02072f3df8850f4d56e62e",
+      "canonical_object_sha256": "181a5b9e2e7c7e10d51bec686197fc3a87fcab0d6f02072f3df8850f4d56e62e"
+    },
+    {
+      "binding_id": "TB-13328",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品场景连接搭配库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品场景连接搭配库.json:root_object:1:5b24537c4a12c2e2d70ec5335bbe1f0c376d0fa9088a71c1efa763481dd7d872",
+      "canonical_object_sha256": "5b24537c4a12c2e2d70ec5335bbe1f0c376d0fa9088a71c1efa763481dd7d872"
+    },
+    {
+      "binding_id": "TB-13329",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品场景模式库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品场景模式库.json:root_object:1:36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1",
+      "canonical_object_sha256": "36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1"
+    },
+    {
+      "binding_id": "TB-13330",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品动态连接搭配库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品动态连接搭配库.json:root_object:1:dafa2ab73dd3b9a7bebc6a359b710e33442b826cc9138757de9bccf0572d9575",
+      "canonical_object_sha256": "dafa2ab73dd3b9a7bebc6a359b710e33442b826cc9138757de9bccf0572d9575"
+    },
+    {
+      "binding_id": "TB-13331",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品动态模式库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品动态模式库.json:root_object:1:36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1",
+      "canonical_object_sha256": "36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1"
+    },
+    {
+      "binding_id": "TB-13332",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品动态模式验证规则.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品动态模式验证规则.json:root_object:1:240edfd3ae3bb8aeaa04d298e728e2a3174e3c0a405eb5dc45b6c5f21160e801",
+      "canonical_object_sha256": "240edfd3ae3bb8aeaa04d298e728e2a3174e3c0a405eb5dc45b6c5f21160e801"
+    },
+    {
+      "binding_id": "TB-13333",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品伏笔模式库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品伏笔模式库.json:root_object:1:36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1",
+      "canonical_object_sha256": "36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1"
+    },
+    {
+      "binding_id": "TB-13334",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品伏笔爽点搭配库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品伏笔爽点搭配库.json:root_object:1:6cdba4d0698eca7ae438ea0b6c3f2d98f15121b9b1045807b6d78d4696768911",
+      "canonical_object_sha256": "6cdba4d0698eca7ae438ea0b6c3f2d98f15121b9b1045807b6d78d4696768911"
+    },
+    {
+      "binding_id": "TB-13335",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品静态连接搭配库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品静态连接搭配库.json:root_object:1:87b574e978920ffa75dbe4d368912736639d5f223e78fdc550e74c1ce1327a9b",
+      "canonical_object_sha256": "87b574e978920ffa75dbe4d368912736639d5f223e78fdc550e74c1ce1327a9b"
+    },
+    {
+      "binding_id": "TB-13336",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品静态模式库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品静态模式库.json:root_object:1:36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1",
+      "canonical_object_sha256": "36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1"
+    },
+    {
+      "binding_id": "TB-13337",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品静态模式验证规则.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品静态模式验证规则.json:root_object:1:84fc07dc320eb88399ddc958af9768f5ec16e4980fd71d393c1e92c9c5313f62",
+      "canonical_object_sha256": "84fc07dc320eb88399ddc958af9768f5ec16e4980fd71d393c1e92c9c5313f62"
+    },
+    {
+      "binding_id": "TB-13338",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品连接搭配模板.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品连接搭配模板.json:root_object:1:108cf931957804bc633bbba600cbb84c9f88b3671579a1ee8727931bbdd67bd1",
+      "canonical_object_sha256": "108cf931957804bc633bbba600cbb84c9f88b3671579a1ee8727931bbdd67bd1"
+    },
+    {
+      "binding_id": "TB-13339",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品连接搭配验证规则.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品连接搭配验证规则.json:root_object:1:fa3e3fe28c6a1dcbe10919c180544e17e1848d0d0f116aa98e5db1566a3ac75c",
+      "canonical_object_sha256": "fa3e3fe28c6a1dcbe10919c180544e17e1848d0d0f116aa98e5db1566a3ac75c"
+    },
+    {
+      "binding_id": "TB-13340",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品人物关系搭配库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品人物关系搭配库.json:root_object:1:da9d48f88790ff60e795461b9d54a2dd0555766852a68069f71bbbd7a0835421",
+      "canonical_object_sha256": "da9d48f88790ff60e795461b9d54a2dd0555766852a68069f71bbbd7a0835421"
+    },
+    {
+      "binding_id": "TB-13341",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品人物关系模式库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品人物关系模式库.json:root_object:1:36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1",
+      "canonical_object_sha256": "36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1"
+    },
+    {
+      "binding_id": "TB-13342",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品爽点模式库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品爽点模式库.json:root_object:1:36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1",
+      "canonical_object_sha256": "36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1"
+    },
+    {
+      "binding_id": "TB-13343",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品信息传播模式库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品信息传播模式库.json:root_object:1:36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1",
+      "canonical_object_sha256": "36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1"
+    },
+    {
+      "binding_id": "TB-13344",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品信息资源搭配库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品信息资源搭配库.json:root_object:1:45671ce155621139532734a1fe7b7803459d2eea4cd68f3479c6b5fa9b7d693d",
+      "canonical_object_sha256": "45671ce155621139532734a1fe7b7803459d2eea4cd68f3479c6b5fa9b7d693d"
+    },
+    {
+      "binding_id": "TB-13345",
+      "status": "passed",
+      "repair_id": "20260818-type-root-final",
+      "source_file_sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "source_section": "作品资源流动模式库.json",
+      "location_kind": "root_object",
+      "source_index": 1,
+      "stable_source_identity": "type-connection:作品资源流动模式库.json:root_object:1:36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1",
+      "canonical_object_sha256": "36ab19568d96197c19e77d722b21985a47143aefcbe9af860804bb8470932ad1"
+    }
+  ],
+  "unresolved": []
+}

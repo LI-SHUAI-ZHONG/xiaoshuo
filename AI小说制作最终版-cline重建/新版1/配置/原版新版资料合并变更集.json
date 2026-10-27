@@ -1,0 +1,5 @@
+{
+  "schema_version": "original-material-merge-changeset-1.0",
+  "description": "仅记录已确认需要写回原始资料的内容变更。绑定、授权、审计和发布审批不是资料变更，禁止填入本文件。每项必须提供目标文件当前 UTF-8 文本 SHA-256、唯一 anchor 的 SHA-256、锚点前后精确上下文、变更理由，并声明 conditions/tags/relations/state_transitions 分别保留或修订；合并器拒绝重复内容、重复稳定标识和定位漂移。",
+  "changes": []
+}

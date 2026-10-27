@@ -1,0 +1,30 @@
+{
+  "schema_version": "project-source-confirmation-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "status": "confirmed",
+  "source_quality_ack": true,
+  "confirmed_by": "project_owner",
+  "confirmed_at": "2026-08-14T00:00:00+08:00",
+  "accepted_fields": [
+    "project_id",
+    "genre_selection",
+    "book_title",
+    "world_stage",
+    "mainline_conflict",
+    "core_mystery",
+    "protagonist",
+    "protagonist.personality",
+    "protagonist.desire",
+    "protagonist.obsession",
+    "protagonist.decision_tendency",
+    "protagonist.blind_spots",
+    "protagonist.emotional_reactions",
+    "chapter_plan",
+    "world_name",
+    "supporting_characters",
+    "factions_and_locations"
+  ],
+  "unresolved_fields": [],
+  "confirmation_scope": "项目所有者确认当前 project_config.json 中的书名、类型、世界阶段、主线冲突、核心谜团、主角、世界名称、配角、势力与地点和首章计划。",
+  "formal_fact_approval": true
+}

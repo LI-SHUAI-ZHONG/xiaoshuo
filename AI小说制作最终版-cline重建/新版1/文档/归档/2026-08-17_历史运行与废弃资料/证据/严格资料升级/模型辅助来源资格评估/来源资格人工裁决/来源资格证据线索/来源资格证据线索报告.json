@@ -1,0 +1,17 @@
+{
+  "schema_version": "source-qualification-evidence-clue-inventory-1.0",
+  "generated_at": "2026-08-13T02:44:12.705450+00:00",
+  "scope": "local_observation_only; no_human_decision_or_source_or_usage_permission_modified",
+  "model_assessment_path": "文档/证据/严格资料升级/模型辅助来源资格评估/模型辅助来源资格评估清单.jsonl",
+  "model_assessment_sha256": "881a784be5e17aa7e43c5ce9c9ddd27d5d6e8d9045e12b041a33fe0465269620",
+  "source_kind_count": 7,
+  "evidence_field_status_counts": {
+    "local_snapshot_only": 7,
+    "observed_unverified": 1,
+    "unavailable": 20
+  },
+  "qualification_sufficient_evidence_field_count": 0,
+  "formal_fact_eligible_count": 0,
+  "model_input_eligible_count": 0,
+  "prose_write_allowed": false
+}

@@ -1,0 +1,51 @@
+{
+  "rules": [
+    {
+      "id": "SC-R1",
+      "condition": "每个项目的主线结构设计必须声明所采用的静态连接source→target对，且至少声明3条。",
+      "action": "在主线结构设计文档中记录至少3条静态连接及其source和target；少于3条时不通过采用检查。",
+      "blocking_level": "high"
+    },
+    {
+      "id": "SC-R2",
+      "condition": "每条采用的静态连接必须绑定到一个具体故事对象，故事对象类型为角色、地点、势力或事件。",
+      "action": "为每条静态连接记录bound_to.type和项目内对象ID；缺少绑定或类型不在允许范围内时不认定为有效采用。",
+      "blocking_level": "high"
+    },
+    {
+      "id": "SC-R3",
+      "condition": "章节计划中必须列出该章节依赖的静态连接ID列表（如有）。",
+      "action": "在章节计划中保存章节依赖的edge_id列表；章节使用静态连接但未列出ID时，标记为计划不完整。",
+      "blocking_level": "medium"
+    },
+    {
+      "id": "SC-R4",
+      "condition": "静态连接采用记录必须写入docs/evidence/static_connection_consumption.jsonl。",
+      "action": "为每条采用的静态连接写入edge_id、source、target、故事对象绑定、设计文档路径、章节路径、confidence和ISO时间戳。",
+      "blocking_level": "high"
+    },
+    {
+      "id": "SC-R5",
+      "condition": "正文生成前，运行器必须检查项目主线是否至少有一条静态连接被标记为consumed。",
+      "action": "当项目主线的consumed静态连接数量为0时阻断正文生成。",
+      "blocking_level": "blocker"
+    }
+  ],
+  "consumption_schema": {
+    "edge_id": "string（如STATIC-001）",
+    "source": "string",
+    "target": "string",
+    "bound_to": {
+      "type": "角色|地点|势力|事件",
+      "id": "项目内ID"
+    },
+    "used_in_design": [
+      "设计文档路径"
+    ],
+    "used_in_chapter": [
+      "章节路径"
+    ],
+    "confidence": "high|medium|low",
+    "consumed_at": "ISO时间"
+  }
+}

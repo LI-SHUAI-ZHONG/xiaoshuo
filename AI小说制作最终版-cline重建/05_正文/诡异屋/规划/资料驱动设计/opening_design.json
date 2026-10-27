@@ -1,0 +1,14 @@
+{
+  "artifact_type": "opening_design",
+  "status": "retrospective_reconstruction",
+  "source_trace": [
+    {"record_id": "CAP-OPENING-DESIGN", "source_file": "08_原始资料/资料库.txt", "source_labels": ["112.1_开篇设计", "112.2_第一句话", "112.3_开篇场景", "112.4_开篇承诺"], "stage": "STORY_BIBLE", "effect": "以清单中的不存在地址开场，承诺通过物证和现场行动推进悬疑。"},
+    {"record_id": "CAP-TYPE-STYLE-LENGTH", "stage": "STORY_BIBLE", "effect": "冷峻现场感和中篇递进约束。"}
+  ],
+  "inputs": {"type": "悬疑", "style": "冷峻、克制、紧张、具有现场感", "length": "中篇", "story_core": "档案修复师进入重新出现的旧屋"},
+  "decisions": {"opening_promise": "每件物证都可能记录尚未发生的案件，且主角会被证据牵连", "first_scene": "档案馆修复户籍卡并发现不存在地址", "information_release": {"visible": ["地址冲突", "旧屋入口", "写有林砚姓名的清点卡", "23:40和厨房刀"], "withheld": ["死亡对象", "书写者", "旧屋机制", "顾怀山真实结局"]}, "hook": "门在林砚身后关上", "chapter_interfaces": {"chapter_001_to_002": "清点卡的未来时限和现场封锁推动进入旧屋调查", "chapter_002_to_003": "307、七年前收据和未登记三楼推动证据链升级"}},
+  "writing_requirements": ["第一段建立具体问题", "结尾升级问题而非解释答案", "异常只写成林砚可观察到的证据"],
+  "acceptance_criteria": ["开场有具体问题", "前三章承诺不被第一章解释完", "章末存在下一章行动压力"],
+  "not_used_reasons": ["原条目未提供结构化设计指令和判定标准，本文件为修复后的项目转换结果"],
+  "evidence_status": "partial"
+}

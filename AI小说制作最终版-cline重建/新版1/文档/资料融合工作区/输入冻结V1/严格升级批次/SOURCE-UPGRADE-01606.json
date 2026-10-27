@@ -1,0 +1,146 @@
+{
+  "schema_version": "strict-source-upgrade-batch-1.0",
+  "batch_id": "SOURCE-UPGRADE-01606",
+  "record_limit": 6,
+  "prose_write_allowed": false,
+  "records": [
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09631",
+      "consumption_id": "PC-09631",
+      "binding_id": "TB-13330",
+      "source_id": "作品动态连接搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品动态连接搭配库.json[1]",
+      "source_ref_sha256": "6db393e0ecbca37cdbf48e06dbce8afd4d1a8510c1279485afb3fe2feb19a3b4",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09632",
+      "consumption_id": "PC-09632",
+      "binding_id": "TB-13331",
+      "source_id": "作品动态模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品动态模式库.json[1]",
+      "source_ref_sha256": "762761ed6657c1ab32f02ae606e979258ce00084bdfaf1b542cced857f9298d3",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09633",
+      "consumption_id": "PC-09633",
+      "binding_id": "TB-13332",
+      "source_id": "作品动态模式验证规则.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品动态模式验证规则.json[1]",
+      "source_ref_sha256": "cd6f3bcd3e0d7d6d2ed2c42d89e4d1a709335e4bcf0ab23b5f90e2e1bed737f0",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09634",
+      "consumption_id": "PC-09634",
+      "binding_id": "TB-13333",
+      "source_id": "作品伏笔模式库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品伏笔模式库.json[1]",
+      "source_ref_sha256": "648941c9f7c5d2a00e4a5b8b136dbaa8e7791c8192221578525d1a04cd5775dc",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09635",
+      "consumption_id": "PC-09635",
+      "binding_id": "TB-13334",
+      "source_id": "作品伏笔爽点搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品伏笔爽点搭配库.json[1]",
+      "source_ref_sha256": "9db860ac675876be4de25c40b0b3128073644f1417b0c0d42cb53bac6c27ec1f",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-09636",
+      "consumption_id": "PC-09636",
+      "binding_id": "TB-13335",
+      "source_id": "作品静态连接搭配库.json:1",
+      "source_kind": "类型连接",
+      "source_ref": "原始资料/类型连接.txt:作品静态连接搭配库.json[1]",
+      "source_ref_sha256": "bf2f500825b1f134bdb02b77c4959f252888e6f03c98953b874bccca578849c0",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 文本数组或下标无效"
+      ]
+    }
+  ]
+}

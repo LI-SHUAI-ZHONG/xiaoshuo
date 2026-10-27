@@ -1,0 +1,53 @@
+{
+  "schema_version": "repair-state-1.0",
+  "state_id": "baseline-20260818-material-integrity-repair",
+  "created_at": "2026-08-18T00:00:00Z",
+  "basis": "用户授权将通过验证的升级资料、使用方法和要求受控写回原版资料，形成可直接使用的最终资料；不以历史归档运行结果替代当前状态。",
+  "overall_status": "in_progress",
+  "gates": {
+    "formal_fact_eligible": false,
+    "prose_write_allowed": false,
+    "formal_release_allowed": false
+  },
+  "confirmed_facts": [
+    "六类原始资料和13,345条绑定已登记；登记不构成项目采用、正文消费或正式发布。",
+    "类型系统和类型连接仍为partial，仅允许draft_usable用途。",
+    "当前资源注册表缺少动态链消费规则和执行采用规则。",
+    "严格全量资料连续编排依赖的两个模块在当前脚本目录不可定位。",
+    "全量资料批量升级验证报告显示正文队列、批次和计划数均为0。"
+  ],
+  "open_blockers": [
+    {
+      "id": "R-001",
+      "status": "pending_rebuild",
+      "scope": "resource_contract",
+      "detail": "补齐动态链消费规则和执行采用规则后，必须重新生成资源注册表确认其状态。"
+    },
+    {
+      "id": "R-002",
+      "status": "blocked",
+      "scope": "strict_upgrade_runner",
+      "detail": "严格全量资料连续编排缺少严格全量资料模型升级和全量资料升级模型错误隔离模块。"
+    },
+    {
+      "id": "R-003",
+      "status": "pending_verification",
+      "scope": "library_locator",
+      "detail": "资料库定位异常必须仅由原始资料精确命中证据修复；无法命中的记录保持隔离。"
+    },
+    {
+      "id": "R-004",
+      "status": "blocked",
+      "scope": "formal_delivery",
+      "detail": "类型来源字段缺失、项目采用和正文消费均未形成可验证证据，正式发布保持关闭。"
+    }
+  ],
+  "change_boundary": {
+    "original_sources_immutable": false,
+    "original_sources_writeback_policy": "仅允许字段级融合批次在已生成快照、变更账本、前后哈希和回读校验后写回原版资料；无字段候选或验证失败时拒绝写回。",
+    "existing_bindings_immutable": true,
+    "no_adoption_status_change": true,
+    "no_scene_or_prose_generation": true,
+    "no_formal_release_status_change": true
+  }
+}

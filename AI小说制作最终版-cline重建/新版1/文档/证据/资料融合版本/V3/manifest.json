@@ -1,0 +1,35 @@
+{
+  "schema_version": "original-upgrade-material-field-fusion-1.0",
+  "version": "V3",
+  "generated_at": "2026-08-17T20:38:06.792760Z",
+  "baseline": "文档/证据/全量资料治理/资料库_规范化.json",
+  "baseline_sha256": "b1596ce166cdf22180d98b22ba1c0f1381105a594a027204c87d32072d51c5ca",
+  "upgrade_input": "文档/证据/资料库语义依赖修复日志-二版.jsonl",
+  "upgrade_input_sha256": "084fdea1a1c40e750b3ef2ab654848f4bb7010bf9d2635b1c3dc967679345dcf",
+  "source_class": "same_source_derived_improvement",
+  "status": "validated_overlay",
+  "formal_fact_eligible": false,
+  "formal_release_allowed": false,
+  "material_fused": {
+    "change_count": 0,
+    "file": "field_changes.jsonl"
+  },
+  "validated_overlay": {
+    "count": 238,
+    "file": "validated_overlay.jsonl"
+  },
+  "resolved_material_view": {
+    "path": "resolved_material_view",
+    "file": "资料库_规范化.json"
+  },
+  "pending_evidence": {
+    "count": 0,
+    "file": "pending_evidence.jsonl"
+  },
+  "unresolved_conflicts": {
+    "count": 0,
+    "file": "unresolved_conflicts.jsonl"
+  },
+  "merge_preview": "merge_preview.json",
+  "manifest_sha256": "a54e4f02d11621e88b076782f0072f0aad3e457115dfb0ac3a62639988f5c2e3"
+}

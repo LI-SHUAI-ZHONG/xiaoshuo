@@ -1,0 +1,15 @@
+{
+  "schema_version": "dynamic-chain-consumption-rules-1.1",
+  "purpose": "定义动态链从项目决策、场景绑定到正文验证的最小可审计链；索引、读取或历史记录均不构成消费。",
+  "rules": [
+    {"id": "DC-R1", "condition": "任何项目设计决策引用动态链时必须声明有效chain_id和具体decision_statement。", "action": "记录任务ID、设计文件路径、chain_id、decision_statement和可重复定位的source_ref；缺任一项时保持not_adopted。", "blocking_level": "medium"},
+    {"id": "DC-R2", "condition": "每个声明使用动态链的场景必须列出dynamic_chain_ids，并说明该链如何改变场景目标、阻碍、选择或代价。", "action": "在场景卡记录scene_id、chapter_id、chain_id、binding_effect和设计定位；不得按数组顺序自动分配。", "blocking_level": "blocker"},
+    {"id": "DC-R3", "condition": "动态链仅在项目决策和场景绑定均完整时可记录为adopted；正文落点验证通过后才可记录为consumed。", "action": "决策与场景证据完整为adopted，另有可定位正文段落和转译说明为consumed；缺失时不得提升状态。", "blocking_level": "blocker"},
+    {"id": "DC-R4", "condition": "动态链记录必须追加写入文档/证据/动态链消费.jsonl，并绑定当前project_id和run_id。", "action": "每条记录写入chain_id、status、task_id、scene_id、chapter_id、decision_statement、binding_effect、source_ref、text_location、confidence和时间戳。", "blocking_level": "high"},
+    {"id": "DC-R5", "condition": "正文生成或交付审计不得把索引命中、历史消费记录、候选记录或无正文定位记录计入当前项目消费。", "action": "仅统计project_id和run_id匹配且status为consumed、正文定位有效的记录；其他记录保持0消费。", "blocking_level": "blocker"}
+  ],
+  "record_statuses": ["candidate", "not_adopted", "adopted", "consumed"],
+  "consumption_schema": {
+    "project_id": "string", "run_id": "string", "chain_id": "string", "status": "candidate|not_adopted|adopted|consumed", "task_id": "string", "scene_id": "string", "chapter_id": "string", "decision_statement": "string", "binding_effect": "string", "source_ref": "object", "text_location": "string|null", "confidence": "high|medium|low", "consumed_at": "RFC3339"
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "schema_version": "strict-source-upgrade-batch-1.0",
+  "batch_id": "SOURCE-UPGRADE-00306",
+  "record_limit": 6,
+  "prose_write_allowed": false,
+  "records": [
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-01831",
+      "consumption_id": "PC-01831",
+      "binding_id": "TB-05530",
+      "source_id": "悬疑",
+      "source_kind": "类型系统",
+      "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [79, 1482, 1695, 1696, 1708, 1710, 1711, 1722, 1732, 1738, 1739, 1751, 1753, 1764, 1774, 1905, 2058, 2305, 2306, 2903]}",
+      "source_ref_sha256": "9645dee7526fb6def9abfb09c077ee17bed1e22b08ac101f77d4b0064479ff3c",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 不具备可精确回读的受控定位格式"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-01832",
+      "consumption_id": "PC-01832",
+      "binding_id": "TB-05531",
+      "source_id": "游戏",
+      "source_kind": "类型系统",
+      "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1921, 2061, 2397, 2398, 2404, 7226, 7227, 7235, 8476, 8477, 8485, 8501, 8502, 8510, 8526, 8527, 8535, 11526, 11527, 11535]}",
+      "source_ref_sha256": "3de52c1a4cff27179446814c8840586f86eff204d3c4ba2333f680fa0cd41a22",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 不具备可精确回读的受控定位格式"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-01833",
+      "consumption_id": "PC-01833",
+      "binding_id": "TB-05532",
+      "source_id": "灵异",
+      "source_kind": "类型系统",
+      "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1913, 2058, 2351, 2352, 2358, 5701, 5702, 5710, 8026, 8027, 8035, 8051, 8052, 8060, 8076, 8077, 8085, 8226, 8227, 8235]}",
+      "source_ref_sha256": "03cfc9a373139f9afbf74bb49d629c564a58daa6c95a9eb46a84ce645089464e",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 不具备可精确回读的受控定位格式"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-01834",
+      "consumption_id": "PC-01834",
+      "binding_id": "TB-05533",
+      "source_id": "玄幻",
+      "source_kind": "类型系统",
+      "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1824, 1825, 1837, 1839, 1850, 1860, 1873, 2049, 2052, 2121, 2122, 2926, 2927, 2935, 2976, 2977, 2985, 3351, 3352, 3360]}",
+      "source_ref_sha256": "520c6e31897c489b045f85a58c36f22202c95d00e075519ebdd5c9953959ffdd",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 不具备可精确回读的受控定位格式"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-01835",
+      "consumption_id": "PC-01835",
+      "binding_id": "TB-05534",
+      "source_id": "科幻",
+      "source_kind": "类型系统",
+      "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [1695, 1696, 1708, 1732, 1901, 2282, 2283, 5076, 5077, 5085, 6651, 6652, 6660, 6801, 6802, 6810, 6826, 6827, 6835, 6926]}",
+      "source_ref_sha256": "36b0f4c66f0a38477a05464d67365636f72f2c2d110612da4e5f9742cea48646",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 不具备可精确回读的受控定位格式"
+      ]
+    },
+    {
+      "schema_version": "strict-source-upgrade-record-1.0",
+      "upgrade_id": "SU-PC-01836",
+      "consumption_id": "PC-01836",
+      "binding_id": "TB-05535",
+      "source_id": "耽美",
+      "source_kind": "类型系统",
+      "source_ref": "{'file': '原始资料/类型系统.txt', 'matched_lines': [11226, 11227, 11235, 626657]}",
+      "source_ref_sha256": "66e7a115ee01139ce032bf1048343154dc717f32b7821e69e2fa3451e3036c33",
+      "source_item_sha256": null,
+      "source_quality_level": "draft_usable",
+      "item_attested": false,
+      "attestation_scope": null,
+      "project_source_confirmed": false,
+      "formal_fact_eligible": false,
+      "permitted_use": "quarantine_only",
+      "prose_write_allowed": false,
+      "original_prose_artifacts_modified": false,
+      "status": "quarantined",
+      "errors": [
+        "source_ref 不具备可精确回读的受控定位格式"
+      ]
+    }
+  ]
+}

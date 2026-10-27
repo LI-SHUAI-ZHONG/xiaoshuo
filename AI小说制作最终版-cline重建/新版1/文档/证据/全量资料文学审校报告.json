@@ -1,0 +1,13 @@
+{
+  "schema_version": "full-source-literary-review-1.0",
+  "generated_at": "2026-08-16T06:35:08.046986+00:00",
+  "policy": "文学审校必须由具名人工裁决，并绑定当前正文段落哈希；重复、未知或无效裁决一律阻断通过。退回裁决保留审计原因但不得进入正文消费完成。脚本不会从模型输出推断或伪造人工通过。通过文学审校也不授予正式发布许可。",
+  "reviewed_count": 15,
+  "passed_count": 15,
+  "rejected_consumption_ids": [],
+  "pending_consumption_ids": [],
+  "blocked_count": 0,
+  "blockers": [],
+  "formal_release_allowed": false,
+  "status": "passed"
+}

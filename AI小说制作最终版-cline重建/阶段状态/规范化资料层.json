@@ -1,0 +1,94 @@
+{
+  "schema_version": "normalized-content-layer-1.0",
+  "status": "ready_with_gates",
+  "source_policy": {
+    "raw_sources_read_only": true,
+    "workspace_relative_refs_only": true,
+    "formal_fact_levels": ["confirmed_raw", "cross_confirmed"],
+    "candidate_levels": ["reconstructed", "unconfirmed"],
+    "conflict_level": "conflict",
+    "no_template_as_fact": true
+  },
+  "records": [
+    {
+      "id": "STATIC-ROLE-MAIN-001",
+      "domain": "static_relation",
+      "evidence_level": "confirmed_raw",
+      "claim": "主角节点稳定连接到欲望、执念、弧光、核心悬念和开篇共鸣点。",
+      "source_refs": ["08_原始资料/静态网络.txt#source_index.1.1_主角.targets"],
+      "runtime_usable": true,
+      "use": "fact",
+      "validation": {"source_format": "json", "source_key": "1.1_主角", "target_count": 5}
+    },
+    {
+      "id": "STATIC-ROLE-ACTION-001",
+      "domain": "static_relation",
+      "evidence_level": "confirmed_raw",
+      "claim": "角色动作节点连接到动作链、人格外化和精确动词。",
+      "source_refs": ["08_原始资料/静态网络.txt#source_index.2.3_角色动作.targets"],
+      "runtime_usable": true,
+      "use": "fact",
+      "validation": {"source_format": "json", "source_key": "2.3_角色动作", "target_count": 3}
+    },
+    {
+      "id": "STATIC-STATE-001",
+      "domain": "static_relation",
+      "evidence_level": "confirmed_raw",
+      "claim": "角色状态节点连接到身体状态、精神状态和状态叠加。",
+      "source_refs": ["08_原始资料/静态网络.txt#source_index.2.6_角色状态.targets"],
+      "runtime_usable": true,
+      "use": "fact",
+      "validation": {"source_format": "json", "source_key": "2.6_角色状态", "target_count": 3}
+    },
+    {
+      "id": "DYNAMIC-RULE-GATE-001",
+      "domain": "dynamic_rule",
+      "evidence_level": "cross_confirmed",
+      "claim": "动态效果只能作为候选，必须经过人物行动、事件证据和连续性验证后才能写入状态。",
+      "source_refs": ["阶段状态/规范化资料证据包.json#EVID-RUNTIME-001", "阶段状态/规范化资料证据包.json#EVID-RUNTIME-003"],
+      "runtime_usable": true,
+      "use": "constraint",
+      "validation": {"required_checks": ["action_selected", "event_evidence", "continuity"]}
+    },
+    {
+      "id": "GAP-DYNAMIC-PARSE-001",
+      "domain": "dynamic_network",
+      "evidence_level": "unconfirmed",
+      "claim": "动态网络原文包含代码围栏和生成式总表，尚未完成结构化解析与逐条验证。",
+      "source_refs": ["08_原始资料/动态网络.txt"],
+      "runtime_usable": false,
+      "use": "gap",
+      "validation": {"blocking_reason": "raw_not_machine_parseable_as_single_json"}
+    },
+    {
+      "id": "GAP-ANCHOR-TEMPLATE-001",
+      "domain": "anchor_network",
+      "evidence_level": "unconfirmed",
+      "claim": "锚点网络当前以扩展说明和模板化表格为主，不能直接约束具体故事事实。",
+      "source_refs": ["08_原始资料/锚点网络.txt"],
+      "runtime_usable": false,
+      "use": "gap",
+      "validation": {"blocking_reason": "template_or_fixture_content"}
+    },
+    {
+      "id": "GAP-TYPE-CONNECTION-001",
+      "domain": "type_connection",
+      "evidence_level": "unconfirmed",
+      "claim": "类型连接中的空数组和 template 生成记录不能作为已确认类型关系。",
+      "source_refs": ["08_原始资料/类型连接.txt"],
+      "runtime_usable": false,
+      "use": "gap",
+      "validation": {"blocking_reason": "empty_or_template_records"}
+    }
+  ],
+  "indexes": {
+    "by_domain": {"static_relation": ["STATIC-ROLE-MAIN-001", "STATIC-ROLE-ACTION-001", "STATIC-STATE-001"], "dynamic_rule": ["DYNAMIC-RULE-GATE-001"], "dynamic_network": ["GAP-DYNAMIC-PARSE-001"], "anchor_network": ["GAP-ANCHOR-TEMPLATE-001"], "type_connection": ["GAP-TYPE-CONNECTION-001"]},
+    "runtime_usable": ["STATIC-ROLE-MAIN-001", "STATIC-ROLE-ACTION-001", "STATIC-STATE-001", "DYNAMIC-RULE-GATE-001"],
+    "blocked": ["GAP-DYNAMIC-PARSE-001", "GAP-ANCHOR-TEMPLATE-001", "GAP-TYPE-CONNECTION-001"]
+  },
+  "gates": {
+    "formal_generation": "ready_when_selected_evidence_and_domain_gates_pass",
+    "dynamic_state_update": "requires_action_event_and_continuity_evidence",
+    "template_records": "never_runtime_usable"
+  }
+}

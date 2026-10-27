@@ -1,0 +1,22 @@
+{
+  "schema_version": "creative-repair-state-1.0",
+  "project_root": "D:/AI小说制作最终版-cline重建/新版1",
+  "plan_path": "文档/修补方案/创作资料全量调取修补主计划.md",
+  "current_phase": "P6",
+  "status": "in_progress",
+  "phases": {
+    "P0": {"status": "completed", "artifacts": ["文档/修补方案/创作资料全量调取修补主计划.md", "文档/修补方案/修补状态.json"], "last_validation": "方案、状态文件已写入并复核"},
+    "P1": {"status": "completed", "artifacts": ["脚本/资料注册与完整性.py", "脚本/项目来源确认.py", "文档/证据/资源注册表.json", "文档/证据/项目来源确认报告.json"], "last_validation": "18项资源登记可解析；缺失资料负向门禁返回退出码1；缺少项目来源确认文件返回退出码1并保持draft_only"},
+    "P2": {"status": "completed", "artifacts": ["脚本/执行管道.py", "文档/证据/类型连接采用.jsonl", "文档/证据/静态连接消费.jsonl", "文档/证据/动态链消费.jsonl", "文档/证据/锚点消费.jsonl"], "last_validation": "隔离回归确认四类来源均产生当前项目采用记录"},
+    "P3": {"status": "completed", "artifacts": ["文档/证据/execution_outputs/module_08_scene_beat_cards.json"], "last_validation": "3个场景均有语义选择理由、设计绑定、动态链、静态边和锚点"},
+    "P4": {"status": "completed", "artifacts": ["文档/证据/execution_outputs/module_09_scene_prose.json"], "last_validation": "模块09通过自检；正文使用项目字段和锚点转译，未直出锚点名"},
+    "P5": {"status": "completed", "artifacts": ["文档/证据/execution_outputs/module_10_final_check_report.json", "脚本/资料消费审计.py"], "last_validation": "模块10仅因来源partial/pending/placeholder阻断，未出现模板或日志缺失误报"},
+    "P6": {"status": "in_progress_blocked", "artifacts": ["文档/修补方案/最终回归验证报告.json", "文档/证据/项目来源确认报告.json"], "last_validation": "路线对齐完成；缺少确认文件返回pending/exit1；接受派生候选后仍保留世界名、配角、势力地点阻断；隔离回归模块10和11均保持draft_only"}
+  },
+  "rules": {
+    "never_modify_original_sources": true,
+    "never_claim_loaded_as_consumed": true,
+    "formal_delivery_requires_confirmed_project_facts": true,
+    "failed_gate_blocks_dependents": true
+  }
+}

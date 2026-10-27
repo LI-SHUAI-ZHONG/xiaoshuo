@@ -1,0 +1,43 @@
+{
+  "schema_version": "scene-creative-brief-1.0",
+  "project_id": "trial-玄幻-沈砚",
+  "status": "authorial_draft",
+  "release_status": "draft_only",
+  "formal_fact_status": "not_confirmed",
+  "policy": "本简报是用于检索和激活资料的作者草案，不确认新世界事实，不构成正文或发布批准。",
+  "scenes": [
+    {
+      "scene_id": "CH01-S01",
+      "chapter_id": "CH01",
+      "title": "第七息回亮",
+      "creative_need": "在外门检测场建立沈砚的可复核观察、陆昭的现实顾虑和镇潮阵异常的第一处可见痕迹。",
+      "stage": "场景卡",
+      "required_source_kinds": ["资料库", "动态网络", "静态网络", "锚点网络"],
+      "retrieval_terms": ["沈砚", "检测", "灵息", "镇潮阵", "第七息", "陆昭", "晋升", "代价", "关系", "状态", "状态变化", "能量", "力量公式", "权衡", "玄幻", "修炼", "宗门"],
+      "activation_evidence": ["场景目标已记录", "主角、检测与异常词已匹配", "场景卡阶段已指定"],
+      "activation_conditions_met": true
+    },
+    {
+      "scene_id": "CH01-S02",
+      "chapter_id": "CH01",
+      "title": "档案廊的缺页",
+      "creative_need": "让沈砚在档案廊以问题逼许照微表态，并取得一份只能证明异常存在、尚不能解释真相的缺页。",
+      "stage": "场景卡",
+      "required_source_kinds": ["资料库"],
+      "retrieval_terms": ["沈砚", "许照微", "档案", "缺页", "潮灾", "名册", "证据", "禁令", "关系", "状态", "玄幻", "修炼", "宗门"],
+      "activation_evidence": ["场景目标已记录", "人物、档案与证据词已匹配", "场景卡阶段已指定"],
+      "activation_conditions_met": true
+    },
+    {
+      "scene_id": "CH01-S03",
+      "chapter_id": "CH01",
+      "title": "退路变窄",
+      "creative_need": "让沈砚决定保留异常证据而非交回，陆昭因此承担可见风险，并以晋升资格受损作为章末不可逆代价。",
+      "stage": "场景卡",
+      "required_source_kinds": ["资料库", "动态网络", "静态网络", "锚点网络"],
+      "retrieval_terms": ["沈砚", "陆昭", "证据", "晋升", "镇潮阵", "风险", "选择", "代价", "关系", "状态", "状态变化", "资源", "临界值", "权衡", "玄幻", "修炼", "宗门"],
+      "activation_evidence": ["场景目标已记录", "选择、风险与代价词已匹配", "场景卡阶段已指定"],
+      "activation_conditions_met": true
+    }
+  ]
+}

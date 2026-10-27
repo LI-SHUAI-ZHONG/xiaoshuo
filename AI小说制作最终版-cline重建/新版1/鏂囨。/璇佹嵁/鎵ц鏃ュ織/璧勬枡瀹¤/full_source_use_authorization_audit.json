@@ -1,0 +1,12 @@
+﻿{
+    "schema_version":  "command-execution-record-1.0",
+    "name":  "full_source_use_authorization_audit",
+    "command":  "C:\\Users\\li\\AppData\\Local\\Programs\\Python\\Launcher\\py.exe D:\\AI小说制作最终版-cline重建\\新版1\\脚本\\全量资料输入与正文授权.py --project-root D:\\AI小说制作最终版-cline重建\\新版1 --audit",
+    "started_at":  "2026-08-13T16:11:09.5491218Z",
+    "finished_at":  "2026-08-13T16:11:11.0866071Z",
+    "exit_code":  0,
+    "stdout_file":  "D:\\AI小说制作最终版-cline重建\\新版1\\鏂囨。\\璇佹嵁\\鎵ц鏃ュ織\\璧勬枡瀹¤\\full_source_use_authorization_audit.stdout.txt",
+    "stderr_file":  "D:\\AI小说制作最终版-cline重建\\新版1\\鏂囨。\\璇佹嵁\\鎵ц鏃ュ織\\璧勬枡瀹¤\\full_source_use_authorization_audit.stderr.txt",
+    "stdout":  "{\"schema_version\": \"full-source-model-input-prose-authorization-1.0\", \"generated_at\": \"2026-08-13T16:11:10.788289+00:00\", \"scope\": \"per_binding_explicit_use_authorization_audit\", \"baseline_binding_count\": 13345, \"submitted_record_count\": 13345, \"authorized_binding_count\": 13345, \"rejected_record_count\": 0, \"unsubmitted_binding_count\": 0, \"model_input_eligible_count\": 13345, \"prose_write_allowed_count\": 13345}\r\n",
+    "stderr":  ""
+}

@@ -1,0 +1,21 @@
+{
+  "total_processed": 403,
+  "filled": 250,
+  "still_empty": 153,
+  "confidence_distribution": {
+    "high": 50,
+    "medium": 200,
+    "low": 153
+  },
+  "unresolved_reason_distribution": {
+    "语义引用或明确名称": 250,
+    "无可识别功能引用": 133,
+    "缺少可分析正文": 20
+  },
+  "validation": {
+    "index_entries": 418,
+    "all_dependencies_exist": true
+  },
+  "updated_at": "2026-08-11T02:20:37.302068Z"
+}
+

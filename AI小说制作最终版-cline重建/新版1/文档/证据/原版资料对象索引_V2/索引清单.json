@@ -1,0 +1,46 @@
+{
+  "schema_version": "original-material-object-index-1.0",
+  "generated_at": "2026-08-18T01:33:04.240973Z",
+  "source_file_count": 6,
+  "object_count": 8989,
+  "object_kind_counts": {
+    "anchor_table_row": 1730,
+    "json_object": 5847,
+    "markdown_entry": 927,
+    "source_json_block": 485
+  },
+  "files": [
+    {
+      "source_file": "原始资料/动态网络.txt",
+      "sha256": "6210e0b720a66d1369811632d7fa35b531aa52f180afc881774a9e50b8e29351",
+      "object_count": 3165
+    },
+    {
+      "source_file": "原始资料/类型系统.txt",
+      "sha256": "e9ea89fd332d75fddb176c4de59bf7af52b3f5716aef3f05819bafecebfd0bb3",
+      "object_count": 463
+    },
+    {
+      "source_file": "原始资料/类型连接.txt",
+      "sha256": "c4e9a6be77728f234a8f8be6edc4d77f38e1116e5aa0e2d2c3b124532743da58",
+      "object_count": 36
+    },
+    {
+      "source_file": "原始资料/资料库.txt",
+      "sha256": "1fa20a116003cf356d797a7aae73586e3ffd42fa5459f3c1f81358170267383e",
+      "object_count": 900
+    },
+    {
+      "source_file": "原始资料/锚点网络.txt",
+      "sha256": "e14382a6351d9d9183871195a644d25eaa5e37f4a8d659732f45963e9ed1b8b8",
+      "object_count": 1743
+    },
+    {
+      "source_file": "原始资料/静态网络.txt",
+      "sha256": "21b25fa76405e67428367cd7aec3e2176f1a4a01b259daaae82b58c6f3fc72c9",
+      "object_count": 2682
+    }
+  ],
+  "objects_file": "对象索引.jsonl",
+  "original_sources_modified": false
+}

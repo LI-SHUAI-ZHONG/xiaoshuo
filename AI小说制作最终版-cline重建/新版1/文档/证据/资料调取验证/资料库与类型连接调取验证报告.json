@@ -1,0 +1,24 @@
+{
+  "schema_version": "source-retrieval-validation-1.0",
+  "generated_at": "2026-08-18T18:20:31.017470Z",
+  "scope": "library_and_type_connection_retrieval_only",
+  "raw_sources": {
+    "library": {
+      "path": "原始资料/资料库.txt",
+      "sha256": "3bff90bc342bb2ff3194cc7c1e673d4d7899d07ec091ea7873d7640144ed7cbc",
+      "entry_count": 910
+    },
+    "type_connections": {
+      "path": "原始资料/类型连接.txt",
+      "sha256": "8becb7f70452de4465e4a73b2a4bcc9c5928c865953edd6b1a6fcbbae6ab4508",
+      "source_block_count": 36
+    }
+  },
+  "binding_count": 7926,
+  "status_counts": {
+    "类型连接:exact": 7358,
+    "资料库:exact": 568
+  },
+  "policy": "调取可用性与审计/授权/正文消费状态分离；可回读的原始资料不因派生审计状态而失去检索用途。",
+  "status": "passed"
+}

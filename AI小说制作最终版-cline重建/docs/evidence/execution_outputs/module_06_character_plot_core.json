@@ -1,0 +1,1622 @@
+{
+  "character_connections": [
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.1_主角",
+      "target": "130_核心悬念",
+      "type": "绑定",
+      "condition": "绑定主线；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.1_主角",
+      "original_target": "130_核心悬念",
+      "normalized_source": "1.1_主角",
+      "normalized_target": "130_核心悬念",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.1_主角",
+            "130_核心悬念",
+            "绑定"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00001",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.1_主角",
+      "target": "3.1_欲望",
+      "type": "驱动",
+      "condition": "主角存在；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立时，为终点状态变化提供驱动力。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.1_主角",
+      "original_target": "3.1_欲望",
+      "normalized_source": "1.1_主角",
+      "normalized_target": "3.1_欲望",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.1_主角",
+            "3.1_欲望",
+            "驱动"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00002",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.1_主角",
+      "target": "3.2_执念",
+      "type": "驱动",
+      "condition": "主角存在；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立时，为终点状态变化提供驱动力。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.1_主角",
+      "original_target": "3.2_执念",
+      "normalized_source": "1.1_主角",
+      "normalized_target": "3.2_执念",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.1_主角",
+            "3.2_执念",
+            "驱动"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00003",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.1_主角",
+      "target": "4.1_弧光",
+      "type": "演化",
+      "condition": "全书主线；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点持续或变化时，推动终点按阶段发生状态变化。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.1_主角",
+      "original_target": "4.1_弧光",
+      "normalized_source": "1.1_主角",
+      "normalized_target": "4.1_弧光",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.1_主角",
+            "4.1_弧光",
+            "演化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00004",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.1_主角",
+      "target": "119.1_共鸣点",
+      "type": "约束",
+      "condition": "开篇建立；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立时，限制终点可采取的状态或行为范围。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.1_主角",
+      "original_target": "119.1_共鸣点",
+      "normalized_source": "1.1_主角",
+      "normalized_target": "119.1_共鸣点",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.1_主角",
+            "119.1_共鸣点",
+            "约束"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00005",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.4_背景角色",
+      "target": "110.1_氛围",
+      "type": "输出",
+      "condition": "营造真实感；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点完成处理时，将其状态结果传递给终点。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.4_背景角色",
+      "original_target": "110.1_氛围",
+      "normalized_source": "1.4_背景角色",
+      "normalized_target": "110.1_氛围",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.4_背景角色",
+            "110.1_氛围",
+            "输出"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00011",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.4_背景角色",
+      "target": "20.2_自动运转",
+      "type": "嵌套",
+      "condition": "世界填充；且当前故事明确采用该静态关系",
+      "priority": 3,
+      "effect": "当起点成立时，终点作为起点的一部分参与当前状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.4_背景角色",
+      "original_target": "20.2_自动运转",
+      "normalized_source": "1.4_背景角色",
+      "normalized_target": "20.2_自动运转",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.4_背景角色",
+            "20.2_自动运转",
+            "嵌套"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00012",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.7_角色关系网络",
+      "target": "5.1_亲缘",
+      "type": "嵌套",
+      "condition": "包含；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立时，终点作为起点的一部分参与当前状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.7_角色关系网络",
+      "original_target": "5.1_亲缘",
+      "normalized_source": "1.7_角色关系网络",
+      "normalized_target": "5.1_亲缘",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.7_角色关系网络",
+            "5.1_亲缘",
+            "嵌套"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00019",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.7_角色关系网络",
+      "target": "5.2_社会关系",
+      "type": "嵌套",
+      "condition": "包含；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立时，终点作为起点的一部分参与当前状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.7_角色关系网络",
+      "original_target": "5.2_社会关系",
+      "normalized_source": "1.7_角色关系网络",
+      "normalized_target": "5.2_社会关系",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.7_角色关系网络",
+            "5.2_社会关系",
+            "嵌套"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00020",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.7_角色关系网络",
+      "target": "5.3_情感关系",
+      "type": "嵌套",
+      "condition": "包含；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立时，终点作为起点的一部分参与当前状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.7_角色关系网络",
+      "original_target": "5.3_情感关系",
+      "normalized_source": "1.7_角色关系网络",
+      "normalized_target": "5.3_情感关系",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.7_角色关系网络",
+            "5.3_情感关系",
+            "嵌套"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00021",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.8_角色分类体系",
+      "target": "124.1_小说种类",
+      "type": "约束",
+      "condition": "类型决定分类；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立时，限制终点可采取的状态或行为范围。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.8_角色分类体系",
+      "original_target": "124.1_小说种类",
+      "normalized_source": "1.8_角色分类体系",
+      "normalized_target": "124.1_小说种类",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.8_角色分类体系",
+            "124.1_小说种类",
+            "约束"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00022",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "1.8_角色分类体系",
+      "target": "144.1_配角级别",
+      "type": "转化",
+      "condition": "功能分类；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立并满足转化条件时，将起点状态转为终点状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "1.8_角色分类体系",
+      "original_target": "144.1_配角级别",
+      "normalized_source": "1.8_角色分类体系",
+      "normalized_target": "144.1_配角级别",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "1.8_角色分类体系",
+            "144.1_配角级别",
+            "转化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00023",
+      "status": "derived"
+    },
+    {
+      "id": "C00071",
+      "source": "110.2_氛围与角色情绪映射",
+      "source_layer": "表达层",
+      "target": "7.4_情感与身体反应",
+      "target_layer": "引擎层",
+      "type": "触发链",
+      "direction": "双向",
+      "strength": "强",
+      "condition": "氛围映射情绪",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "都市",
+        "科幻",
+        "悬疑",
+        "言情",
+        "历史",
+        "军事",
+        "游戏",
+        "体育",
+        "灵异",
+        "同人",
+        "二次元",
+        "耽美",
+        "轻小说"
+      ],
+      "priority": 1,
+      "effect": "氛围变化反映情绪变化",
+      "generated_from_static": false,
+      "needs_review": false,
+      "original_source": "110.2_氛围与角色情绪映射",
+      "original_target": "7.4_情感与身体反应",
+      "normalized_source": "110.2_氛围与角色情绪映射",
+      "normalized_target": "7.4_情感与身体反应",
+      "field_source": {
+        "source": "动态网络.txt 原始连接记录"
+      },
+      "status": "original"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "140.1_角色未知性",
+      "target": "140.2_揭示节奏",
+      "type": "演化",
+      "condition": "未知性决定揭示节奏；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点持续或变化时，推动终点按阶段发生状态变化。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "140.1_角色未知性",
+      "original_target": "140.2_揭示节奏",
+      "normalized_source": "140.1_角色未知性",
+      "normalized_target": "140.2_揭示节奏",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "140.1_角色未知性",
+            "140.2_揭示节奏",
+            "演化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00244",
+      "status": "derived"
+    },
+    {
+      "id": "C00245",
+      "source": "140.1_角色未知性",
+      "source_layer": "读者层",
+      "target": "65.2_读者不确定性管理",
+      "target_layer": "读者层",
+      "type": "触发链",
+      "direction": "单向",
+      "strength": "强",
+      "condition": "未知性制造不确定性",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "都市",
+        "科幻",
+        "悬疑",
+        "言情",
+        "历史",
+        "军事",
+        "游戏",
+        "体育",
+        "灵异",
+        "同人",
+        "二次元",
+        "耽美",
+        "轻小说"
+      ],
+      "priority": 1,
+      "effect": "角色未知性制造不确定性",
+      "generated_from_static": false,
+      "needs_review": false,
+      "original_source": "140.1_角色未知性",
+      "original_target": "65.2_读者不确定性管理",
+      "normalized_source": "140.1_角色未知性",
+      "normalized_target": "65.2_读者不确定性管理",
+      "field_source": {
+        "source": "动态网络.txt 原始连接记录"
+      },
+      "status": "original"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "140.1_角色未知性",
+      "target": "158.1_认知阶梯",
+      "type": "转化",
+      "condition": "未知性与认知阶梯相关；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立并满足转化条件时，将起点状态转为终点状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "140.1_角色未知性",
+      "original_target": "158.1_认知阶梯",
+      "normalized_source": "140.1_角色未知性",
+      "normalized_target": "158.1_认知阶梯",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "140.1_角色未知性",
+            "158.1_认知阶梯",
+            "转化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00246",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "140.1_角色未知性",
+      "target": "65.2_读者不确定性",
+      "type": "转化",
+      "condition": "未知性→不确定性；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立并满足转化条件时，将起点状态转为终点状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "140.1_角色未知性",
+      "original_target": "65.2_读者不确定性",
+      "normalized_source": "140.1_角色未知性",
+      "normalized_target": "65.2_读者不确定性",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "140.1_角色未知性",
+            "65.2_读者不确定性",
+            "转化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00247",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "145.4_动作",
+      "target": "2.3_角色动作",
+      "type": "嵌套",
+      "condition": "动作=角色动作；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立时，终点作为起点的一部分参与当前状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "145.4_动作",
+      "original_target": "2.3_角色动作",
+      "normalized_source": "145.4_动作",
+      "normalized_target": "2.3_角色动作",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "145.4_动作",
+            "2.3_角色动作",
+            "嵌套"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00285",
+      "status": "derived"
+    },
+    {
+      "id": "C00289",
+      "source": "146.1_人格外化",
+      "source_layer": "执行层",
+      "target": "2.3_角色动作",
+      "target_layer": "生成层",
+      "type": "嵌套链",
+      "direction": "单向",
+      "strength": "强",
+      "condition": "外化是动作",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "都市",
+        "科幻",
+        "悬疑",
+        "言情",
+        "历史",
+        "军事",
+        "游戏",
+        "体育",
+        "灵异",
+        "同人",
+        "二次元",
+        "耽美",
+        "轻小说"
+      ],
+      "priority": 1,
+      "effect": "人格外化是动作的一部分",
+      "generated_from_static": false,
+      "needs_review": false,
+      "original_source": "146.1_人格外化",
+      "original_target": "2.3_角色动作",
+      "normalized_source": "146.1_人格外化",
+      "normalized_target": "2.3_角色动作",
+      "field_source": {
+        "source": "动态网络.txt 原始连接记录"
+      },
+      "status": "original"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "146.1_人格外化",
+      "target": "2.3_角色动作",
+      "type": "转化",
+      "condition": "人格→动作；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立并满足转化条件时，将起点状态转为终点状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "146.1_人格外化",
+      "original_target": "2.3_角色动作",
+      "normalized_source": "146.1_人格外化",
+      "normalized_target": "2.3_角色动作",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "146.1_人格外化",
+            "2.3_角色动作",
+            "转化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00290",
+      "status": "derived"
+    },
+    {
+      "id": "C00384",
+      "source": "156.3_外貌审美",
+      "source_layer": "表达层",
+      "target": "2.1_角色外貌",
+      "target_layer": "生成层",
+      "type": "嵌套链",
+      "direction": "单向",
+      "strength": "强",
+      "condition": "审美是外貌",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "都市",
+        "科幻",
+        "悬疑",
+        "言情",
+        "历史",
+        "军事",
+        "游戏",
+        "体育",
+        "灵异",
+        "同人",
+        "二次元",
+        "耽美",
+        "轻小说"
+      ],
+      "priority": 1,
+      "effect": "外貌审美是角色外貌的一部分",
+      "generated_from_static": false,
+      "needs_review": false,
+      "original_source": "156.3_外貌审美",
+      "original_target": "2.1_角色外貌",
+      "normalized_source": "156.3_外貌审美",
+      "normalized_target": "2.1_角色外貌",
+      "field_source": {
+        "source": "动态网络.txt 原始连接记录"
+      },
+      "status": "original"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.1_角色外貌",
+      "target": "146.1_人格外化",
+      "type": "转化",
+      "condition": "外貌反映人格；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立并满足转化条件时，将起点状态转为终点状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.1_角色外貌",
+      "original_target": "146.1_人格外化",
+      "normalized_source": "2.1_角色外貌",
+      "normalized_target": "146.1_人格外化",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.1_角色外貌",
+            "146.1_人格外化",
+            "转化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00449",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.1_角色外貌",
+      "target": "52.1_视觉描写",
+      "type": "输出",
+      "condition": "首次出场；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点完成处理时，将其状态结果传递给终点。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.1_角色外貌",
+      "original_target": "52.1_视觉描写",
+      "normalized_source": "2.1_角色外貌",
+      "normalized_target": "52.1_视觉描写",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.1_角色外貌",
+            "52.1_视觉描写",
+            "输出"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00450",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.1_角色外貌",
+      "target": "151.1_身份",
+      "type": "嵌套",
+      "condition": "外貌暗示身份；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立时，终点作为起点的一部分参与当前状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.1_角色外貌",
+      "original_target": "151.1_身份",
+      "normalized_source": "2.1_角色外貌",
+      "normalized_target": "151.1_身份",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.1_角色外貌",
+            "151.1_身份",
+            "嵌套"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00451",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.2_角色嗓音",
+      "target": "52.2_听觉描写",
+      "type": "输出",
+      "condition": "首次说话；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点完成处理时，将其状态结果传递给终点。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.2_角色嗓音",
+      "original_target": "52.2_听觉描写",
+      "normalized_source": "2.2_角色嗓音",
+      "normalized_target": "52.2_听觉描写",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.2_角色嗓音",
+            "52.2_听觉描写",
+            "输出"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00452",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.2_角色嗓音",
+      "target": "57.5_说话风格",
+      "type": "约束",
+      "condition": "嗓音决定风格；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立时，限制终点可采取的状态或行为范围。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.2_角色嗓音",
+      "original_target": "57.5_说话风格",
+      "normalized_source": "2.2_角色嗓音",
+      "normalized_target": "57.5_说话风格",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.2_角色嗓音",
+            "57.5_说话风格",
+            "约束"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00453",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.3_角色动作",
+      "target": "145.4_动作",
+      "type": "转化",
+      "condition": "动作链节点；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立并满足转化条件时，将起点状态转为终点状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.3_角色动作",
+      "original_target": "145.4_动作",
+      "normalized_source": "2.3_角色动作",
+      "normalized_target": "145.4_动作",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.3_角色动作",
+            "145.4_动作",
+            "转化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00454",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.3_角色动作",
+      "target": "146.1_人格外化",
+      "type": "转化",
+      "condition": "动作反映人格；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立并满足转化条件时，将起点状态转为终点状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.3_角色动作",
+      "original_target": "146.1_人格外化",
+      "normalized_source": "2.3_角色动作",
+      "normalized_target": "146.1_人格外化",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.3_角色动作",
+            "146.1_人格外化",
+            "转化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00455",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.3_角色动作",
+      "target": "50.1_精确动词",
+      "type": "绑定",
+      "condition": "动作需精确动词；且当前故事明确采用该静态关系",
+      "priority": 2,
+      "effect": "当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.3_角色动作",
+      "original_target": "50.1_精确动词",
+      "normalized_source": "2.3_角色动作",
+      "normalized_target": "50.1_精确动词",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.3_角色动作",
+            "50.1_精确动词",
+            "绑定"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00456",
+      "status": "derived"
+    },
+    {
+      "direction": "单向",
+      "strength": "中",
+      "valid_types": [
+        "玄幻",
+        "仙侠",
+        "科幻",
+        "游戏",
+        "军事",
+        "悬疑",
+        "都市",
+        "历史",
+        "言情",
+        "奇幻"
+      ],
+      "source_layer": "未分类",
+      "target_layer": "未分类",
+      "source": "2.4_角色性格",
+      "target": "146.1_人格外化",
+      "type": "转化",
+      "condition": "性格需外化；且当前故事明确采用该静态关系",
+      "priority": 1,
+      "effect": "当起点成立并满足转化条件时，将起点状态转为终点状态。",
+      "generated_from_static": true,
+      "needs_review": false,
+      "validation_status": "derived_contract_validated",
+      "derivation_contract": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0",
+      "original_source": "2.4_角色性格",
+      "original_target": "146.1_人格外化",
+      "normalized_source": "2.4_角色性格",
+      "normalized_target": "146.1_人格外化",
+      "field_source": {
+        "direction": "明确默认规则: direction=单向",
+        "strength": "明确默认规则: strength=中",
+        "valid_types": "NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略",
+        "source_layer": "明确默认规则: 未分类",
+        "target_layer": "明确默认规则: 未分类",
+        "condition": "静态网络对应记录",
+        "priority": "静态网络对应记录",
+        "effect": "按静态关系类型派生的通用状态变化语义"
+      },
+      "source_refs": [
+        {
+          "artifact": "NET-STATIC-FULL",
+          "source": "静态网络.txt source_index",
+          "source_key": [
+            "2.4_角色性格",
+            "146.1_人格外化",
+            "转化"
+          ]
+        }
+      ],
+      "review_reason": "已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境",
+      "id": "C00457",
+      "status": "derived"
+    }
+  ],
+  "plot_edges": 1341,
+  "dynamic_edges": 1824
+}

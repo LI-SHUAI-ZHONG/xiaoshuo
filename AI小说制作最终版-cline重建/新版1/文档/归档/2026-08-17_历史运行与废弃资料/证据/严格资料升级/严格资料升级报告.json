@@ -1,0 +1,21 @@
+{
+  "schema_version": "strict-source-upgrade-report-1.0",
+  "generated_at": "2026-08-13T00:20:47.460732+00:00",
+  "scope": "source_audit_and_normalized_reference_validation_only",
+  "input_record_count": 13345,
+  "batch_size": 6,
+  "batch_count": 2225,
+  "status_counts": {
+    "upgraded_for_draft_audit": 6110,
+    "quarantined": 7235
+  },
+  "quality_level_counts": {
+    "draft_usable": 13345
+  },
+  "attested_item_count": 9,
+  "formal_fact_eligible_count": 0,
+  "project_source_confirmed": false,
+  "prose_write_allowed": false,
+  "legacy_prose_or_archive_modified": false,
+  "policy": "条目认证不能替代项目来源确认；任何 candidate/pending/unconfirmed/blocked、身份不一致或不可回读来源均隔离。"
+}

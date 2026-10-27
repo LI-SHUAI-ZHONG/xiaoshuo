@@ -1,0 +1,125 @@
+{
+  "schema_version": "chapter-execution-manifest-2.0",
+  "chapter_id": "1",
+  "title": "第七码",
+  "status": "derived_planning_candidate",
+  "target_characters": {
+    "minimum": 2000,
+    "maximum": 2500
+  },
+  "progression": "发现异常",
+  "chapter_decision": {
+    "chapter_goal": "确认第七息回亮不是自身修炼误差，并取得能复核的旧域指向。",
+    "obstacle": "检测与档案制度会把异常归为误差，公开追问将危及沈砚和协助者的晋升资格。",
+    "choice": "沈砚放弃当场争辩，以掌心节拍、缺页与禁线反应保存可复核证据，并用内门木牌打开旧域缝隙。",
+    "consequence": "晋升资格作废；许照微因协助被记过；陆昭与沈砚的信任出现裂口。",
+    "state_change": "从怀疑异常到确认镇潮阵正在向旧域输送灵息。",
+    "next_action_interface": "带着父亲留下的节拍进入旧域，查明回响对应的人与阵眼。"
+  },
+  "selected_evidence": [
+    {
+      "source_id": "SB-WORLD-001",
+      "source_ref": "项目创作圣经.json:world.power_system",
+      "evidence_level": "derived",
+      "decision_impact": "世界规则、代价与公开谎言",
+      "direct_fact_allowed": false
+    },
+    {
+      "source_id": "SB-CHAR-001",
+      "source_ref": "项目创作圣经.json:characters",
+      "evidence_level": "derived",
+      "decision_impact": "人物动机、冲突与可承担代价",
+      "direct_fact_allowed": false
+    },
+    {
+      "source_id": "SB-ARC-001",
+      "source_ref": "项目创作圣经.json:series_arc[0]",
+      "evidence_level": "derived",
+      "decision_impact": "卷一承诺与转折边界",
+      "direct_fact_allowed": false
+    },
+    {
+      "source_id": "DYN-001",
+      "source_ref": "网络完整数据/动态连接完整数据.json",
+      "evidence_level": "draft_usable",
+      "decision_impact": "状态变化只能落为行动与可观察后果",
+      "direct_fact_allowed": false
+    },
+    {
+      "source_id": "STA-001",
+      "source_ref": "网络完整数据/静态连接完整数据.json",
+      "evidence_level": "draft_usable",
+      "decision_impact": "权限、资源与关系边界",
+      "direct_fact_allowed": false
+    },
+    {
+      "source_id": "ANC-001",
+      "source_ref": "原始资料/锚点网络.txt",
+      "evidence_level": "draft_usable",
+      "decision_impact": "用可感知物件和空间落实异常",
+      "direct_fact_allowed": false
+    }
+  ],
+  "fact_boundary": "仅可将项目创作圣经中的作者草案和 draft_usable 来源转为带来源标识的草稿设计；不得作为已确认项目事实、不得混入 candidate/unconfirmed 内容。",
+  "exclusions": [
+    "candidate、blocked 或无 source_ref 的资料不得进入正文",
+    "来源定义、资料 ID、元数据和规则原文不得出现在正文",
+    "未通过跨章连续性和场景闭环验证不得写入正文"
+  ],
+  "scenes": [
+    {
+      "scene_id": "1-S1",
+      "location": "检测场",
+      "goal": "完成检测并辨明异常来源",
+      "obstacle": "异常会被直接记为修行不稳",
+      "new_information": "第七息回亮且指向旧域",
+      "choice": "保留节拍和刻痕方向",
+      "consequence": "放弃复测，线索只能私下追查",
+      "required_prose_evidence": [
+        "目标",
+        "阻碍或新信息",
+        "人物选择",
+        "可观察后果",
+        "状态变化"
+      ]
+    },
+    {
+      "scene_id": "1-S2",
+      "location": "档案廊",
+      "goal": "取得潮期的历史记录",
+      "obstacle": "低阶权限只能看到被删改的卷宗",
+      "new_information": "缺页与检测石有同样刻痕",
+      "choice": "接受许照微的薄页",
+      "consequence": "许照微被记过，沈砚欠下人情",
+      "required_prose_evidence": [
+        "目标",
+        "阻碍或新信息",
+        "人物选择",
+        "可观察后果",
+        "状态变化"
+      ]
+    },
+    {
+      "scene_id": "1-S3",
+      "location": "旧域外廊",
+      "goal": "验证禁线用途",
+      "obstacle": "擅入将永失晋升资格，巡夜逼近",
+      "new_information": "禁线吸入灵息而非隔绝灾息",
+      "choice": "以木牌换取短暂缝隙",
+      "consequence": "资格作废，必须进入旧域",
+      "required_prose_evidence": [
+        "目标",
+        "阻碍或新信息",
+        "人物选择",
+        "可观察后果",
+        "状态变化"
+      ]
+    }
+  ],
+  "validation_criteria": [
+    "每场具备目标、阻碍或新信息、选择、后果",
+    "全章具备可观察状态变化和下一章行动接口",
+    "字数在 2000-2500 中文字符",
+    "证据链不得越过 draft_usable 的事实边界"
+  ]
+}
