@@ -1,0 +1,608 @@
+{
+  "steps": [
+    {
+      "step": 1,
+      "title": "仓库初始化与架构契约",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\01_仓库初始化与架构契约.md"
+    },
+    {
+      "step": 2,
+      "title": "开发工具链与质量门禁",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\02_开发工具链与质量门禁.md"
+    },
+    {
+      "step": 3,
+      "title": "本地基础设施与环境配置",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\03_本地基础设施与环境配置.md"
+    },
+    {
+      "step": 4,
+      "title": "后端内核与应用启动",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\04_后端内核与应用启动.md"
+    },
+    {
+      "step": 5,
+      "title": "数据层迁移仓储与Outbox",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\05_数据层迁移仓储与Outbox.md"
+    },
+    {
+      "step": 6,
+      "title": "身份权限安全与审计",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\06_身份权限安全与审计.md"
+    },
+    {
+      "step": 7,
+      "title": "项目工作区与资产核心",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\07_项目工作区与资产核心.md"
+    },
+    {
+      "step": 8,
+      "title": "事件任务与工作流引擎",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\08_事件任务与工作流引擎.md"
+    },
+    {
+      "step": 9,
+      "title": "AI模型网关工具与插件边界",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\09_AI模型网关工具与插件边界.md"
+    },
+    {
+      "step": 10,
+      "title": "Agent运行时与总控编排",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\10_Agent运行时与总控编排.md"
+    },
+    {
+      "step": 11,
+      "title": "知识采集检索与研究骨架",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\11_知识采集检索与研究骨架.md"
+    },
+    {
+      "step": 12,
+      "title": "七层记忆与上下文构建",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\12_七层记忆与上下文构建.md"
+    },
+    {
+      "step": 13,
+      "title": "小说世界人物与作者模型骨架",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\13_小说世界人物与作者模型骨架.md"
+    },
+    {
+      "step": 14,
+      "title": "Canon一致性与质量评估",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\14_Canon一致性与质量评估.md"
+    },
+    {
+      "step": 15,
+      "title": "反馈指标与受控进化闭环",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\15_反馈指标与受控进化闭环.md"
+    },
+    {
+      "step": 16,
+      "title": "API基础契约与客户端生成",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\16_API基础契约与客户端生成.md"
+    },
+    {
+      "step": 17,
+      "title": "API资源路由与实时事件",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\17_API资源路由与实时事件.md"
+    },
+    {
+      "step": 18,
+      "title": "Studio前端底座与设计系统",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\18_Studio前端底座与设计系统.md"
+    },
+    {
+      "step": 19,
+      "title": "Studio项目与创作工作区",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\19_Studio项目与创作工作区.md"
+    },
+    {
+      "step": 20,
+      "title": "Studio监控与系统工作区",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\20_Studio监控与系统工作区.md"
+    },
+    {
+      "step": 21,
+      "title": "多模态生态与扩展接口骨架",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\21_多模态生态与扩展接口骨架.md"
+    },
+    {
+      "step": 22,
+      "title": "可观测性韧性备份与灾备",
+      "status": "历史PASS",
+      "path": "01_搭建框架_ACCOS\\执行\\22_可观测性韧性备份与灾备.md"
+    },
+    {
+      "step": 23,
+      "title": "集成测试CI发布与最终验收",
+      "status": "历史PARTIAL",
+      "path": "01_搭建框架_ACCOS\\执行\\23_集成测试CI发布与最终验收.md"
+    },
+    {
+      "step": 24,
+      "title": "基线与契约定版",
+      "status": "IMPLEMENTED_UNTESTED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/24_基线与契约定版.md"
+    },
+    {
+      "step": 25,
+      "title": "本地身份设置与审批",
+      "status": "IMPLEMENTED_UNTESTED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/25_本地身份设置与审批.md"
+    },
+    {
+      "step": 26,
+      "title": "正文存储版本与编辑基础",
+      "status": "IMPLEMENTED_UNTESTED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/26_正文存储版本与编辑基础.md"
+    },
+    {
+      "step": 27,
+      "title": "真实模型Prompt与Agent执行",
+      "status": "IMPLEMENTED_UNTESTED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/27_真实模型Prompt与Agent执行.md"
+    },
+    {
+      "step": 28,
+      "title": "依赖工作流调度与总控",
+      "status": "IN_PROGRESS",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/28_依赖工作流调度与总控.md"
+    },
+    {
+      "step": 29,
+      "title": "知识采集转译与混合检索",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/29_知识采集转译与混合检索.md"
+    },
+    {
+      "step": 30,
+      "title": "七层记忆与强制上下文",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/30_七层记忆与强制上下文.md"
+    },
+    {
+      "step": 31,
+      "title": "类型主题剧情与场景规划",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/31_类型主题剧情与场景规划.md"
+    },
+    {
+      "step": 32,
+      "title": "世界人物时间线与模拟",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/32_世界人物时间线与模拟.md"
+    },
+    {
+      "step": 33,
+      "title": "写作审稿修订与接受闭环",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/33_写作审稿修订与接受闭环.md"
+    },
+    {
+      "step": 34,
+      "title": "完整Studio与可视化整合",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/34_完整Studio与可视化整合.md"
+    },
+    {
+      "step": 35,
+      "title": "自主研究多项目计划与战略",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/35_自主研究多项目计划与战略.md"
+    },
+    {
+      "step": 36,
+      "title": "作者学习反馈与成长",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/36_作者学习反馈与成长.md"
+    },
+    {
+      "step": 37,
+      "title": "实验室受控进化与晋升",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/37_实验室受控进化与晋升.md"
+    },
+    {
+      "step": 38,
+      "title": "插件沙箱工具与模块生成",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/38_插件沙箱工具与模块生成.md"
+    },
+    {
+      "step": 39,
+      "title": "宇宙IP出版导入与改编",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/39_宇宙IP出版导入与改编.md"
+    },
+    {
+      "step": 40,
+      "title": "图音视频3D与跨媒介资产",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/40_图音视频3D与跨媒介资产.md"
+    },
+    {
+      "step": 41,
+      "title": "团队协作实时编辑与审阅",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/41_团队协作实时编辑与审阅.md"
+    },
+    {
+      "step": 42,
+      "title": "私有市场权属分成与信誉",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/42_私有市场权属分成与信誉.md"
+    },
+    {
+      "step": 43,
+      "title": "本地交付运维备份与迁移",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/43_本地交付运维备份与迁移.md"
+    },
+    {
+      "step": 44,
+      "title": "全功能接线与施工完整性复核",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/44_全功能接线与施工完整性复核.md"
+    },
+    {
+      "step": 45,
+      "title": "统一测试修复与最终验收",
+      "status": "PLANNED",
+      "path": "01_搭建框架_ACCOS/后续执行/步骤/45_统一测试修复与最终验收.md"
+    }
+  ],
+  "status_counts": {
+    "历史PASS": 22,
+    "历史PARTIAL": 1,
+    "IMPLEMENTED_UNTESTED": 4,
+    "IN_PROGRESS": 1,
+    "PLANNED": 17
+  },
+  "nodes": [
+    {
+      "line": 15,
+      "text": "| N01 灵感捕获/任务澄清 | 作者原话、目标、约束、当前项目 | OriginalIdeaRef + WorkBrief候选 + 缺项清单 | 作者确认目标；缺少会改变作品方向的项不猜成事实 |"
+    },
+    {
+      "line": 16,
+      "text": "| N02 类型与读者定位 | Brief、作者可用偏好、类型组件 | GenreProfile/BlendPlan、六维影响、融合风险 | 作者选方案或使用自定义；无类型库可手工定义六维，不随机填充模板 |"
+    },
+    {
+      "line": 17,
+      "text": "| N03 研究/资料准备 | 资料需求图、来源权限、预算 | ResearchPlan、带证据知识、转译组件 | mandatory来源齐全或经作者将对应可选项调整；不得伪造引用 |"
+    },
+    {
+      "line": 18,
+      "text": "| N04 世界设计 | Brief、类型影响、研究与规则约束 | WorldBible：规则/历史/地理/文明/制度/资源/科技/文化 | 结构检查和作者确认，形成基础Canon版本 |"
+    },
+    {
+      "line": 19,
+      "text": "| N05 人物设计 | 世界、主题、类型、角色任务 | DNA/身份、心理/欲望/创伤、目标、关系、成长、VoiceProfile | 动机和行动有来源；人物知道的秘密与作者知道的真相分开 |"
+    },
+    {
+      "line": 20,
+      "text": "| N06 全书与卷规划 | 已确认主题/人物/世界、结局意向 | Series→Work→Volume→Arc→Chapter→Scene、故事线、因果、情绪曲线、伏笔表 | 不强制单一三幕模板；允许作者提供结构 |"
+    },
+    {
+      "line": 21,
+      "text": "| N07 本章任务 | 卷/章节计划、前章接受版本、未完成伏笔、当前世界/人物状态 | ChapterBrief + ScenePlan +预期状态变化 | 章节计划与输入版本一致 |"
+    },
+    {
+      "line": 22,
+      "text": "| N08 依赖预检 | StageRequirement、所有mandatory refs、授权、配额 | PreflightReport + 冻结StepInputManifest | 缺项→waiting_resource；旧版本→stale；未配模型→waiting_configuration |"
+    },
+    {
+      "line": 23,
+      "text": "| N09 上下文组装 | Canon、角色当前/历史状态、知识组件、作者风格、前置产物 | ContextPackage + ReadReceipt + 排除原因 +token预算 | mandatory全部入包；超预算分步/重新规划，不能截掉硬约束 |"
+    },
+    {
+      "line": 24,
+      "text": "| N10 场景/正文生成 | ContextPackage、场景目的、POV/信息权限、VoiceProfile | PartialDraft→完整DraftCandidate，可选多个变体 | 实际完整返回并存储后才完成；截断/拒绝/取消单独状态 |"
+    },
+    {
+      "line": 25,
+      "text": "| N11 审稿 | 草稿同版本、Canon/时间/因果/人物/主题/风格、引用 | Findings、维度评价、读者模拟、修订候选 | 硬规则阻断；主观评价有证据、可申诉；未检查不能过关 |"
+    },
+    {
+      "line": 26,
+      "text": "| N12 修订 | 指定问题、选中文段、目标Revision、锁定段落 | 有范围的Patch/新版Draft、修改理由/影响 | 作者已写内容不能被旧候选覆盖；有限轮次后转人工 |"
+    },
+    {
+      "line": 27,
+      "text": "| N13 作者审阅 | 版本差异、发现、事实变更、影响 | 接受/拒绝/保留草稿/退回前置节点 | 真人或明确配置的低风险自动策略；主题/Canon重大变更要求真人 |"
+    },
+    {
+      "line": 28,
+      "text": "| N14 接受与事实提交 | 完整正文、批准、未过期检查、expected revisions | AcceptedRevision、事实新版本、Outbox、审计 | 同一提交边界一致；partial draft不可接受 |"
+    },
+    {
+      "line": 29,
+      "text": "| N15 记忆与索引 | AcceptedRevision/新事实事件 | 摘要、事件/因果/角色状态/伏笔投影、应用记录 | 去重与watermark完成；自动推断未证实项保持候选 |"
+    },
+    {
+      "line": 30,
+      "text": "| N16 下一章/全书复核 | 新状态、未回收线索、卷计划、预算 | 下一章任务或卷/全书整合报告 | 依赖版本合格；章节间依赖顺序不可被并行调度绕过 |"
+    },
+    {
+      "line": 31,
+      "text": "| N17 定稿与出版 | 接受版本集合、顺序、作者批准、许可元数据 | TXT/MD/DOCX/EPUB/PDF/项目包，版次与manifest | 本地导出可自动；外部平台发布需具体授权与配置 |"
+    },
+    {
+      "line": 32,
+      "text": "| N18 反馈与进化 | 显式评分/修改/同意信号、成本/失败/质量数据 | 作者模型候选、经验组件、改进实验、成长建议 | 数据不足不伪造学习结果；实验后才能晋升 |"
+    }
+  ],
+  "tables": [
+    "ab_experiments",
+    "flow_meta",
+    "flow_nodes",
+    "run_outputs",
+    "projects",
+    "briefs",
+    "bible_entries",
+    "chapters",
+    "scenes",
+    "runs",
+    "drafts",
+    "accepted",
+    "state_notes"
+  ],
+  "test_files": 10,
+  "test_functions": 46,
+  "tests": [
+    {
+      "path": "07_新框架_v0\\tests\\test_ab.py",
+      "tests": [
+        {
+          "name": "test_ab_persistence_seal_and_reproducibility",
+          "line": 14
+        },
+        {
+          "name": "test_failed_ab_retains_runs_no_choice",
+          "line": 46
+        },
+        {
+          "name": "test_unknown_context_and_interrupted_experiment",
+          "line": 58
+        },
+        {
+          "name": "test_v3_migrates_without_losing_flow",
+          "line": 77
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_ab_cli.py",
+      "tests": [
+        {
+          "name": "test_ab_cli",
+          "line": 9
+        },
+        {
+          "name": "test_ab_requires_real_config",
+          "line": 35
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_cli.py",
+      "tests": [
+        {
+          "name": "test_cli_persists_across_processes",
+          "line": 14
+        },
+        {
+          "name": "test_cli_missing_project_and_path_escape",
+          "line": 39
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_context.py",
+      "tests": [
+        {
+          "name": "test_registry",
+          "line": 13
+        },
+        {
+          "name": "test_context_selection_previous_rules_and_snapshots",
+          "line": 24
+        },
+        {
+          "name": "test_example_fixture",
+          "line": 52
+        },
+        {
+          "name": "test_flow_rules_context_frozen_after_n4",
+          "line": 69
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_flow.py",
+      "tests": [
+        {
+          "name": "test_end_to_end_and_idempotent_resume",
+          "line": 25
+        },
+        {
+          "name": "test_forced_stop_after_n3_resumes_frozen_inputs",
+          "line": 45
+        },
+        {
+          "name": "test_two_revision_limit_and_rejected_drafts_preserved",
+          "line": 69
+        },
+        {
+          "name": "test_generation_failure_does_not_accept_or_repeat",
+          "line": 88
+        },
+        {
+          "name": "test_declined_gate_resumes_without_skipping_confirmation",
+          "line": 99
+        },
+        {
+          "name": "test_interrupted_review_is_not_automatically_repeated",
+          "line": 109
+        },
+        {
+          "name": "test_resume_after_accept_commit_before_export",
+          "line": 132
+        },
+        {
+          "name": "test_resume_rejects_changed_model",
+          "line": 153
+        },
+        {
+          "name": "test_explicit_retry_preserves_failure_and_completes",
+          "line": 161
+        },
+        {
+          "name": "test_unconfirmed_brief_can_be_corrected",
+          "line": 174
+        },
+        {
+          "name": "test_interleaved_resume_does_not_duplicate_notes",
+          "line": 189
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_flow_cli.py",
+      "tests": [
+        {
+          "name": "test_flow_cli_and_resume",
+          "line": 11
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_generation.py",
+      "tests": [
+        {
+          "name": "test_write_records_result_and_snapshot",
+          "line": 14
+        },
+        {
+          "name": "test_fake_cannot_write_production",
+          "line": 45
+        },
+        {
+          "name": "test_missing_configuration_and_key",
+          "line": 54
+        },
+        {
+          "name": "test_input_is_durable_before_call_and_exception_is_recorded",
+          "line": 68
+        },
+        {
+          "name": "test_version_one_database_migrates_without_losing_data",
+          "line": 86
+        },
+        {
+          "name": "test_test_mode_cannot_target_projects",
+          "line": 102
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_providers.py",
+      "tests": [
+        {
+          "name": "test_compat_protocol",
+          "line": 43
+        },
+        {
+          "name": "test_ollama_protocol",
+          "line": 56
+        },
+        {
+          "name": "test_http_error_and_malformed_are_not_success",
+          "line": 65
+        },
+        {
+          "name": "test_cli_write_inspection_accept_and_secret_redaction",
+          "line": 75
+        },
+        {
+          "name": "test_cli_requires_config_without_creating_project",
+          "line": 109
+        },
+        {
+          "name": "test_malformed_request_id_is_recorded_as_error",
+          "line": 118
+        },
+        {
+          "name": "test_invalid_json_number_still_finishes_run",
+          "line": 134
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_smoke.py",
+      "tests": [
+        {
+          "name": "test_import_nw",
+          "line": 4
+        }
+      ]
+    },
+    {
+      "path": "07_新框架_v0\\tests\\test_store.py",
+      "tests": [
+        {
+          "name": "test_roundtrip_versions_acceptance_and_export",
+          "line": 23
+        },
+        {
+          "name": "test_reject_incomplete_acceptance",
+          "line": 61
+        },
+        {
+          "name": "test_wrong_scene_run_and_acceptance_rejected",
+          "line": 75
+        },
+        {
+          "name": "test_export_failure_rolls_back_pointer",
+          "line": 89
+        },
+        {
+          "name": "test_reopen_repairs_export_from_accepted",
+          "line": 100
+        },
+        {
+          "name": "test_open_missing_and_future_database",
+          "line": 112
+        },
+        {
+          "name": "test_failed_commit_does_not_publish_unaccepted_text",
+          "line": 124
+        },
+        {
+          "name": "test_export_error_after_commit_is_recoverable",
+          "line": 144
+        }
+      ]
+    }
+  ]
+}

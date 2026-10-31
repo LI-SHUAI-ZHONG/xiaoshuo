@@ -1,0 +1,649 @@
+[
+  {
+    "path": "07_新框架_v0\\src\\nw\\__init__.py",
+    "lines": 1,
+    "symbols": []
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\__main__.py",
+    "lines": 6,
+    "symbols": []
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\cli.py",
+    "lines": 197,
+    "symbols": [
+      {
+        "name": "decide_interactively",
+        "line": 19,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "project_directory",
+        "line": 30,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "dispatch",
+        "line": 44,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "main",
+        "line": 95,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "decide",
+        "line": 62,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "serialize",
+        "line": 179,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\config.py",
+    "lines": 73,
+    "symbols": [
+      {
+        "name": "ConfigRequired",
+        "line": 16,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "Config",
+        "line": 21,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "load_config",
+        "line": 31,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "make_provider",
+        "line": 65,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\context\\__init__.py",
+    "lines": 1,
+    "symbols": []
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\context\\base.py",
+    "lines": 23,
+    "symbols": [
+      {
+        "name": "ContextItem",
+        "line": 6,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "ContextPackage",
+        "line": 12,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "ContextProvider",
+        "line": 16,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "package",
+        "line": 21,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "build",
+        "line": 18,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\context\\minimal.py",
+    "lines": 25,
+    "symbols": [
+      {
+        "name": "MinimalProvider",
+        "line": 5,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "build",
+        "line": 8,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\context\\registry.py",
+    "lines": 40,
+    "symbols": [
+      {
+        "name": "register",
+        "line": 10,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "get_provider",
+        "line": 15,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "build_context",
+        "line": 20,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\context\\rules_pack.py",
+    "lines": 23,
+    "symbols": [
+      {
+        "name": "RulesPackProvider",
+        "line": 9,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "build",
+        "line": 12,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\experiments\\__init__.py",
+    "lines": 1,
+    "symbols": []
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\experiments\\ab.py",
+    "lines": 95,
+    "symbols": [
+      {
+        "name": "seal",
+        "line": 13,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "Experiment",
+        "line": 18,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "__init__",
+        "line": 19,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "start",
+        "line": 22,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "record",
+        "line": 48,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "view",
+        "line": 65,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "choose",
+        "line": 73,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "reveal",
+        "line": 86,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\flow\\__init__.py",
+    "lines": 1,
+    "symbols": []
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\flow\\engine.py",
+    "lines": 146,
+    "symbols": [
+      {
+        "name": "FlowEngine",
+        "line": 16,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "__init__",
+        "line": 17,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "nodes",
+        "line": 22,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "run",
+        "line": 26,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "block",
+        "line": 65,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "call_id",
+        "line": 70,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "write_review_revise",
+        "line": 83,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "accept",
+        "line": 128,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\flow\\nodes.py",
+    "lines": 71,
+    "symbols": [
+      {
+        "name": "NodeStore",
+        "line": 11,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "__init__",
+        "line": 12,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "author_input",
+        "line": 15,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "create",
+        "line": 24,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "check_settings",
+        "line": 47,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "get",
+        "line": 56,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "save",
+        "line": 63,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "save_in_transaction",
+        "line": 67,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\generation.py",
+    "lines": 59,
+    "symbols": [
+      {
+        "name": "encode",
+        "line": 13,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "review_draft",
+        "line": 17,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "write_scene",
+        "line": 27,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "call_model",
+        "line": 37,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\llm\\__init__.py",
+    "lines": 1,
+    "symbols": []
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\llm\\base.py",
+    "lines": 18,
+    "symbols": [
+      {
+        "name": "GenResult",
+        "line": 7,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "LLMProvider",
+        "line": 15,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "generate",
+        "line": 18,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\llm\\fake.py",
+    "lines": 19,
+    "symbols": [
+      {
+        "name": "FakeProvider",
+        "line": 8,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "__init__",
+        "line": 11,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "generate",
+        "line": 17,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\llm\\ollama.py",
+    "lines": 33,
+    "symbols": [
+      {
+        "name": "OllamaProvider",
+        "line": 8,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "__init__",
+        "line": 11,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "generate",
+        "line": 14,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\llm\\openai_compat.py",
+    "lines": 34,
+    "symbols": [
+      {
+        "name": "OpenAICompatProvider",
+        "line": 8,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "__init__",
+        "line": 11,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "generate",
+        "line": 14,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\llm\\transport.py",
+    "lines": 46,
+    "symbols": [
+      {
+        "name": "NoRedirect",
+        "line": 8,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "redact",
+        "line": 14,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "post",
+        "line": 26,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "redirect_request",
+        "line": 9,
+        "kind": "FunctionDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\models.py",
+    "lines": 86,
+    "symbols": [
+      {
+        "name": "Project",
+        "line": 8,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "Brief",
+        "line": 15,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "BibleEntry",
+        "line": 23,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "Chapter",
+        "line": 32,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "Scene",
+        "line": 40,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "Draft",
+        "line": 48,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "Accepted",
+        "line": 59,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "Run",
+        "line": 66,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "StateNote",
+        "line": 83,
+        "kind": "ClassDef"
+      }
+    ]
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\schema.py",
+    "lines": 98,
+    "symbols": []
+  },
+  {
+    "path": "07_新框架_v0\\src\\nw\\store.py",
+    "lines": 229,
+    "symbols": [
+      {
+        "name": "now",
+        "line": 25,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "Store",
+        "line": 29,
+        "kind": "ClassDef"
+      },
+      {
+        "name": "__init__",
+        "line": 30,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "__enter__",
+        "line": 69,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "__exit__",
+        "line": 72,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "_insert",
+        "line": 76,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "list",
+        "line": 82,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "get",
+        "line": 86,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "project",
+        "line": 95,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "init_project",
+        "line": 101,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "add_brief",
+        "line": 110,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "briefs",
+        "line": 116,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "add_bible",
+        "line": 119,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "bible",
+        "line": 125,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "add_chapter",
+        "line": 128,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "add_scene",
+        "line": 132,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "add_run",
+        "line": 138,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "finish_run",
+        "line": 142,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "run_output",
+        "line": 162,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "add_draft",
+        "line": 167,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "drafts",
+        "line": 175,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "accepted",
+        "line": 179,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "_export_path",
+        "line": 183,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "_export",
+        "line": 188,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "accept",
+        "line": 196,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "add_note",
+        "line": 222,
+        "kind": "FunctionDef"
+      },
+      {
+        "name": "notes",
+        "line": 228,
+        "kind": "FunctionDef"
+      }
+    ]
+  }
+]

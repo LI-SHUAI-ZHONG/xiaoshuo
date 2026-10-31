@@ -1,0 +1,4 @@
+import json,collections
+from pathlib import Path
+O=Path('D:/诊断报告_20261101');inv=json.loads((O/'tmp/inventory.json').read_text(encoding='utf8'))['files'];print(collections.Counter('/'.join(x['path'].split('/')[:4])for x in inv if '/infra/'in x['path']).most_common(10));print(collections.Counter('/'.join(x['path'].split('/')[:4])for x in inv if '/apps/'in x['path']).most_common(8));e=json.loads((O/'tmp/library_entries_v2.json').read_text(encoding='utf8')); print('source headings',len(e),'rt-only',[(x['id'],x['section'])for x in e if not x['fields']][:30]);print('runtime keys',list(e[0]['runtime'][0]));print('runtime record keys',list(e[0]['runtime'][0]['runtime_calling_layer'][0]));
+for x in json.loads((O/'tmp/library_random.json').read_text(encoding='utf8'))[-4:]:print(x['id'],json.dumps({k:v for k,v in x['fields'].items() if k in ['禁止清单','替代方式','设计指令','判定标准']},ensure_ascii=False)[:2100])

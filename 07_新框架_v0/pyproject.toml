@@ -1,0 +1,21 @@
+[build-system]
+# setuptools 仅用于安装 src 布局的本地 Python 包。
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xiaoshuo-nw"
+version = "0.0.0"
+description = "Minimal novel-writing framework scaffold"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+# pytest 是唯一测试依赖；运行时仅使用标准库。
+test = ["pytest>=8,<10"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

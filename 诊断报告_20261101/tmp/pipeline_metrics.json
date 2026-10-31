@@ -1,0 +1,2072 @@
+[
+  {
+    "path": "03_运行资料/脚本/28HI当前运行验收汇总.py",
+    "bytes": 3314,
+    "lines": 73,
+    "nul": 0,
+    "sha256": "6d9d02eda8e429b9e769f7444ebcc0223c3c2ccb171fc05c0eeb53c56cf76f4c",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/_step08_full_context_validation.py",
+    "bytes": 16724,
+    "lines": 269,
+    "nul": 0,
+    "sha256": "0a57ad46d9cd414702e171e4ac18f97ad1e40e3a731edf898ec4a2f32a92069e",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/analyze_unresolved_runtime_bindings.js",
+    "bytes": 1758,
+    "lines": 32,
+    "nul": 0,
+    "sha256": "0d6c9b761e3d2634c73f6ae2f655fab2639e14a1b120a5e4555a16a4745ddfd2",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/build_complete_runtime_enhanced_materials.js",
+    "bytes": 14568,
+    "lines": 308,
+    "nul": 0,
+    "sha256": "b7f0308593974ad30962fe7e94f5009ede3c9e9c7af90c5f70a25d27fb564a92",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/build_runtime_upgrade_mapping.js",
+    "bytes": 14735,
+    "lines": 352,
+    "nul": 0,
+    "sha256": "b9fbf27ffa8d301a6183dd148b6ea4dff8b20fb7146e91b6246d63e7c92b41c5",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/complete_fused_runtime_coverage.js",
+    "bytes": 6514,
+    "lines": 32,
+    "nul": 0,
+    "sha256": "33f8e5961eb62f6ec909a830e45f521d30b3642781e836ac464ae42d57740c56",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/fuse_runtime_into_materials.js",
+    "bytes": 9761,
+    "lines": 51,
+    "nul": 0,
+    "sha256": "dbc79e109c77dcf11f98e8b123c672bf5e4ae8c4557b7009d1a0c3b979b830c4",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/inspect_absorbed_upgrade_payloads.js",
+    "bytes": 2094,
+    "lines": 33,
+    "nul": 0,
+    "sha256": "fadc63b9bf53d61f3b8d66b97c898a82b6b77ba6468f8197aaf1f643523adced",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/inspect_runtime_binding_structure.js",
+    "bytes": 2344,
+    "lines": 45,
+    "nul": 0,
+    "sha256": "6cb0cd57c7fe116dc75065959ca01f3617170e6c95308588b81d935989d11f79",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/run_strict_smoke.py",
+    "bytes": 1079,
+    "lines": 36,
+    "nul": 0,
+    "sha256": "e314b72246c0b091df4c1ba80b6e35cdbf4bbf8f24d8493b06b56c1c767d9d82",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/test_24d_动态结构回退.py",
+    "bytes": 2822,
+    "lines": 59,
+    "nul": 0,
+    "sha256": "789cf68777dccbb83d0e055b96becb588050d47a7d9e71771a2ab6235c590f7b",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_step08_node_dispatch.py",
+    "bytes": 5722,
+    "lines": 112,
+    "nul": 0,
+    "sha256": "e2fa85d1fe97e453227f26f4cad871cdb07fe8f79218a4c5f23e1ffbe3c6e183",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_step08_phase_a.py",
+    "bytes": 2216,
+    "lines": 57,
+    "nul": 0,
+    "sha256": "d01f58318fa06af262a4a918b5b1cda2855f081d730b3ab942f11e5ca14f6f49",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_三章金样本闸门.py",
+    "bytes": 3425,
+    "lines": 59,
+    "nul": 0,
+    "sha256": "834b9f4409d58e2948b8096df7a57823723a0941203381ce4e333157eeca9288",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格全量资料升级最终审核.py",
+    "bytes": 7154,
+    "lines": 103,
+    "nul": 0,
+    "sha256": "4fc18a77d36033108d38e57a34b6e278b55c44759896212f993e4339c5306631",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格升级原版对象绑定.py",
+    "bytes": 2080,
+    "lines": 38,
+    "nul": 0,
+    "sha256": "7265b359d81195c7c44bfd2b9a61410da166c702f7badd3d2eb20486a13af3b6",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格隔离内容分流.py",
+    "bytes": 1664,
+    "lines": 35,
+    "nul": 0,
+    "sha256": "f9566cd425281ba14e0862d4af6d4653ac57b7adc9ba6aeb564424ae8fce09d2",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格隔离内容处置画像.py",
+    "bytes": 825,
+    "lines": 22,
+    "nul": 0,
+    "sha256": "bd16c617c59226739c170aaa5f3619a5339873783c457665ba72f4f6041492dc",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格隔离分类报告.py",
+    "bytes": 983,
+    "lines": 26,
+    "nul": 0,
+    "sha256": "2f1f294123e2b6acaaf5dd6e6e5fa66e55a6b1bb43ed54dfb382807372a6d7d2",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格隔离可恢复性评估.py",
+    "bytes": 816,
+    "lines": 22,
+    "nul": 0,
+    "sha256": "5d2cfd59d7ca4d8a439c03b4fd00ff6ec0279e9f729cc4d496747d65f43437cd",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格隔离替代来源方案.py",
+    "bytes": 1615,
+    "lines": 36,
+    "nul": 0,
+    "sha256": "4ce7432aaca3d2af02996d4c2233c49e0c84708ba305bb531b3de163236952cf",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格隔离替代来源重审.py",
+    "bytes": 2464,
+    "lines": 61,
+    "nul": 0,
+    "sha256": "afc1ece1bbb04005ee9f60d2a5c41f314c9843211f37a78f83e90a7059e58c8e",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_严格隔离项目确认.py",
+    "bytes": 1975,
+    "lines": 40,
+    "nul": 0,
+    "sha256": "4c09ea4514bb79aca79b9ef5d586ab5d5418d4084e6df45e11ae8f6018d2ff7d",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全流程创作质量门.py",
+    "bytes": 7087,
+    "lines": 119,
+    "nul": 0,
+    "sha256": "2c0502c521ff7e42c9c03bd94a61decf7c4cc67e13f726918bcb340b333dccce",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全绑定来源完整性审计.py",
+    "bytes": 3774,
+    "lines": 61,
+    "nul": 0,
+    "sha256": "8977dd6fdb7ab514419fe9a6847c1634ba549a38c191d6810c0c13d9779d391a",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全资料生产能力门.py",
+    "bytes": 5043,
+    "lines": 98,
+    "nul": 0,
+    "sha256": "4eb7eae7c3d6d827164da4629194603a1a5cf67e51343c6b37cc7410260d5bf1",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料严格隔离审计.py",
+    "bytes": 12181,
+    "lines": 181,
+    "nul": 0,
+    "sha256": "a8f6909187e6af14786bb982228a471d509970cdbcdd8a42eb0330868c69b4be",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料升级审查包.py",
+    "bytes": 2136,
+    "lines": 38,
+    "nul": 0,
+    "sha256": "0a92742dc49f0f579cf17bd0346d982b4c17c88b3813afaad1834913d056b58c",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料升级异常审计.py",
+    "bytes": 1894,
+    "lines": 40,
+    "nul": 0,
+    "sha256": "ededd217e4da474cf612fdb71c045cb96262b5a26d4a7ab6d28192fc614565d6",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料升级运行报告.py",
+    "bytes": 1861,
+    "lines": 32,
+    "nul": 0,
+    "sha256": "971563e9346ee1c13812b5123fa3aa21a86b3bf99bbfda5dd55472d2104ec082",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料新版构建.py",
+    "bytes": 4961,
+    "lines": 72,
+    "nul": 0,
+    "sha256": "0d11835286e9c74d86a0c5474886c9ca80e8ab3d2e279d5b2865ef9fd7dc569b",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料正文消费验证.py",
+    "bytes": 6754,
+    "lines": 90,
+    "nul": 0,
+    "sha256": "24a34400e27dcc32d11c9ea0df1ff5b7f66a1e0ffbb02406dc0a7997d3d897e7",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料类型连接身份修复.py",
+    "bytes": 3991,
+    "lines": 48,
+    "nul": 0,
+    "sha256": "d09d87e1d17f576fe179b80ccfc8a855eb98daacfe3c856c5f7a52b8e2a11a72",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料资料库定位修复.py",
+    "bytes": 2219,
+    "lines": 35,
+    "nul": 0,
+    "sha256": "064f1db3c82bf01eaf2f380e0493961f19c6d5274d6a2740c500ee9843d07db9",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_全量资料输入与正文授权.py",
+    "bytes": 3343,
+    "lines": 66,
+    "nul": 0,
+    "sha256": "fdd53a11640b398540c06431543350a81c3c782362612ef9b26935dbdfedfec1",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_写作资料证据验证.py",
+    "bytes": 2638,
+    "lines": 63,
+    "nul": 0,
+    "sha256": "5221781743f305cd55e6df9bbf1119396618d122c6da72164c4e363f9e2d444e",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_升级成果追溯审计.py",
+    "bytes": 2150,
+    "lines": 47,
+    "nul": 0,
+    "sha256": "9966155fece959d3e5a54136d5808f3e06119fee328218e07babc022e9778ed7",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_历史改进恢复合同.py",
+    "bytes": 3325,
+    "lines": 64,
+    "nul": 0,
+    "sha256": "b539c8ea2aa73fd35441e43dc99e43ba0e57238b84913f3a751ab8d2a68457bf",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_历史改进资料化.py",
+    "bytes": 1506,
+    "lines": 35,
+    "nul": 0,
+    "sha256": "40feb39bceec398ce928b6862e01d578b0fa5216e4763b888547ff5c92ec9343",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_原版升级资料字段级融合.py",
+    "bytes": 7448,
+    "lines": 130,
+    "nul": 0,
+    "sha256": "09a929942f88b58967d6989e0638f01bb0bbbc03f177ba1094b269c2ef4d43fb",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_原版新版资料合并.py",
+    "bytes": 5442,
+    "lines": 108,
+    "nul": 0,
+    "sha256": "fe5e8030d65e5d6eb31b49cb13cc89eed1ffe9d1c2e38230df46cfb7d0c878b3",
+    "functions": 12,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_原版资料升级审查闸门.py",
+    "bytes": 1784,
+    "lines": 35,
+    "nul": 0,
+    "sha256": "eb3aa912811c94b057f4a5de9ce69f28025dbf1aa2475a0eb5da57ef617c9ef2",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_原版资料升级执行.py",
+    "bytes": 2285,
+    "lines": 43,
+    "nul": 0,
+    "sha256": "af72eb7ad7a7dc01c5c0bbb2dd2aea444ce66a22e865f9aedfe8059d80cf7d47",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_原版资料对象索引.py",
+    "bytes": 1656,
+    "lines": 39,
+    "nul": 0,
+    "sha256": "42ede337f46ae26bfe0223b2a6ac1554243c93ff7f2cf4ad9db630674054c14c",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_场景创作激活.py",
+    "bytes": 14233,
+    "lines": 196,
+    "nul": 0,
+    "sha256": "fc23ef77bbedc6ea5962558540c884620420020909b4934a9fe341c8a1856970",
+    "functions": 14,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_执行契约.py",
+    "bytes": 24324,
+    "lines": 301,
+    "nul": 0,
+    "sha256": "76a1396fbb18c9353399ea9b45a84e6d7f648a2574f20aa626f94f2e6aa56a54",
+    "functions": 20,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_执行管道_source_capability_gate.py",
+    "bytes": 4977,
+    "lines": 108,
+    "nul": 0,
+    "sha256": "628127b705cdb4d9583a413f24888d242870882a140d7f5872bde18feda12b9e",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_执行管道_正文旁路.py",
+    "bytes": 2049,
+    "lines": 47,
+    "nul": 0,
+    "sha256": "d1356bb04e020ad93563da85de77592c0c4563e972582bbb1a3a7a1cfbfef01d",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_执行管道正文发布边界.py",
+    "bytes": 3033,
+    "lines": 67,
+    "nul": 0,
+    "sha256": "3f69fb5abc7743d154f37a40672d59cf4cb21e1e8045227395f8222ef57ae427",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_持续资料升级调度.py",
+    "bytes": 1484,
+    "lines": 35,
+    "nul": 0,
+    "sha256": "3943198e783836d8d21f7ab32ac8f7b8cbb01a04861028e2e0d4d6ffbf49f3c6",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_文学审校.py",
+    "bytes": 3927,
+    "lines": 64,
+    "nul": 0,
+    "sha256": "8e0af4ac3c58f42e5f3392f2158e054edbeb214dd47c9ffbc58e15ad476e0188",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_来源引用审计与迁移.py",
+    "bytes": 2330,
+    "lines": 44,
+    "nul": 0,
+    "sha256": "78af1e46aa71311ab4ae9b51e3c396c0ce21628212e2552047363fea53aa0eba",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_来源语义审校.py",
+    "bytes": 2900,
+    "lines": 47,
+    "nul": 0,
+    "sha256": "8fbb807736aef72fd84b8f5b77db47667853ad40ef1dffdee90ac1b1f55d6777",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_来源质量自主分析.py",
+    "bytes": 4373,
+    "lines": 91,
+    "nul": 0,
+    "sha256": "074bf5071eb85c984223ab811f105bad735fdee6a1faf21f65f63491c55140ab",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_来源资格证据线索盘点.py",
+    "bytes": 2840,
+    "lines": 53,
+    "nul": 0,
+    "sha256": "8321fc3bb27bfefb445b83fd8e9944add4c7488d0d932528fcae20de2c3e5cb1",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_正式交付审批.py",
+    "bytes": 4929,
+    "lines": 98,
+    "nul": 0,
+    "sha256": "e5bfb4f40202c78cdba28939c6653e630e8118ec8443ccc6fd9e5f1299e58860",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_正式交付审批_人物表现.py",
+    "bytes": 4409,
+    "lines": 79,
+    "nul": 0,
+    "sha256": "69d0ade070073e1618477193c66557e251053c4aeb6464c8b7e0ccf9d219a567",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_派生资料失败样本隔离.py",
+    "bytes": 2354,
+    "lines": 53,
+    "nul": 0,
+    "sha256": "c1400a9bb699d96f848d64bc218f62f567f1993cd03fb7795245512c5e9384da",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_派生资料批次回归.py",
+    "bytes": 5464,
+    "lines": 101,
+    "nul": 0,
+    "sha256": "adb93fc1c153881915aabd6f40dd1c71f355ed30eeab7e8ecdc7ae69ec83e386",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_派生资料项目采用.py",
+    "bytes": 4603,
+    "lines": 84,
+    "nul": 0,
+    "sha256": "28a7d4e3e58e4a31a3824a43c1a7a9623b581d884724c9342c201724648b764f",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_灵感库选型器.py",
+    "bytes": 3053,
+    "lines": 77,
+    "nul": 0,
+    "sha256": "cc64e9ec7173fd3925ed6b14da246e8e842465c63036b0b8b2dd6be87e8d5508",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_生成升级能力清单.py",
+    "bytes": 6176,
+    "lines": 95,
+    "nul": 0,
+    "sha256": "d6cd01be788e2789f718fab5a07a8b453abfb87c7d02dc23c140258e9cb402d1",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_章节质量资料就绪度门.py",
+    "bytes": 2976,
+    "lines": 61,
+    "nul": 0,
+    "sha256": "6229fccc78a20c97f53011e1596146104dd92695ad00aae144a9b26238a09155",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_类型连接对象分类审计.py",
+    "bytes": 1668,
+    "lines": 33,
+    "nul": 0,
+    "sha256": "ee0a5cd8fdd58b35a9c0c788f6994e2ecc86e181d75c92d65e8ec04a399bbbe1",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_类型连接结构对象引用审计.py",
+    "bytes": 1710,
+    "lines": 33,
+    "nul": 0,
+    "sha256": "729b121efdf71642e9eac7f9971556a9099fd3dbf2da24f138c7e24792db2746",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_类型连接身份复核审计.py",
+    "bytes": 1684,
+    "lines": 35,
+    "nul": 0,
+    "sha256": "7031d876ea39481ef20c343ed3d86a7d91420c916b675cf9b3cb88f0c0dfa9bf",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_资料库条目补全.py",
+    "bytes": 2032,
+    "lines": 43,
+    "nul": 0,
+    "sha256": "0b285ba2c8f2de4d23eb0db2365e94ef6125f271e32ca6950835e9d1c5d3e674",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_资料消费审计.py",
+    "bytes": 5992,
+    "lines": 120,
+    "nul": 0,
+    "sha256": "d2e889a9a0f1d3a19bb7227db5371eab31f5fd5473c6eb42c0cdde5867885271",
+    "functions": 10,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_资料资格与合同注册.py",
+    "bytes": 4631,
+    "lines": 95,
+    "nul": 0,
+    "sha256": "3de42c40de3fbbf7234e23ecdfc629c9aff727572d8ddf8aa6e7d3b49e84d8e9",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_资料运行准入准备.py",
+    "bytes": 2768,
+    "lines": 58,
+    "nul": 0,
+    "sha256": "623a24ebc9de59842142d8087bfa52eee1d4cf8eab692dfac35362904f545066",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_运行命令回执.py",
+    "bytes": 1754,
+    "lines": 41,
+    "nul": 0,
+    "sha256": "7771a25619bc0d00e80d274a52e55707ea9e02d78fc2d42c357d57bcddc13af9",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_运行命令调度.py",
+    "bytes": 1832,
+    "lines": 42,
+    "nul": 0,
+    "sha256": "0e635510003dc1dd4c86c768cb61d1a4ba840f3d4d733a4f499b9afce9eceee0",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_运行恢复与幂等验收.py",
+    "bytes": 5080,
+    "lines": 93,
+    "nul": 0,
+    "sha256": "31491b092fe147866ef3a5ddc04588219e20175b93581ba5ad6f9f018e2219af",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_运行清单复核.py",
+    "bytes": 10600,
+    "lines": 214,
+    "nul": 0,
+    "sha256": "22db0a93a58ee10a7e615618901fdd1799ff58d0869559fcf88c739fece37db5",
+    "functions": 19,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_运行资料包契约.py",
+    "bytes": 18952,
+    "lines": 317,
+    "nul": 0,
+    "sha256": "928abbd86972b0435d455e536b2d202e151100a6b37e5043f9476cfe7dd7571b",
+    "functions": 21,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_逐日主资料补丁重放回执.py",
+    "bytes": 3481,
+    "lines": 71,
+    "nul": 0,
+    "sha256": "268c90e7f5bb3f1839f02f31c47692b9e01db06ba35d26ae97aa94bec059f4cf",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_项目创作生产政策.py",
+    "bytes": 3344,
+    "lines": 67,
+    "nul": 0,
+    "sha256": "dc373ad39ed2a6bf9d6b7b6ba03ecf9291f26871dccf224c58a14b1d099d147b",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/test_项目生命周期管理.py",
+    "bytes": 3790,
+    "lines": 80,
+    "nul": 0,
+    "sha256": "c63452e12dded945c4aa12a6dc64d1f8b01656806a9dda16bc79dce0cd0827b5",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "测试，保留回归价值"
+  },
+  {
+    "path": "03_运行资料/脚本/verify_fused_runtime_coverage.js",
+    "bytes": 1568,
+    "lines": 10,
+    "nul": 0,
+    "sha256": "ef15e8d9d1e71b0b6c3027aa5d4a26d55fa9b7f9654dc9fe0d8d5bb289a2c404",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/三章金样本闸门.py",
+    "bytes": 18682,
+    "lines": 218,
+    "nul": 0,
+    "sha256": "cb395adc5c8c888289d9f78b23fbe3568a7aa677d1f5e428190803e43cc7bf1f",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格全量资料升级最终审核.py",
+    "bytes": 7016,
+    "lines": 132,
+    "nul": 0,
+    "sha256": "27fc7398ec9f1bf955a513d0ae6f91e00875abb4e8fed32620f29bc7e25da2ab",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/严格全量资料连续编排.py",
+    "bytes": 15890,
+    "lines": 287,
+    "nul": 0,
+    "sha256": "c0d8621e4f297200257af6909f309fe71e702fbbae86fc7a059d17442fc6edd3",
+    "functions": 13,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格升级原版对象绑定.py",
+    "bytes": 4472,
+    "lines": 97,
+    "nul": 0,
+    "sha256": "21f5f359ffce0e601ba000101b631f9ec5e98c998ab5848d760fc46554281dac",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/严格升级记录全部搬入原版.py",
+    "bytes": 3986,
+    "lines": 92,
+    "nul": 0,
+    "sha256": "3992cb576da68b01375fb4ce88d85e9a48ebeea313f231278907a7a13baf7ef2",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/严格恢复带栈诊断.py",
+    "bytes": 1009,
+    "lines": 29,
+    "nul": 0,
+    "sha256": "ea916f68d51d5b008ba6baea10664ecab0b87722a83de1f903f6f232c1192af6",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格连续预检.py",
+    "bytes": 986,
+    "lines": 33,
+    "nul": 0,
+    "sha256": "14f6aeee69ff0a1fe3be7e9f27e9784f703d31a5b815ad3e4c97941477a1fc6a",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格隔离内容分流.py",
+    "bytes": 7941,
+    "lines": 164,
+    "nul": 0,
+    "sha256": "9b1330b313880e9ccd39dde9063fcce29dd399b963cb949c81a14a22eb7aab06",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格隔离内容处置画像.py",
+    "bytes": 5027,
+    "lines": 102,
+    "nul": 0,
+    "sha256": "64b482719af5ab829186780da71f51f58645d1529e60bb9b8cdaaea9a7aed493",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格隔离分类报告.py",
+    "bytes": 5700,
+    "lines": 108,
+    "nul": 0,
+    "sha256": "4fe8053e908646c9ff4cf788a151dbe7a4b0da23276fed82011afa6ed3af6f98",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格隔离可恢复性评估.py",
+    "bytes": 4691,
+    "lines": 103,
+    "nul": 0,
+    "sha256": "c659a2adb50b545599aff1af133db3b1194472c1ec9246ae652e9a8cd1cf878c",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格隔离替代来源方案.py",
+    "bytes": 6125,
+    "lines": 124,
+    "nul": 0,
+    "sha256": "3447311925d0e08c553137505b7bf11f6bb94c10999d6cdeacf456454f1e537e",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格隔离替代来源重审.py",
+    "bytes": 9510,
+    "lines": 184,
+    "nul": 0,
+    "sha256": "31ab262390358772b395bccc5dbe0d635e4d8e82b6d835c616477e6b3293d9a6",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/严格隔离项目确认.py",
+    "bytes": 10748,
+    "lines": 222,
+    "nul": 0,
+    "sha256": "f2f394ac268c5f0a09f68c67175536346d45a10128d3a8907cb99f01bcbbb684",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/修复全量资料异常引用.py",
+    "bytes": 3089,
+    "lines": 63,
+    "nul": 0,
+    "sha256": "18a864182517eb81c38309240c68858e50707b2dba2df2255f30dfc39b724233",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/修复资料库全量索引.py",
+    "bytes": 9444,
+    "lines": 182,
+    "nul": 0,
+    "sha256": "8363ec6ddd618723ea541a4facbe0de0b9d0824191250cf0f44fb81093ab2d84",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全流程创作质量门.py",
+    "bytes": 14238,
+    "lines": 238,
+    "nul": 0,
+    "sha256": "91c1887d0e4ce449b6f9d6391fb6f91828ab9e4115163057a41c761932a73caa",
+    "functions": 11,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全绑定来源完整性审计.py",
+    "bytes": 6757,
+    "lines": 135,
+    "nul": 0,
+    "sha256": "5a382e7abd8bf9838af539cc538c7f07de87c736f74585df5962c9fd875187ba",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全资料生产能力门.py",
+    "bytes": 11979,
+    "lines": 207,
+    "nul": 0,
+    "sha256": "689cd9fe3f9b58b6dffeeebca9a89dc062293219971851dc1101770b4ed09f81",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量来源解析审计.py",
+    "bytes": 5139,
+    "lines": 101,
+    "nul": 0,
+    "sha256": "bf018f575cfef76883653739570c32d1e149cde6e274613119bae89fe7dfe784",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料严格隔离审计.py",
+    "bytes": 11971,
+    "lines": 211,
+    "nul": 0,
+    "sha256": "78e2604885e63d7f14cca1d3c70da50fb031eee49c3d0ab409bde06ad49e2c5b",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料升级守护.py",
+    "bytes": 8222,
+    "lines": 143,
+    "nul": 0,
+    "sha256": "f9c91257da50af30a26f1dbc860564bf90f56f6da96ee099033e65819689f6ec",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料升级定位映射.py",
+    "bytes": 8891,
+    "lines": 180,
+    "nul": 0,
+    "sha256": "c2ebf95d5b1bc215eb08d56b4bcd3eeffb71de5f94890301fb5bdf7f0d1413ba",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料升级审查包.py",
+    "bytes": 6801,
+    "lines": 134,
+    "nul": 0,
+    "sha256": "e7b5d019eedfa360d7e3879e509a5ec75fec2346f7c09ebfc1c5387fd0ae38cc",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料升级异常审计.py",
+    "bytes": 5894,
+    "lines": 131,
+    "nul": 0,
+    "sha256": "ddcb2b8f00c11b79e33686fc926849199c48b443b43a730d1e3076cead89b4cf",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料升级快速批处理.py",
+    "bytes": 5793,
+    "lines": 122,
+    "nul": 0,
+    "sha256": "134c5f71eb16f49259c9e30f68be92fe291cfe7a8415f63b88af45726613dba0",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料升级运行报告.py",
+    "bytes": 4789,
+    "lines": 105,
+    "nul": 0,
+    "sha256": "bf6041f6d27e078b3ac8a3cc5f63fe1c86402691c656ed24d9b3b71e81058560",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料历史消费隔离.py",
+    "bytes": 7024,
+    "lines": 144,
+    "nul": 0,
+    "sha256": "4bcce6ff31ba65a6f595d94e0d7ad884527c2bc38471da66781683beb94d9912",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料新版构建.py",
+    "bytes": 12499,
+    "lines": 210,
+    "nul": 0,
+    "sha256": "2ed8155f22a57990ddba595ec3af71456861683ca10321b4a8b9d9670db5dba4",
+    "functions": 12,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料检查与修正.py",
+    "bytes": 15180,
+    "lines": 298,
+    "nul": 0,
+    "sha256": "27b913c0e9b0b93235ba2d8031d41f930f704c3f1b6ff59375311d91d33b7d82",
+    "functions": 14,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料正文消费验证.py",
+    "bytes": 10765,
+    "lines": 217,
+    "nul": 0,
+    "sha256": "e9c9757433dfd058f187e54c42fdb95cce5b34ca150fad5d05ede0bda0b01737",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料正文生产编排.py",
+    "bytes": 9423,
+    "lines": 207,
+    "nul": 0,
+    "sha256": "483441238a8a001a66581e093dea81eb338ce52a83ce13496e2b13e3a087873b",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料激活前置条件盘点.py",
+    "bytes": 17298,
+    "lines": 324,
+    "nul": 0,
+    "sha256": "a3825b40040b19081e8bc1a7c352b587fdaa709edc60c51d66a14faf37650598",
+    "functions": 13,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料类型连接身份修复.py",
+    "bytes": 7416,
+    "lines": 120,
+    "nul": 0,
+    "sha256": "202e6885e23df1449ce503edf4323b19253c4f7fad71c34a186ec543d3ca17d4",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料绑定授权投影同步.py",
+    "bytes": 1986,
+    "lines": 49,
+    "nul": 0,
+    "sha256": "69937c61c0da42a357b42c932a9d23cbbaf9165afbd02fd9676c008028b90a01",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料解释词转译与创作绑定.py",
+    "bytes": 24560,
+    "lines": 403,
+    "nul": 0,
+    "sha256": "bf1aafa8c43a121b9355a97a4f63c5230a402ae3a23776e2b6a53574d79defb6",
+    "functions": 12,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料资料库定位修复.py",
+    "bytes": 5034,
+    "lines": 91,
+    "nul": 0,
+    "sha256": "fc17eefdec302170c4912c717ffe2ec8ace4cd7008e66589fb2159c878f41c6a",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/全量资料输入与正文授权.py",
+    "bytes": 10675,
+    "lines": 231,
+    "nul": 0,
+    "sha256": "19f007304fa36ef0e68d2ab7fb60b91160510991bba87f3174bc63da96415431",
+    "functions": 10,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/六主资料吸收快照差异审查.py",
+    "bytes": 4501,
+    "lines": 108,
+    "nul": 0,
+    "sha256": "46bb4bb0d72d476ffd5746edff8e0eaf2877b9bb0c8870e0bf75692eff628b6c",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/六主资料规则层聚合升级.py",
+    "bytes": 16676,
+    "lines": 370,
+    "nul": 0,
+    "sha256": "39f9a7dc7dfcbc8b51a9144f01e625671a7064bdb3ba5234f618952dcf7a10e3",
+    "functions": 19,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/写作资料证据验证.py",
+    "bytes": 22522,
+    "lines": 399,
+    "nul": 0,
+    "sha256": "bc3579cb03e89db913e033529a7db0e8c36077086e9b66952cdc6b8841be4959",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/冻结资料融合输入.py",
+    "bytes": 6125,
+    "lines": 150,
+    "nul": 0,
+    "sha256": "9eca2714f843b3dc66801f2e84dca61bc8c02a410bc657cf08def8199367dac7",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/分析新方案与资料.py",
+    "bytes": 19199,
+    "lines": 180,
+    "nul": 0,
+    "sha256": "d8ceccbc2dc53d764ec7e358c50c4edec4119a29b6df0d78d00cb5d949061dd4",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/创建全量资料替代批次.py",
+    "bytes": 6219,
+    "lines": 127,
+    "nul": 0,
+    "sha256": "3babea1b78a7cdf158b0c5d7e98d70c5b9f9f70fed61a2278c92b857e80ea295",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/初始化小说项目.py",
+    "bytes": 9280,
+    "lines": 219,
+    "nul": 0,
+    "sha256": "6161aeea5108bfa10c2d3722baae40a9e662335f2435041febabe3d9d0f8cc50",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/初始化项目.py",
+    "bytes": 4239,
+    "lines": 126,
+    "nul": 0,
+    "sha256": "1f56ec8041661167795da20b4b4f8f50b77d0027170597d93f14e36119fa90f0",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/刷新本轮恢复证据.py",
+    "bytes": 1176,
+    "lines": 37,
+    "nul": 0,
+    "sha256": "aeb99ad1fcbd6edae39a9cf51fafbe92e6f8e5b4b74edb5a5eb38d3fca5b8612",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/升级成果追溯审计.py",
+    "bytes": 9508,
+    "lines": 194,
+    "nul": 0,
+    "sha256": "7575496bfc62831303c9bfae2fac2b15a7b76393fa78d8e45bfa6c62f2e5930e",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/历史会话资料核对.py",
+    "bytes": 12020,
+    "lines": 218,
+    "nul": 0,
+    "sha256": "48f4157ce5456a31dc5b721583fe16027c7ab0996d75eaed19673678ab2a14fb",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/历史改进资料化.py",
+    "bytes": 11652,
+    "lines": 131,
+    "nul": 0,
+    "sha256": "a9d20acf046404a250e3cc916ad42ce0beeb3d68e7fe37ce4b783c2d048ccfa4",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/原版升级资料原样搬运.py",
+    "bytes": 5472,
+    "lines": 137,
+    "nul": 0,
+    "sha256": "ce052a58785a2600cbbb2e618c6e64d7f66dbc6ffa21201d282cfbb31fe2fefa",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/原版升级资料字段级融合.py",
+    "bytes": 22312,
+    "lines": 444,
+    "nul": 0,
+    "sha256": "a50b251f4fd5ef59ab690fcede6ac56e532bebc5db1dfbfff8bfe082fba1fd6d",
+    "functions": 17,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/原版新版资料合并.py",
+    "bytes": 14401,
+    "lines": 282,
+    "nul": 0,
+    "sha256": "4ae23a35032b0d0ea515023f06adbcc4c338101cada16d01a15e33e289b9eb1f",
+    "functions": 18,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/原版资料升级审查闸门.py",
+    "bytes": 4632,
+    "lines": 93,
+    "nul": 0,
+    "sha256": "b51c93a24543350530b997263c3ce47cbd6b1b1ac2bb69c67230f3c42a159d5b",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/原版资料吸收全部缺失升级内容.py",
+    "bytes": 6643,
+    "lines": 125,
+    "nul": 0,
+    "sha256": "d5045a6110268950f3a38ecb0e4e5dfffc7e523ba81905cdff69983c65a5055e",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/原版资料对象索引.py",
+    "bytes": 6700,
+    "lines": 153,
+    "nul": 0,
+    "sha256": "a70f7bcc2f349f29a0ecc525c574b424ebd1a952ece73c93d4f696d82bbb5350",
+    "functions": 11,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/原版资料库依赖升级回写.py",
+    "bytes": 5408,
+    "lines": 128,
+    "nul": 0,
+    "sha256": "38b6dc97d68f3b828852ee5a4039c6cf6264e0fc0897cb07af508fdc6d9769e2",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/启动严格烟雾批次.ps1",
+    "bytes": 175,
+    "lines": 4,
+    "nul": 0,
+    "sha256": "8fdb4f9d679c51507026b8d146e4a2bec5bf56c096276661b0782ec4ab5ec5bf",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/启动小说创作.py",
+    "bytes": 1974,
+    "lines": 47,
+    "nul": 0,
+    "sha256": "1203f2be7fc68175735b3550fb423d1a6fbd011df1eed1c9a75ff1232d79fe9b",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/场景创作激活.py",
+    "bytes": 19049,
+    "lines": 298,
+    "nul": 0,
+    "sha256": "435f7fe418f88c17b2e5ca8619db1d76a34c9f1242e0eeff2831d0e7e0686519",
+    "functions": 11,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/审计升级定位映射.py",
+    "bytes": 7478,
+    "lines": 145,
+    "nul": 0,
+    "sha256": "ee2022276c1e963753327f9bfd0a56a211ed659e8277a387e60c477eca70b854",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/建立资料基线与证据登记.py",
+    "bytes": 6944,
+    "lines": 179,
+    "nul": 0,
+    "sha256": "0fd98c6f7e8efd1c43df61d4c0ad87cad9db3f0a4b201f165cd8cc508d68fd36",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/当前源码全量回归.py",
+    "bytes": 3749,
+    "lines": 93,
+    "nul": 0,
+    "sha256": "78c36e0c25c93ceb08375524811a22206c8db5030daa84f48c40c09877579944",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/执行管道.py",
+    "bytes": 254609,
+    "lines": 3888,
+    "nul": 0,
+    "sha256": "34a3de8f5ca72c9d712c0ca60b587e46309e22750633034f85da289709565666",
+    "functions": 87,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/执行管道.py.before_material_chain_fix_20260829",
+    "bytes": 198726,
+    "lines": 2921,
+    "nul": 0,
+    "sha256": "8cd07ad528ab572b0d2baab56a99656c123594ec0f6bdd4f06f77dd78f5c5db3",
+    "functions": 75,
+    "parse_error": "",
+    "classification": "历史备份，不作当前执行入口"
+  },
+  {
+    "path": "03_运行资料/脚本/执行管道.py.before_remove_source_capability_gate_20260820_144250",
+    "bytes": 182282,
+    "lines": 2673,
+    "nul": 0,
+    "sha256": "3db3c2e72fda49d9c5a91647dc85da2d679c27c88fc3fbf8c6a2a412801a6503",
+    "functions": 70,
+    "parse_error": "",
+    "classification": "历史备份，不作当前执行入口"
+  },
+  {
+    "path": "03_运行资料/脚本/执行管道.py.before_step08_node_dispatch_20260820_131206",
+    "bytes": 182383,
+    "lines": 2675,
+    "nul": 0,
+    "sha256": "b916526f50d45e53037b4d8f2c31d704af1669b5ac1c49f36e2b289932a5f794",
+    "functions": 70,
+    "parse_error": "",
+    "classification": "历史备份，不作当前执行入口"
+  },
+  {
+    "path": "03_运行资料/脚本/执行管道.py.before_step08_phase_A_20260820_135404_146728",
+    "bytes": 182383,
+    "lines": 2675,
+    "nul": 0,
+    "sha256": "b916526f50d45e53037b4d8f2c31d704af1669b5ac1c49f36e2b289932a5f794",
+    "functions": 70,
+    "parse_error": "",
+    "classification": "历史备份，不作当前执行入口"
+  },
+  {
+    "path": "03_运行资料/脚本/执行管道.py.before_step08_phase_B_20260820_135622_883372",
+    "bytes": 182282,
+    "lines": 2673,
+    "nul": 0,
+    "sha256": "3db3c2e72fda49d9c5a91647dc85da2d679c27c88fc3fbf8c6a2a412801a6503",
+    "functions": 70,
+    "parse_error": "",
+    "classification": "历史备份，不作当前执行入口"
+  },
+  {
+    "path": "03_运行资料/脚本/执行管道.py.before_upstream_dispatch_20260820_123802",
+    "bytes": 182383,
+    "lines": 2675,
+    "nul": 0,
+    "sha256": "b916526f50d45e53037b4d8f2c31d704af1669b5ac1c49f36e2b289932a5f794",
+    "functions": 70,
+    "parse_error": "",
+    "classification": "历史备份，不作当前执行入口"
+  },
+  {
+    "path": "03_运行资料/脚本/持续资料升级调度.py",
+    "bytes": 6524,
+    "lines": 150,
+    "nul": 0,
+    "sha256": "6dca3c48d842583c9810c8885ba206706e7089b7358c76c7df3a43f506d674b8",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/按升级方法分类搬入原版.py",
+    "bytes": 7852,
+    "lines": 146,
+    "nul": 0,
+    "sha256": "1544c8116a6afbcc28b37c469aecfc749dbb31bb90302ff0b0c952599aaf45a7",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/文学审校.py",
+    "bytes": 7042,
+    "lines": 128,
+    "nul": 0,
+    "sha256": "cc153433b079c3f183276f7d9ff7584faee2580ad779197fb686f28a81fd5cc5",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/来源引用审计与迁移.py",
+    "bytes": 5690,
+    "lines": 109,
+    "nul": 0,
+    "sha256": "706ae782dfc7e221e632a46e619fd31c3cbd8a1384d927ed4a4d417495c6f757",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/来源解析器.py",
+    "bytes": 20227,
+    "lines": 387,
+    "nul": 0,
+    "sha256": "af69dad59682b2c9067a3a0e7fa5ae63d63d4adc54d12be5c32a6aae1541728c",
+    "functions": 18,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/来源质量自主分析.py",
+    "bytes": 11368,
+    "lines": 242,
+    "nul": 0,
+    "sha256": "1354c7e5d249e302f9a81ff32cc8177e1b426fc88b937268f62ab5e22a1e92f2",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/来源资格证据线索盘点.py",
+    "bytes": 7534,
+    "lines": 164,
+    "nul": 0,
+    "sha256": "74bc55eeea81d0ea8df54a87ce0b1d8ec817223a9b892e7937d04eac58656a48",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/核对原版升级对应关系.py",
+    "bytes": 7744,
+    "lines": 156,
+    "nul": 0,
+    "sha256": "da902681f94652b1466d43c40dd460c68a58321eedbacef96ddbdcad738b80b2",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/正式交付审批.py",
+    "bytes": 23942,
+    "lines": 451,
+    "nul": 0,
+    "sha256": "10df69cc6bf806bed780645b3f7add485115883f72fee669721cd1518eaea58d",
+    "functions": 18,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/汇总来源解析审计.py",
+    "bytes": 3437,
+    "lines": 66,
+    "nul": 0,
+    "sha256": "03cb23195ccbd80468a2b41cdbf60b70deae5b95880bfb9b6c431c9db4fe9941",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/派生契约裁决报告.py",
+    "bytes": 6837,
+    "lines": 161,
+    "nul": 0,
+    "sha256": "bb769961b983d3a60ab55569eb32d144099ea9049802ee1448b37bc0b9304644",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/派生结果重算一致性检查.py",
+    "bytes": 6329,
+    "lines": 147,
+    "nul": 0,
+    "sha256": "0932de23704940e2293631d55dc3b80a769fb01a2ecf63559889d612f366fbc1",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/派生资料升级证据诊断.py",
+    "bytes": 4472,
+    "lines": 96,
+    "nul": 0,
+    "sha256": "5de5b3afbf0e12b0f3c3c35e55008ad7b82e9c36ddc286d0a974b31dfaf0ed5c",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/派生资料失败样本隔离.py",
+    "bytes": 3539,
+    "lines": 88,
+    "nul": 0,
+    "sha256": "d25eaddc357d57a992a5c5c9a4a4558ecbce83003e3ba2f43118a5f9e7c05602",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/派生资料批次回归.py",
+    "bytes": 8577,
+    "lines": 195,
+    "nul": 0,
+    "sha256": "5d8a1847044170285d8d37f983c9d15b2adf19f328f1c6e44b4466f7369dae41",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/派生资料项目采用.py",
+    "bytes": 11330,
+    "lines": 240,
+    "nul": 0,
+    "sha256": "47a4a62308622ec97ec52abbedd82d558e5cdb7c09cc8acd6fd5aa54d0de238c",
+    "functions": 13,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/灵感库选型器.py",
+    "bytes": 4945,
+    "lines": 112,
+    "nul": 0,
+    "sha256": "0dc6af014273c4531ee6ffdeeef2f68499be3ae89a9f7806aaa95d08fb96865e",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/生成升级定位映射修订.py",
+    "bytes": 3896,
+    "lines": 62,
+    "nul": 0,
+    "sha256": "f60f5278f1809a5cdf3990b25d0487d1261a830e4c5db16796d561a2408cb380",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/生成升级能力清单.py",
+    "bytes": 14384,
+    "lines": 280,
+    "nul": 0,
+    "sha256": "ead3bff95fcacd68cb04a9dd285e23e111bb44bdb0099250dbd3979d718142cc",
+    "functions": 15,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/生成第一章候选草稿消费证据.js",
+    "bytes": 2927,
+    "lines": 52,
+    "nul": 0,
+    "sha256": "02af4f3bdd7e315b4e08d44a569afb80614a00719bbcabd8e094d8791dad0330",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/生成第一章最小授权提交.js",
+    "bytes": 2238,
+    "lines": 38,
+    "nul": 0,
+    "sha256": "a27cab20c3b7121a13184c9db927cfaa64be680d033879c6664c75d468e60984",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/章节质量资料就绪度门.py",
+    "bytes": 7677,
+    "lines": 143,
+    "nul": 0,
+    "sha256": "97783cec53219fd3165fadfbbaf6d535d6db59428d60cb11b23039bc3d6cd926",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/类型连接对象分类审计.py",
+    "bytes": 4666,
+    "lines": 101,
+    "nul": 0,
+    "sha256": "6c3409e1d0cd7dc0de006b46827ae3e209f46d3ba1d0d86b241b7f1d7e6bebb9",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/类型连接结构对象引用审计.py",
+    "bytes": 5554,
+    "lines": 125,
+    "nul": 0,
+    "sha256": "1f7fb891b34c894af08b3456aa1c518b1ada1d5ca6394551f91abc08ac850dd6",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/类型连接身份复核审计.py",
+    "bytes": 4546,
+    "lines": 106,
+    "nul": 0,
+    "sha256": "6708de19438fe3f868495e79d66c2ec8d3dd1501fbad3af09616d8a297ae50f9",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/编排第一章受控草稿批次.js",
+    "bytes": 4699,
+    "lines": 82,
+    "nul": 0,
+    "sha256": "419826b32c0f4bed5c749549002066a0ccf70bfec3e2e5a4798af021dce6d67d",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/补全资料缺口.py",
+    "bytes": 4713,
+    "lines": 101,
+    "nul": 0,
+    "sha256": "d5fac169f368ded6609aa4c8afa5ec1856b813c605d40bc735352452b81ea49f",
+    "functions": 5,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/补全非类型资料证据.py",
+    "bytes": 5210,
+    "lines": 132,
+    "nul": 0,
+    "sha256": "d771f732f7ab38de029fa2d7777c06b522145d2113728c4a3b63a592fe9f548e",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/补齐当前项目灵感回执.py",
+    "bytes": 1666,
+    "lines": 41,
+    "nul": 0,
+    "sha256": "f92a54c0ee72207686a294cd8bf1a2001a08df7bc1cb66c5f7a316488b35344f",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/解释词覆盖审计.py",
+    "bytes": 18049,
+    "lines": 245,
+    "nul": 0,
+    "sha256": "ca2af35255187b89a4646becc0b94e999afa5e98a4e53947494da73050ff53f0",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/计划锁与正式创作门.py",
+    "bytes": 14389,
+    "lines": 227,
+    "nul": 0,
+    "sha256": "9867d78921d8c0ba51445fcd812b5edb4c66662e3ab1af0a3d38caaefd6e72cf",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/识别同序资料差异.py",
+    "bytes": 7102,
+    "lines": 175,
+    "nul": 0,
+    "sha256": "93986825822b075f028c594d702bc15eba74d14e5b1cacba5466870681e3cad1",
+    "functions": 8,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/资料库与类型连接调取验证.py",
+    "bytes": 12429,
+    "lines": 202,
+    "nul": 0,
+    "sha256": "5f0da51b4b5b71bb17f8edab98c0e8c00b5185258f0de060eedd3a58330a2a9a",
+    "functions": 11,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/资料库条目补全.py",
+    "bytes": 2852,
+    "lines": 57,
+    "nul": 0,
+    "sha256": "66c7d26a63668515c7a06e55893df38f4e232b0158b78182523aa5850047c4f7",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/资料治理.py",
+    "bytes": 10966,
+    "lines": 188,
+    "nul": 0,
+    "sha256": "e14b931fa2ee51041ed8b97b38182dca71c7841ef5634e02d21e74364f70882e",
+    "functions": 10,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/资料注册与完整性.py",
+    "bytes": 15566,
+    "lines": 300,
+    "nul": 0,
+    "sha256": "b01f91567bf762e5389a273135dd94195411cf1b0c7f4ae5257dc1d92986f07e",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/资料消费审计.py",
+    "bytes": 29171,
+    "lines": 493,
+    "nul": 0,
+    "sha256": "c67204f6f74bd65eccbdfd903938875338ee45547dcf61897e35f62956d86834",
+    "functions": 12,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/资料激活前置条件审计.py",
+    "bytes": 9508,
+    "lines": 190,
+    "nul": 0,
+    "sha256": "12923b59041c3fd4e258ede0cf3bfebd35f69a3ffd27f6f871eb0824b5fd9460",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/资料资格与合同注册.py",
+    "bytes": 10296,
+    "lines": 214,
+    "nul": 0,
+    "sha256": "e133a4ddfef70675bc9d93db4ebf60b533936579461fbffc22c99e4a12adf91d",
+    "functions": 7,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/资料运行准入准备.py",
+    "bytes": 13788,
+    "lines": 227,
+    "nul": 0,
+    "sha256": "d6b13e7550858d6f82a8b26eb58e1b651755e9a1ff373c38eba638a2ebacebe6",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/运行tb00008隔离.py",
+    "bytes": 1270,
+    "lines": 29,
+    "nul": 0,
+    "sha256": "ee024028674c00f5e5394c87a2894d575cd8b3825bf3aab264970cf5bfa3257a",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/运行严格恢复诊断.py",
+    "bytes": 1513,
+    "lines": 39,
+    "nul": 0,
+    "sha256": "719f9f65287cfa69b67e78bd1898e7a9fa2ec5ebcd1119093dab6a4055e44f7c",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/运行严格连续恢复.py",
+    "bytes": 1437,
+    "lines": 32,
+    "nul": 0,
+    "sha256": "4727f530abbd4e8d35e4ac83d308e858cf87fd7d5b4344d4b79267b094e522cd",
+    "functions": 1,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/运行命令回执.py",
+    "bytes": 2627,
+    "lines": 52,
+    "nul": 0,
+    "sha256": "87c4e09a8a90be89b0f5cf537ae88cd1b7229217560a06e0144e470e100695aa",
+    "functions": 3,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/运行命令调度.py",
+    "bytes": 3899,
+    "lines": 102,
+    "nul": 0,
+    "sha256": "197cec318b674a4afe658f48a293662db2729d5de24a9bdbd743a639af49b769",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/运行恢复与幂等验收.py",
+    "bytes": 7173,
+    "lines": 168,
+    "nul": 0,
+    "sha256": "e292b490a4965188ebd82538f4e1089e1a474f14507d0aa33dcdaf42730c3ba4",
+    "functions": 9,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/运行清单复核.py",
+    "bytes": 16533,
+    "lines": 345,
+    "nul": 0,
+    "sha256": "34d25f767082f3dd32cc99e86648bb7e1ffcc70f8fd7b8050d93a68b7a7fc24b",
+    "functions": 17,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/运行资料包契约.py",
+    "bytes": 23811,
+    "lines": 400,
+    "nul": 0,
+    "sha256": "aa3d487f7a14ed7a698f5830fcb0c21511a0179655cb03035fcd4fb46ae187b0",
+    "functions": 10,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/逐日主资料补丁重放回执.py",
+    "bytes": 6577,
+    "lines": 138,
+    "nul": 0,
+    "sha256": "34909b052876973cc39bb0561f4c324c5ecf82607cb663cdeda98d9d25d5b962",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/重建升级异常派生定位.py",
+    "bytes": 7249,
+    "lines": 111,
+    "nul": 0,
+    "sha256": "204bf4c7ba8305ea3e55c8533c611e8375c2449621213146e8deb7e825e08bb2",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/重建当前授权提交.py",
+    "bytes": 4741,
+    "lines": 96,
+    "nul": 0,
+    "sha256": "36cb722be9011d270fd4fdd181fc68229db0b99084334be2ccceeaa7c8f5b85b",
+    "functions": 2,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/重建当前项目运行基线.py",
+    "bytes": 21712,
+    "lines": 270,
+    "nul": 0,
+    "sha256": "4c8f77723a3a26898e410c43938f494d0ee0d6c52d751de61e000ccf968ffb3d",
+    "functions": 12,
+    "parse_error": "",
+    "classification": "治理/修复工具，迁移前隔离副作用"
+  },
+  {
+    "path": "03_运行资料/脚本/项目创作生产政策.py",
+    "bytes": 7973,
+    "lines": 157,
+    "nul": 0,
+    "sha256": "aa315aa229071b351d25cda03037c9a7be9923e0039e1b5ffa3a6b80b5f32ecd",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/项目执行边界.py",
+    "bytes": 15224,
+    "lines": 242,
+    "nul": 0,
+    "sha256": "970e7360eaf0595dc1d564f86300f2cd78402abcadaca64f758b0be50925dc82",
+    "functions": 10,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/项目来源确认.py",
+    "bytes": 6055,
+    "lines": 116,
+    "nul": 0,
+    "sha256": "6d96144c349531d2f794a66ebc0577fd7aade752e71bb44487651d2aeceaa0c1",
+    "functions": 4,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/项目生命周期管理.py",
+    "bytes": 10248,
+    "lines": 232,
+    "nul": 0,
+    "sha256": "7b87cb3f99eea3c1bf8cdf97978910777c1ce75485d7d87620dbd85a4d0792dc",
+    "functions": 12,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/项目规划.py",
+    "bytes": 7202,
+    "lines": 137,
+    "nul": 0,
+    "sha256": "a182fa7e2e58f645a683bde57e40ff3755fc244061fb9eacfd6b0b46a51cf48d",
+    "functions": 6,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  },
+  {
+    "path": "03_运行资料/脚本/验证第一章受控草稿批次.js",
+    "bytes": 1794,
+    "lines": 19,
+    "nul": 0,
+    "sha256": "78069a4b5c7d6192db37c4928f8ff45c686dc9dbbbe79fd6fd70ab312516a983",
+    "functions": 0,
+    "parse_error": "",
+    "classification": "运行/校验工具，保留契约并拆分职责"
+  }
+]

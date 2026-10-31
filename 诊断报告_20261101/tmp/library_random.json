@@ -1,0 +1,2887 @@
+[
+  {
+    "id": "6.1_基础情感",
+    "line": 13207,
+    "start": 13207,
+    "section": [
+      6,
+      "情感分类"
+    ],
+    "end": 13556,
+    "fields": {
+      "定义": "无需学习、跨文化共通的情感。读者能在1秒内识别。",
+      "调用条件": "无",
+      "指令": "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因。",
+      "设计指令": "无",
+      "写作指令": "无",
+      "分级标准": "无",
+      "场景变体": "无",
+      "判定标准": "无",
+      "修正指南": "无",
+      "示例": "场景：执行“基础情感”。输入：故事任务和条目定义“无需学习、跨文化共通的情感”。操作：按定义确定对象与步骤，并落实指令“写作规则：每章至少触发一种基础情感”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。",
+      "反面案例": "无",
+      "关联板块": "无",
+      "关联路径": "无",
+      "优先级": "无",
+      "例外处理": "无",
+      "调用标签": "#6.1_基础情感"
+    },
+    "base": "【定义】\n无需学习、跨文化共通的情感。读者能在1秒内识别。\n\n\n【调用条件】\n无\n\n\n【指令】\n\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因。\n\n\n【设计指令】\n无\n\n\n【写作指令】\n无\n\n\n【分级标准】\n无\n\n\n【场景变体】\n无\n\n\n【判定标准】\n无\n\n\n【修正指南】\n无\n\n\n【示例】\n场景：执行“基础情感”。输入：故事任务和条目定义“无需学习、跨文化共通的情感”。操作：按定义确定对象与步骤，并落实指令“写作规则：每章至少触发一种基础情感”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。\n\n【反面案例】\n无\n\n\n【关联板块】\n无\n\n\n【关联路径】\n无\n\n\n【优先级】\n无\n\n\n【例外处理】\n无\n\n\n【调用标签】\n#6.1_基础情感",
+    "base_length": 293,
+    "raw_length": 10951,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_binding",
+        "canonical_source_id": "6.1_基础情感",
+        "source_locator": "6.1_基础情感",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00039",
+            "source_id": "6.1_基础情感",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '6.1_基础情感', 'line_start': 2483}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因。",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因。",
+                "动作与结果",
+                "场景：执行“基础情感”。输入：故事任务和条目定义“无需学习、跨文化共通的情感”。操作：按定义确定对象与步骤，并落实指令“写作规则：每章至少触发一种基础情感”。输",
+                "基础情感",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "无需学习、跨文化共通的情感。读者能在1秒内识别。",
+                "选择"
+              ],
+              "source_semantic_anchor": "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因”直接相关的具体创作问题时，锁定 基础情感 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00039",
+              "source_id": "6.1_基础情感",
+              "source_ref_sha256": "ba7361d482b13a30a5062dfaf865f27e56bc4b38be010f576f0acc5b381bb7b1",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          },
+          {
+            "binding_id": "TB-00039",
+            "source_id": "6.1_基础情感",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '6.1_基础情感', 'line_start': 2483}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因。",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因。",
+                "动作与结果",
+                "场景：执行“基础情感”。输入：故事任务和条目定义“无需学习、跨文化共通的情感”。操作：按定义确定对象与步骤，并落实指令“写作规则：每章至少触发一种基础情感”。输",
+                "基础情感",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "无需学习、跨文化共通的情感。读者能在1秒内识别。",
+                "选择"
+              ],
+              "source_semantic_anchor": "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因”直接相关的具体创作问题时，锁定 基础情感 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "\\*\\*写作规则\\*\\*：每章至少触发一种基础情感。基础情感通过身体信号被读者识别，不需要解释原因",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00039",
+              "source_id": "6.1_基础情感",
+              "source_ref_sha256": "ba7361d482b13a30a5062dfaf865f27e56bc4b38be010f576f0acc5b381bb7b1",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ],
+        "tail_upgrade_evidence": [
+          {
+            "attestation_scope": null,
+            "binding_id": "TB-00039",
+            "consumption_id": "PC-09685",
+            "errors": [],
+            "formal_fact_eligible": false,
+            "item_attested": false,
+            "original_prose_artifacts_modified": false,
+            "permitted_use": "draft_audit_only",
+            "project_source_confirmed": false,
+            "prose_write_allowed": false,
+            "schema_version": "strict-source-upgrade-record-1.0",
+            "source_id": "6.1_基础情感",
+            "source_item_sha256": "2acb520dba5d6037b30dc3e4b8add28a044baf050460111d5cecdaf9e56b8dc5",
+            "source_kind": "资料库",
+            "source_quality_level": "draft_usable",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '6.1_基础情感', 'line_start': 2483}",
+            "source_ref_sha256": "ba7361d482b13a30a5062dfaf865f27e56bc4b38be010f576f0acc5b381bb7b1",
+            "status": "upgraded_for_draft_audit",
+            "upgrade_id": "SU-PC-09685"
+          },
+          {
+            "binding_id": "TB-00039",
+            "category": "reused_unchanged",
+            "fingerprint": {
+              "binding_strategy_sha256": "aadbdc052ad58b2c6a094023d3e72a84c641db661f93018f655d27519cb66642",
+              "dependency_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "locator_valid": true,
+              "source_object_sha256": "6958bd8c342f19784d0ef86af51fae9dd7c96a77759042a5fbda399cffc3e89f",
+              "source_ref_sha256": "88d1f20aac2e35265c0116ad4e1f5a44a0fe94e3f76978844819d3f7ccd54309"
+            },
+            "model_call_required": false,
+            "reasons": [
+              "原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承"
+            ],
+            "reused_from_run_id": "20260816T101311Z-295bb554",
+            "source_id": "6.1_基础情感"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "8.1_身体状态",
+    "line": 20229,
+    "start": 20229,
+    "section": [
+      8,
+      "状态分类"
+    ],
+    "end": 20578,
+    "fields": {
+      "定义": "影响角色的行动能力和决策质量。",
+      "调用条件": "无",
+      "指令": "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）。",
+      "设计指令": "无",
+      "写作指令": "无",
+      "分级标准": "无",
+      "场景变体": "无",
+      "判定标准": "无",
+      "修正指南": "无",
+      "示例": "场景：执行“身体状态”。输入：故事任务和条目定义“影响角色的行动能力和决策质量”。操作：按定义确定对象与步骤，并落实指令“写作规则：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。",
+      "反面案例": "无",
+      "关联板块": "无",
+      "关联路径": "无",
+      "优先级": "无",
+      "例外处理": "无",
+      "调用标签": "#8.1_身体状态"
+    },
+    "base": "【定义】\n影响角色的行动能力和决策质量。\n\n\n【调用条件】\n无\n\n\n【指令】\n\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）。\n\n\n【设计指令】\n无\n\n\n【写作指令】\n无\n\n\n【分级标准】\n无\n\n\n【场景变体】\n无\n\n\n【判定标准】\n无\n\n\n【修正指南】\n无\n\n\n【示例】\n场景：执行“身体状态”。输入：故事任务和条目定义“影响角色的行动能力和决策质量”。操作：按定义确定对象与步骤，并落实指令“写作规则：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。\n\n【反面案例】\n无\n\n\n【关联板块】\n无\n\n\n【关联路径】\n无\n\n\n【优先级】\n无\n\n\n【例外处理】\n无\n\n\n【调用标签】\n#8.1_身体状态",
+    "base_length": 297,
+    "raw_length": 10895,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_binding",
+        "canonical_source_id": "8.1_身体状态",
+        "source_locator": "8.1_身体状态",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00059",
+            "source_id": "8.1_身体状态",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '8.1_身体状态', 'line_start': 3863}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）。",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）。",
+                "动作与结果",
+                "场景：执行“身体状态”。输入：故事任务和条目定义“影响角色的行动能力和决策质量”。操作：按定义确定对象与步骤，并落实指令“写作规则：身体状态必须在场景中通过行为",
+                "将条目定义",
+                "影响角色的行动能力和决策质量。",
+                "指令或判定证据转译为场景中的可观察约束",
+                "身体状态",
+                "选择"
+              ],
+              "source_semantic_anchor": "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）”直接相关的具体创作问题时，锁定 身体状态 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00059",
+              "source_id": "8.1_身体状态",
+              "source_ref_sha256": "67c0ce021d35804422db72c886bf51e507615c7868049dad1994430a3c9d405f",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          },
+          {
+            "binding_id": "TB-00059",
+            "source_id": "8.1_身体状态",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '8.1_身体状态', 'line_start': 3863}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）。",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）。",
+                "动作与结果",
+                "场景：执行“身体状态”。输入：故事任务和条目定义“影响角色的行动能力和决策质量”。操作：按定义确定对象与步骤，并落实指令“写作规则：身体状态必须在场景中通过行为",
+                "将条目定义",
+                "影响角色的行动能力和决策质量。",
+                "指令或判定证据转译为场景中的可观察约束",
+                "身体状态",
+                "选择"
+              ],
+              "source_semantic_anchor": "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）”直接相关的具体创作问题时，锁定 身体状态 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "\\*\\*写作规则\\*\\*：身体状态必须在场景中通过行为被读者感知（走路姿势、呼吸、动作幅度）",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00059",
+              "source_id": "8.1_身体状态",
+              "source_ref_sha256": "67c0ce021d35804422db72c886bf51e507615c7868049dad1994430a3c9d405f",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ],
+        "tail_upgrade_evidence": [
+          {
+            "attestation_scope": null,
+            "binding_id": "TB-00059",
+            "consumption_id": "PC-09705",
+            "errors": [],
+            "formal_fact_eligible": false,
+            "item_attested": false,
+            "original_prose_artifacts_modified": false,
+            "permitted_use": "draft_audit_only",
+            "project_source_confirmed": false,
+            "prose_write_allowed": false,
+            "schema_version": "strict-source-upgrade-record-1.0",
+            "source_id": "8.1_身体状态",
+            "source_item_sha256": "2d74f03b230519a0fb87f0830ab813b51bcb830f5ad4a5a95b3da6180f4e3daa",
+            "source_kind": "资料库",
+            "source_quality_level": "draft_usable",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '8.1_身体状态', 'line_start': 3863}",
+            "source_ref_sha256": "67c0ce021d35804422db72c886bf51e507615c7868049dad1994430a3c9d405f",
+            "status": "upgraded_for_draft_audit",
+            "upgrade_id": "SU-PC-09705"
+          },
+          {
+            "binding_id": "TB-00059",
+            "category": "reused_unchanged",
+            "fingerprint": {
+              "binding_strategy_sha256": "d18d3aedb147411195c440f4bc7a1adf0120e98c4de017030a258728d9a4c090",
+              "dependency_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "locator_valid": true,
+              "source_object_sha256": "50e202dad8b3a7f7b7fe1c03917a887658ddd8e88d52af3c8237b6ea46dfdeac",
+              "source_ref_sha256": "08abcde669af252c60e188d3f8a7f1ab7abeb0835d34da02e09900c917e03872"
+            },
+            "model_call_required": false,
+            "reasons": [
+              "原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承"
+            ],
+            "reused_from_run_id": "20260816T101311Z-295bb554",
+            "source_id": "8.1_身体状态"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "26.3_交易成本",
+    "line": 50864,
+    "start": 50864,
+    "section": [
+      26,
+      "交易体系"
+    ],
+    "end": 51213,
+    "fields": {
+      "定义": "交易消耗的资源/时间/机会。",
+      "调用条件": "无",
+      "指令": "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略。",
+      "设计指令": "无",
+      "写作指令": "无",
+      "分级标准": "无",
+      "场景变体": "无",
+      "判定标准": "无",
+      "修正指南": "无",
+      "示例": "场景：执行“交易成本”。输入：故事任务和条目定义“交易消耗的资源/时间/机会”。操作：按定义确定对象与步骤，并落实指令“写作规则：交易成本让每次交易都有“价格”之外的成本”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。",
+      "反面案例": "无",
+      "关联板块": "无",
+      "关联路径": "无",
+      "优先级": "无",
+      "例外处理": "无",
+      "调用标签": "#26.3_交易成本"
+    },
+    "base": "【定义】\n交易消耗的资源/时间/机会。\n\n\n【调用条件】\n无\n\n\n【指令】\n\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略。\n\n\n【设计指令】\n无\n\n\n【写作指令】\n无\n\n\n【分级标准】\n无\n\n\n【场景变体】\n无\n\n\n【判定标准】\n无\n\n\n【修正指南】\n无\n\n\n【示例】\n场景：执行“交易成本”。输入：故事任务和条目定义“交易消耗的资源/时间/机会”。操作：按定义确定对象与步骤，并落实指令“写作规则：交易成本让每次交易都有“价格”之外的成本”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。\n\n【反面案例】\n无\n\n\n【关联板块】\n无\n\n\n【关联路径】\n无\n\n\n【优先级】\n无\n\n\n【例外处理】\n无\n\n\n【调用标签】\n#26.3_交易成本",
+    "base_length": 301,
+    "raw_length": 11076,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_binding",
+        "canonical_source_id": "26.3_交易成本",
+        "source_locator": "26.3_交易成本",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00146",
+            "source_id": "26.3_交易成本",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '26.3_交易成本', 'line_start': 9893}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略。",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略。",
+                "交易成本",
+                "交易消耗的资源/时间/机会。",
+                "动作与结果",
+                "场景：执行“交易成本”。输入：故事任务和条目定义“交易消耗的资源/时间/机会”。操作：按定义确定对象与步骤，并落实指令“写作规则：交易成本让每次交易都有“价格”",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "选择"
+              ],
+              "source_semantic_anchor": "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略”直接相关的具体创作问题时，锁定 交易成本 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00146",
+              "source_id": "26.3_交易成本",
+              "source_ref_sha256": "7d49c8b0cd53995d9936dcdad9f4fe301010db73523cacd39ef84d66eeb2c1c1",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          },
+          {
+            "binding_id": "TB-00146",
+            "source_id": "26.3_交易成本",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '26.3_交易成本', 'line_start': 9893}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略。",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略。",
+                "交易成本",
+                "交易消耗的资源/时间/机会。",
+                "动作与结果",
+                "场景：执行“交易成本”。输入：故事任务和条目定义“交易消耗的资源/时间/机会”。操作：按定义确定对象与步骤，并落实指令“写作规则：交易成本让每次交易都有“价格”",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "选择"
+              ],
+              "source_semantic_anchor": "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略”直接相关的具体创作问题时，锁定 交易成本 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "\\*\\*写作规则\\*\\*：交易成本让每次交易都有“价格”之外的成本。角色选择交易方式时，成本的考量体现了其人格和策略",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00146",
+              "source_id": "26.3_交易成本",
+              "source_ref_sha256": "7d49c8b0cd53995d9936dcdad9f4fe301010db73523cacd39ef84d66eeb2c1c1",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ],
+        "tail_upgrade_evidence": [
+          {
+            "attestation_scope": null,
+            "binding_id": "TB-00146",
+            "consumption_id": "PC-09792",
+            "errors": [],
+            "formal_fact_eligible": false,
+            "item_attested": false,
+            "original_prose_artifacts_modified": false,
+            "permitted_use": "draft_audit_only",
+            "project_source_confirmed": false,
+            "prose_write_allowed": false,
+            "schema_version": "strict-source-upgrade-record-1.0",
+            "source_id": "26.3_交易成本",
+            "source_item_sha256": "3f67a82389995c6a8907285041d1ac418a929874f6c0497ca5a17f219532e657",
+            "source_kind": "资料库",
+            "source_quality_level": "draft_usable",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '26.3_交易成本', 'line_start': 9893}",
+            "source_ref_sha256": "7d49c8b0cd53995d9936dcdad9f4fe301010db73523cacd39ef84d66eeb2c1c1",
+            "status": "upgraded_for_draft_audit",
+            "upgrade_id": "SU-PC-09792"
+          },
+          {
+            "binding_id": "TB-00146",
+            "category": "reused_unchanged",
+            "fingerprint": {
+              "binding_strategy_sha256": "e30fd271ce0c8035c83a9213e2b7bfc7234eb6867c438f6ea5b6e54889920eab",
+              "dependency_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "locator_valid": true,
+              "source_object_sha256": "45205f1c0b224307c93a15e078ca4b765fafe11a74cd9df000915a19d0d3a027",
+              "source_ref_sha256": "3ff6208a5af9a7861ce500fc3822b1110f12eef8e9e36ed0b9a6c51aeb70c08f"
+            },
+            "model_call_required": false,
+            "reasons": [
+              "原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承"
+            ],
+            "reused_from_run_id": "20260816T101311Z-295bb554",
+            "source_id": "26.3_交易成本"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "4.2_演变方向",
+    "line": 7917,
+    "start": 7917,
+    "section": [
+      4,
+      "角色成长"
+    ],
+    "end": 8269,
+    "fields": {
+      "定义": "角色在故事中变化的方向性：",
+      "调用条件": "无",
+      "指令": "\\*\\*维度互锁规则\\*\\*：\n\\- 每个角色至少2对维度有互锁关系\n\\- A变B必变，A不变B不变\n\\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻木互锁",
+      "设计指令": "无",
+      "写作指令": "无",
+      "分级标准": "无",
+      "场景变体": "无",
+      "判定标准": "无",
+      "修正指南": "无",
+      "示例": "场景：执行“演变方向”。输入：故事任务和条目定义“角色在故事中变化的方向性：”。操作：按定义确定对象与步骤，并落实指令“维度互锁规则：-每个角色至少2对维度有互锁关系-A变B必变，A不”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。",
+      "反面案例": "无",
+      "关联板块": "无",
+      "关联路径": "无",
+      "优先级": "无",
+      "例外处理": "无",
+      "调用标签": "#4.2_演变方向"
+    },
+    "base": "【定义】\n角色在故事中变化的方向性：\n\n\n【调用条件】\n无\n\n\n【指令】\n\\*\\*维度互锁规则\\*\\*：\n\\- 每个角色至少2对维度有互锁关系\n\\- A变B必变，A不变B不变\n\\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻木互锁\n\n\n【设计指令】\n无\n\n\n【写作指令】\n无\n\n\n【分级标准】\n无\n\n\n【场景变体】\n无\n\n\n【判定标准】\n无\n\n\n【修正指南】\n无\n\n\n【示例】\n场景：执行“演变方向”。输入：故事任务和条目定义“角色在故事中变化的方向性：”。操作：按定义确定对象与步骤，并落实指令“维度互锁规则：-每个角色至少2对维度有互锁关系-A变B必变，A不”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。\n\n【反面案例】\n无\n\n\n【关联板块】\n无\n\n\n【关联路径】\n无\n\n\n【优先级】\n无\n\n\n【例外处理】\n无\n\n\n【调用标签】\n#4.2_演变方向",
+    "base_length": 324,
+    "raw_length": 11450,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_binding",
+        "canonical_source_id": "4.2_演变方向",
+        "source_locator": "4.2_演变方向",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00024",
+            "source_id": "4.2_演变方向",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '4.2_演变方向', 'line_start': 1434}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "\\*\\*维度互锁规则\\*\\*：\n\\- 每个角色至少2对维度有互锁关系\n\\- A变B必变，A不变B不变\n\\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "\\*\\*维度互锁规则\\*\\*：\n\\- 每个角色至少2对维度有互锁关系\n\\- A变B必变，A不变B不变\n\\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻",
+                "动作与结果",
+                "场景：执行“演变方向”。输入：故事任务和条目定义“角色在故事中变化的方向性：”。操作：按定义确定对象与步骤，并落实指令“维度互锁规则：-每个角色至少2对维度有互",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "演变方向",
+                "角色在故事中变化的方向性：",
+                "选择"
+              ],
+              "source_semantic_anchor": "\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻”直接相关的具体创作问题时，锁定 演变方向 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00024",
+              "source_id": "4.2_演变方向",
+              "source_ref_sha256": "c5dfeffae5aba80b8931d6c4cdebf921f561e7fbf5a2fe629db0fd1e9ee3d1a2",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          },
+          {
+            "binding_id": "TB-00024",
+            "source_id": "4.2_演变方向",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '4.2_演变方向', 'line_start': 1434}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "\\*\\*维度互锁规则\\*\\*：\n\\- 每个角色至少2对维度有互锁关系\n\\- A变B必变，A不变B不变\n\\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "\\*\\*维度互锁规则\\*\\*：\n\\- 每个角色至少2对维度有互锁关系\n\\- A变B必变，A不变B不变\n\\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻",
+                "动作与结果",
+                "场景：执行“演变方向”。输入：故事任务和条目定义“角色在故事中变化的方向性：”。操作：按定义确定对象与步骤，并落实指令“维度互锁规则：-每个角色至少2对维度有互",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "演变方向",
+                "角色在故事中变化的方向性：",
+                "选择"
+              ],
+              "source_semantic_anchor": "\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻”直接相关的具体创作问题时，锁定 演变方向 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "\\*\\*维度互锁规则\\*\\*： \\- 每个角色至少2对维度有互锁关系 \\- A变B必变，A不变B不变 \\- 例：灵力储量上升和经脉裂痕加深互锁；心智下降和情绪麻",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00024",
+              "source_id": "4.2_演变方向",
+              "source_ref_sha256": "c5dfeffae5aba80b8931d6c4cdebf921f561e7fbf5a2fe629db0fd1e9ee3d1a2",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ],
+        "tail_upgrade_evidence": [
+          {
+            "attestation_scope": null,
+            "binding_id": "TB-00024",
+            "consumption_id": "PC-09670",
+            "errors": [],
+            "formal_fact_eligible": false,
+            "item_attested": false,
+            "original_prose_artifacts_modified": false,
+            "permitted_use": "draft_audit_only",
+            "project_source_confirmed": false,
+            "prose_write_allowed": false,
+            "schema_version": "strict-source-upgrade-record-1.0",
+            "source_id": "4.2_演变方向",
+            "source_item_sha256": "18a55d3a6d4d76191a634aa5d0c0c02fd0c830c538a952fb9ed6160fd4ffcf30",
+            "source_kind": "资料库",
+            "source_quality_level": "draft_usable",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '4.2_演变方向', 'line_start': 1434}",
+            "source_ref_sha256": "c5dfeffae5aba80b8931d6c4cdebf921f561e7fbf5a2fe629db0fd1e9ee3d1a2",
+            "status": "upgraded_for_draft_audit",
+            "upgrade_id": "SU-PC-09670"
+          },
+          {
+            "binding_id": "TB-00024",
+            "category": "reused_unchanged",
+            "fingerprint": {
+              "binding_strategy_sha256": "e734503d06f73856137893a7d32e27b6912a067aefe8822b4d60be02ed97327c",
+              "dependency_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "locator_valid": true,
+              "source_object_sha256": "3c2391cc3a5962fc314fbf56823c6add7e5ca59576f9e336eb0abb05dd317c3c",
+              "source_ref_sha256": "a0eb2b656411d36eb795912a249c71905c97a1cd961597a2804e4f02a57137cf"
+            },
+            "model_call_required": false,
+            "reasons": [
+              "原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承"
+            ],
+            "reused_from_run_id": "20260816T101311Z-295bb554",
+            "source_id": "4.2_演变方向"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "静默时刻",
+    "line": 90998,
+    "start": 90998,
+    "section": [
+      62,
+      "节奏控制"
+    ],
+    "end": 91007,
+    "fields": {
+      "定义": "完全无外部冲突的深度体验瞬间。",
+      "设计指令": "完全无外部冲突的深度体验瞬间。",
+      "示例": "完全无外部冲突的深度体验瞬间。",
+      "调用标签": "#概念型·静默时刻"
+    },
+    "base": "【定义】完全无外部冲突的深度体验瞬间。\n\n【设计指令】完全无外部冲突的深度体验瞬间。\n\n【示例】完全无外部冲突的深度体验瞬间。\n\n【调用标签】#概念型·静默时刻",
+    "base_length": 74,
+    "raw_length": 82,
+    "runtime": []
+  },
+  {
+    "id": "读者回访价值",
+    "line": 91552,
+    "start": 91552,
+    "section": [
+      66,
+      "读者记忆"
+    ],
+    "end": 91561,
+    "fields": {
+      "定义": "读者愿意再次回到这个故事的意愿。",
+      "设计指令": "读者愿意再次回到这个故事的意愿。",
+      "示例": "读者愿意再次回到这个故事的意愿。",
+      "调用标签": "#概念型·读者回访价值"
+    },
+    "base": "【定义】读者愿意再次回到这个故事的意愿。\n\n【设计指令】读者愿意再次回到这个故事的意愿。\n\n【示例】读者愿意再次回到这个故事的意愿。\n\n【调用标签】#概念型·读者回访价值",
+    "base_length": 79,
+    "raw_length": 87,
+    "runtime": []
+  },
+  {
+    "id": "距离变化规则",
+    "line": 89725,
+    "start": 89725,
+    "section": [
+      53,
+      "叙述距离"
+    ],
+    "end": 89749,
+    "fields": {
+      "定义": "每章至少使用2种叙述距离。",
+      "调用条件": "需要在写作中运用距离变化规则技法时调用",
+      "指令": "每章至少使用2种叙述距离。",
+      "设计指令": "在设计阶段规划距离变化规则的应用方式和位置",
+      "写作指令": "在写作阶段按距离变化规则规则逐条执行",
+      "分级标准": "轻度：简单运用距离变化规则；中度：充分运用距离变化规则；重度：深度运用距离变化规则",
+      "场景变体": "对朋友：自然运用距离变化规则；对敌人：冲突性运用距离变化规则；对权威：谨慎运用距离变化规则；对陌生人：基础运用距离变化规则",
+      "判定标准": "规则\\*\\*：\n\n\\- 每种距离最少连续使用1个段落\n\n\\- 距离变化是节奏变化的信号（远→近=加速，近→远=减速）\n\n\\-",
+      "修正指南": "如不合格，重新审视距离变化规则的运用是否到位，调整后重新检查",
+      "示例": "每章至少使用2种叙述距离。",
+      "反面案例": "忽略距离变化规则规则，导致段落效果不佳",
+      "关联板块": "与板块53 叙述距离的其他子节配合使用",
+      "关联路径": "资料库/板块53 叙述距离.md",
+      "优先级": "中",
+      "例外处理": "在不需要距离变化规则的场景中可不使用",
+      "调用标签": "#映射型·距离变化规则"
+    },
+    "base": "【定义】每章至少使用2种叙述距离。\n【调用条件】需要在写作中运用距离变化规则技法时调用\n【指令】每章至少使用2种叙述距离。\n【设计指令】在设计阶段规划距离变化规则的应用方式和位置\n【写作指令】在写作阶段按距离变化规则规则逐条执行\n【分级标准】轻度：简单运用距离变化规则；中度：充分运用距离变化规则；重度：深度运用距离变化规则\n【场景变体】对朋友：自然运用距离变化规则；对敌人：冲突性运用距离变化规则；对权威：谨慎运用距离变化规则；对陌生人：基础运用距离变化规则\n【判定标准】规则\\*\\*：\n\n\\- 每种距离最少连续使用1个段落\n\n\\- 距离变化是节奏变化的信号（远→近=加速，近→远=减速）\n\n\\-\n【修正指南】如不合格，重新审视距离变化规则的运用是否到位，调整后重新检查\n【示例】每章至少使用2种叙述距离。\n【反面案例】忽略距离变化规则规则，导致段落效果不佳\n【关联板块】与板块53 叙述距离的其他子节配合使用\n【关联路径】资料库/板块53 叙述距离.md\n【优先级】中\n【例外处理】在不需要距离变化规则的场景中可不使用\n【调用标签】#映射型·距离变化规则",
+    "base_length": 454,
+    "raw_length": 481,
+    "runtime": []
+  },
+  {
+    "id": "快节奏场景语言",
+    "line": 89752,
+    "start": 89752,
+    "section": [
+      54,
+      "语言质感轮换"
+    ],
+    "end": 89770,
+    "fields": {
+      "定义": "短句、动词密集、少描写。",
+      "调用条件": "需要在写作中运用快节奏场景语言技法时调用",
+      "指令": "短句、动词密集、少描写。",
+      "设计指令": "在设计阶段规划快节奏场景语言的应用方式和位置",
+      "写作指令": "在写作阶段按快节奏场景语言规则逐条执行",
+      "分级标准": "轻度：简单运用快节奏场景语言；中度：充分运用快节奏场景语言；重度：深度运用快节奏场景语言",
+      "场景变体": "对朋友：自然运用快节奏场景语言；对敌人：冲突性运用快节奏场景语言；对权威：谨慎运用快节奏场景语言；对陌生人：基础运用快节奏场景语言",
+      "判定标准": "快节奏场景语言是否在文中得到体现，读者能否感知到该技法的效果",
+      "修正指南": "如不合格，重新审视快节奏场景语言的运用是否到位，调整后重新检查",
+      "示例": "短句、动词密集、少描写。",
+      "反面案例": "忽略快节奏场景语言规则，导致段落效果不佳",
+      "关联板块": "与板块54 语言质感轮换的其他子节配合使用",
+      "关联路径": "资料库/板块54 语言质感轮换.md",
+      "优先级": "中",
+      "例外处理": "在不需要快节奏场景语言的场景中可不使用",
+      "调用标签": "#可执行型·快节奏场景语言"
+    },
+    "base": "【定义】短句、动词密集、少描写。\n【调用条件】需要在写作中运用快节奏场景语言技法时调用\n【指令】短句、动词密集、少描写。\n【设计指令】在设计阶段规划快节奏场景语言的应用方式和位置\n【写作指令】在写作阶段按快节奏场景语言规则逐条执行\n【分级标准】轻度：简单运用快节奏场景语言；中度：充分运用快节奏场景语言；重度：深度运用快节奏场景语言\n【场景变体】对朋友：自然运用快节奏场景语言；对敌人：冲突性运用快节奏场景语言；对权威：谨慎运用快节奏场景语言；对陌生人：基础运用快节奏场景语言\n【判定标准】快节奏场景语言是否在文中得到体现，读者能否感知到该技法的效果\n【修正指南】如不合格，重新审视快节奏场景语言的运用是否到位，调整后重新检查\n【示例】短句、动词密集、少描写。\n【反面案例】忽略快节奏场景语言规则，导致段落效果不佳\n【关联板块】与板块54 语言质感轮换的其他子节配合使用\n【关联路径】资料库/板块54 语言质感轮换.md\n【优先级】中\n【例外处理】在不需要快节奏场景语言的场景中可不使用\n【调用标签】#可执行型·快节奏场景语言",
+    "base_length": 446,
+    "raw_length": 465,
+    "runtime": []
+  },
+  {
+    "id": "欺骗",
+    "line": 93678,
+    "start": 93678,
+    "section": [
+      85,
+      "信息交互"
+    ],
+    "end": 93696,
+    "fields": {
+      "定义": "提供虚假信息。",
+      "调用条件": "需要在写作中运用欺骗技法时调用",
+      "指令": "提供虚假信息。",
+      "设计指令": "在设计阶段规划欺骗的应用方式和位置",
+      "写作指令": "在写作阶段按欺骗规则逐条执行",
+      "分级标准": "轻度：简单运用欺骗；中度：充分运用欺骗；重度：深度运用欺骗",
+      "场景变体": "对朋友：自然运用欺骗；对敌人：冲突性运用欺骗；对权威：谨慎运用欺骗；对陌生人：基础运用欺骗",
+      "判定标准": "规则\\*\\*：欺骗是高风险高回报的信息策略",
+      "修正指南": "如不合格，重新审视欺骗的运用是否到位，调整后重新检查",
+      "示例": "提供虚假信息。",
+      "反面案例": "忽略欺骗规则，导致段落效果不佳",
+      "关联板块": "与板块85 信息交互的其他子节配合使用",
+      "关联路径": "资料库/板块85 信息交互.md",
+      "优先级": "中",
+      "例外处理": "在不需要欺骗的场景中可不使用",
+      "调用标签": "#可执行型·欺骗"
+    },
+    "base": "【定义】提供虚假信息。\n【调用条件】需要在写作中运用欺骗技法时调用\n【指令】提供虚假信息。\n【设计指令】在设计阶段规划欺骗的应用方式和位置\n【写作指令】在写作阶段按欺骗规则逐条执行\n【分级标准】轻度：简单运用欺骗；中度：充分运用欺骗；重度：深度运用欺骗\n【场景变体】对朋友：自然运用欺骗；对敌人：冲突性运用欺骗；对权威：谨慎运用欺骗；对陌生人：基础运用欺骗\n【判定标准】规则\\*\\*：欺骗是高风险高回报的信息策略\n【修正指南】如不合格，重新审视欺骗的运用是否到位，调整后重新检查\n【示例】提供虚假信息。\n【反面案例】忽略欺骗规则，导致段落效果不佳\n【关联板块】与板块85 信息交互的其他子节配合使用\n【关联路径】资料库/板块85 信息交互.md\n【优先级】中\n【例外处理】在不需要欺骗的场景中可不使用\n【调用标签】#可执行型·欺骗",
+    "base_length": 348,
+    "raw_length": 367,
+    "runtime": []
+  },
+  {
+    "id": "利用",
+    "line": 93228,
+    "start": 93228,
+    "section": [
+      81,
+      "命运态度"
+    ],
+    "end": 93246,
+    "fields": {
+      "定义": "将命运当作工具使用。",
+      "调用条件": "需要在写作中运用利用技法时调用",
+      "指令": "将命运当作工具使用。",
+      "设计指令": "在设计阶段规划利用的应用方式和位置",
+      "写作指令": "在写作阶段按利用规则逐条执行",
+      "分级标准": "轻度：简单运用利用；中度：充分运用利用；重度：深度运用利用",
+      "场景变体": "对朋友：自然运用利用；对敌人：冲突性运用利用；对权威：谨慎运用利用；对陌生人：基础运用利用",
+      "判定标准": "利用是否在文中得到体现，读者能否感知到该技法的效果",
+      "修正指南": "如不合格，重新审视利用的运用是否到位，调整后重新检查",
+      "示例": "将命运当作工具使用。",
+      "反面案例": "忽略利用规则，导致段落效果不佳",
+      "关联板块": "与板块81 命运态度的其他子节配合使用",
+      "关联路径": "资料库/板块81 命运态度.md",
+      "优先级": "中",
+      "例外处理": "在不需要利用的场景中可不使用",
+      "调用标签": "#可执行型·利用"
+    },
+    "base": "【定义】将命运当作工具使用。\n【调用条件】需要在写作中运用利用技法时调用\n【指令】将命运当作工具使用。\n【设计指令】在设计阶段规划利用的应用方式和位置\n【写作指令】在写作阶段按利用规则逐条执行\n【分级标准】轻度：简单运用利用；中度：充分运用利用；重度：深度运用利用\n【场景变体】对朋友：自然运用利用；对敌人：冲突性运用利用；对权威：谨慎运用利用；对陌生人：基础运用利用\n【判定标准】利用是否在文中得到体现，读者能否感知到该技法的效果\n【修正指南】如不合格，重新审视利用的运用是否到位，调整后重新检查\n【示例】将命运当作工具使用。\n【反面案例】忽略利用规则，导致段落效果不佳\n【关联板块】与板块81 命运态度的其他子节配合使用\n【关联路径】资料库/板块81 命运态度.md\n【优先级】中\n【例外处理】在不需要利用的场景中可不使用\n【调用标签】#可执行型·利用",
+    "base_length": 361,
+    "raw_length": 380,
+    "runtime": []
+  },
+  {
+    "id": "连续主角POV",
+    "line": 94177,
+    "start": 94177,
+    "section": [
+      92,
+      "视角规则检查"
+    ],
+    "end": 94195,
+    "fields": {
+      "定义": "是否有连续多个场景是主角POV。",
+      "调用条件": "需要在写作中运用连续主角POV技法时调用",
+      "指令": "是否有连续多个场景是主角POV。",
+      "设计指令": "在设计阶段规划连续主角POV的应用方式和位置",
+      "写作指令": "在写作阶段按连续主角POV规则逐条执行",
+      "分级标准": "轻度：简单运用连续主角POV；中度：充分运用连续主角POV；重度：深度运用连续主角POV",
+      "场景变体": "对朋友：自然运用连续主角POV；对敌人：冲突性运用连续主角POV；对权威：谨慎运用连续主角POV；对陌生人：基础运用连续主角POV",
+      "判定标准": "规则\\*\\*：连续主角POV场景超过3个时，读者视角疲劳，需要插入配角POV（板块59.2）",
+      "修正指南": "如不合格，重新审视连续主角POV的运用是否到位，调整后重新检查",
+      "示例": "是否有连续多个场景是主角POV。",
+      "反面案例": "忽略连续主角POV规则，导致段落效果不佳",
+      "关联板块": "与板块92 视角规则检查的其他子节配合使用",
+      "关联路径": "资料库/板块92 视角规则检查.md",
+      "优先级": "中",
+      "例外处理": "在不需要连续主角POV的场景中可不使用",
+      "调用标签": "#可执行型·连续主角POV"
+    },
+    "base": "【定义】是否有连续多个场景是主角POV。\n【调用条件】需要在写作中运用连续主角POV技法时调用\n【指令】是否有连续多个场景是主角POV。\n【设计指令】在设计阶段规划连续主角POV的应用方式和位置\n【写作指令】在写作阶段按连续主角POV规则逐条执行\n【分级标准】轻度：简单运用连续主角POV；中度：充分运用连续主角POV；重度：深度运用连续主角POV\n【场景变体】对朋友：自然运用连续主角POV；对敌人：冲突性运用连续主角POV；对权威：谨慎运用连续主角POV；对陌生人：基础运用连续主角POV\n【判定标准】规则\\*\\*：连续主角POV场景超过3个时，读者视角疲劳，需要插入配角POV（板块59.2）\n【修正指南】如不合格，重新审视连续主角POV的运用是否到位，调整后重新检查\n【示例】是否有连续多个场景是主角POV。\n【反面案例】忽略连续主角POV规则，导致段落效果不佳\n【关联板块】与板块92 视角规则检查的其他子节配合使用\n【关联路径】资料库/板块92 视角规则检查.md\n【优先级】中\n【例外处理】在不需要连续主角POV的场景中可不使用\n【调用标签】#可执行型·连续主角POV",
+    "base_length": 474,
+    "raw_length": 493,
+    "runtime": []
+  },
+  {
+    "id": "高潮前奏",
+    "line": 95003,
+    "start": 95003,
+    "section": [
+      99,
+      "爽点与高潮检查"
+    ],
+    "end": 95021,
+    "fields": {
+      "定义": "高潮前3章是否逐步增加了压迫感。",
+      "调用条件": "需要在写作中运用高潮前奏技法时调用",
+      "指令": "高潮前3章是否逐步增加了压迫感。",
+      "设计指令": "在设计阶段规划高潮前奏的应用方式和位置",
+      "写作指令": "在写作阶段按高潮前奏规则逐条执行",
+      "分级标准": "轻度：简单运用高潮前奏；中度：充分运用高潮前奏；重度：深度运用高潮前奏",
+      "场景变体": "对朋友：自然运用高潮前奏；对敌人：冲突性运用高潮前奏；对权威：谨慎运用高潮前奏；对陌生人：基础运用高潮前奏",
+      "判定标准": "检查方法\\*\\*：从本章往前数3章，检查压迫感（信息/时间/代价）是否逐章递增",
+      "修正指南": "如不合格，重新审视高潮前奏的运用是否到位，调整后重新检查",
+      "示例": "高潮前3章是否逐步增加了压迫感。",
+      "反面案例": "忽略高潮前奏规则，导致段落效果不佳",
+      "关联板块": "与板块99 爽点与高潮检查的其他子节配合使用",
+      "关联路径": "资料库/板块99 爽点与高潮检查.md",
+      "优先级": "中",
+      "例外处理": "在不需要高潮前奏的场景中可不使用",
+      "调用标签": "#可执行型·高潮前奏"
+    },
+    "base": "【定义】高潮前3章是否逐步增加了压迫感。\n【调用条件】需要在写作中运用高潮前奏技法时调用\n【指令】高潮前3章是否逐步增加了压迫感。\n【设计指令】在设计阶段规划高潮前奏的应用方式和位置\n【写作指令】在写作阶段按高潮前奏规则逐条执行\n【分级标准】轻度：简单运用高潮前奏；中度：充分运用高潮前奏；重度：深度运用高潮前奏\n【场景变体】对朋友：自然运用高潮前奏；对敌人：冲突性运用高潮前奏；对权威：谨慎运用高潮前奏；对陌生人：基础运用高潮前奏\n【判定标准】检查方法\\*\\*：从本章往前数3章，检查压迫感（信息/时间/代价）是否逐章递增\n【修正指南】如不合格，重新审视高潮前奏的运用是否到位，调整后重新检查\n【示例】高潮前3章是否逐步增加了压迫感。\n【反面案例】忽略高潮前奏规则，导致段落效果不佳\n【关联板块】与板块99 爽点与高潮检查的其他子节配合使用\n【关联路径】资料库/板块99 爽点与高潮检查.md\n【优先级】中\n【例外处理】在不需要高潮前奏的场景中可不使用\n【调用标签】#可执行型·高潮前奏",
+    "base_length": 427,
+    "raw_length": 446,
+    "runtime": []
+  },
+  {
+    "id": "101.7_悬念维持",
+    "line": 96935,
+    "start": 96935,
+    "section": [
+      101,
+      "整体一致性"
+    ],
+    "end": 97244,
+    "fields": {
+      "定义": "读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。",
+      "设计指令": "将悬念维持作为角色决策的深层驱动，通过行为而非旁白呈现",
+      "示例": "读者是否始终有“想知道”的东西。\n\n\n\n\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。如果中间某一段读者没有“想知道”的东西，悬念链断裂。\n\n\n\n\n\n收到。继续发板块102、103、104。\n\n\n\n\\---",
+      "调用标签": "#概念·悬念维持\n\n\n\n- **条目类型**：规则型"
+    },
+    "base": "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。\n\n**设计指令**：将悬念维持作为角色决策的深层驱动，通过行为而非旁白呈现\n\n**示例**：读者是否始终有“想知道”的东西。\n\n\n\n\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。如果中间某一段读者没有“想知道”的东西，悬念链断裂。\n\n\n\n\n\n收到。继续发板块102、103、104。\n\n\n\n\\---\n\n**调用标签**：#概念·悬念维持\n\n\n\n- **条目类型**：规则型",
+    "base_length": 226,
+    "raw_length": 11028,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_binding",
+        "canonical_source_id": "101.7_悬念维持",
+        "source_locator": "101.7_悬念维持",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00259",
+            "source_id": "101.7_悬念维持",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '101.7_悬念维持', 'line_start': 24025}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。\n**设计指令**：将悬念维持作为角色决策的深层驱",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。\n**设计指令**：将悬念维持作为角色决策的深层驱",
+                "动作与结果",
+                "将条目定义",
+                "悬念维持",
+                "指令或判定证据转译为场景中的可观察约束",
+                "选择"
+              ],
+              "source_semantic_anchor": "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "悬念与回收",
+              "creative_action": "安排埋设、误导、触发和揭示后的新问题",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱”直接相关的具体创作问题时，锁定 悬念维持 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00259",
+              "source_id": "101.7_悬念维持",
+              "source_ref_sha256": "f3ea45ae6d687330e220c8d7b499d598a39b9f7d100aae064ed3c755468c27b4",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          },
+          {
+            "binding_id": "TB-00259",
+            "source_id": "101.7_悬念维持",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '101.7_悬念维持', 'line_start': 24025}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。\n**设计指令**：将悬念维持作为角色决策的深层驱",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。\n**设计指令**：将悬念维持作为角色决策的深层驱",
+                "动作与结果",
+                "将条目定义",
+                "悬念维持",
+                "指令或判定证据转译为场景中的可观察约束",
+                "选择"
+              ],
+              "source_semantic_anchor": "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "悬念与回收",
+              "creative_action": "安排埋设、误导、触发和揭示后的新问题",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱”直接相关的具体创作问题时，锁定 悬念维持 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "**定义**：读者是否始终有“想知道”的东西。\\*\\*检查方法\\*\\*：全书是否始终保留至少一个未解决的悬念。 **设计指令**：将悬念维持作为角色决策的深层驱",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00259",
+              "source_id": "101.7_悬念维持",
+              "source_ref_sha256": "f3ea45ae6d687330e220c8d7b499d598a39b9f7d100aae064ed3c755468c27b4",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ],
+        "tail_upgrade_evidence": [
+          {
+            "attestation_scope": null,
+            "binding_id": "TB-00259",
+            "consumption_id": "PC-09905",
+            "errors": [],
+            "formal_fact_eligible": false,
+            "item_attested": false,
+            "original_prose_artifacts_modified": false,
+            "permitted_use": "draft_audit_only",
+            "project_source_confirmed": false,
+            "prose_write_allowed": false,
+            "schema_version": "strict-source-upgrade-record-1.0",
+            "source_id": "101.7_悬念维持",
+            "source_item_sha256": "cf109c09ef122c81b75ec08b22930a7abacf31fffe0a800d58b1b9f5c79343ee",
+            "source_kind": "资料库",
+            "source_quality_level": "draft_usable",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '101.7_悬念维持', 'line_start': 24025}",
+            "source_ref_sha256": "f3ea45ae6d687330e220c8d7b499d598a39b9f7d100aae064ed3c755468c27b4",
+            "status": "upgraded_for_draft_audit",
+            "upgrade_id": "SU-PC-09905"
+          },
+          {
+            "binding_id": "TB-00259",
+            "category": "reused_unchanged",
+            "fingerprint": {
+              "binding_strategy_sha256": "a417c0d9752669426513332bbbf20ccfc475490ee2ac5f79c444861c9d478284",
+              "dependency_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "locator_valid": true,
+              "source_object_sha256": "c607a5e3f86f6a17a6ad28002226f8fdb4dbc0ccd77a1c792296c77f570e5517",
+              "source_ref_sha256": "5f8aa856428f2d57e696e5d164d562ec503917989c68a8dd2c5cba848793331a"
+            },
+            "model_call_required": false,
+            "reasons": [
+              "原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承"
+            ],
+            "reused_from_run_id": "20260816T101311Z-295bb554",
+            "source_id": "101.7_悬念维持"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "106.1_全篇语言风格统一",
+    "line": 100815,
+    "start": 100815,
+    "section": [
+      106,
+      "全篇语言风格统一"
+    ],
+    "end": 101129,
+    "fields": {
+      "定义": "叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是否一致。",
+      "指令": "在场景中触发角色的全篇语言风格统一状态，通过指定身体信号呈现",
+      "分级标准": "根据全篇语言风格统一的强度/频率分为低、中、高三级",
+      "场景变体": "全篇语言风格统一在不同类型场景（战斗/日常/情感）中的表现变体",
+      "判定标准": "读者能否在1秒内通过身体信号识别出角色的全篇语言风格统一状态",
+      "修正指南": "如读者无法感知全篇语言风格统一，检查是否缺少身体信号描写",
+      "示例": "叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\n\n\n\n\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是否一致。如果第1章用长句，第5章突然全变成短句且无叙事节奏原因，风格断裂。",
+      "反面案例": "直接陈述'他感到全篇语言风格统一'而无身体信号描写",
+      "关联板块": "板块106",
+      "关联路径": "板块106.1相关子项",
+      "优先级": "中",
+      "例外处理": "角色可通过情绪管控策略压抑全篇语言风格统一的外在表现，但内在状态仍存在",
+      "调用标签": "#可执行·全篇语言风格统一\n\n\n\n- **条目类型**：概念型"
+    },
+    "base": "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是否一致。\n\n**指令**：在场景中触发角色的全篇语言风格统一状态，通过指定身体信号呈现\n\n**分级标准**：根据全篇语言风格统一的强度/频率分为低、中、高三级\n\n**场景变体**：全篇语言风格统一在不同类型场景（战斗/日常/情感）中的表现变体\n\n**判定标准**：读者能否在1秒内通过身体信号识别出角色的全篇语言风格统一状态\n\n**修正指南**：如读者无法感知全篇语言风格统一，检查是否缺少身体信号描写\n\n**示例**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\n\n\n\n\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是否一致。如果第1章用长句，第5章突然全变成短句且无叙事节奏原因，风格断裂。\n\n**反面案例**：直接陈述'他感到全篇语言风格统一'而无身体信号描写\n\n**关联板块**：板块106\n\n**关联路径**：板块106.1相关子项\n\n**优先级**：中\n\n**例外处理**：角色可通过情绪管控策略压抑全篇语言风格统一的外在表现，但内在状态仍存在\n\n**调用标签**：#可执行·全篇语言风格统一\n\n\n\n- **条目类型**：概念型",
+    "base_length": 544,
+    "raw_length": 11404,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_binding",
+        "canonical_source_id": "106.1_全篇语言风格统一",
+        "source_locator": "106.1_全篇语言风格统一",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00272",
+            "source_id": "106.1_全篇语言风格统一",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '106.1_全篇语言风格统一', 'line_start': 24278}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是",
+                "全篇语言风格统一",
+                "动作与结果",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "选择"
+              ],
+              "source_semantic_anchor": "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "场景卡",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "正文表达",
+              "creative_action": "转成视角、句式、对白、感官细节或段落节奏",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是”直接相关的具体创作问题时，锁定 全篇语言风格统一 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00272",
+              "source_id": "106.1_全篇语言风格统一",
+              "source_ref_sha256": "7e016fe6df6b3cd56908eb0585f8ed542e3d9923acbdca5312bef266c604594e",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          },
+          {
+            "binding_id": "TB-00272",
+            "source_id": "106.1_全篇语言风格统一",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '106.1_全篇语言风格统一', 'line_start': 24278}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是",
+                "全篇语言风格统一",
+                "动作与结果",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "选择"
+              ],
+              "source_semantic_anchor": "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "场景卡",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "正文表达",
+              "creative_action": "转成视角、句式、对白、感官细节或段落节奏",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是”直接相关的具体创作问题时，锁定 全篇语言风格统一 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "**定义**：叙述语言（非对话）的风格在全篇保持一致，不能时而文学时而口语。\\*\\*检查方法\\*\\*：对比不同章节的叙述语言，句式偏好、用词偏好、叙述距离偏好是",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00272",
+              "source_id": "106.1_全篇语言风格统一",
+              "source_ref_sha256": "7e016fe6df6b3cd56908eb0585f8ed542e3d9923acbdca5312bef266c604594e",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ],
+        "tail_upgrade_evidence": [
+          {
+            "attestation_scope": null,
+            "binding_id": "TB-00272",
+            "consumption_id": "PC-09918",
+            "errors": [],
+            "formal_fact_eligible": false,
+            "item_attested": false,
+            "original_prose_artifacts_modified": false,
+            "permitted_use": "draft_audit_only",
+            "project_source_confirmed": false,
+            "prose_write_allowed": false,
+            "schema_version": "strict-source-upgrade-record-1.0",
+            "source_id": "106.1_全篇语言风格统一",
+            "source_item_sha256": "3db43206aae9ff9ba602a25407474befa88e15ba4dbedc4082ed6ad70f527b5a",
+            "source_kind": "资料库",
+            "source_quality_level": "draft_usable",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '106.1_全篇语言风格统一', 'line_start': 24278}",
+            "source_ref_sha256": "7e016fe6df6b3cd56908eb0585f8ed542e3d9923acbdca5312bef266c604594e",
+            "status": "upgraded_for_draft_audit",
+            "upgrade_id": "SU-PC-09918"
+          },
+          {
+            "binding_id": "TB-00272",
+            "category": "reused_unchanged",
+            "fingerprint": {
+              "binding_strategy_sha256": "d3c600f7048b87bbae47851fd25474ac03e9ae6c868aa6cc30e2aad900cd2bfc",
+              "dependency_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "locator_valid": true,
+              "source_object_sha256": "e3fcc550d35509eaf1efb44b9fde1b34408ff3208920d48aa1ba4503a6a06d65",
+              "source_ref_sha256": "e979e98e42aa0e90b8369b2a4731e6d200de26823dfd39933a45131b887fe760"
+            },
+            "model_call_required": false,
+            "reasons": [
+              "原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承"
+            ],
+            "reused_from_run_id": "20260816T101311Z-295bb554",
+            "source_id": "106.1_全篇语言风格统一"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "122.11_推进与情感节奏",
+    "line": 160256,
+    "start": 160256,
+    "section": [
+      122,
+      "剧情推进"
+    ],
+    "end": 160590,
+    "fields": {
+      "定义": "推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点。",
+      "调用条件": "无",
+      "指令": "情感节奏规则：①连续2章高张力后有1章缓释章 ②连续3章低张力后有1章爆发章 ③全书情感峰值与推进强度曲线的峰值基本重合。",
+      "设计指令": "无",
+      "写作指令": "无",
+      "分级标准": "无",
+      "场景变体": "无",
+      "判定标准": "无",
+      "修正指南": "无",
+      "示例": "场景：执行“推进与情感节奏”。输入：故事任务和条目定义“推进的情感节奏分配规则”。操作：按定义确定对象与步骤，并落实指令“情感节奏规则：①连续2章高张力后有1章缓释章②连续3章低张力后有”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。",
+      "反面案例": "无",
+      "关联板块": "无",
+      "关联路径": "无",
+      "优先级": "无",
+      "例外处理": "无",
+      "调用标签": "#122.11_推进与情感节奏"
+    },
+    "base": "【定义】\n推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点。\n\n【调用条件】\n无\n\n【指令】\n情感节奏规则：①连续2章高张力后有1章缓释章 ②连续3章低张力后有1章爆发章 ③全书情感峰值与推进强度曲线的峰值基本重合。\n\n【设计指令】\n无\n\n【写作指令】\n无\n\n【分级标准】\n无\n\n【场景变体】\n无\n\n【判定标准】\n无\n\n【修正指南】\n无\n\n【示例】\n场景：执行“推进与情感节奏”。输入：故事任务和条目定义“推进的情感节奏分配规则”。操作：按定义确定对象与步骤，并落实指令“情感节奏规则：①连续2章高张力后有1章缓释章②连续3章低张力后有”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。\n\n【反面案例】\n无\n\n【关联板块】\n无\n\n【关联路径】\n无\n\n【优先级】\n无\n\n【例外处理】\n无\n\n【调用标签】\n#122.11_推进与情感节奏",
+    "base_length": 367,
+    "raw_length": 11359,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_binding",
+        "canonical_source_id": "122.11_推进与情感节奏",
+        "source_locator": "122.11_推进与情感节奏",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00423",
+            "source_id": "122.11_推进与情感节奏",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '122.11_推进与情感节奏', 'line_start': 39146}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "场景：执行“推进与情感节奏”。输入：故事任务和条目定义“推进的情感节奏分配规则”。操作：按定义确定对象与步骤，并落实指令“情感节奏规则：①连续2章高张力后有1章",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "动作与结果",
+                "场景：执行“推进与情感节奏”。输入：故事任务和条目定义“推进的情感节奏分配规则”。操作：按定义确定对象与步骤，并落实指令“情感节奏规则：①连续2章高张力后有1章",
+                "将条目定义",
+                "情感节奏规则：①连续2章高张力后有1章缓释章 ②连续3章低张力后有1章爆发章 ③全书情感峰值与推进强度曲线的峰值基本重合。",
+                "指令或判定证据转译为场景中的可观察约束",
+                "推进与情感节奏",
+                "推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点。",
+                "选择"
+              ],
+              "source_semantic_anchor": "推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "场景卡",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "正文表达",
+              "creative_action": "转成视角、句式、对白、感官细节或段落节奏",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点”直接相关的具体创作问题时，锁定 推进与情感节奏 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00423",
+              "source_id": "122.11_推进与情感节奏",
+              "source_ref_sha256": "4c477b3e6c5f83821a7cc1007efe55c4a9d1f166a9f2ecc337a6ad7d55586f9b",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          },
+          {
+            "binding_id": "TB-00423",
+            "source_id": "122.11_推进与情感节奏",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '122.11_推进与情感节奏', 'line_start': 39146}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "场景：执行“推进与情感节奏”。输入：故事任务和条目定义“推进的情感节奏分配规则”。操作：按定义确定对象与步骤，并落实指令“情感节奏规则：①连续2章高张力后有1章",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "动作与结果",
+                "场景：执行“推进与情感节奏”。输入：故事任务和条目定义“推进的情感节奏分配规则”。操作：按定义确定对象与步骤，并落实指令“情感节奏规则：①连续2章高张力后有1章",
+                "将条目定义",
+                "情感节奏规则：①连续2章高张力后有1章缓释章 ②连续3章低张力后有1章爆发章 ③全书情感峰值与推进强度曲线的峰值基本重合。",
+                "指令或判定证据转译为场景中的可观察约束",
+                "推进与情感节奏",
+                "推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点。",
+                "选择"
+              ],
+              "source_semantic_anchor": "推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "场景卡",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "正文表达",
+              "creative_action": "转成视角、句式、对白、感官细节或段落节奏",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点”直接相关的具体创作问题时，锁定 推进与情感节奏 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "推进的情感节奏分配规则。推进不宜保持同一情感色调——应有起伏，形成情感节奏。连续高张力推进后须有缓冲空间，连续低张力推进后须有爆发点",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00423",
+              "source_id": "122.11_推进与情感节奏",
+              "source_ref_sha256": "4c477b3e6c5f83821a7cc1007efe55c4a9d1f166a9f2ecc337a6ad7d55586f9b",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ],
+        "tail_upgrade_evidence": [
+          {
+            "attestation_scope": null,
+            "binding_id": "TB-00423",
+            "consumption_id": "PC-10069",
+            "errors": [],
+            "formal_fact_eligible": false,
+            "item_attested": false,
+            "original_prose_artifacts_modified": false,
+            "permitted_use": "draft_audit_only",
+            "project_source_confirmed": false,
+            "prose_write_allowed": false,
+            "schema_version": "strict-source-upgrade-record-1.0",
+            "source_id": "122.11_推进与情感节奏",
+            "source_item_sha256": "39dd8304d496cc069de8439ade8e32e974530e4c35ce968680623491160d0e36",
+            "source_kind": "资料库",
+            "source_quality_level": "draft_usable",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '122.11_推进与情感节奏', 'line_start': 39146}",
+            "source_ref_sha256": "4c477b3e6c5f83821a7cc1007efe55c4a9d1f166a9f2ecc337a6ad7d55586f9b",
+            "status": "upgraded_for_draft_audit",
+            "upgrade_id": "SU-PC-10069"
+          },
+          {
+            "binding_id": "TB-00423",
+            "category": "reused_unchanged",
+            "fingerprint": {
+              "binding_strategy_sha256": "10dc01525b006d6d7f26ebd45b3ca6105fdaaae621df2a5a9f7430d9ab419c09",
+              "dependency_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "locator_valid": true,
+              "source_object_sha256": "c3d2b81e85b823edaf976cf033905f6eaa49b8466edfd0b490e667eed70e09a4",
+              "source_ref_sha256": "ab8d583894349c727a415c6292e9f136234e4ef4568612a659395b07279c29f9"
+            },
+            "model_call_required": false,
+            "reasons": [
+              "原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承"
+            ],
+            "reused_from_run_id": "20260816T101311Z-295bb554",
+            "source_id": "122.11_推进与情感节奏"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "126.6_按剧情功能的模板调用",
+    "line": 184681,
+    "start": 184681,
+    "section": [
+      126,
+      "调用规则与模板"
+    ],
+    "end": 185015,
+    "fields": {
+      "定义": "不同剧情功能的板块组合。推进剧情、埋设伏笔、释放信息、制造反转的分别模板。",
+      "调用条件": "无",
+      "指令": "推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优先调用。埋设伏笔：板块45（伏笔系统全部）+ 板块111（象征与隐喻）+ 板块116（遗漏信息）——轻量埋入，不做大篇幅。释放信息：板块48.6（信息释放节奏）+ 板块116.6-116.7（遗漏信息释放时机+释放方式）+ 板块65（读者认知）——配合场景节奏。制造反转：板块45.11-45.16（反转体系）+ 板块117（错位）+ 板块45.4（伏笔延迟解码）——至少提前3章开始铺垫。",
+      "设计指令": "无",
+      "写作指令": "无",
+      "分级标准": "无",
+      "场景变体": "无",
+      "判定标准": "无",
+      "修正指南": "无",
+      "示例": "无",
+      "反面案例": "无",
+      "关联板块": "板块122（剧情推进）、板块45（伏笔系统）、板块111（象征与隐喻）、板块116（遗漏信息）、板块48.6（信息释放节奏）、板块65（读者认知）、板块117（错位）",
+      "关联路径": "根据剧情功能选取对应模板组合",
+      "优先级": "无",
+      "例外处理": "无",
+      "调用标签": "#126.6_按剧情功能的模板调用"
+    },
+    "base": "【定义】\n不同剧情功能的板块组合。推进剧情、埋设伏笔、释放信息、制造反转的分别模板。\n\n【调用条件】\n无\n\n【指令】\n推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优先调用。埋设伏笔：板块45（伏笔系统全部）+ 板块111（象征与隐喻）+ 板块116（遗漏信息）——轻量埋入，不做大篇幅。释放信息：板块48.6（信息释放节奏）+ 板块116.6-116.7（遗漏信息释放时机+释放方式）+ 板块65（读者认知）——配合场景节奏。制造反转：板块45.11-45.16（反转体系）+ 板块117（错位）+ 板块45.4（伏笔延迟解码）——至少提前3章开始铺垫。\n\n【设计指令】\n无\n\n【写作指令】\n无\n\n【分级标准》\n无\n\n【场景变体】\n无\n\n【判定标准】\n无\n\n【修正指南】\n无\n\n【示例】\n无\n\n【反面案例》\n无\n\n【关联板块】\n板块122（剧情推进）、板块45（伏笔系统）、板块111（象征与隐喻）、板块116（遗漏信息）、板块48.6（信息释放节奏）、板块65（读者认知）、板块117（错位）\n\n【关联路径】\n根据剧情功能选取对应模板组合\n\n【优先级】\n无\n\n【例外处理】\n无\n\n【调用标签】\n#126.6_按剧情功能的模板调用",
+    "base_length": 517,
+    "raw_length": 11598,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_binding",
+        "canonical_source_id": "126.6_按剧情功能的模板调用",
+        "source_locator": "126.6_按剧情功能的模板调用",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00511",
+            "source_id": "126.6_按剧情功能的模板调用",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '126.6_按剧情功能的模板调用', 'line_start': 42950}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "不同剧情功能的板块组合。推进剧情、埋设伏笔、释放信息、制造反转的分别模板。",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "不同剧情功能的板块组合。推进剧情、埋设伏笔、释放信息、制造反转的分别模板。",
+                "动作与结果",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "按剧情功能的模板调用",
+                "推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优",
+                "板块122（剧情推进）、板块45（伏笔系统）、板块111（象征与隐喻）、板块116（遗漏信息）、板块48.6（信息释放节奏）、板块65（读者认知）、板块117（",
+                "选择"
+              ],
+              "source_semantic_anchor": "推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优”直接相关的具体创作问题时，锁定 按剧情功能的模板调用 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00511",
+              "source_id": "126.6_按剧情功能的模板调用",
+              "source_ref_sha256": "0ef9afb9b213e9e8a2cb7127a8e671c58446f9783000350f1e91572aaf03680b",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          },
+          {
+            "binding_id": "TB-00511",
+            "source_id": "126.6_按剧情功能的模板调用",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '126.6_按剧情功能的模板调用', 'line_start': 42950}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "不同剧情功能的板块组合。推进剧情、埋设伏笔、释放信息、制造反转的分别模板。",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "不同剧情功能的板块组合。推进剧情、埋设伏笔、释放信息、制造反转的分别模板。",
+                "动作与结果",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "按剧情功能的模板调用",
+                "推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优",
+                "板块122（剧情推进）、板块45（伏笔系统）、板块111（象征与隐喻）、板块116（遗漏信息）、板块48.6（信息释放节奏）、板块65（读者认知）、板块117（",
+                "选择"
+              ],
+              "source_semantic_anchor": "推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "剧情创建",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "故事结构与写作执行",
+              "creative_action": "把条目意义转成角色选择、冲突后果和可观察细节",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优”直接相关的具体创作问题时，锁定 按剧情功能的模板调用 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "推进剧情：板块122（剧情推进全部）+ 板块122.13（场景尾部微型推进器）+ 板块122.17（推进的不可逆性）+ 板块122.19（推进与读者动力）——优",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00511",
+              "source_id": "126.6_按剧情功能的模板调用",
+              "source_ref_sha256": "0ef9afb9b213e9e8a2cb7127a8e671c58446f9783000350f1e91572aaf03680b",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ],
+        "tail_upgrade_evidence": [
+          {
+            "attestation_scope": null,
+            "binding_id": "TB-00511",
+            "consumption_id": "PC-10157",
+            "errors": [],
+            "formal_fact_eligible": false,
+            "item_attested": false,
+            "original_prose_artifacts_modified": false,
+            "permitted_use": "draft_audit_only",
+            "project_source_confirmed": false,
+            "prose_write_allowed": false,
+            "schema_version": "strict-source-upgrade-record-1.0",
+            "source_id": "126.6_按剧情功能的模板调用",
+            "source_item_sha256": "ed84f961302a723a671131ab0f39c1e711b1fba27e8999d80f6e40a0eaca04e8",
+            "source_kind": "资料库",
+            "source_quality_level": "draft_usable",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '126.6_按剧情功能的模板调用', 'line_start': 42950}",
+            "source_ref_sha256": "0ef9afb9b213e9e8a2cb7127a8e671c58446f9783000350f1e91572aaf03680b",
+            "status": "upgraded_for_draft_audit",
+            "upgrade_id": "SU-PC-10157"
+          },
+          {
+            "binding_id": "TB-00511",
+            "category": "reused_unchanged",
+            "fingerprint": {
+              "binding_strategy_sha256": "70cb8d2b1a831a0cab43be28795e1ca75de2a0ed158a4fe363d589c96ea5d5ef",
+              "dependency_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+              "locator_valid": true,
+              "source_object_sha256": "ac32b33db53e137a208a219b4ad6658d3a6298ce20345bf09ea07125a4052d44",
+              "source_ref_sha256": "28121e6104c0f64a03f3bdb2519426908d914f98fc6a4d4cb3e4cc87c074b278"
+            },
+            "model_call_required": false,
+            "reasons": [
+              "原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承"
+            ],
+            "reused_from_run_id": "20260816T101311Z-295bb554",
+            "source_id": "126.6_按剧情功能的模板调用"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "板块143 不确定性",
+    "line": 197766,
+    "start": 197766,
+    "section": [
+      143,
+      "不确定性"
+    ],
+    "end": 197793,
+    "fields": {
+      "定义": "读者或角色面对多种可能路径/答案/结果，且当前信息不足以排除其中任何一种时产生的认知状态。不确定性不是\"不知道\"——未知是信息缺失（\"不知道门后有什么\"），不确定性是信息存在但不可排他（\"知道门后有可能是A/B/C，但无法判断是哪一个\"）。",
+      "设计指令": "1. 建立不确定性的三个来源：信息不完整、信息矛盾、系统复杂性\n2. 五种不确定性类型：结果不确定性、因果不确定性、解释不确定性、路径不确定性、信任不确定性\n3. 强度分级管理：弱（70%/30%）、中（50%/50%）、强（1/3各）、极限（>3个可能性）\n4. 维持时长规则：场景级（当前场景内解决）、章节级（1-3章）、篇章级（5-10章）、全书级（终章解决）\n5. 强不确定性最多维持10章必须给出阶段性答案\n6. 解决方式：排除法（逐步排除错误可能性）、揭示法（直接给出正确答案）、转化法（条件变化使某可能性自动失效）\n7. 每条不确定性解决时锚定一个情感标记\n8. 读者摇摆指数：理想状态下读者至少摇摆2-3次才最终确定\n9. 不确定性总量应保持波浪形而非下降形——每推进1/5消除一批次要不确定性同时新增或深化一批核心不确定性\n10. 反转必须发生在不确定性被解决之后（读者认为已\"确定\"某件事后被推翻）\n11. 活跃不确定性超过5条且无明显进展时立即压缩到≤3条",
+      "示例": "来源一（信息不完整）：读者知道\"碎玉可能是传承物，也可能只是普通物品\"——但缺乏区分二者的信息\n来源二（信息矛盾）：苏婉说\"碎玉是危险的\"，赵乾说\"碎玉是机缘\"——读者无法判断\n来源三（系统复杂性）：\"碎玉的代价取决于使用者的资质\"——读者知道资质是关键变量但不知道韩立资质如何",
+      "调用标签": "不确定性、可能性管理、摇摆指数、读者参与、不确定性强度\n\n---"
+    },
+    "base": "【定义】\n读者或角色面对多种可能路径/答案/结果，且当前信息不足以排除其中任何一种时产生的认知状态。不确定性不是\"不知道\"——未知是信息缺失（\"不知道门后有什么\"），不确定性是信息存在但不可排他（\"知道门后有可能是A/B/C，但无法判断是哪一个\"）。\n\n【设计指令】\n1. 建立不确定性的三个来源：信息不完整、信息矛盾、系统复杂性\n2. 五种不确定性类型：结果不确定性、因果不确定性、解释不确定性、路径不确定性、信任不确定性\n3. 强度分级管理：弱（70%/30%）、中（50%/50%）、强（1/3各）、极限（>3个可能性）\n4. 维持时长规则：场景级（当前场景内解决）、章节级（1-3章）、篇章级（5-10章）、全书级（终章解决）\n5. 强不确定性最多维持10章必须给出阶段性答案\n6. 解决方式：排除法（逐步排除错误可能性）、揭示法（直接给出正确答案）、转化法（条件变化使某可能性自动失效）\n7. 每条不确定性解决时锚定一个情感标记\n8. 读者摇摆指数：理想状态下读者至少摇摆2-3次才最终确定\n9. 不确定性总量应保持波浪形而非下降形——每推进1/5消除一批次要不确定性同时新增或深化一批核心不确定性\n10. 反转必须发生在不确定性被解决之后（读者认为已\"确定\"某件事后被推翻）\n11. 活跃不确定性超过5条且无明显进展时立即压缩到≤3条\n\n【示例】\n来源一（信息不完整）：读者知道\"碎玉可能是传承物，也可能只是普通物品\"——但缺乏区分二者的信息\n来源二（信息矛盾）：苏婉说\"碎玉是危险的\"，赵乾说\"碎玉是机缘\"——读者无法判断\n来源三（系统复杂性）：\"碎玉的代价取决于使用者的资质\"——读者知道资质是关键变量但不知道韩立资质如何\n\n【调用标签】\n不确定性、可能性管理、摇摆指数、读者参与、不确定性强度\n\n---",
+    "base_length": 725,
+    "raw_length": 762,
+    "runtime": []
+  },
+  {
+    "id": "板块139 多媒介改编预留",
+    "line": 197664,
+    "start": 197664,
+    "section": [
+      139,
+      "多媒介改编预留"
+    ],
+    "end": 197687,
+    "fields": {
+      "定义": "为可能的漫画/动画/影视/有声等改编预留空间。",
+      "禁止清单": "- 禁止改编预留以损伤文本品质为代价\n- 禁止将所有改编方向的需求混在一起",
+      "替代方式": "- 选定一个主要改编方向做预留\n- 视觉化预留：光线方向明确、构图清晰、色彩可识别、运动轨迹可追踪\n- 听觉化预留：对话有台词感、环境声音有描写、特殊音效有文字锚点\n- 角色视觉符号预留：标志性衣着/配饰/姿态/伤痕\n- 关键道具视觉符号预留：形状明确、颜色明确、发光方式明确、使用视觉特效明确\n- 世界观视觉符号预留：标志、制服、建筑风格、颜色系统\n- 改编扩展预留：配角背景故事、世界观未探索区域、道具未使用功能、历史未描述段落\n- 改编与文本独立性平衡：去掉所有\"适合改编\"的设计，故事仍须独立成立",
+      "调用标签": "改编预留、视觉化、听觉化、视觉符号、改编扩展\n\n---"
+    },
+    "base": "【定义】\n为可能的漫画/动画/影视/有声等改编预留空间。\n\n【禁止清单】\n- 禁止改编预留以损伤文本品质为代价\n- 禁止将所有改编方向的需求混在一起\n\n【替代方式】\n- 选定一个主要改编方向做预留\n- 视觉化预留：光线方向明确、构图清晰、色彩可识别、运动轨迹可追踪\n- 听觉化预留：对话有台词感、环境声音有描写、特殊音效有文字锚点\n- 角色视觉符号预留：标志性衣着/配饰/姿态/伤痕\n- 关键道具视觉符号预留：形状明确、颜色明确、发光方式明确、使用视觉特效明确\n- 世界观视觉符号预留：标志、制服、建筑风格、颜色系统\n- 改编扩展预留：配角背景故事、世界观未探索区域、道具未使用功能、历史未描述段落\n- 改编与文本独立性平衡：去掉所有\"适合改编\"的设计，故事仍须独立成立\n\n【调用标签】\n改编预留、视觉化、听觉化、视觉符号、改编扩展\n\n---",
+    "base_length": 341,
+    "raw_length": 373,
+    "runtime": []
+  },
+  {
+    "id": "板块147 他人视角与人格锚点",
+    "line": 197955,
+    "start": 197955,
+    "section": [
+      147,
+      "他人视角与人格锚点"
+    ],
+    "end": 197978,
+    "fields": {
+      "定义": "故事世界中其他角色对目标角色的印象、判断和标签（他人视角），以及角色在读者和故事世界中可被持续识别的稳定核心特征标记（人格锚点）。",
+      "设计指令": "1. 每个角色设置1-2个核心标签——别人提起他时第一个想到的词\n2. 人格锚点类型：视觉锚点（外貌/服装特征）、语言锚点（话语特征）、行为锚点（行为模式）、关系锚点（互动模式）、情绪锚点（情绪反应模式）\n3. 核心角色人格锚点须在三个建立窗口之一建立：首次出场前三句内（最强）→首次重要互动第一回合（次强）→首次情感反应场景（第三窗口）\n4. 锚点使用频率：一级角色每2-3章至少1次，二级角色每4-5章至少1次\n5. 锚点演变须有明确触发事件和过渡期，演变后保留至少一个与旧锚点的连接\n6. 观察者滤镜效应：每个\"看法描述\"须指定观察者身份及其认知滤镜\n7. 看法修正需2-3次反证互动，稳固需4次以上一致互动\n8. 描写\"角色A眼中的角色B\"时使用观察者的词汇量级和价值判断",
+      "示例": "人格锚点：韩立的\"灰色布衣左袖有补丁\"（视觉锚点）、\"说话前先停顿半拍\"（行为锚点）\n他人视角中的情感判断：喜悦（面部放松伴微笑/眼角细纹/动作轻快）、鄙夷（嘴角单侧上提/眼神斜睨/不对称回应）、畏惧（眼神闪避/身体后撤/用敬语）、尊敬（眼神稳定微垂/思考后回答/背后不改变称呼）",
+      "调用标签": "他人视角、人格锚点、核心标签、锚点建立窗口、观察者滤镜\n\n---"
+    },
+    "base": "【定义】\n故事世界中其他角色对目标角色的印象、判断和标签（他人视角），以及角色在读者和故事世界中可被持续识别的稳定核心特征标记（人格锚点）。\n\n【设计指令】\n1. 每个角色设置1-2个核心标签——别人提起他时第一个想到的词\n2. 人格锚点类型：视觉锚点（外貌/服装特征）、语言锚点（话语特征）、行为锚点（行为模式）、关系锚点（互动模式）、情绪锚点（情绪反应模式）\n3. 核心角色人格锚点须在三个建立窗口之一建立：首次出场前三句内（最强）→首次重要互动第一回合（次强）→首次情感反应场景（第三窗口）\n4. 锚点使用频率：一级角色每2-3章至少1次，二级角色每4-5章至少1次\n5. 锚点演变须有明确触发事件和过渡期，演变后保留至少一个与旧锚点的连接\n6. 观察者滤镜效应：每个\"看法描述\"须指定观察者身份及其认知滤镜\n7. 看法修正需2-3次反证互动，稳固需4次以上一致互动\n8. 描写\"角色A眼中的角色B\"时使用观察者的词汇量级和价值判断\n\n【示例】\n人格锚点：韩立的\"灰色布衣左袖有补丁\"（视觉锚点）、\"说话前先停顿半拍\"（行为锚点）\n他人视角中的情感判断：喜悦（面部放松伴微笑/眼角细纹/动作轻快）、鄙夷（嘴角单侧上提/眼神斜睨/不对称回应）、畏惧（眼神闪避/身体后撤/用敬语）、尊敬（眼神稳定微垂/思考后回答/背后不改变称呼）\n\n【调用标签】\n他人视角、人格锚点、核心标签、锚点建立窗口、观察者滤镜\n\n---",
+    "base_length": 579,
+    "raw_length": 609,
+    "runtime": []
+  },
+  {
+    "id": "148_观察·细节·做法",
+    "line": 201748,
+    "start": 201748,
+    "section": [
+      148,
+      "观察·细节·做法"
+    ],
+    "end": 201874,
+    "fields": {},
+    "base": "",
+    "base_length": 0,
+    "raw_length": 4738,
+    "runtime": [
+      {
+        "fusion_mode": "precise_source_ref",
+        "runtime_calling_layer": [
+          {
+            "binding_id": "TB-00562",
+            "source_id": "148_观察·细节·做法",
+            "source_kind": "资料库",
+            "source_ref": "{'file': '原始资料/资料库.txt', 'locator': '148_观察·细节·做法', 'line_start': 45590}",
+            "translation_status": "translated",
+            "model_input_eligible": true,
+            "prose_write_allowed": true,
+            "semantic_interpretation": {
+              "source_meaning": "1. 观察分两个维度：广度观察（扫视全貌、建立环境定位，场景开篇使用）→深度观察（聚焦特定对象、寻找关键线索，场景中段使用）\n2. 不同人格角色观察到不同东西（",
+              "operational_meaning": "将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。",
+              "semantic_terms": [
+                "1. 观察分两个维度：广度观察（扫视全貌、建立环境定位，场景开篇使用）→深度观察（聚焦特定对象、寻找关键线索，场景中段使用）\n2. 不同人格角色观察到不同东西（",
+                "动作与结果",
+                "将条目定义",
+                "指令或判定证据转译为场景中的可观察约束",
+                "每个场景中至少切换一次广度观察→深度观察，每个场景锚定2-3个细节。\n- 完整链条：观察→细节→做法三步均在场景中可见\n- 部分链条：某环节隐含或跳过\n- 链条",
+                "观察·细节·做法",
+                "角色获取信息（观察）、识别细节、选择行动策略（做法）的完整链条。观察是信息进入认知系统的第一道门，细节是场景中可被观察到的具体微小元素，做法是角色基于观察和细节",
+                "选择"
+              ],
+              "source_semantic_anchor": "1. 观察分两个维度：广度观察（扫视全貌、建立环境定位，场景开篇使用）→深度观察（聚焦特定对象、寻找关键线索，场景中段使用） 2. 不同人格角色观察到不同东西（",
+              "forbidden_shortcut": "不得把资料名称、ID、规则原文或元数据直接写入正文"
+            },
+            "creation_binding": {
+              "primary_stage": "场景卡",
+              "stages": [
+                "剧情创建",
+                "大纲",
+                "分纲",
+                "细纲",
+                "场景卡",
+                "正文",
+                "校验"
+              ],
+              "creative_object": "场景节拍",
+              "creative_action": "落实为观察、想法、心理、动作、结果的可追踪回合",
+              "story_binding": "把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。",
+              "scene_strategy": "在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。",
+              "prose_strategy": "通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。",
+              "creative_strategy": {
+                "source_specific_trigger": "当前置产物出现与“1. 观察分两个维度：广度观察（扫视全貌、建立环境定位，场景开篇使用）→深度观察（聚焦特定对象、寻找关键线索，场景中段使用） 2. 不同人格角色观察到不同东西（”直接相关的具体创作问题时，锁定 观察·细节·做法 的调用条件“满足条目调用条件”。",
+                "observable_action": "让承担该问题的角色或系统围绕“1. 观察分两个维度：广度观察（扫视全貌、建立环境定位，场景开篇使用）→深度观察（聚焦特定对象、寻找关键线索，场景中段使用） 2. 不同人格角色观察到不同东西（”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。",
+                "observable_result": "通过信息、关系、资源、风险或行为的可观察变化呈现“1. 观察分两个维度：广度观察（扫视全貌、建立环境定位，场景开篇使用）→深度观察（聚焦特定对象、寻找关键线索，场景中段使用） 2. 不同人格角色观察到不同东西（”，并能改变后续选择。",
+                "cost_or_change": "该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。",
+                "semantic_anchor": "1. 观察分两个维度：广度观察（扫视全貌、建立环境定位，场景开篇使用）→深度观察（聚焦特定对象、寻找关键线索，场景中段使用） 2. 不同人格角色观察到不同东西（",
+                "evidence_location": "对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希",
+                "quality_rule": "不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择"
+              },
+              "planned_scene_scope": "由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。",
+              "binding_class": "candidate_retrieval",
+              "binding_class_name": "背景候选",
+              "activation_policy": {
+                "mode": "前置产物出现匹配创作问题，或实时检索命中场景需求时激活",
+                "conditions": [
+                  "存在项目上下文；满足条目调用条件"
+                ],
+                "source_declared_conditions": [
+                  "存在项目上下文",
+                  "满足条目调用条件"
+                ],
+                "candidate_effect_policy": "不适用",
+                "inference_targets": [
+                  "剧情创建",
+                  "剧情",
+                  "大纲",
+                  "分纲",
+                  "细纲",
+                  "场景卡",
+                  "正文"
+                ],
+                "allow_repeated_inference": true,
+                "activation_evidence": [
+                  "matched_stage",
+                  "matched_project_terms",
+                  "creative_need",
+                  "activation_reason"
+                ]
+              }
+            },
+            "evidence_contract": {
+              "design_required": [
+                "stage",
+                "creative_object",
+                "creative_action",
+                "source_ref"
+              ],
+              "scene_required": [
+                "scene_id",
+                "trigger",
+                "action",
+                "observable_result",
+                "cost_or_change"
+              ],
+              "prose_required": [
+                "prose_location",
+                "trigger",
+                "action",
+                "observable_result",
+                "paragraph_sha256"
+              ]
+            },
+            "use_authorization": {
+              "schema_version": "full-source-model-input-prose-authorization-1.0",
+              "binding_id": "TB-00562",
+              "source_id": "148_观察·细节·做法",
+              "source_ref_sha256": "edd6bf0756f3a962fbc10a81278e9697957f1911305020d74fc53a84c5120f78",
+              "model_input_eligible": true,
+              "prose_write_allowed": true,
+              "authorization_scope": "project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication",
+              "authorized_by": "project_owner_bulk_upgrade_2026-08-13",
+              "authorized_at": "2026-08-13T08:10:45.710861Z",
+              "authorization_rationale": "项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

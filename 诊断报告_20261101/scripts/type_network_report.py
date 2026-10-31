@@ -1,0 +1,89 @@
+import json,collections
+from pathlib import Path
+O=Path(r'D:\诊断报告_20261101');p=json.loads((O/'tmp/type_network_parsed.json').read_text(encoding='utf-8'));st=json.loads((O/'tmp/type_network_stats.json').read_text(encoding='utf-8'));samples=[json.loads(l) for l in (O/'tmp/type_network_samples.jsonl').read_text(encoding='utf-8').splitlines()]
+def table(headers,rows):return '| '+' | '.join(headers)+' |\n|'+ '|'.join(['---']*len(headers))+'|\n'+''.join('| '+' | '.join(str(v).replace('|','/') for v in row)+' |\n' for row in rows)
+def get(n,s):return next(z for z in p['blocks'][n] if z['name']==s)
+def ref(n,z):return f'02_原版资料/原始资料/{n}.txt:{z["line"]}（SOURCE:{z["name"]}）'
+r='''# 03 类型系统与类型连接诊断
+
+结论：类型系统已经具备可检索的本体、表达适配和候选搭配，但“条目数量”远高于可直接指导写作的规则数量。主要问题是定义循环、关键字段为空、参数未校准与多版本并存。连接适合用作候选检索，不能当作行为因果或确定剧情。
+
+## 方法与覆盖
+
+只读读取 `02_原版资料/原始资料/类型系统.txt` 和 `类型连接.txt` 全文；按 SOURCE 分块后逐块尝试 JSON 解码，递归剥离“运行层升级”仅用于原始语义统计。类型系统449块：434块JSON可解码，15块为md/csv/py等非JSON，未误记成JSON损坏；这些15块只识别格式和位置，未逐条审读内容。类型连接36块全部JSON可解码。扫描整个文件并不等于读懂每条。
+
+人工审读：固定随机种子20261101，710类型中20条（未读97.18%）、3135静态连接总表中20条（未读99.36%），另定向检查玄幻首条、首个适配、首个组合、首个动态模板、静态搭配首条及商业路径/风格/层级/筛选规则。定向阅读不计入随机质量分布；118适配和4200组合只全量统计字段、标识与签名，绝大多数正文未逐条读。随机抽样单位是核心条目表，不代表449个SOURCE块按块均匀抽样。脚本位于 `scripts/type_network_*.py`，中间统计在 `tmp/type_network_stats.json`，100个跨五资料样本及逐条人工评分在 `tmp/type_network_samples.jsonl`。
+
+## 710类型的实际内容
+
+证据：`02_原版资料/原始资料/类型系统.txt:3095`，SOURCE `类型本体\\类型总表.json`。实际710条，层级1为285、层级2为425；父引用缺失0。类型分布如下（全量计算）：
+
+'''
+r+=table(['type_kind','数量'],st['type_kind'].items())
+r+='''
+全部710条有21个基本字段；62条混合类型另有component_type_ids、combination_reason、compatible_mechanisms、compatible_structures、compatible_styles、possible_conflicts。类型ID、名称、定义、scope、证据类型、confidence、status、版本均非空。但aliases、child_ids、inclusions、exclusions、distinguishing_features、common_confusions、not_guaranteed、source_refs八字段全部710空。425个子类都有parent/ancestor，而所有父类child_ids为空：向上查询能用，向下遍历若依赖child_ids会得到空结果。
+
+425个定义含“的子类型”，全部子类定义退化为“名称：父ID的子类型”。它只回答归类，没有回答与相邻类型的区别。随机例 `SUB_XUANHUAN_10`：“废柴逆袭：GENRE_XUANHUAN的子类型”。这不是可执行的逆袭设计规则。
+
+SOURCE `类型本体\\类型层级规则.json`（同文件2861行）声明子类必须引用主类、禁止循环，机制/风格不能冒充主类。当前父引用存在性已经检查；循环、父kind合法性及祖先链全一致性未独立全量验证，不能因有规则文档而称已合格。
+
+同文件42543行还有另一个 `类型总表.json`，all_type_ids只有103项，并有旧层级表。710与103是不同SOURCE版本/用途，不能相加，也不能假定消费端会自动选710版。应为每份表指定唯一canonical版本，旧表仅做显式映射。
+
+## 玄幻适配与承诺、节奏、风格、字数
+
+710表中parent_id直接指GENRE_XUANHUAN的子类25条；序列化记录含“玄幻”19条、含GENRE_XUANHUAN 34条。后两项是字符串命中记录数，包含混合/祖先引用，不能作为玄幻子类数量。GENRE_XUANHUAN定义包括东方文化、修炼升级、超自然力量，但inclusions/exclusions等为空。
+
+118表达适配中直接type_id=GENRE_XUANHUAN为0；仙侠19、都市18、末日16、科幻9、悬疑5，其余51条面向风格/语气/结构/机制。玄幻不能无说明套用仙侠19条：仍需确定修炼资源、晋升门槛、失败代价与风格差异。
+
+承诺与节奏主要在SOURCE `创作路径\\商业爆款路径.json`（297行），首章承诺权重0.9、冲突频率0.85、事件密度0.85、场景状态更新上限12。这些是策略权重，不是每千字事件数，也不是经过作品验证的最佳频率。该块明确“不得为了快节奏牺牲因果”等7个质量门，价值在约束而不是参数精度。
+
+风格SOURCE `风格.json`（1127行）有11个维度，语言风格描述句长、词汇、修辞；118适配可将这些维度参数化。然而“严肃风格：以庄重和深刻为基调”（STYLE_SERIOUS）仍不足以约束一句话如何改写。
+
+对剥离升级元数据后的类型SOURCE块全量搜索“承诺”“字数”，非作品库块只有商业路径命中承诺，未发现“字数”字面配置。不能据此断言整个项目没有长度控制；本文件没有核实出可执行的章节/场景字数契约。建议把承诺、兑现窗口、冲突节点、字数预算和风格样段绑定到项目场景，而不是增加类型标签。
+
+## 118表达适配
+
+证据：同文件20889行 SOURCE `类型表达适配总表.json`。118个adaptation_id，字段包含类型、目标对象、表达偏好/替代/禁用表达、候选动作反应场景及多种约束。首条ADAPT_B_00001把仙侠食物转换为灵食、丹药、宗门资源，禁用外卖等词，且不保证角色必然吃灵食。这比泛标签更能指导局部改写。
+
+但全量统计显示confidence全为999；priority和weight全0；source_refs、人物/身份修饰、性格/情境/道德/资源/关系/连续性约束、conflicts_with均118空。这里把0计为空只是统计“无有效值”，不主张0本身违反schema；999是否允许应查消费端验证，不能当作可靠度。candidate_scene_uses仅4条非空，candidate_actions仅13条，preferred_expressions仅24条。它是少量具体词汇偏好混合大量占位维度。
+
+## 四类核心连接/搭配表
+
+这里明确把四库理解为“静态连接总表、静态搭配库、动态搭配库、类型组合总表”；文件还含分专题表和空作品库，另表列全，避免口径混淆。
+
+'''
+r+=table(['表','位置','记录','唯一自身ID','去自身ID后唯一内容','含义'],[
+['静态连接总表','类型连接.txt:691919',3135,3135,3135,'类型→概念/实体/事件等候选关系'],['静态搭配库','类型连接.txt:570045',2100,2100,2100,'类型+机制+结构+风格+静态边'],['动态搭配库','类型连接.txt:13',2100,2100,2100,'规则+候选效果+传播限制'],['类型组合总表','类型系统.txt:42967',4200,4200,'未作全字段去自身ID，签名4200','统一组合候选与评分']])
+r+='''
+静态总表字段：connection_id、source_id/source_kind、target_id/target_kind、connection_type、relation_scope、direction、weight、priority、compatibility、conditions、parameters、supported_uses、limitations、not_guaranteed、conflicts_with、alternatives、source_refs、evidence_type、confidence、status、schema_version。3135个(source_id,target_id,connection_type)三元组唯一，兼容度、参数、supported_uses、冲突与替代全部空。没有精确重复不等于有3135种独立写作方法。
+
+静态搭配字段群包括component_type/style/mechanism/structure_ids、static_connection_ids、各类focus、expression_parameters、兼容/冲突约束、多样性特征和similarity_signature。动态搭配包括dynamic_rule_ids、trigger_condition_ids、candidate_effect_ids、关系/身份focus、propagation_profile、选择与连续性约束、失败/替代分支。两库similarity_signature各2100空；动态库style_ids、trigger_condition_ids、state/information/resource/foreshadowing_focus、failure_branches、alternative_branches全部2100空。具备引用结构，缺乏情境分支。
+
+4200组合全为template_multi_dimension。以primary_type_id/type_ids/subtype_ids/mechanism_ids/structure_ids/style_ids/tone_ids/concept_ids/entity_type_ids/event_type_ids/dynamic_rule_ids/static_connection_ids构造保序JSON签名，全量唯一4200；这仅证明选定字段组合不同，不证明语义创新。签名未对数组排序，不能声称集合语义也全唯一。组合引用的动态规则ID在当前30条规则中全部能找到；未验证每个跨表引用及实际效果匹配。
+
+“不能保证”的价值很实在：静态搭配明确不保证特定事件、动作、死亡、爱情、升级、复仇、人物选择、关系变化、身份暴露或资源变化。它阻止把类型支持边误当自动剧情。但边界声明本身不会补出可执行行为，仍要绑定目标、障碍、选择、代价和状态证据。
+
+## 动态规则
+
+类型系统28706行共30条：25 active、5 template；27171行39触发条件，31428行30候选效果，26990行16动态冲突规则，32597行30验证规则。TDR_TEMPLATE_001的候选效果只有“相关状态可能被传播影响”，动作、反应、状态/关系/资源/信息变更与分支为空，不能当作现成状态机。
+
+32448行筛选规则规定读取项目类型及当前状态→筛候选→排除前置不满足/pending/fixture/连续性冲突→生成候选效果→等待行动选择和连续性验证→不直接写状态。每场景类型规则上限5、原动态规则5、候选效果10、传播深度3、状态更新12。这是合理的执行边界，落实情况需消费链验证；本诊断未运行引擎。
+
+## 类型连接全部SOURCE清单
+
+以下记录来自全量解析；数组长度按第一层可计数容器，不把模板字段个数误算成记录。
+
+'''
+rows=[]
+for z in p['blocks']['类型连接']:
+ d=z['data'];count=len(d) if isinstance(d,list) else next((len(d[k]) for k in ['原始条目','items','rules','validation_rules'] if k in d and isinstance(d[k],list)),'规则/字段对象');rows.append([z['name'],z['line'],count])
+r+=table(['SOURCE','行','条目/对象'],rows)
+r+='''
+## 建议顺序与未核实事项
+
+先固定710/103版本关系，修正confidence语义并补父子双向一致性；再把玄幻25子类区分特征和核心适配补成最小可用规则；最后用实际场景验证组合评分。无需先扩容4200组合。优先补触发、对象、动作、后果、失败分支，保留not_guaranteed。
+
+未核实：全部规则语义正确性、任何“爆款”效果、实际生成质量、跨库所有引用、模板参数的经验来源。随机分数只描述本次核心表样本，不应外推成全库精确空壳率。
+'''
+(O/'03_类型系统与类型连接.md').write_text(r,encoding='utf-8')
+with (O/'进度.md').open('a',encoding='utf-8') as f:f.write('\n- 已完成03_类型系统与类型连接.md：全量SOURCE解析、710/118/4200字段及核心连接审计，40随机样本人工评分；未执行源程序。\n')

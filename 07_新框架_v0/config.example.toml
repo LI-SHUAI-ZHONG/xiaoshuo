@@ -1,0 +1,15 @@
+# 示例不含密钥。复制为 config.toml 后修改；不要覆盖已有个人配置。
+[paths]
+workspace = "workspace" # 相对路径按配置文件所在目录解析
+
+[model]
+provider = "ollama"
+base_url = "http://localhost:11434"
+model = "REPLACE_WITH_MODEL_NAME" # 替换为本地已安装模型
+# 兼容 API：provider="openai_compat"，base_url="https://你的服务/v1"
+# api_key_env="NW_API_KEY" # 只写环境变量名，不能写密钥
+timeout = 120
+
+[params]
+temperature = 0.7
+# Ollama 可设 num_predict；兼容 API 可设 max_tokens 或 max_completion_tokens。
