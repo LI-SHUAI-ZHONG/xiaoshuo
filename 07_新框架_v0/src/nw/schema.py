@@ -1,6 +1,6 @@
-"""Version 1 SQLite schema; applied atomically by Store."""
+"""SQLite schema and incremental migrations."""
 
-VERSION = 4
+VERSION = 5
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -96,3 +96,48 @@ CREATE TRIGGER accepted_complete_update BEFORE UPDATE ON accepted
 PRAGMA user_version=1;
 COMMIT;
 '''
+
+MIGRATE_V5 = """
+BEGIN IMMEDIATE;
+CREATE TABLE input_manifests(
+ id TEXT PRIMARY KEY, payload_json TEXT NOT NULL CHECK(json_valid(payload_json)),
+ package_json TEXT NOT NULL CHECK(json_valid(package_json)), sha256 TEXT NOT NULL);
+CREATE TRIGGER input_manifests_no_update BEFORE UPDATE ON input_manifests
+ BEGIN SELECT RAISE(ABORT,'input manifests are immutable'); END;
+CREATE TRIGGER input_manifests_no_delete BEFORE DELETE ON input_manifests
+ BEGIN SELECT RAISE(ABORT,'input manifests are immutable'); END;
+CREATE TABLE budgets(
+ id TEXT PRIMARY KEY, limits_json TEXT NOT NULL CHECK(json_valid(limits_json)),
+ used_calls INTEGER NOT NULL DEFAULT 0 CHECK(used_calls>=0),
+ reserved_calls INTEGER NOT NULL DEFAULT 0 CHECK(reserved_calls>=0),
+ reserved_cost TEXT NOT NULL DEFAULT '0', spent_cost TEXT NOT NULL DEFAULT '0');
+CREATE TABLE task_calls(
+ id TEXT PRIMARY KEY, project_id TEXT NOT NULL REFERENCES projects(id),
+ kind TEXT NOT NULL CHECK(kind IN ('plan','rule_extract','select','state_extract','fact_review')),
+ manifest_id TEXT NOT NULL REFERENCES input_manifests(id),
+ manifest_json TEXT NOT NULL CHECK(json_valid(manifest_json)),
+ request_json TEXT NOT NULL CHECK(json_valid(request_json)),
+ messages_json TEXT NOT NULL CHECK(json_valid(messages_json)),
+ budget_id TEXT NOT NULL REFERENCES budgets(id),
+ root_id TEXT NOT NULL REFERENCES task_calls(id),
+ attempt INTEGER NOT NULL CHECK(attempt>0), retry_of TEXT UNIQUE REFERENCES task_calls(id),
+ status TEXT NOT NULL CHECK(status IN ('STARTED','UNKNOWN','FINISHED')),
+ output_text_json TEXT NOT NULL DEFAULT '""' CHECK(json_valid(output_text_json)),
+ raw_json TEXT NOT NULL DEFAULT 'null' CHECK(json_valid(raw_json)),
+ finish_reason TEXT CHECK(finish_reason IN ('complete','truncated','error','refused')),
+ validation TEXT NOT NULL DEFAULT 'UNREVIEWED' CHECK(validation IN ('VALID','INVALID','UNREVIEWED')),
+ result_json TEXT NOT NULL DEFAULT 'null' CHECK(json_valid(result_json)),
+ request_id_json TEXT NOT NULL DEFAULT 'null' CHECK(json_valid(request_id_json)),
+ usage_json TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(usage_json)),
+ reason TEXT, started_at TEXT NOT NULL, ended_at TEXT);
+CREATE TABLE call_reservations(
+ id TEXT PRIMARY KEY, budget_id TEXT REFERENCES budgets(id),
+ call_kind TEXT NOT NULL CHECK(call_kind IN ('run','task')), call_id TEXT NOT NULL,
+ status TEXT NOT NULL CHECK(status IN ('STARTED','UNKNOWN','FINISHED')),
+ estimate_json TEXT NOT NULL CHECK(json_valid(estimate_json)),
+ actual_json TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(actual_json)), UNIQUE(call_kind,call_id));
+PRAGMA user_version=5;
+COMMIT;
+"""
+
+MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5}

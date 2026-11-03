@@ -3,9 +3,10 @@ from dataclasses import asdict
 from typing import Callable
 from uuid import NAMESPACE_URL, uuid5
 
+from nw.call_control import execution_lock
 from nw.context.registry import build_context, get_provider
 from nw.flow.nodes import NODE_IDS, NodeStore
-from nw.generation import call_model, encode
+from nw.generation import call_model, encode, recover_run
 from nw.llm.base import LLMProvider
 from nw.models import StateNote
 from nw.store import Store
@@ -40,6 +41,20 @@ class FlowEngine:
             record = state.get(node)
             if record['status'] == 'DONE':
                 continue
+            if node == 'N5':
+                # Lock before changing the retry attempt or the saved node status.
+                with execution_lock(self.store, f'flow:{scene_id}:N5') as acquired:
+                    if not acquired:
+                        return {'scene_id': scene_id, 'status': 'BLOCKED', 'node': node,
+                                'reason': 'Model call already running'}
+                    if state.get(node)['status'] == 'DONE':
+                        continue
+                    blocked = self.write_review_revise(state, decide, retry_failed)
+                    if blocked:
+                        return blocked
+                if after_node:
+                    after_node(node)
+                continue
             inputs = state.author_input(node) if node in ('N1', 'N2', 'N3') else record['input']
             state.save(node, 'IN_PROGRESS', record['output'], inputs)
             if state.get(node)['status'] == 'DONE':
@@ -52,10 +67,6 @@ class FlowEngine:
                 context = {**state.get('N1')['output'], **state.get('N2')['output'], **state.get('N3')['output']}
                 context = build_context(self.store, scene_id, self.context_name, context)
                 state.save(node, 'DONE', context, context)
-            elif node == 'N5':
-                blocked = self.write_review_revise(state, decide, retry_failed)
-                if blocked:
-                    return blocked
             else:
                 self.accept(state)
             if after_node:
@@ -75,6 +86,10 @@ class FlowEngine:
         run_id = uuid5(NAMESPACE_URL, prefix + (f':retry:{attempt}' if attempt else '')).hex
         row = self.store.connection.execute('SELECT ended_at,finish_reason FROM runs WHERE id=?', (run_id,)).fetchone()
         if retry_failed and row and (not row[0] or row[1] != 'complete'):
+            if not row[0]:
+                previous = recover_run(self.store, run_id)
+                if previous is None or (previous.ended_at and previous.finish_reason == 'complete'):
+                    return run_id
             attempts[key] = attempt + 1
             state.save('N5', 'IN_PROGRESS', output)
             run_id = uuid5(NAMESPACE_URL, prefix + f':retry:{attempt + 1}').hex

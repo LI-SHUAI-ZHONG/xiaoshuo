@@ -1,7 +1,7 @@
 # 新框架 v0
 
 独立的小说写作命令行骨架，施工规则见 AGENTS.md，设计与验收见 Codex总指令与里程碑.md。
-M0–M4 已实现：本地项目存储、模型适配器、六节点流程、可注册上下文与持久 A/B 盲测。
+M0–M4 已验收：本地项目存储、模型适配器、六节点流程、可注册上下文与持久 A/B 盲测。M5 的项目级模型任务、预算和 v5 迁移见 [M5 验收记录](docs/M5-验收记录.md)。
 
 ## 安装、运行与测试（Windows PowerShell）
 
@@ -22,13 +22,17 @@ python -m venv .venv
 ## 目录与配置
 
 - `src/nw/`：Python 包和 CLI；`llm/` 提供三种适配器；`flow/` 实现六节点与恢复；`context/` 提供上下文包；`experiments/ab.py` 实现盲测。
-- `src/nw/models.py`：B2 数据类；`schema.py`：建表脚本与版本 1→2→3→4 迁移；`store.py`：SQLite 与接受正文导出。
+- `src/nw/models.py`：B2 数据类；`schema.py`、`migrations.py`：逐级迁移到 v5；`store.py`：SQLite 与接受正文导出。
 - `tests/`：导入、存储与独立 CLI 进程测试；`fixtures/`：包含最小示例与六条手工规则。
 - `workspace/`：运行数据目录，已忽略上传，每个项目使用 `<project>/nw.db`，已接受正文导出到 `<project>/正文/ch01_s01.md`。
 - `config.example.toml`：模型和路径配置示例；复制为 config.toml 后填写真实模型。密钥只读环境变量，配置文件不允许 api_key 字段。
 - `pyproject.toml`：运行时无第三方依赖；pytest 用于测试，setuptools 用于安装。
 
-M4 验收后停止；里程碑之外的功能需作者另行决定。
+## M5 调用基础
+
+现有 CLI 命令保持原用法。项目级调用供后续工作流通过 Python 接口调用：`nw.tasks.create_budget` 注册限制，`freeze_manifest` 保存实际参数与上下文包，`run_task` 派发，`read_task` 查看结果。接入方可用 `nw.call_budget.prepare_call` 获取套用输出上限后的参数，再以 `model_settings` 冻结配置。
+
+旧库第一次打开会逐级升级，并在项目目录旁于每步升级前生成一份经完整性检查的 SQLite 备份。未知调用会保留预算；确认重试后要用新调用 ID、递增 attempt 并设置 retry_of。旧场景流程仍通过原来的 `flow resume --retry-failed` 显式重试。
 
 
 ## M1 使用示例（PowerShell）

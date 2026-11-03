@@ -6,11 +6,11 @@ import json
 from pathlib import Path
 import sqlite3
 from types import TracebackType
-from typing import Any
+from typing import Any, Callable
 from uuid import uuid4
 
 from nw import models as m
-from nw.schema import MIGRATE_V2, MIGRATE_V3, MIGRATE_V4, SCHEMA, VERSION
+from nw.migrations import upgrade
 from nw.llm.base import GenResult
 
 RECORDS = {
@@ -44,20 +44,7 @@ class Store:
         self.connection.execute('PRAGMA foreign_keys=ON')
         self.connection.execute('PRAGMA recursive_triggers=ON')
         try:
-            version = self.connection.execute('PRAGMA user_version').fetchone()[0]
-            if version == 0:
-                self.connection.executescript(SCHEMA)
-                version = 1
-            if version == 1:
-                self.connection.executescript(MIGRATE_V2)
-                version = 2
-            if version == 2:
-                self.connection.executescript(MIGRATE_V3)
-                version = 3
-            if version == 3:
-                self.connection.executescript(MIGRATE_V4)
-            elif version != VERSION:
-                raise ValueError(f'Unsupported database version: {version}')
+            upgrade(self.connection, db)
             with self.connection:
                 self.connection.execute('BEGIN IMMEDIATE')
                 for accepted in self.list('accepted'):
@@ -139,7 +126,8 @@ class Store:
         with self.connection:
             return self._insert('run', run)
 
-    def finish_run(self, run_id: str, result: GenResult) -> tuple[m.Run, m.Draft | None]:
+    def finish_run(self, run_id: str, result: GenResult, *,
+                   settle: Callable[[], None] | None = None) -> tuple[m.Run, m.Draft | None]:
         if result.finish_reason not in ('complete', 'truncated', 'error', 'refused'):
             raise ValueError('Invalid generation finish reason')
         with self.connection:
@@ -153,10 +141,12 @@ class Store:
             self.connection.execute('INSERT INTO run_outputs VALUES (?,?,?)',
                                     (run_id, result.request_id, json.dumps(result.raw, ensure_ascii=False)))
             draft = None
-            if run.kind != 'review' and result.finish_reason in ('complete', 'truncated') and result.text:
+            if run.kind in ('write', 'revise') and result.finish_reason in ('complete', 'truncated') and result.text:
                 version = self.connection.execute('SELECT COALESCE(MAX(version),0)+1 FROM drafts WHERE scene_id=?', (run.scene_id,)).fetchone()[0]
                 draft = self._insert('draft', m.Draft(uuid4().hex, run.scene_id, version, result.text,
                                                     result.finish_reason, run_id, now()))
+            if settle is not None:
+                settle()
             return self.get('run', run_id), draft
 
     def run_output(self, run_id: str) -> dict:
