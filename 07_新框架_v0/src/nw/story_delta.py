@@ -9,6 +9,8 @@ from nw.call_control import model_settings
 from nw.config import Config
 from nw.llm.base import LLMProvider
 from nw.models import Draft
+from nw.cards import card_input_ref, read_card
+from nw.story_models import CardRef
 from nw.store import Store
 from nw.story_dependencies import add_dependency, check_inputs_current, verify_legacy_ref
 from nw.story_models import Evidence, StateDelta, StateHead
@@ -42,6 +44,19 @@ def _evidence(raw: dict, draft: Draft) -> Evidence:
     return evidence
 
 
+def story_write_manifest(store: Store, draft: Draft) -> dict | None:
+    run = store.get('run', draft.run_id)
+    ident = json.loads(run.input_snapshot_json).get('manifest_id')
+    if ident is None:
+        return None
+    manifest, package = read_input_manifest(store, ident)
+    if manifest['settings']['prompt_version'] != 'story-write-v1':
+        return None
+    if manifest['purpose'] != 'write' or canonical(package) != canonical(json.loads(run.context_package_json)):
+        raise ValueError('Story write manifest does not match the draft run')
+    return manifest
+
+
 def _manifest(store: Store, draft: Draft, ident: str) -> tuple[dict, dict]:
     manifest, package = read_input_manifest(store, ident)
     if manifest['purpose'] != 'state_extract' or package.get('draft_id') != draft.id:
@@ -57,6 +72,15 @@ def _manifest(store: Store, draft: Draft, ident: str) -> tuple[dict, dict]:
     if (manifest['story_order'] < baseline['as_of_story_order'] or
             position(manifest['disclosure_order']) < position(baseline['disclosure_order'])):
         raise ValueError('HISTORY_INCOMPLETE')
+    written = story_write_manifest(store, draft)
+    if written:
+        if written['story_order'] != manifest['story_order']:
+            raise ValueError('Delta story time must match the frozen work package')
+        if (written['branch_id'], written['state_revision']) == (manifest['branch_id'], manifest['state_revision']):
+            if written['brief_ref'] != manifest['brief_ref'] or any(
+                    not all(ref in manifest[field] for ref in written[field])
+                    for field in ('dependency_refs', 'predecessor_drafts')):
+                raise ValueError('Delta must preserve the frozen writing dependencies at the same story revision')
     return manifest, package
 
 
@@ -176,7 +200,19 @@ def manifest_refs(store: Store, manifest: dict, scene_id: str, *, current: bool 
                 raise ValueError('Brief reference must target a brief')
             refs.append(verify_legacy_ref(store, ref))
         for raw in manifest.get('dependency_refs', []):
-            refs.append(verify_legacy_ref(store, Ref(**raw)))
+            ref = Ref(**raw)
+            if ref.kind == 'card':
+                card = read_card(store, CardRef(ref.id, ref.version))
+                if ref != card_input_ref(card):
+                    raise ValueError('Frozen card reference hash mismatch')
+                refs.append(ref)
+            elif ref.kind == 'draft':
+                source = store.get('draft', ref.id)
+                if source.scene_id == scene_id or ref != draft_ref(source):
+                    raise ValueError('Frozen evidence draft is invalid')
+                refs.append(ref)
+            else:
+                refs.append(verify_legacy_ref(store, ref))
     except TypeError:
         raise ValueError('Invalid frozen input reference') from None
     for raw in manifest['predecessor_drafts']:

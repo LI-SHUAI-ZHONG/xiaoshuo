@@ -46,7 +46,7 @@ def dispatch(store: Store, args: argparse.Namespace) -> Any:
     if args.command == 'init':
         return store.init_project(args.name)
     store.project()
-    if args.command in ('story', 'cards') or args.command == 'accept' and args.batch is not None:
+    if args.command in ('story', 'cards', 'plan') or args.command == 'accept' and args.batch is not None:
         return novel_cli.dispatch(store, args)
     if args.command == 'ab':
         experiment = Experiment(store)
@@ -59,7 +59,8 @@ def dispatch(store: Store, args: argparse.Namespace) -> Any:
             return experiment.view(args.experiment)
         return experiment.reveal(args.experiment)
     if args.command == 'review':
-        return review_draft(store, args.draft, args.provider_instance, args.settings.model, args.settings.params)
+        return review_draft(store, args.draft, args.provider_instance, args.settings.model, args.settings.params,
+                            budget=novel_cli.read_budget_file(args.budget))
     if args.command == 'flow':
         notes = json.loads(args.notes.read_text(encoding='utf-8')) if args.action == 'run' else None
         def decide(node: str, payload: dict) -> str:
@@ -70,7 +71,10 @@ def dispatch(store: Store, args: argparse.Namespace) -> Any:
             args.scene, decide, notes=notes, resume=args.action == 'resume',
             retry_failed=getattr(args, 'retry_failed', False))
     if args.command == 'write':
-        run, draft = write_scene(store, args.scene, args.provider_instance, args.settings.model, args.settings.params, context_name=args.context)
+        run, draft = write_scene(
+            store, args.scene, args.provider_instance, args.settings.model, args.settings.params,
+            context_name=args.context, story_scope=novel_cli.read_scope_file(args.story_input),
+            budget=novel_cli.read_budget_file(args.budget), branch=args.branch)
         return {'run': asdict(run), 'draft': asdict(draft) if draft else None}
     if args.command == 'accept':
         return store.accept(args.draft)
@@ -120,6 +124,7 @@ def main(argv: list[str] | None = None) -> int:
             command.add_argument('choice', type=int, choices=[1, 2])
     review = commands.add_parser('review')
     review.add_argument('--draft', required=True)
+    review.add_argument('--budget', type=Path)
     review.add_argument('--provider', choices=['ollama', 'openai_compat'])
     flow = commands.add_parser('flow').add_subparsers(dest='action', required=True)
     for action in ('run', 'resume'):
@@ -134,7 +139,10 @@ def main(argv: list[str] | None = None) -> int:
             command.add_argument('--retry-failed', action='store_true', help='explicitly retry failed/unknown calls as new Runs; completed calls are reused')
     write = commands.add_parser('write')
     write.add_argument('--scene', required=True)
-    write.add_argument('--context', default='minimal')
+    write.add_argument('--context')
+    write.add_argument('--branch', default='main')
+    write.add_argument('--story-input', type=Path, help='explicit branch, revision, story_order and scene_ref JSON')
+    write.add_argument('--budget', type=Path)
     write.add_argument('--provider', choices=['ollama', 'openai_compat'])
     accept = commands.add_parser('accept')
     accept_target = accept.add_mutually_exclusive_group(required=True)
@@ -176,7 +184,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         settings = None
         legacy_model = args.command in ('write', 'review', 'flow') or (args.command == 'ab' and args.action == 'start')
-        needs_model = legacy_model or (args.command == 'story' and args.action == 'extract')
+        needs_model = (legacy_model or (args.command == 'story' and args.action == 'extract')
+                       or (args.command == 'plan' and args.action in ('propose', 'retry')))
         if args.workspace is None and args.config.exists():
             settings = load_config(args.config)
         args.workspace = args.workspace or (settings.workspace if settings else ROOT / 'workspace')
@@ -185,9 +194,11 @@ def main(argv: list[str] | None = None) -> int:
             settings = settings or load_config(args.config)
         with Store(directory, create=args.command == 'init') as store:
             if legacy_model and store.managed_story():
-                if args.command == 'flow':
+                if args.command in ('flow', 'ab'):
                     raise ValueError('MANAGED_STORY: use story commands for this project')
-                raise ValueError('CONTEXT_PROVIDER_REQUIRED: managed writing and review need story context')
+                if args.command == 'write' and args.story_input is None:
+                    from nw.context.story import scene_scope
+                    scene_scope(store, args.scene, args.branch)
             if needs_model:
                 args.settings = settings or load_config(args.config)
                 args.provider_instance = make_provider(args.settings, args.provider)

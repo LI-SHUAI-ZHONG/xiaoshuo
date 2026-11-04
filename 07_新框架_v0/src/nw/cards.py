@@ -7,7 +7,7 @@ from uuid import uuid4
 from nw.sources import read_span
 from nw.store import Store, now
 from nw.story_models import CardLink, CardRef, DecisionRecord, DecisionRef, SourceRef
-from nw.task_models import canonical
+from nw.task_models import Ref, _ref, canonical, content_sha256
 
 
 class CardConflict(ValueError):
@@ -36,7 +36,8 @@ _OPTIONAL = {
                   'ability_cost', 'independent_goal'),
     'style': ('reference', 'pov', 'syntax', 'avoid'),
     'taboo': ('reason',),
-    'plot': ('choice', 'resistance', 'ending_direction', 'central_question', 'payoff_window'),
+    'plot': ('choice', 'resistance', 'ending_direction', 'central_question', 'payoff_window',
+             'reader_promise', 'protagonist_want', 'cost'),
     'scene': ('function', 'location', 'story_time', 'entering_state', 'conflict', 'choice',
               'planned_result', 'allowed_disclosure', 'length_flexibility'),
     'promise': ('due', 'introduced_at', 'misdirection', 'partial_payoff', 'invalidation_reason'),
@@ -66,13 +67,17 @@ def _body(kind: str, value: object) -> dict:
     maps = set(_MAPS.get(kind, ()))
     if (not isinstance(value, dict) or
             not required <= value.keys() or
-            value.keys() - required - optional - lists - maps - {'visibility'} or
+            value.keys() - required - optional - lists - maps - {'visibility'} - ({'members'} if kind == 'plot' else set()) or
             any(not _text(value[key]) for key in required) or
             any(value[key] is not None and not _text(value[key]) for key in optional & value.keys()) or
             any(not _list_of_text(value[key]) for key in lists & value.keys()) or
             any(not isinstance(value[key], dict) or
                 any(not _text(k) or not _text(v) for k, v in value[key].items()) for key in maps & value.keys())):
         raise ValueError(f'Invalid {kind} card body')
+    if 'members' in value and (not isinstance(value['members'], list) or
+            any(not _ref(ref) or set(ref) != {'kind', 'id', 'version', 'sha256'} or ref['kind'] != 'card'
+                for ref in value['members'])):
+        raise ValueError('Plan members require pinned card references')
     result = {'visibility': 'author_only', **value}
     if (result['visibility'] not in ('author_only', 'public', 'holders') or
             bool(result.get('holders')) != (result['visibility'] == 'holders')):
@@ -163,6 +168,11 @@ def read_card(store: Store, ref: CardRef) -> dict:
         (ref.card_id, ref.version)).fetchone()
     return {**asdict(ref), 'kind': row['kind'], 'origin': row['origin'], 'body': json.loads(row['body_json']),
             'source_refs': json.loads(row['source_refs_json']), 'status': decision['decision'] if decision else 'proposal'}
+
+
+def card_input_ref(card: dict) -> Ref:
+    payload = {key: value for key, value in card.items() if key != 'status'}
+    return Ref('card', card['card_id'], card['version'], content_sha256(payload))
 
 
 def decide_card(store: Store, ref: CardRef, decision: str, reason: str) -> DecisionRef:

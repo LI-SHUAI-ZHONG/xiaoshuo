@@ -120,6 +120,9 @@ def _write_events(store: Store, commit_id: str, scene_id: str, delta: StateDelta
 
 
 def _check_settings_for_delta(store: Store, snapshot: dict, delta: StateDelta) -> None:
+    draft = store.get('draft', delta.draft_id)
+    if draft.scene_id in snapshot.get('stale_plan_scenes', []):
+        raise ValueError('STALE_PLAN: retired design cannot be accepted on this branch')
     manifest, _ = read_input_manifest(store, delta.manifest_id)
     settings = {(card['card_id'], card['version']) for card in snapshot['settings']}
     baseline = revision_state(store, StateHead(delta.branch_id, delta.base_revision))
@@ -197,7 +200,8 @@ def promotion_impacts(store: Store, main: dict, candidate: dict) -> list[str]:
     changed = [key for key in set(earlier) | set(later) if earlier.get(key) != later.get(key)]
     settings_changed = main['settings'] != candidate['settings']
     first = min((_scene_position(store, key) for key in changed), default=None)
-    return [key for key in earlier if key not in later or (
+    stale_plan = set(candidate.get('stale_plan_scenes', []))
+    return [key for key in earlier if key in stale_plan or key not in later or (
         earlier[key] == later[key] and (settings_changed or first is not None and _scene_position(store, key) > first))]
 
 

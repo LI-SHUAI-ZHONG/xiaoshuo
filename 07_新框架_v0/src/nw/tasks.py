@@ -62,7 +62,10 @@ def _insert_manifest(store: Store, inputs: InputManifest, package: dict, *, lega
             raise ValueError('Input manifest requires complete story scope: branch, revision and both orders')
     if inputs.context_sha256 != content_sha256(package):
         raise ValueError('Input manifest context hash mismatch')
-    frozen = canonical(asdict(inputs)), canonical(package), inputs.context_sha256
+    payload = asdict(inputs)
+    if inputs.selection is None:
+        payload.pop('selection')
+    frozen = canonical(payload), canonical(package), inputs.context_sha256
     row = store.connection.execute(
         'SELECT payload_json,package_json,sha256 FROM input_manifests WHERE id=?', (inputs.id,)).fetchone()
     if row:

@@ -265,7 +265,8 @@ def replay(baseline: dict, operations: list[dict], holder: str = 'AUTHOR',
 
 
 def state_at(store: Store, branch_id: str, revision: int, story_order: int, holder: str,
-             disclosure_order: tuple[int, int, int] | None = None) -> StateView:
+             disclosure_order: tuple[int, int, int] | None = None, *,
+             before_scene: str | None = None) -> StateView:
     if type(story_order) is not int or not text(holder):
         raise ValueError('State query requires a story time and holder')
     if holder == 'READER' and disclosure_order is None:
@@ -273,10 +274,18 @@ def state_at(store: Store, branch_id: str, revision: int, story_order: int, hold
     disclosure = position(disclosure_order) if disclosure_order is not None else None
     baseline = baseline_for(store, branch_id)
     if ((holder != 'READER' and story_order < baseline['as_of_story_order']) or
-            (holder == 'READER' and disclosure < position(baseline['disclosure_order']))):
+            (holder == 'READER' and disclosure < position(baseline['disclosure_order'])) or
+            (before_scene is not None and disclosure is not None and disclosure <= position(baseline['disclosure_order'])
+             and story_order == baseline['as_of_story_order'])):
         raise ValueError('HISTORY_INCOMPLETE')
     snapshot = revision_state(store, StateHead(branch_id, revision))
-    facts = replay(baseline, selected_operations(store, snapshot), holder, story_order, disclosure)
+    if before_scene is not None:
+        snapshot['slots'].pop(before_scene, None)
+    operations = selected_operations(store, snapshot)
+    if before_scene is not None and disclosure is not None:
+        operations = [op for op in operations if op['story_order'] != story_order or
+                      position(op['disclosure_order']) < disclosure]
+    facts = replay(baseline, operations, holder, story_order, disclosure)
     settings, omissions = [], []
     for ref in snapshot['settings']:
         card = read_card(store, CardRef(ref['card_id'], ref['version']))

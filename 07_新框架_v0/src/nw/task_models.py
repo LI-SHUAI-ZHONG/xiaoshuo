@@ -71,6 +71,7 @@ class InputManifest:
     candidate_delta_refs: tuple[tuple[str, str], ...] = ()
     candidate_projection_sha256: str | None = None
     dependency_refs: tuple[Ref, ...] = ()
+    selection: dict | None = None
 
 
 @dataclass(frozen=True)

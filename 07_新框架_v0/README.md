@@ -17,7 +17,7 @@ python -m venv .venv
 ```
 
 仓库位置不同时只修改第一行路径。虚拟环境激活后，对应命令就是 `python -m nw --help` 和 `python -m pytest`。
-预期帮助显示 story、cards 和现有命令，pytest 全部通过。裸运行 `python -m nw` 也显示帮助。
+预期帮助显示 story、cards、plan 和现有命令，pytest 全部通过。裸运行 `python -m nw` 也显示帮助。
 
 ## 目录与配置
 
@@ -55,6 +55,38 @@ python -m venv .venv
 4. `accept --batch BATCH.json --expected-head N --commit-id ID` 提交。候选分支加 `--branch NAME`。若改动早场，用 `story fork` 建分支并通过 `story impacts --branch NAME` 查看需重审的场景。提升前用 `story decide` 保存 `promote` 决定，其目标为 `candidate` 和 `expected_main` 两个 `{branch_id,revision}` 对象。
 
 命令示例和验证结果另见 [M7 验收记录](docs/M7-验收记录.md)。
+
+## M8 从 Brief 到候选设计和场景工作包
+
+用 `brief --text TEXT --constraints TEXT` 保存作者需求。示例需求在 `fixtures/story_seed/brief.json`，`show brief` 可查看版本。要使用托管写作，先按 M7 的步骤执行 `story adopt`。新项目可用空接受映射、空事实与空卡片，从故事时间 0 开始接入。
+
+可用 `cards import --file fixtures/story_seed/manifest.json` 导入种子。按需用 `cards decide --id CARD --version N --decision trial --reason REASON` 允许方法卡参与选配。批准和试用的方法才会被召回。把下面的 JSON 保存为 UTF-8 的 `budget.json`，数值按本次模型调用的需要填写。
+
+```json
+{"max_calls": 2, "context_char_limit": 45000, "output_limit": 2000}
+```
+
+在 07 目录用以下顺序操作。大写占位符取自上一条命令的 JSON 输出，模型配置沿用 `config.toml`。
+
+```powershell
+$nwPython = '.\.venv\Scripts\python.exe'
+& $nwPython -m nw --project demo plan propose --scope book --brief-version 1 --budget budget.json
+& $nwPython -m nw --project demo plan show --id BOOK_PLAN
+& $nwPython -m nw --project demo cards decide --id ROOT_CARD --version 1 --decision approved --reason '选择此方向'
+& $nwPython -m nw --project demo plan apply --id BOOK_PLAN --decision APPROVAL
+& $nwPython -m nw --project demo plan propose --scope chapter --parent BOOK_PLAN --brief-version 1 --budget budget.json
+# 对章级方案重复 show、cards decide、plan apply，取得 chapters 下的 scene_id。
+& $nwPython -m nw --project demo story context --scene SCENE_ID --context-char-limit 45000
+& $nwPython -m nw --project demo write --scene SCENE_ID --budget budget.json
+& $nwPython -m nw --project demo review --draft DRAFT_ID --budget budget.json
+```
+
+- `plan show` 展示完整候选、成员版本、开放问题和落地映射。详案也可用 `volume` 或 `scene`，均须指定已应用的父方案。应用时核对批准决定、章场号、Brief 与分支版本。重复应用同一决定会返回既有 ID。未决的关键世界规则随子方案保留，相关场景会停在 `OPEN_DESIGN_QUESTIONS`。调用失败可以先用 `plan show --id ID` 查看记录，再用 `plan retry --id ID` 按原输入和剩余预算显式重试。
+- `replan` 需要托管候选分支和已应用的父方案。应用后，未接受的受影响章场在该分支标记为过期。涉及已接受场景的替换返回 `REPLAN_ACCEPTED_DESCENDANTS` 并列出场景 ID。已有正文仍可按 M7 的分支证据流程修订和重审。
+- `story context` 可以在调用前核对命中的方法、弃用理由、必需卡片、来源定位和稿件依赖。系统最多召回 20 个方法候选，并选用 0–5 个。前文按可见事实和段落定位承接。读者信息只显示与本场 POV 已知事实重合的已披露内容。模型实际收到的 `package` 与版本、预算、选配记录分开冻结，硬约束超出预算会停止。
+- 已落地的场景默认按其绑定及当前分支装配。旧托管场景可传 `--story-input PATH` 给 `write` 或 `story context`，文件形如 `{"branch_id":"main","revision":2,"story_order":1,"scene_ref":{"card_id":"scene-card","version":1}}`。该场景卡与必需人物卡须已绑定到该分支版本。审稿复用写作工作包，使用独立调用预算。作者按 M7 的步骤提取证据、审查和接受正文。
+
+见 [M8 验收记录](docs/M8-验收记录.md)。
 
 ## M1 使用示例（PowerShell）
 

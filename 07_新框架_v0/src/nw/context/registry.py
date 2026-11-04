@@ -3,6 +3,7 @@ from dataclasses import asdict
 from nw.context.base import ContextProvider
 from nw.context.minimal import MinimalProvider
 from nw.context.rules_pack import RulesPackProvider
+from nw.context.story import StoryProvider
 from nw.store import Store
 
 _PROVIDERS: dict[str, ContextProvider] = {}
@@ -19,6 +20,8 @@ def get_provider(name: str) -> ContextProvider:
 
 def build_context(store: Store, scene_id: str, name: str = 'minimal',
                   confirmed: dict | None = None) -> dict:
+    if name == 'story':
+        raise ValueError('CONTEXT_PROVIDER_REQUIRED: story context requires a frozen work package scope')
     scene = store.get('scene', scene_id)
     entries = {(b.kind, b.name): asdict(b) for b in store.bible()}
     project = {'brief': asdict(store.briefs()[-1]) if store.briefs() else None,
@@ -38,3 +41,4 @@ def build_context(store: Store, scene_id: str, name: str = 'minimal',
 
 register(MinimalProvider())
 register(RulesPackProvider())
+register(StoryProvider())

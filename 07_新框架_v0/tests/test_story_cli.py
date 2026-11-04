@@ -5,6 +5,7 @@ from nw.store import Store
 from nw.task_models import content_sha256
 from story_fixture import baseline, draft_for, operation, seed_book
 from test_cli import invoke
+from test_providers import server
 
 
 def test_managed_cli_adoption_and_legacy_guards(tmp_path: Path) -> None:
@@ -68,3 +69,62 @@ def test_adoption_requires_legacy_flow_completion_or_abandonment(tmp_path: Path)
             adopt_story(store, baseline(), {})
         record_story_decision(store, 'abandon', {'scene_id': scene.id}, '转入托管')
         assert adopt_story(store, baseline(), {}).revision == 0
+
+
+def test_m8_cli_design_write_review_and_delta(tmp_path: Path, server) -> None:
+    from test_planning import Planner
+
+    endpoint, transport = server
+    config = tmp_path / 'test.toml'
+    config.write_text(f'[model]\nprovider="ollama"\nbase_url="{endpoint}"\nmodel="test"\n', encoding='utf-8')
+    budget = tmp_path / 'budget.json'
+    budget.write_text('{"max_calls":1,"context_char_limit":45000,"output_limit":2000}', encoding='utf-8')
+
+    def cli(*args):
+        result = invoke(tmp_path, '--project', 'm8', '--config', str(config), *args)
+        assert result.returncode == 0, result.stderr
+        return json.loads(result.stdout)
+
+    def reply(text):
+        transport['body'] = {'done': True, 'done_reason': 'stop', 'message': {'content': text}}
+
+    def design(scope, *extra):
+        reply(json.dumps(Planner(scope).output, ensure_ascii=False))
+        proposal = cli('plan', 'propose', '--scope', scope, '--brief-version', '1', '--budget', str(budget), *extra)
+        root = cli('plan', 'show', '--id', proposal['id'])['candidates'][0]['root']
+        assert root['body']['cost']
+        approval = cli('cards', 'decide', '--id', root['card_id'], '--version', '1',
+                       '--decision', 'approved', '--reason', '选择方案')
+        return proposal['id'], cli('plan', 'apply', '--id', proposal['id'], '--decision', approval['id'])
+
+    cli('init', '--name', '暗井')
+    cli('brief', '--text', '暗井线索', '--constraints', '受限视角')
+    base = baseline()
+    adoption = tmp_path / 'baseline.json'
+    adoption.write_text(json.dumps({'baseline': base, 'expected_accepted': {}, 'baseline_sha256': content_sha256(base)}),
+                        encoding='utf-8')
+    cli('story', 'adopt', '--baseline', str(adoption))
+    direction, _ = design('book')
+    _, result = design('chapter', '--parent', direction)
+    scene = result['chapters'][0]['scenes'][0]['scene_id']
+    work = cli('story', 'context', '--scene', scene, '--context-char-limit', '45000')
+    assert work['scope']['revision'] == 2
+    reply('[FAKE] 沈砚低头查看封条。')
+    written = cli('write', '--scene', scene, '--budget', str(budget))
+    draft = written['draft']['id']
+    assert json.loads(transport['request']['messages'][-1]['content']) == work['package']
+    reply('[FAKE] 检查封条动作。')
+    reviewed = cli('review', '--draft', draft, '--budget', str(budget))
+    assert json.loads(reviewed['context_package_json']) == work['package']
+    data = tmp_path / 'delta.json'
+    data.write_text(json.dumps({
+        'id': 'empty-delta', 'draft_id': draft, 'operations': [],
+        'scope': {'id': 'delta-scope', 'branch_id': 'main', 'base_revision': 2, 'story_order': 1},
+    }), encoding='utf-8')
+    cli('story', 'delta', '--file', str(data))
+    assert cli('story', 'check', '--delta', 'empty-delta')['findings'] == []
+    from nw.tasks import read_input_manifest
+    with Store(tmp_path / 'm8') as store:
+        frozen, _ = read_input_manifest(store, 'delta-scope')
+        assert frozen['dependency_refs'] == work['dependency_refs']
+        assert frozen['brief_ref'] == work['brief_ref']

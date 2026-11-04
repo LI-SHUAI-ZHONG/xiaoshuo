@@ -7,16 +7,18 @@ from typing import Any
 
 from nw.acceptance import accept_batch, promote_branch, promotion_impacts, record_story_decision
 from nw.call_control import model_settings
+from nw.context.story import StoryScope, build_story_context, scene_scope
+from nw.planning import SCOPES, apply_plan, plan_input, propose_plan, retry_plan, show_plan
 from nw.cards import decide_card, decision_history, read_card, read_decision, read_links
 from nw.sources import import_seed_cards
 from nw.store import Store
 from nw.story_delta import (candidate_projection_digest, candidate_snapshot, check_delta, draft_digest, draft_ref, prepare_delta,
-                            read_delta, save_delta)
+                            read_delta, save_delta, story_write_manifest)
 from nw.story_models import AcceptanceRequest, CardRef, StateHead
 from nw.story_state import (adopt_story, apply_settings, baseline_for, current_head, fork_story, position,
                             replay, revision_state, selected_operations, state_at)
 from nw.task_models import Budget, InputManifest, content_sha256
-from nw.tasks import freeze_manifest
+from nw.tasks import freeze_manifest, read_task
 
 
 def _position(value: str) -> tuple[int, int, int]:
@@ -28,6 +30,26 @@ def _position(value: str) -> tuple[int, int, int]:
 
 def register_commands(subparsers: Any) -> None:
     stories = subparsers.add_parser('story', help='manage evidence-backed story state').add_subparsers(dest='action', required=True)
+    context = stories.add_parser('context', help='inspect a POV work package without a model call')
+    context.add_argument('--scene', required=True)
+    context.add_argument('--branch', default='main')
+    context.add_argument('--story-input', type=Path)
+    context.add_argument('--context-char-limit', type=int, required=True)
+    plans = subparsers.add_parser('plan', help='propose, inspect and apply story designs').add_subparsers(dest='action', required=True)
+    propose = plans.add_parser('propose')
+    propose.add_argument('--scope', choices=SCOPES, required=True)
+    propose.add_argument('--brief-version', type=int, required=True)
+    propose.add_argument('--parent', help='ID of an applied direction or design')
+    propose.add_argument('--branch', default='main')
+    propose.add_argument('--budget', type=Path, required=True)
+    propose.add_argument('--provider', choices=['ollama', 'openai_compat'])
+    retry = plans.add_parser('retry', help='explicitly retry a failed call with its original budget and inputs')
+    retry.add_argument('--id', required=True)
+    retry.add_argument('--provider', choices=['ollama', 'openai_compat'])
+    plans.add_parser('show').add_argument('--id', required=True)
+    apply = plans.add_parser('apply')
+    apply.add_argument('--id', required=True)
+    apply.add_argument('--decision', required=True)
     stories.add_parser('adopt').add_argument('--baseline', type=Path, required=True)
     show = stories.add_parser('show')
     fork = stories.add_parser('fork')
@@ -80,6 +102,35 @@ def _shape(factory: Any, payload: dict) -> Any:
         raise ValueError(f'Invalid {factory.__name__} fields: {exc}') from exc
 
 
+def read_budget_file(path: Path | None) -> Budget | None:
+    return _shape(Budget, _load(path, dict)) if path is not None else None
+
+
+def read_scope_file(path: Path | None) -> StoryScope | None:
+    return _shape(StoryScope, _load(path, dict)) if path is not None else None
+
+
+def _plan(store: Store, args: argparse.Namespace) -> Any:
+    if args.action == 'propose':
+        return propose_plan(store, args.brief_version, args.scope, args.provider_instance, args.settings,
+                            read_budget_file(args.budget), parent_id=args.parent, branch=args.branch)
+    if args.action == 'retry':
+        return retry_plan(store, args.id, args.provider_instance, args.settings)
+    if args.action == 'apply':
+        apply_plan(store, args.id, args.decision)
+        return show_plan(store, args.id).application
+    manifest, _ = plan_input(store, args.id)
+    task = read_task(store, args.id)
+    if task.validation != 'VALID':
+        return {'task': asdict(task), 'manifest': manifest}
+    proposal = show_plan(store, args.id)
+    candidates = [
+        {'root': read_card(store, CardRef(**candidate['root'])),
+         'members': [read_card(store, CardRef(**ref)) for ref in candidate['members'].values()]}
+        for candidate in proposal.materialization]
+    return {'proposal': asdict(proposal), 'candidates': candidates, 'manifest': manifest}
+
+
 def _freeze(store: Store, draft_id: str, scope: dict, settings: dict) -> str:
     required = {'id', 'branch_id', 'base_revision', 'story_order'}
     if not isinstance(scope, dict) or not required <= scope.keys() or scope.keys() - required - {
@@ -103,24 +154,40 @@ def _freeze(store: Store, draft_id: str, scope: dict, settings: dict) -> str:
     facts = replay(baseline_for(store, head.branch_id), selected_operations(store, snapshot),
                    story_order=scope['story_order'], disclosure=disclosure)
     changed_ids = {ident for ident, _ in deps}
+    written = story_write_manifest(store, draft)
+    same_scope = written is not None and (written['branch_id'], written['state_revision']) == (
+        head.branch_id, head.revision)
+    if written is not None and written['story_order'] != scope['story_order']:
+        raise ValueError('Delta story time must match the frozen work package')
     predecessors = {raw['id']: raw for raw in scope.get('predecessor_drafts', [])}
     for slot in snapshot['slots'].values():
         if slot['delta_id'] not in changed_ids:
             ref = draft_ref(store.get('draft', slot['draft_id']))
             predecessors.setdefault(ref.id, asdict(ref))
+    brief_ref = scope.get('brief_ref')
+    dependency_refs = scope.get('dependency_refs', []).copy()
+    if same_scope:
+        if brief_ref is not None and brief_ref != written['brief_ref']:
+            raise ValueError('Delta Brief must match the frozen work package')
+        brief_ref = written['brief_ref']
+        for ref in written['predecessor_drafts']:
+            predecessors.setdefault(ref['id'], ref)
+        dependency_refs.extend(ref for ref in written['dependency_refs'] if ref not in dependency_refs)
     package = {'draft_id': draft.id, 'draft_sha256': draft_digest(draft),
                'facts': [asdict(fact) for fact in facts], 'settings': view.settings}
     return freeze_manifest(store, InputManifest(
         scope['id'], 'state_extract', settings, content_sha256(package),
-        brief_ref=scope.get('brief_ref'),
+        brief_ref=brief_ref,
         card_refs=tuple({'card_id': card['card_id'], 'version': card['version']} for card in view.settings),
         branch_id=head.branch_id, state_revision=head.revision, story_order=scope['story_order'],
         disclosure_order=disclosure, predecessor_drafts=tuple(predecessors.values()),
         candidate_delta_refs=tuple(deps), candidate_projection_sha256=digest,
-        dependency_refs=tuple(scope.get('dependency_refs', []))), package)
+        dependency_refs=tuple(dependency_refs)), package)
 
 
 def dispatch(store: Store, args: argparse.Namespace) -> Any:
+    if args.command == 'plan':
+        return _plan(store, args)
     if args.command == 'accept':
         if args.expected_head is None or not args.commit_id:
             raise ValueError('Batch acceptance requires --expected-head and --commit-id')
@@ -140,6 +207,9 @@ def dispatch(store: Store, args: argparse.Namespace) -> Any:
 
 
 def _story(store: Store, args: argparse.Namespace) -> Any:
+    if args.action == 'context':
+        scope = read_scope_file(args.story_input) or scene_scope(store, args.scene, args.branch)
+        return build_story_context(store, args.scene, scope, args.context_char_limit)
     if args.action == 'adopt':
         data = _load(args.baseline, dict)
         if (set(data) != {'baseline', 'baseline_sha256', 'expected_accepted'} or
