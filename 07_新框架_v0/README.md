@@ -17,12 +17,12 @@ python -m venv .venv
 ```
 
 仓库位置不同时只修改第一行路径。虚拟环境激活后，对应命令就是 `python -m nw --help` 和 `python -m pytest`。
-预期帮助显示 story、cards、plan 和现有命令，pytest 全部通过。裸运行 `python -m nw` 也显示帮助。
+预期帮助显示 story、cards、plan、novel 和现有命令，pytest 全部通过。裸运行 `python -m nw` 也显示帮助。
 
 ## 目录与配置
 
 - `src/nw/`：Python 包和 CLI；`llm/` 提供三种适配器；`flow/` 实现六节点与恢复；`context/` 提供上下文包；`experiments/ab.py` 实现盲测。
-- `src/nw/models.py`：B2 数据类；`schema.py`、`migrations.py`：逐级迁移到 v7；`store.py`：SQLite 与接受正文导出。
+- `src/nw/models.py`：B2 数据类；`schema.py`、`migrations.py`：逐级迁移到 v8；`store.py`：SQLite 与接受正文导出。
 - `tests/`：导入、存储与独立 CLI 进程测试；`fixtures/`：包含最小示例与六条手工规则。
 - `workspace/`：运行数据目录，已忽略上传，每个项目使用 `<project>/nw.db`，已接受正文导出到 `<project>/正文/ch01_s01.md`。
 - `config.example.toml`：模型和路径配置示例；复制为 config.toml 后填写真实模型。密钥只读环境变量，配置文件不允许 api_key 字段。
@@ -87,6 +87,34 @@ $nwPython = '.\.venv\Scripts\python.exe'
 - 已落地的场景默认按其绑定及当前分支装配。旧托管场景可传 `--story-input PATH` 给 `write` 或 `story context`，文件形如 `{"branch_id":"main","revision":2,"story_order":1,"scene_ref":{"card_id":"scene-card","version":1}}`。该场景卡与必需人物卡须已绑定到该分支版本。审稿复用写作工作包，使用独立调用预算。作者按 M7 的步骤提取证据、审查和接受正文。
 
 见 [M8 验收记录](docs/M8-验收记录.md)。
+
+## M9 连续场景任务
+
+从已接入 `story adopt` 的项目开始。把请求保存为 UTF-8 的 `job.json`，预算中的 `max_calls` 是整个任务的上限。三场在每场一次起草、审稿、提取、独立事实审查时共需 12 次。每轮额外修订及其审稿各占一次调用，最多两轮。
+
+```json
+{
+  "mode": "write",
+  "branch_id": "main",
+  "scene_ids": ["SCENE_ID_1", "SCENE_ID_2", "SCENE_ID_3"],
+  "budget": {"max_calls": 12, "context_char_limit": 45000, "output_limit": 2000}
+}
+```
+
+```powershell
+$nwPython = '.\.venv\Scripts\python.exe'
+& $nwPython -m nw --project demo novel start --request job.json
+& $nwPython -m nw --project demo novel resume --job JOB_ID
+& $nwPython -m nw --project demo novel show --job JOB_ID
+```
+
+- `mode: design` 可从当前 Brief 开始，`scene_ids` 为空。任务先请作者选择书级方向，再按 `design_scope` 细化，默认 `chapter`，也可选 `volume` 或 `scene`。已有应用方案时可传 `parent_id` 直接细化。采用章场后，应用映射会返回供后续写作使用的 ID。
+- `write` 按章场顺序串写请求中的场景。旧托管场景可在请求的 `scene_scopes` 对象中，按场景 ID 指定 `{"story_order":1,"scene_ref":{"card_id":"scene-card","version":1}}`。卡片须已绑定到该分支。`continue` 省略场景时，使用分支上下一场获批、尚未接受的场景。`revise` 使用所选分支当前接受稿，或该分支可用的完整稿件。
+- `WAITING` 表示需要作者决定。输出的 `outputs.gate` 含确切的候选、正文、证据变更或核心问题。把返回的 `step`、`outputs.gate.token`、所选 `action` 和 `reason` 写入 `decision.json`，再运行 `novel resume --job JOB_ID --decision decision.json`。设计选择 `approve` 还须填 `root`（候选根卡 ID）。批次可 `accept`，也可 `reject` 并指定 `scene_id`，依赖被退回前场的候选后场会标记为过期。
+- `novel cancel --job JOB_ID` 会停止后续模型请求。已发出的请求及返回仍记在原尝试。调用中断或结构不合格时，可用 `--retry-failed` 开新尝试。增加额度用 `--max-calls N` 或在已有费用上限时用 `--max-cost AMOUNT`。原模型参数、实际消息和调用记录可回读。
+- `STALE` 表示依赖的 Brief、分支、大纲或方法版本已变化，应按当前范围新建任务。关键事实审查有硬问题时，先修订并重新审查。正文接受与任务完成在同一 SQLite 事务提交，导出失败可重开项目按已接受指针恢复。
+
+见 [M9 验收记录](docs/M9-验收记录.md)。
 
 ## M1 使用示例（PowerShell）
 

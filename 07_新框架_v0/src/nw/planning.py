@@ -83,6 +83,17 @@ def propose_plan(store: Store, brief_ref: Ref | int, scope: str, provider: LLMPr
                  budget: Budget, *, parent_id: str | None = None, branch: str = 'main') -> PlanProposal:
     ident = uuid4().hex
     budget_id = create_budget(store, f'plan:{ident}', budget)
+    request, package = prepare_plan_task(store, brief_ref, scope, provider, config, budget_id, ident,
+                                         parent_id=parent_id, branch=branch)
+    return _run_plan(store, request, package, provider, config)
+
+
+def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: LLMProvider,
+                      config: Config, budget_id: str, ident: str, *, parent_id: str | None = None,
+                      branch: str = 'main') -> tuple[TaskRequest, dict]:
+    from nw.call_budget import read_budget
+
+    budget = read_budget(store, budget_id)
     prompt = plan_prompt(scope)
     with store.connection:
         store.connection.execute('BEGIN')
@@ -114,12 +125,12 @@ def propose_plan(store: Store, brief_ref: Ref | int, scope: str, provider: LLMPr
     params, _ = prepare_call(store, budget_id, provider.name, config.params, messages)
     refs = tuple({'card_id': card['card_id'], 'version': card['version']} for card in [*cards, *methods])
     # Planning is author-facing, with the branch pin inside the frozen design work package.
+    manifest_id = f'plan:{ident}'
     freeze_manifest(store, InputManifest(
-        budget_id, 'plan', model_settings(provider, config.model, params, 'story-plan-v1'),
+        manifest_id, 'plan', model_settings(provider, config.model, params, 'story-plan-v1'),
         content_sha256(package), brief_ref=brief_pin,
         card_refs=refs, source_refs=sources, dependency_refs=(outline_pin,)), package)
-    request = TaskRequest(ident, project_id, 'plan', budget_id, {'messages': messages}, budget_id)
-    return _run_plan(store, request, package, provider, config)
+    return TaskRequest(ident, project_id, 'plan', manifest_id, {'messages': messages}, budget_id), package
 
 
 def retry_plan(store: Store, ident: str, provider: LLMProvider, config: Config) -> PlanProposal:

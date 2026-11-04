@@ -30,7 +30,7 @@ def _v5(directory: Path) -> tuple[list[str], dict]:
 def test_v5_database_and_backup_keep_all_old_rows(tmp_path: Path) -> None:
     tables, before = _v5(tmp_path)
     with Store(tmp_path) as store:
-        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 7
+        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 8
         assert snapshot(store.connection, tables) == before
         assert not store.connection.execute('PRAGMA foreign_key_check').fetchall()
     [backup] = tmp_path.glob('nw.v5.*.bak')

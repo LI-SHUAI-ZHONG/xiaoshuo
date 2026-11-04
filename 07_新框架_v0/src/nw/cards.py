@@ -175,7 +175,8 @@ def card_input_ref(card: dict) -> Ref:
     return Ref('card', card['card_id'], card['version'], content_sha256(payload))
 
 
-def decide_card(store: Store, ref: CardRef, decision: str, reason: str) -> DecisionRef:
+def decide_card(store: Store, ref: CardRef, decision: str, reason: str, *,
+                decision_id: str | None = None) -> DecisionRef:
     if not _text(decision) or decision not in _DECISIONS or not _text(reason):
         raise ValueError('A card decision requires trial, approved or disabled and a reason')
     with store.connection:
@@ -186,7 +187,12 @@ def decide_card(store: Store, ref: CardRef, decision: str, reason: str) -> Decis
                 raise ValueError('A source-only rule cannot be made usable')
             if row['origin'] == 'model' and not json.loads(row['source_refs_json']):
                 raise ValueError('A model rule needs a verified source or an explicit author version')
-        ident = uuid4().hex
+        ident = decision_id or uuid4().hex
+        if decision_id and store.connection.execute('SELECT 1 FROM card_decisions WHERE id=?', (ident,)).fetchone():
+            saved = read_decision(store, ident)
+            if saved.ref != DecisionRef(ident, ref, decision) or saved.reason != reason:
+                raise ValueError('Card decision ID already binds a different decision')
+            return saved.ref
         store.connection.execute('INSERT INTO card_decisions VALUES (?,?,?,?,?,?)',
                                  (ident, ref.card_id, ref.version, decision, reason, now()))
     return DecisionRef(ident, ref, decision)

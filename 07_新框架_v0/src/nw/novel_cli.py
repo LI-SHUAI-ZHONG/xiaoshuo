@@ -8,17 +8,17 @@ from typing import Any
 from nw.acceptance import accept_batch, promote_branch, promotion_impacts, record_story_decision
 from nw.call_control import model_settings
 from nw.context.story import StoryScope, build_story_context, scene_scope
+from nw.novel_flow import JobRequest, cancel_job, resume_job, show_job, start_job
 from nw.planning import SCOPES, apply_plan, plan_input, propose_plan, retry_plan, show_plan
 from nw.cards import decide_card, decision_history, read_card, read_decision, read_links
 from nw.sources import import_seed_cards
 from nw.store import Store
-from nw.story_delta import (candidate_projection_digest, candidate_snapshot, check_delta, draft_digest, draft_ref, prepare_delta,
-                            read_delta, save_delta, story_write_manifest)
+from nw.story_extract import freeze_delta_input
+from nw.story_delta import check_delta, prepare_delta, read_delta, save_delta
 from nw.story_models import AcceptanceRequest, CardRef, StateHead
-from nw.story_state import (adopt_story, apply_settings, baseline_for, current_head, fork_story, position,
-                            replay, revision_state, selected_operations, state_at)
-from nw.task_models import Budget, InputManifest, content_sha256
-from nw.tasks import freeze_manifest, read_task
+from nw.story_state import adopt_story, apply_settings, current_head, fork_story, position, revision_state, state_at
+from nw.task_models import Budget, content_sha256
+from nw.tasks import read_task
 
 
 def _position(value: str) -> tuple[int, int, int]:
@@ -29,6 +29,18 @@ def _position(value: str) -> tuple[int, int, int]:
 
 
 def register_commands(subparsers: Any) -> None:
+    jobs = subparsers.add_parser('novel', help='coordinate persistent multi-scene creative work').add_subparsers(
+        dest='action', required=True)
+    jobs.add_parser('start').add_argument('--request', type=Path, required=True)
+    for action in ('show', 'resume', 'cancel'):
+        command = jobs.add_parser(action)
+        command.add_argument('--job', required=True)
+        if action == 'resume':
+            command.add_argument('--retry-failed', action='store_true')
+            command.add_argument('--decision', type=Path, help='UTF-8 JSON containing step, token, action and reason')
+            command.add_argument('--max-calls', type=int, help='raise the total call ceiling for this job')
+            command.add_argument('--max-cost', help='raise the existing cost ceiling for this job')
+            command.add_argument('--provider', choices=['ollama', 'openai_compat'])
     stories = subparsers.add_parser('story', help='manage evidence-backed story state').add_subparsers(dest='action', required=True)
     context = stories.add_parser('context', help='inspect a POV work package without a model call')
     context.add_argument('--scene', required=True)
@@ -131,61 +143,34 @@ def _plan(store: Store, args: argparse.Namespace) -> Any:
     return {'proposal': asdict(proposal), 'candidates': candidates, 'manifest': manifest}
 
 
-def _freeze(store: Store, draft_id: str, scope: dict, settings: dict) -> str:
-    required = {'id', 'branch_id', 'base_revision', 'story_order'}
-    if not isinstance(scope, dict) or not required <= scope.keys() or scope.keys() - required - {
-            'candidate_delta_refs', 'predecessor_drafts', 'brief_ref', 'dependency_refs'}:
-        raise ValueError('Invalid delta manifest fields')
-    for field in ('candidate_delta_refs', 'predecessor_drafts', 'dependency_refs'):
-        if not isinstance(scope.get(field, []), list):
-            raise ValueError(f'{field} must be a list')
-    if any(not isinstance(raw, dict) or not isinstance(raw.get('id'), str)
-           for raw in scope.get('predecessor_drafts', [])):
-        raise ValueError('Invalid predecessor draft reference')
-    head = StateHead(scope['branch_id'], scope['base_revision'])
-    draft = store.get('draft', draft_id)
-    scene = store.get('scene', draft.scene_id)
-    chapter = store.get('chapter', scene.chapter_id)
-    disclosure = (chapter.index, scene.index, 0)
-    view = state_at(store, head.branch_id, head.revision, scope['story_order'], 'AUTHOR', disclosure)
-    deps = scope.get('candidate_delta_refs', [])
-    digest = candidate_projection_digest(store, head, deps, scene.id) if deps else None
-    snapshot = candidate_snapshot(store, head, deps, scene.id)
-    facts = replay(baseline_for(store, head.branch_id), selected_operations(store, snapshot),
-                   story_order=scope['story_order'], disclosure=disclosure)
-    changed_ids = {ident for ident, _ in deps}
-    written = story_write_manifest(store, draft)
-    same_scope = written is not None and (written['branch_id'], written['state_revision']) == (
-        head.branch_id, head.revision)
-    if written is not None and written['story_order'] != scope['story_order']:
-        raise ValueError('Delta story time must match the frozen work package')
-    predecessors = {raw['id']: raw for raw in scope.get('predecessor_drafts', [])}
-    for slot in snapshot['slots'].values():
-        if slot['delta_id'] not in changed_ids:
-            ref = draft_ref(store.get('draft', slot['draft_id']))
-            predecessors.setdefault(ref.id, asdict(ref))
-    brief_ref = scope.get('brief_ref')
-    dependency_refs = scope.get('dependency_refs', []).copy()
-    if same_scope:
-        if brief_ref is not None and brief_ref != written['brief_ref']:
-            raise ValueError('Delta Brief must match the frozen work package')
-        brief_ref = written['brief_ref']
-        for ref in written['predecessor_drafts']:
-            predecessors.setdefault(ref['id'], ref)
-        dependency_refs.extend(ref for ref in written['dependency_refs'] if ref not in dependency_refs)
-    package = {'draft_id': draft.id, 'draft_sha256': draft_digest(draft),
-               'facts': [asdict(fact) for fact in facts], 'settings': view.settings}
-    return freeze_manifest(store, InputManifest(
-        scope['id'], 'state_extract', settings, content_sha256(package),
-        brief_ref=brief_ref,
-        card_refs=tuple({'card_id': card['card_id'], 'version': card['version']} for card in view.settings),
-        branch_id=head.branch_id, state_revision=head.revision, story_order=scope['story_order'],
-        disclosure_order=disclosure, predecessor_drafts=tuple(predecessors.values()),
-        candidate_delta_refs=tuple(deps), candidate_projection_sha256=digest,
-        dependency_refs=tuple(dependency_refs)), package)
+
+def _novel(store: Store, args: argparse.Namespace) -> Any:
+    if args.action == 'start':
+        raw = _load(args.request, dict)
+        if not isinstance(raw.get('budget'), dict):
+            raise ValueError('Novel request requires a budget object')
+        raw['budget'] = _shape(Budget, raw['budget'])
+        return start_job(store, _shape(JobRequest, raw))
+    if args.action == 'show':
+        return show_job(store, args.job)
+    if args.action == 'cancel':
+        return cancel_job(store, args.job)
+    choice = _load(args.decision, dict) if args.decision else None
+
+    def decide(step: str, gate: dict) -> dict | None:
+        if choice is None:
+            return None
+        if choice.get('step') != step or choice.get('token') != gate['token']:
+            raise ValueError('Decision step and token must match the current author gate')
+        return {key: value for key, value in choice.items() if key not in ('step', 'token')}
+
+    return resume_job(store, args.job, args.provider_instance, args.settings, decide, args.retry_failed,
+                      max_calls=args.max_calls, max_cost=args.max_cost)
 
 
 def dispatch(store: Store, args: argparse.Namespace) -> Any:
+    if args.command == 'novel':
+        return _novel(store, args)
     if args.command == 'plan':
         return _plan(store, args)
     if args.command == 'accept':
@@ -245,7 +230,7 @@ def _story(store: Store, args: argparse.Namespace) -> Any:
             raise ValueError('Manual delta requires id, draft_id, scope and operations')
         settings = {'provider': 'author', 'model': 'manual', 'params': {}, 'prompt_version': 'manual-state-v1',
                     'base_url': None, 'timeout': None, 'stream': False}
-        ident = _freeze(store, data['draft_id'], data['scope'], settings)
+        ident = freeze_delta_input(store, data['draft_id'], data['scope'], settings)
         return save_delta(store, data['id'], data['draft_id'], ident, data['operations'])
     budget = _shape(Budget, _load(args.budget, dict))
     scope = _load(args.manifest, dict)
@@ -258,5 +243,5 @@ def _story(store: Store, args: argparse.Namespace) -> Any:
         raise ValueError('Budget output limit must be a positive integer')
     params[key] = min(params.get(key, budget.output_limit), budget.output_limit)
     settings = model_settings(args.provider_instance, args.settings.model, params, 'state-extract-v1')
-    ident = _freeze(store, args.draft, scope, settings)
+    ident = freeze_delta_input(store, args.draft, scope, settings)
     return prepare_delta(store, args.draft, ident, args.provider_instance, args.settings, budget)

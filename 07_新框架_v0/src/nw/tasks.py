@@ -63,8 +63,9 @@ def _insert_manifest(store: Store, inputs: InputManifest, package: dict, *, lega
     if inputs.context_sha256 != content_sha256(package):
         raise ValueError('Input manifest context hash mismatch')
     payload = asdict(inputs)
-    if inputs.selection is None:
-        payload.pop('selection')
+    for optional in ('selection', 'novel_job_id'):
+        if payload[optional] is None:
+            payload.pop(optional)
     frozen = canonical(payload), canonical(package), inputs.context_sha256
     row = store.connection.execute(
         'SELECT payload_json,package_json,sha256 FROM input_manifests WHERE id=?', (inputs.id,)).fetchone()
@@ -146,7 +147,8 @@ def _check_request(store: Store, request: TaskRequest) -> None:
 
 
 def run_task(store: Store, request: TaskRequest, provider: LLMProvider, config: Config, *,
-             validate: Callable[[dict], None] | None = None) -> TaskResult:
+             validate: Callable[[dict], None] | None = None,
+             before_reserve: Callable[[], None] | None = None) -> TaskResult:
     _check_request(store, request)
     check_test_provider(store, provider)
     parent = _task(store, request.retry_of) if request.retry_of is not None else None
@@ -166,11 +168,12 @@ def run_task(store: Store, request: TaskRequest, provider: LLMProvider, config: 
             return TaskResult(request.id, 'RUNNING')
         if parent is not None:
             _check_retry(store, request, _task(store, parent['id']))
-        return _start_task(store, request, request_json, root, provider, config, validate)
+        return _start_task(store, request, request_json, root, provider, config, validate, before_reserve)
 
 
 def _start_task(store: Store, request: TaskRequest, request_json: str, root: str,
-                provider: LLMProvider, config: Config, validate: Callable[[dict], None] | None) -> TaskResult:
+                provider: LLMProvider, config: Config, validate: Callable[[dict], None] | None,
+                before_reserve: Callable[[], None] | None) -> TaskResult:
     manifest, _ = read_input_manifest(store, request.manifest_id)
     messages = json.loads(request_json)['payload'].get('messages')
     if (not isinstance(messages, list) or not messages or
@@ -186,6 +189,8 @@ def _start_task(store: Store, request: TaskRequest, request_json: str, root: str
             raise ValueError('Provider, settings and task purpose must match the frozen input manifest')
         with store.connection:
             store.connection.execute('BEGIN IMMEDIATE')
+            if before_reserve:
+                before_reserve()
             hold = _reserve(store, request.budget_id, 'task', request.id, estimate)
             if hold is None:
                 raise ValueError('Task call is already reserved')

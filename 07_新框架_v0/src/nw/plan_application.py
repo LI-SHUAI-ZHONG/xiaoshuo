@@ -2,6 +2,7 @@
 """Apply exactly the approved candidate, with atomic and repeatable materialization."""
 from dataclasses import asdict
 import json
+from typing import Callable
 from uuid import uuid4
 
 from nw import planning
@@ -87,7 +88,8 @@ def _checked_snapshot(store: Store, frozen: dict) -> tuple[StateHead | None, dic
     return head, snapshot
 
 
-def apply_plan(store: Store, proposal_id: str, decision_id: str) -> list[CardRef]:
+def apply_plan(store: Store, proposal_id: str, decision_id: str, *,
+               before_apply: Callable[[], None] | None = None) -> list[CardRef]:
     proposal = planning.show_plan(store, proposal_id)
     manifest, frozen = planning.plan_input(store, proposal_id)
     with store.connection:
@@ -97,6 +99,8 @@ def apply_plan(store: Store, proposal_id: str, decision_id: str) -> list[CardRef
             if previous['decision_id'] != decision_id:
                 raise ValueError('Plan was applied with a different decision')
             return [CardRef(row['card_id'], row['version']) for row in previous['approvals']]
+        if before_apply:
+            before_apply()
         decision = read_decision(store, decision_id).ref
         if (decision.decision != 'approved' or decision.card_ref not in proposal.candidate_cards or
                 decision_history(store, decision.card_ref)[-1] != decision):

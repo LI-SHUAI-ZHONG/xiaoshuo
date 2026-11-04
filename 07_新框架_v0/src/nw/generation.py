@@ -1,7 +1,7 @@
 """Model calls with persisted input/output and optional flow recovery IDs."""
 from dataclasses import asdict, replace
 import json
-from typing import Any
+from typing import Any, Callable
 from uuid import uuid4
 
 from nw.call_budget import _reserve, _settle, create_budget, finish_reservation, prepare_call, reservation
@@ -9,7 +9,7 @@ from nw.call_control import check_test_provider, execution_lock, model_settings,
 from nw.cards import eligible_rule_refs
 from nw.context.registry import build_context
 from nw.context.story import WRITE_PROMPT, StoryScope, build_story_context, scene_scope
-from nw.story_delta import draft_ref
+from nw.story_delta import draft_ref, story_write_manifest
 from nw.story_dependencies import add_dependency, check_inputs_current
 from nw.story_state import current_head
 from nw.story_models import CardRef, StateHead
@@ -36,8 +36,8 @@ def review_draft(store: Store, draft_id: str, provider: LLMProvider,
         ident = json.loads(original.input_snapshot_json).get('manifest_id')
         if not ident:
             raise ValueError('CONTEXT_PROVIDER_REQUIRED: review requires a frozen story draft')
-        frozen, context = read_input_manifest(store, ident)
-        if frozen['branch_id'] is None or frozen['settings']['prompt_version'] != 'story-write-v1':
+        frozen = story_write_manifest(store, draft)
+        if frozen is None:
             raise ValueError('CONTEXT_PROVIDER_REQUIRED: review requires a frozen story draft')
     messages = [{'role': 'system', 'content': '审查草稿与需求、设定和场景卡的一致性，列出具体修订意见；不要输出替代正文。'},
                 {'role': 'user', 'content': encode({'context': context, 'draft': asdict(draft)})}]
@@ -122,7 +122,8 @@ def call_model(store: Store, scene_id: str, provider: LLMProvider, model: str,
                params: dict, kind: str, messages: list[dict], context: dict,
                run_id: str | None = None, *, budget_id: str | None = None,
                manifest_id: str | None = None,
-               story_manifest: InputManifest | None = None) -> tuple[Run, Draft | None]:
+               story_manifest: InputManifest | None = None,
+               before_reserve: Callable[[], None] | None = None) -> tuple[Run, Draft | None]:
     """Persist the request before sending; a previous run ID never sends twice."""
     check_test_provider(store, provider)
     run_id = run_id or uuid4().hex
@@ -135,12 +136,13 @@ def call_model(store: Store, scene_id: str, provider: LLMProvider, model: str,
         if not acquired:
             raise RunInProgress(f'Run is being started: {run_id}')
         return _new_run(store, scene_id, provider, model, params, kind, messages, context,
-                        run_id, budget_id, manifest_id, story_manifest)
+                        run_id, budget_id, manifest_id, story_manifest, before_reserve)
 
 
 def _new_run(store: Store, scene_id: str, provider: LLMProvider, model: str, params: dict,
              kind: str, messages: list[dict], context: dict, run_id: str, budget_id: str | None,
-             manifest_id: str | None, story_manifest: InputManifest | None) -> tuple[Run, Draft | None]:
+             manifest_id: str | None, story_manifest: InputManifest | None,
+             before_reserve: Callable[[], None] | None) -> tuple[Run, Draft | None]:
     params, estimate = prepare_call(store, budget_id, provider.name, params, messages)
     legacy = manifest_id is None and story_manifest is None
     if story_manifest is not None:
@@ -162,6 +164,8 @@ def _new_run(store: Store, scene_id: str, provider: LLMProvider, model: str, par
               encode(context), '', 'error', '{}', now(), '')
     with store.connection:
         store.connection.execute('BEGIN IMMEDIATE')
+        if before_reserve:
+            before_reserve()
         if store.managed_story() != (story_manifest is not None):
             raise ValueError('CONTEXT_PROVIDER_REQUIRED: managed writing and review need story context')
         if story_manifest is not None:
@@ -188,7 +192,8 @@ def _new_run(store: Store, scene_id: str, provider: LLMProvider, model: str, par
 
 
 def _story_run_refs(manifest: InputManifest) -> list[Ref]:
-    refs = [*manifest.dependency_refs, *manifest.predecessor_drafts]
+    refs = [*manifest.dependency_refs, *manifest.predecessor_drafts,
+            *(Ref('delta', ident, 1, digest) for ident, digest in manifest.candidate_delta_refs)]
     if manifest.brief_ref:
         refs.append(manifest.brief_ref)
     return [Ref(**ref) if isinstance(ref, dict) else ref for ref in refs]

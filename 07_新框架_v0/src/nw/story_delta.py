@@ -1,22 +1,20 @@
 """Draft evidence validation and independent model review of candidate changes."""
-from dataclasses import asdict, replace
+from dataclasses import asdict
 from hashlib import sha256
 import json
 import re
 
-from nw.call_budget import create_budget, prepare_call, read_budget
-from nw.call_control import model_settings
 from nw.config import Config
 from nw.llm.base import LLMProvider
 from nw.models import Draft
 from nw.cards import card_input_ref, read_card
-from nw.story_models import CardRef
+from nw.story_models import CardRef, StateView
 from nw.store import Store
 from nw.story_dependencies import add_dependency, check_inputs_current, verify_legacy_ref
 from nw.story_models import Evidence, StateDelta, StateHead
 from nw.story_state import ACTIONS, baseline_for, parse_fact, position, replay, revision_state, selected_operations
-from nw.task_models import Budget, Finding, InputManifest, Ref, TaskRequest, canonical, content_sha256
-from nw.tasks import freeze_manifest, read_input_manifest, run_task
+from nw.task_models import Budget, Finding, Ref, canonical, content_sha256
+from nw.tasks import read_input_manifest
 
 
 def draft_digest(draft: Draft) -> str:
@@ -50,9 +48,10 @@ def story_write_manifest(store: Store, draft: Draft) -> dict | None:
     if ident is None:
         return None
     manifest, package = read_input_manifest(store, ident)
-    if manifest['settings']['prompt_version'] != 'story-write-v1':
+    if manifest['settings']['prompt_version'] not in ('story-write-v1', 'novel-revise-v1'):
         return None
-    if manifest['purpose'] != 'write' or canonical(package) != canonical(json.loads(run.context_package_json)):
+    if (manifest['purpose'] != run.kind or run.kind not in ('write', 'revise')
+            or canonical(package) != canonical(json.loads(run.context_package_json))):
         raise ValueError('Story write manifest does not match the draft run')
     return manifest
 
@@ -74,11 +73,22 @@ def _manifest(store: Store, draft: Draft, ident: str) -> tuple[dict, dict]:
         raise ValueError('HISTORY_INCOMPLETE')
     written = story_write_manifest(store, draft)
     if written:
+        job_id = written.get('novel_job_id')
+        if job_id:
+            row = store.connection.execute('SELECT status FROM novel_jobs WHERE id=?', (job_id,)).fetchone()
+            if row is None or row[0] in ('REJECTED', 'STALE', 'CANCELLED'):
+                raise ValueError('STALE_JOB_DRAFT: the originating novel job is no longer active')
         if written['story_order'] != manifest['story_order']:
             raise ValueError('Delta story time must match the frozen work package')
         if (written['branch_id'], written['state_revision']) == (manifest['branch_id'], manifest['state_revision']):
+            if (written['candidate_delta_refs'] != manifest['candidate_delta_refs']
+                    or written['candidate_projection_sha256'] != manifest['candidate_projection_sha256']):
+                # M7 may independently re-review a draft against a newly proposed batch.
+                if written['candidate_delta_refs']:
+                    raise ValueError('Delta must preserve the frozen candidate projection')
             if written['brief_ref'] != manifest['brief_ref'] or any(
-                    not all(ref in manifest[field] for ref in written[field])
+                    not all(ref in manifest[field] for ref in written[field]
+                            if ref['kind'] != 'draft' or store.get('draft', ref['id']).scene_id != draft.scene_id)
                     for field in ('dependency_refs', 'predecessor_drafts')):
                 raise ValueError('Delta must preserve the frozen writing dependencies at the same story revision')
     return manifest, package
@@ -158,11 +168,13 @@ def _scene_position(store: Store, scene_id: str) -> tuple[int, int]:
     return store.get('chapter', scene.chapter_id).index, scene.index
 
 
-def candidate_snapshot(store: Store, head: StateHead, refs: list | tuple, scene_id: str) -> dict:
+def candidate_snapshot(store: Store, head: StateHead, refs: list | tuple, scene_id: str, *,
+                       include_later: bool = False) -> dict:
     snapshot = revision_state(store, head)
     cutoff = _scene_position(store, scene_id)
-    snapshot['slots'] = {key: slot for key, slot in snapshot['slots'].items()
-                         if _scene_position(store, key) < cutoff}
+    if not include_later:
+        snapshot['slots'] = {key: slot for key, slot in snapshot['slots'].items()
+                             if _scene_position(store, key) < cutoff}
     seen: set[str] = set()
     scenes = {scene_id}
     for pair in refs:
@@ -187,8 +199,17 @@ def candidate_snapshot(store: Store, head: StateHead, refs: list | tuple, scene_
 
 def candidate_projection_digest(store: Store, head: StateHead, refs: list | tuple, scene_id: str) -> str:
     snapshot = candidate_snapshot(store, head, refs, scene_id)
-    facts = replay(baseline_for(store, head.branch_id), selected_operations(store, snapshot))
-    return content_sha256({'snapshot': snapshot, 'facts': [asdict(f) for f in facts]})
+    from nw.story_state import project_candidate_state
+
+    baseline = baseline_for(store, head.branch_id)
+    deltas = [read_delta(store, ident) for ident, _ in refs]
+    candidate_ids = {delta.id for delta in deltas}
+    committed = {**snapshot, 'slots': {key: slot for key, slot in snapshot['slots'].items()
+                                       if slot['delta_id'] not in candidate_ids}}
+    base = StateView(head.branch_id, head.revision, baseline['as_of_story_order'], 'AUTHOR',
+                     replay(baseline, []), [], baseline['coverage'], [], [])
+    projected = project_candidate_state(base, deltas, committed_operations=selected_operations(store, committed))
+    return content_sha256({'snapshot': snapshot, 'facts': [asdict(f) for f in projected.facts]})
 
 
 def manifest_refs(store: Store, manifest: dict, scene_id: str, *, current: bool = True) -> list[Ref]:
@@ -310,69 +331,31 @@ def check_delta(store: Store, delta: StateDelta, *, project: bool = True) -> lis
                                  delta.extraction_task_id, delta.review_task_id)
         if not project:
             return checks
-        snapshot = candidate_snapshot(store, StateHead(delta.branch_id, delta.base_revision),
-                                      manifest['candidate_delta_refs'], draft.scene_id)
-        replay(baseline_for(store, delta.branch_id), [*selected_operations(store, snapshot), *delta.operations])
+        head = StateHead(delta.branch_id, delta.base_revision)
+        scheduled = manifest.get('novel_job_id') is not None
+        snapshot = candidate_snapshot(store, head, manifest['candidate_delta_refs'], draft.scene_id,
+                                      include_later=scheduled)
+        snapshot['slots'].pop(draft.scene_id, None)
+        committed = selected_operations(store, snapshot)
+        if scheduled:
+            # Check chronology through this scene's changes. Later events are checked by batch replay.
+            time_end = max(((op['story_order'], *position(op['disclosure_order'])) for op in delta.operations
+                            if op['holder'] != 'READER'),
+                           default=(manifest['story_order'], *position(manifest['disclosure_order'])))
+            disclosure_end = max((position(op['disclosure_order']) for op in delta.operations),
+                                 default=position(manifest['disclosure_order']))
+            committed = [op for op in committed if
+                         (position(op['disclosure_order']) <= disclosure_end if op['holder'] == 'READER' else
+                          (op['story_order'], *position(op['disclosure_order'])) <= time_end)]
+        replay(baseline_for(store, delta.branch_id), [*committed, *delta.operations])
     except ValueError as exc:
         checks.append(Finding('INVALID_DELTA', 'hard', asdict(draft_ref(draft)), [], str(exc),
                               '核对稿件、证据和旧值后新建候选变更', 'OPEN'))
     return checks
 
-
-def _budget(store: Store, manifest_id: str, budget: Budget | str) -> str:
-    if isinstance(budget, str):
-        return budget
-    ident = f'delta-budget:{manifest_id}'
-    row = store.connection.execute('SELECT 1 FROM budgets WHERE id=?', (ident,)).fetchone()
-    if row is None:
-        create_budget(store, ident, budget)
-    else:
-        previous = replace(read_budget(store, ident), used_calls=0, reserved_calls=0)
-        if previous != budget:
-            raise ValueError('Delta retry must use its original budget')
-    return ident
-
-
 def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMProvider,
                   config: Config, budget: Budget | str) -> StateDelta:
-    draft = store.get('draft', draft_id)
-    if draft.status != 'complete':
-        raise ValueError('State extraction requires a complete draft')
-    manifest, package = _manifest(store, draft, manifest_id)
-    budget_id = _budget(store, manifest_id, budget)
-    project_id = store.project().id
-    evidence_format = {'draft_id': draft.id, 'text_sha256': draft_digest(draft), 'start': 0, 'end': len(draft.text)}
-    frozen_input = {'draft': asdict(draft), 'target_ref': asdict(draft_ref(draft)), 'context': package,
-                    'evidence_format': evidence_format,
-                    'story_order': manifest['story_order'], 'disclosure_order': manifest['disclosure_order']}
-    messages = [{'role': 'system', 'content': (
-        '只输出 JSON {"operations":[]}。逐项提供 op、entity_id、predicate、holder、claim、story_order、'
-        'disclosure_order、expected_old、new_value、evidence。证据用正文 Unicode 半开区间。'
-        '未发生的计划、人物说辞和误信不得写成 WORLD 事实。')},
-        {'role': 'user', 'content': canonical(frozen_input)}]
-    extraction_id = f'delta-extract:{manifest_id}'
-    result = run_task(store, TaskRequest(extraction_id, project_id, 'state_extract', manifest_id,
-                                       {'messages': messages}, budget_id), provider, config,
-                      validate=lambda output: _operations(output['operations'], draft, manifest))
-    if result.validation != 'VALID':
-        raise ValueError(f'State extraction {result.status}/{result.validation}: {result.id}')
-    operations = _operations(result.parsed['operations'], draft, manifest)
-    review_package = {**frozen_input, 'candidate_operations': operations, 'extraction_task_id': result.id}
-    review_messages = [{'role': 'system', 'content': (
-        '独立核对正文与候选变更。只输出 JSON {"findings":[]}。问题需含 code、severity（hard/soft/info）、'
-        'target_ref、evidence、explanation、suggested_action、status。问题用 OPEN，正文未支持的事实用 hard。')},
-        {'role': 'user', 'content': canonical(review_package)}]
-    params, _ = prepare_call(store, budget_id, provider.name, config.params, review_messages)
-    review_manifest_id = f'delta-review-manifest:{manifest_id}'
-    freeze_manifest(store, InputManifest(review_manifest_id, 'fact_review',
-        model_settings(provider, config.model, params, 'fact-review-v1'), content_sha256(review_package),
-        branch_id=manifest['branch_id'], state_revision=manifest['state_revision'],
-        story_order=manifest['story_order'], disclosure_order=position(manifest['disclosure_order'])), review_package)
-    review_id = f'delta-review:{manifest_id}'
-    review = run_task(store, TaskRequest(review_id, project_id, 'fact_review', review_manifest_id,
-                                        {'messages': review_messages}, budget_id), provider, config,
-                      validate=lambda output: _findings(output['findings'], draft))
-    if review.validation != 'VALID':
-        raise ValueError(f'Fact review {review.status}/{review.validation}: {review.id}')
-    return save_delta(store, f'delta:{manifest_id}', draft.id, manifest_id, operations,
-                      findings=review.parsed['findings'], extraction_task_id=result.id, review_task_id=review.id)
+    """Keep the public state API while extraction owns dispatch and prompt construction."""
+    from nw.story_extract import prepare_delta as extract
+
+    return extract(store, draft_id, manifest_id, provider, config, budget)

@@ -22,7 +22,8 @@ def server() -> Iterator[tuple[str, dict]]:
             self.send_response(state['status'])
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write(state.get('raw_body', json.dumps(state['body'])).encode('utf-8'))
+            body = state['respond'](state['request']) if 'respond' in state else state['body']
+            self.wfile.write(state.get('raw_body', json.dumps(body)).encode('utf-8'))
 
         def log_message(self, format: str, *args: object) -> None:
             pass

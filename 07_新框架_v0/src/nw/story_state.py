@@ -266,7 +266,7 @@ def replay(baseline: dict, operations: list[dict], holder: str = 'AUTHOR',
 
 def state_at(store: Store, branch_id: str, revision: int, story_order: int, holder: str,
              disclosure_order: tuple[int, int, int] | None = None, *,
-             before_scene: str | None = None) -> StateView:
+             before_scene: str | None = None, snapshot: dict | None = None) -> StateView:
     if type(story_order) is not int or not text(holder):
         raise ValueError('State query requires a story time and holder')
     if holder == 'READER' and disclosure_order is None:
@@ -278,9 +278,10 @@ def state_at(store: Store, branch_id: str, revision: int, story_order: int, hold
             (before_scene is not None and disclosure is not None and disclosure <= position(baseline['disclosure_order'])
              and story_order == baseline['as_of_story_order'])):
         raise ValueError('HISTORY_INCOMPLETE')
-    snapshot = revision_state(store, StateHead(branch_id, revision))
+    if snapshot is None:
+        snapshot = revision_state(store, StateHead(branch_id, revision))
     if before_scene is not None:
-        snapshot['slots'].pop(before_scene, None)
+        snapshot = {**snapshot, 'slots': {k: v for k, v in snapshot['slots'].items() if k != before_scene}}
     operations = selected_operations(store, snapshot)
     if before_scene is not None and disclosure is not None:
         operations = [op for op in operations if op['story_order'] != story_order or
@@ -301,8 +302,10 @@ def state_at(store: Store, branch_id: str, revision: int, story_order: int, hold
     return StateView(branch_id, revision, story_order, holder, facts, settings, baseline['coverage'], omissions, legacy)
 
 
-def project_candidate_state(base_view: StateView, deltas: list[StateDelta]) -> StateView:
+def project_candidate_state(base_view: StateView, deltas: list[StateDelta], *,
+                            committed_operations: list[dict] | None = None) -> StateView:
     values = {fact_key(f): f for f in base_view.facts}
+    operations = list(committed_operations or ())
     seen: dict[str, str] = {}
     for delta in deltas:
         if ((delta.branch_id, delta.base_revision) != (base_view.branch_id, base_view.revision)
@@ -311,7 +314,8 @@ def project_candidate_state(base_view: StateView, deltas: list[StateDelta]) -> S
         if any(seen.get(ident) != digest for ident, digest in delta.candidate_delta_refs):
             raise ValueError('Candidate dependency is missing, out of order, or has a different hash')
         seen[delta.id] = delta.sha256
-        for op in sorted(delta.operations, key=_operation_key):
-            if base_view.holder == 'AUTHOR' or op['holder'] == base_view.holder:
-                apply_operation(values, op)
+        operations.extend(delta.operations)
+    for op in sorted(operations, key=_operation_key):
+        if base_view.holder == 'AUTHOR' or op['holder'] == base_view.holder:
+            apply_operation(values, op)
     return replace(base_view, facts=list(values.values()))

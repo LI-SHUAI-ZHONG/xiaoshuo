@@ -72,6 +72,7 @@ class InputManifest:
     candidate_projection_sha256: str | None = None
     dependency_refs: tuple[Ref, ...] = ()
     selection: dict | None = None
+    novel_job_id: str | None = None
 
 
 @dataclass(frozen=True)

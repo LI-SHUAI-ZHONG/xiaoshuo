@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 7
+VERSION = 8
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -246,4 +246,33 @@ CREATE TABLE story_invalidations(
 COMMIT;
 """
 
-MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6, 6: MIGRATE_V7}
+MIGRATE_V8 = """
+BEGIN IMMEDIATE;
+CREATE TABLE novel_jobs(
+ id TEXT PRIMARY KEY, branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ request_json TEXT NOT NULL CHECK(json_valid(request_json)), budget_id TEXT NOT NULL REFERENCES budgets(id),
+ status TEXT NOT NULL CHECK(status IN ('READY','RUNNING','WAITING','BLOCKED','STALE','REJECTED','CANCELLED','DONE')),
+ step_key TEXT, reason TEXT, model_json TEXT CHECK(model_json IS NULL OR json_valid(model_json)),
+ output_json TEXT NOT NULL CHECK(json_valid(output_json)));
+CREATE TABLE novel_steps(
+ job_id TEXT NOT NULL REFERENCES novel_jobs(id), step_key TEXT NOT NULL,
+ attempt INTEGER NOT NULL CHECK(attempt>0), status TEXT NOT NULL CHECK(status IN ('STARTED','DONE','FAILED','STALE')),
+ input_json TEXT NOT NULL CHECK(json_valid(input_json)), output_json TEXT NOT NULL CHECK(json_valid(output_json)),
+ PRIMARY KEY(job_id,step_key,attempt));
+ALTER TABLE story_decisions RENAME TO story_decisions_v7;
+CREATE TABLE story_decisions(
+ id TEXT PRIMARY KEY, action TEXT NOT NULL CHECK(action IN ('adopt','accept','promote','settings','abandon',
+ 'novel_confirm','novel_core','novel_reject','novel_review')),
+ targets_json TEXT NOT NULL CHECK(json_valid(targets_json)), reason TEXT NOT NULL, created_at TEXT NOT NULL);
+INSERT INTO story_decisions SELECT * FROM story_decisions_v7 ORDER BY rowid;
+DROP TABLE story_decisions_v7;
+""" + ''.join(
+    f"""CREATE TRIGGER story_decisions_no_{action.lower()} BEFORE {action} ON story_decisions
+ BEGIN SELECT RAISE(ABORT,'story_decisions is append-only'); END;
+"""
+    for action in ('UPDATE', 'DELETE')
+) + """PRAGMA user_version=8;
+COMMIT;
+"""
+
+MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6, 6: MIGRATE_V7, 7: MIGRATE_V8}

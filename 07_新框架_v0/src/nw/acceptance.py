@@ -174,17 +174,24 @@ def accept_batch(store: Store, requests: list[AcceptanceRequest], expected_head:
     if not requests or not text(commit_id):
         raise ValueError('A nonempty batch and commit ID are required')
     if checkpoint is not None:
-        raise ValueError('Workflow checkpoints require the M9 scheduler')
+        from nw.novel_store import acceptance_checkpoint, checkpoint_input
+        expected = checkpoint_input(requests, expected_head, commit_id)
     records = sorted((asdict(r) for r in requests), key=canonical)
     digest = content_sha256({'action': 'accept', 'head': asdict(expected_head), 'requests': records})
     with store.connection:
         store.connection.execute('BEGIN IMMEDIATE')
         existing = existing_commit(store, commit_id, digest)
         if existing:
+            if checkpoint is not None:
+                acceptance_checkpoint(store, checkpoint, expected, existing, existing=True)
             return existing
+        if checkpoint is not None:
+            acceptance_checkpoint(store, checkpoint, expected, None)
         if current_head(store, expected_head.branch_id) != expected_head:
             raise ValueError('STALE_HEAD')
         result, export = _accept_in_transaction(store, requests, expected_head, commit_id, digest)
+        if checkpoint is not None:
+            acceptance_checkpoint(store, checkpoint, expected, result)
     store._export_accepted(export)
     return result
 

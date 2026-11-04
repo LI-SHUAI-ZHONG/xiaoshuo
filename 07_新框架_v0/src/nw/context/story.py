@@ -8,7 +8,7 @@ from nw.context.base import ContextItem, ContextPackage, package
 from nw.selection import select_rules
 from nw.sources import read_span
 from nw.store import Store
-from nw.story_delta import draft_ref
+from nw.story_delta import candidate_snapshot, draft_ref
 from nw.story_dependencies import check_inputs_current, legacy_ref
 from nw.story_models import CardRef, Fact, SourceRef, StateHead
 from nw.story_state import baseline_for, current_head, position, revision_state, state_at
@@ -132,7 +132,8 @@ def _previous_refs(store: Store, snapshot: dict, facts: list[Fact],
     return predecessors, other_evidence
 
 
-def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_limit: int) -> StoryWork:
+def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_limit: int, *,
+                        candidate_refs: tuple[tuple[str, str], ...] = ()) -> StoryWork:
     """Freeze the same versioned information the model receives, with source receipts."""
     if type(char_limit) is not int or char_limit < 1:
         raise ValueError('Context character limit must be a positive integer')
@@ -144,12 +145,14 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         raise ValueError('Story scope does not match the materialized scene')
     scene_ref = _ref(scope.scene_ref)
     card = read_card(store, scene_ref)
-    snapshot = revision_state(store, StateHead(scope.branch_id, scope.revision))
+    head = StateHead(scope.branch_id, scope.revision)
+    snapshot = (candidate_snapshot(store, head, candidate_refs, scene_id, include_later=True) if candidate_refs
+                else revision_state(store, head))
     if scene.id in snapshot.get('stale_plan_scenes', []):
         raise ValueError('STALE_PLAN: this scene was retired by a revised plan on this branch')
     _check_scene(card, scene_ref, scope, snapshot)
     view = state_at(store, scope.branch_id, scope.revision, scope.story_order, card['body']['pov'],
-                    disclosure, before_scene=scene_id)
+                    disclosure, before_scene=scene_id, snapshot=snapshot)
     visible_ids = {c['card_id'] for c in view.settings}
     if any(ref['card_id'] not in visible_ids and read_card(store, CardRef(ref['card_id'], ref['version']))['kind'] == 'taboo'
            for ref in snapshot['settings']):
@@ -173,7 +176,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     shared = []
     if disclosure > position(baseline_for(store, scope.branch_id)['disclosure_order']):
         reader = state_at(store, scope.branch_id, scope.revision, scope.story_order, 'READER', disclosure,
-                          before_scene=scene_id)
+                          before_scene=scene_id, snapshot=snapshot)
         known = {(fact.entity_id, fact.predicate, canonical(fact.value)) for fact in view.facts if fact.claim == 'fact'}
         shared = [fact for fact in reader.facts if fact.claim == 'fact' and fact.disclosure_order < disclosure
                   and (fact.entity_id, fact.predicate, canonical(fact.value)) in known]

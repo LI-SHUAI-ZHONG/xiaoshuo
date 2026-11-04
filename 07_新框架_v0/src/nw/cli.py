@@ -46,7 +46,7 @@ def dispatch(store: Store, args: argparse.Namespace) -> Any:
     if args.command == 'init':
         return store.init_project(args.name)
     store.project()
-    if args.command in ('story', 'cards', 'plan') or args.command == 'accept' and args.batch is not None:
+    if args.command in ('story', 'cards', 'plan', 'novel') or args.command == 'accept' and args.batch is not None:
         return novel_cli.dispatch(store, args)
     if args.command == 'ab':
         experiment = Experiment(store)
@@ -185,7 +185,8 @@ def main(argv: list[str] | None = None) -> int:
         settings = None
         legacy_model = args.command in ('write', 'review', 'flow') or (args.command == 'ab' and args.action == 'start')
         needs_model = (legacy_model or (args.command == 'story' and args.action == 'extract')
-                       or (args.command == 'plan' and args.action in ('propose', 'retry')))
+                       or (args.command == 'plan' and args.action in ('propose', 'retry'))
+                       or (args.command == 'novel' and args.action == 'resume'))
         if args.workspace is None and args.config.exists():
             settings = load_config(args.config)
         args.workspace = args.workspace or (settings.workspace if settings else ROOT / 'workspace')

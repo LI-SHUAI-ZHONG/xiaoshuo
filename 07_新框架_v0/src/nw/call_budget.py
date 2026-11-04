@@ -28,6 +28,11 @@ def _amount(value: Decimal) -> str:
 
 
 def create_budget(store: Store, budget_id: str, budget: Budget) -> str:
+    with store.connection:
+        return _insert_budget(store, budget_id, budget)
+
+
+def _insert_budget(store: Store, budget_id: str, budget: Budget) -> str:
     if (not budget_id or any(type(n) is not int or n < 1 for n in
                              (budget.max_calls, budget.context_char_limit, budget.output_limit))
             or type(budget.max_revisions) is not int or not 0 <= budget.max_revisions <= 2
@@ -45,9 +50,26 @@ def create_budget(store: Store, budget_id: str, budget: Budget) -> str:
             raise ValueError('A cost limit requires a known price snapshot')
         _money(budget.max_cost)
     limits = canonical({k: v for k, v in asdict(budget).items() if k not in ('used_calls', 'reserved_calls')})
-    with store.connection:
-        store.connection.execute('INSERT INTO budgets(id,limits_json) VALUES (?,?)', (budget_id, limits))
+    store.connection.execute('INSERT INTO budgets(id,limits_json) VALUES (?,?)', (budget_id, limits))
     return budget_id
+
+
+def extend_budget(store: Store, budget_id: str, max_calls: int | None, max_cost: str | None) -> None:
+    if max_calls is None and max_cost is None:
+        return
+    with store.connection:
+        store.connection.execute('BEGIN IMMEDIATE')
+        row = _budget(store, budget_id)
+        limits = json.loads(row['limits_json'])
+        if max_calls is not None:
+            if type(max_calls) is not int or not limits['max_calls'] <= max_calls <= 2**63 - 1:
+                raise ValueError('New call ceiling must be at least the original ceiling')
+            limits['max_calls'] = max_calls
+        if max_cost is not None:
+            if limits['max_cost'] is None or _money(max_cost) < _money(limits['max_cost']):
+                raise ValueError('A budget extension must raise an existing cost ceiling')
+            limits['max_cost'] = max_cost
+        store.connection.execute('UPDATE budgets SET limits_json=? WHERE id=?', (canonical(limits), budget_id))
 
 
 def _budget(store: Store, budget_id: str) -> sqlite3.Row:
