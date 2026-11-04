@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "cards_file": "cards.json",
+  "sources": [
+    {
+      "path": "02_原版资料/原始资料/资料库.txt",
+      "spans": [
+        {
+          "key": "r5.6",
+          "start_line": 11091,
+          "end_line": 11102,
+          "sha256": "e8615cca6784fc731a5e7f0fdcbee31858b1608551e113fbd154a570a3e05834"
+        },
+        {
+          "key": "r8.1",
+          "start_line": 20229,
+          "end_line": 20240,
+          "sha256": "0de8812c42e7c7d2fcf646ef35b0e294c8412179ca89ac444741b79d6619256a"
+        },
+        {
+          "key": "r106.1-definition",
+          "start_line": 100815,
+          "end_line": 100817,
+          "sha256": "1fecc958a4e892733ba04b22c0f0138833f41d44a3c0c061d4ce728b6b1fe713"
+        },
+        {
+          "key": "r106.1-instruction",
+          "start_line": 100819,
+          "end_line": 100827,
+          "sha256": "201dd2530142473961ff22912ec73a2e877355d1e823d2cbc6572d23a88f2ec2"
+        },
+        {
+          "key": "r106.1-full",
+          "start_line": 100815,
+          "end_line": 100827,
+          "sha256": "f3327d908df0b917138b1a06483d013fc31107d55460ff61b4a4b378af6995f9"
+        },
+        {
+          "key": "r127.5",
+          "start_line": 189728,
+          "end_line": 189740,
+          "sha256": "f5666d1919466b1670c304ec416ec660dcb3ffba6a656ba43c4444e1a3c323dc"
+        },
+        {
+          "key": "r128.4",
+          "start_line": 196024,
+          "end_line": 196033,
+          "sha256": "99c5be83e6eee70b280cb4226ee45dca68570e934674cd908994de14de09ef12"
+        },
+        {
+          "key": "r128.6",
+          "start_line": 196686,
+          "end_line": 196695,
+          "sha256": "b642a5dde5e396942db86512e11f7c5b615f0abb719e0f178f88a5251731f848"
+        }
+      ],
+      "observed_file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+      "normalized_sha256": "3c4ea472a7bdc31d338832221ed09d36b7d8d9256d6927cf5fbcd8f38d804558"
+    },
+    {
+      "path": "03_运行资料/配置/项目创作圣经.json",
+      "spans": [
+        {
+          "key": "char-shen",
+          "start_line": 32,
+          "end_line": 41,
+          "sha256": "91946dac6ab33669f2bf0c5114e3cead0946127609b8cdfe08432fca823a1925"
+        },
+        {
+          "key": "char-lu",
+          "start_line": 42,
+          "end_line": 48,
+          "sha256": "05f88a2a5dcafc91df1b28f09426228e6c0c82ee02de3a89ac82e6395d0e480d"
+        }
+      ],
+      "observed_file_sha256": "fe2accc98e0098c9c3fb8c42be35709d9463793d276e921c9beb44a391dbe791",
+      "normalized_sha256": "9301ed4b0c7ba5dabb6b58dc3dd320b165361386dc6894f9d4955d0bbbba7e21"
+    },
+    {
+      "path": "03_运行资料/配置/首章场景创作简报.json",
+      "spans": [
+        {
+          "key": "scene-01",
+          "start_line": 9,
+          "end_line": 19,
+          "sha256": "0c4355721653d3de32977dde3905dab096e6b4e233e413dc7669cd3ce7f75621"
+        },
+        {
+          "key": "scene-02",
+          "start_line": 20,
+          "end_line": 30,
+          "sha256": "0aa65cb63fb9e90840ebe40650712824a6f1d233fb357fbe5eda45711c244d2c"
+        },
+        {
+          "key": "scene-03",
+          "start_line": 31,
+          "end_line": 41,
+          "sha256": "4b2532a6f96047639260733cbba37390bcb1a159ff1c8581dea8c1b33cb180d9"
+        }
+      ],
+      "observed_file_sha256": "db28866ca084fb7c0fd3cd5594b909a957a376dc20105106bfb684de7109c495",
+      "normalized_sha256": "db28866ca084fb7c0fd3cd5594b909a957a376dc20105106bfb684de7109c495"
+    }
+  ]
+}

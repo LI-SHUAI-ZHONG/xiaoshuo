@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 5
+VERSION = 6
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -140,4 +140,56 @@ PRAGMA user_version=5;
 COMMIT;
 """
 
-MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5}
+MIGRATE_V6 = """
+BEGIN IMMEDIATE;
+CREATE TABLE source_versions(
+ id TEXT PRIMARY KEY, relative_path TEXT NOT NULL, file_sha256 TEXT NOT NULL CHECK(length(file_sha256)=64),
+ byte_size INTEGER NOT NULL CHECK(byte_size>=0), encoding TEXT,
+ status TEXT NOT NULL CHECK(status IN ('READY','NUL','INVALID_ENCODING','EMPTY')),
+ UNIQUE(relative_path,file_sha256));
+CREATE TABLE source_spans(
+ id TEXT PRIMARY KEY, source_id TEXT NOT NULL REFERENCES source_versions(id),
+ start_line INTEGER NOT NULL CHECK(start_line>=1), end_line INTEGER NOT NULL CHECK(end_line>=start_line),
+ span_sha256 TEXT NOT NULL CHECK(length(span_sha256)=64), text TEXT NOT NULL CHECK(length(text)>0),
+ UNIQUE(source_id,start_line,end_line));
+CREATE TRIGGER source_spans_ready BEFORE INSERT ON source_spans
+ WHEN (SELECT status FROM source_versions WHERE id=NEW.source_id) != 'READY'
+ BEGIN SELECT RAISE(ABORT,'quarantined source'); END;
+CREATE TABLE cards(
+ card_id TEXT NOT NULL, version INTEGER NOT NULL CHECK(version>=1),
+ kind TEXT NOT NULL CHECK(kind IN ('world','character','style','taboo','plot','scene','promise',
+                                  'rule','brief','volume','chapter')),
+ origin TEXT NOT NULL CHECK(origin IN ('repository','author','model')),
+ body_json TEXT NOT NULL CHECK(json_valid(body_json) AND json_type(body_json)='object'),
+ source_refs_json TEXT NOT NULL CHECK(json_valid(source_refs_json) AND json_type(source_refs_json)='array'),
+ created_at TEXT NOT NULL, PRIMARY KEY(card_id,version));
+CREATE TRIGGER cards_consecutive BEFORE INSERT ON cards
+ WHEN NEW.version != (SELECT COALESCE(MAX(version),0)+1 FROM cards WHERE card_id=NEW.card_id)
+ BEGIN SELECT RAISE(ABORT,'card versions must be consecutive'); END;
+CREATE TABLE card_decisions(
+ id TEXT PRIMARY KEY, card_id TEXT NOT NULL, version INTEGER NOT NULL,
+ decision TEXT NOT NULL CHECK(decision IN ('trial','approved','disabled')),
+ reason TEXT NOT NULL CHECK(length(trim(reason))>0), created_at TEXT NOT NULL,
+ FOREIGN KEY(card_id,version) REFERENCES cards(card_id,version));
+CREATE INDEX card_decisions_card ON card_decisions(card_id,version);
+CREATE TABLE card_links(
+ id TEXT PRIMARY KEY, from_card_id TEXT NOT NULL, from_version INTEGER NOT NULL,
+ to_card_id TEXT NOT NULL, to_version INTEGER NOT NULL,
+ relation TEXT NOT NULL CHECK(relation IN ('interprets','corrects','contradicts','depends_on','contains','supersedes')),
+ FOREIGN KEY(from_card_id,from_version) REFERENCES cards(card_id,version),
+ FOREIGN KEY(to_card_id,to_version) REFERENCES cards(card_id,version),
+ UNIQUE(from_card_id,from_version,to_card_id,to_version,relation));
+CREATE TABLE plan_applications(
+ proposal_id TEXT PRIMARY KEY REFERENCES task_calls(id), decision_id TEXT NOT NULL REFERENCES card_decisions(id),
+ mapping_json TEXT NOT NULL CHECK(json_valid(mapping_json)));
+""" + ''.join(
+    f"""CREATE TRIGGER {table}_no_{action.lower()} BEFORE {action} ON {table}
+ BEGIN SELECT RAISE(ABORT,'{table} is append-only'); END;
+"""
+    for table in ('source_versions', 'source_spans', 'cards', 'card_decisions', 'card_links')
+    for action in ('UPDATE', 'DELETE')
+) + """PRAGMA user_version=6;
+COMMIT;
+"""
+
+MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6}

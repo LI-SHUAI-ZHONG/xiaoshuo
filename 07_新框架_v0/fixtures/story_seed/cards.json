@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "card_id": "rule-5.6",
+      "kind": "rule",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "number": "5.6",
+        "title": "权力不对称",
+        "role": "method",
+        "original_meaning": "决定权、资源、话语权或信息权在人物间分配不均。",
+        "applies_when": "资源或信息控制确实影响人物选择。",
+        "excludes_when": "本场没有相关制约，或需要为了套用规则硬造反转。",
+        "operation": "用人物能否查看、交出或拒绝材料表现权力差；有转移时安排读者可见的时刻。",
+        "counterexample": "只写她掌握权力，双方的选择毫无变化。",
+        "check": "读者能指出各方控制什么，及这怎样改变选择。",
+        "explanation": "原文调用条件为无；适用与排除条件是本次转译，不强迫每场反转。"
+      },
+      "sources": [
+        "r5.6"
+      ]
+    },
+    {
+      "card_id": "rule-8.1",
+      "kind": "rule",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "number": "8.1",
+        "title": "身体状态",
+        "role": "method",
+        "original_meaning": "身体状态影响行动能力和决策质量。",
+        "applies_when": "伤势、疲劳等已有状态确实影响当前行动或判断。",
+        "excludes_when": "没有状态依据，或状态不会改变行动。",
+        "operation": "通过动作幅度、行动受限或选择成本体现已有状态。",
+        "counterexample": "为了加入呼吸或疼痛描写，凭空给人物添加伤势。",
+        "check": "删掉状态后若人物行为完全不变，应检查是否需要这条规则。",
+        "explanation": "行为表现来自原文；只在有依据时使用是本次转译。"
+      },
+      "sources": [
+        "r8.1"
+      ]
+    },
+    {
+      "card_id": "rule-106.1-definition",
+      "kind": "rule",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "number": "106.1",
+        "title": "文风一致：原定义",
+        "role": "source_definition",
+        "original_meaning": "跨章比较非对白叙述的句式、用词和叙述距离。",
+        "applies_when": "只用作原文定义证据。",
+        "excludes_when": "不能直接当成已确认的作者文风。",
+        "operation": "保留原定义与检查方法，供审阅修正候选时对照。",
+        "counterexample": "把叙述与人物对白混为一谈。",
+        "check": "来源片段包含定义及检查方法。",
+        "explanation": "保留原定义用于查证。"
+      },
+      "sources": [
+        "r106.1-definition"
+      ]
+    },
+    {
+      "card_id": "rule-106.1-instruction",
+      "kind": "rule",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "number": "106.1",
+        "title": "文风一致：冲突指令",
+        "role": "rejected_instruction",
+        "original_meaning": "原指令要求以身体信号呈现全篇语言风格统一。",
+        "applies_when": "只用于查看错译和审阅冲突。",
+        "excludes_when": "不得用于指导正文写作、审稿或角色状态。",
+        "operation": "记录错译指令及其判定、修正描述，关联原定义。",
+        "counterexample": "拿手抖或呼吸判定叙述距离是否一致。",
+        "check": "可分别回查原定义和冲突指令。",
+        "explanation": "身体信号不能度量叙述风格；本记录保留冲突证据。"
+      },
+      "sources": [
+        "r106.1-instruction"
+      ]
+    },
+    {
+      "card_id": "rule-106.1-correction",
+      "kind": "rule",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "number": "106.1",
+        "title": "文风一致：比较叙述方式",
+        "role": "method",
+        "original_meaning": "原定义是核对非对白叙述的句式、用词和叙述距离。",
+        "applies_when": "正文完成后，有作者认可样段或同作品既定叙述基线。",
+        "excludes_when": "人物对白、明确有意的视角变化，或没有可比样段时。",
+        "operation": "标出突兀词汇、叙述距离改变与解释性旁白，并说明是否有叙事理由。",
+        "counterexample": "以身体信号代替比较，或要求所有角色用同一种语言。",
+        "check": "指出具体段落、比较基准和变化是否有理由。",
+        "explanation": "候选纠正：保留叙述检查，移除机器指令对身体信号的错误要求。"
+      },
+      "sources": [
+        "r106.1-full"
+      ]
+    },
+    {
+      "card_id": "rule-127.5",
+      "kind": "rule",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "number": "127.5",
+        "title": "参数到正文表现",
+        "role": "method",
+        "original_meaning": "选用的资料参数应映射到正文表现并在完稿后核验。",
+        "applies_when": "已明确场景或章节任务，正在转译选中的资料。",
+        "excludes_when": "无法映射到任务或缺少来源时。",
+        "operation": "记录参数、可观察的正文表现和检验点；无法映射就登记缺口。",
+        "counterexample": "把尚未映射的参数当成已经发生的情节。",
+        "check": "每条入选参数有可定位的表达和检验点。",
+        "explanation": "原文罗列各板块用途；本次提炼聚焦任务级映射。"
+      },
+      "sources": [
+        "r127.5"
+      ]
+    },
+    {
+      "card_id": "rule-128.4",
+      "kind": "rule",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "number": "128.4",
+        "title": "资料三层筛选",
+        "role": "method",
+        "original_meaning": "由任务功能定位到板块，再精确到必需子项。",
+        "applies_when": "开始为场景或章节挑选辅助资料。",
+        "excludes_when": "作者已经明确资料且当前没有选配问题。",
+        "operation": "先写任务功能，再列候选板块，仅保留当前必需的子项。",
+        "counterexample": "把候选板块全文投入工作包。",
+        "check": "每项入选都能对应一个任务缺口。",
+        "explanation": "该三层只用于资料选择，与人物的三层故事信息分开。"
+      },
+      "sources": [
+        "r128.4"
+      ]
+    },
+    {
+      "card_id": "rule-128.6",
+      "kind": "rule",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "number": "128.6",
+        "title": "精准调用前置问题",
+        "role": "method",
+        "original_meaning": "调用前说明要输出什么、依赖哪些板块、哪些子项不可缺。",
+        "applies_when": "任务明确后，取资料或发起创作前。",
+        "excludes_when": "单纯回读固定来源，或已完成同一输入的筛选。",
+        "operation": "逐项回答三个问题，保留必要资料及不用理由。",
+        "counterexample": "机械凑够三个板块。",
+        "check": "可从任务追溯到每项必要资料。",
+        "explanation": "原文建议三个板块；本次将数量视为建议，避免固定配额。"
+      },
+      "sources": [
+        "r128.6"
+      ]
+    },
+    {
+      "card_id": "chaohen-char-shen",
+      "kind": "character",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "name": "沈砚",
+        "role": "外门弟子，受限第三人称视角",
+        "want": "取得内门晋升资格，换回被宗门扣留的母亲遗物。",
+        "need": "承认真相不能只靠独自查证，也不能把所有守序者都当成敌人。",
+        "wound": "父亲死于一次被定性为修行失控的潮期，自那以后母亲不准他靠近旧域。",
+        "strength": "能从极细微的灵息回声中辨出人为遮掩。",
+        "flaw": "一旦发现规则说谎，便倾向于先取证后求人，容易把盟友推到被动处境。",
+        "voice": "少说判断，多以提问和可复核的细节逼人表态。"
+      },
+      "sources": [
+        "char-shen"
+      ]
+    },
+    {
+      "card_id": "chaohen-char-lu",
+      "kind": "character",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "name": "陆昭",
+        "role": "外门同期，沈砚的室友与竞争者",
+        "want": "按部就班进入内门，为病重的妹妹换取药额。",
+        "relationship": "他相信规则至少能救下眼前的人，因此无法接受沈砚拿晋升资格赌一个尚未证实的真相。",
+        "scene_function": "在检测场主动替沈砚遮挡视线，却要求他不要把自己拖进禁令。"
+      },
+      "sources": [
+        "char-lu"
+      ]
+    },
+    {
+      "card_id": "chaohen-scene-01",
+      "kind": "scene",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "title": "第七息回亮",
+        "goal": "在外门检测场建立沈砚的可复核观察、陆昭的现实顾虑和镇潮阵异常的第一处可见痕迹。",
+        "pov": "待确认",
+        "unknowns": [
+          "本场最终视角与进入条件待设计确认"
+        ]
+      },
+      "sources": [
+        "scene-01"
+      ]
+    },
+    {
+      "card_id": "chaohen-scene-02",
+      "kind": "scene",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "title": "档案廊的缺页",
+        "goal": "让沈砚在档案廊以问题逼许照微表态，并取得一份只能证明异常存在、尚不能解释真相的缺页。",
+        "pov": "待确认",
+        "unknowns": [
+          "本场最终视角与进入条件待设计确认"
+        ]
+      },
+      "sources": [
+        "scene-02"
+      ]
+    },
+    {
+      "card_id": "chaohen-scene-03",
+      "kind": "scene",
+      "status": "proposal",
+      "origin": "repository",
+      "body": {
+        "title": "退路变窄",
+        "goal": "让沈砚决定保留异常证据而非交回，陆昭因此承担可见风险，并以晋升资格受损作为章末不可逆代价。",
+        "pov": "待确认",
+        "unknowns": [
+          "本场最终视角与进入条件待设计确认"
+        ]
+      },
+      "sources": [
+        "scene-03"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "from": "rule-106.1-correction",
+      "to": "rule-106.1-definition",
+      "relation": "interprets"
+    },
+    {
+      "from": "rule-106.1-correction",
+      "to": "rule-106.1-instruction",
+      "relation": "corrects"
+    },
+    {
+      "from": "rule-106.1-instruction",
+      "to": "rule-106.1-definition",
+      "relation": "contradicts"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # 新框架 v0
 
 独立的小说写作命令行骨架，施工规则见 AGENTS.md，设计与验收见 Codex总指令与里程碑.md。
-M0–M4 已验收：本地项目存储、模型适配器、六节点流程、可注册上下文与持久 A/B 盲测。M5 的项目级模型任务、预算和 v5 迁移见 [M5 验收记录](docs/M5-验收记录.md)。
+M0–M4 已验收：本地项目存储、模型适配器、六节点流程、可注册上下文与持久 A/B 盲测。M5 的项目级模型任务与预算见 [M5 验收记录](docs/M5-验收记录.md)；M6 的真实源段、卡片版本和确认历史见 [M6 验收记录](docs/M6-验收记录.md)。
 
 ## 安装、运行与测试（Windows PowerShell）
 
@@ -22,7 +22,7 @@ python -m venv .venv
 ## 目录与配置
 
 - `src/nw/`：Python 包和 CLI；`llm/` 提供三种适配器；`flow/` 实现六节点与恢复；`context/` 提供上下文包；`experiments/ab.py` 实现盲测。
-- `src/nw/models.py`：B2 数据类；`schema.py`、`migrations.py`：逐级迁移到 v5；`store.py`：SQLite 与接受正文导出。
+- `src/nw/models.py`：B2 数据类；`schema.py`、`migrations.py`：逐级迁移到 v6；`store.py`：SQLite 与接受正文导出。
 - `tests/`：导入、存储与独立 CLI 进程测试；`fixtures/`：包含最小示例与六条手工规则。
 - `workspace/`：运行数据目录，已忽略上传，每个项目使用 `<project>/nw.db`，已接受正文导出到 `<project>/正文/ch01_s01.md`。
 - `config.example.toml`：模型和路径配置示例；复制为 config.toml 后填写真实模型。密钥只读环境变量，配置文件不允许 api_key 字段。
@@ -34,6 +34,12 @@ python -m venv .venv
 
 旧库第一次打开会逐级升级，并在项目目录旁于每步升级前生成一份经完整性检查的 SQLite 备份。未知调用会保留预算；确认重试后要用新调用 ID、递增 attempt 并设置 retry_of。旧场景流程仍通过原来的 `flow resume --retry-failed` 显式重试。
 
+
+## M6 来源与卡片
+
+`fixtures/story_seed/manifest.json` 登记首批资料的相对路径、行号及 SHA-256，`cards.json` 保存候选转译和关系。用 `nw.sources.import_seed_cards(store, manifest_path, root=repo_root)` 导入；只导入方法及来源记录时用 `import_rule_cards`。后者也接收明确标记 `origin="author"` 的原创规则候选。
+
+`read_source_version` 和 `read_span` 可回查定位和原文；`nw.cards.read_card`、`decision_history`、`read_decision` 和 `read_links` 可检查指定版本和历史。卡片默认是待审候选，`decide_card` 记录显式决定。编辑卡片时以当前版本作 `expected_version`，将新内容以 `proposal` 提交；原决定归旧版本。导入种子不会创建传统场景、草稿或已接受正文。
 
 ## M1 使用示例（PowerShell）
 
