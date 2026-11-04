@@ -51,10 +51,21 @@ def dispatch(store: Store, args: argparse.Namespace) -> Any:
     if args.command == 'ab':
         experiment = Experiment(store)
         if args.action == 'start':
+            if store.managed_story():
+                budget = novel_cli.read_budget_file(args.budget)
+                if budget is None:
+                    raise ValueError('BUDGET_REQUIRED: story A/B requires --budget')
+                if args.a != 'minimal' or args.b != 'rules_pack':
+                    raise ValueError('Story A/B compares no methods and selected methods')
+                return experiment.start_story(
+                    args.scene, args.provider_instance, args.settings.model, args.settings.params, budget=budget,
+                    scope=novel_cli.read_scope_file(args.story_input), branch=args.branch, seed=args.seed)
+            if args.budget is not None or args.story_input is not None or args.branch != 'main':
+                raise ValueError('Story A/B scope and budget require story adoption')
             return experiment.start(args.scene, args.provider_instance, args.settings.model, args.settings.params,
                                     a=args.a, b=args.b, seed=args.seed)
         if args.action == 'choose':
-            return experiment.choose(args.choice, args.experiment)
+            return experiment.choose(args.choice, args.experiment, reason=args.reason)
         if args.action == 'show':
             return experiment.view(args.experiment)
         return experiment.reveal(args.experiment)
@@ -116,12 +127,16 @@ def main(argv: list[str] | None = None) -> int:
     start.add_argument('--a', default='minimal')
     start.add_argument('--b', default='rules_pack')
     start.add_argument('--seed', type=int)
+    start.add_argument('--budget', type=Path)
+    start.add_argument('--branch', default='main')
+    start.add_argument('--story-input', type=Path)
     start.add_argument('--provider', choices=['ollama', 'openai_compat'])
     for action in ('choose', 'reveal', 'show'):
         command = ab.add_parser(action)
         command.add_argument('--experiment', help='defaults to latest experiment')
         if action == 'choose':
             command.add_argument('choice', type=int, choices=[1, 2])
+            command.add_argument('--reason', help='reason for the blind choice in a story project')
     review = commands.add_parser('review')
     review.add_argument('--draft', required=True)
     review.add_argument('--budget', type=Path)
@@ -195,8 +210,10 @@ def main(argv: list[str] | None = None) -> int:
             settings = settings or load_config(args.config)
         with Store(directory, create=args.command == 'init') as store:
             if legacy_model and store.managed_story():
-                if args.command in ('flow', 'ab'):
+                if args.command == 'flow':
                     raise ValueError('MANAGED_STORY: use story commands for this project')
+                if args.command == 'ab' and args.budget is None:
+                    raise ValueError('BUDGET_REQUIRED: story A/B requires --budget')
                 if args.command == 'write' and args.story_input is None:
                     from nw.context.story import scene_scope
                     scene_scope(store, args.scene, args.branch)

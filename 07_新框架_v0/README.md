@@ -116,6 +116,24 @@ $nwPython = '.\.venv\Scripts\python.exe'
 
 见 [M9 验收记录](docs/M9-验收记录.md)。
 
+## M10 托管场景盲测
+
+先通过 `story context` 确认场景能装配，且有已试用或批准的方法卡命中。托管盲测只装配一次工作包，两组共用作者需求、设定、故事时间、前文证据和模型参数。系统从其中一组移除方法卡，再冻结两组输入。预算文件至少留两次调用。
+
+```powershell
+$nwPython = '.\.venv\Scripts\python.exe'
+& $nwPython -m nw --project demo ab start --scene SCENE_ID --budget budget.json
+& $nwPython -m nw --project demo ab show --experiment EXPERIMENT_ID
+& $nwPython -m nw --project demo ab choose 1 --experiment EXPERIMENT_ID --reason '人物选择和代价更清楚'
+& $nwPython -m nw --project demo ab reveal --experiment EXPERIMENT_ID
+```
+
+- 用实际场景和实验 ID 替换大写占位符。可用 `--branch NAME` 选择托管分支。旧托管场景可传 `--story-input PATH` 绑定工作包范围。
+- 作者先看编号正文并记录选择及理由。揭晓返回编号映射、共同基础摘要、方法卡版本与预算 ID。两组都完成后才开放选择。中断后可用 `ab show` 查看结果，已经发生的调用与原始记录可回查。
+- 实验选择只写入盲测记录。选中的候选稿可单独审阅，若要进入作品，仍须按 M7 核对当前证据并明确接受。
+
+M10 的工程和真实创作分别验收。用例、操作记录和待评项目见 [小说创作验收](docs/小说创作验收.md)。
+
 ## M1 使用示例（PowerShell）
 
 在本目录运行。`--project` 是单个目录名；`--workspace` 可省略，默认固定为本框架目录下的 workspace，不随当前工作目录改变。全局选项放在子命令之前。

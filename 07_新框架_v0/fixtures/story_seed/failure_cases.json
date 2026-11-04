@@ -1,0 +1,17 @@
+
+[
+  {
+    "id": "false_speech",
+    "text": "陆昭骗沈砚说守井人已经死了。沈砚只听见了这句话。",
+    "claim": "utterance",
+    "value": "守井人已经死了",
+    "finding": "UTTERANCE_NOT_WORLD_FACT"
+  },
+  {
+    "id": "future_plan",
+    "text": "沈砚打算明晚交出钥匙。眼下钥匙仍在他手里。",
+    "claim": "plan",
+    "value": "明晚交出钥匙",
+    "finding": "FUTURE_PLAN_NOT_WORLD_FACT"
+  }
+]

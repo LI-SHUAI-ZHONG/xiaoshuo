@@ -92,3 +92,109 @@ def test_v3_migrates_without_losing_flow(tmp_path: Path) -> None:
         assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 8
         assert store.connection.execute("SELECT output_json FROM flow_nodes").fetchone()[0] == '{"old":true}'
         assert store.connection.execute('SELECT COUNT(*) FROM ab_experiments').fetchone()[0] == 0
+
+
+def test_ab_diff_is_only_rule_condition(tmp_path: Path) -> None:
+    from nw.task_models import Budget, content_sha256
+    from nw.tasks import read_input_manifest
+    from test_novel_flow import setup_story
+    from test_selection import method
+
+    with Store(tmp_path, create=True, test_mode=True) as store:
+        [scene] = setup_story(store, 1)
+        rule = method(store, 'investigate')
+        provider = FakeProvider()
+        result = Experiment(store).start_story(scene, provider, 'm', {'seed': 123},
+                                               budget=Budget(2, 45000, 1000), seed=42)
+        assert result['status'] == 'READY' and 'comparison' not in result
+        assert 'investigate' not in json.dumps(result, ensure_ascii=False)
+        with pytest.raises(ValueError, match='reason'):
+            Experiment(store).choose(1, result['experiment_id'])
+        Experiment(store).choose(1, result['experiment_id'], reason='行动线索更清楚')
+        revealed = Experiment(store).reveal(result['experiment_id'])
+        by_arm = {arm['provider']: store.get('run', arm['run_id']) for arm in revealed['mapping'].values()}
+        plain, methods = by_arm['no_methods'], by_arm['selected_methods']
+        plain_input, selected_input = [json.loads(run.input_snapshot_json) for run in (plain, methods)]
+        assert plain_input['messages'][0] == selected_input['messages'][0]
+        assert json.loads(plain.params_json) == json.loads(methods.params_json)
+        base, with_methods = [json.loads(item['messages'][1]['content']) for item in (plain_input, selected_input)]
+        assert base['items'] == [row for row in with_methods['items'] if not row['source'].startswith('rule:')]
+        assert [row['source'] for row in with_methods['items'] if row['source'].startswith('rule:')] == ['rule:investigate']
+        a, _ = read_input_manifest(store, plain_input['manifest_id'])
+        b, _ = read_input_manifest(store, selected_input['manifest_id'])
+        assert all(a[field] == b[field] for field in ('brief_ref', 'branch_id', 'state_revision', 'story_order',
+                                                     'disclosure_order', 'predecessor_drafts', 'settings'))
+        assert revealed['comparison']['base_sha256'] == content_sha256(base)
+        assert revealed['comparison']['method_refs'] == [{'card_id': rule.card_id, 'version': rule.version}]
+        assert revealed['choice_reason'] == '行动线索更清楚'
+        assert not store.list('accepted')
+    with Store(tmp_path, test_mode=True) as store:
+        assert Experiment(store).reveal(result['experiment_id']) == revealed
+
+
+def test_managed_ab_refuses_empty_or_unfunded_comparison(tmp_path: Path) -> None:
+    from nw.task_models import Budget
+    from test_novel_flow import setup_story
+    from test_selection import method
+
+    with Store(tmp_path, create=True, test_mode=True) as store:
+        [scene] = setup_story(store, 1)
+        provider = FakeProvider()
+        ab = Experiment(store)
+        with pytest.raises(ValueError, match='eligible method'):
+            ab.start_story(scene, provider, 'm', {}, budget=Budget(2, 45000, 1000))
+        method(store, 'investigate')
+        with pytest.raises(ValueError, match='two calls'):
+            ab.start_story(scene, provider, 'm', {}, budget=Budget(1, 45000, 1000))
+        assert not provider.calls and not store.list('run')
+
+
+def test_story_ab_interrupted_pair_recovers_without_new_calls(tmp_path: Path) -> None:
+    from nw.call_budget import read_budget
+    from nw.task_models import Budget
+    from test_novel_flow import setup_story
+    from test_selection import method
+
+    class Interrupted(FakeProvider):
+        def generate(self, messages, **params):
+            if self.calls:
+                raise KeyboardInterrupt()
+            return super().generate(messages, **params)
+
+    provider = Interrupted()
+    with Store(tmp_path, create=True, test_mode=True) as store:
+        [scene] = setup_story(store, 1)
+        method(store, 'investigate')
+        ab = Experiment(store)
+        with pytest.raises(KeyboardInterrupt):
+            ab.start_story(scene, provider, 'm', {}, budget=Budget(2, 45000, 1000), seed=12)
+        assert ab.record()['status'] == 'IN_PROGRESS'
+    with Store(tmp_path, test_mode=True) as store:
+        ab = Experiment(store)
+        assert ab.view()['status'] == 'BLOCKED'
+        assert ab.view()['status'] == 'BLOCKED'
+        assert len(provider.calls) == 1 and len(store.list('run')) == 2
+        budget = read_budget(store, ab.record()['comparison']['budget_id'])
+        assert budget.used_calls == budget.reserved_calls == 1
+        with pytest.raises(ValueError, match='complete'):
+            ab.choose(1, reason='不足以比较')
+
+
+def test_story_ab_draft_retains_story_time_and_is_not_an_automatic_revision_source(tmp_path: Path) -> None:
+    from nw.story_extract import freeze_delta_input
+    from nw.task_models import Budget
+    from test_novel_flow import job, setup_story
+    from test_selection import method
+
+    with Store(tmp_path, create=True, test_mode=True) as store:
+        [scene] = setup_story(store, 1)
+        method(store, 'investigate')
+        Experiment(store).start_story(scene, FakeProvider(), 'm', {}, budget=Budget(2, 45000, 1000))
+        with pytest.raises(ValueError, match='complete source draft'):
+            job(store, [scene], mode='revise')
+        draft = store.drafts(scene)[0]
+        settings = {'provider': 'author', 'model': 'manual', 'params': {}, 'prompt_version': 'manual-state-v1',
+                    'base_url': None, 'timeout': None, 'stream': False}
+        with pytest.raises(ValueError, match='story time'):
+            freeze_delta_input(store, draft.id, {'id': 'wrong', 'branch_id': 'main', 'base_revision': 0,
+                                                'story_order': 99}, settings)

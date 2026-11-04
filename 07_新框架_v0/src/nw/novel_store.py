@@ -117,7 +117,8 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
                     for candidate in reversed(store.drafts(scene)):
                         frozen = story_write_manifest(store, candidate)
                         if (candidate.status != 'complete' or frozen is None
-                                or frozen['branch_id'] != head.branch_id):
+                                or frozen['branch_id'] != head.branch_id
+                                or frozen['settings']['prompt_version'] == 'story-ab-v1'):
                             continue
                         owner = frozen.get('novel_job_id')
                         if owner and job_row(store, owner)['status'] != 'BLOCKED':

@@ -48,7 +48,7 @@ def story_write_manifest(store: Store, draft: Draft) -> dict | None:
     if ident is None:
         return None
     manifest, package = read_input_manifest(store, ident)
-    if manifest['settings']['prompt_version'] not in ('story-write-v1', 'novel-revise-v1'):
+    if manifest['settings']['prompt_version'] not in ('story-write-v1', 'novel-revise-v1', 'story-ab-v1'):
         return None
     if (manifest['purpose'] != run.kind or run.kind not in ('write', 'revise')
             or canonical(package) != canonical(json.loads(run.context_package_json))):
