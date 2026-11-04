@@ -14,6 +14,7 @@ from nw.config import ConfigRequired, ROOT, load_config, make_provider
 from nw.generation import write_scene, review_draft
 from nw.flow.engine import FlowEngine
 from nw.experiments.ab import Experiment
+from nw import novel_cli
 
 
 def decide_interactively(node: str, payload: dict) -> str:
@@ -45,6 +46,8 @@ def dispatch(store: Store, args: argparse.Namespace) -> Any:
     if args.command == 'init':
         return store.init_project(args.name)
     store.project()
+    if args.command in ('story', 'cards') or args.command == 'accept' and args.batch is not None:
+        return novel_cli.dispatch(store, args)
     if args.command == 'ab':
         experiment = Experiment(store)
         if args.action == 'start':
@@ -96,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
     """Execute a storage command and print UTF-8 compatible JSON records."""
     parser = argparse.ArgumentParser(
         prog="python -m nw",
-        description="Novel-writing framework v0 (M4 context and A/B).",
+        description="Novel-writing framework v0 (story state, context and A/B).",
         epilog="fake is available only through the isolated automated test API.",
     )
     parser.add_argument('--workspace', type=Path)
@@ -134,7 +137,13 @@ def main(argv: list[str] | None = None) -> int:
     write.add_argument('--context', default='minimal')
     write.add_argument('--provider', choices=['ollama', 'openai_compat'])
     accept = commands.add_parser('accept')
-    accept.add_argument('--draft', required=True)
+    accept_target = accept.add_mutually_exclusive_group(required=True)
+    accept_target.add_argument('--draft')
+    accept_target.add_argument('--batch', type=Path)
+    accept.add_argument('--branch', default='main')
+    accept.add_argument('--expected-head', type=int)
+    accept.add_argument('--commit-id')
+    novel_cli.register_commands(commands)
     commands.add_parser('runs')
     init = commands.add_parser('init', help='create a project')
     init.add_argument('--name', required=True)
@@ -166,15 +175,22 @@ def main(argv: list[str] | None = None) -> int:
         parser.error('--project is required')
     try:
         settings = None
-        needs_model = args.command in ('write', 'review', 'flow') or (args.command == 'ab' and args.action == 'start')
-        if needs_model or args.config.exists():
+        legacy_model = args.command in ('write', 'review', 'flow') or (args.command == 'ab' and args.action == 'start')
+        needs_model = legacy_model or (args.command == 'story' and args.action == 'extract')
+        if args.workspace is None and args.config.exists():
             settings = load_config(args.config)
-        if needs_model:
-            args.settings = settings
-            args.provider_instance = make_provider(settings, args.provider)
         args.workspace = args.workspace or (settings.workspace if settings else ROOT / 'workspace')
         directory = project_directory(args.workspace, args.project)
+        if needs_model and not (directory / 'nw.db').is_file():
+            settings = settings or load_config(args.config)
         with Store(directory, create=args.command == 'init') as store:
+            if legacy_model and store.managed_story():
+                if args.command == 'flow':
+                    raise ValueError('MANAGED_STORY: use story commands for this project')
+                raise ValueError('CONTEXT_PROVIDER_REQUIRED: managed writing and review need story context')
+            if needs_model:
+                args.settings = settings or load_config(args.config)
+                args.provider_instance = make_provider(args.settings, args.provider)
             result = dispatch(store, args)
         def serialize(item: Any) -> Any:
             return item if isinstance(item, dict) else asdict(item)

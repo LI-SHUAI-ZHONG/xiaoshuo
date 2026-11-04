@@ -66,10 +66,11 @@ class InputManifest:
     branch_id: str | None = None
     state_revision: int | None = None
     story_order: int | None = None
-    disclosure_order: int | None = None
+    disclosure_order: int | tuple[int, int, int] | None = None
     predecessor_drafts: tuple[Ref, ...] = ()
     candidate_delta_refs: tuple[tuple[str, str], ...] = ()
     candidate_projection_sha256: str | None = None
+    dependency_refs: tuple[Ref, ...] = ()
 
 
 @dataclass(frozen=True)

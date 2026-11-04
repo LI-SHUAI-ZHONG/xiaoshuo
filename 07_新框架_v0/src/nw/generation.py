@@ -104,6 +104,8 @@ def _new_run(store: Store, scene_id: str, provider: LLMProvider, model: str, par
               encode(context), '', 'error', '{}', now(), '')
     with store.connection:
         store.connection.execute('BEGIN IMMEDIATE')
+        if store.managed_story():
+            raise ValueError('CONTEXT_PROVIDER_REQUIRED: managed writing and review need story context')
         hold = _reserve(store, budget_id, 'run', run_id, estimate)
         if hold is None:
             raise ValueError('Run call is already reserved')

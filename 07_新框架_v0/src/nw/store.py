@@ -97,8 +97,12 @@ class Store:
     def add_brief(self, text: str, constraints: str = '') -> m.Brief:
         with self.connection:
             self.connection.execute('BEGIN IMMEDIATE')
-            version = len(self.briefs()) + 1
-            return self._insert('brief', m.Brief(self.project().id, text, constraints, version))
+            prior = self.briefs()
+            project_id = self.project().id
+            if self.managed_story() and prior:
+                from nw.story_dependencies import invalidate_input, legacy_ref
+                invalidate_input(self, legacy_ref('brief', project_id, prior[-1]))
+            return self._insert('brief', m.Brief(project_id, text, constraints, len(prior) + 1))
 
     def briefs(self) -> list[m.Brief]:
         return self.list('brief')
@@ -106,7 +110,12 @@ class Store:
     def add_bible(self, kind: str, name: str, body: str) -> m.BibleEntry:
         with self.connection:
             self.connection.execute('BEGIN IMMEDIATE')
-            version = 1 + max((b.version for b in self.bible() if b.kind == kind and b.name == name), default=0)
+            versions = [b for b in self.bible() if b.kind == kind and b.name == name]
+            previous = max(versions, key=lambda b: b.version, default=None)
+            if self.managed_story() and previous is not None:
+                from nw.story_dependencies import invalidate_input, legacy_ref
+                invalidate_input(self, legacy_ref('bible', json.dumps([kind, name], ensure_ascii=False), previous))
+            version = 1 if previous is None else previous.version + 1
             return self._insert('bible', m.BibleEntry(self.project().id, kind, name, body, version))
 
     def bible(self) -> list[m.BibleEntry]:
@@ -114,13 +123,22 @@ class Store:
 
     def add_chapter(self, index: int, title: str) -> m.Chapter:
         with self.connection:
+            self.connection.execute('BEGIN IMMEDIATE')
+            self._invalidate_outline()
             return self._insert('chapter', m.Chapter(uuid4().hex, self.project().id, index, title))
 
     def add_scene(self, chapter_id: str, index: int, card_json: str) -> m.Scene:
         if not isinstance(json.loads(card_json), dict):
             raise ValueError('Scene card must be a JSON object')
         with self.connection:
+            self.connection.execute('BEGIN IMMEDIATE')
+            self._invalidate_outline()
             return self._insert('scene', m.Scene(uuid4().hex, chapter_id, index, card_json))
+
+    def _invalidate_outline(self) -> None:
+        if self.managed_story():
+            from nw.story_dependencies import invalidate_input, outline_ref
+            invalidate_input(self, outline_ref(self))
 
     def add_run(self, run: m.Run) -> m.Run:
         with self.connection:
@@ -183,30 +201,58 @@ class Store:
         if not path.exists() or path.read_text(encoding='utf-8') != draft.text:
             path.write_text(draft.text, encoding='utf-8', newline='')
 
-    def accept(self, draft_id: str) -> m.Accepted:
-        # Commit the authoritative pointer before publishing any text file.
-        # This prevents failed COMMIT from leaving never-accepted prose behind.
-        with self.connection:
-            self.connection.execute('BEGIN IMMEDIATE')
-            draft = self.get('draft', draft_id)
-            run = self.get('run', draft.run_id)
-            if run.provider == 'fake' and not self.test_mode:
-                raise ValueError('fake output may be accepted only in isolated test stores')
-            if draft.status != 'complete' or run.finish_reason != 'complete':
-                raise ValueError('Acceptance requires complete draft and run')
-            self._export_path(draft).parent.mkdir(parents=True, exist_ok=True)
-            accepted = m.Accepted(draft.scene_id, draft.id, now())
-            self.connection.execute(
-                'INSERT INTO accepted VALUES (?,?,?) ON CONFLICT(scene_id) DO UPDATE '
-                'SET draft_id=excluded.draft_id, accepted_at=excluded.accepted_at', astuple(accepted))
+    def managed_story(self) -> bool:
+        return self.connection.execute("SELECT 1 FROM story_branches WHERE id='main' AND enabled=1").fetchone() is not None
+
+    def check_legacy_flow(self, scene_id: str) -> None:
+        if self.managed_story():
+            raise ValueError('MANAGED_STORY: use story commands for this project')
+        if self.connection.execute("""
+            SELECT 1 FROM story_decisions WHERE action='abandon' AND json_extract(targets_json,'$.scene_id')=?
+        """, (scene_id,)).fetchone():
+            raise ValueError('Legacy flow was explicitly abandoned')
+
+    def _check_acceptable(self, draft_id: str) -> m.Draft:
+        draft = self.get('draft', draft_id)
+        run = self.get('run', draft.run_id)
+        if run.provider == 'fake' and not self.test_mode:
+            raise ValueError('fake output may be accepted only in isolated test stores')
+        if draft.status != 'complete' or run.finish_reason != 'complete':
+            raise ValueError('Acceptance requires complete draft and run')
+        return draft
+
+    def _accept_in_transaction(self, draft_id: str) -> m.Accepted:
+        draft = self._check_acceptable(draft_id)
+        accepted = m.Accepted(draft.scene_id, draft.id, now())
+        self.connection.execute(
+            'INSERT INTO accepted VALUES (?,?,?) ON CONFLICT(scene_id) DO UPDATE '
+            'SET draft_id=excluded.draft_id, accepted_at=excluded.accepted_at', astuple(accepted))
+        return accepted
+
+    def _export_accepted(self, scene_ids: list[str]) -> None:
+        if not scene_ids:
+            return
         try:
             with self.connection:
                 self.connection.execute('BEGIN IMMEDIATE')
-                # Another process may have accepted a newer version meanwhile.
-                current = self.accepted(draft.scene_id)
-                self._export(self.get('draft', current.draft_id))
+                for scene_id in scene_ids:
+                    # Another process may have accepted a newer version meanwhile.
+                    current = self.accepted(scene_id)
+                    self._export(self.get('draft', current.draft_id))
         except (OSError, sqlite3.Error) as exc:
-            raise OSError('Acceptance recorded in SQLite; export failed. Reopen project to retry.') from exc
+            raise OSError('Acceptance recorded and committed in SQLite; export failed. Reopen project to retry.') from exc
+
+    def accept(self, draft_id: str, *, legacy_flow_scene: str | None = None) -> m.Accepted:
+        with self.connection:
+            self.connection.execute('BEGIN IMMEDIATE')
+            if legacy_flow_scene is not None:
+                self.check_legacy_flow(legacy_flow_scene)
+            if self.managed_story():
+                raise ValueError('DELTA_REQUIRED: accept reviewed prose with accept --batch')
+            # The traditional command treats a blocked destination directory as a preflight failure.
+            self._export_path(self._check_acceptable(draft_id)).parent.mkdir(parents=True, exist_ok=True)
+            accepted = self._accept_in_transaction(draft_id)
+        self._export_accepted([accepted.scene_id])
         return accepted
 
     def add_note(self, scene_id: str, kind: str, text: str) -> m.StateNote:

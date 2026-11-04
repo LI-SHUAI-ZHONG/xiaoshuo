@@ -89,6 +89,6 @@ def test_v3_migrates_without_losing_flow(tmp_path: Path) -> None:
     connection.close()
     with Store(directory) as store:
         assert store.project().name == '旧项目'
-        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 6
+        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 7
         assert store.connection.execute("SELECT output_json FROM flow_nodes").fetchone()[0] == '{"old":true}'
         assert store.connection.execute('SELECT COUNT(*) FROM ab_experiments').fetchone()[0] == 0

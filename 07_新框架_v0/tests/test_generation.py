@@ -96,7 +96,7 @@ def test_version_one_database_migrates_without_losing_data(tmp_path: Path) -> No
     connection.close()
     with Store(directory) as store:
         assert store.project().name == '旧项目'
-        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 6
+        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 7
 
 
 def test_test_mode_cannot_target_projects(tmp_path: Path) -> None:

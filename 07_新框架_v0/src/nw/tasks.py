@@ -4,6 +4,7 @@ import json
 import math
 import sqlite3
 from urllib.parse import urlsplit
+from typing import Callable
 
 from nw.call_budget import (BudgetExceeded, _reserve, _settle, create_budget, finish_reservation,
                             prepare_call, read_budget, reservation, reserve_call)
@@ -42,6 +43,11 @@ def _check_settings(settings: dict) -> None:
             raise ValueError('Invalid manifest model settings endpoint')
 
 
+def _disclosure_position(value: object) -> bool:
+    return (type(value) is int or isinstance(value, (tuple, list)) and len(value) == 3
+            and all(type(part) is int and part >= 0 for part in value))
+
+
 def _insert_manifest(store: Store, inputs: InputManifest, package: dict, *, legacy: bool = False) -> str:
     if (not inputs.id or inputs.schema_version != 1 or
             inputs.purpose not in TASK_KINDS | {'write', 'review', 'revise'} or not isinstance(package, dict)):
@@ -51,7 +57,8 @@ def _insert_manifest(store: Store, inputs: InputManifest, package: dict, *, lega
     if (any(v is not None for v in scoped) or
             (not legacy and inputs.purpose not in ('plan', 'rule_extract'))):
         if (not isinstance(inputs.branch_id, str) or not inputs.branch_id or
-                any(type(v) is not int for v in scoped[1:]) or inputs.state_revision < 0):
+                type(inputs.state_revision) is not int or inputs.state_revision < 0 or
+                type(inputs.story_order) is not int or not _disclosure_position(inputs.disclosure_order)):
             raise ValueError('Input manifest requires complete story scope: branch, revision and both orders')
     if inputs.context_sha256 != content_sha256(package):
         raise ValueError('Input manifest context hash mismatch')
@@ -135,7 +142,8 @@ def _check_request(store: Store, request: TaskRequest) -> None:
         raise ValueError('Invalid project task request')
 
 
-def run_task(store: Store, request: TaskRequest, provider: LLMProvider, config: Config) -> TaskResult:
+def run_task(store: Store, request: TaskRequest, provider: LLMProvider, config: Config, *,
+             validate: Callable[[dict], None] | None = None) -> TaskResult:
     _check_request(store, request)
     check_test_provider(store, provider)
     parent = _task(store, request.retry_of) if request.retry_of is not None else None
@@ -155,11 +163,11 @@ def run_task(store: Store, request: TaskRequest, provider: LLMProvider, config: 
             return TaskResult(request.id, 'RUNNING')
         if parent is not None:
             _check_retry(store, request, _task(store, parent['id']))
-        return _start_task(store, request, request_json, root, provider, config)
+        return _start_task(store, request, request_json, root, provider, config, validate)
 
 
 def _start_task(store: Store, request: TaskRequest, request_json: str, root: str,
-                provider: LLMProvider, config: Config) -> TaskResult:
+                provider: LLMProvider, config: Config, validate: Callable[[dict], None] | None) -> TaskResult:
     manifest, _ = read_input_manifest(store, request.manifest_id)
     messages = json.loads(request_json)['payload'].get('messages')
     if (not isinstance(messages, list) or not messages or
@@ -193,8 +201,11 @@ def _start_task(store: Store, request: TaskRequest, request_json: str, root: str
     if result.finish_reason == 'complete':
         try:
             parsed = validate_task_output(request.kind, result.text)
+            if validate is not None:
+                validate(parsed)
             validation = 'VALID'
         except (ValueError, RecursionError):
+            parsed = None
             validation, reason = 'INVALID', 'INVALID_STRUCTURED_OUTPUT'
     elif status == 'UNKNOWN':
         reason = 'PROVIDER_OUTCOME_UNKNOWN'

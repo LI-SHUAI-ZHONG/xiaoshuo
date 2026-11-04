@@ -17,12 +17,12 @@ python -m venv .venv
 ```
 
 仓库位置不同时只修改第一行路径。虚拟环境激活后，对应命令就是 `python -m nw --help` 和 `python -m pytest`。
-预期：帮助显示 M4 context and A/B，pytest 全部通过。裸运行 `python -m nw` 也显示帮助。
+预期帮助显示 story、cards 和现有命令，pytest 全部通过。裸运行 `python -m nw` 也显示帮助。
 
 ## 目录与配置
 
 - `src/nw/`：Python 包和 CLI；`llm/` 提供三种适配器；`flow/` 实现六节点与恢复；`context/` 提供上下文包；`experiments/ab.py` 实现盲测。
-- `src/nw/models.py`：B2 数据类；`schema.py`、`migrations.py`：逐级迁移到 v6；`store.py`：SQLite 与接受正文导出。
+- `src/nw/models.py`：B2 数据类；`schema.py`、`migrations.py`：逐级迁移到 v7；`store.py`：SQLite 与接受正文导出。
 - `tests/`：导入、存储与独立 CLI 进程测试；`fixtures/`：包含最小示例与六条手工规则。
 - `workspace/`：运行数据目录，已忽略上传，每个项目使用 `<project>/nw.db`，已接受正文导出到 `<project>/正文/ch01_s01.md`。
 - `config.example.toml`：模型和路径配置示例；复制为 config.toml 后填写真实模型。密钥只读环境变量，配置文件不允许 api_key 字段。
@@ -40,6 +40,21 @@ python -m venv .venv
 `fixtures/story_seed/manifest.json` 登记首批资料的相对路径、行号及 SHA-256，`cards.json` 保存候选转译和关系。用 `nw.sources.import_seed_cards(store, manifest_path, root=repo_root)` 导入；只导入方法及来源记录时用 `import_rule_cards`。后者也接收明确标记 `origin="author"` 的原创规则候选。
 
 `read_source_version` 和 `read_span` 可回查定位和原文；`nw.cards.read_card`、`decision_history`、`read_decision` 和 `read_links` 可检查指定版本和历史。卡片默认是待审候选，`decide_card` 记录显式决定。编辑卡片时以当前版本作 `expected_version`，将新内容以 `proposal` 提交；原决定归旧版本。导入种子不会创建传统场景、草稿或已接受正文。
+
+## M7 接入并审阅已有稿件
+
+`story adopt --baseline PATH` 由作者显式切换项目。文件包含 `expected_accepted`（场景 ID 到已接受草稿 ID 的映射）、`baseline` 和 `baseline_sha256`。用 `show accepted` 查看现有映射。基线字段为 `as_of_story_order`、`disclosure_order`（三段整数）、`coverage`（`entities` 和 `predicates` 两个列表）、`facts` 和 `card_refs`。若采用某张基础卡，须填写 `card_id`、`version` 和批准的 `decision_id`。基线摘要用 `nw.task_models.content_sha256(baseline)` 计算。旧流程需要先完成，或通过 `story decide` 记录 `abandon`，目标写明 `scene_id` 或未结束的 `run_id`。
+
+接入后，用 `story show --branch main --revision 0 --time 0 --holder WORLD` 查世界事实。查人物时将 holder 换成稳定人物 ID。查读者时用 `--holder READER --disclosure 1,1,0`，章和场沿用既有编号，末位为从零开始的披露段落。用 `cards import --file PATH` 导入候选卡，`cards show --id ID --version N` 查看引用及决定历史。
+
+接受稿件时依次执行：
+
+1. `story extract --draft ID --manifest SCOPE.json --budget BUDGET.json` 提取并独立审查。范围文件包含 `id`、`branch_id`、`base_revision`、`story_order`，可选 `candidate_delta_refs`（按序列出的 `[delta_id, sha256]`）。预算至少包含 `max_calls`、`context_char_limit`、`output_limit`，提取及审查各占一次。作者手工整理变更时可改用 `story delta --file PATH`，文件含 `id`、`draft_id`、同形 `scope` 和 `operations` 列表。
+2. `story check --delta ID` 查看证据和问题。每项操作须含 `op`、`entity_id`、`predicate`、`holder`、`claim`、`story_order`、`disclosure_order`、`expected_old`、`new_value` 和 `evidence`。证据条目含 `draft_id`、`text_sha256`、`start`、`end`，采用 Unicode 半开区间。无旧值用 JSON `null`。
+3. `story decide --file PATH` 登记决定。JSON 对象含 `action: "accept"`、`reason` 及 `targets`。目标必须含确切的 `branch_id`、`scene_id`、`draft_id`、`delta_id`、`manifest_id`。将目标加上返回的 `decision_id`，作为批次 JSON 数组的一项。
+4. `accept --batch BATCH.json --expected-head N --commit-id ID` 提交。候选分支加 `--branch NAME`。若改动早场，用 `story fork` 建分支并通过 `story impacts --branch NAME` 查看需重审的场景。提升前用 `story decide` 保存 `promote` 决定，其目标为 `candidate` 和 `expected_main` 两个 `{branch_id,revision}` 对象。
+
+命令示例和验证结果另见 [M7 验收记录](docs/M7-验收记录.md)。
 
 ## M1 使用示例（PowerShell）
 

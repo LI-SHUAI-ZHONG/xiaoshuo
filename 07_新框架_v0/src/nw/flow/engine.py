@@ -27,6 +27,7 @@ class FlowEngine:
     def run(self, scene_id: str, decide: Decision, *, notes: list[dict] | None = None,
             resume: bool = False, retry_failed: bool = False,
             after_node: Callable[[str], None] | None = None) -> dict:
+        self.store.check_legacy_flow(scene_id)
         if self.provider.name == 'fake' and not self.store.test_mode:
             raise ValueError('fake is allowed only in isolated test stores')
         state = NodeStore(self.store, scene_id)
@@ -47,6 +48,7 @@ class FlowEngine:
                     if not acquired:
                         return {'scene_id': scene_id, 'status': 'BLOCKED', 'node': node,
                                 'reason': 'Model call already running'}
+                    self.store.check_legacy_flow(scene_id)
                     if state.get(node)['status'] == 'DONE':
                         continue
                     blocked = self.write_review_revise(state, decide, retry_failed)
@@ -144,10 +146,11 @@ class FlowEngine:
         draft_id = state.get('N5')['output']['draft_id']
         current = self.store.accepted(state.scene_id)
         if current is None or current.draft_id != draft_id:
-            self.store.accept(draft_id)
+            self.store.accept(draft_id, legacy_flow_scene=state.scene_id)
         else:
             with self.store.connection:
                 self.store.connection.execute('BEGIN IMMEDIATE')
+                self.store.check_legacy_flow(state.scene_id)
                 self.store._export(self.store.get('draft', draft_id))
         # Notes and DONE checkpoint commit together, so resume never duplicates notes.
         with self.store.connection:

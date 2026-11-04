@@ -37,6 +37,7 @@ class NodeStore:
                   'N5': {'source': 'N4'}, 'N6': {'notes': notes}}
         with self.store.connection:
             self.store.connection.execute('BEGIN IMMEDIATE')
+            self.store.check_legacy_flow(self.scene_id)
             if self.store.connection.execute('SELECT 1 FROM flow_meta WHERE scene_id=?', (self.scene_id,)).fetchone():
                 raise ValueError('Flow already exists; use flow resume')
             self.store.connection.execute('INSERT INTO flow_meta VALUES (?,?,?)', (self.scene_id, encode(settings), encode(notes)))
@@ -62,9 +63,11 @@ class NodeStore:
 
     def save(self, node: str, status: str, output: dict, inputs: dict | None = None) -> None:
         with self.store.connection:
+            self.store.connection.execute('BEGIN IMMEDIATE')
             self.save_in_transaction(node, status, output, inputs)
 
     def save_in_transaction(self, node: str, status: str, output: dict, inputs: dict | None = None) -> None:
+        self.store.check_legacy_flow(self.scene_id)
         if inputs is None:
             inputs = self.get(node)['input']
         self.store.connection.execute("UPDATE flow_nodes SET status=?,input_json=?,output_json=? WHERE scene_id=? AND node=? AND status!='DONE'",

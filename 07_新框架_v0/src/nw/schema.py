@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 6
+VERSION = 7
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -192,4 +192,58 @@ CREATE TABLE plan_applications(
 COMMIT;
 """
 
-MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6}
+MIGRATE_V7 = """
+BEGIN IMMEDIATE;
+CREATE TABLE story_branches(
+ id TEXT PRIMARY KEY, parent_branch_id TEXT REFERENCES story_branches(id),
+ base_revision INTEGER NOT NULL, parent_at_fork INTEGER NOT NULL, head_revision INTEGER NOT NULL,
+ enabled INTEGER NOT NULL CHECK(enabled IN (0,1)),
+ baseline_json TEXT NOT NULL CHECK(json_valid(baseline_json)));
+CREATE TABLE story_commits(
+ id TEXT PRIMARY KEY, branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ revision INTEGER NOT NULL, base_revision INTEGER NOT NULL, payload_hash TEXT NOT NULL,
+ state_json TEXT NOT NULL CHECK(json_valid(state_json)), created_at TEXT NOT NULL,
+ UNIQUE(branch_id,revision));
+CREATE TABLE state_deltas(
+ id TEXT PRIMARY KEY, branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ base_revision INTEGER NOT NULL, draft_id TEXT NOT NULL REFERENCES drafts(id),
+ manifest_id TEXT NOT NULL REFERENCES input_manifests(id),
+ manifest_json TEXT NOT NULL CHECK(json_valid(manifest_json)),
+ operations_json TEXT NOT NULL CHECK(json_valid(operations_json)),
+ validation_json TEXT NOT NULL CHECK(json_valid(validation_json)), sha256 TEXT NOT NULL,
+ FOREIGN KEY(branch_id,base_revision) REFERENCES story_commits(branch_id,revision));
+CREATE TABLE story_events(
+ id TEXT PRIMARY KEY, commit_id TEXT NOT NULL REFERENCES story_commits(id),
+ scene_id TEXT NOT NULL REFERENCES scenes(id), draft_id TEXT NOT NULL,
+ payload_json TEXT NOT NULL CHECK(json_valid(payload_json)),
+ FOREIGN KEY(draft_id,scene_id) REFERENCES drafts(id,scene_id));
+CREATE TABLE story_slots(
+ branch_id TEXT NOT NULL REFERENCES story_branches(id), scene_id TEXT NOT NULL REFERENCES scenes(id),
+ draft_id TEXT NOT NULL, commit_id TEXT NOT NULL REFERENCES story_commits(id),
+ delta_id TEXT REFERENCES state_deltas(id), PRIMARY KEY(branch_id,scene_id),
+ FOREIGN KEY(draft_id,scene_id) REFERENCES drafts(id,scene_id));
+CREATE TABLE story_decisions(
+ id TEXT PRIMARY KEY, action TEXT NOT NULL CHECK(action IN ('adopt','accept','promote','settings','abandon')),
+ targets_json TEXT NOT NULL CHECK(json_valid(targets_json)), reason TEXT NOT NULL, created_at TEXT NOT NULL);
+CREATE TABLE artifact_dependencies(
+ consumer_kind TEXT NOT NULL, consumer_id TEXT NOT NULL, consumer_version INTEGER NOT NULL,
+ consumer_sha256 TEXT NOT NULL, producer_kind TEXT NOT NULL, producer_id TEXT NOT NULL,
+ producer_version INTEGER NOT NULL, producer_sha256 TEXT NOT NULL,
+ PRIMARY KEY(consumer_kind,consumer_id,consumer_version,producer_kind,producer_id,producer_version));
+CREATE INDEX artifact_dependencies_producer ON artifact_dependencies(producer_kind,producer_id,producer_version);
+CREATE TABLE story_invalidations(
+ producer_kind TEXT NOT NULL, producer_id TEXT NOT NULL, producer_version INTEGER NOT NULL,
+ producer_sha256 TEXT NOT NULL, created_at TEXT NOT NULL,
+ PRIMARY KEY(producer_kind,producer_id,producer_version));
+""" + ''.join(
+    f"""CREATE TRIGGER {table}_no_{action.lower()} BEFORE {action} ON {table}
+ BEGIN SELECT RAISE(ABORT,'{table} is append-only'); END;
+"""
+    for table in ('story_commits', 'state_deltas', 'story_events', 'story_decisions', 'artifact_dependencies',
+                  'story_invalidations')
+    for action in ('UPDATE', 'DELETE')
+) + """PRAGMA user_version=7;
+COMMIT;
+"""
+
+MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6, 6: MIGRATE_V7}
