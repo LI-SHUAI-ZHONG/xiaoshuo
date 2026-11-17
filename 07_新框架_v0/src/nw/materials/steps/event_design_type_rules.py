@@ -1,0 +1,76 @@
+"""事件设计步骤的《类型系统》层级、报告或条件原文。"""
+
+MATERIAL = r"""#### 事件设计核对的类型动态冲突
+【类型系统原文位置】类型动态冲突规则.json 第26990行
+【各条共用原文值】{"detection":"report_only","auto_resolve":false,"severity":"error","schema_version":"TYPE_D-1.0.0"}
+【本步用法】在实际项目产物上核对以下报告项，记录具体对象、时点、所涉字段及依据。原件规定 report_only，auto_resolve=false。报告按现有产物和待核说明保存。
+【逐条原文值】conflict_id 原文行 | conflict_id | description | 本步核对
+27059 | TDC_009 | 类型规则触发条件缺少事件依据 | 对照实际上游节点与完成条件，报告类型规则缺少触发事件的依据。
+
+#### 事件设计核对的动态触发条件
+【类型系统原文位置】类型动态触发条件.json 第27171行
+【各条共用原文值】{"expected_value":null,"source_id":null,"required":true,"negatable":true,"failure_behavior":"report_and_skip","status":"active"}
+【本步用法】逐条保留 reference 身份，只有项目实际采用所属 rule_id 时才从已具备的前置核对。依该父规则内 evaluation_order 检查实际对象与原条件。比较值或证据缺失时记录待核，原 failure_behavior 为 report_and_skip，已成立的候选仍沿用本步现有验证和选择条件。
+【逐条原文值】condition_id 原文行 | condition_id | rule_id | condition_kind | field | operator | evaluation_order | source_refs | evidence_type | confidence | 本步核对
+27290 | TDC_0007 | TDR_TEMPLATE_004 | event_completed | event_id | exists | 0 | ["事件状态变化表.json","因果验证规则.json"] | template | 0 | 核对实际前事件和完成条件，据此形成有条件的后继候选。
+27458 | TDC_0016 | TDR_004 | event_completed | event_id | exists | 0 | ["事件状态变化表.json","因果验证规则.json"] | inferred | 0.7 | 把实际上游前事件与完成条件保留在后继事件候选。
+27548 | TDC_0021 | TDR_009 | risk_state | risk_level | greater_than | 0 | ["因果验证规则.json"] | inferred | 0.6 | 按已确认的风险和前序节点核对升级条件与阈值，缺比较值时保留待核。
+27567 | TDC_0022 | TDR_010 | risk_state | conflict_level | greater_than | 0 | ["因果验证规则.json","类型适配冲突规则.json"] | inferred | 0.7 | 核对已建立的冲突及持续对抗的项目依据，保留比较口径待核。
+27587 | TDC_0023 | TDR_011 | risk_state | conflict_level | less_than | 0 | ["类型适配冲突规则.json"] | template | 0.5 | 核对实际冲突和当事方降级意愿，所需比较阈值以确切输入为据。
+
+【《类型系统》类型动态规则总表｜事件设计】
+【原文位置】来源块第 28,706 行。每项前为条目 ID 字段的原件行和现行裁定。
+【本步用法】按本步的实际前置、条目触发和外部选择条件判断用途。原条所列空值、候选范围和现行裁定随条保留。
+
+28987｜reference｜{"rule_id":"TDR_TEMPLATE_004","rule_scope":"事件候选模板","rule_kind":"TYPE_EVENT_CANDIDATE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":[],"trigger_entities":[],"trigger_event_types":["战斗","对话","发现","移动"],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["前一事件已完成"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_T004_E01","effect_kind":"event_candidate","description":"候选事件供选择"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"unknown","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":["事件状态变化表.json","因果验证规则.json"],"evidence_type":"template","confidence":0,"status":"template","schema_version":"TYPE_D-1.0.0"}
+【本步用法】剧情已定战斗、对话、发现或移动等前事件时，以其完成条件和实际结果为门槛，安排可接续的后继事件候选。
+
+29442｜design_ready｜{"rule_id":"TDR_004","rule_scope":"事件完成后产生类型相关候选事件","rule_kind":"TYPE_EVENT_CANDIDATE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":[],"trigger_entities":[],"trigger_event_types":["战斗","对话","发现"],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["前一事件已确认为完成状态"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_004_E01","effect_kind":"event_candidate","description":"候选事件供连续性验证和选择"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"repeatable","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":["事件状态变化表.json","因果验证规则.json"],"evidence_type":"inferred","confidence":0.7,"status":"active","schema_version":"TYPE_D-1.0.0"}
+【本步用法】以前一事件原有完成条件和实际结果为门槛，从已有角色及因果关系设计可选的后继事件。条件未满足时记录条件预案。
+
+29885｜design_ready｜{"rule_id":"TDR_009","rule_scope":"风险在类型场景中的升级候选","rule_kind":"TYPE_RISK_ESCALATION","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":["风险","冲突"],"trigger_entities":[],"trigger_event_types":[],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["风险已存在","升级条件部分满足"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_009_E01","effect_kind":"risk_increase","description":"风险可能升级"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"repeatable","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":["因果验证规则.json"],"evidence_type":"inferred","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
+【本步用法】风险已有来源且升级条件部分具备时，从已定前事件核对还欠的条件，并保留实际可发生的升级候选和范围。
+
+29974｜design_ready｜{"rule_id":"TDR_010","rule_scope":"冲突升级的候选触发","rule_kind":"TYPE_CONFLICT_ESCALATION","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":["冲突"],"trigger_entities":["人物","群体"],"trigger_event_types":[],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["冲突存在","双方均有持续对抗可能"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_010_E01","effect_kind":"risk_increase","description":"冲突可能升级但可选降级路径"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"repeatable","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":["因果验证规则.json","类型适配冲突规则.json"],"evidence_type":"inferred","confidence":0.7,"status":"active","schema_version":"TYPE_D-1.0.0"}
+【本步用法】双方具备延续已存在冲突的条件时，按前事件的完成条件核对可升级的方向和具体后果，保留已有的降级路径。
+
+【《类型系统》类型动态候选效果｜事件设计】
+【原文位置】来源块第 31,428 行。每项前为条目 ID 字段的原件行和现行裁定。
+【本步用法】各候选效果随相应父规则核对本步状态或行动。原件的目标、字段和值均留空，现行裁定为 reference。用已具备的项目产物确定具体作用及可验证证据。
+
+31532｜reference｜{"effect_id":"TDR_T004_E01","rule_id":"TDR_TEMPLATE_004","effect_kind":"event_candidate","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":["事件状态变化表.json","因果验证规则.json"],"evidence_type":"template","confidence":0,"status":"active"}
+【本步用法】随前事件及原完成条件保留候选。到场景选择时用相关人物和可接续的后果核对采用依据。
+
+31696｜reference｜{"effect_id":"TDR_004_E01","rule_id":"TDR_004","effect_kind":"event_candidate","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":["事件状态变化表.json","因果验证规则.json"],"evidence_type":"inferred","confidence":0.7,"status":"active"}
+【本步用法】沿用上一事件的完成门槛和接续人物，按现有因果证据核对该事件候选是否可以采用。
+
+31856｜reference｜{"effect_id":"TDR_009_E01","rule_id":"TDR_009","effect_kind":"risk_increase","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":["因果验证规则.json"],"evidence_type":"inferred","confidence":0.6,"status":"active"}
+【本步用法】以现有风险及所需条件记录可能新增的风险，供后续按实际行动和后果核对。
+
+31889｜reference｜{"effect_id":"TDR_010_E01","rule_id":"TDR_010","effect_kind":"risk_increase","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":["因果验证规则.json","类型适配冲突规则.json"],"evidence_type":"inferred","confidence":0.7,"status":"active"}
+【本步用法】追溯双方当下仍可作出的选择及触发门槛，沿用后续实际选择确认升级程度。
+
+【《类型系统》类型动态验证规则｜事件设计】
+【原文位置】来源块第 32,597 行。条目前缀是原件中的字段行。
+【本步用法】按实际项目对象、已用资料和本步产物核对下列验证项，并将问题定位到已有产物和证据。原件规定 report_only=true、auto_fix_allowed=false。
+
+32638｜reference｜{"validation_id":"TDV_005","check_description":"前置条件是否满足","report_only":true,"auto_fix_allowed":false,"severity":"error","status":"active","schema_version":"TYPE_D-1.0.0"}
+【本步用法】对照实际所用前一事件和规则的完成条件，标出证据已支持的前置以及仍待满足的部分。
+
+32665｜reference｜{"validation_id":"TDV_008","check_description":"事件类型是否存在","report_only":true,"auto_fix_allowed":false,"severity":"error","status":"active","schema_version":"TYPE_D-1.0.0"}
+【本步用法】把候选事件类型与作品已有事件及原规则触发条件对照，指出未得到支持的类型或事件。
+
+【《类型系统》类型多样性策略的维度｜事件设计】
+【原文位置】来源块第 32,920 行。每项前缀为对应字段的物理原件行。
+【本步用法】沿用作者已确认的条件，比较当前步骤实际已有的适用候选。权重保留原值，具体比较依据采用本次已明确的范围。
+
+32983｜reference｜{"id":"event","name":"事件维度","weight":0.05}
+【本步用法】比较同一前置完成条件下可接续的不同事件候选，分别保留其实际参与者及后果。
+
+【《类型系统》类型多样性策略的边界｜事件设计】
+【原文位置】来源块第 32,920 行。每项前缀为对应字段的物理原件行。
+【本步用法】在现有步骤核对候选的适用边界，并对照作者已确认的设定和前置产物。
+
+33045｜"违反因果约束"
+【本步用法】比较备选事件时，对照实际前因、已有动作与完成条件核对后果的归因。
+"""

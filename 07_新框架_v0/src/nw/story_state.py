@@ -12,6 +12,7 @@ from nw.task_models import canonical, content_sha256
 
 CLAIMS = ('fact', 'belief', 'suspicion', 'utterance', 'plan')
 ACTIONS = ('set', 'unset', 'add_relation', 'remove_relation', 'introduce_promise', 'advance_promise')
+IDENTITY_STATUS_PREFIX = 'identity_status:'
 
 
 def text(value: object) -> bool:
@@ -30,6 +31,18 @@ def fact_key(fact: Fact) -> tuple[str, str, str, str]:
     return fact.holder, fact.entity_id, fact.predicate, group
 
 
+def validate_identity_status(predicate: str, holder: str, value: object) -> None:
+    scope = predicate.removeprefix(IDENTITY_STATUS_PREFIX)
+    fields = {'identity', 'permissions', 'social_expectations'} if holder == 'WORLD' else {'identity'}
+    if not text(scope) or not isinstance(value, dict) or set(value) != fields:
+        raise ValueError('IDENTITY_STATUS: use a specific scope and the holder-specific identity fields')
+    if value['identity'] is not None and not text(value['identity']):
+        raise ValueError('IDENTITY_STATUS: identity must be a name or null for a removed status')
+    for key in fields - {'identity'}:
+        if not isinstance(value[key], list) or not all(text(item) for item in value[key]):
+            raise ValueError(f'IDENTITY_STATUS: {key} must list the actual applicable effects')
+
+
 def parse_fact(value: dict, evidence: tuple[dict, ...]) -> Fact:
     if (not isinstance(value, dict) or not {'entity_id', 'predicate', 'holder', 'claim',
                                             'story_order', 'disclosure_order', 'value'} <= value.keys() or
@@ -41,6 +54,8 @@ def parse_fact(value: dict, evidence: tuple[dict, ...]) -> Fact:
         raise ValueError('WORLD accepts only facts')
     if value['predicate'] == 'owner' and value['holder'] == 'WORLD' and not text(value['value']):
         raise ValueError('WORLD owner must be one stable holder ID')
+    if value['predicate'].startswith(IDENTITY_STATUS_PREFIX):
+        validate_identity_status(value['predicate'], value['holder'], value['value'])
     canonical(value['value'])
     return Fact(value['entity_id'], value['predicate'], value['value'], value['holder'], value['claim'],
                 value['story_order'], position(value['disclosure_order']), evidence)
@@ -80,6 +95,22 @@ def write_revision(store: Store, head: StateHead, parent_revision: int, ident: s
             (head.branch_id, scene_id, slot['draft_id'], ident, slot['delta_id']))
     store.connection.execute('UPDATE story_branches SET head_revision=? WHERE id=?',
                              (head.revision, head.branch_id))
+
+
+def approved_scene_positions(store: Store, snapshot: dict) -> dict[str, tuple[int, int]]:
+    """List the materialized scenes with settings active on the pinned branch."""
+    active = {(row['card_id'], row['version']) for row in snapshot['settings']}
+    retired = set(snapshot.get('stale_plan_scenes', ()))
+    chapters = {row.id: row.index for row in store.list('chapter')}
+    result = {}
+    for scene in store.list('scene'):
+        if scene.id in retired:
+            continue
+        binding = json.loads(scene.card_json).get('story')
+        ref = binding.get('scene_ref') if isinstance(binding, dict) else None
+        if isinstance(ref, dict) and (ref.get('card_id'), ref.get('version')) in active:
+            result[scene.id] = (chapters[scene.chapter_id], scene.index)
+    return result
 
 
 def _approved_cards(store: Store, entries: list[dict]) -> list[dict]:

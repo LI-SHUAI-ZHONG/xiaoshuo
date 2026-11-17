@@ -8,7 +8,9 @@ from nw.call_budget import _reserve, _settle, create_budget, finish_reservation,
 from nw.call_control import check_test_provider, execution_lock, model_settings, outcome_for, send_model
 from nw.cards import eligible_rule_refs
 from nw.context.registry import build_context
-from nw.context.story import WRITE_PROMPT, StoryScope, build_story_context, scene_scope
+from nw.context.story import StoryScope, build_story_context, scene_scope
+from nw.materials.stage_input import step_material_prompt
+from nw.materials.steps.review import MATERIAL as REVIEW_MATERIAL
 from nw.story_delta import draft_ref, story_write_manifest
 from nw.story_dependencies import add_dependency, check_inputs_current
 from nw.story_state import current_head
@@ -39,7 +41,12 @@ def review_draft(store: Store, draft_id: str, provider: LLMProvider,
         frozen = story_write_manifest(store, draft)
         if frozen is None:
             raise ValueError('CONTEXT_PROVIDER_REQUIRED: review requires a frozen story draft')
-    messages = [{'role': 'system', 'content': '审查草稿与需求、设定和场景卡的一致性，列出具体修订意见；不要输出替代正文。'},
+    prompt = '审查草稿与需求、设定和场景卡的一致性，列出具体修订意见；不要输出替代正文。'
+    if frozen is not None:
+        # This entry reviews the already frozen scene context. Formal material
+        # checks with dedicated source contracts are handled in the novel job.
+        prompt = step_material_prompt(prompt, REVIEW_MATERIAL, ())
+    messages = [{'role': 'system', 'content': prompt},
                 {'role': 'user', 'content': encode({'context': context, 'draft': asdict(draft)})}]
     budget_id, manifest = None, None
     if frozen is not None:
@@ -67,7 +74,7 @@ def write_scene(store: Store, scene_id: str, provider: LLMProvider,
         if budget is None:
             raise ValueError('BUDGET_REQUIRED: managed writing needs an explicit budget')
         work = build_story_context(store, scene_id, scope, budget.context_char_limit)
-        messages = [{'role': 'system', 'content': WRITE_PROMPT},
+        messages = [{'role': 'system', 'content': work.prompt},
                     {'role': 'user', 'content': canonical(work.package)}]
         budget_id = create_budget(store, uuid4().hex, budget)
         effective, _ = prepare_call(store, budget_id, provider.name, params, messages)
@@ -78,7 +85,7 @@ def write_scene(store: Store, scene_id: str, provider: LLMProvider,
             source_refs=work.source_refs, branch_id=scope.branch_id, state_revision=scope.revision,
             story_order=scope.story_order, disclosure_order=work.disclosure,
             predecessor_drafts=work.predecessor_drafts, dependency_refs=work.dependency_refs,
-            selection={**work.selection, 'manifest_id': manifest_id})
+            selection={**work.selection, 'manifest_id': manifest_id}, material_design_sha256=work.material_design_sha256)
         return call_model(store, scene_id, provider, model, params, 'write', messages, work.package,
                           budget_id=budget_id, story_manifest=manifest)
     if story_scope is not None or budget is not None or branch != 'main':

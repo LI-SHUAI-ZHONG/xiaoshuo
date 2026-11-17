@@ -12,7 +12,7 @@ from test_providers import server
 def test_cli_three_scene_story_roundtrip(tmp_path, server):
     endpoint, transport = server
     config = tmp_path / 'model.toml'
-    config.write_text(f'[model]\nprovider="ollama"\nbase_url="{endpoint}"\nmodel="test"\n', encoding='utf-8')
+    config.write_text(f'[model]\nprovider="ollama"\nbase_url="{endpoint}"\nmodel="test"\n[workflow]\nsource_driven=false\n', encoding='utf-8')
     with Store(tmp_path / 'book', create=True) as store:
         store.init_project('钥匙')
         store.add_brief('追查封条', '受限第三人称')

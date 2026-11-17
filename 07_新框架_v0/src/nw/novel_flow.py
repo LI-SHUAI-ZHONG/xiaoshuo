@@ -10,6 +10,8 @@ from nw.call_control import check_test_provider, execution_lock, model_settings
 from nw.cards import decide_card, eligible_rule_refs, read_card
 from nw.config import Config
 from nw.llm.base import LLMProvider
+from nw.materials.binding import verify_materials
+from nw.materials.scoped import precheck_scope, review_scope
 from nw.novel_calls import JobCalls, call_id
 from nw.novel_scene import scene_delta
 from nw.novel_store import (JobPaused, JobRef, JobRequest, JobResult, Journal, cancel_job, checkpoint_input,
@@ -106,18 +108,30 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
     def prepare():
         j.check_active(propose)
         request, _ = prepare_plan_task(j.store, Ref(**j.request['brief_ref']), scope, calls.provider, calls.config,
-                                       j.id, call_id(j.id, propose, 1), parent_id=parent, branch=j.head.branch_id)
+                                       j.id, call_id(j.id, propose, 1), parent_id=parent, branch=j.head.branch_id,
+                                       materials=j.request.get('materials', ()),
+                                       material_deferrals=j.request.get('material_deferrals'))
+        from nw.materials.work_session import drive_plan
+        _,package=read_input_manifest(j.store,request.manifest_id)
+        request,_=drive_plan(j.store,request,package,calls.provider,calls.config,retry_failed=calls.retry_failed,
+                            verify=lambda:j.check_active(propose))
         return request
 
     def validate(output: dict) -> None:
         step = j.latest(propose)
         _, package = read_input_manifest(j.store, step['input']['request']['manifest_id'])
-        validate_plan(output, scope, _known_cards(package))
+        from nw.materials.phase_projection import expand_output
+        validate_plan(expand_output(output,package), scope, _known_cards(package), package.get('materials', ()),
+                      package.get('material_deferrals'),package.get('material_work'))
 
     def verify_plan() -> None:
         j.check_active(j.current_step or propose)
         step = j.latest(propose)
         manifest, frozen = read_input_manifest(j.store, step['input']['request']['manifest_id'])
+        verify_materials(j.store.directory.parent, frozen.get('materials', ()))
+        if frozen.get('material_work'):
+            from nw.materials.work_catalog import SourceDesk
+            SourceDesk(j.store.directory.parent).verify(frozen['material_work']['sources'])
         if asdict(outline_ref(j.store)) != manifest['dependency_refs'][0]:
             raise JobPaused('STALE', propose, 'STALE_OUTLINE')
         selected = {CardRef(card['card_id'], card['version']) for card in frozen['method_cards']}
@@ -130,7 +144,8 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         verify_plan()
     candidates = [
         {'root': read_card(j.store, CardRef(**item['root'])),
-         'members': [read_card(j.store, CardRef(**ref)) for _, ref in sorted(item['members'].items())]}
+         'members': [read_card(j.store, CardRef(**ref)) for _, ref in sorted(item['members'].items())],
+         **({'material_design': item['material_design']} if 'material_design' in item else {})}
         for item in proposal.materialization
     ]
     # Decision targets describe immutable versions; the approval changes only the separate decision log.
@@ -164,12 +179,14 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
 def _write_batch(calls: JobCalls, decide: Decision) -> JobResult:
     j = calls.journal
     scenes = j.request['scene_ids']
+    precheck_scope(j.store, scenes, j.head)
     deltas = []
     chain = ()
     for scene in scenes:
         delta = scene_delta(calls, scene, chain, decide)
         deltas.append(delta)
         chain = (*chain, (delta.id, delta.sha256))
+    scoped = review_scope(calls, deltas)
     gate = 'batch:confirm'
     previews = [_preview(j, scene, delta) for scene, delta in zip(scenes, deltas, strict=True)]
 
@@ -177,7 +194,8 @@ def _write_batch(calls: JobCalls, decide: Decision) -> JobResult:
         if 'scene_id' in choice and (choice['action'] != 'reject' or choice['scene_id'] not in scenes):
             raise ValueError('Reject a scene from this batch or reject the whole batch')
 
-    choice = j.gate(gate, {'scenes': previews, 'head': asdict(j.head)}, decide,
+    choice = j.gate(gate, {'scenes': previews, 'head': asdict(j.head),
+                         **({'material_scope_review': scoped} if scoped else {})}, decide,
                     {'accept': 'novel_confirm', 'reject': 'novel_reject'}, check_choice)
     if choice['action'] == 'reject':
         rejected = choice.get('scene_id')
@@ -205,9 +223,10 @@ def _write_batch(calls: JobCalls, decide: Decision) -> JobResult:
 
 
 def _preview(j: Journal, scene: str, delta: StateDelta) -> dict:
+    checks = j.latest(f'scene:{scene}:check')['output']
     return {'scene_id': scene, 'draft': asdict(j.store.get('draft', delta.draft_id)),
             'delta_id': delta.id, 'manifest_id': delta.manifest_id, 'delta_sha256': delta.sha256,
-            'operations': delta.operations, 'findings': j.latest(f'scene:{scene}:check')['output']['findings']}
+            'operations': delta.operations, **checks}
 
 
 def _acceptance_requests(j: Journal, scenes: list[str], deltas: list[StateDelta],

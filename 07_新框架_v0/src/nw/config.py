@@ -26,6 +26,7 @@ class Config:
     timeout: float
     params: dict
     workspace: Path
+    source_driven: bool = True
 
 
 def load_config(path: Path) -> Config:
@@ -57,7 +58,10 @@ def load_config(path: Path) -> Config:
         workspace = Path(data.get('paths', {}).get('workspace', str(ROOT / 'workspace')))
         if not workspace.is_absolute():
             workspace = path.resolve().parent / workspace
-        return Config(provider, url.rstrip('/'), model, key_env, timeout, params, workspace)
+        workflow=data.get('workflow',{})
+        if not isinstance(workflow,dict) or set(workflow)-{'source_driven'} or type(workflow.get('source_driven',True)) is not bool:
+            raise ValueError()
+        return Config(provider, url.rstrip('/'), model, key_env, timeout, params, workspace,workflow.get('source_driven',True))
     except (KeyError, TypeError, ValueError, AttributeError):
         raise ConfigRequired('Set valid model.provider, base_url, model, api_key_env (compatible API), timeout and supported params; never put keys in TOML') from None
 

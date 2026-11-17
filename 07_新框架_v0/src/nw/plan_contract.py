@@ -5,6 +5,7 @@ from graphlib import TopologicalSorter
 import re
 
 from nw.cards import _body
+from nw.materials.binding import validate_bindings
 from nw.story_models import CardRef
 from nw.story_state import text
 
@@ -111,12 +112,14 @@ def _chapters(rows: object, scope: str, members: dict[str, dict]) -> None:
         raise ValueError('Every chapter and scene card needs a materialization coordinate')
 
 
-def validate_plan(output: dict, scope: str, existing: dict[str, str]) -> None:
-    if output['scope'] != scope or not 2 <= len(output['candidate_cards']) <= 3:
+def validate_plan(output: dict, scope: str, existing: dict[str, str], materials: list[dict] = (),
+                  material_deferrals: dict | None = None,material_work: dict | None = None) -> None:
+    minimum=1 if scope!='book' and material_work and material_work.get('policy') in {'artifact-stage-binding-v3','artifact-stage-binding-v4'} else 2
+    if output['scope'] != scope or not minimum <= len(output['candidate_cards']) <= 3:
         raise ValueError('Expected 2–3 candidates for the requested scope')
     choices = set()
     for candidate in output['candidate_cards']:
-        if (set(candidate) != {'kind', 'body', 'members', 'chapters', 'open_world_rules'} or
+        if (set(candidate) - {'material_bindings', 'process_bindings','material_work'} != {'kind', 'body', 'members', 'chapters', 'open_world_rules'} or
                 candidate['kind'] != 'plot' or
                 not all(text(candidate['body'].get(field)) for field in _DIRECTION) or
                 'members' in candidate['body'] or 'unknowns' in candidate['body'] or
@@ -130,5 +133,8 @@ def validate_plan(output: dict, scope: str, existing: dict[str, str]) -> None:
         choices.add(choice)
         members = _members(candidate['members'], existing)
         _chapters(candidate['chapters'], scope, members)
+        validate_bindings(candidate, scope, members, existing, materials, material_deferrals)
+        from nw.materials.work_application import validate_work
+        validate_work(candidate,material_work)
         if scope == 'volume' and not any(row['kind'] == 'volume' for row in members.values()):
             raise ValueError('Volume scope requires a volume card')

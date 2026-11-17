@@ -13,8 +13,11 @@ class OllamaProvider:
 
     def generate(self, messages: list[dict], **params: Any) -> GenResult:
         model = params.pop('model')
+        output_format=params.pop('format',None)
+        body={'model': model, 'messages': messages, 'stream': False, 'options': params}
+        if output_format is not None:body['format']=output_format
         raw, error = post(self.base_url + '/api/chat',
-                          {'model': model, 'messages': messages, 'stream': False, 'options': params}, self.timeout)
+                          body, self.timeout)
         text, reason = '', 'error'
         try:
             if not error:

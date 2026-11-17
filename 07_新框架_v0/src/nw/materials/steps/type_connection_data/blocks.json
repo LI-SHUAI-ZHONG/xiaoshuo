@@ -1,0 +1,931 @@
+[
+  {
+    "number": 1,
+    "name": "类型场景静态连接.json",
+    "source_header_line": 5,
+    "steps": [
+      "scene_design"
+    ],
+    "step_use": "类型场景静态连接原表为 []。以本步从上游取得的实际事件、行动和场景需求使用现有场景资料。",
+    "original": []
+  },
+  {
+    "number": 2,
+    "name": "类型冲突关系.json",
+    "source_header_line": 9,
+    "steps": [
+      "type_adaptation"
+    ],
+    "step_use": "类型冲突关系原表为 []。具体相容、冲突与条件仍按已有原文和作者项目定义判定。",
+    "original": []
+  },
+  {
+    "number": 3,
+    "name": "类型动态搭配库.json",
+    "source_header_line": 13,
+    "steps": [
+      "type_adaptation"
+    ],
+    "original_count": 2100
+  },
+  {
+    "number": 4,
+    "name": "类型伏笔静态连接.json",
+    "source_header_line": 530739,
+    "steps": [
+      "plot_design"
+    ],
+    "original_count": 300
+  },
+  {
+    "number": 5,
+    "name": "类型概念静态连接.json",
+    "source_header_line": 541678,
+    "steps": [
+      "type_adaptation"
+    ],
+    "original_count": 720
+  },
+  {
+    "number": 6,
+    "name": "类型兼容关系.json",
+    "source_header_line": 567737,
+    "steps": [
+      "type_adaptation"
+    ],
+    "original_count": 70
+  },
+  {
+    "number": 7,
+    "name": "类型静态搭配库.json",
+    "source_header_line": 570045,
+    "steps": [
+      "type_adaptation"
+    ],
+    "original_count": 2100
+  },
+  {
+    "number": 8,
+    "name": "类型静态连接字段说明.json",
+    "source_header_line": 691785,
+    "steps": [
+      "governance"
+    ],
+    "step_use": "用所选连接的实际字段核对类型、枚举、范围和原义。",
+    "original": {
+      "connection_id": {
+        "type": "string",
+        "format": "TSC_XXXXXX",
+        "description": "类型静态连接唯一标识"
+      },
+      "source_id": {
+        "type": "string",
+        "description": "连接源ID"
+      },
+      "source_kind": {
+        "type": "string",
+        "enum": [
+          "genre",
+          "subgenre",
+          "hybrid_genre",
+          "mechanism",
+          "structure",
+          "style",
+          "tone"
+        ]
+      },
+      "target_id": {
+        "type": "string",
+        "description": "连接目标ID"
+      },
+      "target_kind": {
+        "type": "string",
+        "enum": [
+          "genre",
+          "subgenre",
+          "hybrid_genre",
+          "mechanism",
+          "structure",
+          "style",
+          "tone",
+          "concept",
+          "entity_type",
+          "event_type",
+          "information_type",
+          "resource_type",
+          "foreshadowing_type",
+          "scene_type",
+          "action_type",
+          "reaction_type"
+        ]
+      },
+      "connection_type": {
+        "type": "string",
+        "enum_ref": "类型连接枚举.json"
+      },
+      "relation_scope": {
+        "type": "string",
+        "enum": [
+          "global_template",
+          "genre_level",
+          "subgenre_level",
+          "hybrid_level",
+          "mechanism_level",
+          "structure_level",
+          "style_level",
+          "tone_level",
+          "project_level",
+          "pending_review"
+        ]
+      },
+      "direction": {
+        "type": "string",
+        "enum": [
+          "directed",
+          "bidirectional"
+        ],
+        "default": "directed"
+      },
+      "weight": {
+        "type": "number",
+        "min": 0,
+        "max": 1,
+        "default": 0.5
+      },
+      "priority": {
+        "type": "integer",
+        "min": 0,
+        "max": 10,
+        "default": 5
+      },
+      "conditions": {
+        "type": "array",
+        "description": "静态适用范围条件"
+      },
+      "effects": {
+        "type": "array",
+        "description": "静态适配结果（非动态变化）"
+      },
+      "not_guaranteed": {
+        "type": "array",
+        "description": "明确不保证的事项"
+      },
+      "source_refs": {
+        "type": "array",
+        "description": "来源引用"
+      },
+      "evidence_type": {
+        "type": "string",
+        "enum": [
+          "template",
+          "normalized",
+          "inferred",
+          "pending",
+          "fixture"
+        ]
+      },
+      "confidence": {
+        "type": "number",
+        "min": 0,
+        "max": 1
+      },
+      "status": {
+        "type": "string",
+        "enum": [
+          "active",
+          "pending",
+          "deprecated",
+          "fixture"
+        ]
+      },
+      "schema_version": {
+        "type": "string",
+        "pattern": "TYPE_C-\\d+\\.\\d+\\.\\d+"
+      }
+    }
+  },
+  {
+    "number": 9,
+    "name": "类型静态连接总表.json",
+    "source_header_line": 691919,
+    "steps": [
+      "character_design",
+      "event_design",
+      "plot_design",
+      "scene_design",
+      "type_adaptation",
+      "world_design"
+    ],
+    "original_count": 3135
+  },
+  {
+    "number": 10,
+    "name": "类型连接枚举.json",
+    "source_header_line": 1069214,
+    "steps": [
+      "governance"
+    ],
+    "step_use": "用原枚举核对本次连接和状态取值。枚举存在的关系名需要另有实际原条。",
+    "original": {
+      "connection_type": [
+        "TYPE_SUPPORTS_CONCEPT",
+        "TYPE_PRIORITIZES_CONCEPT",
+        "TYPE_SUPPORTS_ENTITY",
+        "TYPE_SUPPORTS_EVENT",
+        "TYPE_SUPPORTS_ACTION",
+        "TYPE_SUPPORTS_REACTION",
+        "TYPE_SUPPORTS_INFORMATION",
+        "TYPE_SUPPORTS_RESOURCE",
+        "TYPE_SUPPORTS_FORESHADOWING",
+        "TYPE_SUPPORTS_SCENE",
+        "TYPE_USES_MECHANISM",
+        "TYPE_USES_STRUCTURE",
+        "TYPE_USES_STYLE",
+        "TYPE_COMPATIBLE_WITH",
+        "TYPE_CONFLICTS_WITH",
+        "TYPE_REQUIRES_CONTEXT",
+        "TYPE_EXCLUDES_CONTEXT",
+        "TYPE_REFINES",
+        "TYPE_COMBINES_WITH",
+        "TYPE_DISTINGUISHED_FROM",
+        "TYPE_ALTERNATIVE_TO",
+        "TYPE_INDEXES_BY"
+      ],
+      "forbidden_connection_type": [
+        "TYPE_CAUSES_DEATH",
+        "TYPE_CAUSES_LOVE",
+        "TYPE_CAUSES_REVENGE",
+        "TYPE_CAUSES_UPGRADE",
+        "TYPE_CAUSES_BETRAYAL",
+        "TYPE_CAUSES_ATTACK",
+        "TYPE_CAUSES_RESCUE",
+        "TYPE_CAUSES_FIXED_ACTION",
+        "TYPE_ALWAYS_REVEALS",
+        "TYPE_ALWAYS_HIDES"
+      ],
+      "relation_scope": [
+        "global_template",
+        "genre_level",
+        "subgenre_level",
+        "hybrid_level",
+        "mechanism_level",
+        "structure_level",
+        "style_level",
+        "tone_level",
+        "project_level",
+        "pending_review"
+      ],
+      "evidence_type": [
+        "template",
+        "normalized",
+        "inferred",
+        "pending",
+        "fixture"
+      ],
+      "status": [
+        "active",
+        "pending",
+        "deprecated",
+        "fixture"
+      ]
+    }
+  },
+  {
+    "number": 11,
+    "name": "类型连接验证规则.json",
+    "source_header_line": 1069280,
+    "steps": [
+      "governance"
+    ],
+    "step_use": "用 V01–V16 核对实际端点、静动态边界、来源资格及可核字段。",
+    "original": {
+      "validation_rules": [
+        {
+          "rule_id": "V01",
+          "rule": "source_id必须存在"
+        },
+        {
+          "rule_id": "V02",
+          "rule": "target_id必须存在"
+        },
+        {
+          "rule_id": "V03",
+          "rule": "source_kind与source_id类型一致"
+        },
+        {
+          "rule_id": "V04",
+          "rule": "target_kind与target_id类型一致"
+        },
+        {
+          "rule_id": "V05",
+          "rule": "connection_type合法"
+        },
+        {
+          "rule_id": "V06",
+          "rule": "不包含动态传播字段"
+        },
+        {
+          "rule_id": "V07",
+          "rule": "不包含固定剧情结果"
+        },
+        {
+          "rule_id": "V08",
+          "rule": "不包含未经来源支持的具体事实"
+        },
+        {
+          "rule_id": "V09",
+          "rule": "无反向重复"
+        },
+        {
+          "rule_id": "V10",
+          "rule": "无循环依赖"
+        },
+        {
+          "rule_id": "V11",
+          "rule": "不覆盖原始三网络"
+        },
+        {
+          "rule_id": "V12",
+          "rule": "pending不进入active索引"
+        },
+        {
+          "rule_id": "V13",
+          "rule": "fixture不进入正式active"
+        },
+        {
+          "rule_id": "V14",
+          "rule": "具有evidence_type"
+        },
+        {
+          "rule_id": "V15",
+          "rule": "具有not_guaranteed"
+        },
+        {
+          "rule_id": "V16",
+          "rule": "具有schema_version"
+        }
+      ],
+      "schema_version": "TYPE_C-1.0.0"
+    }
+  },
+  {
+    "number": 12,
+    "name": "类型区分关系.json",
+    "source_header_line": 1069352,
+    "steps": [
+      "type_adaptation"
+    ],
+    "original_count": 5
+  },
+  {
+    "number": 13,
+    "name": "类型实体静态连接.json",
+    "source_header_line": 1069522,
+    "steps": [
+      "character_design",
+      "event_design",
+      "plot_design",
+      "scene_design",
+      "world_design"
+    ],
+    "original_count": 500
+  },
+  {
+    "number": 14,
+    "name": "类型事件静态连接.json",
+    "source_header_line": 1088527,
+    "steps": [
+      "event_design"
+    ],
+    "original_count": 820
+  },
+  {
+    "number": 15,
+    "name": "类型信息静态连接.json",
+    "source_header_line": 1118872,
+    "steps": [
+      "plot_design"
+    ],
+    "original_count": 380
+  },
+  {
+    "number": 16,
+    "name": "类型资源静态连接.json",
+    "source_header_line": 1132177,
+    "steps": [
+      "world_design"
+    ],
+    "original_count": 340
+  },
+  {
+    "number": 17,
+    "name": "类型组合约束.json",
+    "source_header_line": 1144082,
+    "steps": [
+      "type_selection",
+      "governance"
+    ],
+    "step_use": "按本项目真实选择核对类型、机制、结构、风格和语气的原定数量限制。项目相容性覆盖需有原因。",
+    "original": {
+      "max_genre_combination": 3,
+      "max_mechanisms_per_project": 5,
+      "max_structures_per_project": 2,
+      "max_styles_per_project": 3,
+      "max_tones_per_project": 2,
+      "incompatible_pairs": [],
+      "requires_manual_review": true,
+      "auto_combination_forbidden": true,
+      "rules": [
+        "类型组合不得自动生成所有排列",
+        "混合类型必须在混合类型表中定义",
+        "项目层可覆盖兼容性但需记录原因"
+      ],
+      "schema_version": "TYPE_C-1.0.0"
+    }
+  },
+  {
+    "number": 18,
+    "name": "作品表达连接搭配库.json",
+    "source_header_line": 1144101,
+    "steps": [
+      "expression_design"
+    ],
+    "step_use": "表达连接搭配库当前无实例。作品资料库有可采用的抽象表达成果时，按本场叙述需要取用。",
+    "original": {
+      "combination_kind": "表达",
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 19,
+    "name": "作品场景连接搭配库.json",
+    "source_header_line": 1144112,
+    "steps": [
+      "scene_design"
+    ],
+    "step_use": "作品场景搭配库当前无实例。取用已有作品抽象搭配时核对与本场已选事件和动作的适配性。",
+    "original": {
+      "combination_kind": "场景",
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 20,
+    "name": "作品场景模式库.json",
+    "source_header_line": 1144123,
+    "steps": [
+      "scene_design"
+    ],
+    "step_use": "作品场景模式库当前无实例。取用已有抽象模式时，围绕当前场景功能、空间及人物行动确定适用内容。",
+    "original": {
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 21,
+    "name": "作品动态连接搭配库.json",
+    "source_header_line": 1144133,
+    "steps": [
+      "state_propagation"
+    ],
+    "step_use": "作品动态搭配库当前无实例。按已成立的根变化核对所选候选规则、外部行动和传播条件。",
+    "original": {
+      "combination_kind": "动态",
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 22,
+    "name": "作品动态模式库.json",
+    "source_header_line": 1144144,
+    "steps": [
+      "state_transition"
+    ],
+    "step_use": "作品动态模式库当前无实例。已有抽象成果时，沿本项目事件和真实前状态核对候选变化及失败处理。",
+    "original": {
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 23,
+    "name": "作品动态模式验证规则.json",
+    "source_header_line": 1144154,
+    "steps": [
+      "governance"
+    ],
+    "step_use": "用 DP-01–DP-15 核对实际模式的来源、已用规则、传播限制和待确认候选。",
+    "original": {
+      "schema_name": "作品动态模式验证规则",
+      "schema_version": "H0D-1.0.0",
+      "rules": [
+        {
+          "rule_id": "DP-01",
+          "description": "dynamic_pattern_id必须非空且唯一"
+        },
+        {
+          "rule_id": "DP-02",
+          "description": "source_work_ids必须存在"
+        },
+        {
+          "rule_id": "DP-03",
+          "description": "必须包含not_guaranteed"
+        },
+        {
+          "rule_id": "DP-04",
+          "description": "必须包含similarity_features"
+        },
+        {
+          "rule_id": "DP-05",
+          "description": "必须包含originality_risk"
+        },
+        {
+          "rule_id": "DP-06",
+          "description": "max_depth不得超过3"
+        },
+        {
+          "rule_id": "DP-07",
+          "description": "max_activated_rules不得超过5"
+        },
+        {
+          "rule_id": "DP-08",
+          "description": "max_state_updates不得超过12"
+        },
+        {
+          "rule_id": "DP-09",
+          "description": "不得引用C00484-C00494"
+        },
+        {
+          "rule_id": "DP-10",
+          "description": "不得覆盖类型系统D"
+        },
+        {
+          "rule_id": "DP-11",
+          "description": "不得自动生成completed事件"
+        },
+        {
+          "rule_id": "DP-12",
+          "description": "不得自动写入人物状态"
+        },
+        {
+          "rule_id": "DP-13",
+          "description": "不得自动选择唯一行为"
+        },
+        {
+          "rule_id": "DP-14",
+          "description": "fixture对象不得进入正式库"
+        },
+        {
+          "rule_id": "DP-15",
+          "description": "不得生成虚构作品模式作为source_fact"
+        }
+      ]
+    }
+  },
+  {
+    "number": 24,
+    "name": "作品伏笔模式库.json",
+    "source_header_line": 1144223,
+    "steps": [
+      "plot_design"
+    ],
+    "step_use": "作品伏笔模式库当前无实例。取用已有抽象成果时，根据本作伏笔需求核对铺设、显隐和回收条件。",
+    "original": {
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 25,
+    "name": "作品伏笔爽点搭配库.json",
+    "source_header_line": 1144233,
+    "steps": [
+      "plot_design"
+    ],
+    "step_use": "作品伏笔爽点搭配库当前无实例。依据项目已有铺垫和兑现需要，取用可兼容的抽象期待与兑现安排。",
+    "original": {
+      "combination_kind": "伏笔爽点",
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 26,
+    "name": "作品静态连接搭配库.json",
+    "source_header_line": 1144244,
+    "steps": [
+      "static_relations"
+    ],
+    "step_use": "作品静态搭配库当前无实例。依据实际项目关系两端和适用范围查看已提炼的稳定关系。",
+    "original": {
+      "combination_kind": "静态",
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 27,
+    "name": "作品静态模式库.json",
+    "source_header_line": 1144255,
+    "steps": [
+      "static_relations"
+    ],
+    "step_use": "作品静态模式库当前无实例。已有抽象成果时核对对象之间的稳定关系及成立条件。",
+    "original": {
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 28,
+    "name": "作品静态模式验证规则.json",
+    "source_header_line": 1144265,
+    "steps": [
+      "governance"
+    ],
+    "step_use": "用 SP-01–SP-11 核对实际静态模式的来源、边界、风险、相似特征和资格。",
+    "original": {
+      "schema_name": "作品静态模式验证规则",
+      "schema_version": "H0D-1.0.0",
+      "rules": [
+        {
+          "rule_id": "SP-01",
+          "description": "static_pattern_id必须非空且唯一"
+        },
+        {
+          "rule_id": "SP-02",
+          "description": "source_work_ids必须存在"
+        },
+        {
+          "rule_id": "SP-03",
+          "description": "必须包含not_guaranteed"
+        },
+        {
+          "rule_id": "SP-04",
+          "description": "必须包含similarity_features"
+        },
+        {
+          "rule_id": "SP-05",
+          "description": "必须包含originality_risk"
+        },
+        {
+          "rule_id": "SP-06",
+          "description": "不得包含动态触发条件"
+        },
+        {
+          "rule_id": "SP-07",
+          "description": "不得包含动态传播层数"
+        },
+        {
+          "rule_id": "SP-08",
+          "description": "不得包含固定动作、固定死亡、固定爱情、固定升级、固定复仇、固定打脸、固定剧情结果"
+        },
+        {
+          "rule_id": "SP-09",
+          "description": "fixture对象不得进入正式库"
+        },
+        {
+          "rule_id": "SP-10",
+          "description": "不得引用C00484-C00494"
+        },
+        {
+          "rule_id": "SP-11",
+          "description": "不得生成虚构作品模式作为source_fact"
+        }
+      ]
+    }
+  },
+  {
+    "number": 29,
+    "name": "作品连接搭配模板.json",
+    "source_header_line": 1144318,
+    "steps": [
+      "governance"
+    ],
+    "step_use": "使用作品搭配时，按现有字段填写适用的实际来源、连接、规则与限制。模板中的零分和空槽保留原值。",
+    "original": {
+      "combination_id": "",
+      "combination_kind": "",
+      "primary_type_id": "",
+      "type_ids": [],
+      "subtype_ids": [],
+      "mechanism_ids": [],
+      "structure_ids": [],
+      "style_ids": [],
+      "source_pattern_ids": [],
+      "static_connection_ids": [],
+      "dynamic_rule_ids": [],
+      "concept_ids": [],
+      "event_type_ids": [],
+      "information_type_ids": [],
+      "resource_type_ids": [],
+      "relationship_type_ids": [],
+      "foreshadowing_type_ids": [],
+      "satisfaction_type_ids": [],
+      "compatibility_score": 0,
+      "diversity_score": 0,
+      "novelty_score": 0,
+      "similarity_score": 0,
+      "reuse_penalty": 0,
+      "originality_risk": "",
+      "quality_score": 0,
+      "generation_method": "",
+      "selection_status": "",
+      "not_guaranteed": [],
+      "source_refs": [],
+      "evidence_type": "template",
+      "confidence": 0,
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 30,
+    "name": "作品连接搭配验证规则.json",
+    "source_header_line": 1144356,
+    "steps": [
+      "governance"
+    ],
+    "step_use": "用 COM-01–COM-11 核对实际搭配的种类、唯一性、引用、资格及静动态区分。",
+    "original": {
+      "schema_name": "作品连接搭配验证规则",
+      "schema_version": "H0D-1.0.0",
+      "rules": [
+        {
+          "rule_id": "COM-01",
+          "description": "combination_id必须非空且唯一"
+        },
+        {
+          "rule_id": "COM-02",
+          "description": "combination_kind必须在枚举范围内"
+        },
+        {
+          "rule_id": "COM-03",
+          "description": "不建立所有排列组合"
+        },
+        {
+          "rule_id": "COM-04",
+          "description": "不用重复组合填充数量"
+        },
+        {
+          "rule_id": "COM-05",
+          "description": "组合不得自动产生固定剧情"
+        },
+        {
+          "rule_id": "COM-06",
+          "description": "动态搭配必须引用合法动态规则"
+        },
+        {
+          "rule_id": "COM-07",
+          "description": "动态搭配不得引用待恢复规则"
+        },
+        {
+          "rule_id": "COM-08",
+          "description": "fixture搭配不得进入正式库"
+        },
+        {
+          "rule_id": "COM-09",
+          "description": "没有真实作品来源时，正式作品搭配库保持空模板"
+        },
+        {
+          "rule_id": "COM-10",
+          "description": "不得引用C00484-C00494"
+        },
+        {
+          "rule_id": "COM-11",
+          "description": "静态和动态搭配必须严格分离"
+        }
+      ]
+    }
+  },
+  {
+    "number": 31,
+    "name": "作品人物关系搭配库.json",
+    "source_header_line": 1144409,
+    "steps": [
+      "static_relations"
+    ],
+    "step_use": "作品人物关系搭配库当前无实例。已有抽象成果时，依据本项目真实人物、已有关系和需求选择适用组合。",
+    "original": {
+      "combination_kind": "人物关系",
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 32,
+    "name": "作品人物关系模式库.json",
+    "source_header_line": 1144420,
+    "steps": [
+      "static_relations"
+    ],
+    "step_use": "作品人物关系模式库当前无实例。已有抽象成果时核对人物两端、稳定关系和具体成立条件。",
+    "original": {
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 33,
+    "name": "作品爽点模式库.json",
+    "source_header_line": 1144430,
+    "steps": [
+      "plot_design"
+    ],
+    "step_use": "作品爽点模式库当前无实例。依据本项目已设计的前置期待、选择、代价和兑现事件考虑抽象方法。",
+    "original": {
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 34,
+    "name": "作品信息传播模式库.json",
+    "source_header_line": 1144440,
+    "steps": [
+      "state_propagation"
+    ],
+    "step_use": "作品信息传播模式库当前无实例。已有抽象成果时，依真实知情者、行动选择和信息媒介核对传播候选。",
+    "original": {
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 35,
+    "name": "作品信息资源搭配库.json",
+    "source_header_line": 1144450,
+    "steps": [
+      "plot_design"
+    ],
+    "step_use": "作品信息资源搭配库当前无实例。已有抽象成果时，核对当前信息及资源的实际持有条件、用途与关联。",
+    "original": {
+      "combination_kind": "信息资源",
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  },
+  {
+    "number": 36,
+    "name": "作品资源流动模式库.json",
+    "source_header_line": 1144461,
+    "steps": [
+      "world_design",
+      "state_propagation"
+    ],
+    "step_use": "作品资源流动模式库当前无实例。已有抽象成果时，根据本项目资源分布、根变化和可选行动判断适用性。",
+    "original": {
+      "items": [],
+      "count": 0,
+      "evidence_type": "template",
+      "status": "active",
+      "schema_version": "H0D-1.0.0"
+    }
+  }
+]

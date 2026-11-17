@@ -63,6 +63,14 @@ def test_ollama_protocol(server: tuple[str, dict], done: bool, reason: str, expe
     assert state['request']['options'] == {'temperature': 0.1}
 
 
+def test_ollama_structured_stage_schema_is_sent_at_protocol_top_level(server):
+    url,state=server;state['body']={'message':{'content':'{}'},'done':True,'done_reason':'stop'}
+    schema={'type':'object','properties':{'stage':{'type':'string'}},'required':['stage']}
+    OllamaProvider(url).generate([{'role':'user','content':'JSON'}],model='m',format=schema,temperature=0.1)
+    assert state['request'].get('format')==schema
+    assert 'format' not in state['request']['options']
+
+
 def test_http_error_and_malformed_are_not_success(server: tuple[str, dict]) -> None:
     url, state = server
     provider = OpenAICompatProvider(url + '/v1', 'secret')

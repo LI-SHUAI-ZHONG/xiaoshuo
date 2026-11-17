@@ -7,6 +7,8 @@ from uuid import uuid4
 
 from nw import planning
 from nw.cards import card_input_ref, decision_history, read_card, read_decision
+from nw.materials.binding import verify_materials
+from nw.materials.phase_routes import STAGED_POLICIES
 from nw.models import Chapter, Scene
 from nw.store import Store, now
 from nw.story_dependencies import find_impacts, outline_ref
@@ -31,7 +33,7 @@ def _approved_members(store: Store, root: CardRef, root_card: dict, approval: st
     return entries
 
 
-def _materialize(store: Store, candidate: dict) -> list[dict]:
+def _materialize(store: Store, candidate: dict, proposal_id: str) -> list[dict]:
     chapters = {row.index: row for row in store.list('chapter')}
     existing = {(row.chapter_id, row.index) for row in store.list('scene')}
     project = store.project()
@@ -50,8 +52,13 @@ def _materialize(store: Store, candidate: dict) -> list[dict]:
             if (chapter.id, spec['index']) in existing:
                 raise ValueError('PLAN_COORDINATE_CONFLICT: scene already exists')
             binding = {'scene_ref': candidate['members'][spec['card']], 'story_order': spec['story_order']}
-            scene = store._insert('scene', Scene(uuid4().hex, chapter.id, spec['index'], canonical({'story': binding})))
-            entry['scenes'].append({'scene_id': scene.id, 'index': scene.index, **binding})
+            card = {'story': binding}
+            material = {}
+            if candidate.get('material_design'):
+                card['_nw_material_plan'] = proposal_id
+                material['material_key'] = spec['card']
+            scene = store._insert('scene', Scene(uuid4().hex, chapter.id, spec['index'], canonical(card)))
+            entry['scenes'].append({'scene_id': scene.id, 'index': scene.index, **binding, **material})
         result.append(entry)
     return result
 
@@ -92,6 +99,14 @@ def apply_plan(store: Store, proposal_id: str, decision_id: str, *,
                before_apply: Callable[[], None] | None = None) -> list[CardRef]:
     proposal = planning.show_plan(store, proposal_id)
     manifest, frozen = planning.plan_input(store, proposal_id)
+    if frozen.get('material_work'):
+        from nw.materials.work_catalog import SourceDesk
+        SourceDesk(store.directory.parent).verify(frozen['material_work']['sources'])
+        if frozen['material_work'].get('policy') in STAGED_POLICIES:
+            from nw.materials.binding_reviews import verify_session_bindings
+            verify_session_bindings(frozen['material_work'],store.directory.parent,test_mode=store.test_mode)
+            from nw.materials.governance_runtime import verify_session_governance
+            verify_session_governance(frozen['material_work'],store.directory.parent,adopting=True)
     with store.connection:
         store.connection.execute('BEGIN IMMEDIATE')
         previous = planning._application(store, proposal_id)
@@ -113,18 +128,21 @@ def apply_plan(store: Store, proposal_id: str, decision_id: str, *,
             raise ValueError('STALE_PLAN: outline changed since design')
         head, snapshot = _checked_snapshot(store, frozen)
         chosen = next(item for item in proposal.materialization if item['root'] == asdict(root))
+        verify_materials(store.directory.parent, frozen.get('materials', ()))
         stale = []
         if snapshot is not None and proposal.scope == 'replan':
             stale = _retire_descendants(store, snapshot, frozen['parent'])
             if affected := sorted(set(stale) & snapshot['slots'].keys()):
                 raise ValueError('REPLAN_ACCEPTED_DESCENDANTS: ' + ', '.join(affected))
         approvals = _approved_members(store, root, read_card(store, root), decision_id)
-        chapters = _materialize(store, chosen)
+        chapters = _materialize(store, chosen, proposal_id)
         if snapshot is not None:
             snapshot['settings'].extend(approvals)
         result = {'root': asdict(root), 'decision_id': decision_id, 'approvals': approvals,
                   'chapters': chapters, 'stale_scenes': stale,
                   'branch_head': asdict(StateHead(head.branch_id, head.revision + 1)) if head else None}
+        if 'material_design' in chosen:
+            result['material_design'] = chosen['material_design']
         if head is not None:
             write_revision(store, StateHead(**result['branch_head']), head.revision,
                            f'plan-apply:{proposal_id}', content_sha256(result), snapshot)

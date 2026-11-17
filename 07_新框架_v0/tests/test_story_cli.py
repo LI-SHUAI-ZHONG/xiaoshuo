@@ -76,7 +76,7 @@ def test_m8_cli_design_write_review_and_delta(tmp_path: Path, server) -> None:
 
     endpoint, transport = server
     config = tmp_path / 'test.toml'
-    config.write_text(f'[model]\nprovider="ollama"\nbase_url="{endpoint}"\nmodel="test"\n', encoding='utf-8')
+    config.write_text(f'[model]\nprovider="ollama"\nbase_url="{endpoint}"\nmodel="test"\n[workflow]\nsource_driven=false\n', encoding='utf-8')
     budget = tmp_path / 'budget.json'
     budget.write_text('{"max_calls":1,"context_char_limit":45000,"output_limit":2000}', encoding='utf-8')
 

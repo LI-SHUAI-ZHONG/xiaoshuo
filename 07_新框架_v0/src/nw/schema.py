@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 8
+VERSION = 10
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -275,4 +275,43 @@ DROP TABLE story_decisions_v7;
 COMMIT;
 """
 
-MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6, 6: MIGRATE_V7, 7: MIGRATE_V8}
+MIGRATE_V9 = """
+BEGIN IMMEDIATE;
+ALTER TABLE plan_applications RENAME TO plan_applications_v8;
+ALTER TABLE task_calls RENAME TO task_calls_v8;
+CREATE TABLE task_calls(
+""" + MIGRATE_V5.split('CREATE TABLE task_calls(',1)[1].split('CREATE TABLE call_reservations(',1)[0].replace(
+    "'state_extract','fact_review'", "'state_extract','fact_review','material_work'") + """
+INSERT INTO task_calls SELECT * FROM task_calls_v8 ORDER BY rowid;
+CREATE TABLE plan_applications(
+ proposal_id TEXT PRIMARY KEY REFERENCES task_calls(id), decision_id TEXT NOT NULL REFERENCES card_decisions(id),
+ mapping_json TEXT NOT NULL CHECK(json_valid(mapping_json)));
+INSERT INTO plan_applications SELECT * FROM plan_applications_v8 ORDER BY rowid;
+DROP TABLE plan_applications_v8;
+DROP TABLE task_calls_v8;
+PRAGMA user_version=9;
+COMMIT;
+"""
+
+MIGRATE_V10 = """
+BEGIN IMMEDIATE;
+CREATE TABLE chapter_records(
+ id TEXT PRIMARY KEY,
+ branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ chapter_id TEXT NOT NULL REFERENCES chapters(id),
+ kind TEXT NOT NULL CHECK(kind IN ('summary','character','cost','commitment','commitment-ending',
+                                   'resource-update','resource-inventory','resource-settlement')),
+ input_sha256 TEXT NOT NULL,
+ report_json TEXT NOT NULL CHECK(json_valid(report_json)), report_sha256 TEXT NOT NULL,
+ created_at TEXT NOT NULL);
+CREATE INDEX chapter_records_scope ON chapter_records(branch_id,chapter_id,kind,input_sha256);
+CREATE TRIGGER chapter_records_no_update BEFORE UPDATE ON chapter_records
+ BEGIN SELECT RAISE(ABORT,'chapter_records is append-only'); END;
+CREATE TRIGGER chapter_records_no_delete BEFORE DELETE ON chapter_records
+ BEGIN SELECT RAISE(ABORT,'chapter_records is append-only'); END;
+PRAGMA user_version=10;
+COMMIT;
+"""
+
+MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6,
+              6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10}

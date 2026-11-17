@@ -8,7 +8,7 @@ from nw.call_budget import BudgetExceeded, _cost, _insert_budget, _money, prepar
 from nw.call_control import check_test_provider, execution_lock, model_settings
 from nw.cards import eligible_rule_refs, read_card
 from nw.context.registry import build_context
-from nw.context.story import WRITE_PROMPT, StoryScope, build_story_context, scene_scope
+from nw.context.story import StoryScope, build_story_context, scene_scope
 from nw.generation import call_model, encode, recover_run
 from nw.llm.base import LLMProvider
 from nw.store import Store, now
@@ -89,7 +89,7 @@ class Experiment:
                 for arm in arms:
                     include = arm['provider'] == 'selected_methods'
                     context = full if include else base
-                    messages = [{'role': 'system', 'content': WRITE_PROMPT},
+                    messages = [{'role': 'system', 'content': work.prompt},
                                 {'role': 'user', 'content': canonical(context)}]
                     effective, estimate = prepare_call(self.store, budget_id, provider.name, params, messages)
                     ident = f"ab:{arm['run_id']}"
@@ -101,7 +101,8 @@ class Experiment:
                         disclosure_order=work.disclosure, predecessor_drafts=work.predecessor_drafts,
                         dependency_refs=tuple(ref for ref in work.dependency_refs if include or ref.kind != 'card'
                                               or CardRef(ref.id, ref.version) not in selected),
-                        selection={**work.selection, 'manifest_id': ident} if include else None)
+                        selection={**work.selection, 'manifest_id': ident} if include else None,
+                        material_design_sha256=work.material_design_sha256)
                     _insert_manifest(self.store, manifest, context)
                     requests.append((arm['run_id'], context, messages, manifest, estimate))
                 if budget.max_cost is not None:
@@ -251,6 +252,7 @@ class Experiment:
                   'predecessor_drafts', 'settings')
         methods = comparison['method_refs']
         if (any(base[key] != selected[key] for key in fields) or a['messages'][0] != b['messages'][0]
+                or base.get('material_design_sha256') != selected.get('material_design_sha256')
                 or comparison['branch_id'] != base['branch_id'] or comparison['state_revision'] != base['state_revision']
                 or base['card_refs'] != [ref for ref in selected['card_refs'] if ref not in methods]
                 or plain != {'items': [item for item in full['items'] if not item['source'].startswith('rule:')]}

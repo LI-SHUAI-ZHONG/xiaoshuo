@@ -8,6 +8,7 @@ from uuid import uuid4
 
 from nw.call_budget import _insert_budget, read_budget
 from nw.cards import eligible_rule_refs
+from nw.materials.binding import resolve_materials
 from nw.store import Store, now
 from nw.story_delta import _scene_position, story_write_manifest
 from nw.story_dependencies import legacy_ref
@@ -26,6 +27,8 @@ class JobRequest:
     design_scope: str = 'chapter'
     parent_id: str | None = None
     scene_scopes: dict[str, dict] = field(default_factory=dict)
+    materials: list[dict] = field(default_factory=list)
+    material_deferrals: dict[str, str] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -88,6 +91,13 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
         raise ValueError('Design options are available only in design mode')
     if request.parent_id is not None and not text(request.parent_id):
         raise ValueError('Invalid parent proposal ID')
+    if request.mode != 'design' and request.materials != []:
+        raise ValueError('MATERIAL_SCOPE: assign materials in design; writing inherits the approved scene')
+    if (not isinstance(request.material_deferrals, dict) or
+            not all(text(key) and text(reason) for key, reason in request.material_deferrals.items()) or
+            request.material_deferrals and request.mode != 'design'):
+        raise ValueError('MATERIAL_SCOPE: design deferrals require source IDs and author reasons')
+    materials = resolve_materials(store.directory.parent, request.materials)
     ident = uuid4().hex
     with store.connection:
         store.connection.execute('BEGIN IMMEDIATE')
@@ -139,7 +149,7 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
         if request.mode == 'revise' and request.budget.max_revisions == 0:
             raise ValueError('Revision mode requires at least one revision in the budget')
         frozen = {**asdict(request), 'scene_ids': scenes, 'brief_ref': pin,
-                  'head': asdict(head), 'original_drafts': originals}
+                  'head': asdict(head), 'original_drafts': originals, 'materials': materials}
         _insert_budget(store, ident, request.budget)
         store.connection.execute("""INSERT INTO novel_jobs
             (id,branch_id,request_json,budget_id,status,output_json) VALUES (?,?,?,?,'READY','{}')""",
@@ -154,6 +164,8 @@ def show_job(store: Store, ident: str) -> JobResult:
     outputs = json.loads(job['output_json'])
     request = json.loads(job['request_json'])
     outputs['scope'] = {key: request[key] for key in ('mode', 'head', 'scene_ids', 'brief_ref')}
+    if request.get('materials'):
+        outputs['scope']['materials'] = [row['request'] for row in request['materials']]
     outputs['steps'] = [{'step_key': row[0], 'attempt': row[1], 'status': row[2], 'output': json.loads(row[3])}
                         for row in steps]
     outputs['budget'] = asdict(read_budget(store, job['budget_id']))

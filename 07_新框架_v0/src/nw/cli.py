@@ -14,7 +14,7 @@ from nw.config import ConfigRequired, ROOT, load_config, make_provider
 from nw.generation import write_scene, review_draft
 from nw.flow.engine import FlowEngine
 from nw.experiments.ab import Experiment
-from nw import novel_cli
+from nw import material_cli, novel_cli
 
 
 def decide_interactively(node: str, payload: dict) -> str:
@@ -167,6 +167,7 @@ def main(argv: list[str] | None = None) -> int:
     accept.add_argument('--expected-head', type=int)
     accept.add_argument('--commit-id')
     novel_cli.register_commands(commands)
+    material_cli.register_commands(commands)
     commands.add_parser('runs')
     init = commands.add_parser('init', help='create a project')
     init.add_argument('--name', required=True)
@@ -194,9 +195,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.command is None:
         parser.print_help()
         return 0
-    if not args.project:
+    if args.command != 'materials' and not args.project:
         parser.error('--project is required')
     try:
+        if args.command == 'materials':
+            workspace = args.workspace
+            if workspace is None:
+                workspace = load_config(args.config).workspace if args.config.exists() else ROOT / 'workspace'
+            print(json.dumps(material_cli.dispatch(workspace, args), ensure_ascii=False, indent=2))
+            return 0
         settings = None
         legacy_model = args.command in ('write', 'review', 'flow') or (args.command == 'ab' and args.action == 'start')
         needs_model = (legacy_model or (args.command == 'story' and args.action == 'extract')

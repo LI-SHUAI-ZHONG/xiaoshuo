@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "version_name": "搭建现行六大资料：运行层精准融合完成版-20260819-03",
+  "scope": "one_current_complete_material_version_only",
+  "catalog_inputs": [
+    {
+      "path": "02_原版资料/原始资料/动态网络.txt",
+      "family": "dynamic",
+      "layer": "baseline",
+      "sha256": "d6093b82fe6e072bdff7300fadcf175112b988d319c6b836f5d5b881b5282cc6",
+      "bytes": 19196814,
+      "usage": "parse_current"
+    },
+    {
+      "path": "02_原版资料/原始资料/类型系统.txt",
+      "family": "types",
+      "layer": "baseline",
+      "sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582",
+      "bytes": 18050349,
+      "usage": "parse_current"
+    },
+    {
+      "path": "02_原版资料/原始资料/类型连接.txt",
+      "family": "type_links",
+      "layer": "baseline",
+      "sha256": "e7b7f8f2d1bb7f1af3007ed24da1d3531f767a08c14db94e79346264eafed7b0",
+      "bytes": 65826203,
+      "usage": "parse_current"
+    },
+    {
+      "path": "02_原版资料/原始资料/资料库.txt",
+      "family": "library",
+      "layer": "baseline",
+      "sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+      "bytes": 10140562,
+      "usage": "parse_current"
+    },
+    {
+      "path": "02_原版资料/原始资料/锚点网络.txt",
+      "family": "anchors",
+      "layer": "baseline",
+      "sha256": "9b7ea71e53613a453fe71fa0a862411f65f22328a38ee7b97db7fd5bab7be759",
+      "bytes": 10383833,
+      "usage": "parse_current"
+    },
+    {
+      "path": "02_原版资料/原始资料/静态网络.txt",
+      "family": "static",
+      "layer": "baseline",
+      "sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197",
+      "bytes": 19830111,
+      "usage": "parse_current"
+    }
+  ]
+}

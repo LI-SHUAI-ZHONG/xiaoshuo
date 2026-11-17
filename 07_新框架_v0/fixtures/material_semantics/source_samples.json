@@ -1,0 +1,891 @@
+{
+  "purpose": "Frozen real source excerpts for isolated regressions; all project products are FAKE fixtures",
+  "samples": [
+    {
+      "source": {
+        "id": "6a006d2c77833de1d01060fff2a34c056ea4a4ef302ba11aaaeab70a54f32deb",
+        "key": "2.3_角色动作",
+        "profile": "character",
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "sha256": "7bec4a83d9f9ec235e3a732ee0b6549556c2927eaa5299652916c8d71af0b2d9"
+      },
+      "source_context": {
+        "byte_end": 174259,
+        "byte_start": 172927,
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "fragment_id": "6a006d2c77833de1d01060fff2a34c056ea4a4ef302ba11aaaeab70a54f32deb",
+        "id": "6a006d2c77833de1d01060fff2a34c056ea4a4ef302ba11aaaeab70a54f32deb",
+        "line_end": 3611,
+        "line_start": 3543,
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "sha256": "7bec4a83d9f9ec235e3a732ee0b6549556c2927eaa5299652916c8d71af0b2d9",
+        "source_id": "92583cff03f6d4e5fd66dd4b5ec6ed7ba04103a92fd7a4e4a0cc4cc1e4e34c12"
+      },
+      "source_state": "design_ready",
+      "original_text": "### 2.3_角色动作\r\n\r\n【定义】\r\n角色的外在行为特征，包括以下维度：\r\n\r\n\r\n【调用条件】\r\n无\r\n\r\n\r\n【指令】\r\n\\*\\*动作写作规则\\*\\*：\r\n\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因\r\n\\- 动作序列必须完整（从开始到结束，不能跳过中间状态）\r\n\\- 动作在情绪变化时必须出现变化描写（“他不再搓手指了——他攥紧了拳头”）\r\n\r\n\r\n【设计指令】\r\n无\r\n\r\n\r\n【写作指令】\r\n\\- 动作在情绪变化时必须出现变化描写（“他不再搓手指了——他攥紧了拳头”）\r\n\r\n\r\n【分级标准】\r\n无\r\n\r\n\r\n【场景变体】\r\n无\r\n\r\n\r\n【判定标准】\r\n无\r\n\r\n\r\n【修正指南】\r\n无\r\n\r\n\r\n【示例】\r\n场景：执行“角色动作”。输入：故事任务和条目定义“角色的外在行为特征，包括以下维度：”。操作：按定义确定对象与步骤，并落实指令“动作写作规则：-动作不是“发生了”，而是“被角色执行的”——每个”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。\r\n\r\n【反面案例】\r\n无\r\n\r\n\r\n【关联板块】\r\n无\r\n\r\n\r\n【关联路径】\r\n无\r\n\r\n\r\n【优先级】\r\n无\r\n\r\n\r\n【例外处理】\r\n无\r\n\r\n\r\n【调用标签】\r\n#2.3_角色动作",
+      "original_text_sha256": "99a2320f65593bc78abe97ea184b80c0f9f7da0a0a4f1396c35fd1b7bc90b91b",
+      "application_layers": [
+        {
+          "aligned_fields": [],
+          "binding_ids": [
+            "TB-00011"
+          ],
+          "id": "38b4eaa4cc333ed815bbe1a2445b1ff5a89fd4394ea3d3c359a7497761a02bca",
+          "mode": "source_grounded_project_translation_required",
+          "owner_locator": null,
+          "owner_native_id": "2.3_角色动作",
+          "rejected_fields": [
+            {
+              "binding": 0,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/creative_action",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/scene_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/prose_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/creative_action",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/scene_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/prose_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            }
+          ],
+          "source_anchors": [
+            "\\*\\*动作写作规则\\*\\*： \\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\- 动作序列必须完整（从开始到结束，不能跳过中间状态"
+          ],
+          "source_ref": {
+            "byte_end": 190518,
+            "byte_start": 174259,
+            "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+            "fragment_id": "0130c169669f437fea16daf8fb8a7bf315fc5cc0cf0fe492157682ba34f63383",
+            "id": "38b4eaa4cc333ed815bbe1a2445b1ff5a89fd4394ea3d3c359a7497761a02bca",
+            "line_end": 3895,
+            "line_start": 3612,
+            "locator": "library_upgrade",
+            "path": "02_原版资料/原始资料/资料库.txt",
+            "sha256": "5caf93245b9da492f6b8ac524bc945904c1c94024ca17e95f087fb2c4730febc",
+            "source_id": "92583cff03f6d4e5fd66dd4b5ec6ed7ba04103a92fd7a4e4a0cc4cc1e4e34c12"
+          },
+          "translation_source_ids": [
+            "2.3_角色动作"
+          ],
+          "text_sha256": "f041a9b1bee04274230ed514aaa121e8cd2e5c579665a89ce4bba6d850715e8f",
+          "text": "【运行层升级】\n\n```json\n{\n  \"fusion_mode\": \"precise_source_binding\",\n  \"canonical_source_id\": \"2.3_角色动作\",\n  \"source_locator\": \"2.3_角色动作\",\n  \"runtime_calling_layer\": [\n    {\n      \"binding_id\": \"TB-00011\",\n      \"source_id\": \"2.3_角色动作\",\n      \"source_kind\": \"资料库\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '2.3_角色动作', 'line_start': 723}\",\n      \"translation_status\": \"translated\",\n      \"model_input_eligible\": true,\n      \"prose_write_allowed\": true,\n      \"semantic_interpretation\": {\n        \"source_meaning\": \"\\\\*\\\\*动作写作规则\\\\*\\\\*：\\n\\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因\\n\\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态\",\n        \"operational_meaning\": \"将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。\",\n        \"semantic_terms\": [\n          \"\\\\*\\\\*动作写作规则\\\\*\\\\*：\\n\\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因\\n\\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态\",\n          \"动作与结果\",\n          \"场景：执行“角色动作”。输入：故事任务和条目定义“角色的外在行为特征，包括以下维度：”。操作：按定义确定对象与步骤，并落实指令“动作写作规则：-动作不是“发生了\",\n          \"将条目定义\",\n          \"指令或判定证据转译为场景中的可观察约束\",\n          \"角色动作\",\n          \"角色的外在行为特征，包括以下维度：\",\n          \"选择\"\n        ],\n        \"source_semantic_anchor\": \"\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态\",\n        \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n      },\n      \"creation_binding\": {\n        \"primary_stage\": \"剧情创建\",\n        \"stages\": [\n          \"剧情创建\",\n          \"大纲\",\n          \"分纲\",\n          \"细纲\",\n          \"场景卡\",\n          \"正文\",\n          \"校验\"\n        ],\n        \"creative_object\": \"角色行为与弧光\",\n        \"creative_action\": \"让角色在目标、判断、动作和代价中体现该意义\",\n        \"story_binding\": \"把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。\",\n        \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n        \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n        \"creative_strategy\": {\n          \"source_specific_trigger\": \"当前置产物出现与“\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态”直接相关的具体创作问题时，锁定 角色动作 的调用条件“满足条目调用条件”。\",\n          \"observable_action\": \"让承担该问题的角色或系统围绕“\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。\",\n          \"observable_result\": \"通过信息、关系、资源、风险或行为的可观察变化呈现“\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态”，并能改变后续选择。\",\n          \"cost_or_change\": \"该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。\",\n          \"semantic_anchor\": \"\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态\",\n          \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n          \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n        },\n        \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n        \"binding_class\": \"candidate_retrieval\",\n        \"binding_class_name\": \"背景候选\",\n        \"activation_policy\": {\n          \"mode\": \"前置产物出现匹配创作问题，或实时检索命中场景需求时激活\",\n          \"conditions\": [\n            \"存在项目上下文；满足条目调用条件\"\n          ],\n          \"source_declared_conditions\": [\n            \"存在项目上下文\",\n            \"满足条目调用条件\"\n          ],\n          \"candidate_effect_policy\": \"不适用\",\n          \"inference_targets\": [\n            \"剧情创建\",\n            \"剧情\",\n            \"大纲\",\n            \"分纲\",\n            \"细纲\",\n            \"场景卡\",\n            \"正文\"\n          ],\n          \"allow_repeated_inference\": true,\n          \"activation_evidence\": [\n            \"matched_stage\",\n            \"matched_project_terms\",\n            \"creative_need\",\n            \"activation_reason\"\n          ]\n        }\n      },\n      \"evidence_contract\": {\n        \"design_required\": [\n          \"stage\",\n          \"creative_object\",\n          \"creative_action\",\n          \"source_ref\"\n        ],\n        \"scene_required\": [\n          \"scene_id\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"cost_or_change\"\n        ],\n        \"prose_required\": [\n          \"prose_location\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"paragraph_sha256\"\n        ]\n      },\n      \"use_authorization\": {\n        \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n        \"binding_id\": \"TB-00011\",\n        \"source_id\": \"2.3_角色动作\",\n        \"source_ref_sha256\": \"b3d79ca6da8af709982e9eaa71ed439590ff69b8a98d698dcb36f9fddfbe56c4\",\n        \"model_input_eligible\": true,\n        \"prose_write_allowed\": true,\n        \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n        \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n        \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n        \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n      }\n    },\n    {\n      \"binding_id\": \"TB-00011\",\n      \"source_id\": \"2.3_角色动作\",\n      \"source_kind\": \"资料库\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '2.3_角色动作', 'line_start': 723}\",\n      \"translation_status\": \"translated\",\n      \"model_input_eligible\": true,\n      \"prose_write_allowed\": true,\n      \"semantic_interpretation\": {\n        \"source_meaning\": \"\\\\*\\\\*动作写作规则\\\\*\\\\*：\\n\\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因\\n\\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态\",\n        \"operational_meaning\": \"将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。\",\n        \"semantic_terms\": [\n          \"\\\\*\\\\*动作写作规则\\\\*\\\\*：\\n\\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因\\n\\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态\",\n          \"动作与结果\",\n          \"场景：执行“角色动作”。输入：故事任务和条目定义“角色的外在行为特征，包括以下维度：”。操作：按定义确定对象与步骤，并落实指令“动作写作规则：-动作不是“发生了\",\n          \"将条目定义\",\n          \"指令或判定证据转译为场景中的可观察约束\",\n          \"角色动作\",\n          \"角色的外在行为特征，包括以下维度：\",\n          \"选择\"\n        ],\n        \"source_semantic_anchor\": \"\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态\",\n        \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n      },\n      \"creation_binding\": {\n        \"primary_stage\": \"剧情创建\",\n        \"stages\": [\n          \"剧情创建\",\n          \"大纲\",\n          \"分纲\",\n          \"细纲\",\n          \"场景卡\",\n          \"正文\",\n          \"校验\"\n        ],\n        \"creative_object\": \"角色行为与弧光\",\n        \"creative_action\": \"让角色在目标、判断、动作和代价中体现该意义\",\n        \"story_binding\": \"把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。\",\n        \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n        \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n        \"creative_strategy\": {\n          \"source_specific_trigger\": \"当前置产物出现与“\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态”直接相关的具体创作问题时，锁定 角色动作 的调用条件“满足条目调用条件”。\",\n          \"observable_action\": \"让承担该问题的角色或系统围绕“\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。\",\n          \"observable_result\": \"通过信息、关系、资源、风险或行为的可观察变化呈现“\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态”，并能改变后续选择。\",\n          \"cost_or_change\": \"该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。\",\n          \"semantic_anchor\": \"\\\\*\\\\*动作写作规则\\\\*\\\\*： \\\\- 动作不是“发生了”，而是“被角色执行的”——每个主要动作前应有动因 \\\\- 动作序列必须完整（从开始到结束，不能跳过中间状态\",\n          \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n          \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n        },\n        \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n        \"binding_class\": \"candidate_retrieval\",\n        \"binding_class_name\": \"背景候选\",\n        \"activation_policy\": {\n          \"mode\": \"前置产物出现匹配创作问题，或实时检索命中场景需求时激活\",\n          \"conditions\": [\n            \"存在项目上下文；满足条目调用条件\"\n          ],\n          \"source_declared_conditions\": [\n            \"存在项目上下文\",\n            \"满足条目调用条件\"\n          ],\n          \"candidate_effect_policy\": \"不适用\",\n          \"inference_targets\": [\n            \"剧情创建\",\n            \"剧情\",\n            \"大纲\",\n            \"分纲\",\n            \"细纲\",\n            \"场景卡\",\n            \"正文\"\n          ],\n          \"allow_repeated_inference\": true,\n          \"activation_evidence\": [\n            \"matched_stage\",\n            \"matched_project_terms\",\n            \"creative_need\",\n            \"activation_reason\"\n          ]\n        }\n      },\n      \"evidence_contract\": {\n        \"design_required\": [\n          \"stage\",\n          \"creative_object\",\n          \"creative_action\",\n          \"source_ref\"\n        ],\n        \"scene_required\": [\n          \"scene_id\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"cost_or_change\"\n        ],\n        \"prose_required\": [\n          \"prose_location\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"paragraph_sha256\"\n        ]\n      },\n      \"use_authorization\": {\n        \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n        \"binding_id\": \"TB-00011\",\n        \"source_id\": \"2.3_角色动作\",\n        \"source_ref_sha256\": \"b3d79ca6da8af709982e9eaa71ed439590ff69b8a98d698dcb36f9fddfbe56c4\",\n        \"model_input_eligible\": true,\n        \"prose_write_allowed\": true,\n        \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n        \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n        \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n        \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n      }\n    }\n  ],\n  \"tail_upgrade_evidence\": [\n    {\n      \"attestation_scope\": null,\n      \"binding_id\": \"TB-00011\",\n      \"consumption_id\": \"PC-09657\",\n      \"errors\": [],\n      \"formal_fact_eligible\": false,\n      \"item_attested\": false,\n      \"original_prose_artifacts_modified\": false,\n      \"permitted_use\": \"draft_audit_only\",\n      \"project_source_confirmed\": false,\n      \"prose_write_allowed\": false,\n      \"schema_version\": \"strict-source-upgrade-record-1.0\",\n      \"source_id\": \"2.3_角色动作\",\n      \"source_item_sha256\": \"418a062e587fada057473076620e52c7085a8f9cb359da50875a5b951c5b5db3\",\n      \"source_kind\": \"资料库\",\n      \"source_quality_level\": \"draft_usable\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '2.3_角色动作', 'line_start': 723}\",\n      \"source_ref_sha256\": \"b3d79ca6da8af709982e9eaa71ed439590ff69b8a98d698dcb36f9fddfbe56c4\",\n      \"status\": \"upgraded_for_draft_audit\",\n      \"upgrade_id\": \"SU-PC-09657\"\n    },\n    {\n      \"binding_id\": \"TB-00011\",\n      \"category\": \"reused_unchanged\",\n      \"fingerprint\": {\n        \"binding_strategy_sha256\": \"6277f34cd41a3bc21f7051f2662fda05875e3723d2872d52db192589d59dac61\",\n        \"dependency_sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\n        \"locator_valid\": true,\n        \"source_object_sha256\": \"4a3162007a2d7f51e7e131cbd71f351105bbdd8121746be069c673928f326a73\",\n        \"source_ref_sha256\": \"5ecffc1b63d6a2f67d7f82eeffdd534247f8da9bfc17898964f8d25fdef39ecc\"\n      },\n      \"model_call_required\": false,\n      \"reasons\": [\n        \"原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承\"\n      ],\n      \"reused_from_run_id\": \"20260816T101311Z-295bb554\",\n      \"source_id\": \"2.3_角色动作\"\n    }\n  ]\n}\n```\n\n---\r\n\r\n"
+        }
+      ],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "e19695c2e8f4c3299f0a8bc8d2240e3b14828a9f8952c55829f521399ff865b4",
+        "key": "板块64 读者情感#读者情绪波形设计",
+        "profile": "plot",
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "sha256": "b2d031342b0876f22e32f7d438eb57826f6021e27b6f9e11fc9ec0640a2ab52f"
+      },
+      "source_context": {
+        "byte_end": 4420739,
+        "byte_start": 4419375,
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "fragment_id": "325f7e36f03a256dd318909c7d53273b7064f0db4dbb2c206d0b96b65a5bcf13",
+        "id": "e19695c2e8f4c3299f0a8bc8d2240e3b14828a9f8952c55829f521399ff865b4",
+        "line_end": 91193,
+        "line_start": 91175,
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "sha256": "b2d031342b0876f22e32f7d438eb57826f6021e27b6f9e11fc9ec0640a2ab52f",
+        "source_id": "92583cff03f6d4e5fd66dd4b5ec6ed7ba04103a92fd7a4e4a0cc4cc1e4e34c12"
+      },
+      "source_state": "design_ready",
+      "original_text": "### 读者情绪波形设计\r\n\r\n【定义】读者情绪必须有起有伏。\r\n【调用条件】需要在写作中运用读者情绪波形设计技法时调用\r\n【指令】读者情绪必须有起有伏。\r\n【设计指令】在设计阶段规划读者情绪波形设计的应用方式和位置\r\n【写作指令】在写作阶段按读者情绪波形设计规则逐条执行\r\n【分级标准】轻度：简单运用读者情绪波形设计；中度：充分运用读者情绪波形设计；重度：深度运用读者情绪波形设计\r\n【场景变体】对朋友：自然运用读者情绪波形设计；对敌人：冲突性运用读者情绪波形设计；对权威：谨慎运用读者情绪波形设计；对陌生人：基础运用读者情绪波形设计\r\n【判定标准】规则\\*\\*：读者情绪不能是一条直线\r\n【修正指南】如不合格，重新审视读者情绪波形设计的运用是否到位，调整后重新检查\r\n【示例】读者情绪必须有起有伏。\r\n【反面案例】忽略读者情绪波形设计规则，导致段落效果不佳\r\n【关联板块】与板块64 读者情感的其他子节配合使用\r\n【关联路径】资料库/板块64 读者情感.md\r\n【优先级】中\r\n【例外处理】在不需要读者情绪波形设计的场景中可不使用\r\n【调用标签】#可执行型·读者情绪波形设计",
+      "original_text_sha256": "38107353dafba2716447721ab3c99927390c4e450ac9e4335828090debc611e5",
+      "application_layers": [],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "34bb67cc445c2be3532722ebdef23778827ff85a43018017ee85e5cce9592526",
+        "key": "板块45 伏笔与反转#伏笔埋设",
+        "profile": "plot",
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "sha256": "c5e8784cfd3e51f2c3d92732f6b519c243af6b9973c1d86539084160948695c9"
+      },
+      "source_context": {
+        "byte_end": 4242136,
+        "byte_start": 4240924,
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "fragment_id": "51ba5cd1c46978701ded4aced3aebaca71a39a7fd804078b4bedd56b68a67e77",
+        "id": "34bb67cc445c2be3532722ebdef23778827ff85a43018017ee85e5cce9592526",
+        "line_end": 88247,
+        "line_start": 88229,
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "sha256": "c5e8784cfd3e51f2c3d92732f6b519c243af6b9973c1d86539084160948695c9",
+        "source_id": "92583cff03f6d4e5fd66dd4b5ec6ed7ba04103a92fd7a4e4a0cc4cc1e4e34c12"
+      },
+      "source_state": "reference",
+      "original_text": "### 伏笔埋设\r\n\r\n【定义】伏笔的三种核心特征。\r\n【调用条件】需要在写作中运用伏笔埋设技法时调用\r\n【指令】伏笔的三种核心特征。\r\n【设计指令】在设计阶段规划伏笔埋设的应用方式和位置\r\n【写作指令】在写作阶段按伏笔埋设规则逐条执行\r\n【分级标准】轻度：简单运用伏笔埋设；中度：充分运用伏笔埋设；重度：深度运用伏笔埋设\r\n【场景变体】对朋友：自然运用伏笔埋设；对敌人：冲突性运用伏笔埋设；对权威：谨慎运用伏笔埋设；对陌生人：基础运用伏笔埋设\r\n【判定标准】规则\\*\\*：首次引入的伏笔在后续2-10章中被揭示其真正含义\r\n【修正指南】如不合格，重新审视伏笔埋设的运用是否到位，调整后重新检查\r\n【示例】伏笔的三种核心特征。\r\n【反面案例】忽略伏笔埋设规则，导致段落效果不佳\r\n【关联板块】与板块45 伏笔与反转的其他子节配合使用\r\n【关联路径】资料库/板块45 伏笔与反转.md\r\n【优先级】中\r\n【例外处理】在不需要伏笔埋设的场景中可不使用\r\n【调用标签】#可执行型·伏笔埋设",
+      "original_text_sha256": "0b798279cacc534a0d44876d75f2bb022bc4e44448fae466d9359d8c021ddcbc",
+      "application_layers": [],
+      "source_issues": {
+        "missing": [
+          "「伏笔埋设」宣称列举结构，但原文未列出具体成员。"
+        ],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "d7b4800d8a35b14e9d02698426fbc9b006210c46ea4ae01d9ec5ae61deb95100",
+        "key": "A1.1",
+        "profile": "anchor",
+        "path": "02_原版资料/原始资料/锚点网络.txt",
+        "file_sha256": "9b7ea71e53613a453fe71fa0a862411f65f22328a38ee7b97db7fd5bab7be759",
+        "sha256": "48f55d33fae212b95c32c4f8ae09a57f4575e994f6b2bcb46637548e13a1047c"
+      },
+      "source_context": {
+        "byte_end": 7867798,
+        "byte_start": 7867729,
+        "file_sha256": "9b7ea71e53613a453fe71fa0a862411f65f22328a38ee7b97db7fd5bab7be759",
+        "fragment_id": "d7b4800d8a35b14e9d02698426fbc9b006210c46ea4ae01d9ec5ae61deb95100",
+        "id": "d7b4800d8a35b14e9d02698426fbc9b006210c46ea4ae01d9ec5ae61deb95100",
+        "line_end": 2986,
+        "line_start": 2986,
+        "path": "02_原版资料/原始资料/锚点网络.txt",
+        "sha256": "48f55d33fae212b95c32c4f8ae09a57f4575e994f6b2bcb46637548e13a1047c",
+        "source_id": "afee9656ba342ab94409c3192e0d34d00a3abd678c6c7b307de1ff62cfcd6d76"
+      },
+      "source_state": "design_ready",
+      "original_text": "| A1.1 | 移动_步行_慢 | 缓慢步行 | 从容/疲惫 | 行动 |",
+      "original_text_sha256": "409f5ddcf413a2119bdbb5515868a779098c279d58ec62e16e3131b16c532e08",
+      "application_layers": [
+        {
+          "aligned_fields": [],
+          "binding_ids": [
+            "TB-05104"
+          ],
+          "id": "74d1c698f855fc528c646367da03ff4cd084ead8779d76eafbc357fc877501a1",
+          "mode": "source_grounded_project_translation_required",
+          "owner_locator": null,
+          "owner_native_id": "A1.1",
+          "rejected_fields": [
+            {
+              "binding": 0,
+              "field": "semantic_interpretation",
+              "reason": "原义锚点不足或与原文字面不符，须重新转译"
+            },
+            {
+              "binding": 0,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/creative_action",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/scene_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/prose_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            }
+          ],
+          "source_anchors": [],
+          "source_ref": {
+            "byte_end": 7873421,
+            "byte_start": 7867798,
+            "file_sha256": "9b7ea71e53613a453fe71fa0a862411f65f22328a38ee7b97db7fd5bab7be759",
+            "fragment_id": "578f5c28cd76cdab31559480aaf808f5f9c53ae8d8fe729d886c59cf8b2c7f6d",
+            "id": "74d1c698f855fc528c646367da03ff4cd084ead8779d76eafbc357fc877501a1",
+            "line_end": 2987,
+            "line_start": 2987,
+            "locator": "anchor_upgrade",
+            "path": "02_原版资料/原始资料/锚点网络.txt",
+            "sha256": "ce1c42bd06d07bd41b6b007f6ff1a63c7fa5edbc6221cea06981b48cf43e9d31",
+            "source_id": "afee9656ba342ab94409c3192e0d34d00a3abd678c6c7b307de1ff62cfcd6d76"
+          },
+          "translation_source_ids": [
+            "A1.1"
+          ],
+          "text_sha256": "2a379c82bc9b8c269e66e60c444029d64e624ab962543c69ae73bb29f3696e6a",
+          "text": "| A1.1 运行层升级 | ```json {\"fusion_mode\":\"precise_source_binding\",\"canonical_source_id\":\"A1.1\",\"source_locator\":\"A1.1\",\"runtime_calling_layer\":[{\"binding_id\":\"TB-05104\",\"source_id\":\"A1.1\",\"source_kind\":\"锚点网络\",\"source_ref\":\"原始资料/锚点网络.txt:1616\",\"translation_status\":\"translated\",\"model_input_eligible\":true,\"prose_write_allowed\":true,\"semantic_interpretation\":{\"source_meaning\":\"移动_步行_慢\",\"operational_meaning\":\"将“移动_步行_慢”的状态“缓慢步行”在条件“从容/疲惫”成立时落到具体场景对象和可观察表现。\",\"semantic_terms\":[\"从容\",\"在条件\",\"成立时落到具体场景对象和可观察表现\",\"步行\",\"疲惫\",\"的状态\",\"移动\",\"移动_步行_慢\",\"缓慢步行\",\"行动\"],\"source_semantic_anchor\":\"移动_步行_慢\",\"forbidden_shortcut\":\"不得把资料名称、ID、规则原文或元数据直接写入正文\"},\"creation_binding\":{\"primary_stage\":\"场景卡\",\"stages\":[\"剧情创建\",\"大纲\",\"分纲\",\"细纲\",\"场景卡\",\"正文\",\"校验\"],\"creative_object\":\"可观察表现\",\"creative_action\":\"把抽象状态转成感官、空间、身体或动作细节\",\"story_binding\":\"把抽象要求转成视角内可感知的空间、身体、感官、动作或物件细节。\",\"scene_strategy\":\"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\"prose_strategy\":\"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\"creative_strategy\":{\"source_specific_trigger\":\"当视角对象进入“移动_步行_慢”规定的触发条件“移动_步行_慢”时，先呈现一个可感知的异常细节。\",\"observable_action\":\"让视角内的角色对该细节作出身体、空间或物件层面的动作，落实“把抽象状态转成感官、空间、身体或动作细节”。\",\"observable_result\":\"该动作留下可回看的感官或空间结果，与“移动_步行_慢”相符，并改变角色下一次观察。\",\"cost_or_change\":\"角色为确认或避开该锚点付出时间、暴露位置或承受身体不适，场景状态因此不可完全复原。\",\"semantic_anchor\":\"移动_步行_慢\",\"evidence_location\":\"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\"quality_rule\":\"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"},\"planned_scene_scope\":\"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\"binding_class\":\"direct_creation\",\"binding_class_name\":\"直接创作\",\"activation_policy\":{\"mode\":\"场景需要具体感官、空间、身体或动作表现时激活\",\"conditions\":[\"从容/疲惫\"],\"source_declared_conditions\":[\"从容/疲惫\"],\"candidate_effect_policy\":\"不适用\",\"inference_targets\":[\"场景卡\",\"正文\"],\"allow_repeated_inference\":true,\"activation_evidence\":[\"matched_stage\",\"matched_project_terms\",\"creative_need\",\"activation_reason\"]}},\"evidence_contract\":{\"design_required\":[\"stage\",\"creative_object\",\"creative_action\",\"source_ref\"],\"scene_required\":[\"scene_id\",\"trigger\",\"action\",\"observable_result\",\"cost_or_change\"],\"prose_required\":[\"prose_location\",\"trigger\",\"action\",\"observable_result\",\"paragraph_sha256\"]},\"use_authorization\":{\"schema_version\":\"full-source-model-input-prose-authorization-1.0\",\"binding_id\":\"TB-05104\",\"source_id\":\"A1.1\",\"source_ref_sha256\":\"5e0cd7a650d17733d5ea4f05331144d9239658ead41c34d8fb98edab736b1809\",\"model_input_eligible\":true,\"prose_write_allowed\":true,\"authorization_scope\":\"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\"authorized_by\":\"project_owner_bulk_upgrade_2026-08-13\",\"authorized_at\":\"2026-08-13T08:10:45.710861Z\",\"authorization_rationale\":\"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"}}],\"tail_upgrade_evidence\":[{\"attestation_scope\":null,\"binding_id\":\"TB-05104\",\"consumption_id\":\"PC-11585\",\"errors\":[],\"formal_fact_eligible\":false,\"item_attested\":false,\"original_prose_artifacts_modified\":false,\"permitted_use\":\"draft_audit_only\",\"project_source_confirmed\":false,\"prose_write_allowed\":false,\"schema_version\":\"strict-source-upgrade-record-1.0\",\"source_id\":\"A1.1\",\"source_item_sha256\":\"409f5ddcf413a2119bdbb5515868a779098c279d58ec62e16e3131b16c532e08\",\"source_kind\":\"锚点网络\",\"source_quality_level\":\"draft_usable\",\"source_ref\":\"原始资料/锚点网络.txt:1616\",\"source_ref_sha256\":\"5e0cd7a650d17733d5ea4f05331144d9239658ead41c34d8fb98edab736b1809\",\"status\":\"upgraded_for_draft_audit\",\"upgrade_id\":\"SU-PC-11585\"},{\"binding_id\":\"TB-05104\",\"category\":\"reused_unchanged\",\"fingerprint\":{\"binding_strategy_sha256\":\"158ca32369d8beb4f30da8e20f3460e03759fba5e6d571dfc40637e97b1be72c\",\"dependency_sha256\":\"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\"locator_valid\":true,\"source_object_sha256\":\"d87fdbadf5633dda46a6b73ff0f7afd21267a9b7494eb2c80e278592972ad62b\",\"source_ref_sha256\":\"4df082d26b6ce2f87458269c653627ad03e008d318836ab8d8777a22cb36f116\"},\"model_call_required\":false,\"reasons\":[\"原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承\"],\"reused_from_run_id\":\"20260816T101311Z-295bb554\",\"source_id\":\"A1.1\"}]} ``` | 精确绑定 | 已融合 |\n"
+        }
+      ],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "e3e8e31490e14edcee8695c9e321a68cc0ceb0a1c64d512f38001a44d73a5ad8",
+        "key": "G3C_ADAPT_冲突类型适配_001",
+        "profile": "metadata",
+        "path": "02_原版资料/原始资料/类型系统.txt",
+        "file_sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582",
+        "sha256": "c465f807990ca22b982649d97ef03066b924074f4c341c341c99f1b914f002de"
+      },
+      "source_context": {
+        "byte_end": 3913,
+        "byte_start": 3419,
+        "file_sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582",
+        "fragment_id": "eda82272ebb383dd6b25b8f34551d83b34ff410f245427fc408a935b4f242ad7",
+        "fragment_key": "冲突类型适配.json",
+        "id": "e3e8e31490e14edcee8695c9e321a68cc0ceb0a1c64d512f38001a44d73a5ad8",
+        "line_end": 110,
+        "line_start": 94,
+        "locator": "/adapters/0",
+        "path": "02_原版资料/原始资料/类型系统.txt",
+        "sha256": "c465f807990ca22b982649d97ef03066b924074f4c341c341c99f1b914f002de",
+        "source_id": "6cd30d00d42a5b3410bed51599a705463517ef6316fbfc6c4319c45fc0a3cba5"
+      },
+      "source_state": "reference",
+      "original_text": "{\"confidence\":\"high\",\"evidence_type\":\"template\",\"object_kind\":\"冲突类型适配_adapter\",\"preferred_conflicts\":[\"resource_conflict\",\"power_conflict\",\"capability_conflict\"],\"rule\":\"动作类型倾向物理冲突\",\"schema_version\":\"G-3C-1.0\",\"source_refs\":[],\"stable_id\":\"G3C_ADAPT_冲突类型适配_001\",\"status\":\"active\",\"type\":\"action\",\"violence_tendency\":\"high\"}",
+      "original_text_sha256": "a63d8fdce82f8fede21845b10f8953da6891c305fbef3748a714852b37830f09",
+      "application_layers": [],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "50241aba42e018c7090ebfadc902dfbd29facb1bd0bfef7899eba8828f0eb81b",
+        "key": "G3C_ADAPT_伏笔类型适配_001",
+        "profile": "metadata",
+        "path": "02_原版资料/原始资料/类型系统.txt",
+        "file_sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582",
+        "sha256": "7db02dfdfd132b42b3dc970f55f7ef3e4d2d6ff1f7189e21652eea89a2e6737f"
+      },
+      "source_context": {
+        "byte_end": 66152,
+        "byte_start": 65712,
+        "file_sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582",
+        "fragment_id": "b37aa4421a4cbfd57ab5ca6aa99abba50fca167e568cc29c59eb577957274dbd",
+        "fragment_key": "伏笔类型适配.json",
+        "id": "50241aba42e018c7090ebfadc902dfbd29facb1bd0bfef7899eba8828f0eb81b",
+        "line_end": 2007,
+        "line_start": 1994,
+        "locator": "/adapters/0",
+        "path": "02_原版资料/原始资料/类型系统.txt",
+        "sha256": "7db02dfdfd132b42b3dc970f55f7ef3e4d2d6ff1f7189e21652eea89a2e6737f",
+        "source_id": "6cd30d00d42a5b3410bed51599a705463517ef6316fbfc6c4319c45fc0a3cba5"
+      },
+      "source_state": "reference",
+      "original_text": "{\"confidence\":\"high\",\"density\":\"high\",\"evidence_type\":\"template\",\"object_kind\":\"伏笔类型适配_adapter\",\"payoff_pace\":\"gradual\",\"rule\":\"悬疑类型提高伏笔密度，减少显性程度\",\"schema_version\":\"G-3C-1.0\",\"source_refs\":[],\"stable_id\":\"G3C_ADAPT_伏笔类型适配_001\",\"status\":\"active\",\"type\":\"mystery\",\"visibility\":\"low\"}",
+      "original_text_sha256": "38f3e3e69806d3f9e454e17f9ece1a2897349c6f1dbeb011d4609247f3194a3b",
+      "application_layers": [],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "bdde74478e04bda4f879c25d3629049613195b94b8976bde3fd306d661be60ea",
+        "key": "C00001",
+        "profile": "dynamic_binding",
+        "path": "02_原版资料/原始资料/动态网络.txt",
+        "file_sha256": "d6093b82fe6e072bdff7300fadcf175112b988d319c6b836f5d5b881b5282cc6",
+        "sha256": "243f5cd3f755b755232e189a8f9f20117c4b137449627a8fde9c95fa6494b1cc"
+      },
+      "source_context": {
+        "id": "bdde74478e04bda4f879c25d3629049613195b94b8976bde3fd306d661be60ea",
+        "source_id": "75af629947f8bcfbdf710744bebc24fbbce8b495391f08aba83a27aedf870bca",
+        "fragment_id": "bdde74478e04bda4f879c25d3629049613195b94b8976bde3fd306d661be60ea",
+        "sha256": "243f5cd3f755b755232e189a8f9f20117c4b137449627a8fde9c95fa6494b1cc",
+        "byte_start": 166,
+        "byte_end": 18537,
+        "line_start": 8,
+        "line_end": 374,
+        "path": "02_原版资料/原始资料/动态网络.txt",
+        "file_sha256": "d6093b82fe6e072bdff7300fadcf175112b988d319c6b836f5d5b881b5282cc6"
+      },
+      "source_state": "design_ready",
+      "original_text": "{\"condition\":\"绑定主线；且当前故事明确采用该静态关系\",\"derivation_contract\":\"NET-DYNAMIC-DERIVATION-CONTRACT-1.0\",\"direction\":\"单向\",\"effect\":\"当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新。\",\"field_source\":{\"condition\":\"静态网络对应记录\",\"direction\":\"明确默认规则: direction=单向\",\"effect\":\"按静态关系类型派生的通用状态变化语义\",\"priority\":\"静态网络对应记录\",\"source_layer\":\"明确默认规则: 未分类\",\"strength\":\"明确默认规则: strength=中\",\"target_layer\":\"明确默认规则: 未分类\",\"valid_types\":\"NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略\"},\"generated_from_static\":true,\"id\":\"C00001\",\"needs_review\":false,\"normalized_source\":\"1.1_主角\",\"normalized_target\":\"130_核心悬念\",\"original_source\":\"1.1_主角\",\"original_target\":\"130_核心悬念\",\"priority\":1,\"review_reason\":\"已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境\",\"source\":\"1.1_主角\",\"source_layer\":\"未分类\",\"source_refs\":[{\"artifact\":\"NET-STATIC-FULL\",\"source\":\"静态网络.txt source_index\",\"source_key\":[\"1.1_主角\",\"130_核心悬念\",\"绑定\"]}],\"status\":\"derived\",\"strength\":\"中\",\"target\":\"130_核心悬念\",\"target_layer\":\"未分类\",\"type\":\"绑定\",\"valid_types\":[\"玄幻\",\"仙侠\",\"科幻\",\"游戏\",\"军事\",\"悬疑\",\"都市\",\"历史\",\"言情\",\"奇幻\"],\"validation_status\":\"derived_contract_validated\"}",
+      "original_text_sha256": "8b173f896fd8747eacb8929d6543981c128553d61c3f263eacafa5c8dd06705e",
+      "application_layers": [
+        {
+          "aligned_fields": [],
+          "binding_ids": [
+            "TB-01910"
+          ],
+          "id": "16af901324d86de6cf05a19cc80c28cfc9b487d6c93cbd3403f11ec869403fdb",
+          "mode": "source_grounded_project_translation_required",
+          "owner_locator": null,
+          "owner_native_id": "C00001",
+          "rejected_fields": [
+            {
+              "binding": 0,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/creative_action",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/scene_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/prose_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            }
+          ],
+          "source_anchors": [
+            "当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新"
+          ],
+          "source_ref": {
+            "byte_end": 18529,
+            "byte_start": 2267,
+            "file_sha256": "d6093b82fe6e072bdff7300fadcf175112b988d319c6b836f5d5b881b5282cc6",
+            "fragment_id": "bdde74478e04bda4f879c25d3629049613195b94b8976bde3fd306d661be60ea",
+            "id": "16af901324d86de6cf05a19cc80c28cfc9b487d6c93cbd3403f11ec869403fdb",
+            "line_end": 373,
+            "line_start": 63,
+            "locator": "/运行层升级",
+            "path": "02_原版资料/原始资料/动态网络.txt",
+            "sha256": "76419b240332136f4b2ca767c7bbee4166098915c3280bfc7010ff1ccbee923b",
+            "source_id": "75af629947f8bcfbdf710744bebc24fbbce8b495391f08aba83a27aedf870bca"
+          },
+          "translation_source_ids": [
+            "C00001"
+          ],
+          "text_sha256": "84606dda32d1a5b80887b61d75133a4c53aea8e44e9b8f4c90e56ae654e7f11a",
+          "text": "{\n          \"fusion_mode\": \"precise_source_binding\",\n          \"canonical_source_id\": \"C00001\",\n          \"source_locator\": null,\n          \"runtime_calling_layer\": [\n            {\n              \"binding_id\": \"TB-01910\",\n              \"source_id\": \"C00001\",\n              \"source_kind\": \"动态网络\",\n              \"source_ref\": \"网络完整数据/动态连接完整数据.json:connections[0]\",\n              \"translation_status\": \"translated\",\n              \"model_input_eligible\": true,\n              \"prose_write_allowed\": true,\n              \"semantic_interpretation\": {\n                \"source_meaning\": \"1.1_主角\",\n                \"operational_meaning\": \"将动态边转译为触发条件、状态变化、角色选择和可验证后果。\",\n                \"semantic_terms\": [\n                  \"1.1_主角\",\n                  \"130_核心悬念\",\n                  \"将动态边转译为触发条件\",\n                  \"当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新。\",\n                  \"状态变化\",\n                  \"绑定\",\n                  \"角色选择和可验证后果\"\n                ],\n                \"source_semantic_anchor\": \"当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新\",\n                \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n              },\n              \"creation_binding\": {\n                \"primary_stage\": \"分纲\",\n                \"stages\": [\n                  \"剧情创建\",\n                  \"大纲\",\n                  \"分纲\",\n                  \"细纲\",\n                  \"场景卡\",\n                  \"正文\",\n                  \"校验\"\n                ],\n                \"creative_object\": \"因果链\",\n                \"creative_action\": \"把状态变化转成事件顺序、触发条件和结果\",\n                \"story_binding\": \"把状态变化转成有触发条件、行动顺序和可观察结果的因果链。\",\n                \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n                \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n                \"creative_strategy\": {\n                  \"source_specific_trigger\": \"当动态关系的触发条件“当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新”在前置状态中成立时，检查 C00001 的 source→target 传播。\",\n                  \"observable_action\": \"由受影响的故事对象根据“当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新”采取一次可记录的选择，使状态沿该关系从 source 推向 target。\",\n                  \"observable_result\": \"读者能看到 target 或相关局势出现“当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新”对应的变化，并留下下一步因果约束。\",\n                  \"cost_or_change\": \"传播会消耗行动窗口或暴露关系来源，后续对象必须在已改变的状态上重新决策。\",\n                  \"semantic_anchor\": \"当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新\",\n                  \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n                  \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n                },\n                \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n                \"binding_class\": \"indirect_constraint\",\n                \"binding_class_name\": \"间接约束\",\n                \"activation_policy\": {\n                  \"mode\": \"前置剧情状态或场景状态匹配后激活\",\n                  \"conditions\": [\n                    \"绑定主线；且当前故事明确采用该静态关系\"\n                  ],\n                  \"source_declared_conditions\": [\n                    \"绑定主线；且当前故事明确采用该静态关系\"\n                  ],\n                  \"candidate_effect_policy\": \"不适用\",\n                  \"inference_targets\": [\n                    \"剧情\",\n                    \"大纲\",\n                    \"分纲\",\n                    \"细纲\",\n                    \"场景卡\",\n                    \"正文\"\n                  ],\n                  \"allow_repeated_inference\": true,\n                  \"activation_evidence\": [\n                    \"matched_stage\",\n                    \"matched_project_terms\",\n                    \"creative_need\",\n                    \"activation_reason\"\n                  ]\n                }\n              },\n              \"evidence_contract\": {\n                \"design_required\": [\n                  \"stage\",\n                  \"creative_object\",\n                  \"creative_action\",\n                  \"source_ref\"\n                ],\n                \"scene_required\": [\n                  \"scene_id\",\n                  \"trigger\",\n                  \"action\",\n                  \"observable_result\",\n                  \"cost_or_change\"\n                ],\n                \"prose_required\": [\n                  \"prose_location\",\n                  \"trigger\",\n                  \"action\",\n                  \"observable_result\",\n                  \"paragraph_sha256\"\n                ]\n              },\n              \"use_authorization\": {\n                \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n                \"binding_id\": \"TB-01910\",\n                \"source_id\": \"C00001\",\n                \"source_ref_sha256\": \"9f0a8b9d965c4ad0cb317a8fd764e7ff62d69b7169e873184b019f1ae48be6bd\",\n                \"model_input_eligible\": true,\n                \"prose_write_allowed\": true,\n                \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n                \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n                \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n                \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n              }\n            }\n          ],\n          \"tail_upgrade_evidence\": [\n            {\n              \"attestation_scope\": \"动态连接 connections[0] 的内容、来源权利、适用范围与本次正文使用。\",\n              \"binding_id\": \"TB-01910\",\n              \"consumption_id\": \"PC-00001\",\n              \"errors\": [],\n              \"formal_fact_eligible\": false,\n              \"item_attested\": true,\n              \"original_prose_artifacts_modified\": false,\n              \"permitted_use\": \"draft_audit_only\",\n              \"project_source_confirmed\": false,\n              \"prose_write_allowed\": false,\n              \"schema_version\": \"strict-source-upgrade-record-1.0\",\n              \"source_id\": \"C00001\",\n              \"source_item_sha256\": \"e9731f287e8af02e0f2386550b836bb3e1cea84b2ad26257097e54357f2c78ae\",\n              \"source_kind\": \"动态网络\",\n              \"source_quality_level\": \"draft_usable\",\n              \"source_ref\": \"网络完整数据/动态连接完整数据.json:connections[0]\",\n              \"source_ref_sha256\": \"9f0a8b9d965c4ad0cb317a8fd764e7ff62d69b7169e873184b019f1ae48be6bd\",\n              \"status\": \"upgraded_for_draft_audit\",\n              \"upgrade_id\": \"SU-PC-00001\"\n            },\n            {\n              \"binding_id\": \"TB-01910\",\n              \"category\": \"reused_unchanged\",\n              \"fingerprint\": {\n                \"binding_strategy_sha256\": \"2caa35f82c7c50473747c70bb9a7ad41873b922c3aadcdd5a301d7bc6e380244\",\n                \"dependency_sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\n                \"locator_valid\": true,\n                \"source_object_sha256\": \"e9731f287e8af02e0f2386550b836bb3e1cea84b2ad26257097e54357f2c78ae\",\n                \"source_ref_sha256\": \"0ed2c999de985e8479793f53f848b7224991ec06c25c89c3c58b3f8c46ae4cfa\"\n              },\n              \"model_call_required\": false,\n              \"reasons\": [\n                \"原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承\"\n              ],\n              \"reused_from_run_id\": \"20260816T101311Z-295bb554\",\n              \"source_id\": \"C00001\"\n            },\n            {\n              \"after_sha256\": \"2ebe2f352b16a2d8149a7e00fd8602581d5973f0cfba802e2cc7b6a1e10e189c\",\n              \"before\": {\n                \"condition\": \"绑定主线；且当前故事明确采用该静态关系\",\n                \"derivation_contract\": \"NET-DYNAMIC-DERIVATION-CONTRACT-1.0\",\n                \"direction\": \"单向\",\n                \"effect\": \"当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新。\",\n                \"field_source\": {\n                  \"condition\": \"静态网络对应记录\",\n                  \"direction\": \"明确默认规则: direction=单向\",\n                  \"effect\": \"按静态关系类型派生的通用状态变化语义\",\n                  \"priority\": \"静态网络对应记录\",\n                  \"source_layer\": \"明确默认规则: 未分类\",\n                  \"strength\": \"明确默认规则: strength=中\",\n                  \"target_layer\": \"明确默认规则: 未分类\",\n                  \"valid_types\": \"NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略\"\n                },\n                \"generated_from_static\": true,\n                \"id\": \"C00001\",\n                \"needs_review\": false,\n                \"normalized_source\": \"1.1_主角\",\n                \"normalized_target\": \"130_核心悬念\",\n                \"original_source\": \"1.1_主角\",\n                \"original_target\": \"130_核心悬念\",\n                \"priority\": 1,\n                \"review_reason\": \"已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境\",\n                \"source\": \"1.1_主角\",\n                \"source_layer\": \"未分类\",\n                \"source_refs\": [\n                  {\n                    \"artifact\": \"NET-STATIC-FULL\",\n                    \"source\": \"静态网络.txt source_index\",\n                    \"source_key\": [\n                      \"1.1_主角\",\n                      \"130_核心悬念\",\n                      \"绑定\"\n                    ]\n                  }\n                ],\n                \"status\": \"derived\",\n                \"strength\": \"中\",\n                \"target\": \"130_核心悬念\",\n                \"target_layer\": \"未分类\",\n                \"type\": \"绑定\",\n                \"valid_types\": [\n                  \"玄幻\",\n                  \"仙侠\",\n                  \"科幻\",\n                  \"游戏\",\n                  \"军事\",\n                  \"悬疑\",\n                  \"都市\",\n                  \"历史\",\n                  \"言情\",\n                  \"奇幻\"\n                ],\n                \"validation_status\": \"derived_contract_validated\"\n              },\n              \"before_sha256\": \"245dfc225a05332de4722bb852545c472201b5e16051cf61ce0bf79afda0b455\",\n              \"binding_ids\": [\n                \"TB-01910\"\n              ],\n              \"changes\": [\n                {\n                  \"after\": \"绑定于主线剧情，并在当前故事中保持此静态关系不变。当起点成立时，终点状态将随之更新。\",\n                  \"before\": \"绑定主线；且当前故事明确采用该静态关系\",\n                  \"field_path\": \"condition\",\n                  \"operation\": \"replace\",\n                  \"reason\": \"增加详细说明以确保条件和状态更新机制的清晰性\"\n                },\n                {\n                  \"after\": \"当起点成立且当前故事明确采用该静态关系时，起点与终点保持绑定关系，终点状态将随之更新。\",\n                  \"before\": \"当起点成立时，起点与终点保持绑定关系，终点状态随起点状态更新。\",\n                  \"field_path\": \"effect\",\n                  \"operation\": \"replace\",\n                  \"reason\": \"增加条件说明以确保效果描述的准确性和完整性\"\n                }\n              ],\n              \"model_metadata\": {\n                \"model\": \"qwen2.5:7b\",\n                \"provider\": \"ollama\",\n                \"structured_output\": \"json_object\"\n              },\n              \"original_object_id\": \"原始资料/动态网络.txt#动态网络连接_完整版.连接列表[0]\",\n              \"rationale\": \"增强输入对象的边界和清晰性，明确说明条件和状态更新机制。\",\n              \"review_status\": \"pending\",\n              \"schema_version\": \"original-material-upgrade-execution-1.0\",\n              \"source_file\": \"原始资料/动态网络.txt\",\n              \"source_id\": \"C00001\",\n              \"status\": \"requires_human_review\",\n              \"strict_upgrade_ids\": [\n                \"SU-PC-00001\"\n              ],\n              \"upgrade_id\": \"OMU-首对象审查候选V5-00001\",\n              \"upgraded_object\": {\n                \"condition\": \"绑定于主线剧情，并在当前故事中保持此静态关系不变。当起点成立时，终点状态将随之更新。\",\n                \"derivation_contract\": \"NET-DYNAMIC-DERIVATION-CONTRACT-1.0\",\n                \"direction\": \"单向\",\n                \"effect\": \"当起点成立且当前故事明确采用该静态关系时，起点与终点保持绑定关系，终点状态将随之更新。\",\n                \"field_source\": {\n                  \"condition\": \"静态网络对应记录\",\n                  \"direction\": \"明确默认规则: direction=单向\",\n                  \"effect\": \"按静态关系类型派生的通用状态变化语义\",\n                  \"priority\": \"静态网络对应记录\",\n                  \"source_layer\": \"明确默认规则: 未分类\",\n                  \"strength\": \"明确默认规则: strength=中\",\n                  \"target_layer\": \"明确默认规则: 未分类\",\n                  \"valid_types\": \"NET-DYNAMIC-DERIVATION-CONTRACT-1.0 全类型适用策略\"\n                },\n                \"generated_from_static\": true,\n                \"id\": \"C00001\",\n                \"needs_review\": false,\n                \"normalized_source\": \"1.1_主角\",\n                \"normalized_target\": \"130_核心悬念\",\n                \"original_source\": \"1.1_主角\",\n                \"original_target\": \"130_核心悬念\",\n                \"priority\": 1,\n                \"review_reason\": \"已按 NET-DYNAMIC-DERIVATION-CONTRACT-1.0 校验；具体故事采用仍需绑定当前对象和情境\",\n                \"source\": \"1.1_主角\",\n                \"source_layer\": \"未分类\",\n                \"source_refs\": [\n                  {\n                    \"artifact\": \"NET-STATIC-FULL\",\n                    \"source\": \"静态网络.txt source_index\",\n                    \"source_key\": [\n                      \"1.1_主角\",\n                      \"130_核心悬念\",\n                      \"绑定\"\n                    ]\n                  }\n                ],\n                \"status\": \"derived\",\n                \"strength\": \"中\",\n                \"target\": \"130_核心悬念\",\n                \"target_layer\": \"未分类\",\n                \"type\": \"绑定\",\n                \"valid_types\": [\n                  \"玄幻\",\n                  \"仙侠\",\n                  \"科幻\",\n                  \"游戏\",\n                  \"军事\",\n                  \"悬疑\",\n                  \"都市\",\n                  \"历史\",\n                  \"言情\",\n                  \"奇幻\"\n                ],\n                \"validation_status\": \"derived_contract_validated\"\n              },\n              \"writeback_allowed\": false\n            }\n          ]\n        }"
+        }
+      ],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "ad92fcb188673021350876bbdb2e759a1988f5832363abe53dce2d84cced74a9",
+        "key": "1.1_主角 / 130_核心悬念 / 绑定",
+        "profile": "static_binding",
+        "path": "02_原版资料/原始资料/静态网络.txt",
+        "file_sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197",
+        "sha256": "81334bc8f50a0d907eee9f9089f143c28300213d7a6cd6391b1b74186d584c9b"
+      },
+      "source_context": {
+        "id": "ad92fcb188673021350876bbdb2e759a1988f5832363abe53dce2d84cced74a9",
+        "source_id": "2b9f6db1f282d95cc422af10444cf7c596a262ac72af8dd37f376385653eed2a",
+        "fragment_id": "ad92fcb188673021350876bbdb2e759a1988f5832363abe53dce2d84cced74a9",
+        "sha256": "81334bc8f50a0d907eee9f9089f143c28300213d7a6cd6391b1b74186d584c9b",
+        "byte_start": 400236,
+        "byte_end": 414555,
+        "line_start": 14264,
+        "line_end": 14539,
+        "path": "02_原版资料/原始资料/静态网络.txt",
+        "file_sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197"
+      },
+      "source_state": "design_ready",
+      "original_text": "{\"condition\":\"绑定主线\",\"priority\":1,\"source\":\"1.1_主角\",\"target\":\"130_核心悬念\",\"type\":\"绑定\"}",
+      "original_text_sha256": "f1666386ae6b4ed821c5f72291e39f6807362fe8a8caec14d6614f80444ce09b",
+      "application_layers": [
+        {
+          "aligned_fields": [],
+          "binding_ids": [
+            "TB-00569"
+          ],
+          "id": "2848c12c4572c18bf92271c2a956efd947d6fba26f2ec0e6de5c8a1df8fc5fe2",
+          "mode": "source_grounded_project_translation_required",
+          "owner_locator": null,
+          "owner_native_id": "1.1_主角 / 130_核心悬念 / 绑定",
+          "rejected_fields": [
+            {
+              "binding": 0,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/creative_action",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/scene_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/prose_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/creative_action",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/scene_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/prose_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            }
+          ],
+          "source_anchors": [
+            "130_核心悬念"
+          ],
+          "source_ref": {
+            "byte_end": 414549,
+            "byte_start": 400409,
+            "file_sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197",
+            "fragment_id": "ad92fcb188673021350876bbdb2e759a1988f5832363abe53dce2d84cced74a9",
+            "id": "2848c12c4572c18bf92271c2a956efd947d6fba26f2ec0e6de5c8a1df8fc5fe2",
+            "line_end": 14538,
+            "line_start": 14270,
+            "locator": "/运行层升级",
+            "path": "02_原版资料/原始资料/静态网络.txt",
+            "sha256": "0051fb0e662098dafa5c86a517688393a8e6fc2de40e0c13d68a10ccb3e6ad96",
+            "source_id": "2b9f6db1f282d95cc422af10444cf7c596a262ac72af8dd37f376385653eed2a"
+          },
+          "translation_source_ids": [
+            "STATIC:1.1_主角->130_核心悬念#1"
+          ],
+          "text_sha256": "9e534ecbd30809fdccbb91d7c504217418849b9971bec3918b03b0d421b7af5c",
+          "text": "{\n        \"fusion_mode\": \"precise_source_binding\",\n        \"canonical_source_id\": \"STATIC:1.1_主角->130_核心悬念#1\",\n        \"source_locator\": \"connections[0]\",\n        \"runtime_calling_layer\": [\n          {\n            \"binding_id\": \"TB-00569\",\n            \"source_id\": \"STATIC:1.1_主角->130_核心悬念#1\",\n            \"source_kind\": \"静态网络\",\n            \"source_ref\": \"网络完整数据/静态连接完整数据.json:connections[0]\",\n            \"translation_status\": \"translated\",\n            \"model_input_eligible\": true,\n            \"prose_write_allowed\": true,\n            \"semantic_interpretation\": {\n              \"source_meaning\": \"1.1_主角\",\n              \"operational_meaning\": \"把1.1_主角与130_核心悬念之间的绑定转译为稳定结构约束，并检查其成立条件和优先级。\",\n              \"semantic_terms\": [\n                \"1.1_主角\",\n                \"130_核心悬念\",\n                \"主角与\",\n                \"并检查其成立条件和优先级\",\n                \"核心悬念之间的绑定转译为稳定结构约束\",\n                \"绑定\"\n              ],\n              \"source_semantic_anchor\": \"130_核心悬念\",\n              \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n            },\n            \"creation_binding\": {\n              \"primary_stage\": \"大纲\",\n              \"stages\": [\n                \"剧情创建\",\n                \"大纲\",\n                \"分纲\",\n                \"细纲\",\n                \"场景卡\",\n                \"正文\",\n                \"校验\"\n              ],\n              \"creative_object\": \"角色行为与弧光\",\n              \"creative_action\": \"让角色在目标、判断、动作和代价中体现该意义\",\n              \"story_binding\": \"把稳定关系转成势力、人物、地点或制度对行动的持续约束。\",\n              \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n              \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n              \"creative_strategy\": {\n                \"source_specific_trigger\": \"当场景需要处理“130_核心悬念”所描述的稳定关系时，先让关系双方的利益或权限发生可观察碰撞。\",\n                \"observable_action\": \"由关系中的一方调用、拒绝或重新解释该连接，具体执行“让角色在目标、判断、动作和代价中体现该意义”，而不是解释关系名称。\",\n                \"observable_result\": \"空间、势力或人物之间的可达性/信任/约束按“130_核心悬念”产生可验证改变。\",\n                \"cost_or_change\": \"关系被重新确认后，至少一方失去原有权限、资源或安全余量，新的关系边界限制后续行动。\",\n                \"semantic_anchor\": \"130_核心悬念\",\n                \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n                \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n              },\n              \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n              \"binding_class\": \"indirect_constraint\",\n              \"binding_class_name\": \"间接约束\",\n              \"activation_policy\": {\n                \"mode\": \"前置剧情状态或场景状态匹配后激活\",\n                \"conditions\": [\n                  \"绑定主线\"\n                ],\n                \"source_declared_conditions\": [\n                  \"绑定主线\"\n                ],\n                \"candidate_effect_policy\": \"不适用\",\n                \"inference_targets\": [\n                  \"剧情\",\n                  \"大纲\",\n                  \"分纲\",\n                  \"细纲\",\n                  \"场景卡\",\n                  \"正文\"\n                ],\n                \"allow_repeated_inference\": true,\n                \"activation_evidence\": [\n                  \"matched_stage\",\n                  \"matched_project_terms\",\n                  \"creative_need\",\n                  \"activation_reason\"\n                ]\n              }\n            },\n            \"evidence_contract\": {\n              \"design_required\": [\n                \"stage\",\n                \"creative_object\",\n                \"creative_action\",\n                \"source_ref\"\n              ],\n              \"scene_required\": [\n                \"scene_id\",\n                \"trigger\",\n                \"action\",\n                \"observable_result\",\n                \"cost_or_change\"\n              ],\n              \"prose_required\": [\n                \"prose_location\",\n                \"trigger\",\n                \"action\",\n                \"observable_result\",\n                \"paragraph_sha256\"\n              ]\n            },\n            \"use_authorization\": {\n              \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n              \"binding_id\": \"TB-00569\",\n              \"source_id\": \"STATIC:1.1_主角->130_核心悬念#1\",\n              \"source_ref_sha256\": \"72a55e76683c79475d485f2ccd5499d2f8bb776cf40ef126e420bb49bbe3672e\",\n              \"model_input_eligible\": true,\n              \"prose_write_allowed\": true,\n              \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n              \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n              \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n              \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n            }\n          },\n          {\n            \"binding_id\": \"TB-00569\",\n            \"source_id\": \"STATIC:1.1_主角->130_核心悬念#1\",\n            \"source_kind\": \"静态网络\",\n            \"source_ref\": \"网络完整数据/静态连接完整数据.json:connections[0]\",\n            \"translation_status\": \"translated\",\n            \"model_input_eligible\": true,\n            \"prose_write_allowed\": true,\n            \"semantic_interpretation\": {\n              \"source_meaning\": \"1.1_主角\",\n              \"operational_meaning\": \"把1.1_主角与130_核心悬念之间的绑定转译为稳定结构约束，并检查其成立条件和优先级。\",\n              \"semantic_terms\": [\n                \"1.1_主角\",\n                \"130_核心悬念\",\n                \"主角与\",\n                \"并检查其成立条件和优先级\",\n                \"核心悬念之间的绑定转译为稳定结构约束\",\n                \"绑定\"\n              ],\n              \"source_semantic_anchor\": \"130_核心悬念\",\n              \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n            },\n            \"creation_binding\": {\n              \"primary_stage\": \"大纲\",\n              \"stages\": [\n                \"剧情创建\",\n                \"大纲\",\n                \"分纲\",\n                \"细纲\",\n                \"场景卡\",\n                \"正文\",\n                \"校验\"\n              ],\n              \"creative_object\": \"角色行为与弧光\",\n              \"creative_action\": \"让角色在目标、判断、动作和代价中体现该意义\",\n              \"story_binding\": \"把稳定关系转成势力、人物、地点或制度对行动的持续约束。\",\n              \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n              \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n              \"creative_strategy\": {\n                \"source_specific_trigger\": \"当场景需要处理“130_核心悬念”所描述的稳定关系时，先让关系双方的利益或权限发生可观察碰撞。\",\n                \"observable_action\": \"由关系中的一方调用、拒绝或重新解释该连接，具体执行“让角色在目标、判断、动作和代价中体现该意义”，而不是解释关系名称。\",\n                \"observable_result\": \"空间、势力或人物之间的可达性/信任/约束按“130_核心悬念”产生可验证改变。\",\n                \"cost_or_change\": \"关系被重新确认后，至少一方失去原有权限、资源或安全余量，新的关系边界限制后续行动。\",\n                \"semantic_anchor\": \"130_核心悬念\",\n                \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n                \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n              },\n              \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n              \"binding_class\": \"indirect_constraint\",\n              \"binding_class_name\": \"间接约束\",\n              \"activation_policy\": {\n                \"mode\": \"前置剧情状态或场景状态匹配后激活\",\n                \"conditions\": [\n                  \"绑定主线\"\n                ],\n                \"source_declared_conditions\": [\n                  \"绑定主线\"\n                ],\n                \"candidate_effect_policy\": \"不适用\",\n                \"inference_targets\": [\n                  \"剧情\",\n                  \"大纲\",\n                  \"分纲\",\n                  \"细纲\",\n                  \"场景卡\",\n                  \"正文\"\n                ],\n                \"allow_repeated_inference\": true,\n                \"activation_evidence\": [\n                  \"matched_stage\",\n                  \"matched_project_terms\",\n                  \"creative_need\",\n                  \"activation_reason\"\n                ]\n              }\n            },\n            \"evidence_contract\": {\n              \"design_required\": [\n                \"stage\",\n                \"creative_object\",\n                \"creative_action\",\n                \"source_ref\"\n              ],\n              \"scene_required\": [\n                \"scene_id\",\n                \"trigger\",\n                \"action\",\n                \"observable_result\",\n                \"cost_or_change\"\n              ],\n              \"prose_required\": [\n                \"prose_location\",\n                \"trigger\",\n                \"action\",\n                \"observable_result\",\n                \"paragraph_sha256\"\n              ]\n            },\n            \"use_authorization\": {\n              \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n              \"binding_id\": \"TB-00569\",\n              \"source_id\": \"STATIC:1.1_主角->130_核心悬念#1\",\n              \"source_ref_sha256\": \"72a55e76683c79475d485f2ccd5499d2f8bb776cf40ef126e420bb49bbe3672e\",\n              \"model_input_eligible\": true,\n              \"prose_write_allowed\": true,\n              \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n              \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n              \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n              \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n            }\n          }\n        ],\n        \"tail_upgrade_evidence\": [\n          {\n            \"attestation_scope\": null,\n            \"binding_id\": \"TB-00569\",\n            \"consumption_id\": \"PC-12005\",\n            \"errors\": [],\n            \"formal_fact_eligible\": false,\n            \"item_attested\": false,\n            \"original_prose_artifacts_modified\": false,\n            \"permitted_use\": \"draft_audit_only\",\n            \"project_source_confirmed\": false,\n            \"prose_write_allowed\": false,\n            \"schema_version\": \"strict-source-upgrade-record-1.0\",\n            \"source_id\": \"STATIC:1.1_主角->130_核心悬念#1\",\n            \"source_item_sha256\": \"4cfe56a1151b174892d2d69b30077d02ef2bfe28b6ec5919ffe847d96ebcf617\",\n            \"source_kind\": \"静态网络\",\n            \"source_quality_level\": \"draft_usable\",\n            \"source_ref\": \"网络完整数据/静态连接完整数据.json:connections[0]\",\n            \"source_ref_sha256\": \"72a55e76683c79475d485f2ccd5499d2f8bb776cf40ef126e420bb49bbe3672e\",\n            \"status\": \"upgraded_for_draft_audit\",\n            \"upgrade_id\": \"SU-PC-12005\"\n          },\n          {\n            \"binding_id\": \"TB-00569\",\n            \"category\": \"reused_unchanged\",\n            \"fingerprint\": {\n              \"binding_strategy_sha256\": \"36b6c627366cdd2f4df15ff8bed02f7fbf755f9e84546ae4029f25814cf79db1\",\n              \"dependency_sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\n              \"locator_valid\": true,\n              \"source_object_sha256\": \"4cfe56a1151b174892d2d69b30077d02ef2bfe28b6ec5919ffe847d96ebcf617\",\n              \"source_ref_sha256\": \"acbdf4b62968bcef96a9391ca9814e463ceed215eb8e40d1dbb2a5fcf995a44a\"\n            },\n            \"model_call_required\": false,\n            \"reasons\": [\n              \"原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承\"\n            ],\n            \"reused_from_run_id\": \"20260816T101311Z-295bb554\",\n            \"source_id\": \"STATIC:1.1_主角->130_核心悬念#1\"\n          }\n        ]\n      }"
+        }
+      ],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "6dbeaba27d7a984f7b8bd89b159981a8d47818de36f9e5cbfd524e5329c3daf8",
+        "key": "145.4_动作 / 50.1_精确动词 / 绑定",
+        "profile": "static_relation",
+        "path": "02_原版资料/原始资料/静态网络.txt",
+        "file_sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197",
+        "sha256": "eda643ee11d06f37585181bedfc4675f909004728a5d140fee929ad47e0aa9b3"
+      },
+      "source_context": {
+        "byte_end": 3315413,
+        "byte_start": 3300973,
+        "file_sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197",
+        "id": "6dbeaba27d7a984f7b8bd89b159981a8d47818de36f9e5cbfd524e5329c3daf8",
+        "line_end": 69743,
+        "line_start": 69468,
+        "path": "02_原版资料/原始资料/静态网络.txt",
+        "sha256": "eda643ee11d06f37585181bedfc4675f909004728a5d140fee929ad47e0aa9b3",
+        "source_id": "2b9f6db1f282d95cc422af10444cf7c596a262ac72af8dd37f376385653eed2a"
+      },
+      "source_state": "design_ready",
+      "original_text": "{\"condition\":\"动作需精确动词\",\"priority\":1,\"source\":\"145.4_动作\",\"target\":\"50.1_精确动词\",\"type\":\"绑定\"}",
+      "original_text_sha256": "eddf0d530f86e1d2eae8b4b5ed95d541c061569164f701f737f99063925f845b",
+      "application_layers": [
+        {
+          "aligned_fields": [],
+          "binding_ids": [
+            "TB-00769"
+          ],
+          "id": "c09375b3170f13983ed970eabd42bcfa41727cc2589e5f3e2f4b88706ed189d3",
+          "mode": "source_grounded_project_translation_required",
+          "owner_locator": null,
+          "owner_native_id": "145.4_动作 / 50.1_精确动词 / 绑定",
+          "rejected_fields": [
+            {
+              "binding": 0,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/creative_action",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/scene_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/prose_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/creative_action",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/scene_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/prose_strategy",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            }
+          ],
+          "source_anchors": [
+            "50.1_精确动词"
+          ],
+          "source_ref": {
+            "byte_end": 3315407,
+            "byte_start": 3301158,
+            "file_sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197",
+            "fragment_id": "6dbeaba27d7a984f7b8bd89b159981a8d47818de36f9e5cbfd524e5329c3daf8",
+            "id": "c09375b3170f13983ed970eabd42bcfa41727cc2589e5f3e2f4b88706ed189d3",
+            "line_end": 69742,
+            "line_start": 69474,
+            "locator": "/运行层升级",
+            "path": "02_原版资料/原始资料/静态网络.txt",
+            "sha256": "f5df90b0dd305488495edea9d085e233bc8ac42de47cf2848c11417c4df54005",
+            "source_id": "2b9f6db1f282d95cc422af10444cf7c596a262ac72af8dd37f376385653eed2a"
+          },
+          "translation_source_ids": [
+            "STATIC:145.4_动作->50.1_精确动词#201"
+          ],
+          "text_sha256": "929ec43025eef281b6421d54fde2f84dd3a031501cfb0358dc54d2f3df023445",
+          "text": "{\n        \"fusion_mode\": \"precise_source_binding\",\n        \"canonical_source_id\": \"STATIC:145.4_动作->50.1_精确动词#201\",\n        \"source_locator\": \"connections[200]\",\n        \"runtime_calling_layer\": [\n          {\n            \"binding_id\": \"TB-00769\",\n            \"source_id\": \"STATIC:145.4_动作->50.1_精确动词#201\",\n            \"source_kind\": \"静态网络\",\n            \"source_ref\": \"网络完整数据/静态连接完整数据.json:connections[200]\",\n            \"translation_status\": \"translated\",\n            \"model_input_eligible\": true,\n            \"prose_write_allowed\": true,\n            \"semantic_interpretation\": {\n              \"source_meaning\": \"145.4_动作\",\n              \"operational_meaning\": \"把145.4_动作与50.1_精确动词之间的绑定转译为稳定结构约束，并检查其成立条件和优先级。\",\n              \"semantic_terms\": [\n                \"145.4_动作\",\n                \"50.1_精确动词\",\n                \"动作与\",\n                \"并检查其成立条件和优先级\",\n                \"精确动词之间的绑定转译为稳定结构约束\",\n                \"绑定\"\n              ],\n              \"source_semantic_anchor\": \"50.1_精确动词\",\n              \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n            },\n            \"creation_binding\": {\n              \"primary_stage\": \"大纲\",\n              \"stages\": [\n                \"剧情创建\",\n                \"大纲\",\n                \"分纲\",\n                \"细纲\",\n                \"场景卡\",\n                \"正文\",\n                \"校验\"\n              ],\n              \"creative_object\": \"场景节拍\",\n              \"creative_action\": \"落实为观察、想法、心理、动作、结果的可追踪回合\",\n              \"story_binding\": \"把稳定关系转成势力、人物、地点或制度对行动的持续约束。\",\n              \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n              \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n              \"creative_strategy\": {\n                \"source_specific_trigger\": \"当场景需要处理“50.1_精确动词”所描述的稳定关系时，先让关系双方的利益或权限发生可观察碰撞。\",\n                \"observable_action\": \"由关系中的一方调用、拒绝或重新解释该连接，具体执行“落实为观察、想法、心理、动作、结果的可追踪回合”，而不是解释关系名称。\",\n                \"observable_result\": \"空间、势力或人物之间的可达性/信任/约束按“50.1_精确动词”产生可验证改变。\",\n                \"cost_or_change\": \"关系被重新确认后，至少一方失去原有权限、资源或安全余量，新的关系边界限制后续行动。\",\n                \"semantic_anchor\": \"50.1_精确动词\",\n                \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n                \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n              },\n              \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n              \"binding_class\": \"indirect_constraint\",\n              \"binding_class_name\": \"间接约束\",\n              \"activation_policy\": {\n                \"mode\": \"前置剧情状态或场景状态匹配后激活\",\n                \"conditions\": [\n                  \"动作需精确动词\"\n                ],\n                \"source_declared_conditions\": [\n                  \"动作需精确动词\"\n                ],\n                \"candidate_effect_policy\": \"不适用\",\n                \"inference_targets\": [\n                  \"剧情\",\n                  \"大纲\",\n                  \"分纲\",\n                  \"细纲\",\n                  \"场景卡\",\n                  \"正文\"\n                ],\n                \"allow_repeated_inference\": true,\n                \"activation_evidence\": [\n                  \"matched_stage\",\n                  \"matched_project_terms\",\n                  \"creative_need\",\n                  \"activation_reason\"\n                ]\n              }\n            },\n            \"evidence_contract\": {\n              \"design_required\": [\n                \"stage\",\n                \"creative_object\",\n                \"creative_action\",\n                \"source_ref\"\n              ],\n              \"scene_required\": [\n                \"scene_id\",\n                \"trigger\",\n                \"action\",\n                \"observable_result\",\n                \"cost_or_change\"\n              ],\n              \"prose_required\": [\n                \"prose_location\",\n                \"trigger\",\n                \"action\",\n                \"observable_result\",\n                \"paragraph_sha256\"\n              ]\n            },\n            \"use_authorization\": {\n              \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n              \"binding_id\": \"TB-00769\",\n              \"source_id\": \"STATIC:145.4_动作->50.1_精确动词#201\",\n              \"source_ref_sha256\": \"b5499e0acca894d780d68259b1ce11efc0e5955f452deae8418a04917e306bbc\",\n              \"model_input_eligible\": true,\n              \"prose_write_allowed\": true,\n              \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n              \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n              \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n              \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n            }\n          },\n          {\n            \"binding_id\": \"TB-00769\",\n            \"source_id\": \"STATIC:145.4_动作->50.1_精确动词#201\",\n            \"source_kind\": \"静态网络\",\n            \"source_ref\": \"网络完整数据/静态连接完整数据.json:connections[200]\",\n            \"translation_status\": \"translated\",\n            \"model_input_eligible\": true,\n            \"prose_write_allowed\": true,\n            \"semantic_interpretation\": {\n              \"source_meaning\": \"145.4_动作\",\n              \"operational_meaning\": \"把145.4_动作与50.1_精确动词之间的绑定转译为稳定结构约束，并检查其成立条件和优先级。\",\n              \"semantic_terms\": [\n                \"145.4_动作\",\n                \"50.1_精确动词\",\n                \"动作与\",\n                \"并检查其成立条件和优先级\",\n                \"精确动词之间的绑定转译为稳定结构约束\",\n                \"绑定\"\n              ],\n              \"source_semantic_anchor\": \"50.1_精确动词\",\n              \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n            },\n            \"creation_binding\": {\n              \"primary_stage\": \"大纲\",\n              \"stages\": [\n                \"剧情创建\",\n                \"大纲\",\n                \"分纲\",\n                \"细纲\",\n                \"场景卡\",\n                \"正文\",\n                \"校验\"\n              ],\n              \"creative_object\": \"场景节拍\",\n              \"creative_action\": \"落实为观察、想法、心理、动作、结果的可追踪回合\",\n              \"story_binding\": \"把稳定关系转成势力、人物、地点或制度对行动的持续约束。\",\n              \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n              \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n              \"creative_strategy\": {\n                \"source_specific_trigger\": \"当场景需要处理“50.1_精确动词”所描述的稳定关系时，先让关系双方的利益或权限发生可观察碰撞。\",\n                \"observable_action\": \"由关系中的一方调用、拒绝或重新解释该连接，具体执行“落实为观察、想法、心理、动作、结果的可追踪回合”，而不是解释关系名称。\",\n                \"observable_result\": \"空间、势力或人物之间的可达性/信任/约束按“50.1_精确动词”产生可验证改变。\",\n                \"cost_or_change\": \"关系被重新确认后，至少一方失去原有权限、资源或安全余量，新的关系边界限制后续行动。\",\n                \"semantic_anchor\": \"50.1_精确动词\",\n                \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n                \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n              },\n              \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n              \"binding_class\": \"indirect_constraint\",\n              \"binding_class_name\": \"间接约束\",\n              \"activation_policy\": {\n                \"mode\": \"前置剧情状态或场景状态匹配后激活\",\n                \"conditions\": [\n                  \"动作需精确动词\"\n                ],\n                \"source_declared_conditions\": [\n                  \"动作需精确动词\"\n                ],\n                \"candidate_effect_policy\": \"不适用\",\n                \"inference_targets\": [\n                  \"剧情\",\n                  \"大纲\",\n                  \"分纲\",\n                  \"细纲\",\n                  \"场景卡\",\n                  \"正文\"\n                ],\n                \"allow_repeated_inference\": true,\n                \"activation_evidence\": [\n                  \"matched_stage\",\n                  \"matched_project_terms\",\n                  \"creative_need\",\n                  \"activation_reason\"\n                ]\n              }\n            },\n            \"evidence_contract\": {\n              \"design_required\": [\n                \"stage\",\n                \"creative_object\",\n                \"creative_action\",\n                \"source_ref\"\n              ],\n              \"scene_required\": [\n                \"scene_id\",\n                \"trigger\",\n                \"action\",\n                \"observable_result\",\n                \"cost_or_change\"\n              ],\n              \"prose_required\": [\n                \"prose_location\",\n                \"trigger\",\n                \"action\",\n                \"observable_result\",\n                \"paragraph_sha256\"\n              ]\n            },\n            \"use_authorization\": {\n              \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n              \"binding_id\": \"TB-00769\",\n              \"source_id\": \"STATIC:145.4_动作->50.1_精确动词#201\",\n              \"source_ref_sha256\": \"b5499e0acca894d780d68259b1ce11efc0e5955f452deae8418a04917e306bbc\",\n              \"model_input_eligible\": true,\n              \"prose_write_allowed\": true,\n              \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n              \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n              \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n              \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n            }\n          }\n        ],\n        \"tail_upgrade_evidence\": [\n          {\n            \"attestation_scope\": null,\n            \"binding_id\": \"TB-00769\",\n            \"consumption_id\": \"PC-12205\",\n            \"errors\": [],\n            \"formal_fact_eligible\": false,\n            \"item_attested\": false,\n            \"original_prose_artifacts_modified\": false,\n            \"permitted_use\": \"draft_audit_only\",\n            \"project_source_confirmed\": false,\n            \"prose_write_allowed\": false,\n            \"schema_version\": \"strict-source-upgrade-record-1.0\",\n            \"source_id\": \"STATIC:145.4_动作->50.1_精确动词#201\",\n            \"source_item_sha256\": \"0ece40bf9dc238b3aeadf9885396f5e41e8cd39736db90c1c8a6d81438a1686d\",\n            \"source_kind\": \"静态网络\",\n            \"source_quality_level\": \"draft_usable\",\n            \"source_ref\": \"网络完整数据/静态连接完整数据.json:connections[200]\",\n            \"source_ref_sha256\": \"b5499e0acca894d780d68259b1ce11efc0e5955f452deae8418a04917e306bbc\",\n            \"status\": \"upgraded_for_draft_audit\",\n            \"upgrade_id\": \"SU-PC-12205\"\n          },\n          {\n            \"binding_id\": \"TB-00769\",\n            \"category\": \"reused_unchanged\",\n            \"fingerprint\": {\n              \"binding_strategy_sha256\": \"d4e33b12530cd234ba4efc5e860d4a0e2a94a1e65aac4a42b6d27b31ff1add11\",\n              \"dependency_sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\n              \"locator_valid\": true,\n              \"source_object_sha256\": \"0ece40bf9dc238b3aeadf9885396f5e41e8cd39736db90c1c8a6d81438a1686d\",\n              \"source_ref_sha256\": \"fa515c18d103f11fc62859825acc27b3e0b84524b06d0f953b5154190794a907\"\n            },\n            \"model_call_required\": false,\n            \"reasons\": [\n              \"原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承\"\n            ],\n            \"reused_from_run_id\": \"20260816T101311Z-295bb554\",\n            \"source_id\": \"STATIC:145.4_动作->50.1_精确动词#201\"\n          }\n        ]\n      }"
+        }
+      ],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "2e3120a61fcebdff432b3cbe2f87a21630409f868b1b218ea78ce79c96677967",
+        "key": "127.5_各板块设计应用对应表",
+        "profile": "material_conversion",
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "sha256": "7a4ef37bbf40120d913a56b414537a170e21825da96bb089d36ccb6cb36d2d79"
+      },
+      "source_context": {
+        "byte_end": 9451727,
+        "byte_start": 9445003,
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "fragment_id": "2e3120a61fcebdff432b3cbe2f87a21630409f868b1b218ea78ce79c96677967",
+        "id": "2e3120a61fcebdff432b3cbe2f87a21630409f868b1b218ea78ce79c96677967",
+        "line_end": 189778,
+        "line_start": 189728,
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "sha256": "7a4ef37bbf40120d913a56b414537a170e21825da96bb089d36ccb6cb36d2d79",
+        "source_id": "92583cff03f6d4e5fd66dd4b5ec6ed7ba04103a92fd7a4e4a0cc4cc1e4e34c12"
+      },
+      "source_state": "design_ready",
+      "original_text": "### 127.5_各板块设计应用对应表\r\n\r\n【定义】\r\n每个板块如何应用于实际写作。板块1-4（人物）→生成具体角色的外貌/动作/性格/能力/弧光/驱动，转化为场景中的出场描写和对话风格。板块5（关系）→生成角色互动模式，转化为对手戏中的权力动态和信息互换。板块6-7（情感）→生成情感触发和释放点，转化为场景中的身体反应和潜台词。板块8-9（状态）→生成角色的当前状态数值，转化为场景中的生理描写和行为限制。板块10-16（力量体系）→生成战斗/修炼/消耗场景，转化为具体的能量数值变化和进阶过程。板块17-19（物理引擎）→生成世界运行规律，转化为环境描写中的温度/重力/能量感知。板块20-23（生态）→生成势力动态和暗线，转化为背景事件和自动运转现象。板块24-27（经济）→生成资源流动和交易，转化为角色获取/消耗/交换资源的具体场景。板块28-30（道具）→生成道具功能和代价，转化为使用场景中的功能展示和代价支付。板块31-35（世界观）→生成历史/制度/规则，转化为叙述中的隐性信息释放。板块36-38（种族/构造）→生成种族特性和构造限制，转化为角色的能力边界和身体特征。板块39-40（职业/制造）→生成职业行为和生产过程，转化为工作场景和制造流程的具体描写。板块41-45（剧情）→生成事件推进和冲突，转化为场景中的对抗回合和伏笔埋设。板块46-47（场景）→生成具体场景，转化为4个场景的起承转合和对抗结构。板块48（章节）→生成章节结构，转化为具体的开篇/发展/结尾段落。板块49-55（语言）→生成句子和词汇选择，转化为具体的文字表达。板块56-57（对话）→生成对话，转化为具体的对话内容和非台词元素。板块58-59（视角）→生成视角选择，转化为叙述距离和POV切换。板块60（镜头）→生成视觉化描写，转化为推拉摇移等镜头感文字。板块61-62（节奏）→生成节奏模式，转化为重章/中章/轻章/空章的篇幅和密度分配。板块63（主题）→生成主题表达，转化为角色行动和选择中的价值观体现。板块64-66（读者体验）→生成读者情绪曲线，转化为钩子强度分配和情感峰值布局。板块67-69（认知/心智）→生成角色认知偏差和判断失误，转化为错误决策和盲点揭示。板块70-73（意志/决策）→生成角色的决策场景，转化为选择时刻和代价支付。板块74-76（道德）→生成道德困境，转化为两难场景中的内心挣扎和选择后果。板块77-79（时间）→生成时间感知和时间线，转化为时间跳跃和截止日期压迫感。板块80-82（命运）→生成命运主题表达，转化为必然性错觉和命运反转的揭示。板块83-86（交互）→生成角色与世界交互的具体行为，转化为探索/采集/交易/合作等场景。板块87-90（执行系统）→生成写作流程，转化为规划师→写手→编辑的三阶段操作。板块91-101（检视清单）→生成质量检查，转化为终检报告中的违规项修复。板块102-108（一致性）→生成一致性维护，转化为写作前/中/后的三步检查流程。板块109（叙述者）→生成叙述者声音和可信度，转化为旁白中的判断倾向和情感温度。板块110（氛围）→生成场景氛围，转化为温度/光线/声音/气味的具体描写。板块111（象征）→生成象征物和隐喻，转化为重复出现的意象和含义递进。板块112（开篇/收尾）→生成第一句话和最后一句话，转化为开篇承诺和结尾回响。板块113（叙事时间）→生成叙事顺序和速度，转化为倒叙/插叙/概要/延展的具体操作。板块114（类型特征）→生成类型元素和惯例，转化为符合类型期待的核心场景。板块115（空间）→生成空间结构和象征，转化为场景地理位置和空间转换描写。板块116（遗漏信息）→生成信息空缺和延迟揭示，转化为角色未知和读者未知的信息管理。板块117（错位）→生成认知/预期/信息错位，转化为角色之间的误解和反转铺垫。板块118（代价追踪）→生成代价累积记录，转化为每章的代价清点和一致性检查。板块119（读者认同）→生成认同触发点，转化为角色共鸣场景和脆弱时刻描写。板块120（多视角切换）→生成POV切换规则，转化为章间和场景间的视角分配。板块121（配角运用）→生成配角功能和弧光，转化为配角独立行动和支线交汇。板块122（剧情推进）→生成推进速度和推进器，转化为每章的推进单位分配和钩子设计。板块123（爆款）→生成爆款元素布局，转化为金句/名场面/社交传播点的具体写作。板块124（小说种类）→生成类型定位和融合策略，转化为符合该种类规则的核心要素。板块125（资源库）→生成资源清单和流动追踪，转化为资源获取/消耗/交易的具体场景。板块126（调用规则）→生成模板调用方案，转化为本章所需板块清单和优先级排序。板块127（设计生成应用）→参数设计转化为写作指令，转化为具体的操作流程。板块128（精准调用）→生成精准调用方案，转化为本章实际调用的板块清单和子项。\r\n\r\n【调用条件）\r\n无\r\n\r\n【指令]\r\n根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实。\r\n\r\n【设计指令]\r\n先确定当前要写的场景或章节，再只选择直接支撑该任务的板块；为每个选中板块填写参数、正文表现和验证点，形成场景级转化清单。\r\n\r\n【写作指令]\r\n按转化清单逐项落地：人物参数写成可见动作或对话，关系参数写成互动和权力变化，状态参数写成身体或行为限制，剧情参数写成事件推进和后果；完成一项勾选一项，禁止只在正文中笼统声称“已应用”。\r\n\r\n【分级标准】\r\n无\r\n\r\n【场景变体]\r\n无\r\n\r\n【判定标准]\r\n无\r\n\r\n【修正指南]\r\n无\r\n\r\n【示例]\r\n无\r\n\r\n【反面案例)\r\n无\r\n\r\n【关联板块]\r\n板块1-128（全部板块）\r\n\r\n【关联路径)\r\n每个板块→对应写作转化路径\r\n\r\n【优先级]\r\n无\r\n\r\n【例外处理]\r\n无\r\n\r\n【调用标签)\r\n#127.5_各板块设计应用对应表",
+      "original_text_sha256": "aaacb270c066be4cbc77234176d0dbb6e273f6f4d40e3825d14559ce3c05f332",
+      "application_layers": [
+        {
+          "aligned_fields": [],
+          "binding_ids": [
+            "TB-00530"
+          ],
+          "id": "1d1037bd8fc6571e10f9739909cc3c29e35748485632108954363265a99a18a0",
+          "mode": "source_grounded_project_translation_required",
+          "owner_locator": null,
+          "owner_native_id": "127.5_各板块设计应用对应表",
+          "rejected_fields": [
+            {
+              "binding": 0,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/creative_action",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/scene_strategy",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/prose_strategy",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 1,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/creative_action",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/scene_strategy",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/prose_strategy",
+              "reason": "语义域错位"
+            }
+          ],
+          "source_anchors": [
+            "根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实"
+          ],
+          "source_ref": {
+            "byte_end": 9468388,
+            "byte_start": 9451727,
+            "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+            "fragment_id": "b1cc694b19ffccc24224df2e49ea31e5795739c114a9f0600d314fe136da299c",
+            "id": "1d1037bd8fc6571e10f9739909cc3c29e35748485632108954363265a99a18a0",
+            "line_end": 190063,
+            "line_start": 189779,
+            "locator": "library_upgrade",
+            "path": "02_原版资料/原始资料/资料库.txt",
+            "sha256": "3b29d370aad56569e5e9d1ce03ca714db3e2bd5d51bb0855d2202affa9a8b0e8",
+            "source_id": "92583cff03f6d4e5fd66dd4b5ec6ed7ba04103a92fd7a4e4a0cc4cc1e4e34c12"
+          },
+          "translation_source_ids": [
+            "127.5_各板块设计应用对应表"
+          ],
+          "text_sha256": "9cf356d26a5166968716ae5a5dfe3ed28f5a05e44a995cf638677a4e98b06241",
+          "text": "【运行层升级】\n\n```json\n{\n  \"fusion_mode\": \"precise_source_binding\",\n  \"canonical_source_id\": \"127.5_各板块设计应用对应表\",\n  \"source_locator\": \"127.5_各板块设计应用对应表\",\n  \"runtime_calling_layer\": [\n    {\n      \"binding_id\": \"TB-00530\",\n      \"source_id\": \"127.5_各板块设计应用对应表\",\n      \"source_kind\": \"资料库\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '127.5_各板块设计应用对应表', 'line_start': 43762}\",\n      \"translation_status\": \"translated\",\n      \"model_input_eligible\": true,\n      \"prose_write_allowed\": true,\n      \"semantic_interpretation\": {\n        \"source_meaning\": \"各板块设计应用对应表\",\n        \"operational_meaning\": \"将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。\",\n        \"semantic_terms\": [\n          \"动作与结果\",\n          \"各板块设计应用对应表\",\n          \"将条目定义\",\n          \"指令或判定证据转译为场景中的可观察约束\",\n          \"根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实。\",\n          \"每个板块如何应用于实际写作。板块1-4（人物）→生成具体角色的外貌/动作/性格/能力/弧光/驱动，转化为场景中的出场描写和对话风格。板块5（关系）→生成角色互动\",\n          \"选择\"\n        ],\n        \"source_semantic_anchor\": \"根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实\",\n        \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n      },\n      \"creation_binding\": {\n        \"primary_stage\": \"剧情创建\",\n        \"stages\": [\n          \"剧情创建\",\n          \"大纲\",\n          \"分纲\",\n          \"细纲\",\n          \"场景卡\",\n          \"正文\",\n          \"校验\"\n        ],\n        \"creative_object\": \"故事结构与写作执行\",\n        \"creative_action\": \"把条目意义转成角色选择、冲突后果和可观察细节\",\n        \"story_binding\": \"把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。\",\n        \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n        \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n        \"creative_strategy\": {\n          \"source_specific_trigger\": \"当前置产物出现与“根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实”直接相关的具体创作问题时，锁定 各板块设计应用对应表 的调用条件“满足条目调用条件”。\",\n          \"observable_action\": \"让承担该问题的角色或系统围绕“根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。\",\n          \"observable_result\": \"通过信息、关系、资源、风险或行为的可观察变化呈现“根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实”，并能改变后续选择。\",\n          \"cost_or_change\": \"该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。\",\n          \"semantic_anchor\": \"根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实\",\n          \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n          \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n        },\n        \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n        \"binding_class\": \"candidate_retrieval\",\n        \"binding_class_name\": \"背景候选\",\n        \"activation_policy\": {\n          \"mode\": \"前置产物出现匹配创作问题，或实时检索命中场景需求时激活\",\n          \"conditions\": [\n            \"存在项目上下文；满足条目调用条件\"\n          ],\n          \"source_declared_conditions\": [\n            \"存在项目上下文\",\n            \"满足条目调用条件\"\n          ],\n          \"candidate_effect_policy\": \"不适用\",\n          \"inference_targets\": [\n            \"剧情创建\",\n            \"剧情\",\n            \"大纲\",\n            \"分纲\",\n            \"细纲\",\n            \"场景卡\",\n            \"正文\"\n          ],\n          \"allow_repeated_inference\": true,\n          \"activation_evidence\": [\n            \"matched_stage\",\n            \"matched_project_terms\",\n            \"creative_need\",\n            \"activation_reason\"\n          ]\n        }\n      },\n      \"evidence_contract\": {\n        \"design_required\": [\n          \"stage\",\n          \"creative_object\",\n          \"creative_action\",\n          \"source_ref\"\n        ],\n        \"scene_required\": [\n          \"scene_id\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"cost_or_change\"\n        ],\n        \"prose_required\": [\n          \"prose_location\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"paragraph_sha256\"\n        ]\n      },\n      \"use_authorization\": {\n        \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n        \"binding_id\": \"TB-00530\",\n        \"source_id\": \"127.5_各板块设计应用对应表\",\n        \"source_ref_sha256\": \"7b587b1cadfb07535f30c02dc797c8e9f1111b19769e28a9539283c21e41a887\",\n        \"model_input_eligible\": true,\n        \"prose_write_allowed\": true,\n        \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n        \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n        \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n        \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n      }\n    },\n    {\n      \"binding_id\": \"TB-00530\",\n      \"source_id\": \"127.5_各板块设计应用对应表\",\n      \"source_kind\": \"资料库\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '127.5_各板块设计应用对应表', 'line_start': 43762}\",\n      \"translation_status\": \"translated\",\n      \"model_input_eligible\": true,\n      \"prose_write_allowed\": true,\n      \"semantic_interpretation\": {\n        \"source_meaning\": \"各板块设计应用对应表\",\n        \"operational_meaning\": \"将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。\",\n        \"semantic_terms\": [\n          \"动作与结果\",\n          \"各板块设计应用对应表\",\n          \"将条目定义\",\n          \"指令或判定证据转译为场景中的可观察约束\",\n          \"根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实。\",\n          \"每个板块如何应用于实际写作。板块1-4（人物）→生成具体角色的外貌/动作/性格/能力/弧光/驱动，转化为场景中的出场描写和对话风格。板块5（关系）→生成角色互动\",\n          \"选择\"\n        ],\n        \"source_semantic_anchor\": \"根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实\",\n        \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n      },\n      \"creation_binding\": {\n        \"primary_stage\": \"剧情创建\",\n        \"stages\": [\n          \"剧情创建\",\n          \"大纲\",\n          \"分纲\",\n          \"细纲\",\n          \"场景卡\",\n          \"正文\",\n          \"校验\"\n        ],\n        \"creative_object\": \"故事结构与写作执行\",\n        \"creative_action\": \"把条目意义转成角色选择、冲突后果和可观察细节\",\n        \"story_binding\": \"把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。\",\n        \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n        \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n        \"creative_strategy\": {\n          \"source_specific_trigger\": \"当前置产物出现与“根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实”直接相关的具体创作问题时，锁定 各板块设计应用对应表 的调用条件“满足条目调用条件”。\",\n          \"observable_action\": \"让承担该问题的角色或系统围绕“根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。\",\n          \"observable_result\": \"通过信息、关系、资源、风险或行为的可观察变化呈现“根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实”，并能改变后续选择。\",\n          \"cost_or_change\": \"该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。\",\n          \"semantic_anchor\": \"根据当前场景的目标，从对应板块提取参数，填写“参数→正文表现”的映射；按映射生成写作指令，并在正文完成后逐项核验，未能映射的参数登记为缺口，不得直接补写为事实\",\n          \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n          \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n        },\n        \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n        \"binding_class\": \"candidate_retrieval\",\n        \"binding_class_name\": \"背景候选\",\n        \"activation_policy\": {\n          \"mode\": \"前置产物出现匹配创作问题，或实时检索命中场景需求时激活\",\n          \"conditions\": [\n            \"存在项目上下文；满足条目调用条件\"\n          ],\n          \"source_declared_conditions\": [\n            \"存在项目上下文\",\n            \"满足条目调用条件\"\n          ],\n          \"candidate_effect_policy\": \"不适用\",\n          \"inference_targets\": [\n            \"剧情创建\",\n            \"剧情\",\n            \"大纲\",\n            \"分纲\",\n            \"细纲\",\n            \"场景卡\",\n            \"正文\"\n          ],\n          \"allow_repeated_inference\": true,\n          \"activation_evidence\": [\n            \"matched_stage\",\n            \"matched_project_terms\",\n            \"creative_need\",\n            \"activation_reason\"\n          ]\n        }\n      },\n      \"evidence_contract\": {\n        \"design_required\": [\n          \"stage\",\n          \"creative_object\",\n          \"creative_action\",\n          \"source_ref\"\n        ],\n        \"scene_required\": [\n          \"scene_id\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"cost_or_change\"\n        ],\n        \"prose_required\": [\n          \"prose_location\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"paragraph_sha256\"\n        ]\n      },\n      \"use_authorization\": {\n        \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n        \"binding_id\": \"TB-00530\",\n        \"source_id\": \"127.5_各板块设计应用对应表\",\n        \"source_ref_sha256\": \"7b587b1cadfb07535f30c02dc797c8e9f1111b19769e28a9539283c21e41a887\",\n        \"model_input_eligible\": true,\n        \"prose_write_allowed\": true,\n        \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n        \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n        \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n        \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n      }\n    }\n  ],\n  \"tail_upgrade_evidence\": [\n    {\n      \"attestation_scope\": null,\n      \"binding_id\": \"TB-00530\",\n      \"consumption_id\": \"PC-10176\",\n      \"errors\": [],\n      \"formal_fact_eligible\": false,\n      \"item_attested\": false,\n      \"original_prose_artifacts_modified\": false,\n      \"permitted_use\": \"draft_audit_only\",\n      \"project_source_confirmed\": false,\n      \"prose_write_allowed\": false,\n      \"schema_version\": \"strict-source-upgrade-record-1.0\",\n      \"source_id\": \"127.5_各板块设计应用对应表\",\n      \"source_item_sha256\": \"1889c11acd53e0a5d1585eab9373f4d66bef10f2539caaed4f23f3ea4a58fafd\",\n      \"source_kind\": \"资料库\",\n      \"source_quality_level\": \"draft_usable\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '127.5_各板块设计应用对应表', 'line_start': 43762}\",\n      \"source_ref_sha256\": \"7b587b1cadfb07535f30c02dc797c8e9f1111b19769e28a9539283c21e41a887\",\n      \"status\": \"upgraded_for_draft_audit\",\n      \"upgrade_id\": \"SU-PC-10176\"\n    },\n    {\n      \"binding_id\": \"TB-00530\",\n      \"category\": \"reused_unchanged\",\n      \"fingerprint\": {\n        \"binding_strategy_sha256\": \"fc32e91349ce550046643b78793428598205cb0adf6f718d937b833dee9b98e6\",\n        \"dependency_sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\n        \"locator_valid\": true,\n        \"source_object_sha256\": \"e727568edb7c3a738844fab3727babcc6347075b00b4258f9e3f45a80de0ddb7\",\n        \"source_ref_sha256\": \"00cfd9e6348a0d090b6077ab1ce38b013a8359baf0b19468c57fb14e0824aa77\"\n      },\n      \"model_call_required\": false,\n      \"reasons\": [\n        \"原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承\"\n      ],\n      \"reused_from_run_id\": \"20260816T101311Z-295bb554\",\n      \"source_id\": \"127.5_各板块设计应用对应表\"\n    }\n  ]\n}\n```\n\n---\r\n\r\n【示例】\r\n场景：执行“各板块设计应用对应表”。输入：故事任务和条目定义“每个板块如何应用于实际写作”。操作：按定义确定对象与步骤，并落实指令“条目原文中的核心定义”。输出：得到对应的设计决策。验证：检查结果是否符合定义和指令。\r\n\r\n"
+        }
+      ],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "3646ce8e3ad5307667fb528aa2a8996b07207f09a3d6eb09aab3c2cc1ef07333",
+        "key": "128.4_板块调用的三层筛选法",
+        "profile": "material_selection",
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "sha256": "2b5cb40f28a63511b7b26eb13f2182a352ecc982ec52e69151a9edce867934bf"
+      },
+      "source_context": {
+        "byte_end": 9783377,
+        "byte_start": 9782144,
+        "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "fragment_id": "3646ce8e3ad5307667fb528aa2a8996b07207f09a3d6eb09aab3c2cc1ef07333",
+        "id": "3646ce8e3ad5307667fb528aa2a8996b07207f09a3d6eb09aab3c2cc1ef07333",
+        "line_end": 196074,
+        "line_start": 196024,
+        "path": "02_原版资料/原始资料/资料库.txt",
+        "sha256": "2b5cb40f28a63511b7b26eb13f2182a352ecc982ec52e69151a9edce867934bf",
+        "source_id": "92583cff03f6d4e5fd66dd4b5ec6ed7ba04103a92fd7a4e4a0cc4cc1e4e34c12"
+      },
+      "source_state": "design_ready",
+      "original_text": "### 128.4_板块调用的三层筛选法\r\n\r\n【定义]\r\n从全量到精量的筛选流程。第一层筛选：\"这一章/这个场景在写什么？\"确定功能定位。第二层筛选：\"这个功能需要哪些板块支撑？\"匹配对应板块。第三层筛选：\"这些板块中哪些子项在此刻是必需的？\"精确到子项级别。筛选完成后将调用清单从板块级压缩到子项级（例：板块41→仅调用41.2\"15节拍结构\"中的\"第一次抉择\"节点）。\r\n\r\n【调用条件]\r\n无\r\n\r\n【指令]\r\n三层筛选法：第一层确定功能定位→第二层匹配对应板块→第三层精确到子项级别。最终调用清单从板块级压缩到子项级。\r\n\r\n【设计指令]\r\n无\r\n\r\n【写作指令]\r\n无\r\n\r\n【分级标准]\r\n无\r\n\r\n【场景变体]\r\n无\r\n\r\n【判定标准]\r\n无\r\n\r\n【修正指南]\r\n无\r\n\r\n【示例]\r\n板块41→仅调用41.2\"15节拍结构\"中的\"第一次抉择\"节点。\r\n\r\n【反面案例]\r\n板块级调用而不压缩到子项级→调用过宽。\r\n\r\n【关联板块]\r\n无\r\n\r\n【关联路径]\r\n功能定位→匹配板块→精确到子项→压缩调用清单\r\n\r\n【优先级]\r\n无\r\n\r\n【例外处理]\r\n无\r\n\r\n【调用标签]\r\n#128.4_板块调用的三层筛选法",
+      "original_text_sha256": "c9a0575aea27d6b2328b8c9ba6e87a0ca4889fbe17b5e7e9638e428ddfa26ce9",
+      "application_layers": [
+        {
+          "aligned_fields": [],
+          "binding_ids": [
+            "TB-00538"
+          ],
+          "id": "2d0eadc6fc7d79cf91ff615c08dfd43e5d1bf6c3b4b364897405a574f25eca45",
+          "mode": "source_grounded_project_translation_required",
+          "owner_locator": null,
+          "owner_native_id": "128.4_板块调用的三层筛选法",
+          "rejected_fields": [
+            {
+              "binding": 0,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/creative_action",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/scene_strategy",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 0,
+              "field": "creation_binding/prose_strategy",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 1,
+              "field": "semantic_interpretation/operational_meaning",
+              "reason": "通用模板仅供当前项目重新转化，不能证明本项效果"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/creative_action",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/scene_strategy",
+              "reason": "语义域错位"
+            },
+            {
+              "binding": 1,
+              "field": "creation_binding/prose_strategy",
+              "reason": "语义域错位"
+            }
+          ],
+          "source_anchors": [
+            "从全量到精量的筛选流程。第一层筛选：\"这一章/这个场景在写什么？\"确定功能定位。第二层筛选：\"这个功能需要哪些板块支撑？\"匹配对应板块。第三层筛选：\"这些板块中"
+          ],
+          "source_ref": {
+            "byte_end": 9799576,
+            "byte_start": 9783377,
+            "file_sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+            "fragment_id": "7478a80d8982fc08bf18c8455127803a935c3c6a28571d54c052b4ed192778cd",
+            "id": "2d0eadc6fc7d79cf91ff615c08dfd43e5d1bf6c3b4b364897405a574f25eca45",
+            "line_end": 196354,
+            "line_start": 196075,
+            "locator": "library_upgrade",
+            "path": "02_原版资料/原始资料/资料库.txt",
+            "sha256": "c5a42ac86330c38935f4b284e456e321b9b3859b0b94f28f7ba3625f9550782f",
+            "source_id": "92583cff03f6d4e5fd66dd4b5ec6ed7ba04103a92fd7a4e4a0cc4cc1e4e34c12"
+          },
+          "translation_source_ids": [
+            "128.4_板块调用的三层筛选法"
+          ],
+          "text_sha256": "1bbf9855e7b9192eb1ff88dccde7a194b1a0255942e6abc927db45a08341dfe6",
+          "text": "【运行层升级】\n\n```json\n{\n  \"fusion_mode\": \"precise_source_binding\",\n  \"canonical_source_id\": \"128.4_板块调用的三层筛选法\",\n  \"source_locator\": \"128.4_板块调用的三层筛选法\",\n  \"runtime_calling_layer\": [\n    {\n      \"binding_id\": \"TB-00538\",\n      \"source_id\": \"128.4_板块调用的三层筛选法\",\n      \"source_kind\": \"资料库\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '128.4_板块调用的三层筛选法', 'line_start': 44755}\",\n      \"translation_status\": \"translated\",\n      \"model_input_eligible\": true,\n      \"prose_write_allowed\": true,\n      \"semantic_interpretation\": {\n        \"source_meaning\": \"从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中\",\n        \"operational_meaning\": \"将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。\",\n        \"semantic_terms\": [\n          \"从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中\",\n          \"动作与结果\",\n          \"将条目定义\",\n          \"指令或判定证据转译为场景中的可观察约束\",\n          \"板块调用的三层筛选法\",\n          \"选择\"\n        ],\n        \"source_semantic_anchor\": \"从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中\",\n        \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n      },\n      \"creation_binding\": {\n        \"primary_stage\": \"剧情创建\",\n        \"stages\": [\n          \"剧情创建\",\n          \"大纲\",\n          \"分纲\",\n          \"细纲\",\n          \"场景卡\",\n          \"正文\",\n          \"校验\"\n        ],\n        \"creative_object\": \"故事结构与写作执行\",\n        \"creative_action\": \"把条目意义转成角色选择、冲突后果和可观察细节\",\n        \"story_binding\": \"把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。\",\n        \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n        \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n        \"creative_strategy\": {\n          \"source_specific_trigger\": \"当前置产物出现与“从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中”直接相关的具体创作问题时，锁定 板块调用的三层筛选法 的调用条件“满足条目调用条件”。\",\n          \"observable_action\": \"让承担该问题的角色或系统围绕“从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。\",\n          \"observable_result\": \"通过信息、关系、资源、风险或行为的可观察变化呈现“从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中”，并能改变后续选择。\",\n          \"cost_or_change\": \"该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。\",\n          \"semantic_anchor\": \"从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中\",\n          \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n          \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n        },\n        \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n        \"binding_class\": \"candidate_retrieval\",\n        \"binding_class_name\": \"背景候选\",\n        \"activation_policy\": {\n          \"mode\": \"前置产物出现匹配创作问题，或实时检索命中场景需求时激活\",\n          \"conditions\": [\n            \"存在项目上下文；满足条目调用条件\"\n          ],\n          \"source_declared_conditions\": [\n            \"存在项目上下文\",\n            \"满足条目调用条件\"\n          ],\n          \"candidate_effect_policy\": \"不适用\",\n          \"inference_targets\": [\n            \"剧情创建\",\n            \"剧情\",\n            \"大纲\",\n            \"分纲\",\n            \"细纲\",\n            \"场景卡\",\n            \"正文\"\n          ],\n          \"allow_repeated_inference\": true,\n          \"activation_evidence\": [\n            \"matched_stage\",\n            \"matched_project_terms\",\n            \"creative_need\",\n            \"activation_reason\"\n          ]\n        }\n      },\n      \"evidence_contract\": {\n        \"design_required\": [\n          \"stage\",\n          \"creative_object\",\n          \"creative_action\",\n          \"source_ref\"\n        ],\n        \"scene_required\": [\n          \"scene_id\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"cost_or_change\"\n        ],\n        \"prose_required\": [\n          \"prose_location\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"paragraph_sha256\"\n        ]\n      },\n      \"use_authorization\": {\n        \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n        \"binding_id\": \"TB-00538\",\n        \"source_id\": \"128.4_板块调用的三层筛选法\",\n        \"source_ref_sha256\": \"51441ed2516534f82a484651ea7c0808e96d0cd182124e282eacccfc269f439a\",\n        \"model_input_eligible\": true,\n        \"prose_write_allowed\": true,\n        \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n        \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n        \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n        \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n      }\n    },\n    {\n      \"binding_id\": \"TB-00538\",\n      \"source_id\": \"128.4_板块调用的三层筛选法\",\n      \"source_kind\": \"资料库\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '128.4_板块调用的三层筛选法', 'line_start': 44755}\",\n      \"translation_status\": \"translated\",\n      \"model_input_eligible\": true,\n      \"prose_write_allowed\": true,\n      \"semantic_interpretation\": {\n        \"source_meaning\": \"从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中\",\n        \"operational_meaning\": \"将条目定义、指令或判定证据转译为场景中的可观察约束、选择、动作与结果。\",\n        \"semantic_terms\": [\n          \"从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中\",\n          \"动作与结果\",\n          \"将条目定义\",\n          \"指令或判定证据转译为场景中的可观察约束\",\n          \"板块调用的三层筛选法\",\n          \"选择\"\n        ],\n        \"source_semantic_anchor\": \"从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中\",\n        \"forbidden_shortcut\": \"不得把资料名称、ID、规则原文或元数据直接写入正文\"\n      },\n      \"creation_binding\": {\n        \"primary_stage\": \"剧情创建\",\n        \"stages\": [\n          \"剧情创建\",\n          \"大纲\",\n          \"分纲\",\n          \"细纲\",\n          \"场景卡\",\n          \"正文\",\n          \"校验\"\n        ],\n        \"creative_object\": \"故事结构与写作执行\",\n        \"creative_action\": \"把条目意义转成角色选择、冲突后果和可观察细节\",\n        \"story_binding\": \"把该条目的意义转成项目角色、冲突、世界限制或表达选择，并保留其来源边界。\",\n        \"scene_strategy\": \"在与项目问题匹配的场景中安排触发条件，先呈现可观察现象，再让角色或系统作出行动，最后留下状态变化。\",\n        \"prose_strategy\": \"通过当前视角可感知的环境、身体反应、动作、对白或结果体现，不暴露解释词本身。\",\n        \"creative_strategy\": {\n          \"source_specific_trigger\": \"当前置产物出现与“从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中”直接相关的具体创作问题时，锁定 板块调用的三层筛选法 的调用条件“满足条目调用条件”。\",\n          \"observable_action\": \"让承担该问题的角色或系统围绕“从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中”作出一次具体选择并执行，动作必须体现该语义而非复述资料定义。\",\n          \"observable_result\": \"通过信息、关系、资源、风险或行为的可观察变化呈现“从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中”，并能改变后续选择。\",\n          \"cost_or_change\": \"该选择至少牺牲一项资源、信任、时间、安全或旧状态，代价在下一次行动前保持有效。\",\n          \"semantic_anchor\": \"从全量到精量的筛选流程。第一层筛选：\\\"这一章/这个场景在写什么？\\\"确定功能定位。第二层筛选：\\\"这个功能需要哪些板块支撑？\\\"匹配对应板块。第三层筛选：\\\"这些板块中\",\n          \"evidence_location\": \"对应阶段产物；进入正文时必须定位到 scene_id#paragraphs[index] 并提供段落哈希\",\n          \"quality_rule\": \"不得只复述资料定义；触发必须进入情境，行动必须由角色或系统执行，结果必须能改变后续选择\"\n        },\n        \"planned_scene_scope\": \"由项目阶段、场景需求和激活条件共同确定，不预设章节或主角。\",\n        \"binding_class\": \"candidate_retrieval\",\n        \"binding_class_name\": \"背景候选\",\n        \"activation_policy\": {\n          \"mode\": \"前置产物出现匹配创作问题，或实时检索命中场景需求时激活\",\n          \"conditions\": [\n            \"存在项目上下文；满足条目调用条件\"\n          ],\n          \"source_declared_conditions\": [\n            \"存在项目上下文\",\n            \"满足条目调用条件\"\n          ],\n          \"candidate_effect_policy\": \"不适用\",\n          \"inference_targets\": [\n            \"剧情创建\",\n            \"剧情\",\n            \"大纲\",\n            \"分纲\",\n            \"细纲\",\n            \"场景卡\",\n            \"正文\"\n          ],\n          \"allow_repeated_inference\": true,\n          \"activation_evidence\": [\n            \"matched_stage\",\n            \"matched_project_terms\",\n            \"creative_need\",\n            \"activation_reason\"\n          ]\n        }\n      },\n      \"evidence_contract\": {\n        \"design_required\": [\n          \"stage\",\n          \"creative_object\",\n          \"creative_action\",\n          \"source_ref\"\n        ],\n        \"scene_required\": [\n          \"scene_id\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"cost_or_change\"\n        ],\n        \"prose_required\": [\n          \"prose_location\",\n          \"trigger\",\n          \"action\",\n          \"observable_result\",\n          \"paragraph_sha256\"\n        ]\n      },\n      \"use_authorization\": {\n        \"schema_version\": \"full-source-model-input-prose-authorization-1.0\",\n        \"binding_id\": \"TB-00538\",\n        \"source_id\": \"128.4_板块调用的三层筛选法\",\n        \"source_ref_sha256\": \"51441ed2516534f82a484651ea7c0808e96d0cd182124e282eacccfc269f439a\",\n        \"model_input_eligible\": true,\n        \"prose_write_allowed\": true,\n        \"authorization_scope\": \"project_runtime_creative_input; stages=剧情创建,剧情,大纲,分纲,细纲,场景卡,正文,校验; candidate_and_reviewable_prose_only; no_formal_publication\",\n        \"authorized_by\": \"project_owner_bulk_upgrade_2026-08-13\",\n        \"authorized_at\": \"2026-08-13T08:10:45.710861Z\",\n        \"authorization_rationale\": \"项目所有者要求批量传输并升级全部已登记、已语义转译资料，用于项目运行期创作规划、检索和可审校候选文本。不得将该运行期授权解释为正式事实批准或正式发布许可。\"\n      }\n    }\n  ],\n  \"tail_upgrade_evidence\": [\n    {\n      \"attestation_scope\": null,\n      \"binding_id\": \"TB-00538\",\n      \"consumption_id\": \"PC-10184\",\n      \"errors\": [],\n      \"formal_fact_eligible\": false,\n      \"item_attested\": false,\n      \"original_prose_artifacts_modified\": false,\n      \"permitted_use\": \"draft_audit_only\",\n      \"project_source_confirmed\": false,\n      \"prose_write_allowed\": false,\n      \"schema_version\": \"strict-source-upgrade-record-1.0\",\n      \"source_id\": \"128.4_板块调用的三层筛选法\",\n      \"source_item_sha256\": \"261c4d34ffbdbbcd1f30942500036f7723b00e8cedf9ec8c92e7820d911f0b53\",\n      \"source_kind\": \"资料库\",\n      \"source_quality_level\": \"draft_usable\",\n      \"source_ref\": \"{'file': '原始资料/资料库.txt', 'locator': '128.4_板块调用的三层筛选法', 'line_start': 44755}\",\n      \"source_ref_sha256\": \"51441ed2516534f82a484651ea7c0808e96d0cd182124e282eacccfc269f439a\",\n      \"status\": \"upgraded_for_draft_audit\",\n      \"upgrade_id\": \"SU-PC-10184\"\n    },\n    {\n      \"binding_id\": \"TB-00538\",\n      \"category\": \"reused_unchanged\",\n      \"fingerprint\": {\n        \"binding_strategy_sha256\": \"3ec7e179b988a3aeb651d9b8b07734a3c3bfc7d0c3e12174dfaded4b87db5bcb\",\n        \"dependency_sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\",\n        \"locator_valid\": true,\n        \"source_object_sha256\": \"9a4470c723760bc75dd1c2d015380b4d38d762b7d6838bb097a7e75eadc03c10\",\n        \"source_ref_sha256\": \"abde38fb263f673a928032af4d232f8cc1750ff0d540e4a91f13b58a4e16bde2\"\n      },\n      \"model_call_required\": false,\n      \"reasons\": [\n        \"原文与定位哈希未变化；旧基线缺少的绑定策略/依赖哈希按未变化继承\"\n      ],\n      \"reused_from_run_id\": \"20260816T101311Z-295bb554\",\n      \"source_id\": \"128.4_板块调用的三层筛选法\"\n    }\n  ]\n}\n```\n\n---\r\n\r\n"
+        }
+      ],
+      "source_issues": {
+        "missing": [],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    },
+    {
+      "source": {
+        "id": "a960cd0aacd3daf2b6acef45f329f17c854db6a635d1b05562431c7b9998c6cd",
+        "key": "TDR_TEMPLATE_001",
+        "profile": "type_transition",
+        "path": "02_原版资料/原始资料/类型系统.txt",
+        "file_sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582",
+        "sha256": "bd1238d6731da581c0b54173bf22fce21ec6b59709eb6430282a0223645934ef"
+      },
+      "source_context": {
+        "byte_end": 853040,
+        "byte_start": 850355,
+        "file_sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582",
+        "fragment_id": "f191de9d7676d16b4d81109831b8127b3c9cc201b9baefb5c3da24ff735ec7f7",
+        "fragment_key": "类型动态规则总表.json",
+        "id": "a960cd0aacd3daf2b6acef45f329f17c854db6a635d1b05562431c7b9998c6cd",
+        "line_end": 28802,
+        "line_start": 28710,
+        "locator": "/原始条目/0",
+        "path": "02_原版资料/原始资料/类型系统.txt",
+        "sha256": "bd1238d6731da581c0b54173bf22fce21ec6b59709eb6430282a0223645934ef",
+        "source_id": "6cd30d00d42a5b3410bed51599a705463517ef6316fbfc6c4319c45fc0a3cba5"
+      },
+      "source_state": "reference",
+      "original_text": "{\"alternative_branches\":[],\"candidate_actions\":[],\"candidate_effects\":[{\"description\":\"相关状态可能被传播影响\",\"effect_id\":\"TDR_T001_E01\",\"effect_kind\":\"state_change\"}],\"candidate_reactions\":[],\"confidence\":0,\"conflicts_with\":[],\"cooldown\":null,\"delayed_effects\":[],\"evidence_type\":\"template\",\"excludes_rules\":[],\"failure_branches\":[],\"forbidden_assumptions\":[\"类型不能决定确定行为\",\"类型不能代替行动选择\",\"类型不能覆盖人物性格\",\"类型不能跳过连续性验证\"],\"foreshadowing_changes\":[],\"hybrid_ids\":[],\"identity_changes\":[],\"information_changes\":[],\"interruption_conditions\":[],\"item_changes\":[],\"location_changes\":[],\"mechanism_ids\":[],\"not_guaranteed\":[\"候选效果不一定被选中\",\"状态变化需要事件证据\",\"传播需要验证每一层\"],\"preconditions\":[\"实体存在且可行动\",\"状态变化已确认\"],\"priority\":0,\"propagation_limits\":{\"max_activated_rules\":5,\"max_depth\":3,\"max_state_updates\":12},\"relationship_changes\":[],\"repeat_policy\":\"unknown\",\"required_capabilities\":[],\"required_context\":[],\"required_identity_conditions\":[],\"required_information\":[],\"required_moral_conditions\":[],\"required_relationships\":[],\"required_resources\":[],\"requires_rules\":[],\"resource_changes\":[],\"rule_id\":\"TDR_TEMPLATE_001\",\"rule_kind\":\"TYPE_STATE_PROPAGATION\",\"rule_scope\":\"状态传播模板\",\"schema_version\":\"TYPE_D-1.0.0\",\"selection_constraints\":[\"必须经过外部行动选择\",\"不能自动生成completed事件\",\"需要连续性验证\"],\"source_refs\":[\"动态网络连接.txt\"],\"state_changes\":[],\"status\":\"template\",\"structure_ids\":[],\"style_ids\":[],\"subtype_ids\":[],\"trigger_concepts\":[\"身体状态\",\"精神状态\"],\"trigger_entities\":[\"人物\"],\"trigger_event_types\":[\"状态变化\"],\"trigger_foreshadowing_types\":[],\"trigger_information_types\":[],\"trigger_relationship_types\":[],\"trigger_resource_types\":[],\"type_ids\":[],\"validation_rules\":[],\"weight\":0}",
+      "original_text_sha256": "06b78d4086b1d21e56e124a83e99bc35ac1002ab423c8cfcd14c8847485aedb4",
+      "application_layers": [],
+      "source_issues": {
+        "missing": [
+          "原始 status=template，未冒充已确认条目"
+        ],
+        "conflicts": []
+      },
+      "related_sources": [],
+      "use_mode": "project_method",
+      "authority": "isolated_regression_original_excerpt_not_project_fact"
+    }
+  ]
+}

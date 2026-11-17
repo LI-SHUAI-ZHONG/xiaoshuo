@@ -94,6 +94,8 @@ class JobCalls:
             return result
         if result.status in ('RUNNING', 'BUDGET_EXCEEDED'):
             raise self._blocked(key, result.reason or result.status, task_id=result.id)
-        reason = f'{request.kind} {result.status}/{result.validation}'
+        reason = (result.reason if result.reason and result.reason.startswith(
+            ('MATERIAL_DESIGN:','MATERIAL_WORK:','MATERIAL_STAGE:','MATERIAL_WAITING_INPUTS:'))
+                  else f'{request.kind} {result.status}/{result.validation}')
         j.result(key, 'FAILED', {'task_id': result.id, 'reason': reason})
         raise self._blocked(key, reason, task_id=result.id)

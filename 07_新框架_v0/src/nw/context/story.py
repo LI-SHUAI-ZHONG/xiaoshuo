@@ -5,6 +5,10 @@ import json
 
 from nw.cards import card_input_ref, read_card, read_links
 from nw.context.base import ContextItem, ContextPackage, package
+from nw.materials.binding import verify_materials
+from nw.materials.evidence import comparison_draft, scene_checks, scene_materials, verify_preconditions, writer_checks
+from nw.materials.stage_input import check_source_keys, step_material_prompt
+from nw.materials.steps.writing import MATERIAL as WRITING_MATERIAL
 from nw.selection import select_rules
 from nw.sources import read_span
 from nw.store import Store
@@ -12,10 +16,20 @@ from nw.story_delta import candidate_snapshot, draft_ref
 from nw.story_dependencies import check_inputs_current, legacy_ref
 from nw.story_models import CardRef, Fact, SourceRef, StateHead
 from nw.story_state import baseline_for, current_head, position, revision_state, state_at
-from nw.task_models import Ref, canonical
+from nw.task_models import Ref, canonical, content_sha256
 
 WRITE_PROMPT = ('按作者约束和本场任务写正文。仅用POV可知的信息。人物的belief可能有误，'
                 '按场景卡的披露边界写作，计划结果仍是候选。方法卡只在适用条件有依据时使用。只输出正文。')
+
+# These scoped sources also have direct uses written into the prose step.
+_WRITING_SCOPE_KEYS = frozenset({
+    '板块52 感官描写#五感规则',
+    '板块52 感官描写#触觉描写',
+    '板块52 感官描写#嗅觉描写',
+    '板块52 感官描写#味觉描写',
+    '板块53 叙述距离#距离变化规则',
+    '126.11_多视角切换模板调用',
+})
 
 
 @dataclass(frozen=True)
@@ -37,6 +51,9 @@ class StoryWork:
     predecessor_drafts: tuple[Ref, ...]
     dependency_refs: tuple[Ref, ...]
     selection: dict
+    material_design_sha256: str | None = None
+    prompt: str = WRITE_PROMPT
+    writing_source_keys: tuple[str, ...] = ()
 
 
 class StoryProvider:
@@ -50,12 +67,17 @@ class StoryProvider:
         for card in project['settings']:
             items.append(ContextItem('card:' + card['card_id'], canonical(card['body']), '本场确认设定'))
         items.append(ContextItem('pov:' + project['holder'], canonical(project['facts']), '此时POV所知与误信'))
+        if project.get('previous'):
+            prev = project['previous']
+            items.append(ContextItem('previous:' + prev['scene_id'], prev['tail_text'], '同视角紧邻前场正文衔接'))
         if project.get('continuity'):
             items.append(ContextItem('prior-evidence', canonical(project['continuity']),
                                      '前文中支持本场人物所知的段落定位'))
         if project.get('reader'):
             items.append(ContextItem('reader', canonical(project['reader']),
                                      '读者此前也已得知的本场可用信息'))
+        for check in project.get('material_checks', ()):
+            items.append(ContextItem('material:' + check['id'], canonical(check), '作者采用的本场资料约束'))
         for mapping in project.get('mappings', []):
             items.append(ContextItem('rule:' + mapping['ref']['card_id'], canonical(mapping), '场景问题与写法检验'))
         return package(items)
@@ -133,14 +155,15 @@ def _previous_refs(store: Store, snapshot: dict, facts: list[Fact],
 
 
 def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_limit: int, *,
-                        candidate_refs: tuple[tuple[str, str], ...] = ()) -> StoryWork:
+                        candidate_refs: tuple[tuple[str, str], ...] = (), base_prompt: str = WRITE_PROMPT) -> StoryWork:
     """Freeze the same versioned information the model receives, with source receipts."""
     if type(char_limit) is not int or char_limit < 1:
         raise ValueError('Context character limit must be a positive integer')
     scene = store.get('scene', scene_id)
     chapter = store.get('chapter', scene.chapter_id)
     disclosure = position((chapter.index, scene.index, 0))
-    binding = json.loads(scene.card_json).get('story')
+    scene_data = json.loads(scene.card_json)
+    binding = scene_data.get('story')
     if binding is not None and binding != {'scene_ref': scope.scene_ref, 'story_order': scope.story_order}:
         raise ValueError('Story scope does not match the materialized scene')
     scene_ref = _ref(scope.scene_ref)
@@ -162,17 +185,73 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     brief = briefs[-1] if briefs else None
     facts = [{key: value for key, value in asdict(f).items() if key != 'evidence'} for f in view.facts]
     inputs = {'brief': asdict(brief) if brief else None, 'settings': settings, 'holder': view.holder, 'facts': facts}
+    design = scene_materials(store, scene_id, scope.scene_ref)
+    source_keys = set()
+    if design:
+        verify_materials(store.directory.parent, design['materials'])
+        checks = scene_checks(design)
+        if any(check['profile'] == 'editor' for check in checks) and comparison_draft(store, scene_id, snapshot) is None:
+            raise ValueError('MATERIAL_PRECONDITION: cross-chapter review requires a prior chapter draft')
+        legacy_preconditions=any(check['profile'] in ('static_binding', 'dynamic_binding', 'static_relation', 'dynamic_relation',
+                                   'anchor', 'character_editor') or check['profile']!='method_work' and check['binding'].get('state') for check in checks)
+        native_preconditions=any(check['profile']=='method_work' and check['binding'].get('state') for check in checks)
+        if legacy_preconditions or native_preconditions:
+            author = state_at(store, scope.branch_id, scope.revision, scope.story_order, 'AUTHOR',
+                              disclosure, before_scene=scene_id, snapshot=snapshot)
+            if legacy_preconditions:
+                legacy_design={key:value for key,value in design.items() if key!='work_session'}
+                verify_preconditions(legacy_design, author.facts, {item['card_id'] for item in snapshot['settings']})
+            if native_preconditions:
+                from nw.materials.phase_projection import verify_current_state
+                verify_current_state(design['work_session'],design['material_key'],design.get('process_ids',{}),author.facts)
+        inputs['material_checks'] = writer_checks(design)
+        ids = {row['id'] for row in inputs['material_checks']}
+        source_keys.update(check_source_keys(check for check in checks if check['id'] in ids))
+        source_keys.update(row['source']['key'] for row in design['materials'] if row['source']['id'] in ids)
+        source_keys.update(check_source_keys(scene_checks(design, scoped=True)) & _WRITING_SCOPE_KEYS)
     from nw.context.registry import get_provider
 
+    prompt = step_material_prompt(base_prompt, WRITING_MATERIAL, source_keys)
     provider = get_provider('story')
     assembled = asdict(provider.build(inputs, card))
-    if len(WRITE_PROMPT) + len(canonical(assembled)) > char_limit:
+    if len(prompt) + len(canonical(assembled)) > char_limit:
         raise ValueError('CONTEXT_TOO_LARGE: mandatory story inputs exceed the budget')
     predecessors, other_evidence = _previous_refs(store, snapshot, view.facts, disclosure)
     earlier = {ref.id for ref in predecessors}
+    draft_texts: dict[str, str] = {}
+
+    def _enrich_span(span: dict) -> dict:
+        did = span.get('draft_id')
+        start, end = span.get('start'), span.get('end')
+        if isinstance(did, str) and did in earlier and type(start) is int and type(end) is int and 0 <= start < end:
+            if did not in draft_texts:
+                draft_texts[did] = store.get('draft', did).text
+            snippet = draft_texts[did][start:end]
+            if snippet and len(snippet) <= 240:
+                return {**span, 'quote': snippet}
+        return span
+
     continuity = [{'entity_id': fact.entity_id, 'predicate': fact.predicate,
-                   'spans': [item for item in fact.evidence if item.get('draft_id') in earlier]}
+                   'spans': [_enrich_span(item) for item in fact.evidence if item.get('draft_id') in earlier]}
                   for fact in view.facts if any(item.get('draft_id') in earlier for item in fact.evidence)]
+    adjacent_previous = None
+    prior_slots = []
+    for cand_scene_id, slot in snapshot['slots'].items():
+        cand_scene = store.get('scene', cand_scene_id)
+        cand_order = (store.get('chapter', cand_scene.chapter_id).index, cand_scene.index)
+        if cand_order < disclosure[:2]:
+            prior_slots.append((cand_order, cand_scene_id, cand_scene, slot['draft_id']))
+    if prior_slots:
+        _, prev_scene_id, prev_scene, prev_draft_id = max(prior_slots, key=lambda row: row[0])
+        prev_binding = json.loads(prev_scene.card_json).get('story')
+        prev_pov = None
+        if isinstance(prev_binding, dict) and isinstance(prev_binding.get('scene_ref'), dict):
+            prev_pov = read_card(store, _ref(prev_binding['scene_ref']))['body'].get('pov')
+        if prev_pov in (None, card['body']['pov']):
+            prev_text = draft_texts.setdefault(prev_draft_id, store.get('draft', prev_draft_id).text)
+            if prev_text.strip():
+                adjacent_previous = {'scene_id': prev_scene_id, 'draft_id': prev_draft_id,
+                                     'tail_text': prev_text[-1200:]}
     shared = []
     if disclosure > position(baseline_for(store, scope.branch_id)['disclosure_order']):
         reader = state_at(store, scope.branch_id, scope.revision, scope.story_order, 'READER', disclosure,
@@ -182,9 +261,12 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
                   and (fact.entity_id, fact.predicate, canonical(fact.value)) in known]
     already_disclosed = [{'entity_id': fact.entity_id, 'predicate': fact.predicate, 'value': fact.value}
                          for fact in shared]
-    for name, optional in [('continuity', continuity), ('reader', already_disclosed)]:
+    optional_parts = [('continuity', continuity), ('reader', already_disclosed)]
+    if adjacent_previous is not None:
+        optional_parts.insert(0, ('previous', adjacent_previous))
+    for name, optional in optional_parts:
         trial = asdict(provider.build({**inputs, name: optional}, card))
-        if len(WRITE_PROMPT) + len(canonical(trial)) <= char_limit:
+        if len(prompt) + len(canonical(trial)) <= char_limit:
             inputs[name] = optional
             assembled = trial
     if inputs.get('reader'):
@@ -193,7 +275,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     selected = []
     for mapping in selection.mappings:
         trial = asdict(provider.build({**inputs, 'mappings': [*selected, mapping]}, card))
-        if len(WRITE_PROMPT) + len(canonical(trial)) > char_limit:
+        if len(prompt) + len(canonical(trial)) > char_limit:
             selection.excluded_reasons.append({'ref': mapping['ref'], 'reason': 'OPTIONAL_CONTEXT_BUDGET'})
         else:
             selected.append(mapping)
@@ -213,4 +295,5 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     return StoryWork(scope, disclosure, assembled,
                      legacy_ref('brief', store.project().id, brief) if brief else None,
                      tuple({'card_id': ref.id, 'version': ref.version} for ref in refs),
-                     tuple(receipts.values()), predecessors, (*refs, *other_evidence), asdict(selection))
+                     tuple(receipts.values()), predecessors, (*refs, *other_evidence), asdict(selection),
+                     content_sha256(design) if design else None, prompt, tuple(sorted(source_keys)))

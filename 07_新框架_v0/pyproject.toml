@@ -17,5 +17,8 @@ test = ["pytest>=8,<10"]
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"nw.materials.steps" = ["type_connection_data/*.json", "type_connection_data/*.jsonl"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

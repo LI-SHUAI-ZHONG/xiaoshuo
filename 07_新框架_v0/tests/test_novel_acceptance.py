@@ -10,6 +10,7 @@ from nw.cards import decide_card, save_card
 from nw.llm.base import GenResult
 from nw.novel_flow import resume_job, show_job
 from nw.novel_store import Journal
+from nw.schema import VERSION
 from nw.store import Store
 from nw.story_state import adopt_story, current_head, state_at
 from nw.task_models import content_sha256
@@ -45,7 +46,7 @@ def test_full_upgrade_then_continue_and_export(tmp_path, server):
     project.mkdir()
     v4_fixture(project)
     settings = tmp_path / 'model.toml'
-    settings.write_text(f'[model]\nprovider="ollama"\nbase_url="{endpoint}"\nmodel="test"\n', encoding='utf-8')
+    settings.write_text(f'[model]\nprovider="ollama"\nbase_url="{endpoint}"\nmodel="test"\n[workflow]\nsource_driven=false\n', encoding='utf-8')
 
     def cli(*args):
         proc = invoke(tmp_path, '--project', 'book', '--config', str(settings), *args)
@@ -88,10 +89,11 @@ def test_full_upgrade_then_continue_and_export(tmp_path, server):
         assert store.accepted('s').draft_id == 'd2'
         assert store.run_output('r1')['raw'] == {'original': '初稿'}
         assert store.accepted(scene)
-        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 8
+        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == VERSION
         assert store.connection.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
         assert store.connection.execute('PRAGMA foreign_key_check').fetchall() == []
-    assert len(list(project.glob('nw.v*.bak'))) == 4
+    backups = sorted(int(path.name.split('.')[1][1:]) for path in project.glob('nw.v*.bak'))
+    assert backups == list(range(4, VERSION))
     assert (project / '正文' / 'ch02_s01.md').read_text(encoding='utf-8').startswith('[FAKE]')
 
 

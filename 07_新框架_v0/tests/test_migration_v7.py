@@ -22,7 +22,7 @@ def test_v6_database_and_backup_preserve_sources_and_decisions(tmp_path: Path) -
         tables = [r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")]
         before = snapshot(db, tables)
     with Store(tmp_path) as store:
-        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 8
+        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 10
         assert snapshot(store.connection, tables) == before
         assert not store.connection.execute('PRAGMA foreign_key_check').fetchall()
     [backup] = tmp_path.glob('nw.v6.*.bak')

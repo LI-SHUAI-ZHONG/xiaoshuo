@@ -58,7 +58,7 @@ def book(tmp_path):
 
 def propose(store, scope='book', parent=None, chapter=1, open_rule=False, branch='main'):
     provider = Planner(scope, chapter=chapter, open_rule=open_rule)
-    config = Config('fake', 'http://localhost', 'test', '', 5, {}, store.directory)
+    config = Config('fake', 'http://localhost', 'test', '', 5, {}, store.directory,source_driven=False)
     return propose_plan(store, 1, scope, provider, config, Budget(1, 45000, 2000),
                         parent_id=parent, branch=branch)
 
@@ -152,7 +152,7 @@ def test_apply_rolls_back_member_decisions_on_scene_conflict(book):
     for candidate in provider.output['candidate_cards']:
         candidate['members'] = [row for row in candidate['members'] if row['kind'] != 'chapter']
         candidate['chapters'][0]['card'] = None
-    config = Config('fake', 'http://localhost', 'test', '', 5, {}, book.directory)
+    config = Config('fake', 'http://localhost', 'test', '', 5, {}, book.directory,source_driven=False)
     candidate = propose_plan(book, 1, 'scene', provider, config, Budget(1, 45000, 2000),
                              parent_id=direction.id)
     decision = decide_card(book, candidate.candidate_cards[0], 'approved', '选定')
@@ -173,7 +173,7 @@ def test_plan_retry_keeps_frozen_messages_and_charges_budget(book):
     provider = Planner('book')
     original_choice = provider.output['candidate_cards'][1]['body']['choice']
     provider.output['candidate_cards'][1]['body']['choice'] = provider.output['candidate_cards'][0]['body']['choice']
-    config = Config('fake', 'http://localhost', 'test', '', 5, {}, book.directory)
+    config = Config('fake', 'http://localhost', 'test', '', 5, {}, book.directory,source_driven=False)
     with pytest.raises(ValueError, match='INVALID') as failure:
         propose_plan(book, 1, 'book', provider, config, Budget(2, 45000, 2000))
     original = str(failure.value).rsplit(' ', 1)[-1]

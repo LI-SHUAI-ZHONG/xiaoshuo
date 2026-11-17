@@ -12,7 +12,8 @@ from nw.story_models import CardRef, StateView
 from nw.store import Store
 from nw.story_dependencies import add_dependency, check_inputs_current, verify_legacy_ref
 from nw.story_models import Evidence, StateDelta, StateHead
-from nw.story_state import ACTIONS, baseline_for, parse_fact, position, replay, revision_state, selected_operations
+from nw.story_state import (ACTIONS, IDENTITY_STATUS_PREFIX, baseline_for, parse_fact, position, replay,
+                            revision_state, selected_operations, validate_identity_status)
 from nw.task_models import Budget, Finding, Ref, canonical, content_sha256
 from nw.tasks import read_input_manifest
 
@@ -103,6 +104,20 @@ def _evidence_paragraph(draft: Draft, evidence: list[dict]) -> int:
                if match.end() < last)
 
 
+def paragraph_evidence(draft: Draft, references: list[dict]) -> list[dict]:
+    spans = [_evidence(reference, draft) for reference in references]
+    breaks = list(_PARAGRAPH_BREAK.finditer(draft.text))
+    starts = [0, *(match.end() for match in breaks)]
+    ends = [*(match.start() for match in breaks), len(draft.text)]
+    return [
+        {'prose_location': f'{draft.scene_id}#paragraphs[{index}]', 'start': start, 'end': end,
+         'paragraph_sha256': sha256(draft.text[start:end].encode('utf-8')).hexdigest()}
+        for index, (start, end) in enumerate(zip(starts, ends))
+        if any(max(start, span.start) < min(end, span.end)
+               and draft.text[max(start, span.start):min(end, span.end)].strip() for span in spans)
+    ]
+
+
 def _operations(raw: list[dict], draft: Draft, manifest: dict) -> list[dict]:
     required = {'op','entity_id','predicate','holder','claim','story_order',
                 'disclosure_order','expected_old','new_value','evidence'}
@@ -124,6 +139,11 @@ def _operations(raw: list[dict], draft: Draft, manifest: dict) -> list[dict]:
             raise ValueError('State operation requires evidence')
         refs = [asdict(_evidence(item, draft)) for item in evidence]
         fact = parse_fact({**op, 'value': op['expected_old'] if removing else op['new_value']}, tuple(refs))
+        if fact.predicate.startswith(IDENTITY_STATUS_PREFIX):
+            if op['expected_old'] is not None:
+                validate_identity_status(fact.predicate, fact.holder, op['expected_old'])
+            if fact.holder == 'WORLD' and (op['op'] != 'set' or canonical(op['expected_old']) == canonical(op['new_value'])):
+                raise ValueError('IDENTITY_STATUS: world changes need a distinct resulting status; disclosure belongs to its holder')
         if (fact.story_order < manifest['story_order'] or
                 fact.disclosure_order < position(manifest['disclosure_order']) or
                 fact.disclosure_order[:2] != position(manifest['disclosure_order'])[:2]):

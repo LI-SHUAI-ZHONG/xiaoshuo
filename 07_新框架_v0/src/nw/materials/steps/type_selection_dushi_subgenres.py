@@ -1,0 +1,39 @@
+"""类型选择步骤直接使用的《类型系统》都市子类型原文。"""
+
+MATERIAL = r"""#### 都市子类型
+【类型系统原文位置】类型本体\类型总表.json 第3095行
+【各条共用原文值】type_kind="SUBGENRE" | parent_id="GENRE_DUSHI" | level=2 | scope="子类型"
+【逐条原文值】type_id原文行|type_id|definition（「：」前的名称即 canonical_name）
+6208|SUB_DUSHI_01|都市异能：GENRE_DUSHI的子类型
+6233|SUB_DUSHI_02|都市修真：GENRE_DUSHI的子类型
+6258|SUB_DUSHI_03|都市兵王：GENRE_DUSHI的子类型
+6283|SUB_DUSHI_04|都市神医：GENRE_DUSHI的子类型
+6308|SUB_DUSHI_05|都市鉴宝：GENRE_DUSHI的子类型
+6333|SUB_DUSHI_06|都市重生：GENRE_DUSHI的子类型
+6358|SUB_DUSHI_07|都市系统：GENRE_DUSHI的子类型
+6383|SUB_DUSHI_08|都市娱乐：GENRE_DUSHI的子类型
+6408|SUB_DUSHI_09|都市职场：GENRE_DUSHI的子类型
+6433|SUB_DUSHI_10|都市创业：GENRE_DUSHI的子类型
+6458|SUB_DUSHI_11|都市商业：GENRE_DUSHI的子类型
+6483|SUB_DUSHI_12|都市豪门：GENRE_DUSHI的子类型
+6508|SUB_DUSHI_13|高干：GENRE_DUSHI的子类型
+6533|SUB_DUSHI_14|总裁：GENRE_DUSHI的子类型
+6558|SUB_DUSHI_15|赘婿：GENRE_DUSHI的子类型
+6583|SUB_DUSHI_16|神豪：GENRE_DUSHI的子类型
+6608|SUB_DUSHI_17|奶爸：GENRE_DUSHI的子类型
+6633|SUB_DUSHI_18|校园：GENRE_DUSHI的子类型
+6658|SUB_DUSHI_19|都市悬疑：GENRE_DUSHI的子类型
+6683|SUB_DUSHI_20|都市灵异：GENRE_DUSHI的子类型
+6708|SUB_DUSHI_21|黑道：GENRE_DUSHI的子类型
+6733|SUB_DUSHI_22|警察刑侦：GENRE_DUSHI的子类型
+6758|SUB_DUSHI_23|医疗职业：GENRE_DUSHI的子类型
+6783|SUB_DUSHI_24|教师职业：GENRE_DUSHI的子类型
+6808|SUB_DUSHI_25|律师职业：GENRE_DUSHI的子类型
+6833|SUB_DUSHI_26|明星娱乐：GENRE_DUSHI的子类型
+6858|SUB_DUSHI_27|体育明星：GENRE_DUSHI的子类型
+6883|SUB_DUSHI_28|都市女性成长：GENRE_DUSHI的子类型
+6908|SUB_DUSHI_29|都市家庭：GENRE_DUSHI的子类型
+6933|SUB_DUSHI_30|都市现实：GENRE_DUSHI的子类型
+【本步用法】
+核对作者指定的都市子类型和父级。「校园」在总表指 SUB_DUSHI_18，在别名表指 GENRE_QINGCHUN，按作者需求确认实际身份，仍有歧义时写入 boundaries。「都市重生」「都市系统」各按子类型记录，相关机制按作者单独确认的要求使用。
+"""

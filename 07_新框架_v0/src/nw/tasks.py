@@ -12,7 +12,7 @@ from nw.call_control import check_test_provider, execution_lock, model_settings,
 from nw.config import Config
 from nw.llm.base import LLMProvider
 from nw.store import Store, now
-from nw.task_models import (TASK_KINDS, InputManifest, TaskRequest, TaskResult, canonical,
+from nw.task_models import (TASK_KINDS, InputManifest, TaskRequest, TaskResult, _sha256, canonical,
                             content_sha256, response_json, validate_task_output)
 
 __all__ = [
@@ -55,15 +55,17 @@ def _insert_manifest(store: Store, inputs: InputManifest, package: dict, *, lega
     _check_settings(inputs.settings)
     scoped = (inputs.branch_id, inputs.state_revision, inputs.story_order, inputs.disclosure_order)
     if (any(v is not None for v in scoped) or
-            (not legacy and inputs.purpose not in ('plan', 'rule_extract'))):
+            (not legacy and inputs.purpose not in ('plan', 'rule_extract', 'material_work'))):
         if (not isinstance(inputs.branch_id, str) or not inputs.branch_id or
                 type(inputs.state_revision) is not int or inputs.state_revision < 0 or
                 type(inputs.story_order) is not int or not _disclosure_position(inputs.disclosure_order)):
             raise ValueError('Input manifest requires complete story scope: branch, revision and both orders')
     if inputs.context_sha256 != content_sha256(package):
         raise ValueError('Input manifest context hash mismatch')
+    if inputs.material_design_sha256 is not None and not _sha256(inputs.material_design_sha256):
+        raise ValueError('Invalid material design hash')
     payload = asdict(inputs)
-    for optional in ('selection', 'novel_job_id'):
+    for optional in ('selection', 'novel_job_id', 'material_design_sha256'):
         if payload[optional] is None:
             payload.pop(optional)
     frozen = canonical(payload), canonical(package), inputs.context_sha256
@@ -212,9 +214,13 @@ def _start_task(store: Store, request: TaskRequest, request_json: str, root: str
             if validate is not None:
                 validate(parsed)
             validation = 'VALID'
-        except (ValueError, RecursionError):
+        except (ValueError, RecursionError) as exc:
             parsed = None
             validation, reason = 'INVALID', 'INVALID_STRUCTURED_OUTPUT'
+            if request.kind in ('plan','material_work') and str(exc).startswith(
+                    ('MATERIAL_DESIGN:','MATERIAL_WORK:','MATERIAL_STAGE:','MATERIAL_WAITING_INPUTS:',
+                     'MATERIAL_GOVERNANCE:')):
+                reason = str(exc)
     elif status == 'UNKNOWN':
         reason = 'PROVIDER_OUTCOME_UNKNOWN'
     with store.connection:

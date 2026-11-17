@@ -4,7 +4,7 @@ import hashlib
 import json
 from typing import Any
 
-TASK_KINDS = frozenset({'plan', 'rule_extract', 'select', 'state_extract', 'fact_review'})
+TASK_KINDS = frozenset({'plan', 'rule_extract', 'select', 'state_extract', 'fact_review', 'material_work'})
 CARD_KINDS = frozenset({'world', 'character', 'style', 'taboo', 'plot', 'scene', 'promise',
                         'rule', 'brief', 'volume', 'chapter'})
 
@@ -73,6 +73,7 @@ class InputManifest:
     dependency_refs: tuple[Ref, ...] = ()
     selection: dict | None = None
     novel_job_id: str | None = None
+    material_design_sha256: str | None = None
 
 
 @dataclass(frozen=True)
@@ -146,12 +147,19 @@ def _evidence(ref: dict) -> bool:
 def validate_task_output(kind: str, text: str) -> dict:
     """Check the transport envelope. Source and story checks belong to its consumers."""
     fields = {'plan': {'scope', 'candidate_cards'}, 'rule_extract': {'rules'},
-              'select': {'selected_refs'}, 'state_extract': {'operations'}, 'fact_review': {'findings'}}
+              'select': {'selected_refs'}, 'state_extract': {'operations'}, 'fact_review': {'findings'},
+              'material_work': {'status','tasks','requests','understanding','work_plan'}}
     if kind not in fields:
         raise ValueError('Unknown task kind')
     data = json.loads(text, object_pairs_hook=_object)
     # Reject nonfinite values, overflowing exponents and unpaired surrogates.
     canonical(data).encode('utf-8')
+    if kind=='material_work' and isinstance(data,dict) and 'stage' in data:
+        if (not _text(data['stage']) or not (
+                set(data)=={'stage','products'} and isinstance(data['products'],dict)
+                or set(data)=={'stage','requests'} and isinstance(data['requests'],list))):
+            raise ValueError('Invalid method stage envelope')
+        return data
     if not isinstance(data, dict) or set(data) != fields[kind]:
         raise ValueError(f'Unexpected fields for {kind}')
     if kind == 'plan':
@@ -178,6 +186,10 @@ def validate_task_output(kind: str, text: str) -> dict:
                                     'introduce_promise', 'advance_promise')
                     or not evidence or not all(map(_evidence, evidence))):
                 raise ValueError('State changes require an operation and evidence')
+    elif kind == 'material_work':
+        if data['status'] not in ('retrieve','ready') or any(not isinstance(data[k],list) for k in
+                ('tasks','requests','understanding','work_plan')):
+            raise ValueError('Invalid method study response')
     else:
         for finding in _records(data['findings'], 'findings'):
             if (set(finding) != set(Finding.__dataclass_fields__) or

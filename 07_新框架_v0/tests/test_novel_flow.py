@@ -23,13 +23,38 @@ class Model(FakeProvider):
         self.core = core
 
     def generate(self, messages, **params):
+        if '[MATERIAL_STEP]' in messages[0]['content']:
+            from fake_phase_work import phase_output
+            return phase_output(self,messages)
+        if '[MATERIAL_ASSEMBLY]' in messages[0]['content']:
+            from fake_phase_work import assembly_output
+            return assembly_output(self,messages)
         self.calls.append(messages)
         prompt, payload = messages[0]['content'], json.loads(messages[-1]['content'])
+        if '[MATERIAL_WORK]' in prompt:
+            from fake_material_work import study_output
+            return GenResult(json.dumps(study_output(payload),ensure_ascii=False),'complete',{},'test',{'isolated_test':True})
         if 'candidate_cards' in prompt:
             result = Planner(payload['scope']).output
+            if payload.get('material_work'):
+                from fake_material_work import apply_work
+                result['candidate_cards']=[apply_work(row,payload['material_work']) for row in result['candidate_cards']]
         elif '{"recommendation"' in prompt:
             result = {'recommendation': 'revise' if self.revisions else 'pass',
                       'notes': '查看证据', 'core_changes': ['改变主角核心目标'] if self.core else []}
+            if payload.get('material_review'):
+                contract=payload['material_review'];text=payload['draft']['text']
+                span={**contract['draft'],'start':0,'end':len(text),'quote':text}
+                result['material_checks']=[]
+                for check in contract['checks']:
+                    row={'id':check['id'],'status':'pass','reason':'[FAKE] 对照所读方法与本次完整测试稿的实际表现','evidence':[span]}
+                    if check.get('source_contract'):
+                        row['source_checks']=[{'id':field['id'],'status':'pass','reason':'[FAKE] 原义与测试段落相符',
+                            'evidence':[span]} for field in check['source_contract'].get('obligations',[])]
+                    if check.get('layer_contract') and check['id'].startswith('work:'):
+                        row['layer_check']={'status':'pass','reason':'[FAKE] 对照当前项目转译与完整测试稿的因果表现',
+                                            'evidence':[span]}
+                    result['material_checks'].append(row)
         elif '{"operations"' in prompt:
             if payload['disclosure_order'][:2] == [1, 1]:
                 result = {'operations': [{'op': 'set', 'entity_id': 'key', 'predicate': 'owner',
@@ -51,7 +76,7 @@ def author(action='accept', **fields):
 
 
 def config(store):
-    return Config('fake', 'http://localhost', 'test', '', 5, {}, store.directory)
+    return Config('fake', 'http://localhost', 'test', '', 5, {}, store.directory,source_driven=False)
 
 
 def setup_story(store, count=3):

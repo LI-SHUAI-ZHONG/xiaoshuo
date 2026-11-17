@@ -6,6 +6,7 @@ from nw.call_budget import create_budget, prepare_call, read_budget
 from nw.call_control import model_settings
 from nw.config import Config
 from nw.llm.base import LLMProvider
+from nw.materials.steps.state_extract import MATERIAL as STATE_EXTRACT_MATERIAL
 
 from nw.store import Store
 from nw.story_delta import (_findings, _manifest, _operations, candidate_projection_digest, candidate_snapshot,
@@ -13,10 +14,12 @@ from nw.story_delta import (_findings, _manifest, _operations, candidate_project
 from nw.story_models import StateDelta, StateHead
 from nw.story_state import baseline_for, position, replay, selected_operations, state_at
 from nw.task_models import Budget, InputManifest, TaskRequest, TaskResult, canonical, content_sha256
-from nw.tasks import freeze_manifest, run_task
+from nw.tasks import freeze_manifest, read_input_manifest, run_task
 
 
-def freeze_delta_input(store: Store, draft_id: str, scope: dict, settings: dict) -> str:
+def freeze_delta_input(store: Store, draft_id: str, scope: dict, settings: dict, *,
+                       material_review_run: str | None = None,
+                       material_hypotheses: list[dict] | None = None) -> str:
     required = {'id', 'branch_id', 'base_revision', 'story_order'}
     if not isinstance(scope, dict) or not required <= scope.keys() or scope.keys() - required - {
             'candidate_delta_refs', 'predecessor_drafts', 'brief_ref', 'dependency_refs'}:
@@ -74,6 +77,19 @@ def freeze_delta_input(store: Store, draft_id: str, scope: dict, settings: dict)
                 dependency_refs.append(asdict(draft_ref(source)))
     package = {'draft_id': draft.id, 'draft_sha256': draft_digest(draft),
                'facts': [asdict(fact) for fact in facts], 'settings': view.settings}
+    if settings.get('prompt_version') == 'state-extract-v1':
+        existing = store.connection.execute(
+            'SELECT 1 FROM input_manifests WHERE id=?', (scope['id'],)).fetchone()
+        if existing:
+            _, previous = read_input_manifest(store, scope['id'])
+            if 'state_extract_material' in previous:
+                package['state_extract_material'] = previous['state_extract_material']
+        else:
+            package['state_extract_material'] = STATE_EXTRACT_MATERIAL
+    if material_review_run is not None:
+        package['material_review_run'] = material_review_run
+    if material_hypotheses:
+        package['material_hypotheses'] = material_hypotheses
     return freeze_manifest(store, InputManifest(
         scope['id'], 'state_extract', settings, content_sha256(package),
         brief_ref=brief_ref,
@@ -81,7 +97,8 @@ def freeze_delta_input(store: Store, draft_id: str, scope: dict, settings: dict)
         branch_id=head.branch_id, state_revision=head.revision, story_order=scope['story_order'],
         disclosure_order=disclosure, predecessor_drafts=tuple(predecessors.values()),
         candidate_delta_refs=tuple(deps), candidate_projection_sha256=digest,
-        dependency_refs=tuple(dependency_refs), novel_job_id=job_id), package)
+        dependency_refs=tuple(dependency_refs), novel_job_id=job_id,
+        material_design_sha256=written.get('material_design_sha256') if same_scope else None), package)
 
 
 def _budget(store: Store, manifest_id: str, budget: Budget | str) -> str:
@@ -107,13 +124,19 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
     budget_id = _budget(store, manifest_id, budget)
     project_id = store.project().id
     evidence_format = {'draft_id': draft.id, 'text_sha256': draft_digest(draft), 'start': 0, 'end': len(draft.text)}
-    frozen_input = {'draft': asdict(draft), 'target_ref': asdict(draft_ref(draft)), 'context': package,
+    step_material = package.get('state_extract_material')
+    material_prompt = '\n\n' + step_material if step_material else ''
+    context = {key: value for key, value in package.items() if key != 'state_extract_material'}
+    frozen_input = {'draft': asdict(draft), 'target_ref': asdict(draft_ref(draft)), 'context': context,
                     'evidence_format': evidence_format,
                     'story_order': manifest['story_order'], 'disclosure_order': manifest['disclosure_order']}
+    material_note = (' material_hypotheses 是待核对的设计目标。仅提取正文确实支持的变化，'
+                     '用目标中的实体 ID、predicate、holder 和前后值定位，缺乏支持时省略。'
+                     if package.get('material_hypotheses') else '')
     messages = [{'role': 'system', 'content': (
         '只输出 JSON {"operations":[]}。逐项提供 op、entity_id、predicate、holder、claim、story_order、'
         'disclosure_order、expected_old、new_value、evidence。证据用正文 Unicode 半开区间。'
-        '未发生的计划、人物说辞和误信不得写成 WORLD 事实。')},
+        '未发生的计划、人物说辞和误信不得写成 WORLD 事实。' + material_note + material_prompt)},
         {'role': 'user', 'content': canonical(frozen_input)}]
     extraction_id = f'delta-extract:{manifest_id}'
     def dispatch(kind: str, request: TaskRequest, validate: Callable[[dict], None]) -> TaskResult:
@@ -130,7 +153,9 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
     review_package = {**frozen_input, 'candidate_operations': operations, 'extraction_task_id': result.id}
     review_messages = [{'role': 'system', 'content': (
         '独立核对正文与候选变更。只输出 JSON {"findings":[]}。问题需含 code、severity（hard/soft/info）、'
-        'target_ref、evidence、explanation、suggested_action、status。问题用 OPEN，正文未支持的事实用 hard。')},
+        'target_ref、evidence、explanation、suggested_action、status。问题用 OPEN，正文未支持的事实用 hard。'
+        + (' 独立核对 material_hypotheses 中的目标和引用。方案、前次意见或标签均不能证明变化发生。'
+           if material_note else '') + material_prompt)},
         {'role': 'user', 'content': canonical(review_package)}]
     review_manifest_id = f'delta-review-manifest:{manifest_id}'
     if invoke is None or not store.connection.execute(

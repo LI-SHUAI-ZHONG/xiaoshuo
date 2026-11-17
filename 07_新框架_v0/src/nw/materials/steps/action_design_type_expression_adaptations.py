@@ -1,0 +1,26 @@
+"""行动设计中的概念动作与行动候选参数的《类型系统》原文。"""
+
+MATERIAL = r"""#### 行动设计中的概念动作与行动候选参数
+【类型系统原文位置】类型表达适配总表.json 第20889行
+【各条共用原文值】{"priority":0,"weight":0,"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0"}
+【本步使用条件】
+以已有事件候选、人物能力、对象、资源和作者确认的安排为前置。在本步现有 candidates 落实选择、对象、阻碍、代价、结果和限制。原行动 ID 或词语表示资料候选，实际行动须由当步的项目证据支持。
+原始 confidence=999 按原值保留。design_ready 条目沿用现有资格及有效字段，按作者实际需要选用。blocked 条目用于核对待核字段及影响，项目参数沿用已确认的依据。GENRE_MORI 依项目已确认的原 ID 核对。
+【逐条原文值】adaptation_id 原文行 | 现有资料裁定 | adaptation_id | type_id | target_kind | target_id | target_scope | adaptation_kind | 本步原字段 | 本步用法
+20897 | design_ready | ADAPT_B_00001 | GENRE_XIANXIA | concept | NEED_FOOD | null | expression_preference | {"candidate_actions":["ACTION_BUY","ACTION_RECEIVE","ACTION_CRAFT"],"not_guaranteed":["角色必然吃灵食","食物必然与修炼绑定"]} | 已具取得条件时核对购买、接受或制作分别能否解决本场需求。
+20960 | design_ready | ADAPT_B_00002 | GENRE_XIANXIA | concept | FATIGUE | null | expression_preference | {"candidate_actions":["ACTION_WAIT","ACTION_TRAIN","ACTION_HIDE"],"not_guaranteed":["疲惫必然导致闭关","疲惫必然是灵力枯竭"]} | 按已有疲惫、能力和安全条件核对等待、锻炼或隐藏。
+21077 | design_ready | ADAPT_B_00004 | GENRE_XIANXIA | concept | ANGER | null | expression_preference | {"candidate_actions":["ACTION_CONFRONT","ACTION_ATTACK"],"not_guaranteed":["愤怒必然导致战斗","愤怒必然导致杀人"]} | 按已知冲突和人物能力核对对峙或攻击候选及后果。
+21190 | design_ready | ADAPT_B_00006 | GENRE_XIANXIA | concept | DESIRE | null | expression_preference | {"candidate_actions":["ACTION_SEARCH","ACTION_TRAIN","ACTION_COMPETITION"],"not_guaranteed":["欲望必然导致堕落","欲望必然导致入魔"]} | 依已经确定的欲望对象核对搜寻、锻炼或竞争。
+21300 | design_ready | ADAPT_B_00008 | GENRE_DUSHI | concept | NEED_FOOD | null | expression_preference | {"candidate_actions":["ACTION_BUY","ACTION_RECEIVE"],"not_guaranteed":["角色必然点外卖","食物短缺必然导致剧情"]} | 按本场食物对象和可用钱款核对购买与接受候选。
+21364 | design_ready | ADAPT_B_00009 | GENRE_DUSHI | concept | FATIGUE | null | expression_preference | {"candidate_actions":["ACTION_WAIT","ACTION_BUY"],"not_guaranteed":["疲惫必然是加班造成"]} | 按疲惫成因与现场条件核对等待或购买。
+21423 | design_ready | ADAPT_B_00010 | GENRE_DUSHI | concept | FEAR | null | expression_preference | {"candidate_actions":["ACTION_HIDE","ACTION_NEGOTIATE","ACTION_INVESTIGATE"],"not_guaranteed":["恐惧必然导致报警","恐惧必然导致逃跑"]} | 从已知威胁与本场目标核对隐藏、协商或调查候选。
+21485 | design_ready | ADAPT_B_00011 | GENRE_DUSHI | concept | ANGER | null | expression_preference | {"candidate_actions":["ACTION_CONFRONT","ACTION_NEGOTIATE"],"not_guaranteed":["愤怒必然导致暴力","愤怒必然导致决裂"]} | 按实际利益和人物目标核对对峙或协商。
+21652 | design_ready | ADAPT_B_00014 | GENRE_MORI | concept | NEED_FOOD | null | expression_preference | {"candidate_actions":["ACTION_SEARCH","ACTION_BUY","ACTION_HIDE"],"not_guaranteed":["食物短缺必然导致死亡","搜寻必然找到食物"]} | 依已有食物缺口和安全条件核对搜寻、购买或隐藏。
+21719 | design_ready | ADAPT_B_00015 | GENRE_MORI | concept | FATIGUE | null | expression_preference | {"candidate_actions":["ACTION_HIDE","ACTION_WAIT","ACTION_DEFEND"],"not_guaranteed":["疲惫必然导致死亡","疲惫必然导致被袭击"]} | 按实际疲惫及可用能力核对隐藏、等待或防守。
+21833 | design_ready | ADAPT_B_00017 | GENRE_MORI | concept | ANGER | null | expression_preference | {"candidate_actions":["ACTION_CONFRONT","ACTION_ATTACK","ACTION_THREATEN"],"not_guaranteed":["愤怒必然导致暴力","愤怒必然导致杀人"]} | 依已定争夺、规则和人物目标核对对峙、攻击或威胁候选。
+21941 | design_ready | ADAPT_B_00019 | GENRE_KEHUAN | concept | FATIGUE | null | expression_preference | {"candidate_actions":["ACTION_WAIT","ACTION_TRAIN"],"not_guaranteed":["疲劳必然是科技副作用"]} | 依据疲惫与人物现有能力核对等待或训练。
+21993 | blocked | ADAPT_B_00020 | GENRE_XUANYI | concept | FEAR | null | expression_preference | {"candidate_actions":["ACTION_INVESTIGATE","ACTION_OBSERVE"],"not_guaranteed":["恐惧必然源于凶手","恐惧是真实威胁"]} | 保留调查与观察候选原值，核对待补的威胁依据及适用条件。
+23742 | design_ready | ADAPT_B_00051 | GENRE_XIANXIA | action_type | null | all_actions | action_candidate_weight | {"parameters":{"candidate_priority":0,"candidate_visibility":"normal","candidate_cost_emphasis":"normal","candidate_risk_emphasis":"normal","candidate_information_gain":"normal","candidate_relationship_effect":"normal","candidate_moral_effect":"normal","candidate_failure_visibility":"normal"},"preferred_expressions":["修行","炼丹","御剑","布阵","斗法"],"avoid_expressions":["打电话","发邮件","开车","刷信用卡"],"not_guaranteed":["修仙者必然战斗"]} | 按本场确实可用的能力核对修行、炼丹、御剑、布阵或斗法候选及代价。
+23801 | design_ready | ADAPT_B_00052 | GENRE_DUSHI | action_type | null | all_actions | action_candidate_weight | {"parameters":{"candidate_priority":0,"candidate_visibility":"normal","candidate_cost_emphasis":"normal","candidate_risk_emphasis":"normal","candidate_information_gain":"normal","candidate_relationship_effect":"normal","candidate_moral_effect":"normal","candidate_failure_visibility":"normal"},"preferred_expressions":["谈判","签约","调查","社交","投资"],"avoid_expressions":["御剑","布阵","服丹"],"not_guaranteed":["城市角色必然商务谈判"]} | 按实际人物、对象和事件核对谈判、签约、调查、社交或投资候选。
+23859 | design_ready | ADAPT_B_00053 | GENRE_MORI | action_type | null | all_actions | action_candidate_weight | {"parameters":{"candidate_priority":0,"candidate_visibility":"normal","candidate_cost_emphasis":"normal","candidate_risk_emphasis":"normal","candidate_information_gain":"normal","candidate_relationship_effect":"normal","candidate_moral_effect":"normal","candidate_failure_visibility":"normal"},"preferred_expressions":["搜寻","守卫","转移","交易","侦察"],"avoid_expressions":["休闲购物","娱乐消遣"],"not_guaranteed":["幸存者必然搜寻到物资"]} | 按既有求生目标、环境和角色能力核对搜寻、守卫、转移、交易或侦察。
+"""

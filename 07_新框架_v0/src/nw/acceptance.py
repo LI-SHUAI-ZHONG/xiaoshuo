@@ -4,6 +4,8 @@ import json
 from uuid import uuid4
 
 from nw.call_control import execution_lock
+from nw.materials.evidence import check_material_acceptance
+from nw.materials.scoped import check_scope_acceptance
 from nw.store import Store, now
 from nw.story_delta import check_delta, draft_ref, manifest_refs, prepare_delta, read_delta
 from nw.story_dependencies import add_dependency
@@ -68,7 +70,9 @@ def _checked_deltas(store: Store, requests: list[AcceptanceRequest], expected_he
                     if item.severity == 'hard']
         if blockers:
             raise ValueError('Unresolved state review: ' + '; '.join(blockers))
+        check_material_acceptance(store, draft, delta)
         deltas[request.scene_id] = delta
+    check_scope_acceptance(store, list(deltas.values()), expected_head)
     return deltas
 
 
@@ -272,7 +276,8 @@ def promote_branch(store: Store, branch_id: str, expected_main: StateHead,
         _require_promotion_reviews(store, branch_id, old, new, updates)
         for key in updates:
             slot = new['slots'][key]
-            store._check_acceptable(slot['draft_id'])
+            draft = store._check_acceptable(slot['draft_id'])
+            check_material_acceptance(store, draft, read_delta(store, slot['delta_id']))
         result = StateHead('main', expected_main.revision + 1)
         write_revision(store, result, expected_main.revision, commit_id, digest, new)
         for key in updates:

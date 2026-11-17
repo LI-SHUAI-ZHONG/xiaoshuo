@@ -54,6 +54,7 @@ def register_commands(subparsers: Any) -> None:
     propose.add_argument('--parent', help='ID of an applied direction or design')
     propose.add_argument('--branch', default='main')
     propose.add_argument('--budget', type=Path, required=True)
+    propose.add_argument('--governance-inputs', type=Path, help='frozen author governance inputs keyed by planning stage')
     propose.add_argument('--provider', choices=['ollama', 'openai_compat'])
     retry = plans.add_parser('retry', help='explicitly retry a failed call with its original budget and inputs')
     retry.add_argument('--id', required=True)
@@ -71,6 +72,21 @@ def register_commands(subparsers: Any) -> None:
     show.add_argument('--time', type=int, required=True)
     show.add_argument('--holder', required=True)
     show.add_argument('--disclosure', type=_position)
+    chapter = stories.add_parser('chapter-state', help='inspect accepted scene changes within a chapter')
+    chapter.add_argument('--chapter', type=int, required=True)
+    chapter.add_argument('--branch', default='main')
+    chapter.add_argument('--revision', type=int)
+    summary = stories.add_parser('chapter-summary', help='read or save an author summary for accepted chapter prose')
+    index = stories.add_parser('chapter-index', help='list the current branch chapter summaries in order')
+    checkpoint = stories.add_parser('chapter-review', help='read or record an editorial checkpoint over accepted chapters')
+    for command in (summary, index, checkpoint):
+        command.add_argument('--branch', default='main')
+        command.add_argument('--revision', type=int)
+    for command in (summary, checkpoint):
+        command.add_argument('--chapter', type=int, required=True)
+        command.add_argument('--file', type=Path)
+    checkpoint.add_argument('--rule', required=True, choices=('character', 'cost', 'commitment', 'commitment-ending',
+                            'resource-update', 'resource-inventory', 'resource-settlement'))
     fork.add_argument('--name', required=True)
     promote = stories.add_parser('promote')
     promote.add_argument('--branch', required=True)
@@ -124,14 +140,21 @@ def read_scope_file(path: Path | None) -> StoryScope | None:
 
 def _plan(store: Store, args: argparse.Namespace) -> Any:
     if args.action == 'propose':
+        governance_inputs = _load(args.governance_inputs, dict) if args.governance_inputs else None
         return propose_plan(store, args.brief_version, args.scope, args.provider_instance, args.settings,
-                            read_budget_file(args.budget), parent_id=args.parent, branch=args.branch)
+                            read_budget_file(args.budget), parent_id=args.parent, branch=args.branch,
+                            governance_inputs=governance_inputs)
     if args.action == 'retry':
         return retry_plan(store, args.id, args.provider_instance, args.settings)
     if args.action == 'apply':
         apply_plan(store, args.id, args.decision)
         return show_plan(store, args.id).application
-    manifest, _ = plan_input(store, args.id)
+    manifest, package = plan_input(store, args.id)
+    if not store.connection.execute('SELECT 1 FROM task_calls WHERE id=?',(args.id,)).fetchone():
+        checkpoint=package['plan_checkpoint']
+        calls=store.connection.execute('SELECT id,kind,status,validation,reason FROM task_calls WHERE budget_id=? ORDER BY rowid',
+                                        (checkpoint['budget_id'],)).fetchall()
+        return {'checkpoint':checkpoint,'manifest':manifest,'stage_calls':[dict(row) for row in calls]}
     task = read_task(store, args.id)
     if task.validation != 'VALID':
         return {'task': asdict(task), 'manifest': manifest}
@@ -203,6 +226,20 @@ def _story(store: Store, args: argparse.Namespace) -> Any:
         return adopt_story(store, data['baseline'], data['expected_accepted'])
     if args.action == 'show':
         return state_at(store, args.branch, args.revision, args.time, args.holder, args.disclosure)
+    if args.action == 'chapter-state':
+        from nw.chapter_state import chapter_state
+        head = current_head(store, args.branch) if args.revision is None else StateHead(args.branch, args.revision)
+        return chapter_state(store, head, args.chapter)
+    if args.action in ('chapter-summary', 'chapter-index', 'chapter-review'):
+        from nw.chapter_records import chapter_index, chapter_review, chapter_summary
+
+        head = current_head(store, args.branch) if args.revision is None else StateHead(args.branch, args.revision)
+        if args.action == 'chapter-index':
+            return chapter_index(store, head)
+        data = _load(args.file, dict) if args.file else None
+        if args.action == 'chapter-summary':
+            return chapter_summary(store, head, args.chapter, data)
+        return chapter_review(store, head, args.chapter, args.rule, data)
     if args.action == 'fork':
         return fork_story(store, StateHead(args.branch, args.revision), args.name)
     if args.action == 'promote':

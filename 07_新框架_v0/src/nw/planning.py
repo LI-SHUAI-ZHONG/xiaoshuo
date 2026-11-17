@@ -6,9 +6,12 @@ from uuid import uuid4
 
 from nw.call_budget import create_budget, prepare_call
 from nw.call_control import model_settings
+from nw.chapter_state import continuation_chapter_state
 from nw.cards import card_input_ref, _append, _link, eligible_rule_refs, read_card
 from nw.config import Config
 from nw.llm.base import LLMProvider
+from nw.materials.binding import PROCESS, material_prompt, required_for, scene_routes, translate_bindings, verify_materials
+from nw.materials.stage_input import input_record, model_package
 from nw.models import Brief
 from nw.plan_application import apply_plan
 from nw.plan_contract import PlanProposal, SCOPES, plan_prompt, validate_plan
@@ -80,24 +83,60 @@ def _plan_scope(store: Store, scope: str, branch: str, parent_id: str | None) ->
 
 
 def propose_plan(store: Store, brief_ref: Ref | int, scope: str, provider: LLMProvider, config: Config,
-                 budget: Budget, *, parent_id: str | None = None, branch: str = 'main') -> PlanProposal:
+                 budget: Budget, *, parent_id: str | None = None, branch: str = 'main',
+                 governance_inputs: dict | None = None) -> PlanProposal:
     ident = uuid4().hex
     budget_id = create_budget(store, f'plan:{ident}', budget)
     request, package = prepare_plan_task(store, brief_ref, scope, provider, config, budget_id, ident,
-                                         parent_id=parent_id, branch=branch)
+                                         parent_id=parent_id, branch=branch, governance_inputs=governance_inputs)
     return _run_plan(store, request, package, provider, config)
 
 
 def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: LLMProvider,
                       config: Config, budget_id: str, ident: str, *, parent_id: str | None = None,
-                      branch: str = 'main') -> tuple[TaskRequest, dict]:
+                      branch: str = 'main', materials: list[dict] = (),
+                      material_deferrals: dict | None = None,
+                      governance_inputs: dict | None = None) -> tuple[TaskRequest, dict]:
     from nw.call_budget import read_budget
 
     budget = read_budget(store, budget_id)
     prompt = plan_prompt(scope)
+    manifest_id = f'plan:{ident}'
     with store.connection:
         store.connection.execute('BEGIN')
         head, parent = _plan_scope(store, scope, branch, parent_id)
+        if parent:
+            from nw.materials.work_application import validate_saved_work
+            validate_saved_work(store, parent_id, parent.get('material_design', {}), parent['root'])
+        inherited = parent.get('material_design', {}) if parent else {}
+        by_id = {row['source']['id']: row for row in inherited.get('materials', [])}
+        brief = _brief(store, brief_ref.version if isinstance(brief_ref, Ref) else brief_ref)
+        parent_card = read_card(store, CardRef(**parent['root'])) if parent else None
+        recall = None
+        from nw.materials.source_set import selection_status
+        staged_catalog = selection_status(store.directory.parent) is not None
+        if not staged_catalog and not materials and (not by_id or inherited.get('recall')):
+            from nw.materials.recall import recall_materials
+            terms = ' '.join((brief.text, brief.constraints, parent_card['body']['choice'] if parent_card else ''))
+            automatic, recall = recall_materials(store.directory.parent, terms, scope=scope, existing=list(by_id.values()))
+            by_id.update({row['source']['id']: row for row in automatic})
+        for row in materials:
+            key = row['source']['id']
+            if key in by_id and canonical(by_id[key]) != canonical(row):
+                raise ValueError('MATERIAL_SCOPE: redesign the parent before changing an inherited decision')
+            by_id[key] = row
+        materials = list(by_id.values())
+        deferrals = (material_deferrals or {}) if scope != 'book' else {}
+        if deferrals.keys() - scene_routes(materials).keys():
+            raise ValueError('MATERIAL_SCOPE: only adopted sources can be deferred in a detail plan')
+        book_bindings = inherited.get('book_bindings', {})
+        if scope != 'book' and required_for(materials, book=True).keys() != book_bindings.keys():
+            raise ValueError('MATERIAL_SCOPE: confirm type commitments in the book plan first')
+        processes = {row['profile'] for row in materials if row['request']['disposition'] == 'required'} & PROCESS
+        if scope != 'book' and processes & {'material_selection','material_conversion'} and not scene_routes(materials, deferrals):
+            raise ValueError('MATERIAL_SCOPE: selection and conversion require concrete scene-level materials')
+        verify_materials(store.directory.parent, materials)
+        prompt += material_prompt(materials, book=scope == 'book', deferrals=deferrals)
         brief = _brief(store, brief_ref.version if isinstance(brief_ref, Ref) else brief_ref)
         project_id = store.project().id
         brief_pin = legacy_ref('brief', project_id, brief)
@@ -105,7 +144,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             raise ValueError('Brief reference does not match the recorded version')
         state = revision_state(store, head) if head else None
         settings = state['settings'] if state is not None else parent['approvals'] if parent else []
-        facts = (replay(baseline_for(store, head.branch_id), selected_operations(store, state))
+        operations=selected_operations(store,state) if state is not None else []
+        facts = (replay(baseline_for(store, head.branch_id), operations)
                  if head is not None else [])
         cards = [read_card(store, CardRef(row['card_id'], row['version'])) for row in settings]
         parent_card = read_card(store, CardRef(**parent['root'])) if parent else None
@@ -115,17 +155,73 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         places = [{'id': row.id, 'chapter_id': row.chapter_id, 'index': row.index} for row in store.list('scene')]
         outline_pin = outline_ref(store)
         package = {'brief': asdict(brief), 'scope': scope, 'parent_id': parent_id, 'parent': parent_card,
+                   'plan_checkpoint':{'task_id':ident,'budget_id':budget_id,'project_id':project_id},
+                   'material_mode':'source_driven_required' if config.source_driven else 'legacy_when_catalog_missing_explicit',
                    'branch_head': asdict(head) if head else None, 'approved_cards': cards,
                    'accepted_state': [asdict(fact) for fact in facts],
+                   'accepted_changes':[op for op in operations if op['claim']=='fact' and op['holder']=='WORLD'
+                       and op['expected_old'] is not None and canonical(op['expected_old'])!=canonical(op['new_value'])],
                    'outline': {'chapters': outline, 'scenes': places}, 'method_cards': methods}
-        while methods and len(prompt) + len(canonical(package)) > budget.context_char_limit:
+        if inherited.get('work_application'):
+            session=inherited['work_session']
+            package['parent_material_work']={'application':inherited['work_application'],
+                'stages':session.get('stages',[]),'work_plan':session.get('result',{}).get('work_plan',[])}
+        if recall:
+            package['material_recall'] = recall
+        if governance_inputs is not None:
+            from nw.materials.phase_routes import phase_order
+            if (not isinstance(governance_inputs, dict) or governance_inputs.keys() - set(phase_order(scope))
+                    or not all(isinstance(value, dict) for value in governance_inputs.values())):
+                raise ValueError('MATERIAL_GOVERNANCE: expected inputs keyed by current planning stage')
+            package['governance_inputs'] = governance_inputs
+        if head:
+            from nw.materials.stage_effects import accepted_feedback
+            feedback = accepted_feedback(store, head)
+            if feedback:
+                package['material_feedback'] = feedback
+        if materials:
+            package.update(materials=materials, book_bindings=book_bindings, material_deferrals=deferrals)
+        # Pin the in-step text before the first stage, so resuming keeps the original prompts.
+        existing = store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest_id,)).fetchone()
+        if existing:
+            _, previous_package = read_input_manifest(store, manifest_id)
+            for key in ('stage_materials', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
+                        'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
+                        'dynamic_reference_checks', 'dynamic_screening_enabled'):
+                if key in previous_package:
+                    package[key] = previous_package[key]
+        else:
+            if scope == 'chapter' and head is not None:
+                handoff = continuation_chapter_state(store, head, state)
+                if handoff is not None:
+                    package['chapter_handoff'] = handoff
+                    from nw.chapter_records import continuation_reviews, continuation_summary
+                    from nw.models import Chapter
+
+                    if summary := continuation_summary(store, head, handoff['chapter']['index']):
+                        package['chapter_summary'] = summary
+                    if reviews := continuation_reviews(store, head, Chapter(**handoff['chapter'])):
+                        package['chapter_reviews'] = reviews
+            if (store.directory.parent / 'materials/catalog.db').is_file():
+                from nw.materials.phase_flow import STAGE_MATERIALS
+                from nw.materials.phase_routes import phase_order
+                package['type_hierarchy_enabled'] = True
+                package['type_source_scope_enabled'] = True
+                package['type_name_evidence_enabled'] = True
+                package['dynamic_reference_checks'] = True
+                package['dynamic_screening_enabled'] = True
+                package['stage_materials'] = {
+                    stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
+                }
+        while methods and len(prompt) + len(canonical(model_package(package))) > budget.context_char_limit:
             methods.pop()
         sources = _source_refs(store, [*cards, *methods])
-    messages = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': canonical(package)}]
+        if materials:
+            package['material_input']=input_record(package)
+    messages = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': canonical(model_package(package))}]
     params, _ = prepare_call(store, budget_id, provider.name, config.params, messages)
     refs = tuple({'card_id': card['card_id'], 'version': card['version']} for card in [*cards, *methods])
     # Planning is author-facing, with the branch pin inside the frozen design work package.
-    manifest_id = f'plan:{ident}'
     freeze_manifest(store, InputManifest(
         manifest_id, 'plan', model_settings(provider, config.model, params, 'story-plan-v1'),
         content_sha256(package), brief_ref=brief_pin,
@@ -136,17 +232,29 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
 def retry_plan(store: Store, ident: str, provider: LLMProvider, config: Config) -> PlanProposal:
     _, package = plan_input(store, ident)
     row = store.connection.execute('SELECT request_json FROM task_calls WHERE id=?', (ident,)).fetchone()
+    if row is None:
+        checkpoint=package.get('plan_checkpoint',{})
+        if checkpoint.get('task_id')!=ident:raise ValueError('Plan checkpoint not found')
+        request=TaskRequest(ident,checkpoint['project_id'],'plan','plan:'+ident,{'messages':[]},checkpoint['budget_id'])
+        return _run_plan(store,request,package,provider,config,retry_failed=True)
     previous = TaskRequest(**json.loads(row[0]))
     request = replace(previous, id=uuid4().hex, retry_of=ident, attempt=previous.attempt + 1)
     return _run_plan(store, request, package, provider, config)
 
 
 def _run_plan(store: Store, request: TaskRequest, package: dict, provider: LLMProvider,
-              config: Config) -> PlanProposal:
+              config: Config,*,retry_failed: bool=False) -> PlanProposal:
+    from nw.materials.work_session import drive_plan
+    try:request,package=drive_plan(store,request,package,provider,config,retry_failed=retry_failed)
+    except ValueError as exc:
+        raise ValueError(f'{exc}; plan_checkpoint={request.id}; resume with plan retry --id {request.id}') from exc
+    from nw.materials.phase_projection import expand_output
     result = run_task(store, request, provider, config,
-                      validate=lambda output: validate_plan(output, package['scope'], _known_cards(package)))
+                      validate=lambda output: validate_plan(expand_output(output,package), package['scope'], _known_cards(package),
+                                                            package.get('materials', ()),
+                                                            package.get('material_deferrals'),package.get('material_work')))
     if result.validation != 'VALID':
-        raise ValueError(f'Plan {result.status}/{result.validation}: {result.id}')
+        raise ValueError(f'Plan {result.status}/{result.validation}: {result.reason or ""} {result.id}')
     return show_plan(store, request.id)
 
 
@@ -157,9 +265,11 @@ def _known_cards(package: dict) -> dict[str, str]:
 def plan_input(store: Store, ident: str) -> tuple[dict, dict]:
     row = store.connection.execute("SELECT manifest_id FROM task_calls WHERE id=? AND kind='plan'", (ident,)).fetchone()
     if row is None:
-        raise ValueError('Plan task not found')
-    manifest, package = read_input_manifest(store, row[0])
-    if manifest['settings']['prompt_version'] != 'story-plan-v1':
+        try:manifest,package=read_input_manifest(store,'plan:'+ident)
+        except ValueError:raise ValueError('Plan task not found') from None
+        if package.get('plan_checkpoint',{}).get('task_id')!=ident:raise ValueError('Plan task not found')
+    else:manifest, package = read_input_manifest(store, row[0])
+    if manifest['settings']['prompt_version'] not in ('story-plan-v1','story-plan-v2-materials','story-plan-v3-stages'):
         raise ValueError('Task is not a story proposal')
     return manifest, package
 
@@ -179,7 +289,10 @@ def _translate(body: dict, refs: dict[str, CardRef]) -> dict:
 
 
 def _save_candidates(store: Store, ident: str, raw: dict, package: dict) -> PlanProposal:
-    validate_plan(raw, package['scope'], _known_cards(package))
+    from nw.materials.phase_projection import expand_output
+    raw=expand_output(raw,package)
+    materials = package.get('materials', ())
+    validate_plan(raw, package['scope'], _known_cards(package), materials, package.get('material_deferrals'),package.get('material_work'))
     parent = package['parent']
     roots, materialization, findings = [], [], []
     inherited = {card['card_id']: CardRef(card['card_id'], card['version']) for card in package['approved_cards']}
@@ -221,8 +334,28 @@ def _save_candidates(store: Store, ident: str, raw: dict, package: dict) -> Plan
                 _link(store, member, refs[key], 'depends_on')
                 add_dependency(store, member_hash, card_input_ref(read_card(store, refs[key])))
         roots.append(root)
-        materialization.append({'root': asdict(root), 'members': {key: asdict(ref) for key, ref in members.items()},
-                                'chapters': candidate['chapters']})
+        application = {'root': asdict(root), 'members': {key: asdict(ref) for key, ref in members.items()},
+                       'chapters': candidate['chapters']}
+        if materials or package.get('material_work'):
+            bindings = candidate.get('material_bindings', {})
+            application['material_design'] = {
+                'materials': materials,
+                'book_bindings': bindings if raw['scope'] == 'book' else package.get('book_bindings',{}),
+                'material_deferrals': package.get('material_deferrals', {}),
+                'process_bindings': candidate.get('process_bindings', {}),
+                'recall': package.get('material_recall'),
+                'process_context': {'members': candidate['members'], 'chapters': candidate['chapters'],
+                    'existing': _known_cards(package), 'ids': {key: ref.card_id for key,ref in refs.items()}},
+            }
+            if package.get('material_work'):
+                application['material_design'].update(work_session=package['material_work'],work_application=candidate['material_work'],
+                    work_context=(candidate if package['material_work'].get('policy') in {'artifact-stage-binding-v3','artifact-stage-binding-v4'} else
+                        {'body':candidate['body'],'members':candidate['members'],'material_work':candidate['material_work']}))
+            if raw['scope'] != 'book':
+                ids = {key: ref.card_id for key, ref in refs.items()}
+                application['material_design']['scene_bindings'] = {
+                    key: translate_bindings(value, ids) for key, value in bindings.items()}
+        materialization.append(application)
         findings.extend(asdict(Finding('OPEN_WORLD_RULE', 'hard', asdict(root_hash), [], question,
                                        '由作者确认规则与限制后重做场景设计', 'OPEN'))
                         for question in open_rules)
