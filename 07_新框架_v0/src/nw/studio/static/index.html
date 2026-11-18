@@ -178,6 +178,23 @@
             </div>
           </div>
         </div>
+
+
+        <div class="card-panel stack-form" id="jobDrawerSection">
+          <div class="panel-head">
+            <div>
+              <h3>任务流抽屉（Job Stepper Drawer）</h3>
+              <p class="muted small">接入 API 后，实时显示 plan → write → review → revise → extract → accept 闭环进度，支持暂停、确认与人工门禁审批。</p>
+            </div>
+            <div class="row-gap-xs">
+              <button id="btnRefreshJobs" class="btn btn-ghost">刷新任务队列</button>
+            </div>
+          </div>
+          <div id="jobStepperContent" class="job-stepper-content">
+            <div class="muted small">暂无运行中的任务。接入 API 并启动 <code>novel resume</code> 后，任务流将在此实时显示。</div>
+          </div>
+        </div>
+
       </section>
 
       <!-- TAB 2: 14-STEP PIPELINE & JOINT MATERIAL DRY-RUN -->
@@ -325,6 +342,30 @@
             </div>
           </div>
         </div>
+
+            <div class="card-panel stack-form">
+              <div class="panel-head">
+                <h3>沉浸式阅读与多版本 Diff 对照（Zen Reader）</h3>
+                <div class="row-gap-xs">
+                  <select id="zenDraftA" class="input-control w-sm mono"><option value="">选择对照版本A</option></select>
+                  <select id="zenDraftB" class="input-control w-sm mono"><option value="">选择对照版本B</option></select>
+                  <button id="btnZenDiff" class="btn btn-accent">生成逐段 Diff 对照</button>
+                  <button id="btnZenRead" class="btn btn-ghost">沉浸阅读模式</button>
+                </div>
+              </div>
+              <div id="zenReaderContainer" class="zen-reader-container hidden">
+                <div id="zenReaderContent" class="zen-reader-content"></div>
+              </div>
+              <div id="zenDiffContainer" class="zen-diff-container hidden">
+                <div class="diff-legend">
+                  <span class="badge diff-add">新增文字</span>
+                  <span class="badge diff-del">删除文字</span>
+                  <span class="badge diff-unchanged">未改动</span>
+                </div>
+                <div id="zenDiffContent" class="zen-diff-content"></div>
+              </div>
+            </div>
+
       </section>
 
       <!-- TAB 4: CARDS & MULTI-HOLDER KNOWLEDGE MATRIX -->
@@ -397,6 +438,21 @@
           </div>
           <div id="stateMatrixContainer" class="table-wrap"></div>
         </div>
+
+
+        <div class="card-panel stack-form">
+          <div class="panel-head">
+            <div>
+              <h3>人物关系与事件因果拓扑图（SVG 交互式）</h3>
+              <p class="muted small">基于已保存卡片的 links 数据与 state-matrix 动态事实，自动绘制可拖拽人物关系网与伏笔埋设/回收时间轴。</p>
+            </div>
+            <button id="btnRenderGraph" class="btn btn-accent">绘制关系图</button>
+          </div>
+          <div id="svgGraphContainer" class="svg-graph-container">
+            <svg id="relationSvg" class="relation-svg" viewBox="0 0 960 600"></svg>
+          </div>
+        </div>
+
       </section>
 
       <!-- TAB 5: 6-CORPUS MATERIALS & F2 LEDGER -->

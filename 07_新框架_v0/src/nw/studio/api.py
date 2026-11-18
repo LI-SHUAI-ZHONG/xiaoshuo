@@ -443,6 +443,27 @@ class StudioService:
         with self._open_store(project_name) as store:
             return self._list_cards_internal(store)
 
+    def list_jobs(self, project_name: str) -> dict[str, Any]:
+        """List jobs for the Job Stepper Drawer."""
+        with self._open_store(project_name) as store:
+            jobs: list[dict[str, Any]] = []
+            try:
+                for row in store.connection.execute(
+                    'SELECT id, scene_id, status, step, created FROM jobs ORDER BY rowid DESC LIMIT 20'
+                ):
+                    jobs.append({
+                        'id': row['id'],
+                        'scene_id': row['scene_id'],
+                        'status': row['status'],
+                        'current_step': row['step'],
+                        'created': row['created'],
+                        'scope': 'scene',
+                        'needs_confirm': row['status'] == 'needs_confirm',
+                    })
+            except Exception:
+                pass  # jobs table may not exist in offline mode
+            return {'jobs': jobs}
+
     def save_author_card(self, project_name: str, payload: dict[str, Any]) -> dict[str, Any]:
         with self._open_store(project_name) as store:
             card_id = str(payload['card_id']).strip()
@@ -777,6 +798,12 @@ class StudioService:
                 'context_preview': context_preview,
                 'context_error': context_error,
             }
+
+    def get_draft(self, project_name: str, scene_id: str, draft_id: str) -> dict[str, Any]:
+        """Return a single draft by ID for the Zen Reader / Diff View."""
+        with self._open_store(project_name) as store:
+            draft = store.get('draft', draft_id)
+            return asdict(draft)
 
     def save_manual_draft(self, project_name: str, scene_id: str, text: str) -> dict[str, Any]:
         if not text.strip():

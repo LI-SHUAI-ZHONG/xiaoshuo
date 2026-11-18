@@ -86,6 +86,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                     return self._send_json(200, service.project_overview(segs[1]))
                 if len(segs) == 3 and segs[0] == 'projects' and segs[2] == 'cards':
                     return self._send_json(200, {'cards': service.list_cards(segs[1])})
+                if len(segs) == 3 and segs[0] == 'projects' and segs[2] == 'jobs':
+                    return self._send_json(200, service.list_jobs(segs[1]))
                 if len(segs) == 3 and segs[0] == 'projects' and segs[2] == 'state-matrix':
                     rev_str = _first(query, 'revision')
                     disc_str = _first(query, 'disclosure')
@@ -101,6 +103,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                     return self._send_json(200, service.scene_workbench(
                         segs[1], segs[3], branch=_first(query, 'branch', 'main'),
                     ))
+                if len(segs) == 6 and segs[0] == 'projects' and segs[2] == 'scenes' and segs[4] == 'drafts':
+                    return self._send_json(200, service.get_draft(segs[1], segs[3], segs[5]))
                 if len(segs) == 5 and segs[0] == 'projects' and segs[2] == 'scenes' and segs[4] == 'context':
                     return self._send_json(200, service.inspect_scene_context(
                         segs[1], segs[3],

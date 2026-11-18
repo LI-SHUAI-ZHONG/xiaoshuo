@@ -406,6 +406,7 @@
     });
 
     await loadChapterLedger(wb.scene.chapter_index);
+    populateZenSelects();
   }
 
   function renderPovContext(ctx) {
@@ -701,6 +702,318 @@
     }
   }
 
+
+
+  /* ---------- ZEN READER & DIFF VIEW ---------- */
+
+  function populateZenSelects() {
+    const drafts = state.activeScene ? (state.overview?.scenes?.find(s => s.id === state.activeScene.id)?.drafts || []) : [];
+    const workbenchDrafts = document.querySelectorAll("#sceneDraftsList [data-draft]");
+    const opts = [];
+    workbenchDrafts.forEach((el, i) => {
+      opts.push({ id: el.dataset.draft, label: `v${i + 1} (${el.dataset.draft.slice(0, 10)})` });
+    });
+    ["zenDraftA", "zenDraftB"].forEach(id => {
+      const sel = $(id);
+      const prev = sel.value;
+      sel.innerHTML = `<option value="">选择版本</option>` +
+        opts.map(o => `<option value="${esc(o.id)}">${esc(o.label)}</option>`).join("");
+      sel.value = prev;
+    });
+  }
+
+  function simpleDiff(textA, textB) {
+    const parasA = textA.split(/
+
++/);
+    const parasB = textB.split(/
+
++/);
+    const maxLen = Math.max(parasA.length, parasB.length);
+    const result = [];
+    for (let i = 0; i < maxLen; i++) {
+      const a = (parasA[i] || "").trim();
+      const b = (parasB[i] || "").trim();
+      if (a === b) {
+        result.push({ type: "same", a, b });
+      } else {
+        result.push({ type: "changed", a, b });
+      }
+    }
+    return result;
+  }
+
+  function highlightDiffWords(oldText, newText) {
+    const oldWords = oldText.split("");
+    const newWords = newText.split("");
+    let oldHtml = "", newHtml = "";
+    const len = Math.max(oldWords.length, newWords.length);
+    let oi = 0, ni = 0;
+    while (oi < oldWords.length || ni < newWords.length) {
+      if (oi < oldWords.length && ni < newWords.length && oldWords[oi] === newWords[ni]) {
+        oldHtml += esc(oldWords[oi]);
+        newHtml += esc(newWords[ni]);
+        oi++; ni++;
+      } else if (oi < oldWords.length && !newWords.includes(oldWords[oi], ni)) {
+        oldHtml += `<mark class="del">${esc(oldWords[oi])}</mark>`;
+        oi++;
+      } else if (ni < newWords.length && !oldWords.includes(newWords[ni], oi)) {
+        newHtml += `<mark class="add">${esc(newWords[ni])}</mark>`;
+        ni++;
+      } else {
+        if (oi < oldWords.length) {
+          oldHtml += `<mark class="del">${esc(oldWords[oi])}</mark>`;
+          oi++;
+        }
+        if (ni < newWords.length) {
+          newHtml += `<mark class="add">${esc(newWords[ni])}</mark>`;
+          ni++;
+        }
+      }
+    }
+    return { oldHtml, newHtml };
+  }
+
+  async function renderZenDiff() {
+    const idA = $("zenDraftA").value;
+    const idB = $("zenDraftB").value;
+    if (!idA || !idB || !state.activeProject || !state.activeScene) {
+      return toast("请选择两个草稿版本进行对照", "err");
+    }
+    try {
+      const [draftA, draftB] = await Promise.all([
+        api(`/api/projects/${encodeURIComponent(state.activeProject)}/scenes/${encodeURIComponent(state.activeScene.id)}/drafts/${encodeURIComponent(idA)}`),
+        api(`/api/projects/${encodeURIComponent(state.activeProject)}/scenes/${encodeURIComponent(state.activeScene.id)}/drafts/${encodeURIComponent(idB)}`)
+      ]);
+      const textA = draftA.text || "";
+      const textB = draftB.text || "";
+      const diff = simpleDiff(textA, textB);
+      $("zenDiffContent").innerHTML = diff.map((d, i) => {
+        if (d.type === "same") {
+          return `<div class="diff-para"><div class="diff-side"><div class="diff-side-label">§${i + 1} 未改动</div><div>${esc(d.a)}</div></div><div class="diff-side"><div class="diff-side-label">§${i + 1}</div><div>${esc(d.b)}</div></div></div>`;
+        }
+        const hl = highlightDiffWords(d.a, d.b);
+        return `<div class="diff-para"><div class="diff-side diff-side-a"><div class="diff-side-label">§${i + 1} 版本A</div><div>${hl.oldHtml}</div></div><div class="diff-side diff-side-b"><div class="diff-side-label">§${i + 1} 版本B</div><div>${hl.newHtml}</div></div></div>`;
+      }).join("");
+      $("zenDiffContainer").classList.remove("hidden");
+      $("zenReaderContainer").classList.add("hidden");
+      toast(`Diff 对照完成：${diff.filter(d => d.type === "changed").length} 段有变更`);
+    } catch (err) {
+      toast(err.message || "草稿读取失败", "err");
+    }
+  }
+
+  async function renderZenRead() {
+    const idB = $("zenDraftB").value || $("zenDraftA").value;
+    if (!idB || !state.activeProject || !state.activeScene) {
+      return toast("请选择至少一个草稿版本", "err");
+    }
+    try {
+      const draft = await api(`/api/projects/${encodeURIComponent(state.activeProject)}/scenes/${encodeURIComponent(state.activeScene.id)}/drafts/${encodeURIComponent(idB)}`);
+      const text = draft.text || "";
+      const paras = text.split(/
+
++/).filter(Boolean);
+      $("zenReaderContent").innerHTML = paras.map(p => `<p>${esc(p.trim())}</p>`).join("");
+      $("zenReaderContainer").classList.remove("hidden");
+      $("zenDiffContainer").classList.add("hidden");
+      toast("沉浸阅读模式已开启");
+    } catch (err) {
+      toast(err.message || "草稿读取失败", "err");
+    }
+  }
+
+  /* ---------- SVG RELATIONSHIP GRAPH ---------- */
+
+  function renderRelationshipGraph() {
+    const cards = (state.overview && state.overview.cards) || [];
+    if (!cards.length) {
+      toast("当前项目无卡片，请先创建人物卡/世界卡/剧情卡", "err");
+      return;
+    }
+    const svg = $("relationSvg");
+    svg.innerHTML = "";
+    const W = 960, H = 600;
+    const nodeMap = {};
+    const nodes = [];
+    const edges = [];
+
+    cards.forEach((c, i) => {
+      const angle = (2 * Math.PI * i) / cards.length;
+      const r = Math.min(W, H) * 0.35;
+      const node = {
+        id: c.card_id,
+        kind: c.kind,
+        label: c.body?.name || c.body?.title || c.card_id,
+        x: W / 2 + r * Math.cos(angle),
+        y: H / 2 + r * Math.sin(angle),
+        data: c,
+        dragging: false,
+      };
+      nodes.push(node);
+      nodeMap[c.card_id] = node;
+    });
+
+    // Extract links from card bodies
+    cards.forEach(c => {
+      const body = c.body || {};
+      if (body.characters && Array.isArray(body.characters)) {
+        body.characters.forEach(charId => {
+          if (nodeMap[charId]) {
+            edges.push({ from: c.card_id, to: charId, label: "出场" });
+          }
+        });
+      }
+      if (body.pov && nodeMap[body.pov]) {
+        edges.push({ from: c.card_id, to: body.pov, label: "POV" });
+      }
+      // Check for holders
+      if (body.holders && Array.isArray(body.holders)) {
+        body.holders.forEach(h => {
+          if (nodeMap[h]) {
+            edges.push({ from: c.card_id, to: h, label: "知情" });
+          }
+        });
+      }
+    });
+
+    // Render edges
+    edges.forEach(e => {
+      const from = nodeMap[e.from], to = nodeMap[e.to];
+      if (!from || !to) return;
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", from.x); line.setAttribute("y1", from.y);
+      line.setAttribute("x2", to.x); line.setAttribute("y2", to.y);
+      line.classList.add("edge-line");
+      line.dataset.from = e.from;
+      line.dataset.to = e.to;
+      svg.appendChild(line);
+
+      const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      label.setAttribute("x", (from.x + to.x) / 2);
+      label.setAttribute("y", (from.y + to.y) / 2 - 6);
+      label.classList.add("edge-label");
+      label.textContent = e.label;
+      svg.appendChild(label);
+    });
+
+    // Render nodes
+    nodes.forEach(n => {
+      const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      g.dataset.nodeId = n.id;
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", n.x); circle.setAttribute("cy", n.y); circle.setAttribute("r", 22);
+      circle.classList.add("node-circle", `node-${n.kind || "default"}`);
+      g.appendChild(circle);
+
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", n.x); text.setAttribute("y", n.y);
+      text.classList.add("node-label");
+      text.textContent = n.label.length > 6 ? n.label.slice(0, 5) + "…" : n.label;
+      g.appendChild(text);
+
+      const kindLabel = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      kindLabel.setAttribute("x", n.x); kindLabel.setAttribute("y", n.y + 34);
+      kindLabel.classList.add("edge-label");
+      kindLabel.textContent = n.kind;
+      g.appendChild(kindLabel);
+
+      // Drag support
+      let dragging = false, startX, startY;
+      circle.addEventListener("mousedown", (e) => {
+        dragging = true;
+        startX = e.clientX - n.x;
+        startY = e.clientY - n.y;
+        circle.style.cursor = "grabbing";
+        e.preventDefault();
+      });
+      document.addEventListener("mousemove", (e) => {
+        if (!dragging) return;
+        const svgRect = svg.getBoundingClientRect();
+        const scaleX = W / svgRect.width;
+        const scaleY = H / svgRect.height;
+        n.x = (e.clientX - svgRect.left) * scaleX;
+        n.y = (e.clientY - svgRect.top) * scaleY;
+        circle.setAttribute("cx", n.x); circle.setAttribute("cy", n.y);
+        text.setAttribute("x", n.x); text.setAttribute("y", n.y);
+        kindLabel.setAttribute("x", n.x); kindLabel.setAttribute("y", n.y + 34);
+        // Update connected edges
+        svg.querySelectorAll("line.edge-line").forEach(line => {
+          if (line.dataset.from === n.id) { line.setAttribute("x1", n.x); line.setAttribute("y1", n.y); }
+          if (line.dataset.to === n.id) { line.setAttribute("x2", n.x); line.setAttribute("y2", n.y); }
+        });
+        svg.querySelectorAll("text.edge-label").forEach((lbl, idx) => {
+          if (idx < edges.length) {
+            const ef = nodeMap[edges[idx].from], et = nodeMap[edges[idx].to];
+            if (ef && et) { lbl.setAttribute("x", (ef.x + et.x) / 2); lbl.setAttribute("y", (ef.y + et.y) / 2 - 6); }
+          }
+        });
+      });
+      document.addEventListener("mouseup", () => { dragging = false; circle.style.cursor = "grab"; });
+
+      svg.appendChild(g);
+    });
+    toast(`关系图已绘制：${nodes.length} 节点 · ${edges.length} 连接`);
+  }
+
+  /* ---------- JOB STEPPER DRAWER ---------- */
+
+  const JOB_STEPS = [
+    { key: "plan", label: "设计总装冻结", icon: "📐" },
+    { key: "write", label: "场景正文创作", icon: "✍️" },
+    { key: "review", label: "独立审稿核验", icon: "🔍" },
+    { key: "revise", label: "修订与润色", icon: "✏️" },
+    { key: "state_extract", label: "事实增量提取", icon: "📊" },
+    { key: "fact_review", label: "事实证据复核", icon: "✅" },
+    { key: "accept", label: "批次验收归档", icon: "📦" },
+  ];
+
+  async function refreshJobDrawer() {
+    if (!state.activeProject) {
+      $("jobStepperContent").innerHTML = `<div class="muted small">请先选择一个项目。</div>`;
+      return;
+    }
+    try {
+      const res = await api(`/api/projects/${encodeURIComponent(state.activeProject)}/jobs`);
+      const jobs = res.jobs || [];
+      if (!jobs.length) {
+        $("jobStepperContent").innerHTML = `<div class="muted small">暂无运行中的任务。接入 API 并启动 <code>novel resume</code> 后，任务流将在此实时显示。</div>`;
+        return;
+      }
+      $("jobStepperContent").innerHTML = jobs.map(job => {
+        const currentStep = job.current_step || "plan";
+        return `
+          <div class="subtle-box">
+            <div class="list-item-head">
+              <strong>Job ${esc(job.id.slice(0, 12))} · ${esc(job.scope || "scene")}</strong>
+              <span class="badge ${job.status === "running" ? "ok" : job.status === "error" ? "err" : ""}">${esc(job.status)}</span>
+            </div>
+            <div class="job-stepper-content">
+              ${JOB_STEPS.map(s => {
+                const stepStatus = s.key === currentStep ? (job.status === "error" ? "error" : "active")
+                  : JOB_STEPS.findIndex(x => x.key === s.key) < JOB_STEPS.findIndex(x => x.key === currentStep) ? "done" : "waiting";
+                return `
+                  <div class="job-step-row ${stepStatus}">
+                    <div class="job-step-icon">${s.icon}</div>
+                    <div class="job-step-info">
+                      <h4>${esc(s.label)}</h4>
+                      <div class="small">${s.key}</div>
+                    </div>
+                    <div class="job-step-actions">
+                      ${stepStatus === "active" && job.needs_confirm ? `<button class="btn btn-accent btn-confirm-step" data-job="${esc(job.id)}" data-step="${esc(s.key)}">确认通过</button>` : ""}
+                      ${stepStatus === "error" ? `<button class="btn btn-ghost btn-retry-step" data-job="${esc(job.id)}">重试</button>` : ""}
+                    </div>
+                  </div>`;
+              }).join("")}
+            </div>
+          </div>`;
+      }).join("");
+    } catch (err) {
+      $("jobStepperContent").innerHTML = `<div class="muted small">任务队列暂不可用（${esc(err.message)}）。接入 API 后自动启用。</div>`;
+    }
+  }
+
+
   /* ---------- EVENT WIRING ---------- */
 
   function bindEvents() {
@@ -912,6 +1225,17 @@
         toast(err.message, "err");
       }
     });
+
+
+    // Zen Reader & Diff bindings
+    $("btnZenDiff").addEventListener("click", renderZenDiff);
+    $("btnZenRead").addEventListener("click", renderZenRead);
+
+    // SVG Graph binding
+    $("btnRenderGraph").addEventListener("click", renderRelationshipGraph);
+
+    // Job Stepper binding
+    $("btnRefreshJobs").addEventListener("click", refreshJobDrawer);
 
     $("btnLoadMatrix").addEventListener("click", () => loadStateMatrix().catch((e) => toast(e.message, "err")));
     $("btnSearchMaterials").addEventListener("click", () => searchMaterials().catch((e) => toast(e.message, "err")));

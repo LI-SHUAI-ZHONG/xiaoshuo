@@ -585,3 +585,118 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ══════ Zen Reader & Diff View ══════ */
+.zen-reader-container {
+  background: #0c0e14;
+  border-radius: 8px;
+  padding: 2rem 3rem;
+  max-height: 70vh;
+  overflow-y: auto;
+  line-height: 2;
+}
+.zen-reader-content {
+  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-size: 1.08rem;
+  color: #d4d4d8;
+  letter-spacing: 0.02em;
+  max-width: 42em;
+  margin: 0 auto;
+}
+.zen-reader-content p { margin: 0 0 1.2em; text-indent: 2em; }
+
+.zen-diff-container { max-height: 70vh; overflow-y: auto; }
+.diff-legend { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+.diff-add { background: #16a34a22; color: #4ade80; border: 1px solid #16a34a44; }
+.diff-del { background: #dc262622; color: #f87171; border: 1px solid #dc262644; text-decoration: line-through; }
+.diff-unchanged { background: #27272a; color: #71717a; }
+.zen-diff-content {
+  font-family: "Noto Sans SC", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+.zen-diff-content .diff-para {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  background: #18181b;
+}
+.zen-diff-content .diff-side { padding: 0.5rem; border-radius: 4px; }
+.zen-diff-content .diff-side-a { background: #dc262608; border-left: 3px solid #dc2626; }
+.zen-diff-content .diff-side-b { background: #16a34a08; border-left: 3px solid #16a34a; }
+.zen-diff-content .diff-side-label { font-size: 0.75rem; color: #71717a; margin-bottom: 0.25rem; }
+.zen-diff-content mark.add { background: #16a34a33; color: #4ade80; padding: 1px 2px; border-radius: 2px; }
+.zen-diff-content mark.del { background: #dc262633; color: #f87171; padding: 1px 2px; border-radius: 2px; text-decoration: line-through; }
+
+/* ══════ SVG Relationship Graph ══════ */
+.svg-graph-container {
+  background: #111318;
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 400px;
+  position: relative;
+}
+.relation-svg { width: 100%; height: 600px; }
+.relation-svg .node-circle { cursor: grab; transition: r 0.2s; }
+.relation-svg .node-circle:hover { r: 28; }
+.relation-svg .node-label { font-size: 12px; fill: #e4e4e7; pointer-events: none; text-anchor: middle; dominant-baseline: central; }
+.relation-svg .edge-line { stroke: #3f3f46; stroke-width: 1.5; }
+.relation-svg .edge-label { font-size: 10px; fill: #71717a; text-anchor: middle; }
+.relation-svg .node-character { fill: #3b82f6; }
+.relation-svg .node-world { fill: #8b5cf6; }
+.relation-svg .node-plot { fill: #f59e0b; }
+.relation-svg .node-promise { fill: #ef4444; }
+.relation-svg .node-scene { fill: #22c55e; }
+.relation-svg .node-default { fill: #6b7280; }
+.graph-tooltip {
+  position: absolute;
+  background: #1e1e2e;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  color: #d4d4d8;
+  pointer-events: none;
+  display: none;
+  z-index: 10;
+  max-width: 280px;
+}
+
+/* ══════ Job Stepper Drawer ══════ */
+.job-stepper-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.job-step-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem;
+  background: #18181b;
+  border-radius: 8px;
+  border-left: 4px solid #3f3f46;
+}
+.job-step-row.active { border-left-color: #3b82f6; background: #1e1b4b22; }
+.job-step-row.done { border-left-color: #16a34a; }
+.job-step-row.error { border-left-color: #dc2626; }
+.job-step-row.waiting { border-left-color: #71717a; opacity: 0.6; }
+.job-step-icon {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 700;
+  background: #27272a; color: #a1a1aa;
+}
+.job-step-row.done .job-step-icon { background: #16a34a22; color: #4ade80; }
+.job-step-row.active .job-step-icon { background: #3b82f622; color: #60a5fa; animation: pulse-glow 2s infinite; }
+.job-step-row.error .job-step-icon { background: #dc262622; color: #f87171; }
+@keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 0 0 #3b82f633; } 50% { box-shadow: 0 0 8px 4px #3b82f633; } }
+.job-step-info h4 { margin: 0 0 2px; font-size: 0.9rem; }
+.job-step-info .small { color: #71717a; }
+.job-step-actions .btn { font-size: 0.75rem; padding: 4px 8px; }
