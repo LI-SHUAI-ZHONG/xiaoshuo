@@ -30,6 +30,19 @@
 - SVG 交互式人物关系图（Batch 35）
 - Job Stepper Drawer（Batch 35）
 - 单草稿 GET 端点 + 任务列表 GET 端点（Batch 35）
+- **前端 v2 完整重建（Batch 36）：**
+  - 完整 CSS 设计系统（830 行，含亮/暗主题切换、CSS 变量体系）
+  - 响应式布局（3 档断点：768/960/1280px，移动端抽屉式侧边栏）
+  - 全局搜索覆盖层（Ctrl+K 快速检索资料/卡片/场景）
+  - 通知中心滑出面板（操作日志记录）
+  - Modal 对话框系统（替代 alert/confirm）
+  - 项目统计仪表盘（章/场/卡片/草稿/Brief 版本 5 项统计卡片）
+  - 面包屑导航
+  - 加载状态管理（骨架屏 + 旋转器 + 叠加层）
+  - Tooltips 组件
+  - 键盘快捷键（Ctrl+1-6 切换标签，Ctrl+K 搜索，Ctrl+S 保存，ESC 关闭）
+  - 侧边栏折叠/展开
+  - 33 项 Batch 36 专项测试 + 完整向后兼容
 
 ### API 接入准备（路径已验证）
 - `config.toml` 双模型配置预设已就绪
@@ -107,9 +120,9 @@
 | `src/nw/materials/steps/writing.py` | 正文写作步骤 |
 | `src/nw/studio/api.py` | 后端服务层（1,184 行） |
 | `src/nw/studio/server.py` | HTTP 路由（253 行） |
-| `src/nw/studio/static/app.js` | 前端控制器（~1,100 行） |
-| `src/nw/studio/static/index.html` | 前端 HTML（~550 行） |
-| `src/nw/studio/static/styles.css` | 前端样式（~690 行） |
+| `src/nw/studio/static/app.js` | 前端控制器（~1,180 行，含全局搜索/主题切换/Modal/通知/快捷键） |
+| `src/nw/studio/static/index.html` | 前端 HTML（~627 行，含侧边栏/面包屑/搜索覆盖/通知面板/Modal） |
+| `src/nw/studio/static/styles.css` | 前端样式（~830 行，含完整设计系统/暗亮主题/响应式断点） |
 | `docs/Opus5.5接手与能力分工说明.md` | 原始分工说明 |
 | `docs/F2台账剩余处理指南_Batch34分类后.md` | F2 处理模板 |
 | `workspace/materials/F2_triage_needs_author_input.jsonl` | 117 条待作者确认 |
