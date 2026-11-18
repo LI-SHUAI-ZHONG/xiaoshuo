@@ -696,15 +696,20 @@
     const res = await api(`/api/ledger/search?q=${encodeURIComponent(q)}&disposition=${encodeURIComponent(disp)}&limit=40`);
     $("ledgerTotalBadge").textContent = `${(res.total || 0).toLocaleString()} 条`;
     const box = $("ledgerResultList");
-    box.innerHTML = (res.items || []).map(r => `
+    box.innerHTML = (res.items || []).map(r => {
+      const loc = r.source_locator || {};
+      const title = r.source_key || loc.key || loc.unit_id || r.issue_id || loc.path || r.unit_id || r.location || r.source_file || "台账条目";
+      const st = r.disposition || r.status || r.issue_type || "待核查";
+      const badgeCls = (st === "resolved" || st === "recovered_via_verified_archive") ? "ok" : st === "open" ? "warn" : "";
+      return `
       <div class="list-item">
         <div class="list-item-head">
-          <strong>#${r._line || ""} · ${esc(r.source_key || r.unit_id || r.location || r.source_file || "台账条目")}</strong>
-          <span class="badge warn">${esc(r.disposition || r.issue_type || "待核查")}</span>
+          <strong>#${r._line || ""} · ${esc(title)}</strong>
+          <span class="badge ${badgeCls}">${esc(st)}</span>
         </div>
         <pre class="mono small muted" style="white-space:pre-wrap;max-height:80px;overflow:hidden">${esc(JSON.stringify(r, null, 2))}</pre>
-      </div>
-    `).join("") || `<div class="muted small">无匹配 F2 记录。</div>`;
+      </div>`;
+    }).join("") || `<div class="muted small">无匹配 F2 记录。</div>`;
   }
 
   /* ══════ TAB 6: ROUTING ══════ */

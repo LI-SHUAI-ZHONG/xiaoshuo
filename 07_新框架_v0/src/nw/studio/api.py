@@ -153,8 +153,17 @@ _SECRET_LIKE_RE = re.compile(r'^(?:sk-[A-Za-z0-9_-]{12,}|AIza[0-9A-Za-z_-]{20,}|
 _ENV_NAME_RE = re.compile(r'^[A-Za-z_][A-Za-z0-9_]{1,63}$')
 
 
-def _default_ledger_path() -> Path:
-    return ROOT.parent / '08_工作流设计' / 'F2_统一问题台账.jsonl'
+def _default_ledger_path(workspace: Path | None = None) -> Path:
+    ws = workspace or (ROOT / 'workspace')
+    for candidate in (
+        ws / 'materials' / 'F2_统一问题台账.jsonl',
+        ROOT / 'workspace' / 'materials' / 'F2_统一问题台账.jsonl',
+        ROOT.parent / '08_工作流设计' / 'F2_统一问题台账.jsonl',
+        ROOT.parent / '08_工作流设计' / '05_资料问题台账.jsonl',
+    ):
+        if candidate.is_file():
+            return candidate
+    return ws / 'materials' / 'F2_统一问题台账.jsonl'
 
 
 def _anti_forgetting_notes(stage: str) -> list[str]:
@@ -201,7 +210,7 @@ class StudioService:
         else:
             self.workspace = (ROOT / 'workspace').resolve()
         self.workspace.mkdir(parents=True, exist_ok=True)
-        self.ledger_path = (ledger_path or _default_ledger_path()).resolve()
+        self.ledger_path = (ledger_path or _default_ledger_path(self.workspace)).resolve()
         self._lock = threading.Lock()
         self._desk = None
         self._ledger_cache: list[dict] | None = None
@@ -265,7 +274,9 @@ class StudioService:
             'available': self.ledger_path.is_file(),
             'path': str(self.ledger_path),
             'total_issues': len(ledger),
-            'by_disposition': dict(Counter(str(r.get('disposition', r.get('action', 'unknown'))) for r in ledger)),
+            'by_disposition': dict(Counter(
+                str(r.get('disposition') or r.get('status') or r.get('action') or 'unknown') for r in ledger
+            )),
         }
         return {
             'workspace': str(self.workspace),
@@ -1081,8 +1092,9 @@ class StudioService:
         corpora = Counter()
         dispositions = Counter()
         for r in rows:
-            c_val = str(r.get('corpus') or r.get('source_file') or r.get('path') or '未分类')
-            d_val = str(r.get('disposition') or r.get('action') or r.get('severity') or 'unknown')
+            loc = r.get('source_locator') if isinstance(r.get('source_locator'), dict) else {}
+            c_val = str(r.get('corpus') or r.get('source_file') or r.get('path') or loc.get('path') or '未分类')
+            d_val = str(r.get('disposition') or r.get('status') or r.get('action') or r.get('severity') or 'unknown')
             corpora[c_val] += 1
             dispositions[d_val] += 1
             if disp_filter and disp_filter not in d_val.lower():
