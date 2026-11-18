@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小说细粒度工作流客户端 · Novel Workflow Studio v0</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">NW · v0</div>
+        <div>
+          <h1 class="brand-title">小说工作流客户端</h1>
+          <p class="brand-sub">14步联合资料 · 状态证据状态机</p>
+        </div>
+      </div>
+
+      <div class="active-project-box">
+        <label class="field-label" for="globalProjectSelect">当前激活小说项目</label>
+        <div class="row-gap-xs">
+          <select id="globalProjectSelect" class="input-control">
+            <option value="">-- 未选择项目 --</option>
+          </select>
+          <button id="btnRefreshAll" class="btn btn-ghost" title="刷新状态">刷新</button>
+        </div>
+        <div id="activeProjectBadges" class="badge-row"></div>
+      </div>
+
+      <nav class="nav-list" id="mainNav">
+        <button class="nav-item active" data-tab="projects">
+          <span class="nav-index">01</span>
+          <span>项目与设定总览</span>
+        </button>
+        <button class="nav-item" data-tab="pipeline">
+          <span class="nav-index">02</span>
+          <span>14步创作与联合资料沙盘</span>
+        </button>
+        <button class="nav-item" data-tab="scenes">
+          <span class="nav-index">03</span>
+          <span>章场工作台与POV上下文</span>
+        </button>
+        <button class="nav-item" data-tab="cards">
+          <span class="nav-index">04</span>
+          <span>卡片库与多视角知情矩阵</span>
+        </button>
+        <button class="nav-item" data-tab="materials">
+          <span class="nav-index">05</span>
+          <span>六大资料库与F2问题台账</span>
+        </button>
+        <button class="nav-item" data-tab="routing">
+          <span class="nav-index">06</span>
+          <span>API接入与双模型分工配置</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer" id="systemSummaryFooter">
+        <div class="status-pill offline" id="apiModePill">检测运行模式中…</div>
+        <div class="footer-meta" id="catalogSummaryMeta">资料库加载中…</div>
+      </div>
+    </aside>
+
+    <main class="main-stage">
+      <header class="topbar">
+        <div>
+          <h2 id="viewTitle">01 · 项目与设定总览</h2>
+          <p id="viewSubtitle" class="muted">管理本地工作区项目、Brief 硬约束、Bible 设定、故事状态托管（Story Adoption）与分支版本。</p>
+        </div>
+        <div class="topbar-right">
+          <span class="priority-tag" title="五级冲突裁决铁律">裁决优先级：已接受事实 &gt; Brief &gt; 前置冻结产物 &gt; 合格方法 &gt; 候选模板</span>
+        </div>
+      </header>
+
+      <div id="toastBanner" class="toast hidden"></div>
+
+      <!-- TAB 1: PROJECTS -->
+      <section class="tab-panel active" id="tab-projects">
+        <div class="grid-2">
+          <div class="card-panel">
+            <h3>新建小说项目</h3>
+            <form id="formCreateProject" class="stack-form">
+              <div class="grid-2-tight">
+                <div>
+                  <label class="field-label">项目目录名（英文/中文单层目录）</label>
+                  <input type="text" id="newProjDir" class="input-control" placeholder="例如：chaohen_v1" required />
+                </div>
+                <div>
+                  <label class="field-label">小说书名 / 项目标题</label>
+                  <input type="text" id="newProjTitle" class="input-control" placeholder="例如：《潮痕入骨》" required />
+                </div>
+              </div>
+              <div>
+                <label class="field-label">初始 Brief（核心故事需求与读者承诺）</label>
+                <textarea id="newProjBrief" class="input-control" rows="3" placeholder="概括核心故事方向、人物处境、主线悬念与情感基调…"></textarea>
+              </div>
+              <div>
+                <label class="field-label">硬约束（视角、红线、节奏与禁区）</label>
+                <textarea id="newProjConstraints" class="input-control" rows="2" placeholder="例如：单章单POV；禁止全知剧透；每次试错必须有明确代价…"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">创建并切换至该项目</button>
+            </form>
+          </div>
+
+          <div class="card-panel">
+            <h3>工作区已有项目列表</h3>
+            <div id="projectsListContainer" class="list-stack"></div>
+          </div>
+        </div>
+
+        <div id="projectDetailSection" class="stack-lg hidden">
+          <div class="grid-2">
+            <div class="card-panel">
+              <div class="panel-head">
+                <h3>Brief 版本与硬约束</h3>
+                <span id="briefVersionBadge" class="badge">v0</span>
+              </div>
+              <form id="formSaveBrief" class="stack-form">
+                <label class="field-label">核心创作需求正文</label>
+                <textarea id="editBriefText" class="input-control" rows="4" required></textarea>
+                <label class="field-label">作者硬约束（Constraints）</label>
+                <textarea id="editBriefConstraints" class="input-control" rows="2"></textarea>
+                <button type="submit" class="btn btn-primary">追加保存新版本 Brief</button>
+              </form>
+            </div>
+
+            <div class="card-panel">
+              <div class="panel-head">
+                <h3>故事状态机托管（Story Adoption）与分支</h3>
+                <span id="managedStatusBadge" class="badge">未启用</span>
+              </div>
+              <p class="muted small">启用托管后，所有正文落稿将绑定版本化卡片、POV 知情投影、StateDelta 事实证据区间与批次原子验收。</p>
+              <form id="formAdoptStory" class="stack-form">
+                <div class="grid-2-tight">
+                  <div>
+                    <label class="field-label">追踪实体 ID 列表（逗号分隔）</label>
+                    <input type="text" id="adoptEntities" class="input-control" value="protagonist,world_harbor" />
+                  </div>
+                  <div>
+                    <label class="field-label">追踪属性 Predicate 列表（逗号分隔）</label>
+                    <input type="text" id="adoptPredicates" class="input-control" value="status,location,goal,clue" />
+                  </div>
+                </div>
+                <button type="submit" id="btnAdoptStory" class="btn btn-accent">一键初始化故事状态机基线（Adopt Story）</button>
+              </form>
+              <hr class="divider" />
+              <div id="branchesListBox" class="list-stack"></div>
+            </div>
+          </div>
+
+          <div class="card-panel">
+            <div class="panel-head">
+              <h3>传统设定备忘（Bible 条目）与任务队列概览</h3>
+            </div>
+            <div class="grid-2">
+              <form id="formSaveBible" class="stack-form">
+                <div class="grid-2-tight">
+                  <div>
+                    <label class="field-label">类别</label>
+                    <select id="bibleKind" class="input-control">
+                      <option value="world">世界规则 (world)</option>
+                      <option value="character">人物小传 (character)</option>
+                      <option value="style">文风要求 (style)</option>
+                      <option value="taboo">创作禁忌 (taboo)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="field-label">条目名称</label>
+                    <input type="text" id="bibleName" class="input-control" placeholder="例如：潮汐封港规则" required />
+                  </div>
+                </div>
+                <textarea id="bibleBody" class="input-control" rows="2" placeholder="设定内容…" required></textarea>
+                <button type="submit" class="btn btn-secondary">保存 Bible 设定</button>
+              </form>
+              <div>
+                <div id="bibleEntriesBox" class="list-stack max-h-sm"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: 14-STEP PIPELINE & JOINT MATERIAL DRY-RUN -->
+      <section class="tab-panel" id="tab-pipeline">
+        <div class="card-panel">
+          <div class="panel-head">
+            <div>
+              <h3>14步细粒度创作流水线 · 防遗忘账本 · 联合资料实时干跑沙盘</h3>
+              <p class="muted small">无需接入外部 API，即可直接用当前项目 Brief 或任意构想，实测每一步自动召回哪些合格资料、如何按角色分工协同、注入哪些防遗忘守卫与【本步用法】。</p>
+            </div>
+            <div class="row-gap-xs">
+              <select id="pipelineScopeSelect" class="input-control">
+                <option value="chapter">章/场细化全流程（14步 + 总装）</option>
+                <option value="book">全书总纲设计（前6步 + 范围收口）</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="pipelineStepsStrip" class="steps-strip"></div>
+        </div>
+
+        <div class="grid-pipeline-detail">
+          <div class="card-panel stack-form">
+            <h3 id="simStageTitle">步骤干跑输入与前置契约</h3>
+            <div id="simStageMetaBox" class="meta-callout"></div>
+            <label class="field-label">测试 Brief 需求（留空则自动读取当前激活项目的最新 Brief）</label>
+            <textarea id="simBriefText" class="input-control" rows="3" placeholder="输入你的小说构想，例如：玄幻宗门底层杂役在禁地发现残缺器谱，必须在三天宗门大检前自证清白…"></textarea>
+            <label class="field-label">测试硬约束</label>
+            <textarea id="simConstraints" class="input-control" rows="2" placeholder="例如：第三人称单视角限制知情；修为突破必须伴随经脉负荷代价…"></textarea>
+            <label class="checkbox-line">
+              <input type="checkbox" id="simPriorToggle" checked />
+              <span>模拟注入前置步骤产物，预览跨步防遗忘账本（<code>continuity_ledger</code>）</span>
+            </label>
+            <button id="btnRunStageSim" class="btn btn-primary">立即执行本步资料联合调度干跑（离线零Token）</button>
+
+            <div class="divider"></div>
+            <h4>运行时写审改提受 7 环闭环</h4>
+            <div id="runtimeStepsList" class="list-stack"></div>
+          </div>
+
+          <div class="card-panel stack-form">
+            <div class="panel-head">
+              <h3>本步联合资料分工方案与渲染后 System Prompt</h3>
+              <span id="simStatsBadge" class="badge">等待干跑</span>
+            </div>
+            <div id="simJointPlanBox" class="joint-plan-box"></div>
+            <div id="simContinuityBox" class="continuity-box"></div>
+            <h4>本步由 128.4 检索控制器召回的合格资料</h4>
+            <div id="simSourcesList" class="list-stack max-h-md"></div>
+            <h4>实际送入模型的本步指令与【本步用法】全文预览</h4>
+            <pre id="simPromptPreview" class="code-preview">点击左侧「立即执行本步资料联合调度干跑」查看完整注入指令…</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: SCENES, POV CONTEXT & STATE DELTA WORKBENCH -->
+      <section class="tab-panel" id="tab-scenes">
+        <div class="grid-scene-layout">
+          <div class="card-panel stack-form">
+            <h3>章节与场景大纲结构</h3>
+            <form id="formAddChapter" class="row-gap-xs">
+              <input type="number" id="chapIndex" class="input-control w-xs" min="1" value="1" required />
+              <input type="text" id="chapTitle" class="input-control" placeholder="新章节标题，如：第一章 夜潮旧档案" required />
+              <button type="submit" class="btn btn-secondary">新建章</button>
+            </form>
+
+            <form id="formAddScene" class="stack-form subtle-box">
+              <div class="grid-2-tight">
+                <div>
+                  <label class="field-label">所属章节</label>
+                  <select id="sceneChapSelect" class="input-control" required></select>
+                </div>
+                <div>
+                  <label class="field-label">场次序号</label>
+                  <input type="number" id="sceneIndex" class="input-control" min="1" value="1" required />
+                </div>
+              </div>
+              <input type="text" id="sceneTitleInput" class="input-control" placeholder="本场标题与核心冲突简述" required />
+              <div class="grid-2-tight">
+                <input type="text" id="sceneRefCardId" class="input-control" placeholder="绑定已批准场景卡ID(可选)" />
+                <input type="number" id="sceneStoryOrder" class="input-control" min="1" value="1" placeholder="故事时间序 story_order" />
+              </div>
+              <button type="submit" class="btn btn-secondary">添加场景槽位</button>
+            </form>
+
+            <div id="outlineTreeBox" class="list-stack max-h-lg"></div>
+          </div>
+
+          <div class="stack-lg">
+            <div class="card-panel">
+              <div class="panel-head">
+                <div>
+                  <h3 id="activeSceneHeading">场景工作台（请在左侧点击选择一个场景）</h3>
+                  <p id="activeSceneMeta" class="muted small">支持实时检查 POV 受限上下文工作包、录入/查看正文草稿、校验状态增量并执行批次验收。</p>
+                </div>
+                <div class="row-gap-xs">
+                  <input type="number" id="ctxCharLimit" class="input-control w-sm" value="24000" min="2000" step="1000" title="上下文字符预算上限" />
+                  <button id="btnInspectPovContext" class="btn btn-accent">实时生成 POV 写作工作包</button>
+                </div>
+              </div>
+
+              <div id="povContextMeter" class="budget-meter hidden">
+                <div class="meter-labels">
+                  <span id="povMeterText">字符预算占用</span>
+                  <span id="povScopeText" class="mono"></span>
+                </div>
+                <div class="meter-track"><div id="povMeterFill" class="meter-fill"></div></div>
+              </div>
+
+              <div id="povContextItemsBox" class="list-stack max-h-md"></div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card-panel stack-form">
+                <h3>草稿箱与离线手写/试写排练</h3>
+                <p class="muted small">暂不接 API 时，可直接在此录入样章草稿，完整测试后续证据区间校验、StateDelta 与批次接收闭环。</p>
+                <textarea id="manualDraftText" class="input-control" rows="6" placeholder="在此输入或粘贴本场正文草稿…"></textarea>
+                <button id="btnSaveManualDraft" class="btn btn-primary">保存为完整草稿（Author Run）</button>
+                <div id="sceneDraftsList" class="list-stack max-h-sm"></div>
+              </div>
+
+              <div class="card-panel stack-form">
+                <h3>StateDelta 状态增量与批次接收</h3>
+                <label class="field-label">目标草稿 ID</label>
+                <input type="text" id="deltaDraftId" class="input-control mono" placeholder="点击左侧草稿自动填入" />
+                <label class="field-label">事实变更 Operations JSON 数组（可空数组 <code>[]</code> 表示本场无持久状态变更）</label>
+                <textarea id="deltaOpsJson" class="input-control mono" rows="4">[]</textarea>
+                <div class="row-gap-xs">
+                  <button id="btnSaveDelta" class="btn btn-secondary">冻结并执行 check_delta 硬核验</button>
+                </div>
+                <div id="sceneDeltasList" class="list-stack max-h-sm"></div>
+              </div>
+            </div>
+
+            <div class="card-panel stack-form">
+              <div class="panel-head">
+                <h3>整章承接状态与章总结记录（Chapter Summary &amp; Continuity）</h3>
+                <button id="btnLoadChapterLedger" class="btn btn-ghost">读取当前章承接台账</button>
+              </div>
+              <div id="chapterLedgerBox" class="meta-callout">选择场景后可查看所属章节的已接收场景与跨章承接摘要。</div>
+              <div class="row-gap-xs">
+                <input type="text" id="chapterSummaryInput" class="input-control" maxlength="100" placeholder="输入100字以内的已接受章节事实摘要（供下一章 plot_design 自动承接）" />
+                <button id="btnSaveChapterSummary" class="btn btn-secondary">保存章总结</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: CARDS & MULTI-HOLDER KNOWLEDGE MATRIX -->
+      <section class="tab-panel" id="tab-cards">
+        <div class="grid-2">
+          <div class="card-panel stack-form">
+            <h3>创建或升级版本化设定卡片</h3>
+            <div class="grid-3-tight">
+              <div>
+                <label class="field-label">卡片 ID</label>
+                <input type="text" id="cardIdInput" class="input-control mono" placeholder="例如：char_lin" />
+              </div>
+              <div>
+                <label class="field-label">卡片类型</label>
+                <select id="cardKindSelect" class="input-control">
+                  <option value="character">人物卡 (character)</option>
+                  <option value="world">世界规则卡 (world)</option>
+                  <option value="scene">场景任务卡 (scene)</option>
+                  <option value="plot">剧情主线卡 (plot)</option>
+                  <option value="promise">伏笔承诺卡 (promise)</option>
+                  <option value="style">语体风格卡 (style)</option>
+                  <option value="taboo">红线禁忌卡 (taboo)</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label">知情可见域 (Visibility)</label>
+                <select id="cardVisibilitySelect" class="input-control">
+                  <option value="public">全员公开 (public)</option>
+                  <option value="author_only">仅作者/审稿可见 (author_only)</option>
+                  <option value="holders">指定知情人可见 (holders)</option>
+                </select>
+              </div>
+            </div>
+            <div class="row-gap-xs">
+              <button type="button" id="btnFillCardTemplate" class="btn btn-ghost">填入当前类型标准 JSON 字段模板</button>
+            </div>
+            <textarea id="cardBodyJson" class="input-control mono" rows="7"></textarea>
+            <div class="grid-2-tight">
+              <label class="checkbox-line">
+                <input type="checkbox" id="cardAutoApprove" checked />
+                <span>保存后立即标记为 <code>approved</code></span>
+              </label>
+              <label class="checkbox-line">
+                <input type="checkbox" id="cardApplyBranch" checked />
+                <span>同步挂载至当前 <code>main</code> 分支有效设定</span>
+              </label>
+            </div>
+            <button id="btnSaveCard" class="btn btn-primary">保存版本化卡片</button>
+          </div>
+
+          <div class="card-panel stack-form">
+            <div class="panel-head">
+              <h3>项目卡片库（不可变版本链 + 审批状态）</h3>
+              <span id="cardsCountBadge" class="badge">0 张</span>
+            </div>
+            <div id="cardsListContainer" class="list-stack max-h-lg"></div>
+          </div>
+        </div>
+
+        <div class="card-panel stack-form">
+          <div class="panel-head">
+            <div>
+              <h3>多视角知情与误信对照矩阵（WORLD 真相 vs READER 读者所知 vs 角色 POV）</h3>
+              <p class="muted small">直观检验是否存在「角色未获知却提前行动」或「人物误信被当成客观事实」的逻辑崩塌。</p>
+            </div>
+            <div class="row-gap-xs">
+              <input type="number" id="matrixStoryOrder" class="input-control w-sm" value="999999" title="查询截至故事时间序" />
+              <button id="btnLoadMatrix" class="btn btn-accent">刷新多视角状态矩阵</button>
+            </div>
+          </div>
+          <div id="stateMatrixContainer" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <!-- TAB 5: 6-CORPUS MATERIALS & F2 LEDGER -->
+      <section class="tab-panel" id="tab-materials">
+        <div class="grid-2">
+          <div class="card-panel stack-form">
+            <div class="panel-head">
+              <h3>六大资料库检索台（22,941 条已裁定创作方法）</h3>
+              <span id="matSearchTotalBadge" class="badge">0 条</span>
+            </div>
+            <div class="grid-4-tight">
+              <input type="text" id="matQueryInput" class="input-control" placeholder="搜索编号、板块名、关键词（如：伏笔 / 锚点 / 悬疑）" />
+              <select id="matStateSelect" class="input-control">
+                <option value="">全部裁定状态</option>
+                <option value="design_ready">合格直用 (design_ready)</option>
+                <option value="reference">参考模板 (reference)</option>
+                <option value="blocked">拦截隔离 (blocked)</option>
+              </select>
+              <select id="matStageSelect" class="input-control">
+                <option value="">全部投递步骤</option>
+                <option value="type_selection">01. type_selection</option>
+                <option value="type_adaptation">02. type_adaptation</option>
+                <option value="world_design">03. world_design</option>
+                <option value="character_design">04. character_design</option>
+                <option value="static_relations">05. static_relations</option>
+                <option value="plot_design">06. plot_design</option>
+                <option value="event_design">07. event_design</option>
+                <option value="action_design">08. action_design</option>
+                <option value="scene_design">09. scene_design</option>
+                <option value="state_transition">10. state_transition</option>
+                <option value="state_propagation">11. state_propagation</option>
+                <option value="anchor_design">12. anchor_design</option>
+                <option value="expression_design">13. expression_design</option>
+                <option value="bind_scope">14. bind_scope</option>
+                <option value="writer">正文写作 (writer)</option>
+                <option value="review">独立审稿 (review)</option>
+              </select>
+              <button id="btnSearchMaterials" class="btn btn-primary">检索资料</button>
+            </div>
+            <div id="materialsResultList" class="list-stack max-h-md"></div>
+          </div>
+
+          <div class="card-panel stack-form">
+            <h3>资料原文契约与各步骤【本步用法】详情</h3>
+            <div id="materialDetailBox" class="stack-form">
+              <p class="muted">在左侧点击任意资料条目，查看其不可变 SHA-256 来源、裁定状态、原始条款文本以及进入各创作步骤时的精确操作说明。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-panel stack-form">
+          <div class="panel-head">
+            <div>
+              <h3>F2 统一问题台账浏览器（原始资料已知待补缺陷清单）</h3>
+              <p class="muted small">供后续作者与 Opus 5.5 逐项补全原始文本缺口（如时间双轴 78–80 板块、玄幻细化适配、截断尾行等）。</p>
+            </div>
+            <span id="ledgerTotalBadge" class="badge">0 条</span>
+          </div>
+          <div class="row-gap-xs">
+            <input type="text" id="ledgerQueryInput" class="input-control" placeholder="按板块号、文件名或缺陷描述筛选（如：板块78 / 截断 / 玄幻 / 136）" />
+            <input type="text" id="ledgerDispInput" class="input-control w-sm" placeholder="处置状态筛选" />
+            <button id="btnSearchLedger" class="btn btn-secondary">筛选问题台账</button>
+          </div>
+          <div id="ledgerResultList" class="list-stack max-h-md"></div>
+        </div>
+      </section>
+
+      <!-- TAB 6: API & CARBON + OPUS 5.5 ROUTING -->
+      <section class="tab-panel" id="tab-routing">
+        <div class="card-panel stack-form">
+          <div class="panel-head">
+            <div>
+              <h3>运行模式切换与 Carbon + Opus 5.5 分阶段双模型路由中心</h3>
+              <p class="muted small">当前默认保持「暂不接 API · 离线沙盘模式」。待准备进入实测写作阶段时，可一键套用双模型黄金分工预设并生成合法的 <code>config.toml</code>（密钥仅从系统环境变量读取，永不落盘）。</p>
+            </div>
+          </div>
+
+          <div id="routingPresetsGrid" class="presets-grid"></div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card-panel stack-form">
+            <h3>默认基座模型与安全环境变量设置</h3>
+            <div class="grid-2-tight">
+              <div>
+                <label class="field-label">Provider 协议</label>
+                <select id="cfgProvider" class="input-control">
+                  <option value="ollama">ollama（本机离线/免Key）</option>
+                  <option value="openai_compat">openai_compat（云端兼容网关）</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label">默认主力模型名称 (Default Model)</label>
+                <input type="text" id="cfgModel" class="input-control mono" value="gemini-4-carbon" />
+              </div>
+            </div>
+            <div class="grid-2-tight">
+              <div>
+                <label class="field-label">网关地址 (Base URL)</label>
+                <input type="text" id="cfgBaseUrl" class="input-control mono" value="http://127.0.0.1:11434" />
+              </div>
+              <div>
+                <label class="field-label">API Key 环境变量名（严禁填密钥本身！）</label>
+                <input type="text" id="cfgApiKeyEnv" class="input-control mono" placeholder="例如：NOVEL_GATEWAY_API_KEY" />
+              </div>
+            </div>
+            <div class="grid-2-tight">
+              <div>
+                <label class="field-label">超时秒数 (Timeout)</label>
+                <input type="number" id="cfgTimeout" class="input-control" value="180" min="10" />
+              </div>
+              <div>
+                <label class="field-label">默认 Temperature</label>
+                <input type="number" id="cfgTemp" class="input-control" value="0.3" step="0.05" min="0" max="2" />
+              </div>
+            </div>
+
+            <h4>本机环境变量就绪检测（仅检查是否存在，绝不读取显示明文）</h4>
+            <div id="envStatusBox" class="badge-row"></div>
+
+            <h4>分步骤专属模型覆盖（留空则继承默认基座模型）</h4>
+            <div id="stageModelsTableWrap" class="max-h-md table-wrap"></div>
+
+            <div class="row-gap-xs">
+              <button id="btnPreviewConfig" class="btn btn-secondary">生成 config.toml 预览</button>
+              <button id="btnSaveConfig" class="btn btn-primary">校验并写入 config.toml</button>
+            </div>
+          </div>
+
+          <div class="card-panel stack-form">
+            <h3><code>config.toml</code> 配置文件实时预览</h3>
+            <pre id="configTomlPreview" class="code-preview">点击「选择预设」或「生成预览」查看标准 TOML 配置…</pre>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

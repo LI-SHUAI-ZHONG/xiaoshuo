@@ -4,7 +4,7 @@ from typing import Callable
 
 from nw.call_budget import create_budget, prepare_call, read_budget
 from nw.call_control import model_settings
-from nw.config import Config
+from nw.config import Config, resolve_stage_runtime
 from nw.llm.base import LLMProvider
 from nw.materials.steps.state_extract import MATERIAL as STATE_EXTRACT_MATERIAL
 
@@ -139,10 +139,15 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
         '未发生的计划、人物说辞和误信不得写成 WORLD 事实。' + material_note + material_prompt)},
         {'role': 'user', 'content': canonical(frozen_input)}]
     extraction_id = f'delta-extract:{manifest_id}'
+    extract_cfg, extract_prov = resolve_stage_runtime(config, provider, 'state_extract')
+    fact_cfg, fact_prov = resolve_stage_runtime(config, provider, 'fact_review')
+
     def dispatch(kind: str, request: TaskRequest, validate: Callable[[dict], None]) -> TaskResult:
         if invoke:
             return invoke(kind, request, validate)
-        return run_task(store, request, provider, config, validate=validate)
+        if kind == 'fact-review':
+            return run_task(store, request, fact_prov, fact_cfg, validate=validate)
+        return run_task(store, request, extract_prov, extract_cfg, validate=validate)
 
     result = dispatch('extract', TaskRequest(extraction_id, project_id, 'state_extract', manifest_id,
                                             {'messages': messages}, budget_id),
@@ -160,9 +165,9 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
     review_manifest_id = f'delta-review-manifest:{manifest_id}'
     if invoke is None or not store.connection.execute(
             'SELECT 1 FROM input_manifests WHERE id=?', (review_manifest_id,)).fetchone():
-        params, _ = prepare_call(store, budget_id, provider.name, config.params, review_messages)
+        params, _ = prepare_call(store, budget_id, fact_prov.name, fact_cfg.params, review_messages)
         freeze_manifest(store, InputManifest(review_manifest_id, 'fact_review',
-            model_settings(provider, config.model, params, 'fact-review-v1'), content_sha256(review_package),
+            model_settings(fact_prov, fact_cfg.model, params, 'fact-review-v1'), content_sha256(review_package),
             branch_id=manifest['branch_id'], state_revision=manifest['state_revision'],
             story_order=manifest['story_order'], disclosure_order=position(manifest['disclosure_order'])), review_package)
     review_id = f'delta-review:{manifest_id}'

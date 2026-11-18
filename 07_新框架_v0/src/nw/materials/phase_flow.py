@@ -4,7 +4,7 @@ from typing import Callable
 
 from nw.call_budget import prepare_call
 from nw.call_control import model_settings
-from nw.config import Config
+from nw.config import Config, resolve_stage_runtime
 from nw.llm.base import LLMProvider
 from nw.materials.binding_reviews import allows_stage_candidate, model_review
 from nw.materials.phase_contract import FIELDS,validate_phase,require
@@ -967,6 +967,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                    verify: Callable | None,max_rounds: int,index: int,*,studied_sources: list[dict] | None=None,
                    governance: dict | None=None) -> tuple[dict,list[dict],list[dict]]:
     from nw.materials.work_session import _study_call,model_source
+    from nw.materials.step_guard import build_continuity_ledger, build_joint_material_plan
+    stage_config, stage_provider = resolve_stage_runtime(config, provider, stage)
     state=readiness(stage,products,package['scope'])
     if state['missing']:raise ValueError('MATERIAL_WAITING_INPUTS: '+','.join(state['missing']))
     from nw.materials.semantic_handoff import input_stages,handoffs_for
@@ -1020,6 +1022,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             'responses':responses,'output_schema':SCHEMAS[stage],
             'method_requirements':requirements_for(stage,products),
             'approved_cards':context['approved_cards'],'parent':package.get('parent')}
+        if (continuity_ledger := build_continuity_ledger(stage, products, deps, context)) is not None:
+            payload['continuity_ledger'] = continuity_ledger
+        if (joint_plan := build_joint_material_plan(stage, sources)) is not None:
+            payload['joint_material_plan'] = joint_plan
         if chapter_handoff is not None:
             payload['chapter_handoff'] = chapter_handoff
         if chapter_summary is not None:
@@ -1093,7 +1099,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['semantic_requirement_sources']=[model_source(s,stage=stage,full_text=True,semantics=desk.semantic_contract(s))
                 for ident in sorted({r['source_id'] for r in payload['semantic_requirements']})
                 for s in [desk.read(ident)]]
-        if provider.name!='ollama':payload['output_contract']=output_contract(stage,products,sources)
+        if stage_provider.name!='ollama':payload['output_contract']=output_contract(stage,products,sources)
         inherited=next((row for row in package.get('parent_material_work',{}).get('stages',[]) if row['stage']==stage),None)
         if inherited:
             payload['inherited_stage']={'ref':product_ref(inherited),'products':inherited['products'],
@@ -1128,7 +1134,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 if report and report['status']=='failed':
                     bad=[r['rule_id'] for r in report['checks'] if r['status']=='failed']
                     raise ValueError('MATERIAL_GOVERNANCE: '+','.join(dict.fromkeys(bad)))
-        raw,receipt=_study_call(store,request,config,provider,index*max_rounds+turn,payload,sources,
+        raw,receipt=_study_call(store,request,stage_config,stage_provider,index*max_rounds+turn,payload,sources,
             desk,retry_failed,verify,prompt=prompt,validator=validate,
             version='source-step-v4',read_only_sources=[source for source,_ in readings.values()],
             step_material=material,prompt_suffix=suffix)

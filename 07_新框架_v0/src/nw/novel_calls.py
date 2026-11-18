@@ -6,7 +6,7 @@ from typing import Callable
 from uuid import NAMESPACE_URL, uuid5
 
 from nw.call_budget import BudgetExceeded, reservation
-from nw.config import Config
+from nw.config import Config, resolve_stage_runtime
 from nw.generation import call_model
 from nw.llm.base import LLMProvider
 from nw.models import Draft, Run
@@ -23,6 +23,12 @@ class JobCalls:
     def __init__(self, journal: Journal, provider: LLMProvider, config: Config, retry_failed: bool) -> None:
         self.journal, self.provider, self.config = journal, provider, config
         self.retry_failed = retry_failed
+
+    def for_stage(self, stage: str) -> 'JobCalls':
+        cfg, prov = resolve_stage_runtime(self.config, self.provider, stage)
+        if cfg is self.config and prov is self.provider:
+            return self
+        return JobCalls(self.journal, prov, cfg, self.retry_failed)
 
     def _blocked(self, key: str, reason: str, **outputs: str) -> JobPaused:
         return JobPaused('BLOCKED', key, reason, **outputs)

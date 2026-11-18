@@ -287,6 +287,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     validate_requirements(stage,value,products,output_refs(stage,value))
     validate_selected_requirements(stage,value,products,context)
     if not context.get('legacy_replay'):
+        from nw.materials.step_guard import validate_cross_step_consistency
+        validate_cross_step_consistency(stage, value, products, context)
         if stage=='plot_design':validate_plot_products(value,sources,context)
         if stage=='anchor_design':validate_anchor_products(value,products,sources)
         validate_dynamic_dependencies(stage,value,products,sources,context)

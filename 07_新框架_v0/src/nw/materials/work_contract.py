@@ -83,5 +83,15 @@ def validate_study(result: dict,sources: list[dict],scope: str,demand: str) -> N
 
 def compact_session(session: dict) -> dict:
     if session.get('policy') in {'artifact-stage-binding-v3','artifact-stage-binding-v4'}:
-        return {key:session[key] for key in ('id','scope','policy','stages','candidates')}
+        compact_stages = []
+        for st in session.get('stages', ()):
+            if isinstance(st, dict):
+                entry = {k: st[k] for k in ('stage', 'task_id', 'sha256', 'source_ids', 'inputs') if k in st}
+                if isinstance(prods := st.get('products'), dict):
+                    entry['products'] = {k: v for k, v in prods.items() if k != '_criteria'}
+                compact_stages.append(entry)
+        return {
+            **{key: session[key] for key in ('id', 'scope', 'policy', 'candidates') if key in session},
+            'stages': compact_stages,
+        }
     return {key:session[key] for key in ('id','scope','policy','result')}

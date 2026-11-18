@@ -191,13 +191,22 @@ def main(argv: list[str] | None = None) -> int:
     show = commands.add_parser('show')
     show.add_argument('kind', choices=['project', 'brief', 'bible', 'chapter', 'scene', 'draft', 'run', 'accepted', 'note'])
     show.add_argument('record_id', nargs='?')
+    studio = commands.add_parser('studio', help='launch the local Novel Workflow Studio frontend client')
+    studio.add_argument('--host', default='127.0.0.1')
+    studio.add_argument('--port', type=int, default=8765)
+    studio.add_argument('--open-browser', action='store_true')
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()
         return 0
-    if args.command != 'materials' and not args.project:
+    if args.command not in ('materials', 'studio') and not args.project:
         parser.error('--project is required')
     try:
+        if args.command == 'studio':
+            from nw.studio.server import run_studio
+            run_studio(workspace=args.workspace, config_path=args.config,
+                       host=args.host, port=args.port, open_browser=args.open_browser)
+            return 0
         if args.command == 'materials':
             workspace = args.workspace
             if workspace is None:

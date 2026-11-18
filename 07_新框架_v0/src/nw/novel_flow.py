@@ -69,7 +69,10 @@ def resume_job(store: Store, job_id: str, provider: LLMProvider, config: Config,
             return choice
 
         try:
-            _freeze_model(journal, model_settings(provider, config.model, config.params, 'novel-job-v1'))
+            frozen_model = model_settings(provider, config.model, config.params, 'novel-job-v1')
+            if config.stage_models:
+                frozen_model = {**frozen_model, 'stage_models': config.stage_models}
+            _freeze_model(journal, frozen_model)
             extend_budget(store, job_id, max_calls, max_cost)
             journal.move('RUNNING', initial.step)
             if journal.request['mode'] == 'design':
@@ -93,6 +96,21 @@ def _design(calls: JobCalls, decide: Decision) -> JobResult:
                         proposal_id=proposal, application=application)
 
 
+def _scope_governance_inputs(raw_gov: dict | None, scope: str) -> dict | None:
+    if not raw_gov:
+        return None
+    from nw.materials.phase_routes import phase_order
+    allowed = set(phase_order(scope))
+    if scope in raw_gov and isinstance(raw_gov[scope], dict):
+        scoped = {k: v for k, v in raw_gov[scope].items() if k in allowed and isinstance(v, dict)}
+        return scoped or None
+    if 'detail' in raw_gov and scope != 'book' and isinstance(raw_gov['detail'], dict):
+        scoped = {k: v for k, v in raw_gov['detail'].items() if k in allowed and isinstance(v, dict)}
+        return scoped or None
+    scoped = {k: v for k, v in raw_gov.items() if k in allowed and isinstance(v, dict)}
+    return scoped or None
+
+
 def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decision) -> tuple[str, dict]:
     j = calls.journal
     propose = f'plan:{scope}:propose'
@@ -105,15 +123,19 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         return output['proposal_id'], output['application']
     j.current_step = propose
 
+    plan_calls = calls.for_stage('plan')
+
     def prepare():
         j.check_active(propose)
-        request, _ = prepare_plan_task(j.store, Ref(**j.request['brief_ref']), scope, calls.provider, calls.config,
+        gov_for_scope = _scope_governance_inputs(j.request.get('governance_inputs'), scope)
+        request, _ = prepare_plan_task(j.store, Ref(**j.request['brief_ref']), scope, plan_calls.provider, plan_calls.config,
                                        j.id, call_id(j.id, propose, 1), parent_id=parent, branch=j.head.branch_id,
                                        materials=j.request.get('materials', ()),
-                                       material_deferrals=j.request.get('material_deferrals'))
+                                       material_deferrals=j.request.get('material_deferrals'),
+                                       governance_inputs=gov_for_scope)
         from nw.materials.work_session import drive_plan
         _,package=read_input_manifest(j.store,request.manifest_id)
-        request,_=drive_plan(j.store,request,package,calls.provider,calls.config,retry_failed=calls.retry_failed,
+        request,_=drive_plan(j.store,request,package,plan_calls.provider,plan_calls.config,retry_failed=calls.retry_failed,
                             verify=lambda:j.check_active(propose))
         return request
 
@@ -138,7 +160,7 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         if not selected <= set(eligible_rule_refs(j.store)):
             raise JobPaused('STALE', propose, 'STALE_METHOD_VERSION')
 
-    result = calls.task(propose, prepare, validate, verify=verify_plan)
+    result = plan_calls.task(propose, prepare, validate, verify=verify_plan)
     proposal = show_plan(j.store, result.id)
     if proposal.application is None:
         verify_plan()
@@ -186,7 +208,7 @@ def _write_batch(calls: JobCalls, decide: Decision) -> JobResult:
         delta = scene_delta(calls, scene, chain, decide)
         deltas.append(delta)
         chain = (*chain, (delta.id, delta.sha256))
-    scoped = review_scope(calls, deltas)
+    scoped = review_scope(calls.for_stage('scope_review'), deltas)
     gate = 'batch:confirm'
     previews = [_preview(j, scene, delta) for scene, delta in zip(scenes, deltas, strict=True)]
 

@@ -31,7 +31,17 @@ python -m venv .venv
 ```
 
 仓库位置不同时只修改第一行路径。虚拟环境激活后，对应命令就是 `python -m nw --help` 和 `python -m pytest`。
-预期帮助显示 story、cards、plan、novel 和现有命令，pytest 全部通过。裸运行 `python -m nw` 也显示帮助。
+预期帮助显示 story、cards、plan、novel、studio 和现有命令，pytest 全部通过。裸运行 `python -m nw` 也显示帮助。
+
+### 本地可视化客户端（Novel Workflow Studio，支持离线零 API 沙盘）
+
+在暂不接入外部 API 的阶段，可直接启动本地前端客户端管理项目、预演 14 步联合资料调度、检视受限 POV 工作包、录入样章草稿与状态增量、检索 22,941 条裁定资料与 F2 问题台账，并准备分步骤双模型（如 Carbon + Opus 5.5）配置：
+
+```powershell
+.\.venv\Scripts\python.exe -m nw studio --host 127.0.0.1 --port 8765 --open-browser
+```
+
+也可直接双击目录内的 `启动写作客户端.bat`。整体架构与 Opus 5.5 接手分工详见 [整体架构与全流程运行说明](docs/整体架构与全流程运行说明_Carbon交付版.md) 与 [Opus 5.5 接手与能力分工说明](docs/Opus5.5接手与能力分工说明.md)。
 
 ## 目录与配置
 

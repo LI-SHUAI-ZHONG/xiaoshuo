@@ -29,6 +29,7 @@ class JobRequest:
     scene_scopes: dict[str, dict] = field(default_factory=dict)
     materials: list[dict] = field(default_factory=list)
     material_deferrals: dict[str, str] = field(default_factory=dict)
+    governance_inputs: dict[str, dict] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -97,6 +98,10 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
             not all(text(key) and text(reason) for key, reason in request.material_deferrals.items()) or
             request.material_deferrals and request.mode != 'design'):
         raise ValueError('MATERIAL_SCOPE: design deferrals require source IDs and author reasons')
+    if (not isinstance(request.governance_inputs, dict) or
+            not all(text(key) and isinstance(val, dict) for key, val in request.governance_inputs.items()) or
+            request.governance_inputs and request.mode != 'design'):
+        raise ValueError('MATERIAL_GOVERNANCE: design governance_inputs require stage or scope mappings')
     materials = resolve_materials(store.directory.parent, request.materials)
     ident = uuid4().hex
     with store.connection:

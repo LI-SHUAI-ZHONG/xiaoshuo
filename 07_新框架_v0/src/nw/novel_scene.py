@@ -51,8 +51,9 @@ def _inputs(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...]) -> 
         work = build_story_context(j.store, scene, scope, limit, candidate_refs=chain, base_prompt=WRITE_PROMPT)
         digest = candidate_projection_digest(j.store, j.head, chain, scene) if chain else None
         messages = [{'role': 'system', 'content': work.prompt}, {'role': 'user', 'content': canonical(work.package)}]
+        write_calls = calls.for_stage('write')
         manifest = InputManifest(
-            f'{j.id}:{key}', 'write', _settings(calls, 'story-write-v1', messages), content_sha256(work.package),
+            f'{j.id}:{key}', 'write', _settings(write_calls, 'story-write-v1', messages), content_sha256(work.package),
             brief_ref=work.brief_ref, card_refs=work.card_refs, source_refs=work.source_refs,
             branch_id=scope.branch_id, state_revision=scope.revision, story_order=scope.story_order,
             disclosure_order=work.disclosure, predecessor_drafts=work.predecessor_drafts,
@@ -118,7 +119,8 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
     for check in contract['checks'] if contract else ():
         if 'character_card' in check and check['character_card']['ref'] not in dependencies:
             dependencies.append(check['character_card']['ref'])
-    manifest = {**frozen['manifest'], 'purpose': purpose, 'settings': _settings(calls, version, messages),
+    stage_calls = calls.for_stage(purpose)
+    manifest = {**frozen['manifest'], 'purpose': purpose, 'settings': _settings(stage_calls, version, messages),
                 'dependency_refs': dependencies}
     return {'manifest': manifest, 'messages': messages, 'package': package,
             'target_draft': asdict(draft_ref(draft))}
@@ -140,15 +142,18 @@ def _extract(calls: JobCalls, scene: str, draft: Draft, frozen: dict,
     elif row['input']['draft_id'] != draft.id:
         raise JobPaused('STALE', key, 'STALE_DRAFT', scene_id=scene)
     scope = row['input']['scope']
+    extract_calls = calls.for_stage('state_extract')
+    fact_calls = calls.for_stage('fact_review')
     if not j.store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (ident,)).fetchone():
-        settings = _settings(calls, 'state-extract-v1', [])
+        settings = _settings(extract_calls, 'state-extract-v1', [])
         freeze_delta_input(j.store, draft.id, scope, settings, material_review_run=material_review_run,
                            material_hypotheses=hypotheses)
 
     def invoke(kind: str, request: TaskRequest, validate: Callable[[dict], None]) -> TaskResult:
         task_key = f'{key}:{kind}'
-        return calls.task(task_key, lambda: request, validate,
-                          verify=lambda: _verify_context(calls, task_key, scene, frozen['manifest']))
+        target_calls = fact_calls if kind == 'fact-review' else extract_calls
+        return target_calls.task(task_key, lambda: request, validate,
+                                 verify=lambda: _verify_context(calls, task_key, scene, frozen['manifest']))
 
     delta = prepare_delta(j.store, draft.id, ident, calls.provider, calls.config, j.id, invoke=invoke)
     j.result(key, 'DONE', {'delta_id': delta.id, 'sha256': delta.sha256, 'manifest_id': ident})
@@ -175,12 +180,13 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
 
     while True:
         if round_no == 0:
-            _, draft, _ = calls.run(f'{prefix}:write', scene, lambda: frozen, verify=verify)
+            _, draft, _ = calls.for_stage('write').run(f'{prefix}:write', scene, lambda: frozen, verify=verify)
         else:
-            _, draft, _ = calls.run(f'{prefix}:revise:{round_no}', scene,
-                                    lambda: _draft_input(calls, frozen, 'revise', draft, review or {}), verify=verify)
+            _, draft, _ = calls.for_stage('revise').run(
+                f'{prefix}:revise:{round_no}', scene,
+                lambda: _draft_input(calls, frozen, 'revise', draft, review or {}), verify=verify)
         contract, comparison = review_contract(j.store, draft, frozen['manifest'])
-        review_run, _, review = calls.run(
+        review_run, _, review = calls.for_stage('review').run(
             f'{prefix}:review:{round_no}', scene,
             lambda: _draft_input(calls, frozen, 'review', draft, None, contract=contract),
             lambda run: review_result(run, contract, draft, comparison), verify=verify)
