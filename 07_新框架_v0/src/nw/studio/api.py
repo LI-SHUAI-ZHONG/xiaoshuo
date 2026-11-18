@@ -30,7 +30,12 @@ from nw.materials.phase_flow import (
 )
 from nw.materials.phase_routes import EXTERNAL_REQUIRES, ORDER, POLICY, REQUIRES, phase_order, route_method
 from nw.materials.stage_input import step_material_prompt
-from nw.materials.step_guard import PRIORITY_HIERARCHY, build_continuity_ledger, build_joint_material_plan
+from nw.materials.step_guard import (
+    PRIORITY_HIERARCHY,
+    build_continuity_ledger,
+    build_joint_material_plan,
+    build_multi_character_coordination,
+)
 from nw.materials.steps.review import MATERIAL as REVIEW_MATERIAL
 from nw.materials.steps.review_scope import MATERIAL as SCOPE_REVIEW_MATERIAL
 from nw.materials.steps.state_extract import MATERIAL as STATE_EXTRACT_MATERIAL
@@ -165,10 +170,18 @@ def _anti_forgetting_notes(stage: str) -> list[str]:
         notes.append('自动注入 plot_guard：保留伏笔埋设/回收窗口与读者情绪转向目标，使锚点紧扣伏笔与情绪。')
     if stage in ('event_design', 'scene_design', 'state_transition', 'anchor_design', 'expression_design'):
         notes.append('自动注入 entity_guard：提醒非公开实体(visibility!=public)与不可行动实体(can_act=false)，防越权出场与视角泄密。')
+    if stage in ('event_design', 'action_design', 'scene_design', 'state_transition', 'anchor_design', 'expression_design', 'bind_scope'):
+        notes.append('自动注入 character_voice_guard：跨场锁定人物嗓音(voice)、性格基线(behavior)与知情边界，防OOC与性格无因漂移。')
+    if stage in ('scene_design', 'anchor_design', 'expression_design', 'bind_scope'):
+        notes.append('自动注入 foreshadow_reminder：伏笔三态(埋设/暗示/回收)追踪，自动提示本场到期回收项与超期滞后预警。')
+    if stage in ('event_design', 'action_design', 'scene_design', 'state_transition', 'anchor_design', 'expression_design', 'bind_scope'):
+        notes.append('自动注入 multi_char_guard：多角色群戏协同，隔离各角色知情差、声线与行动能力上限，防对白张冠李戴与知情交叉污染。')
+    if stage == 'plot_design':
+        notes.append('硬校验 validate_cross_step_consistency：拦截因果链未闭合、非行动实体充当actor、重复事件循环及伏笔同事件自埋自收矛盾。')
     if stage == 'scene_design':
-        notes.append('硬校验 validate_cross_step_consistency：同场同实体多事件严禁出现互相矛盾的 before_state。')
+        notes.append('硬校验 validate_cross_step_consistency：拦截同场 before_state 矛盾、场外幽灵角色事件、同刻异地分身及无过渡时间线跳跃。')
     if stage == 'state_transition':
-        notes.append('硬校验 validate_cross_step_consistency：严禁同场同实体产生冲突 after_state，严禁残留 TODO/待定/<填写> 等占位幻觉。')
+        notes.append('硬校验 validate_cross_step_consistency：严禁冲突 after_state、占位幻觉及无驱动事件的人物性格突变。')
     return notes
 
 
@@ -650,17 +663,39 @@ class StudioService:
                         'unknowns': ['沉船当晚第三名目击者真实去向'],
                     }
                 }
-            if stage in ('event_design', 'action_design', 'scene_design', 'state_transition', 'state_propagation', 'anchor_design', 'expression_design'):
+            if stage in ('event_design', 'action_design', 'scene_design', 'state_transition', 'state_propagation', 'anchor_design', 'expression_design', 'bind_scope'):
                 mock_products['character_design'] = {
                     'products': {
                         'members': [
-                            {'key': 'char_lin', 'body': {'visibility': 'public'}},
-                            {'key': 'char_informant', 'body': {'visibility': 'holders'}},
+                            {'key': 'char_lin', 'body': {
+                                'name': '林沉', 'visibility': 'public',
+                                'voice': '语速偏慢、克制简短', 'behavior': '高压下先观察物证再开口',
+                                'change_conditions': '唯有铁证推翻旧案定论才动摇',
+                            }},
+                            {'key': 'char_informant', 'body': {
+                                'name': '线人老周', 'visibility': 'holders', 'holders': ['char_lin'],
+                                'voice': '压低嗓音、多用港口暗语', 'behavior': '谨慎多疑、留退路',
+                            }},
                         ],
                         'capabilities': [{'entity': 'evidence_locker', 'can_act': False}],
                     }
                 }
-            if stage in ('anchor_design', 'bind_scope'):
+            if stage in ('anchor_design', 'expression_design', 'bind_scope'):
+                mock_products['scene_design'] = {
+                    'products': {
+                        'members': [{
+                            'key': 'sc_dock_01',
+                            'kind': 'scene',
+                            'body': {
+                                'pov': 'char_lin',
+                                'characters': ['char_lin', 'char_informant'],
+                                'character_goals': {'char_lin': '核实停摆怀表来源', 'char_informant': '试探警方底牌'},
+                            },
+                        }],
+                        'selected_events': [{'scene': 'sc_dock_01', 'event': 'ev_4'}],
+                    }
+                }
+            if stage in ('scene_design', 'anchor_design', 'expression_design', 'bind_scope'):
                 mock_products['plot_design'] = {
                     'products': {
                         'promise_plan': [{'promise': 'promise_watch', 'plant_event': 'ev_1', 'payoff_event': 'ev_4', 'setup': '停摆怀表指向23:15'}],
@@ -670,6 +705,7 @@ class StudioService:
 
         deps = list(REQUIRES[stage])
         continuity_ledger = build_continuity_ledger(stage, mock_products, deps, {'approved_cards': []})
+        multi_char = build_multi_character_coordination(stage, mock_products, {'approved_cards': []})
         if desk is None:
             return {
                 'catalog_available': False,
@@ -678,6 +714,7 @@ class StudioService:
                 'brief': package['brief'],
                 'requires': deps,
                 'continuity_ledger': continuity_ledger,
+                'multi_character_coordination': multi_char,
                 'joint_material_plan': None,
                 'sources': [],
                 'rendered_prompt': STEP_PROMPT + '\n' + STAGE_INSTRUCTIONS.get(stage, ''),
@@ -719,6 +756,7 @@ class StudioService:
             'requires': deps,
             'anti_forgetting_guards': _anti_forgetting_notes(stage),
             'continuity_ledger': continuity_ledger,
+            'multi_character_coordination': multi_char,
             'joint_material_plan': joint_plan,
             'sources_count': len(formatted_sources),
             'sources': formatted_sources,

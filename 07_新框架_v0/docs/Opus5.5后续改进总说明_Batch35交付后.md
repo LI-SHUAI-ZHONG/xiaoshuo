@@ -1,7 +1,7 @@
 # Opus 5.5 后续改进总说明（Batch 35 交付后）
 
 > **文档定位**：由 Gemini 4 Carbon 在完成 Batch 35 后编写，供 Opus 5.5 在获得额度后按图索骥推进剩余文学精修、原始资料缺口补全与前端体验打磨。
-> **基线**：Batch 35 commit，全量回归通过，F2 台账 open=117，三大前端增强已落地。
+> **基线**：Batch 37 commit，全量回归 1146 passed，F2 台账 open=117，前端 v2 重建与角色/伏笔/群戏/因果四大守卫均已落地。
 
 ---
 
@@ -13,6 +13,11 @@
 - 跨步防遗忘账本（`continuity_ledger`）
 - 多资料联合创作角色仲裁（`joint_material_plan`）
 - 前后状态防冲突硬守卫（`validate_cross_step_consistency`）
+- **Batch 37 角色/伏笔/群戏/因果质量守卫增强（发挥长上下文与一致性强项）：**
+  - `character_voice_guard`：跨场锁定角色嗓音(`voice`)、核心性格基线(`behavior`/`boundaries`)、可转变条件(`change_conditions`)与知情范围(`holders`/`unknowns`)，拦截无驱动事件的声线漂移、情绪突变与性格跳变
+  - `foreshadow_reminder`：伏笔三态（`planted` 已埋设 / `hinted` 已暗示 / `paid_off` 已回收）全链路追踪，自动识别本场到期回收项（`due_this_scene`）与超出窗口/阈值的滞后预警（`overdue_warnings`），写作步硬拦截漏收或矛盾覆盖
+  - `build_multi_character_coordination` / `multi_char_guard`：2+ 活跃角色群戏自动编组，隔离各角色声线人设、静态关系条件、知情不对称矩阵（`information_asymmetry`）与非行动实体禁令（`non_acting_entities`），防对白张冠李戴与场外幽灵插话
+  - `plot_design` / `event_design` / `scene_design` 候选方案硬守卫：拦截因果链未闭合、因果环路、重复事件循环、`promise_plan` 倒果为因/同事件自埋自收、同刻异地分身、跨场状态断裂及无时间提示词的无故时间线跳跃
 - 分步骤双模型路由（`[stage_models]`）
 - TEMP 磁盘重定向（`conftest.py`）
 
@@ -115,10 +120,10 @@
 |---|---|
 | `src/nw/context/story.py` | WRITE_PROMPT, StoryScope, build_story_context |
 | `src/nw/novel_scene.py` | REVIEW_PROMPT, REVISE_PROMPT, 写审改闭环 |
-| `src/nw/materials/step_guard.py` | continuity_ledger, joint_material_plan, validate |
+| `src/nw/materials/step_guard.py` | continuity_ledger(含角色嗓音/伏笔三态/群戏协同), joint_material_plan, validate_cross_step_consistency（~635 行） |
 | `src/nw/materials/steps/expression_design.py` | 叙述距离与表达设计步骤 |
 | `src/nw/materials/steps/writing.py` | 正文写作步骤 |
-| `src/nw/studio/api.py` | 后端服务层（1,184 行） |
+| `src/nw/studio/api.py` | 后端服务层（~1,222 行） |
 | `src/nw/studio/server.py` | HTTP 路由（253 行） |
 | `src/nw/studio/static/app.js` | 前端控制器（~1,180 行，含全局搜索/主题切换/Modal/通知/快捷键） |
 | `src/nw/studio/static/index.html` | 前端 HTML（~627 行，含侧边栏/面包屑/搜索覆盖/通知面板/Modal） |

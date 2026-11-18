@@ -1022,7 +1022,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             'responses':responses,'output_schema':SCHEMAS[stage],
             'method_requirements':requirements_for(stage,products),
             'approved_cards':context['approved_cards'],'parent':package.get('parent')}
-        if (continuity_ledger := build_continuity_ledger(stage, products, deps, context)) is not None:
+        if (continuity_ledger := build_continuity_ledger(stage, products, deps, stage_context)) is not None:
             payload['continuity_ledger'] = continuity_ledger
         if (joint_plan := build_joint_material_plan(stage, sources)) is not None:
             payload['joint_material_plan'] = joint_plan
