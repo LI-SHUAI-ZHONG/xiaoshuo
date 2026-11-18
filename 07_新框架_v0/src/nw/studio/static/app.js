@@ -1,4 +1,4 @@
-/* Novel Workflow Studio Frontend Controller (Zero external dependencies, clean ES6) */
+﻿/* Novel Workflow Studio Frontend Controller (Zero external dependencies, clean ES6) */
 (function () {
   const state = {
     status: null,
@@ -69,15 +69,15 @@
     const meta = TAB_TITLES[tab] || [tab, ""];
     $("viewTitle").textContent = meta[0];
     $("viewSubtitle").textContent = meta[1];
-    if (tab === "pipeline" && !state.blueprint) loadBlueprint();
+    if (tab === "pipeline" && !state.blueprint) loadBlueprint().catch((e) => toast(e.message, "err"));
     if (tab === "materials") {
-      searchMaterials();
-      searchLedger();
+      searchMaterials().catch((e) => toast(e.message, "err"));
+      searchLedger().catch((e) => toast(e.message, "err"));
     }
-    if (tab === "routing") loadRouting();
+    if (tab === "routing") loadRouting().catch((e) => toast(e.message, "err"));
     if (tab === "cards" && state.activeProject) {
       renderCards();
-      loadStateMatrix();
+      loadStateMatrix().catch((e) => toast(e.message, "err"));
     }
   }
 
@@ -854,7 +854,9 @@
     $("btnSaveDelta").addEventListener("click", async () => {
       if (!state.activeProject || !state.activeScene) return toast("请先选择场景", "err");
       try {
-        const ops = JSON.parse($("deltaOpsJson").value || "[]");
+        let ops;
+        try { ops = JSON.parse($("deltaOpsJson").value || "[]"); }
+        catch (_) { throw new Error("Operations JSON 格式不正确"); }
         const res = await api(`/api/projects/${encodeURIComponent(state.activeProject)}/scenes/${encodeURIComponent(state.activeScene.id)}/delta`, {
           method: "POST",
           body: { draft_id: $("deltaDraftId").value.trim(), operations: ops },
@@ -891,7 +893,9 @@
     $("btnSaveCard").addEventListener("click", async () => {
       if (!state.activeProject) return toast("请先选择项目", "err");
       try {
-        const body = JSON.parse($("cardBodyJson").value);
+        let body;
+        try { body = JSON.parse($("cardBodyJson").value); }
+        catch (_) { throw new Error("卡片 JSON 格式不正确"); }
         const saved = await api(`/api/projects/${encodeURIComponent(state.activeProject)}/cards`, {
           method: "POST",
           body: {

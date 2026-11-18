@@ -58,7 +58,7 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
         def _serve_static(self, rel_path: str) -> None:
             name = 'index.html' if rel_path in ('', '/') else rel_path.lstrip('/')
             target = (STATIC_DIR / name).resolve()
-            if target.parent != STATIC_DIR or not target.is_file():
+            if not (str(target).startswith(str(STATIC_DIR)) and target.is_file()):
                 self._send_json(HTTPStatus.NOT_FOUND, {'error': f'未找到静态资源: {name}'})
                 return
             data = target.read_bytes()

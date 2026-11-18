@@ -192,6 +192,7 @@ class StudioService:
         self._lock = threading.Lock()
         self._desk = None
         self._ledger_cache: list[dict] | None = None
+        self._ledger_mtime: float = 0.0
 
     def _get_desk(self):
         if not (self.workspace / 'materials/catalog.db').is_file():
@@ -206,7 +207,11 @@ class StudioService:
         if not self.ledger_path.is_file():
             return []
         with self._lock:
-            if self._ledger_cache is None:
+            try:
+                current_mtime = self.ledger_path.stat().st_mtime
+            except OSError:
+                return self._ledger_cache or []
+            if self._ledger_cache is None or current_mtime != self._ledger_mtime:
                 rows: list[dict] = []
                 for idx, line in enumerate(self.ledger_path.read_text(encoding='utf-8').splitlines(), start=1):
                     line = line.strip()
@@ -219,6 +224,7 @@ class StudioService:
                     except ValueError:
                         continue
                 self._ledger_cache = rows
+                self._ledger_mtime = current_mtime
             return self._ledger_cache
 
     def _open_store(self, project_name: str, *, create: bool = False) -> Store:
