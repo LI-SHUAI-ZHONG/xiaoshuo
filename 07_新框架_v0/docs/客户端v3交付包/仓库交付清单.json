@@ -1,0 +1,4874 @@
+{
+  "format_version": 1,
+  "scope": "client project, original source materials and byte-preservation attributes; excludes this manifest itself and repository-root map",
+  "files": 811,
+  "bytes": 371708349,
+  "entries": [
+    {
+      "path": ".gitattributes",
+      "git_blob": "313337acca714cd45a575a4adaf58e5de4d0b9ea",
+      "mode": "100644",
+      "bytes": 185
+    },
+    {
+      "path": "02_原版资料/原始资料/动态网络.txt",
+      "git_blob": "735592ea7e6457e43ccc8ed1269c09e4bce78b55",
+      "mode": "100644",
+      "bytes": 19196814
+    },
+    {
+      "path": "02_原版资料/原始资料/类型系统.txt",
+      "git_blob": "9ed7c904c2e2b30b2bbd9260d03f97329bc8841d",
+      "mode": "100644",
+      "bytes": 18050349
+    },
+    {
+      "path": "02_原版资料/原始资料/类型连接.txt",
+      "git_blob": "585db662fb854565ef8097696cc5a894c1306149",
+      "mode": "100644",
+      "bytes": 65826203
+    },
+    {
+      "path": "02_原版资料/原始资料/融合清单.json",
+      "git_blob": "dfb59aca588257f2af31c16eb3b63b6af0c2ce34",
+      "mode": "100644",
+      "bytes": 1003
+    },
+    {
+      "path": "02_原版资料/原始资料/资料库.txt",
+      "git_blob": "a165e7ee77a1cbf657cf49912f54d4bbf6f48b9b",
+      "mode": "100644",
+      "bytes": 10140562
+    },
+    {
+      "path": "02_原版资料/原始资料/锚点网络.txt",
+      "git_blob": "313c06fc6604b5f3b9d98b871194a92b060f44b8",
+      "mode": "100644",
+      "bytes": 10383833
+    },
+    {
+      "path": "02_原版资料/原始资料/静态网络.txt",
+      "git_blob": "b965e6a7b377acca151886e5097fea68a0bf4db8",
+      "mode": "100644",
+      "bytes": 19830111
+    },
+    {
+      "path": "02_原版资料/网络完整数据/动态连接完整数据.json",
+      "git_blob": "ef38531b89cc67c1ba235c86eb76ac417c1c0ccc",
+      "mode": "100644",
+      "bytes": 3412212
+    },
+    {
+      "path": "02_原版资料/网络完整数据/静态连接完整数据.json",
+      "git_blob": "2452027a460b2e0a5af68ef04f9680cc05e4cfea",
+      "mode": "100644",
+      "bytes": 654149
+    },
+    {
+      "path": "07_新框架_v0/.gitattributes",
+      "git_blob": "d2b6708bb887a3712c2345fdae602769770fc119",
+      "mode": "100644",
+      "bytes": 1061
+    },
+    {
+      "path": "07_新框架_v0/.gitignore",
+      "git_blob": "21ffe3c71398deab0dc7892893dc5ace0a59557d",
+      "mode": "100644",
+      "bytes": 93
+    },
+    {
+      "path": "07_新框架_v0/AGENTS.md",
+      "git_blob": "fe3075d47d19b237888432460f3755eb4db2a5b2",
+      "mode": "100644",
+      "bytes": 4253
+    },
+    {
+      "path": "07_新框架_v0/Codex总指令与里程碑.md",
+      "git_blob": "7cf7359c02bf57469773971ae91c59cc0a96e9b9",
+      "mode": "100644",
+      "bytes": 9193
+    },
+    {
+      "path": "07_新框架_v0/README.md",
+      "git_blob": "820222c35f0550adb8ddd6ddd32fd036f6563d81",
+      "mode": "100644",
+      "bytes": 35054
+    },
+    {
+      "path": "07_新框架_v0/config.example.toml",
+      "git_blob": "c06fc070910c75a2efd8e3e1f3b931a8ede31a55",
+      "mode": "100644",
+      "bytes": 809
+    },
+    {
+      "path": "07_新框架_v0/conftest.py",
+      "git_blob": "96635cafc6c8f92430443dc90f71e70865fe6723",
+      "mode": "100644",
+      "bytes": 479
+    },
+    {
+      "path": "07_新框架_v0/docs/F2台账剩余处理指南_Batch34分类后.md",
+      "git_blob": "5a49f12edcc929d32e21244819c07c20c52c4f84",
+      "mode": "100644",
+      "bytes": 5298
+    },
+    {
+      "path": "07_新框架_v0/docs/M4-plan.md",
+      "git_blob": "0a7b8f605ce0546e51865b2aca957913ad0c781e",
+      "mode": "100644",
+      "bytes": 2378
+    },
+    {
+      "path": "07_新框架_v0/docs/M5-验收记录.md",
+      "git_blob": "31f1f5acd96db70e2e8470641fa39385a15bf848",
+      "mode": "100644",
+      "bytes": 4337
+    },
+    {
+      "path": "07_新框架_v0/docs/M6-验收记录.md",
+      "git_blob": "99462b7a4b39796cfa7eef96bdb287d7989a2270",
+      "mode": "100644",
+      "bytes": 3879
+    },
+    {
+      "path": "07_新框架_v0/docs/M7-验收记录.md",
+      "git_blob": "3dfe0c01e12e50fa1da5e45b8ab00b1d3efd25bf",
+      "mode": "100644",
+      "bytes": 3675
+    },
+    {
+      "path": "07_新框架_v0/docs/M8-验收记录.md",
+      "git_blob": "a390dd20f5245e276b40e9ba00fc109b47e956b2",
+      "mode": "100644",
+      "bytes": 3904
+    },
+    {
+      "path": "07_新框架_v0/docs/M9-验收记录.md",
+      "git_blob": "505e831b64c7ba168d4110df2c471780ab2dc6ec",
+      "mode": "100644",
+      "bytes": 3705
+    },
+    {
+      "path": "07_新框架_v0/docs/Opus5.5后续改进总说明_Batch35交付后.md",
+      "git_blob": "3a58bd5ccd41fd7a56791e11f714f5f976170152",
+      "mode": "100644",
+      "bytes": 7475
+    },
+    {
+      "path": "07_新框架_v0/docs/Opus5.5接手与能力分工说明.md",
+      "git_blob": "ab0d6514ae2015aefe030136096100bb3fcd2b9b",
+      "mode": "100644",
+      "bytes": 19377
+    },
+    {
+      "path": "07_新框架_v0/docs/superpowers/plans/2026-11-07-binding-correction.md",
+      "git_blob": "976640cc9bdf1654401e9000340d7ff5d20062fa",
+      "mode": "100644",
+      "bytes": 1605
+    },
+    {
+      "path": "07_新框架_v0/docs/superpowers/plans/2026-11-07-semantic-catalog.md",
+      "git_blob": "7b0a2e247cf5c1ea7661cbc6fbf519ed930b84c4",
+      "mode": "100644",
+      "bytes": 2998
+    },
+    {
+      "path": "07_新框架_v0/docs/superpowers/plans/2026-11-07-single-material-version.md",
+      "git_blob": "53ca38f89a51b04d1740fd5f41fc8f8bb4d1692a",
+      "mode": "100644",
+      "bytes": 3306
+    },
+    {
+      "path": "07_新框架_v0/docs/superpowers/plans/2026-11-07-source-semantic-execution.md",
+      "git_blob": "d118b5d486ebba4088bae39c07831fd89bf6c2b4",
+      "mode": "100644",
+      "bytes": 8022
+    },
+    {
+      "path": "07_新框架_v0/docs/前置产物与资料调度纠正.md",
+      "git_blob": "3d3028877cf321feb4a02558b73201417a22cb4a",
+      "mode": "100644",
+      "bytes": 406515
+    },
+    {
+      "path": "07_新框架_v0/docs/唯一资料版本.md",
+      "git_blob": "defa71dce65578c740446399d548622850ec3440",
+      "mode": "100644",
+      "bytes": 3116
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/.gitattributes",
+      "git_blob": "128ee018b7e53e9a870363a3779ab1b2a2f930e8",
+      "mode": "100644",
+      "bytes": 100
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/README.md",
+      "git_blob": "f063b0a2330ce9c13739f706e25229d27d5a5e8d",
+      "mode": "100644",
+      "bytes": 6290
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/browser-controls.json",
+      "git_blob": "40abe0b295c75ab87aa7af7671101282f7ac19d9",
+      "mode": "100644",
+      "bytes": 203
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/browser-library.json",
+      "git_blob": "9babe3a0ab4b57266f0de1c4e0a6317f8aeaf857",
+      "mode": "100644",
+      "bytes": 122
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/browser-official.json",
+      "git_blob": "3155663a0fc80a9c509bcbef4c59b0900f62f151",
+      "mode": "100644",
+      "bytes": 112
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/browser-production.json",
+      "git_blob": "260dcd2de9af3098caf6a1e604ab68bfb2796147",
+      "mode": "100644",
+      "bytes": 80
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/browser-shell.json",
+      "git_blob": "426d38a811740e9d6eba18c4f73e313b48b5412c",
+      "mode": "100644",
+      "bytes": 113
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/browser-wizard.json",
+      "git_blob": "1464fe50cac126501f6846892799f114db74ce0e",
+      "mode": "100644",
+      "bytes": 119
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/protected-baseline.json",
+      "git_blob": "ca99cb6490c0f4e7772f7edf19e64570d6c114b1",
+      "mode": "100644",
+      "bytes": 1338
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/protected-check.json",
+      "git_blob": "04c373b9719f3df539e26bfe52d1e5ffb909e258",
+      "mode": "100644",
+      "bytes": 110
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/作者输入规格原文.txt",
+      "git_blob": "e97b29d0789f07b2ca78fde7e8384f55e047dedf",
+      "mode": "100644",
+      "bytes": 36060
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/保护文件复核.json",
+      "git_blob": "04c373b9719f3df539e26bfe52d1e5ffb909e258",
+      "mode": "100644",
+      "bytes": 110
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/完整回归日志.txt",
+      "git_blob": "59684932c6087dde5ab1d3330e6e45c5c25b0c99",
+      "mode": "100644",
+      "bytes": 1393
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/客户端_桌面图标.png",
+      "git_blob": "a0e47a13a458a5225a6b571e047544121851d970",
+      "mode": "100644",
+      "bytes": 11957
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/客户端_窄屏.png",
+      "git_blob": "ccd86a980da036075419f117f25cfb6791f71701",
+      "mode": "100644",
+      "bytes": 90532
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/客户端_首页.png",
+      "git_blob": "85bb58d5aa93f3dfe688c333b3f62898fc263b53",
+      "mode": "100644",
+      "bytes": 206646
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/客户端v3_交付说明.md",
+      "git_blob": "6a5229ebdce6ca359bf34a5c3e9052969de2be61",
+      "mode": "100644",
+      "bytes": 11686
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/快速上手.md",
+      "git_blob": "4c1bd0ed34c8d6d49f53b7b8feff88985944bb3b",
+      "mode": "100644",
+      "bytes": 2419
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/施工前全量回归.txt",
+      "git_blob": "46a9f4045f4d34d5af7edb40c7a09553cb8fc71f",
+      "mode": "100644",
+      "bytes": 1313
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/资料恢复保护核验.json",
+      "git_blob": "d2cc9abd5fd532fbfb31b817d2bcb99dfa6e76dc",
+      "mode": "100644",
+      "bytes": 585
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/资料恢复核验.json",
+      "git_blob": "cae605167ccedf2c52d1db50290e627e437e4edf",
+      "mode": "100644",
+      "bytes": 1421
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/通用API_保存验证.png",
+      "git_blob": "b75e6232aa17bc547c06c1b89384016280e4f963",
+      "mode": "100644",
+      "bytes": 80028
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/通用API设置.png",
+      "git_blob": "04ada4fed163a5181fa54b09aa0c5b15f80e53e5",
+      "mode": "100644",
+      "bytes": 82740
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/通用API设置验收.json",
+      "git_blob": "ad3eea5c94ed22b372bf0e154e7f22854e0c39b7",
+      "mode": "100644",
+      "bytes": 172
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/隔离验收_制作台.png",
+      "git_blob": "2351c9a03960ca667f2d6e31d5b0f6697ccb2e45",
+      "mode": "100644",
+      "bytes": 114334
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/隔离验收_版本对比.png",
+      "git_blob": "f596c51dbefbff33de9e9b413b8c5d27c986959e",
+      "mode": "100644",
+      "bytes": 124033
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收结果.json",
+      "git_blob": "7dc995cd4cb7050712c57a5c650486ce33fa2ac5",
+      "mode": "100644",
+      "bytes": 1592
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_generic_api_settings.cjs",
+      "git_blob": "14015192305ed796a73cddebd8a92c2771b0c6cc",
+      "mode": "100644",
+      "bytes": 3408
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_protected.py",
+      "git_blob": "786c083589e37b4fd1a80992d4fb33e6009fc59e",
+      "mode": "100644",
+      "bytes": 694
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_repository_restore.py",
+      "git_blob": "aafccb29dcb87a0b5f90ce9bba0f5088ea2f872f",
+      "mode": "100644",
+      "bytes": 4839
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_studio_controls.cjs",
+      "git_blob": "4cdb4bbbcf78a8ceb7f8601abb480ef283e8c6d7",
+      "mode": "100644",
+      "bytes": 4408
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_studio_library.cjs",
+      "git_blob": "7384257c61934cb471c396b50be921ffefffcb1d",
+      "mode": "100644",
+      "bytes": 5885
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_studio_production.cjs",
+      "git_blob": "98b6e34accedf12e1b9f31167afe4f4f182a9b9a",
+      "mode": "100644",
+      "bytes": 4076
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_studio_shell.cjs",
+      "git_blob": "deba4e785201308044c41cbb705d0fa4d4406e32",
+      "mode": "100644",
+      "bytes": 2729
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_studio_wizard.cjs",
+      "git_blob": "b44c6b249bfa73ed0300141911dd6ad3b549848e",
+      "mode": "100644",
+      "bytes": 3778
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/serve_studio_fixture.py",
+      "git_blob": "6de83aef9a6fbea52d03f728a32cac1cab3643ef",
+      "mode": "100644",
+      "bytes": 2477
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/serve_studio_v3.py",
+      "git_blob": "555d6d3051d3b9e4e148800a4f83177811519b84",
+      "mode": "100644",
+      "bytes": 610
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3初版验收.md",
+      "git_blob": "6a5229ebdce6ca359bf34a5c3e9052969de2be61",
+      "mode": "100644",
+      "bytes": 11686
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3框架设计规格.md",
+      "git_blob": "2371c0e7f3cab021cca4d640abcae3759f5edce1",
+      "mode": "100644",
+      "bytes": 35578
+    },
+    {
+      "path": "07_新框架_v0/docs/小说创作验收.md",
+      "git_blob": "a9c6b995a297397b9683b7bfba8cae30b8fdb0cc",
+      "mode": "100644",
+      "bytes": 3844
+    },
+    {
+      "path": "07_新框架_v0/docs/整体架构与全流程运行说明_Carbon交付版.md",
+      "git_blob": "f4d7d8a1eea12109dfc2b481372ab4b7e2389a5c",
+      "mode": "100644",
+      "bytes": 14560
+    },
+    {
+      "path": "07_新框架_v0/docs/资料与转译层接入.md",
+      "git_blob": "8aa92fe9228af07f734e0004b03ea558d6329d8e",
+      "mode": "100644",
+      "bytes": 10824
+    },
+    {
+      "path": "07_新框架_v0/docs/资料原义与治理执行.md",
+      "git_blob": "be644bbb3691fbbc8fcbf4b717b5a740531bf92e",
+      "mode": "100644",
+      "bytes": 11159
+    },
+    {
+      "path": "07_新框架_v0/docs/资料接入验收.md",
+      "git_blob": "186a0b26c538265ddc0653153277d99fc11b2f6f",
+      "mode": "100644",
+      "bytes": 22019
+    },
+    {
+      "path": "07_新框架_v0/docs/资料范围审稿实施.md",
+      "git_blob": "2a32cb18a78ed707b1523c9231d3bc1d97cad4ae",
+      "mode": "100644",
+      "bytes": 1655
+    },
+    {
+      "path": "07_新框架_v0/docs/资料驱动创作实施_v2.md",
+      "git_blob": "e4b012b2c231ac5bd7d5e077f969f741540fd223",
+      "mode": "100644",
+      "bytes": 6573
+    },
+    {
+      "path": "07_新框架_v0/fixtures/.gitkeep",
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "mode": "100644",
+      "bytes": 0
+    },
+    {
+      "path": "07_新框架_v0/fixtures/chaohen_minimal.json",
+      "git_blob": "93c5901e6cd23e84c9bebf132d1ca0a09022da7f",
+      "mode": "100644",
+      "bytes": 2897
+    },
+    {
+      "path": "07_新框架_v0/fixtures/create_example.py",
+      "git_blob": "5b0f983b987a3485e25b89e8c604e9bc47d9d57d",
+      "mode": "100644",
+      "bytes": 1059
+    },
+    {
+      "path": "07_新框架_v0/fixtures/material_semantics/current_version_manifest.json",
+      "git_blob": "41025fff6c1d5f6dd53472f4dfd8e3832e18f20e",
+      "mode": "100644",
+      "bytes": 1816
+    },
+    {
+      "path": "07_新框架_v0/fixtures/material_semantics/source_samples.json",
+      "git_blob": "bf642684f3fb684b195adb8967fd8c430f01c7ed",
+      "mode": "100644",
+      "bytes": 161943
+    },
+    {
+      "path": "07_新框架_v0/fixtures/material_semantics/workflow_bindings.json",
+      "git_blob": "e21a469baaba1d8501998bee847aba6ae854ffb5",
+      "mode": "100644",
+      "bytes": 229394
+    },
+    {
+      "path": "07_新框架_v0/fixtures/materials_runtime_baseline/.gitattributes",
+      "git_blob": "f50c3eeff653ebea1f1e8f6dd0e5c977779d9183",
+      "mode": "100644",
+      "bytes": 14
+    },
+    {
+      "path": "07_新框架_v0/fixtures/materials_runtime_baseline/README.md",
+      "git_blob": "d9842592e616e3fc28c6e5c3a6259d46df942224",
+      "mode": "100644",
+      "bytes": 612
+    },
+    {
+      "path": "07_新框架_v0/fixtures/materials_runtime_baseline/v3-20261119/manifest.json",
+      "git_blob": "cb4764277bd844ff52c68ac900af85c1543e0dc1",
+      "mode": "100644",
+      "bytes": 10448
+    },
+    {
+      "path": "07_新框架_v0/fixtures/materials_runtime_baseline/v3-20261119/materials.zip.part001",
+      "git_blob": "27e83dc5828f2476b24f2719a16718de024f49dc",
+      "mode": "100644",
+      "bytes": 67108864
+    },
+    {
+      "path": "07_新框架_v0/fixtures/materials_runtime_baseline/v3-20261119/materials.zip.part002",
+      "git_blob": "0ea66f451ffde2ad7cdb1f6242e32a2d9dcc410f",
+      "mode": "100644",
+      "bytes": 67108864
+    },
+    {
+      "path": "07_新框架_v0/fixtures/materials_runtime_baseline/v3-20261119/materials.zip.part003",
+      "git_blob": "bd517771bb9d33378726790628b4744fc234d3a3",
+      "mode": "100644",
+      "bytes": 62158238
+    },
+    {
+      "path": "07_新框架_v0/fixtures/rules/six_rules.json",
+      "git_blob": "331e42f22c20c50f3dd0527ad4f06fa4ce793d5e",
+      "mode": "100644",
+      "bytes": 755
+    },
+    {
+      "path": "07_新框架_v0/fixtures/story_seed/brief.json",
+      "git_blob": "4868392691b4ec4d43e6da0fe2f2a74f1e98ce7b",
+      "mode": "100644",
+      "bytes": 396
+    },
+    {
+      "path": "07_新框架_v0/fixtures/story_seed/cards.json",
+      "git_blob": "996a27d970914cb13bd527e5f0b1fa8c04f06c4a",
+      "mode": "100644",
+      "bytes": 10752
+    },
+    {
+      "path": "07_新框架_v0/fixtures/story_seed/failure_cases.json",
+      "git_blob": "e15723271587cff32b12ae81fac5e4698286d939",
+      "mode": "100644",
+      "bytes": 446
+    },
+    {
+      "path": "07_新框架_v0/fixtures/story_seed/manifest.json",
+      "git_blob": "9557c100975be95676081a83a07c2f5bf631b173",
+      "mode": "100644",
+      "bytes": 3509
+    },
+    {
+      "path": "07_新框架_v0/pyproject.toml",
+      "git_blob": "dd074517bec52c6e52a487bac66c59b302f972e0",
+      "mode": "100644",
+      "bytes": 863
+    },
+    {
+      "path": "07_新框架_v0/src/nw/__init__.py",
+      "git_blob": "1670f4b2f4f9707bcc088bb8e8edeb7d97d80b4c",
+      "mode": "100644",
+      "bytes": 81
+    },
+    {
+      "path": "07_新框架_v0/src/nw/__main__.py",
+      "git_blob": "65e4d01156229b276f23c987ed717d08f3df0e8b",
+      "mode": "100644",
+      "bytes": 110
+    },
+    {
+      "path": "07_新框架_v0/src/nw/acceptance.py",
+      "git_blob": "eb2cf50729b9d621c58d942d66c144bc8c7555a4",
+      "mode": "100644",
+      "bytes": 15779
+    },
+    {
+      "path": "07_新框架_v0/src/nw/call_budget.py",
+      "git_blob": "c1a3543a7944a016329e3bbed131cd53fccdc3be",
+      "mode": "100644",
+      "bytes": 9457
+    },
+    {
+      "path": "07_新框架_v0/src/nw/call_control.py",
+      "git_blob": "f2a4f039bc34debbd2d11eecc04d4ae1d84ac9e7",
+      "mode": "100644",
+      "bytes": 2429
+    },
+    {
+      "path": "07_新框架_v0/src/nw/cards.py",
+      "git_blob": "cc3563273245e56a162fc4de56cbc0dee6fb22a7",
+      "mode": "100644",
+      "bytes": 11923
+    },
+    {
+      "path": "07_新框架_v0/src/nw/chapter_records.py",
+      "git_blob": "cadc53700a25fbce2607e5c49040b25df5bd3c7e",
+      "mode": "100644",
+      "bytes": 16121
+    },
+    {
+      "path": "07_新框架_v0/src/nw/chapter_state.py",
+      "git_blob": "b3dda3dd4b9e3078e12c194396975d4f97c50d85",
+      "mode": "100644",
+      "bytes": 5219
+    },
+    {
+      "path": "07_新框架_v0/src/nw/cli.py",
+      "git_blob": "36a0d930498b234565abb4bdbfd429fd951b5bad",
+      "mode": "100644",
+      "bytes": 14019
+    },
+    {
+      "path": "07_新框架_v0/src/nw/config.py",
+      "git_blob": "2cabcee21480c8237255e8e661b2409a0ab459d1",
+      "mode": "100644",
+      "bytes": 6115
+    },
+    {
+      "path": "07_新框架_v0/src/nw/context/__init__.py",
+      "git_blob": "615ac48ef538b2647c49a0824c212252f82ffaa2",
+      "mode": "100644",
+      "bytes": 34
+    },
+    {
+      "path": "07_新框架_v0/src/nw/context/base.py",
+      "git_blob": "aa614dab9bb79830279a2f834440aa8a4da597a3",
+      "mode": "100644",
+      "bytes": 629
+    },
+    {
+      "path": "07_新框架_v0/src/nw/context/minimal.py",
+      "git_blob": "5c68cf1423e832fd7faa93475ff88b57e92456c8",
+      "mode": "100644",
+      "bytes": 1383
+    },
+    {
+      "path": "07_新框架_v0/src/nw/context/registry.py",
+      "git_blob": "32fa6e65589770fee67dde4c8eb461b23848e51a",
+      "mode": "100644",
+      "bytes": 2030
+    },
+    {
+      "path": "07_新框架_v0/src/nw/context/rules_pack.py",
+      "git_blob": "6ad8e262f471ce3882e8a452316380fccda7d08d",
+      "mode": "100644",
+      "bytes": 1110
+    },
+    {
+      "path": "07_新框架_v0/src/nw/context/story.py",
+      "git_blob": "028d53f5f4f277c9d4720caa5f004cd905758129",
+      "mode": "100644",
+      "bytes": 17132
+    },
+    {
+      "path": "07_新框架_v0/src/nw/experiments/__init__.py",
+      "git_blob": "0fdb0323f0d87de2ee66978824433baabbc069b4",
+      "mode": "100644",
+      "bytes": 31
+    },
+    {
+      "path": "07_新框架_v0/src/nw/experiments/ab.py",
+      "git_blob": "fc66bd7229921ca9f68d2a473d9b4424c475fa3b",
+      "mode": "100644",
+      "bytes": 15998
+    },
+    {
+      "path": "07_新框架_v0/src/nw/flow/__init__.py",
+      "git_blob": "d6be45a6a71857a5e8b2c978450f372f5894c2a9",
+      "mode": "100644",
+      "bytes": 79
+    },
+    {
+      "path": "07_新框架_v0/src/nw/flow/engine.py",
+      "git_blob": "4cf59f1a9d6fbe3df50b54867e45c5fe2debcbfd",
+      "mode": "100644",
+      "bytes": 9451
+    },
+    {
+      "path": "07_新框架_v0/src/nw/flow/nodes.py",
+      "git_blob": "1601b0ce2b63fcd2aee8cef9beea8d5902953547",
+      "mode": "100644",
+      "bytes": 4231
+    },
+    {
+      "path": "07_新框架_v0/src/nw/generation.py",
+      "git_blob": "ebd56f05a73c95a1c7f2e9a1bb4ca11016c15e33",
+      "mode": "100644",
+      "bytes": 11838
+    },
+    {
+      "path": "07_新框架_v0/src/nw/llm/__init__.py",
+      "git_blob": "98314d072bbdfc34e7ce737a778fac6b4d0eb9de",
+      "mode": "100644",
+      "bytes": 40
+    },
+    {
+      "path": "07_新框架_v0/src/nw/llm/base.py",
+      "git_blob": "0bcdbdafed345530ba4f89a495d29c797af179f5",
+      "mode": "100644",
+      "bytes": 410
+    },
+    {
+      "path": "07_新框架_v0/src/nw/llm/fake.py",
+      "git_blob": "a576575195c9332951cd22fcd8b941663289934f",
+      "mode": "100644",
+      "bytes": 732
+    },
+    {
+      "path": "07_新框架_v0/src/nw/llm/ollama.py",
+      "git_blob": "4f3185a2c2e29cda67852be6ee2af194c191d791",
+      "mode": "100644",
+      "bytes": 1515
+    },
+    {
+      "path": "07_新框架_v0/src/nw/llm/openai_compat.py",
+      "git_blob": "b95bb7c7c1a54aec115c2ca9f863d835d95584ae",
+      "mode": "100644",
+      "bytes": 1589
+    },
+    {
+      "path": "07_新框架_v0/src/nw/llm/transport.py",
+      "git_blob": "7c7c422f786f52f876d2b2ec6d5346a5f66a1853",
+      "mode": "100644",
+      "bytes": 1909
+    },
+    {
+      "path": "07_新框架_v0/src/nw/material_cli.py",
+      "git_blob": "1512d13d488fab24f0f74fc51378edaa5c79b1ad",
+      "mode": "100644",
+      "bytes": 9662
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/__init__.py",
+      "git_blob": "ca51df8049cff02fa0a713137566876ac257c55a",
+      "mode": "100644",
+      "bytes": 60
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/adjudication.py",
+      "git_blob": "2611cd94f1981b8acc0dfa6b41b8706875004f45",
+      "mode": "100644",
+      "bytes": 18683
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/author_references.py",
+      "git_blob": "776e52d75fc9c1ba0a062a20344628c2d15afa80",
+      "mode": "100644",
+      "bytes": 3617
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/binding.py",
+      "git_blob": "f01d29baaa8ba16dd986f66867c634555a7a15d5",
+      "mode": "100644",
+      "bytes": 29498
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/binding_assembly.py",
+      "git_blob": "5419b9a5ab20d642107126c245a878525cc6f559",
+      "mode": "100644",
+      "bytes": 3444
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/binding_reviews.py",
+      "git_blob": "bc0abbeed0dcff34f551d7c4d0bbce6788f448f8",
+      "mode": "100644",
+      "bytes": 12229
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/catalog.py",
+      "git_blob": "b9f407bb860cf7f992dba9dbdf68232739f5773e",
+      "mode": "100644",
+      "bytes": 8739
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/dynamic_refs.py",
+      "git_blob": "684357f54965e589310c6ff9e8456f3672cfc7e6",
+      "mode": "100644",
+      "bytes": 5237
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/dynamic_screening.py",
+      "git_blob": "17301f3f98cf654c521385a122dbd00c467db3b4",
+      "mode": "100644",
+      "bytes": 8235
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/endpoint_reviews.py",
+      "git_blob": "880faebea3c799e5f38089c4c837217f025d9f5b",
+      "mode": "100644",
+      "bytes": 117621
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/evidence.py",
+      "git_blob": "e3029668b0529c173f424ebb7cf6a042214b2f77",
+      "mode": "100644",
+      "bytes": 21986
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/fragments.py",
+      "git_blob": "9dbbfe3d1c8c2f898126e53eb2b30098f2b55242",
+      "mode": "100644",
+      "bytes": 9479
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/functional_rebuild.py",
+      "git_blob": "0a9040ab3a26bb0d30e9e71d2397525e4b3069ca",
+      "mode": "100644",
+      "bytes": 8220
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/governance.py",
+      "git_blob": "79b6a9912c0eb58c8835115efb9690b605b2a119",
+      "mode": "100644",
+      "bytes": 12744
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/governance_checks.py",
+      "git_blob": "ea3b8f97ab2c93b88a4a9d1ef367670bb8e0f413",
+      "mode": "100644",
+      "bytes": 26458
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/governance_contracts.py",
+      "git_blob": "ce1683c8dc388681f9d27f1f35085a6c9831aa5b",
+      "mode": "100644",
+      "bytes": 12700
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/governance_runtime.py",
+      "git_blob": "fe7856b7754887bf8392022bb5faec0d0e1411bb",
+      "mode": "100644",
+      "bytes": 13451
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/identity_catalog.py",
+      "git_blob": "bce4970b9bcc618592364d71db86bd0b3ae64f32",
+      "mode": "100644",
+      "bytes": 14186
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/identity_evidence.py",
+      "git_blob": "a4a1c30247d9691972750c87f7e3f761ca2c45af",
+      "mode": "100644",
+      "bytes": 4797
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/layer_audit.py",
+      "git_blob": "9981259dde52e3ea1945955302ad29e1213ad48c",
+      "mode": "100644",
+      "bytes": 7329
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/layer_workflow.py",
+      "git_blob": "571fc31eae81c4d377129468b07f26e334dc2241",
+      "mode": "100644",
+      "bytes": 1918
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/layers.py",
+      "git_blob": "6550d726cc5606de03856a69b1c81e44989fe9e8",
+      "mode": "100644",
+      "bytes": 24600
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/library_adjudication.py",
+      "git_blob": "20c8e53736d9a2bd7dd7bb09a20d9bece949d6e8",
+      "mode": "100644",
+      "bytes": 25998
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/network_adjudication.py",
+      "git_blob": "c5fae888d05d3ca1c34a2cbc4c329206387dab92",
+      "mode": "100644",
+      "bytes": 7495
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_context.py",
+      "git_blob": "e5a374ae6b2eaa99ec6d88531680e734660742d3",
+      "mode": "100644",
+      "bytes": 499
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_contract.py",
+      "git_blob": "836dc274f1d64945e6fc60cd588f4dc7dcee1987",
+      "mode": "100644",
+      "bytes": 22091
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_dependencies.py",
+      "git_blob": "1617c033697b0579ba21627d8aee0b226a5fa0bf",
+      "mode": "100644",
+      "bytes": 1174
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_flow.py",
+      "git_blob": "1fafc84b54ba4c794c83042396e0307b6ac53f09",
+      "mode": "100644",
+      "bytes": 79628
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_lifecycle.py",
+      "git_blob": "ff5e077d1c5d972196faebbbafbf793639835c42",
+      "mode": "100644",
+      "bytes": 3728
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_projection.py",
+      "git_blob": "b01bd2d06196d4895bdd082a72ec35d787829522",
+      "mode": "100644",
+      "bytes": 12590
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_routes.py",
+      "git_blob": "36f28557d55e39f4b233fbf9757cb4db385c94c9",
+      "mode": "100644",
+      "bytes": 15682
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_scene_checks.py",
+      "git_blob": "8c1208cfd88de85ab4beb140a57a5440fbde87d0",
+      "mode": "100644",
+      "bytes": 2866
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/phase_schema.py",
+      "git_blob": "53ebb76767f4ed96ace4d933ad61c057a157dd0c",
+      "mode": "100644",
+      "bytes": 11175
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/placements.py",
+      "git_blob": "d56a6cef465a5848cd949a62edd305e9f3b97ba8",
+      "mode": "100644",
+      "bytes": 7485
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/process_workflow.py",
+      "git_blob": "ace4d513f4f63729a7598a1692e2eeb94af00971",
+      "mode": "100644",
+      "bytes": 7577
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/recall.py",
+      "git_blob": "fff40cd1f15d5131c1f7628040ce733285fff2cf",
+      "mode": "100644",
+      "bytes": 11233
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/retranslations.py",
+      "git_blob": "bcc254ac14eaef4a2adfce2714e106b4e1fab253",
+      "mode": "100644",
+      "bytes": 3440
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/reviews.py",
+      "git_blob": "bb5420de10cbfa8f730811c9215da4c82cefb67d",
+      "mode": "100644",
+      "bytes": 7361
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/route_catalog.py",
+      "git_blob": "c47ff11fc47c1002db2091f68dbcd898d6e5aef6",
+      "mode": "100644",
+      "bytes": 8094
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/routing.py",
+      "git_blob": "dbed5c35dc5935f2407bec190623d223129c81d0",
+      "mode": "100644",
+      "bytes": 15004
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/scoped.py",
+      "git_blob": "f22f65092651735ac1e9c1b466a4a7e11a48a7e9",
+      "mode": "100644",
+      "bytes": 17576
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/semantic_application.py",
+      "git_blob": "786f2d41fc2665f289c827f4b63b4714d2af560e",
+      "mode": "100644",
+      "bytes": 16916
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/semantic_catalog.py",
+      "git_blob": "e24b530b5613ada2547e91f102d81c32d5d4fe17",
+      "mode": "100644",
+      "bytes": 17324
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/semantic_checks.py",
+      "git_blob": "1de9acb4ed93e216bdb3687503b683c26dd5d75d",
+      "mode": "100644",
+      "bytes": 12929
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/semantic_fields.py",
+      "git_blob": "c7b20dbdd9c6b317357362a40ad7109300601368",
+      "mode": "100644",
+      "bytes": 15694
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/semantic_handoff.py",
+      "git_blob": "266e1552b28ddf20788c33ff687612229bb1f695",
+      "mode": "100644",
+      "bytes": 2475
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/semantic_products.py",
+      "git_blob": "fe34807416a1e8fde920e3e1b0c44c1e0e56589c",
+      "mode": "100644",
+      "bytes": 10010
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/source_context.py",
+      "git_blob": "b7a073f35791c5c826e14aa9b18caabdc9b367c8",
+      "mode": "100644",
+      "bytes": 6188
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/source_semantics.py",
+      "git_blob": "4d571bf54b2e6324e4c65fa94fa097b3f9e34a14",
+      "mode": "100644",
+      "bytes": 11633
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/source_set.py",
+      "git_blob": "a1e9350820e18e5b65f444d5ec9cf65bccac08bb",
+      "mode": "100644",
+      "bytes": 4481
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/stage_effects.py",
+      "git_blob": "605fe550027be8de0043d167aa82f0d3cf1ca008",
+      "mode": "100644",
+      "bytes": 6623
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/stage_input.py",
+      "git_blob": "9f5aee0831cf788fd0a8e37527bae4125b74d1e4",
+      "mode": "100644",
+      "bytes": 14700
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/stage_workflow.py",
+      "git_blob": "2d908dbca7d11110890c401b2e254a4716a8ec36",
+      "mode": "100644",
+      "bytes": 13668
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/step_guard.py",
+      "git_blob": "aae4c367ebcc94397f93c126741b4180dc2f6f13",
+      "mode": "100644",
+      "bytes": 52430
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/__init__.py",
+      "git_blob": "193be9d62fc98dd588f665cb15823f13c9d6c744",
+      "mode": "100644",
+      "bytes": 83
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design.py",
+      "git_blob": "19a132675c7baefada2166d3384096256e9e66f5",
+      "mode": "100644",
+      "bytes": 21698
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_anchor_network.py",
+      "git_blob": "71bd45520bee7ddd5ddd5b55aae9c67b5fbdcc75",
+      "mode": "100644",
+      "bytes": 24888
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_anchor_network_2.py",
+      "git_blob": "9b933d61ae5fcfa576d2d96bcf3be25b7ae536c7",
+      "mode": "100644",
+      "bytes": 21800
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_anchor_network_3.py",
+      "git_blob": "29ef04682f37cecbd398d766bc82a430227b5f72",
+      "mode": "100644",
+      "bytes": 13929
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_anchor_network_4.py",
+      "git_blob": "97badcd106a254a3fbadbdcebdf60787262d6772",
+      "mode": "100644",
+      "bytes": 20947
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_costs.py",
+      "git_blob": "7547b86c1286ba9b45a658e40c99f0ee748eb8f7",
+      "mode": "100644",
+      "bytes": 1649
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_crafting.py",
+      "git_blob": "1402b6f06b62aa27e2cda2d4fc7cdc43c969559b",
+      "mode": "100644",
+      "bytes": 2421
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_decisions.py",
+      "git_blob": "553ad9b7b4fc340ad65b43a28325a9b8cc7d294b",
+      "mode": "100644",
+      "bytes": 23000
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_deliberation_anchors.py",
+      "git_blob": "37d0f5c86fad86b5c6fa42d5cabf385fc274d335",
+      "mode": "100644",
+      "bytes": 8598
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_dialogue.py",
+      "git_blob": "a16e78a8c8d0adc744874b1d00abaec4425791ba",
+      "mode": "100644",
+      "bytes": 4887
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_dynamic_network.py",
+      "git_blob": "3a8167019f23f17e00dc2c23a0886dc56ddbe5ef",
+      "mode": "100644",
+      "bytes": 133350
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_dynamic_network_2.py",
+      "git_blob": "c26f99535ef4e8d01590d44604605b97ef8b732e",
+      "mode": "100644",
+      "bytes": 117853
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_dynamic_network_3.py",
+      "git_blob": "6bff63e2d26519684b80edbe4f41117d464f88bc",
+      "mode": "100644",
+      "bytes": 112314
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_dynamic_network_4.py",
+      "git_blob": "4056633cd9d6fee8ac2acd74a179b3707869c654",
+      "mode": "100644",
+      "bytes": 123107
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_dynamic_network_5.py",
+      "git_blob": "98c07e4a1534f4a6582b480493dff8ce30e5b4c7",
+      "mode": "100644",
+      "bytes": 66945
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_ethics.py",
+      "git_blob": "2d36c6cbd11374b37d11042293db7e25d721d37f",
+      "mode": "100644",
+      "bytes": 1795
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_information.py",
+      "git_blob": "e4f38482a5058887107e84b09ce4b22e591444cf",
+      "mode": "100644",
+      "bytes": 2456
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_interaction.py",
+      "git_blob": "0215bbe9cfdecd278ec8442a0a17322b89da8926",
+      "mode": "100644",
+      "bytes": 16277
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_meaning.py",
+      "git_blob": "12ab2fc10d554b628c9b0923323cc7b02347b3ef",
+      "mode": "100644",
+      "bytes": 2738
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_mechanism_adaptations.py",
+      "git_blob": "19832dafbd920f575a4450a13c580f668bf8d3bf",
+      "mode": "100644",
+      "bytes": 3150
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_misalignment.py",
+      "git_blob": "4ff7d2ededb0d889630a5be19bb4a0dca009981d",
+      "mode": "100644",
+      "bytes": 2489
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_plot.py",
+      "git_blob": "856623c2822d5000f43055d70cf436955bd9f94e",
+      "mode": "100644",
+      "bytes": 7894
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_plot_mechanisms.py",
+      "git_blob": "a64181c9c912b91e87c9a143fd161eeefd915cc7",
+      "mode": "100644",
+      "bytes": 2613
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_progression.py",
+      "git_blob": "e8d80c594f5b0f3574ee203d8937a8ce1552cd46",
+      "mode": "100644",
+      "bytes": 5382
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_resources.py",
+      "git_blob": "97b750a7390b97621dd59dc303ca6c3848f2640f",
+      "mode": "100644",
+      "bytes": 5083
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_static_network.py",
+      "git_blob": "a7e036b2315d82e4481edc7d277dda26423ec270",
+      "mode": "100644",
+      "bytes": 68120
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_type_expression_adaptations.py",
+      "git_blob": "11b262758ef806567a412e8151d17eeb16b108fb",
+      "mode": "100644",
+      "bytes": 7213
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/action_design_type_rules.py",
+      "git_blob": "108657f4c6c475171769abb19f01478a54a3a6b8",
+      "mode": "100644",
+      "bytes": 37871
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design.py",
+      "git_blob": "a6cfc7b7062c9a5c3d29b42b03caebedd17fb184",
+      "mode": "100644",
+      "bytes": 1582
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_anchor_network.py",
+      "git_blob": "64938bb3dfb50221f0368a42ba88f5b5490dab40",
+      "mode": "100644",
+      "bytes": 17438
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_anchor_network_2.py",
+      "git_blob": "751bc5d69185d65112ed92b65b2d3883f65cda73",
+      "mode": "100644",
+      "bytes": 18152
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_anchor_network_3.py",
+      "git_blob": "6bbfbde4ddc79ca4564e3cf2cc72470a5e7adebf",
+      "mode": "100644",
+      "bytes": 22134
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_atmosphere.py",
+      "git_blob": "c8e6536fd7d99435e4f40f46fc236d4e11e6cb86",
+      "mode": "100644",
+      "bytes": 2378
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_body_emotion.py",
+      "git_blob": "304ebab489e3cbfd967acbf3d99469fdd510652f",
+      "mode": "100644",
+      "bytes": 12623
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_dynamic_network.py",
+      "git_blob": "a123b99393bb6fd27c694d74f19ea08b2fa131cb",
+      "mode": "100644",
+      "bytes": 21664
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_multi_viewpoint.py",
+      "git_blob": "5b67674fbb51fdf2650740917d9eeb1e3ac0eac6",
+      "mode": "100644",
+      "bytes": 832
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_scene.py",
+      "git_blob": "63f8f2bbed1d52b2554860884993fd84fbf18315",
+      "mode": "100644",
+      "bytes": 3208
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_static_network.py",
+      "git_blob": "c4d46cebb032802165062f809253b64c35fd2dea",
+      "mode": "100644",
+      "bytes": 2696
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_timeline.py",
+      "git_blob": "fa256c09786ca2e05fae1ae2c02494354430cf57",
+      "mode": "100644",
+      "bytes": 701
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/anchor_design_viewpoint.py",
+      "git_blob": "93ea3d85f9b7f3b6646308d4def7cb7d006a228a",
+      "mode": "100644",
+      "bytes": 3653
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/bind_scope_application.py",
+      "git_blob": "78a120e613f2e8ba5930d108a15c422e0daf6230",
+      "mode": "100644",
+      "bytes": 23680
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/bind_scope_dynamic_network.py",
+      "git_blob": "566ff42957474a9dcb82e14785be19903335defe",
+      "mode": "100644",
+      "bytes": 2353
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/bind_scope_selection.py",
+      "git_blob": "c9528fbe46d212ef8b80637397ca2d5307e5a33f",
+      "mode": "100644",
+      "bytes": 25308
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/bind_scope_source_tags.py",
+      "git_blob": "fad0f3bae7e469849c570984a145cec3e9cb1303",
+      "mode": "100644",
+      "bytes": 1319
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/bind_scope_task_mapping.py",
+      "git_blob": "f2cd445e03c4ba762264cd49a8d473b3d30b2312",
+      "mode": "100644",
+      "bytes": 10076
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/bind_scope_templates.py",
+      "git_blob": "99a2473812fb96878cfeae1262aadbf6570bda5f",
+      "mode": "100644",
+      "bytes": 13695
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/bind_scope_type_rules.py",
+      "git_blob": "de20d3ca82a6101ddca15d52b04d10e86c3c0862",
+      "mode": "100644",
+      "bytes": 24227
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/bind_scope_workflow.py",
+      "git_blob": "ddec080f4db74bec8817dc1517daa38cfc15c00e",
+      "mode": "100644",
+      "bytes": 8530
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design.py",
+      "git_blob": "789947e8fb6f5f101b0eb091efd0ba40ae445392",
+      "mode": "100644",
+      "bytes": 20985
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_anchor_network.py",
+      "git_blob": "8044afdc692f1448426c04f8cbd4f4387b5b3172",
+      "mode": "100644",
+      "bytes": 12034
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_cognition.py",
+      "git_blob": "f7f22b97c58a527c31961ffa18e1a0b3aa12bb40",
+      "mode": "100644",
+      "bytes": 10941
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_dynamic_network.py",
+      "git_blob": "6fd37176534700ea733195a169819468d80e9c37",
+      "mode": "100644",
+      "bytes": 107799
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_ethics.py",
+      "git_blob": "15c465b947ad6fc1d1bc245a29fe485776684c37",
+      "mode": "100644",
+      "bytes": 8019
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_fate.py",
+      "git_blob": "2c70948ea42fbdcade28b8e99fd00555cd3350d8",
+      "mode": "100644",
+      "bytes": 2816
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_plot_mechanisms.py",
+      "git_blob": "cd97024e13fa5f6d100fd0c531ddc7e18492b226",
+      "mode": "100644",
+      "bytes": 1539
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_static_network.py",
+      "git_blob": "4d2477e629bbb7a9b0b7cf2447f912af937d3a09",
+      "mode": "100644",
+      "bytes": 14700
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_supporting.py",
+      "git_blob": "af4999f953c8a27ff0623da8443a3c21a55eb4cf",
+      "mode": "100644",
+      "bytes": 16199
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/character_design_type_expression_adaptations.py",
+      "git_blob": "399157b6a6c07fed7ffb2811358f68b77b0c0da8",
+      "mode": "100644",
+      "bytes": 5409
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design.py",
+      "git_blob": "5c70413552a795ad4efd4dd997b6ab42ba78c5d3",
+      "mode": "100644",
+      "bytes": 4857
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_anchor_network.py",
+      "git_blob": "dfc45ce29ea778d6d3b810dbee156e07b9cca0c7",
+      "mode": "100644",
+      "bytes": 1711
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_dynamic_network.py",
+      "git_blob": "48f7edd3d63dc9adfc86ae00dae9caac0b795b29",
+      "mode": "100644",
+      "bytes": 118866
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_plot.py",
+      "git_blob": "f35c811e75038cd0de78e0e765706d6d0e1a39df",
+      "mode": "100644",
+      "bytes": 11134
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_plot_mechanisms.py",
+      "git_blob": "a4f4c0880312a10dfb6d19e89da0677fd7cc33ef",
+      "mode": "100644",
+      "bytes": 1960
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_progression.py",
+      "git_blob": "46c90a8500d6046e2ce5340bdbb578a31a84cf0f",
+      "mode": "100644",
+      "bytes": 2087
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_static_network.py",
+      "git_blob": "646898433612e57f413751b3bc13b080ec2323ba",
+      "mode": "100644",
+      "bytes": 14510
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_supporting.py",
+      "git_blob": "c83e99ac69f16ac4c555c76cf4bfedb2f67dac30",
+      "mode": "100644",
+      "bytes": 1583
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_type_expression_adaptations.py",
+      "git_blob": "ddb34b2ce0d1bdddc027a13bfaec8559b2f29e23",
+      "mode": "100644",
+      "bytes": 3554
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/event_design_type_rules.py",
+      "git_blob": "eb4bfd852a8d78f6b98ef64608dc5aa5a30b045f",
+      "mode": "100644",
+      "bytes": 17215
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design.py",
+      "git_blob": "4a1a5a21d7989fb797b8bd9a960fc8ec07002362",
+      "mode": "100644",
+      "bytes": 26370
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_age_adaptations.py",
+      "git_blob": "2aaca7ce629322c1e699becf3bb1036586306054",
+      "mode": "100644",
+      "bytes": 3717
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_anchor_network.py",
+      "git_blob": "07afbcf43d05e459b169af6203bfbc5c38303999",
+      "mode": "100644",
+      "bytes": 9949
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_anchor_network_2.py",
+      "git_blob": "d03775fc27bd590707613251c5883b53f9522652",
+      "mode": "100644",
+      "bytes": 24925
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_anchor_network_3.py",
+      "git_blob": "4ad055c20a00c58f419aef28869e26a4970e3aba",
+      "mode": "100644",
+      "bytes": 22536
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_anchor_network_4.py",
+      "git_blob": "cf672dba431d77cb031e629358f5e25880f6594b",
+      "mode": "100644",
+      "bytes": 19124
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_anchor_network_5.py",
+      "git_blob": "e400007f68baddb484f8b1363648f0572d0522c7",
+      "mode": "100644",
+      "bytes": 12985
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_application.py",
+      "git_blob": "b57335eaf2f75e97a4f9bd411a6d6c8cc9e22a3c",
+      "mode": "100644",
+      "bytes": 12375
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_atmosphere.py",
+      "git_blob": "c8ff773bfad00988fb922d3d4e424b24533bfaaf",
+      "mode": "100644",
+      "bytes": 7373
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_classification.py",
+      "git_blob": "9c6e35cc391dd695ee2fabfdd7a1fd72e3419cf4",
+      "mode": "100644",
+      "bytes": 4657
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_cognition.py",
+      "git_blob": "322183161f3a7de8db376a094449202f7c97190b",
+      "mode": "100644",
+      "bytes": 8216
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_continuity.py",
+      "git_blob": "d2bfc4932a6e9ce8fe9ca80458ea0c189c8999ab",
+      "mode": "100644",
+      "bytes": 1730
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_costs.py",
+      "git_blob": "9bbb706a8cc8889a739f604870dd263413994aa2",
+      "mode": "100644",
+      "bytes": 1534
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_crafting.py",
+      "git_blob": "b19472febb9bbc8b48920e77223295360aa19347",
+      "mode": "100644",
+      "bytes": 2625
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_deliberation.py",
+      "git_blob": "67a08b3eb95422dc0530cc10d3d291dc1ac9a452",
+      "mode": "100644",
+      "bytes": 2863
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_dialogue.py",
+      "git_blob": "1195b5486bf9b3ef7b7d50f5384ad757179c20fc",
+      "mode": "100644",
+      "bytes": 23708
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_disclosure.py",
+      "git_blob": "5c678cfc0eab46d7598a301a2dd82304976cd10d",
+      "mode": "100644",
+      "bytes": 1032
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_dynamic_network.py",
+      "git_blob": "363e71b04cd1c15116cfc2bcb64d0932ab4a0850",
+      "mode": "100644",
+      "bytes": 81599
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_dynamic_network_2.py",
+      "git_blob": "d7004b31ac51fc1f42e24c5056d36f9dda19852f",
+      "mode": "100644",
+      "bytes": 117192
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_dynamic_network_3.py",
+      "git_blob": "986be7fddb120aae05334d0742663b37c5493c07",
+      "mode": "100644",
+      "bytes": 124042
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_ethics.py",
+      "git_blob": "19fc448be2993de58545a8e8079e8eb165b1e1f3",
+      "mode": "100644",
+      "bytes": 4001
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_identification.py",
+      "git_blob": "0389c80ff829e89a9cefd98bfefb4192cef90058",
+      "mode": "100644",
+      "bytes": 4871
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_interaction.py",
+      "git_blob": "5ffdfcaf259f0e814fa868c2e3628f0bb6413859",
+      "mode": "100644",
+      "bytes": 5541
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_misalignment.py",
+      "git_blob": "49903f833f8a3360d94ff596f6cd052527f62c65",
+      "mode": "100644",
+      "bytes": 1444
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_multi_viewpoint.py",
+      "git_blob": "1acf157231985ca118c301d44a817210e91ca2ae",
+      "mode": "100644",
+      "bytes": 5333
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_narrator.py",
+      "git_blob": "1acc1f30307265704fa5427de6a91b6d74418c85",
+      "mode": "100644",
+      "bytes": 2903
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_plot.py",
+      "git_blob": "246897dcbbfaf8138770f72e7289bce8727f749b",
+      "mode": "100644",
+      "bytes": 16283
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_progression.py",
+      "git_blob": "2e402328b81024e5599f1f8ffec4f2068c2a1583",
+      "mode": "100644",
+      "bytes": 7936
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_reader.py",
+      "git_blob": "8c5d15af2d3b565b999e75e23a1ccd08596ded11",
+      "mode": "100644",
+      "bytes": 4537
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_reader_engagement.py",
+      "git_blob": "8167cb530bc055a8cbb5f357e81f38068441d31f",
+      "mode": "100644",
+      "bytes": 3194
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_resources.py",
+      "git_blob": "14fe6eb8a1238d6520fe1d43c3a659845197bac0",
+      "mode": "100644",
+      "bytes": 4160
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_sensory.py",
+      "git_blob": "60137c1c4b25432282eb3f4b59fad34dde6db2bb",
+      "mode": "100644",
+      "bytes": 17121
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_space.py",
+      "git_blob": "f38a53e916fa3b9807cd4e8214cc0e9c2c162343",
+      "mode": "100644",
+      "bytes": 4478
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_static_network.py",
+      "git_blob": "a58888e0bfc766bd04a031b8e76ed826a63a0d1a",
+      "mode": "100644",
+      "bytes": 42415
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_supporting.py",
+      "git_blob": "b747b4262f9589266a38aec719295ccb6d08bab2",
+      "mode": "100644",
+      "bytes": 5444
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_symbolism.py",
+      "git_blob": "b7770cc9643d4f2c6656b0442bf6729d5c612671",
+      "mode": "100644",
+      "bytes": 2695
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_timeline.py",
+      "git_blob": "a14d37f7d411cea721baab2931edcf655a51c58d",
+      "mode": "100644",
+      "bytes": 4456
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_tone_adaptations.py",
+      "git_blob": "a0751bb44dee9712e38b1272be97f7bd8722a379",
+      "mode": "100644",
+      "bytes": 11244
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_type_choices.py",
+      "git_blob": "9ae0624c5236544ef14d40de3347c1b973d4ec6e",
+      "mode": "100644",
+      "bytes": 6271
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_type_expression_adaptations.py",
+      "git_blob": "bb8f7ded7c7a9cc37a1133986b3646491cf7bf68",
+      "mode": "100644",
+      "bytes": 20178
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_type_rules.py",
+      "git_blob": "2c5a041dc899f34de18de76259104e87d7988250",
+      "mode": "100644",
+      "bytes": 3459
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_type_styles.py",
+      "git_blob": "ec00bb364fca9c6e5f1a725d22cc54d0281d02d3",
+      "mode": "100644",
+      "bytes": 3573
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_type_tones.py",
+      "git_blob": "874f25b1c06a9e8c2ad521300c88539cdba64e6c",
+      "mode": "100644",
+      "bytes": 1815
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_viewpoint.py",
+      "git_blob": "d043c7c04f49a7ed5ce168f4cc91376a3134531b",
+      "mode": "100644",
+      "bytes": 9176
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/expression_design_world.py",
+      "git_blob": "7efe729fe5e1a5521180335fa20108584bda4d6f",
+      "mode": "100644",
+      "bytes": 6569
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design.py",
+      "git_blob": "d0a5a75e89f54729e62d09429fe256a81cf7ad19",
+      "mode": "100644",
+      "bytes": 15186
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_anchor_network.py",
+      "git_blob": "99717b6d17c4ef1c52f3513112d86da6ebfa3544",
+      "mode": "100644",
+      "bytes": 7813
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_chapter_expectations.py",
+      "git_blob": "ff86197b63db4de34083ea3bf69eb3531850cfdf",
+      "mode": "100644",
+      "bytes": 5291
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_chapters.py",
+      "git_blob": "5c9226d86c2a3d411bbb439999225c36958a2b2a",
+      "mode": "100644",
+      "bytes": 25139
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_classification.py",
+      "git_blob": "405f5a7d97d084cac66211f4ade9e26e618e165f",
+      "mode": "100644",
+      "bytes": 4535
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_continuity.py",
+      "git_blob": "fc6451c6d5bc755464a9a6052938bc3e186dcd85",
+      "mode": "100644",
+      "bytes": 3418
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_crafting.py",
+      "git_blob": "52726ca83ee8edfbec2878a32d656a3d06eb88f5",
+      "mode": "100644",
+      "bytes": 5254
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_decisions.py",
+      "git_blob": "ee90c3f16fd75d35de74c5d7d64dd4d5aa4dd6ed",
+      "mode": "100644",
+      "bytes": 26243
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_deliberation.py",
+      "git_blob": "fe836a192788c312434671df4267f70a0fef0666",
+      "mode": "100644",
+      "bytes": 6953
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_disclosure.py",
+      "git_blob": "d1cf6398a628bca16cb52f490d445ceb56a3184e",
+      "mode": "100644",
+      "bytes": 14267
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_dynamic_network.py",
+      "git_blob": "f61bef2c0df0453a0f819bcb9f8a11ec9a65c1cf",
+      "mode": "100644",
+      "bytes": 139216
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_dynamic_network_2.py",
+      "git_blob": "1f7722183b85b6f29b41d108343b620113ca33a7",
+      "mode": "100644",
+      "bytes": 84613
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_dynamic_network_3.py",
+      "git_blob": "4cd8278cb345ad1109cfaf9d6ac729873ca8c26b",
+      "mode": "100644",
+      "bytes": 70003
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_dynamic_network_4.py",
+      "git_blob": "24291e05c476f0b3ddf26708fd3001a0d91f6559",
+      "mode": "100644",
+      "bytes": 128218
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_dynamic_network_5.py",
+      "git_blob": "3c8c938b0d6c2a38519057c770a0e69468e07bc2",
+      "mode": "100644",
+      "bytes": 132094
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_dynamic_network_6.py",
+      "git_blob": "403ed2be58446a085efb5af6a37bf9aef0baea73",
+      "mode": "100644",
+      "bytes": 108146
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_dynamic_network_7.py",
+      "git_blob": "5174b6dd99358247ab1874b199d8c7ab4d97a6f3",
+      "mode": "100644",
+      "bytes": 63357
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_ethics.py",
+      "git_blob": "b395be9c91630f281ed940352dff701d19bde9ad",
+      "mode": "100644",
+      "bytes": 8169
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_fate.py",
+      "git_blob": "17528a0a573b37fda4acde203673f44b7258f293",
+      "mode": "100644",
+      "bytes": 4304
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_foreshadowing.py",
+      "git_blob": "bc0daf774f8bfcd93196a9033eb0d462d3a10970",
+      "mode": "100644",
+      "bytes": 24939
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_identification.py",
+      "git_blob": "d5bbd52949c7a12dd66686237b805fbf23fda135",
+      "mode": "100644",
+      "bytes": 3687
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_meaning.py",
+      "git_blob": "d8ac0a7d3324433a37255e56edad07a7bdb9ba6f",
+      "mode": "100644",
+      "bytes": 4172
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_memory.py",
+      "git_blob": "58b0018c46597a69b69617b9fa7ba3c18f118921",
+      "mode": "100644",
+      "bytes": 1431
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_misalignment.py",
+      "git_blob": "30f21cddc5bf707957b2f1c445b6468e94950ed0",
+      "mode": "100644",
+      "bytes": 3876
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_multi_viewpoint.py",
+      "git_blob": "79f345ecd107dbca1501cda5385564edb9f8243f",
+      "mode": "100644",
+      "bytes": 13286
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_narrative_structures.py",
+      "git_blob": "00b6efb0466bbf2f1fef9ee4061c534c69397799",
+      "mode": "100644",
+      "bytes": 3160
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_narrator.py",
+      "git_blob": "1430fc4d8cd37d960b12814bf3d00e736293beca",
+      "mode": "100644",
+      "bytes": 814
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_opening_ending.py",
+      "git_blob": "e1792bdd6f4565f3ad3897f66f90cb1f6db6a8f0",
+      "mode": "100644",
+      "bytes": 3677
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_path_templates.py",
+      "git_blob": "c075b124c8990327e69f4002ba5d7babeb050ed1",
+      "mode": "100644",
+      "bytes": 7702
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_plot_mechanisms.py",
+      "git_blob": "6ffae1d1b59d855f9658b741e40a84e41fa80c65",
+      "mode": "100644",
+      "bytes": 4706
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_progression.py",
+      "git_blob": "9602abb60bf0c754d239e256ea514b0810195350",
+      "mode": "100644",
+      "bytes": 13104
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_promise_workflow.py",
+      "git_blob": "82c94a04045e814e7a5dddad6764bf1b399436e7",
+      "mode": "100644",
+      "bytes": 2143
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_reader.py",
+      "git_blob": "37049c35aed6f16fb413e77fc72bbf836a4f6f37",
+      "mode": "100644",
+      "bytes": 20225
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_reader_engagement.py",
+      "git_blob": "806c451042a0e4931b375698af7724ea90742a10",
+      "mode": "100644",
+      "bytes": 15029
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_resources.py",
+      "git_blob": "5ec3966720f4d169b8fdf51e05a917517ee18d88",
+      "mode": "100644",
+      "bytes": 6569
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_social_material.py",
+      "git_blob": "adf48dee57422d8cbf9ddfb9b5942c0d96187c36",
+      "mode": "100644",
+      "bytes": 11566
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_static_network.py",
+      "git_blob": "883084efcadac7e1374e51f99035d05c7a1f8c4f",
+      "mode": "100644",
+      "bytes": 93142
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_structure.py",
+      "git_blob": "a9b26793b7eecd5925ab0afce6c0c9e388d1ae76",
+      "mode": "100644",
+      "bytes": 17194
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_supporting.py",
+      "git_blob": "b46bf768d0d4753b2cb1ceeed572f0057921b4d2",
+      "mode": "100644",
+      "bytes": 16279
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_symbolism.py",
+      "git_blob": "2cf1f7322e7b90e6f9ea310e384d688fe6516280",
+      "mode": "100644",
+      "bytes": 3998
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_time.py",
+      "git_blob": "99adabfd67e5dd4867af8005f9ccc2af4a27159a",
+      "mode": "100644",
+      "bytes": 5729
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_type_expectations.py",
+      "git_blob": "a1481a070d50431e5acaeaf1d0f1ec5f95b48976",
+      "mode": "100644",
+      "bytes": 4567
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_type_expression_adaptations.py",
+      "git_blob": "8ba39382b2bdba278cc5f0fcbf9144246b69f012",
+      "mode": "100644",
+      "bytes": 3904
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_type_materials.py",
+      "git_blob": "b0e0c3541388468e9d97c89b3abc9fcc61fe730f",
+      "mode": "100644",
+      "bytes": 31368
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_type_rules.py",
+      "git_blob": "639a44389b4874d541d0585992e574780864b6aa",
+      "mode": "100644",
+      "bytes": 13588
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/plot_design_world.py",
+      "git_blob": "346f10212228fb401e2387b26694239c131caa2a",
+      "mode": "100644",
+      "bytes": 25057
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review.py",
+      "git_blob": "7ea3d72be8c6c4ff33c9e1127a1badaea046107f",
+      "mode": "100644",
+      "bytes": 7025
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_action_space_anchors.py",
+      "git_blob": "1446be6debae4461ddbe48e138fbcbbcfa67a7b0",
+      "mode": "100644",
+      "bytes": 89249
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_body_state_anchors.py",
+      "git_blob": "621db527f83afca744a3de089ac9be08ac5c7a3c",
+      "mode": "100644",
+      "bytes": 89023
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_character_checks.py",
+      "git_blob": "d3c6f067150d29c201d29222836d5b43a6d932ac",
+      "mode": "100644",
+      "bytes": 14210
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_cognition_decision_anchors.py",
+      "git_blob": "6bea47b91c5f30d4b6d554069b30e42f644b4501",
+      "mode": "100644",
+      "bytes": 144439
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_deliberation.py",
+      "git_blob": "eb332da7662e475fe726a44bb08dd374a75b258e",
+      "mode": "100644",
+      "bytes": 13462
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_dynamic_network.py",
+      "git_blob": "47757f556039ddf3adf11f3271e1108e8be42c63",
+      "mode": "100644",
+      "bytes": 3874
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_expression.py",
+      "git_blob": "083d0e60864d7a23f9863bb48a8bd8ba357c9798",
+      "mode": "100644",
+      "bytes": 24570
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_language_checks.py",
+      "git_blob": "e8ec60009cb29b75f249bd006750d17bd4975b5d",
+      "mode": "100644",
+      "bytes": 13619
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_material_anchors.py",
+      "git_blob": "1c9bd713a5062a2bbdd88a864834f4a9529aea66",
+      "mode": "100644",
+      "bytes": 50429
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_meaning.py",
+      "git_blob": "3a0013ea48ae9deda5fed559376d1d052c2af3e4",
+      "mode": "100644",
+      "bytes": 10614
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_memory.py",
+      "git_blob": "044464107836943a3534a5293d1c94288fc17b52",
+      "mode": "100644",
+      "bytes": 13721
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_object_actions.py",
+      "git_blob": "1d27bd09cf790a001e29517a1c37153223c99c51",
+      "mode": "100644",
+      "bytes": 14798
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_perception_anchors.py",
+      "git_blob": "23b414b3713920c96a9f1eabb2327b10bad36d5f",
+      "mode": "100644",
+      "bytes": 58057
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scene_checks.py",
+      "git_blob": "87c82ad90047d3adcb4667d91be62cee322126cf",
+      "mode": "100644",
+      "bytes": 23876
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scene_space.py",
+      "git_blob": "b993c9f069997fada8783a6cd45743152a7f080a",
+      "mode": "100644",
+      "bytes": 8613
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope.py",
+      "git_blob": "12a6ef4462855b918e1a61d20a8f6283d1f8c2a9",
+      "mode": "100644",
+      "bytes": 5526
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_application.py",
+      "git_blob": "88a2cf6d77b958123b2b2ecdb555f98ae4e8b29b",
+      "mode": "100644",
+      "bytes": 8219
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_book_quality.py",
+      "git_blob": "552cfa16943a191aaadee7cef4da780ba2fa8770",
+      "mode": "100644",
+      "bytes": 8547
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_continuity_checks.py",
+      "git_blob": "1a633d0aa04fa30cb2d2439356d552f2a4e5cffe",
+      "mode": "100644",
+      "bytes": 11528
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_costs.py",
+      "git_blob": "d4a082603739e0da21ab49333b0247e0718f219b",
+      "mode": "100644",
+      "bytes": 2125
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_dynamic_network.py",
+      "git_blob": "cf102c6cab531b9f6a7ba90216532ea87d591f59",
+      "mode": "100644",
+      "bytes": 22288
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_narrative.py",
+      "git_blob": "9c493119c70296ccb0dbd8dbbf5fbd133ca8a0bc",
+      "mode": "100644",
+      "bytes": 3686
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_progression.py",
+      "git_blob": "1b8c0bcfc3754042698440974f07035fa3fe5ab4",
+      "mode": "100644",
+      "bytes": 14911
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_reader.py",
+      "git_blob": "2215e9cc085cadcdd3404b7e954c56e092109aa3",
+      "mode": "100644",
+      "bytes": 4306
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_reader_engagement.py",
+      "git_blob": "6bf3aea6423f8ba4c5e8845cde3c32d723677175",
+      "mode": "100644",
+      "bytes": 19436
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_resources.py",
+      "git_blob": "ecc6975b64678c1c15f4a1598c5812b2a40ee442",
+      "mode": "100644",
+      "bytes": 3327
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_rules.py",
+      "git_blob": "9d1c2cfbe7f5426fa2396b8e8ed9effc0524d1cc",
+      "mode": "100644",
+      "bytes": 12455
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_static_network.py",
+      "git_blob": "317991e2355f1c696afea1af5a50b6c027cb50d2",
+      "mode": "100644",
+      "bytes": 4150
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_structure.py",
+      "git_blob": "d1fcc10507fa589640c659c7b8ab600a92808dca",
+      "mode": "100644",
+      "bytes": 15629
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_scope_viewpoint.py",
+      "git_blob": "958034b4e6347539a816d084392c95de88329230",
+      "mode": "100644",
+      "bytes": 5491
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_social_material.py",
+      "git_blob": "7f33db3946cc1ba62019755f5de77b4f0888c051",
+      "mode": "100644",
+      "bytes": 17905
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_static_network.py",
+      "git_blob": "1f5ccf640632ba678276cd8d60ecb5ef3415cc95",
+      "mode": "100644",
+      "bytes": 974
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_type_originality.py",
+      "git_blob": "00499d3952431316c3326a085045553bb4c1de9f",
+      "mode": "100644",
+      "bytes": 2818
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/review_workflow.py",
+      "git_blob": "77ec378776dfec1e0ee675a8166f0847a15d7895",
+      "mode": "100644",
+      "bytes": 7708
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design.py",
+      "git_blob": "efac6b6ff9229a8a0007d48df538f5b6c80a99f9",
+      "mode": "100644",
+      "bytes": 11588
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_anchor_network.py",
+      "git_blob": "f1b069ce9dea2cad12ead90a50b18dc6a575e441",
+      "mode": "100644",
+      "bytes": 20723
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_anchor_network_2.py",
+      "git_blob": "1a59c53ea6d754e1472987b4129b9de7c34bb71d",
+      "mode": "100644",
+      "bytes": 14285
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_classification.py",
+      "git_blob": "51cdf37c2fa1bfd4cb7abdbb80c5828d5cae7007",
+      "mode": "100644",
+      "bytes": 814
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_disclosure.py",
+      "git_blob": "d34ce2713baf96176fd49107a43eaa1fec83186d",
+      "mode": "100644",
+      "bytes": 10008
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_dynamic_network.py",
+      "git_blob": "e61d3db128f00fb5cc3a06a78183983846b144a0",
+      "mode": "100644",
+      "bytes": 134463
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_memory.py",
+      "git_blob": "9c0a783c4c9e31088b480ab8a8d327dfe229a4cc",
+      "mode": "100644",
+      "bytes": 1398
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_multi_viewpoint.py",
+      "git_blob": "1df1bfb8ccb262bc91e4a9b0c18e4d919a76f392",
+      "mode": "100644",
+      "bytes": 16183
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_narrator.py",
+      "git_blob": "0ebd55661c9f64f59304c56ba1c02f8e71b56766",
+      "mode": "100644",
+      "bytes": 2815
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_opening_timeline.py",
+      "git_blob": "3075c15226011dea446168c08506f05299d31f38",
+      "mode": "100644",
+      "bytes": 3764
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_pacing.py",
+      "git_blob": "9067ea3612497452ea42e60e5eb8f6e1419abf21",
+      "mode": "100644",
+      "bytes": 5136
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_planner.py",
+      "git_blob": "3b5ecd275b9425c201d4b3106815c92aacc41ebe",
+      "mode": "100644",
+      "bytes": 959
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_progression.py",
+      "git_blob": "4dd3ec72e2c64d18a7d51b399946316ce3e2e384",
+      "mode": "100644",
+      "bytes": 6543
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_space.py",
+      "git_blob": "eaa85e81266f9e060395ca4858c59232dc1402ce",
+      "mode": "100644",
+      "bytes": 8305
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_static_network.py",
+      "git_blob": "b12a2d31aa5925403de1259817227f9b3f242a95",
+      "mode": "100644",
+      "bytes": 17558
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_structure.py",
+      "git_blob": "d455256c39da9621d76fb1dd9233f74f46c9bd4a",
+      "mode": "100644",
+      "bytes": 23529
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_structure_adaptations.py",
+      "git_blob": "d14040977d2151b077cb3e441349ab3df2dc694f",
+      "mode": "100644",
+      "bytes": 2967
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_supporting.py",
+      "git_blob": "e943f81711de2104920e7b6fc406f21f0a40981f",
+      "mode": "100644",
+      "bytes": 5845
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_type_expression_adaptations.py",
+      "git_blob": "596d262c059b32bb9cbd81ad8a06aa9493c8c598",
+      "mode": "100644",
+      "bytes": 6027
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_type_rules.py",
+      "git_blob": "98fc367ee13297911b958034f0d30d8394b43787",
+      "mode": "100644",
+      "bytes": 20170
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_viewpoint.py",
+      "git_blob": "ececa913d518c6758b667d140b571819d7ec1a00",
+      "mode": "100644",
+      "bytes": 14284
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/scene_design_workflow_sources.py",
+      "git_blob": "de68843fb2f218f93b71263fe752119240e44fd2",
+      "mode": "100644",
+      "bytes": 6896
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_extract.py",
+      "git_blob": "4bbb4136255e232dd8b3b48449cf6b227496973a",
+      "mode": "100644",
+      "bytes": 8477
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation.py",
+      "git_blob": "a82933cd7c8c631f33ff469ff67caa083c38c194",
+      "mode": "100644",
+      "bytes": 1387
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation_anchor_network.py",
+      "git_blob": "1627235f10bf9af28a2708620e577428fbb58f3d",
+      "mode": "100644",
+      "bytes": 683
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation_crafting.py",
+      "git_blob": "7cf7ff314b5b1132d555f2afccbd8af95cf8d779",
+      "mode": "100644",
+      "bytes": 49861
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation_deliberation.py",
+      "git_blob": "a8fb7cadeeef6e8fd4137387e2b4938d8bb9eaca",
+      "mode": "100644",
+      "bytes": 24321
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation_dynamic_network.py",
+      "git_blob": "8b2a25e33e390f6ed54c1d9745d04947186ee1d9",
+      "mode": "100644",
+      "bytes": 88299
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation_meaning.py",
+      "git_blob": "210701e6dbf791f1b40cf1dc21d8136af923d799",
+      "mode": "100644",
+      "bytes": 22655
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation_memory.py",
+      "git_blob": "5b377c3cb4f05daab5d73c649d494a35a6849db9",
+      "mode": "100644",
+      "bytes": 38785
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation_social_material.py",
+      "git_blob": "e5db0ec3a8a2eab75b6a06dc9239dd881ec380bb",
+      "mode": "100644",
+      "bytes": 64832
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_propagation_type_rules.py",
+      "git_blob": "e6864380c53c9e020284e60a9ba30d65927f6fcf",
+      "mode": "100644",
+      "bytes": 38497
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition.py",
+      "git_blob": "496a2d890e0280e5aba9e718b6d2c1166b98c277",
+      "mode": "100644",
+      "bytes": 21165
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_anchor_network.py",
+      "git_blob": "2cd3e783a88a840d5245d5e211e15ce09a4f5d34",
+      "mode": "100644",
+      "bytes": 19580
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_anchor_network_2.py",
+      "git_blob": "e9fd47ddc3f899554d4ab45fb214cd64c2143303",
+      "mode": "100644",
+      "bytes": 15260
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_anchor_network_3.py",
+      "git_blob": "202ea7f8e2e8e3de46499e4291c7f644d7cdccdc",
+      "mode": "100644",
+      "bytes": 19413
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_anchor_network_4.py",
+      "git_blob": "a77138795162291702e6d60c0ca54c6fcd4b7d1f",
+      "mode": "100644",
+      "bytes": 14264
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_anchor_network_5.py",
+      "git_blob": "61eb817948b82c1368f5d2ea5c1de41e49f2d47a",
+      "mode": "100644",
+      "bytes": 21556
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_cognition.py",
+      "git_blob": "5aa2f30d78442ed4bd6847bcefcab05cfaae74df",
+      "mode": "100644",
+      "bytes": 20827
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_continuity.py",
+      "git_blob": "262cfaa0cce4b3d002872453b550dfca7d26a2e2",
+      "mode": "100644",
+      "bytes": 1333
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_costs.py",
+      "git_blob": "0e0002964a018fce340b2fc41bb03146bbc0a59c",
+      "mode": "100644",
+      "bytes": 3592
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_crafting.py",
+      "git_blob": "607cdabc3ff3f7a6b51858bf48b27c6e39c43fb3",
+      "mode": "100644",
+      "bytes": 10837
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_deliberation.py",
+      "git_blob": "537201c4db4b37b3ea2ae381f5511ec5fe784bc6",
+      "mode": "100644",
+      "bytes": 3085
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_dynamic_network.py",
+      "git_blob": "ec4b67818ca665fd7edd669925c0e2bd3e5ad987",
+      "mode": "100644",
+      "bytes": 116229
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_dynamic_network_2.py",
+      "git_blob": "04f9101a7e798ed11f0e9609fd89e9973d5c6751",
+      "mode": "100644",
+      "bytes": 84247
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_dynamic_network_3.py",
+      "git_blob": "025eab258a5e1f60f021f5e8ecea636270340ef8",
+      "mode": "100644",
+      "bytes": 104091
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_ethics.py",
+      "git_blob": "1b9f7d26b16168551b90d6cebfa1ea9f6880dbde",
+      "mode": "100644",
+      "bytes": 886
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_interaction.py",
+      "git_blob": "127fa63b6dae426a5a2a9705c3b0cb07f3ff9f7a",
+      "mode": "100644",
+      "bytes": 17697
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_meaning.py",
+      "git_blob": "b1adb3e983b4e2132868054d4c90354cdf5fe936",
+      "mode": "100644",
+      "bytes": 12767
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_memory.py",
+      "git_blob": "8ad42627dd425b9e427188a6c2c31e14639c0d3f",
+      "mode": "100644",
+      "bytes": 7166
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_plot.py",
+      "git_blob": "81776322f873858b461e6a7c0e58c0aa1cb87d7f",
+      "mode": "100644",
+      "bytes": 2716
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_progression.py",
+      "git_blob": "c59e62dd7c5983b4f3c58f894553055cb5860a86",
+      "mode": "100644",
+      "bytes": 1563
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_resources.py",
+      "git_blob": "7ddd67e655baa12446495bfcd550ff0503fa0d4e",
+      "mode": "100644",
+      "bytes": 6490
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_static_network.py",
+      "git_blob": "8a76fab22ed7120569e29c19c12eac6152fc24d7",
+      "mode": "100644",
+      "bytes": 36616
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_supporting.py",
+      "git_blob": "56008dd67e51e65cfd68c5ab3e51416e5839fa51",
+      "mode": "100644",
+      "bytes": 3923
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_type_rules.py",
+      "git_blob": "9a608cc63936f5a316cd4fb60deb444091608ef9",
+      "mode": "100644",
+      "bytes": 48024
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/state_transition_world.py",
+      "git_blob": "927be4e515134994f3233cec8a26d04e6732908a",
+      "mode": "100644",
+      "bytes": 2464
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations.py",
+      "git_blob": "c9983ed8d9441b49423ae471ac9eff97fd62bf50",
+      "mode": "100644",
+      "bytes": 8184
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_action_methods.py",
+      "git_blob": "fefe7f14c685d8caaacd3de48de0f4a3716822ab",
+      "mode": "100644",
+      "bytes": 21633
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_anchor_network.py",
+      "git_blob": "49aa0ffb8945ac33bdec08b99f2fbb84b6a719f1",
+      "mode": "100644",
+      "bytes": 8052
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_crafting.py",
+      "git_blob": "512321e6762ad3ead2377c1c0ad30700ee767cce",
+      "mode": "100644",
+      "bytes": 5103
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_deliberation.py",
+      "git_blob": "c83acf36eaf7cec196a3fbfc0186a918df755a33",
+      "mode": "100644",
+      "bytes": 6815
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_dynamic_network.py",
+      "git_blob": "d6e3ba52cf0fa061004175640947058b2ad1da04",
+      "mode": "100644",
+      "bytes": 55943
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_meaning.py",
+      "git_blob": "5966a04f5462e8cdd50b3b767c2b8dfb1ab8f8af",
+      "mode": "100644",
+      "bytes": 3990
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_misalignment.py",
+      "git_blob": "b0f3a84a2b3cea20e7f0df54dd406380c4ffba9e",
+      "mode": "100644",
+      "bytes": 974
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_social_material.py",
+      "git_blob": "cc415d0e7d220c894235bf2d71bc20bf5a22660c",
+      "mode": "100644",
+      "bytes": 11583
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_space.py",
+      "git_blob": "3ac2c45be3572bc7c661083c923727f231c40b83",
+      "mode": "100644",
+      "bytes": 5561
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_static_network.py",
+      "git_blob": "5f032ec836ea0d27b6e3a8b9319c5f9362350278",
+      "mode": "100644",
+      "bytes": 29935
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_supporting.py",
+      "git_blob": "d7b10fe07d1cf4012e1f53346b879d7d77df705c",
+      "mode": "100644",
+      "bytes": 5054
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/static_relations_time.py",
+      "git_blob": "9301fad336507949890eef8f1d9022ce92a4e3fb",
+      "mode": "100644",
+      "bytes": 5682
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_age_boundaries.py",
+      "git_blob": "24ef94ca4d9471830cdd6f0ab91f085d7626de6d",
+      "mode": "100644",
+      "bytes": 2005
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_audience_tags.py",
+      "git_blob": "8d0af5c6b60c26c3cd8f77436178f8939a0f0c12",
+      "mode": "100644",
+      "bytes": 1545
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_classification.py",
+      "git_blob": "0466f64e8f86a4fc2fedc0102b3476a0db7495f6",
+      "mode": "100644",
+      "bytes": 19186
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_combination_review.py",
+      "git_blob": "5af927d418fd4dc21921f2118f2a0e5b5b8d3305",
+      "mode": "100644",
+      "bytes": 20898
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_dynamic_network.py",
+      "git_blob": "57d2e3159a138f74ae5d85e4a2106c330abe7c86",
+      "mode": "100644",
+      "bytes": 29719
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_expectations.py",
+      "git_blob": "a09ae3e3ca4d448cab691ab926dd097c089ed4de",
+      "mode": "100644",
+      "bytes": 7212
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_genre_profiles.py",
+      "git_blob": "26005c4f62e3d20fa352fd73b4d8b2d4c8870fa8",
+      "mode": "100644",
+      "bytes": 24599
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_history_penalty.py",
+      "git_blob": "e7b0c6f3bfdbe8cc23c632d606544ded1159788a",
+      "mode": "100644",
+      "bytes": 3718
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_hybrid_genres.py",
+      "git_blob": "c6e1369377adf98022385b2879a10df3a545d815",
+      "mode": "100644",
+      "bytes": 12289
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_market_tags.py",
+      "git_blob": "449d8d77ef3e982ef64f7e5e513969aa7b1507af",
+      "mode": "100644",
+      "bytes": 1571
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_plot_mechanisms.py",
+      "git_blob": "3f52e550b6ba7ebf8a8edeb4c328a73a333d0b90",
+      "mode": "100644",
+      "bytes": 1612
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_reader_engagement.py",
+      "git_blob": "7336fc92e9e821a3d41c33ffcf4f244c7380483b",
+      "mode": "100644",
+      "bytes": 3393
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_static_network.py",
+      "git_blob": "c36982abbb4bff92f24a6f505ff720991767155d",
+      "mode": "100644",
+      "bytes": 4811
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations.py",
+      "git_blob": "cde385ab06e04531619baddda837082da9930d95",
+      "mode": "100644",
+      "bytes": 96880
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_02.py",
+      "git_blob": "5274c228cff49ab447460166f21d82cbf777d0c1",
+      "mode": "100644",
+      "bytes": 104549
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_03.py",
+      "git_blob": "f5feb7fdcab8d1f3ae9b51c149bbcf3539100792",
+      "mode": "100644",
+      "bytes": 97756
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_04.py",
+      "git_blob": "a7e94c4a0b2b7790eb0e9fb0d54c0f021ae92b13",
+      "mode": "100644",
+      "bytes": 104311
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_05.py",
+      "git_blob": "ddab8f9d34751701d4efd3fa3817ca7c58a75f49",
+      "mode": "100644",
+      "bytes": 106218
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_06.py",
+      "git_blob": "9f2ed764b3a8653e44a6ebeec46a599669546d63",
+      "mode": "100644",
+      "bytes": 105233
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_07.py",
+      "git_blob": "ceee09846efa16382e19422b0da2b807afc18efe",
+      "mode": "100644",
+      "bytes": 157827
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_08.py",
+      "git_blob": "4004322e9b7219f5374de1467d705151a21d578d",
+      "mode": "100644",
+      "bytes": 165546
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_09.py",
+      "git_blob": "adc300d2b8470dcf54d21fdf54b3ad6a7b834be4",
+      "mode": "100644",
+      "bytes": 158823
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_10.py",
+      "git_blob": "667b3a58cef26358fe9c796085f081183842de26",
+      "mode": "100644",
+      "bytes": 60486
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_11.py",
+      "git_blob": "9055dd31dda8de81b0e37494d70a302e64a7791b",
+      "mode": "100644",
+      "bytes": 104194
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_12.py",
+      "git_blob": "1178ec3cc644392fed6e9a8d53e3ea932a75b166",
+      "mode": "100644",
+      "bytes": 105814
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_13.py",
+      "git_blob": "4926195d747190dd2a215ad10100554b169bee46",
+      "mode": "100644",
+      "bytes": 96819
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_14.py",
+      "git_blob": "e523a41dd40eb3494aa5aa65c3c0ed553ae2653d",
+      "mode": "100644",
+      "bytes": 79658
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_15.py",
+      "git_blob": "f86ab8879d149b23d3b1dc59d623ef05d24ed491",
+      "mode": "100644",
+      "bytes": 104106
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_16.py",
+      "git_blob": "9e876ccc96040f018aa462f382a4726930d52e50",
+      "mode": "100644",
+      "bytes": 105574
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_17.py",
+      "git_blob": "546c8aed930023447fdf3f0703cbac9117f39388",
+      "mode": "100644",
+      "bytes": 97104
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_18.py",
+      "git_blob": "eeef4863b4fa788582bcd97ae50aaebf07e9b535",
+      "mode": "100644",
+      "bytes": 79610
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_19.py",
+      "git_blob": "5471523d77ea42fb5773f9d2b3790f93df1580cf",
+      "mode": "100644",
+      "bytes": 103077
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_20.py",
+      "git_blob": "5d059ecc9cc1fee18178f7d464336d59dd453cd8",
+      "mode": "100644",
+      "bytes": 105476
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_21.py",
+      "git_blob": "316f0a68001a7f4b01d282a97bd1eac9e58d4ea3",
+      "mode": "100644",
+      "bytes": 96991
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_22.py",
+      "git_blob": "0eeeb6b066ed5a4c77264c5d2ebd1c8b67d00f8e",
+      "mode": "100644",
+      "bytes": 79566
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_23.py",
+      "git_blob": "57e9dfa84918ff94b4c5999ae4cd18c66bb1e10c",
+      "mode": "100644",
+      "bytes": 103230
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_24.py",
+      "git_blob": "e18ce20cd30ead83dce11e4ffeb15836e3382ed7",
+      "mode": "100644",
+      "bytes": 103763
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_25.py",
+      "git_blob": "dc4f2537b2892ec557980c060066b39a1cd96dea",
+      "mode": "100644",
+      "bytes": 96625
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_26.py",
+      "git_blob": "55eca8f15f9a5f443206f97d523f169037327bcb",
+      "mode": "100644",
+      "bytes": 79327
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_27.py",
+      "git_blob": "88d02b808d419fd13bd0c53b469fadb68339d471",
+      "mode": "100644",
+      "bytes": 104049
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_28.py",
+      "git_blob": "c45c7e60877faba633c9b4f0ce0bcc36fa39d505",
+      "mode": "100644",
+      "bytes": 105771
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_29.py",
+      "git_blob": "897b06cee7fb5c261c15ea441d9bf094dc47694d",
+      "mode": "100644",
+      "bytes": 96628
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_30.py",
+      "git_blob": "9060dc500ceb27c883ae6a65a3def59c8c32f1b7",
+      "mode": "100644",
+      "bytes": 79248
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_31.py",
+      "git_blob": "6c8d26af37e5753eb9ae8f7ac570547149f8ac75",
+      "mode": "100644",
+      "bytes": 105248
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_32.py",
+      "git_blob": "9b93d87a0459d0beaebfcdb4ff4e68ec2d16f429",
+      "mode": "100644",
+      "bytes": 106918
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_33.py",
+      "git_blob": "0493270b2b5c21df9b5bb2a5350d4ea3a15fe37f",
+      "mode": "100644",
+      "bytes": 90113
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_34.py",
+      "git_blob": "69a68df4d2abca1ec4e56b605f4aa378ba050be4",
+      "mode": "100644",
+      "bytes": 89729
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_35.py",
+      "git_blob": "709db4743caf80b1d6d05aea153e3300caf4a3aa",
+      "mode": "100644",
+      "bytes": 105957
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_36.py",
+      "git_blob": "e34aeff7bb3b07dad2676fdf7ade93543f76c144",
+      "mode": "100644",
+      "bytes": 106953
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_37.py",
+      "git_blob": "e8caa5369de1fd672dbaef502a0cc2f09ee40e0a",
+      "mode": "100644",
+      "bytes": 89419
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_38.py",
+      "git_blob": "7ce8162a038285f1208d1135ab103406ab5f5a92",
+      "mode": "100644",
+      "bytes": 89805
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_39.py",
+      "git_blob": "fecd283ca4b3d841a760d248894de154fdd23276",
+      "mode": "100644",
+      "bytes": 104907
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_40.py",
+      "git_blob": "4c93f9c8b8b6a7d912e0549c9a7f08a79994e5eb",
+      "mode": "100644",
+      "bytes": 105451
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_41.py",
+      "git_blob": "5d49e626482c25da288c92b1c650291197c97584",
+      "mode": "100644",
+      "bytes": 88830
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_42.py",
+      "git_blob": "1e21bb0429cd7fd8e60ed8075a13d5ff6b02eab3",
+      "mode": "100644",
+      "bytes": 88950
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_43.py",
+      "git_blob": "9d655fb232db2488d1e4c0460ebdce2f5297f89b",
+      "mode": "100644",
+      "bytes": 105635
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_44.py",
+      "git_blob": "b400a983a846ee87ef3f32e498ef54276137cbb0",
+      "mode": "100644",
+      "bytes": 108895
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_45.py",
+      "git_blob": "c7aa69d37239ee61f384c07eef64562e373e0ea1",
+      "mode": "100644",
+      "bytes": 89455
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_46.py",
+      "git_blob": "ca3bebaebd9bd1a495b17d3bbfa5d43a2cb75eeb",
+      "mode": "100644",
+      "bytes": 89646
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_47.py",
+      "git_blob": "6c9866dad9c73d7125c841c4aad788aa0fdae98b",
+      "mode": "100644",
+      "bytes": 104979
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_48.py",
+      "git_blob": "39aa7d3362e53c7149776315492c709e3ec1fa94",
+      "mode": "100644",
+      "bytes": 107220
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_49.py",
+      "git_blob": "8005c9a86ed9996c1cae17d5307b46674989b340",
+      "mode": "100644",
+      "bytes": 89043
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_50.py",
+      "git_blob": "90f0e477bf185e4b5f74d7686cdb60d630dbd4c0",
+      "mode": "100644",
+      "bytes": 88653
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_51.py",
+      "git_blob": "a4d5fd4f1fc84c39bdf66a66aebde158802e1a45",
+      "mode": "100644",
+      "bytes": 106130
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_52.py",
+      "git_blob": "cf6fe0858687b49702d68634b2d7153053730df4",
+      "mode": "100644",
+      "bytes": 105851
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_53.py",
+      "git_blob": "61ae6fee57d29d06cb09be47aac9ab8607753dde",
+      "mode": "100644",
+      "bytes": 90282
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_54.py",
+      "git_blob": "a8ab961586195c657ca773390ee0ab4399ebdbcc",
+      "mode": "100644",
+      "bytes": 90331
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_55.py",
+      "git_blob": "03ee69e5bfd36fa3d5b744cd0bd17c74632ee381",
+      "mode": "100644",
+      "bytes": 104442
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_56.py",
+      "git_blob": "007149d8879c8adf017509a5bcf1298272e59f2d",
+      "mode": "100644",
+      "bytes": 108828
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_57.py",
+      "git_blob": "46b08ecfed6154a9e01f7f3bd007fb8864b29ee1",
+      "mode": "100644",
+      "bytes": 90446
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_58.py",
+      "git_blob": "bc5440164d314da2702fa70726be00029a31a8e0",
+      "mode": "100644",
+      "bytes": 90332
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_59.py",
+      "git_blob": "f3a75d4018d2c61447280b2e83498d34de17b3b3",
+      "mode": "100644",
+      "bytes": 106570
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_60.py",
+      "git_blob": "5410839b5702f18cfd51212f2a135b7c25b04e1f",
+      "mode": "100644",
+      "bytes": 105649
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_61.py",
+      "git_blob": "55089726e08cd15e135a8100fe90ad2699c7b4f3",
+      "mode": "100644",
+      "bytes": 90425
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_62.py",
+      "git_blob": "8ae18ee23a96ce55548135582ca37bb42ff211df",
+      "mode": "100644",
+      "bytes": 90180
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_63.py",
+      "git_blob": "b73484a5bb24f58007da2c5c3675f81c986af289",
+      "mode": "100644",
+      "bytes": 104347
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_64.py",
+      "git_blob": "e03996635afea2d45e8735fded0ceaa1d28b675e",
+      "mode": "100644",
+      "bytes": 105461
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_65.py",
+      "git_blob": "1fbcf156edb5e86648ea5a0f4826541cef0bd7de",
+      "mode": "100644",
+      "bytes": 89345
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_66.py",
+      "git_blob": "47f210c1b5b983cba58be37c85bb4a7c6b6582c5",
+      "mode": "100644",
+      "bytes": 89382
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_67.py",
+      "git_blob": "eff3ec66b328d34089799b8536664efd94cfceb2",
+      "mode": "100644",
+      "bytes": 106476
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_68.py",
+      "git_blob": "5d8bde5e5663f6bf2fa02a7277180cd1071d2b0e",
+      "mode": "100644",
+      "bytes": 105830
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_69.py",
+      "git_blob": "6b20e6b677319cc0b503aca6ce5920bd06a550a6",
+      "mode": "100644",
+      "bytes": 89620
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_70.py",
+      "git_blob": "faf88dc3fb1fcc4a328ba6ad937f3c33c6517085",
+      "mode": "100644",
+      "bytes": 89837
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_71.py",
+      "git_blob": "61502ee5f30d4b2b2e3ec9456d650311c98ba4d3",
+      "mode": "100644",
+      "bytes": 104266
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_72.py",
+      "git_blob": "7add81c5e45de0b9a20994683b8915108f0ab218",
+      "mode": "100644",
+      "bytes": 104113
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_73.py",
+      "git_blob": "fe6b8da634ce89335d04c4822ace914ba6514a73",
+      "mode": "100644",
+      "bytes": 89817
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_74.py",
+      "git_blob": "0a5407b59b5250c736a339fb0dfc87ba631b13f5",
+      "mode": "100644",
+      "bytes": 89646
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_75.py",
+      "git_blob": "043f915b286e55d663f9151de973c11f9e662850",
+      "mode": "100644",
+      "bytes": 105640
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_76.py",
+      "git_blob": "e34e0528c40010593f3a3b9cdfee7a72220ac7d2",
+      "mode": "100644",
+      "bytes": 106372
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_77.py",
+      "git_blob": "1561c560ca7a0aea6cbec64497578253ec7fcdc1",
+      "mode": "100644",
+      "bytes": 89518
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_combinations_78.py",
+      "git_blob": "53e803d37725eb6c3affd67e5196fa29777103e6",
+      "mode": "100644",
+      "bytes": 89686
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_expression_adaptations.py",
+      "git_blob": "055d58d981359333c04c6d3399cdf5643820551f",
+      "mode": "100644",
+      "bytes": 7158
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_type_rules.py",
+      "git_blob": "12c6e38db9fbff6276d011c59467ce6b64401500",
+      "mode": "100644",
+      "bytes": 50879
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_adaptation_work_case_rules.py",
+      "git_blob": "43acd3bc01d50fe31737390652f25abe5d70ff85",
+      "mode": "100644",
+      "bytes": 10570
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_connection_data/blocks.json",
+      "git_blob": "6716f3831e92301305899e15c5c7748ef49bbed2",
+      "mode": "100644",
+      "bytes": 24491
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_connection_data/character_design.jsonl",
+      "git_blob": "6da6a86e186fd27bced89ce817fb7f16eab5e9a5",
+      "mode": "100644",
+      "bytes": 116630
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_connection_data/event_design.jsonl",
+      "git_blob": "75c4c6986bc6a19f2874ee44a0efbf42d697187e",
+      "mode": "100644",
+      "bytes": 776761
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_connection_data/plot_design.jsonl",
+      "git_blob": "49086e2c129346e95d23e2b67771fe19954d2d69",
+      "mode": "100644",
+      "bytes": 655427
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_connection_data/scene_design.jsonl",
+      "git_blob": "e72304e0ca493cdf2da21acd9ef6a003b98eb2e5",
+      "mode": "100644",
+      "bytes": 19279
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_connection_data/type_adaptation.jsonl",
+      "git_blob": "f575ae06dee82d5ad3700e730d69a188d00d6955",
+      "mode": "100644",
+      "bytes": 6212530
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_connection_data/world_design.jsonl",
+      "git_blob": "5d0b5cd34b98d650d406716778795cd61af32f60",
+      "mode": "100644",
+      "bytes": 503843
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_connections.py",
+      "git_blob": "eb9d2ab1cbdeebda4eca4cb817820d2d9fde93a6",
+      "mode": "100644",
+      "bytes": 9652
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_dianjing_subgenres.py",
+      "git_blob": "83c6cb0583bb73c69cb5f99eeb94a0ab6687ab42",
+      "mode": "100644",
+      "bytes": 892
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_dushi_subgenres.py",
+      "git_blob": "17b692272dd98fe78cfa395747e21984a89c2706",
+      "mode": "100644",
+      "bytes": 2398
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_erciyuan_subgenres.py",
+      "git_blob": "e2d9e97fe7a6d9c067ff44a7a36b7f4c986b2fae",
+      "mode": "100644",
+      "bytes": 1308
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_ertong_subgenres.py",
+      "git_blob": "f1af882f8a10016c0ffe06e970908af87833ed99",
+      "mode": "100644",
+      "bytes": 935
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_genres.py",
+      "git_blob": "e122f7263ff4e34ca1a56c12f9c6518378ace809",
+      "mode": "100644",
+      "bytes": 6134
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_genres_continued.py",
+      "git_blob": "96b82a80fa61bd9c87cf0b908e4be14c926e0bc0",
+      "mode": "100644",
+      "bytes": 4445
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_gongting_subgenres.py",
+      "git_blob": "b92b8ab2ac4b05028a8e84f257c6c6f60c67f893",
+      "mode": "100644",
+      "bytes": 1015
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_jiating_subgenres.py",
+      "git_blob": "897db01b4fa32a6fddeae61a87914e619fced290",
+      "mode": "100644",
+      "bytes": 1005
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_jishi_subgenres.py",
+      "git_blob": "375f804d283617b9b9c25b5a09fea8c0b15b772b",
+      "mode": "100644",
+      "bytes": 1024
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_junshi_subgenres.py",
+      "git_blob": "31607915688d179ec66320c3c524a9a114173782",
+      "mode": "100644",
+      "bytes": 1145
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_kehuan_subgenres.py",
+      "git_blob": "e6d1d9faadc12a35660d5811b583587d55a6d78c",
+      "mode": "100644",
+      "bytes": 2390
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_kongbu_subgenres.py",
+      "git_blob": "5323792811f6f00461a9fc376fd3fafc10f0b72a",
+      "mode": "100644",
+      "bytes": 838
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_lingyi_subgenres.py",
+      "git_blob": "0b071c2352ce63efe4b7cc4e4da71471ad0ff062",
+      "mode": "100644",
+      "bytes": 1430
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_lishi_subgenres.py",
+      "git_blob": "7261faa241eca054c75e2a791e7d299cf2515021",
+      "mode": "100644",
+      "bytes": 2174
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_main_and_subgenres.py",
+      "git_blob": "e8cb13fbea4e7b381ca241c69be040f65bbb4679",
+      "mode": "100644",
+      "bytes": 62757
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_moshi_subgenres.py",
+      "git_blob": "e2e8156c49031b92064e6f19d31cc680d28dd014",
+      "mode": "100644",
+      "bytes": 967
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_nvxing_subgenres.py",
+      "git_blob": "3c32a0db587e7a587bfaea1ee6060777199dab00",
+      "mode": "100644",
+      "bytes": 1110
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_ontology.py",
+      "git_blob": "42c3f0fa66bf4905c44b4b0548557f980190af71",
+      "mode": "100644",
+      "bytes": 8941
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_qihuan_subgenres.py",
+      "git_blob": "031a45f3c785a7a4e58f3f70793f06d19790d55e",
+      "mode": "100644",
+      "bytes": 1903
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_qingchun_subgenres.py",
+      "git_blob": "3a7fb6318c89f2da94337ad954f1297e733ae370",
+      "mode": "100644",
+      "bytes": 1126
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_qingxiaoshuo_subgenres.py",
+      "git_blob": "dcc089bcfc50a28c458255d584242ec8183e6953",
+      "mode": "100644",
+      "bytes": 1242
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_saibo_subgenres.py",
+      "git_blob": "daf1643edae55af5b70407882d751e854d7830f2",
+      "mode": "100644",
+      "bytes": 1068
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_shehui_subgenres.py",
+      "git_blob": "655c6fa0c1887649f63fa24395930b0a728f4b96",
+      "mode": "100644",
+      "bytes": 926
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_subject_tags.py",
+      "git_blob": "2faa94cd6ae0bbf5a410c29e95aa6c48286e3aaa",
+      "mode": "100644",
+      "bytes": 6372
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_tiyu_subgenres.py",
+      "git_blob": "c6412b0c0d7470813820bc71e51ce956ef576b4f",
+      "mode": "100644",
+      "bytes": 1257
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_tonghua_subgenres.py",
+      "git_blob": "99418d53480aacbbf507d774e400256a5e6c52d2",
+      "mode": "100644",
+      "bytes": 927
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_tongren_subgenres.py",
+      "git_blob": "5fa9becf5480de946777d063e9e7a82862047e80",
+      "mode": "100644",
+      "bytes": 904
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_tuili_subgenres.py",
+      "git_blob": "089783eae6ff9f8ecc289ca608c117980b7e946d",
+      "mode": "100644",
+      "bytes": 1074
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_type_rules.py",
+      "git_blob": "3dbf1d202e064ed1b478cf32d477c8bbae697405",
+      "mode": "100644",
+      "bytes": 39633
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_weilai_subgenres.py",
+      "git_blob": "8b4187cbe88c78474a5abeae82ce8f6398e656af",
+      "mode": "100644",
+      "bytes": 1037
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_wuxia_subgenres.py",
+      "git_blob": "327c1e53c77ff8a4fbd021b9265073f791dada21",
+      "mode": "100644",
+      "bytes": 1729
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_xianshi_subgenres.py",
+      "git_blob": "980ade19b33cf40bb5bb90a7988742250d8f2d7b",
+      "mode": "100644",
+      "bytes": 2495
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_xianxia_subgenres.py",
+      "git_blob": "fd7a04af5b7f77a7ac3a780c94fffcd1a7123e23",
+      "mode": "100644",
+      "bytes": 2055
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_xuanhuan_subgenres.py",
+      "git_blob": "7956ba8381bb7495cb8c5e474ac2ea5e3ba04769",
+      "mode": "100644",
+      "bytes": 2226
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_xuanyi_subgenres.py",
+      "git_blob": "431cd9f7af90a4e9d4976dcb1fc71fa85fa689ff",
+      "mode": "100644",
+      "bytes": 1297
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_yanqing_subgenres.py",
+      "git_blob": "bc9dc61bf50909b300dbfa4436cb7ce5a90b694e",
+      "mode": "100644",
+      "bytes": 3191
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_youxi_subgenres.py",
+      "git_blob": "e2fbeae1a6cb5f77421eca4539aa49fb565593e7",
+      "mode": "100644",
+      "bytes": 946
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_zhiye_subgenres.py",
+      "git_blob": "5670efebb765c2740b9dde2f5f3fa9403e6b963b",
+      "mode": "100644",
+      "bytes": 1370
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/type_selection_zhutian_subgenres.py",
+      "git_blob": "4dcf694084d8205520c1a026080578344b90899e",
+      "mode": "100644",
+      "bytes": 1235
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/work_case_application.py",
+      "git_blob": "f12fdab147b0938045b2235ed5bc04baef6794e5",
+      "mode": "100644",
+      "bytes": 13982
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/work_connection_patterns.py",
+      "git_blob": "e98eef1998a552d41335f9df6c95ea2994df749f",
+      "mode": "100644",
+      "bytes": 10011
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/work_knowledge_case_application.py",
+      "git_blob": "b2c8f31beced2a027ef3a7a5fbbfa41443b4168e",
+      "mode": "100644",
+      "bytes": 9993
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/work_source_review.py",
+      "git_blob": "573ddd4e6a1e08bec86e016d8dfab873b2cc0f69",
+      "mode": "100644",
+      "bytes": 55584
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design.py",
+      "git_blob": "27e654190d9d2e73aebd724961406d4d1fa4d5ac",
+      "mode": "100644",
+      "bytes": 18490
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_anchor_network.py",
+      "git_blob": "d224977d61127f2e3c86221ded388666287942a2",
+      "mode": "100644",
+      "bytes": 5017
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_dynamic_network.py",
+      "git_blob": "3172811966f3add2667a72f76ce5072418862387",
+      "mode": "100644",
+      "bytes": 135847
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_dynamic_network_2.py",
+      "git_blob": "03a8d3de2fb1dda4ad3010e874d2c57d51c0bc5f",
+      "mode": "100644",
+      "bytes": 137666
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_dynamic_network_3.py",
+      "git_blob": "434312fab710df3d25405cf2818a318168c4c4e9",
+      "mode": "100644",
+      "bytes": 8713
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_ecology.py",
+      "git_blob": "3407c9ba4dafdcc0dd3391a740d86a45a127d434",
+      "mode": "100644",
+      "bytes": 13091
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_plot_mechanisms.py",
+      "git_blob": "37ab4732e8aa1405f5331b8ae757bc3fda5126ff",
+      "mode": "100644",
+      "bytes": 1928
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_resources.py",
+      "git_blob": "1419535547ca21478f41b1241ad2c615c081be0a",
+      "mode": "100644",
+      "bytes": 14286
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_setting.py",
+      "git_blob": "86183b7d9c97d0dc94e23d91e6fe759f2b8f5166",
+      "mode": "100644",
+      "bytes": 16409
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_space.py",
+      "git_blob": "1daeecaf90d8879bb36d6a14c06eed9a94d7d2a4",
+      "mode": "100644",
+      "bytes": 963
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_static_network.py",
+      "git_blob": "edd3f3f477d548df20b4e2b5c24a13ca24fcaef8",
+      "mode": "100644",
+      "bytes": 33748
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_theme.py",
+      "git_blob": "4f7113f1e3dd29e21e3cadcd8a0dbf46b5ebcc47",
+      "mode": "100644",
+      "bytes": 512
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/world_design_type_expression_adaptations.py",
+      "git_blob": "c62ef78775fb11f18ace1cda53f2e7a25b1dd2e7",
+      "mode": "100644",
+      "bytes": 12365
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing.py",
+      "git_blob": "c3a97ceee42b84aea83cb1abbffb26a255715786",
+      "mode": "100644",
+      "bytes": 35190
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_action_space_anchors.py",
+      "git_blob": "7c7a51f1246f6f8d23e1ecb0ca481302dee33ac0",
+      "mode": "100644",
+      "bytes": 36283
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_application.py",
+      "git_blob": "a60dc2c4c14ead46e7b11dca31653df510f7791f",
+      "mode": "100644",
+      "bytes": 8889
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_body_emotion.py",
+      "git_blob": "181e56e1d5aeb86ec124dc999d6f78dfa7fa49dc",
+      "mode": "100644",
+      "bytes": 5102
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_body_state_anchors.py",
+      "git_blob": "bf95ed22938c799a07cac4f2c854c8f9138ae035",
+      "mode": "100644",
+      "bytes": 82234
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_chapter_continuity.py",
+      "git_blob": "ac88af8d53d0c3a3dadbd8dc1db0879edf7108a0",
+      "mode": "100644",
+      "bytes": 10887
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_cognition.py",
+      "git_blob": "7d4ce186cdc052ddd4474c65ad3fb9740b062827",
+      "mode": "100644",
+      "bytes": 19544
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_cognition_anchors.py",
+      "git_blob": "b700485dbbe6b865732fdab8827c44b2d207e9aa",
+      "mode": "100644",
+      "bytes": 21555
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_cognition_decision_anchors.py",
+      "git_blob": "96b5b596339264ad4c65e9f6d330713e717f6e74",
+      "mode": "100644",
+      "bytes": 104810
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_deliberation.py",
+      "git_blob": "af192f401e088820b44396868162c03142d479de",
+      "mode": "100644",
+      "bytes": 15532
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_disclosure_costs.py",
+      "git_blob": "e6f692cffc34e0e8b7311c2552c620e138dfd21b",
+      "mode": "100644",
+      "bytes": 8267
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_interaction.py",
+      "git_blob": "90f90198f8a8127d2fa1b9e6a1145093f65fd729",
+      "mode": "100644",
+      "bytes": 16665
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_language.py",
+      "git_blob": "c54ae3b91e422d68a7f34f208d4847b78caa1627",
+      "mode": "100644",
+      "bytes": 20811
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_material_anchors.py",
+      "git_blob": "f4e1a6aeb4c544a69fa82ea803d6c751f89fceff",
+      "mode": "100644",
+      "bytes": 50952
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_meaning.py",
+      "git_blob": "d91bfceb35348773d78a039656a6501293da6edc",
+      "mode": "100644",
+      "bytes": 11628
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_memory.py",
+      "git_blob": "1344d13a042ce1b1644ca84cc5fb8c197461482c",
+      "mode": "100644",
+      "bytes": 13840
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_multi_viewpoint.py",
+      "git_blob": "99f36f6f85291578e01749c3086f24ff640f6118",
+      "mode": "100644",
+      "bytes": 7632
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_narrator_atmosphere.py",
+      "git_blob": "0c3330de733bd0706eef45821e6339cdc05708d6",
+      "mode": "100644",
+      "bytes": 6416
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_object_actions.py",
+      "git_blob": "6fe992f69a724c22a5573a5e44d3559ff26fc97c",
+      "mode": "100644",
+      "bytes": 15747
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_opening_ending.py",
+      "git_blob": "83dc08d7d98da02e61db1db708dfb90d999326ad",
+      "mode": "100644",
+      "bytes": 4938
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_perception_anchors.py",
+      "git_blob": "7069a15c9e76ae20e92e508f704aef26b165eb97",
+      "mode": "100644",
+      "bytes": 55396
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_plot.py",
+      "git_blob": "a038ecda340c001068537d8b7460c6010b138df1",
+      "mode": "100644",
+      "bytes": 25879
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_reader.py",
+      "git_blob": "6b58589c0e1bbf8b1481bf64b9a617e5a0ce282c",
+      "mode": "100644",
+      "bytes": 5336
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_scene_space.py",
+      "git_blob": "bdd4bae326883569b37e667cf2d8c4fefc572a00",
+      "mode": "100644",
+      "bytes": 22118
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_sensory.py",
+      "git_blob": "7a86133e69c656bc252f4922bdc7d054b6bd7d0d",
+      "mode": "100644",
+      "bytes": 12330
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_social_material.py",
+      "git_blob": "3d396fde7f516a8de4e3f0eec1afb5e6a49112a4",
+      "mode": "100644",
+      "bytes": 21217
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_viewpoint.py",
+      "git_blob": "677c700bacd950482368977f7476b5f7c93e02e5",
+      "mode": "100644",
+      "bytes": 5897
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_workflow.py",
+      "git_blob": "b93db183d6a03d7273db637604da46fa49965d44",
+      "mode": "100644",
+      "bytes": 3365
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/steps/writing_world.py",
+      "git_blob": "5b7813fe3896cb45b6c5ffe541ad943251c2dee8",
+      "mode": "100644",
+      "bytes": 3331
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/template_candidates.py",
+      "git_blob": "622fa34632c64c8b86c0b80ef940da0f41d59343",
+      "mode": "100644",
+      "bytes": 11967
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/template_contract.py",
+      "git_blob": "b71a9c5fd56b6c4c353eba0449935acd7469b9d5",
+      "mode": "100644",
+      "bytes": 9664
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/template_support.py",
+      "git_blob": "1d48ed8cfc8f9a8a004f57d4141ab6a3fbad65ef",
+      "mode": "100644",
+      "bytes": 3409
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/type_adjudication.py",
+      "git_blob": "fdd1aeb9df1feb06c3273c02d72be28a12dc4544",
+      "mode": "100644",
+      "bytes": 25311
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/type_auxiliary.py",
+      "git_blob": "ad0a1f6da3d16916cf5893a45137bab30544d35a",
+      "mode": "100644",
+      "bytes": 5196
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/type_hierarchy.py",
+      "git_blob": "946209dac253fef562cc52238c10ab4b1a88b96d",
+      "mode": "100644",
+      "bytes": 5617
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/type_source_repairs.py",
+      "git_blob": "16a4c3fadbc19bd958de846093f5e01041fac2d4",
+      "mode": "100644",
+      "bytes": 3908
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/type_sources.py",
+      "git_blob": "819afb75eb7885609bcffbb0a91f68cdf9cbc870",
+      "mode": "100644",
+      "bytes": 9298
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/unit_catalog.py",
+      "git_blob": "0883e5652648f2c83386713dee2685c05140ccb5",
+      "mode": "100644",
+      "bytes": 8090
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/units.py",
+      "git_blob": "3e9361cbf70a74c6f843f9e21f3a55bc070e2262",
+      "mode": "100644",
+      "bytes": 22401
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/work_application.py",
+      "git_blob": "b9ed4c743bfa5681ab8478fd5528f6ffb7345f31",
+      "mode": "100644",
+      "bytes": 9533
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/work_catalog.py",
+      "git_blob": "ffc8cacc3dc34decb43a08f1d04fece691a3f490",
+      "mode": "100644",
+      "bytes": 12717
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/work_contract.py",
+      "git_blob": "3c3a70a42ffbd3a804a5d5656af4449320637c98",
+      "mode": "100644",
+      "bytes": 7194
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/work_knowledge.py",
+      "git_blob": "67e575a3bed86b7edc5d5f14a31f31854f09c663",
+      "mode": "100644",
+      "bytes": 7233
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/work_knowledge_checks.py",
+      "git_blob": "34e69118e0c77263fb4e40f22484b96c5a6f04d6",
+      "mode": "100644",
+      "bytes": 14564
+    },
+    {
+      "path": "07_新框架_v0/src/nw/materials/work_session.py",
+      "git_blob": "ad91a9d725a576c4cf9a4109d54f35c7cc081352",
+      "mode": "100644",
+      "bytes": 11429
+    },
+    {
+      "path": "07_新框架_v0/src/nw/migrations.py",
+      "git_blob": "e0a5171b30ae2cda684dd061700a944bdf12f4c3",
+      "mode": "100644",
+      "bytes": 2763
+    },
+    {
+      "path": "07_新框架_v0/src/nw/models.py",
+      "git_blob": "c323caa6f4c4461321ee9a8b9667b603fdb4bd05",
+      "mode": "100644",
+      "bytes": 1468
+    },
+    {
+      "path": "07_新框架_v0/src/nw/novel_calls.py",
+      "git_blob": "0f17b0bf6bb6780647f8d6fc829049448294dd5c",
+      "mode": "100644",
+      "bytes": 5737
+    },
+    {
+      "path": "07_新框架_v0/src/nw/novel_cli.py",
+      "git_blob": "7143b263c5cd3085a509b4a6740b04de9bdd88a3",
+      "mode": "100644",
+      "bytes": 16496
+    },
+    {
+      "path": "07_新框架_v0/src/nw/novel_flow.py",
+      "git_blob": "c3d9997e95235abd76981f1df12182b138ed8ede",
+      "mode": "100644",
+      "bytes": 13835
+    },
+    {
+      "path": "07_新框架_v0/src/nw/novel_scene.py",
+      "git_blob": "e09485f38440e50223c56844ce0e0ccc51b441f1",
+      "mode": "100644",
+      "bytes": 13462
+    },
+    {
+      "path": "07_新框架_v0/src/nw/novel_store.py",
+      "git_blob": "440cfdd532f5ff485a4c1928ae95bdc5e78cd491",
+      "mode": "100644",
+      "bytes": 17201
+    },
+    {
+      "path": "07_新框架_v0/src/nw/plan_application.py",
+      "git_blob": "76f8a7b718113c4cd1a7ee1614efb9ea15792d70",
+      "mode": "100644",
+      "bytes": 8736
+    },
+    {
+      "path": "07_新框架_v0/src/nw/plan_contract.py",
+      "git_blob": "80230ae375d798fd6032aba99cbf0b27b99a4e2b",
+      "mode": "100644",
+      "bytes": 8641
+    },
+    {
+      "path": "07_新框架_v0/src/nw/planning.py",
+      "git_blob": "16f06fdea95f7b993a598d9236d025efabbf7e9f",
+      "mode": "100644",
+      "bytes": 23227
+    },
+    {
+      "path": "07_新框架_v0/src/nw/schema.py",
+      "git_blob": "0589ee3f8a1a1107ef57c3b729919464d869f1b0",
+      "mode": "100644",
+      "bytes": 17387
+    },
+    {
+      "path": "07_新框架_v0/src/nw/seed_import.py",
+      "git_blob": "2f4e4c6362261ea8462d8c7018d2462c1de0b1b9",
+      "mode": "100644",
+      "bytes": 6518
+    },
+    {
+      "path": "07_新框架_v0/src/nw/selection.py",
+      "git_blob": "5fd780794646e222a2a8607f5994962e6871af88",
+      "mode": "100644",
+      "bytes": 4225
+    },
+    {
+      "path": "07_新框架_v0/src/nw/sources.py",
+      "git_blob": "3ad16751b361584191c7c1f643916abc5f4780b8",
+      "mode": "100644",
+      "bytes": 5549
+    },
+    {
+      "path": "07_新框架_v0/src/nw/store.py",
+      "git_blob": "2641882535039e3722609401b9427e59f82ed0df",
+      "mode": "100644",
+      "bytes": 13074
+    },
+    {
+      "path": "07_新框架_v0/src/nw/story_delta.py",
+      "git_blob": "fa514fd3348b602f0e36d6af3be2b5c035a861d5",
+      "mode": "100644",
+      "bytes": 21715
+    },
+    {
+      "path": "07_新框架_v0/src/nw/story_dependencies.py",
+      "git_blob": "a518af02caee18f2af9f1f926c206b82f8cf9c8e",
+      "mode": "100644",
+      "bytes": 3183
+    },
+    {
+      "path": "07_新框架_v0/src/nw/story_extract.py",
+      "git_blob": "1f28431683d715cd69b46ad97e67e2b4d34a3571",
+      "mode": "100644",
+      "bytes": 11905
+    },
+    {
+      "path": "07_新框架_v0/src/nw/story_models.py",
+      "git_blob": "4c1c01083d4f08ec634ad9a8219120d0aa3769b8",
+      "mode": "100644",
+      "bytes": 1943
+    },
+    {
+      "path": "07_新框架_v0/src/nw/story_state.py",
+      "git_blob": "db0c078fbaff921a9b0784b18d08686bcb6b1063",
+      "mode": "100644",
+      "bytes": 19145
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/__init__.py",
+      "git_blob": "4402ccc8b38dde912a361322bd834d41bf5ca7ee",
+      "mode": "100644",
+      "bytes": 253
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/api.py",
+      "git_blob": "224f27425299f04ac777cb55a64e23d1162be683",
+      "mode": "100644",
+      "bytes": 65953
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/catalog.py",
+      "git_blob": "8665a16fa159848c31981f0a44a20ac26c4dfddc",
+      "mode": "100644",
+      "bytes": 9199
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/kb.py",
+      "git_blob": "b5288f4dba338db9b21bac3e54e29e0674bbf403",
+      "mode": "100644",
+      "bytes": 10447
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/library.py",
+      "git_blob": "e8f4c39bf5c44f6c4c0a1a694fa569eafabe9181",
+      "mode": "100644",
+      "bytes": 6536
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/library_util.py",
+      "git_blob": "c09bd87cfc46858d96f5bc94a784ac522c58afb5",
+      "mode": "100644",
+      "bytes": 330
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/production.py",
+      "git_blob": "574cf6101e67d66222c1cc11892d5a2c7d4ba008",
+      "mode": "100644",
+      "bytes": 18511
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/production_branches.py",
+      "git_blob": "5441f70d5c808228bf0b350c6aa9ff1e415df785",
+      "mode": "100644",
+      "bytes": 10364
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/production_inputs.py",
+      "git_blob": "47c19c2416d1078ac6de2039ba664a29fa2f1316",
+      "mode": "100644",
+      "bytes": 6921
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/production_routes.py",
+      "git_blob": "a62599e65124912affd18bccdc551cc67988c620",
+      "mode": "100644",
+      "bytes": 6265
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/production_store.py",
+      "git_blob": "bf9722a7895c3138bab2875f4824e376a3709271",
+      "mode": "100644",
+      "bytes": 5028
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/production_views.py",
+      "git_blob": "9c9cfbac5b61a82603fb6b554f892aa4f6faaccd",
+      "mode": "100644",
+      "bytes": 22580
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/recommend.py",
+      "git_blob": "36f7fc114dbb613ba50e67b3109986d9bc041cfe",
+      "mode": "100644",
+      "bytes": 7320
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/server.py",
+      "git_blob": "e2ebc903aed0a3c45295f040276f945bfa91eba4",
+      "mode": "100644",
+      "bytes": 16258
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/staging.py",
+      "git_blob": "976230b5c6353e95879407464687785f78dfb11b",
+      "mode": "100644",
+      "bytes": 14106
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/staging_model.py",
+      "git_blob": "9295698dd3c647c364e2af9f7dfee8aafe78cdc4",
+      "mode": "100644",
+      "bytes": 8607
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/app.js",
+      "git_blob": "96a47bdd7ede7f42bf998767611b6e414710f84f",
+      "mode": "100644",
+      "bytes": 62367
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/css/components.css",
+      "git_blob": "989bfaebf06bbf97e58c1142425da00c0feb6116",
+      "mode": "100644",
+      "bytes": 8239
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/css/layout.css",
+      "git_blob": "398549fcc85f75146b29e2b19eaf24d4673bbeac",
+      "mode": "100644",
+      "bytes": 7681
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/css/pages.css",
+      "git_blob": "5ea46713927450cc0d1940cfb09a1bb36a914576",
+      "mode": "100644",
+      "bytes": 12706
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/css/tokens.css",
+      "git_blob": "e14924f269212e95ff487282cedd7b97b4f390ad",
+      "mode": "100644",
+      "bytes": 2115
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/icons/studio-brand.ico",
+      "git_blob": "c2228f3c7a0d16575cecda9961bb329833f2d1ed",
+      "mode": "100644",
+      "bytes": 25678
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/index.html",
+      "git_blob": "c928795840561f57ba08f57c24367ebd8bf06d11",
+      "mode": "100644",
+      "bytes": 4262
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/api.js",
+      "git_blob": "10f86e6c804de44ca72444a49a440d173709bc87",
+      "mode": "100644",
+      "bytes": 1105
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/app.js",
+      "git_blob": "a18b48d78dd604109ede131e0a93fd1b2b366f8a",
+      "mode": "100644",
+      "bytes": 13181
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/components/BookCard.js",
+      "git_blob": "24e365f0d6a579f48f00ffa47515d24570f898f5",
+      "mode": "100644",
+      "bytes": 1625
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/components/Diff.js",
+      "git_blob": "796e1f2de5612f59119eb62c7d30e7c561a0e7cb",
+      "mode": "100644",
+      "bytes": 1413
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/components/Inspector.js",
+      "git_blob": "d1f2571a65d55e1be0c3c66d700e3bf42fcdaf64",
+      "mode": "100644",
+      "bytes": 5176
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/components/ProgressTree.js",
+      "git_blob": "a7e77dd59f468bf41294a93f4ec1562f16ecdebc",
+      "mode": "100644",
+      "bytes": 1619
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/components/RecCard.js",
+      "git_blob": "a7458853b0b814461e001d4220d75340d644175b",
+      "mode": "100644",
+      "bytes": 1027
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/components/Timeline.js",
+      "git_blob": "400f92dec230a1af3149d87349ccd128711f855e",
+      "mode": "100644",
+      "bytes": 517
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/components/WizardStep.js",
+      "git_blob": "53c9996a640f6f38bdcc4c2174ba27e275d7e3a5",
+      "mode": "100644",
+      "bytes": 1942
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/atlas.js",
+      "git_blob": "89a7aae6c9d8d3902fbe79f5cc0795ea22ab277a",
+      "mode": "100644",
+      "bytes": 5947
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/book-stats.js",
+      "git_blob": "4362c053158e803f1aea508214a2a408bc77bbc0",
+      "mode": "100644",
+      "bytes": 3263
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/book.js",
+      "git_blob": "d640c8ebe2291528f3ddb0800cc1fa60df963dce",
+      "mode": "100644",
+      "bytes": 7894
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/home.js",
+      "git_blob": "115077d6bc04868b5860b2fe32a246c262ceb0c4",
+      "mode": "100644",
+      "bytes": 4384
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/kb.js",
+      "git_blob": "626f6dc6da07fbe954c1a661419c75e7d5f5bbd0",
+      "mode": "100644",
+      "bytes": 10286
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/library.js",
+      "git_blob": "4057d6352f0521bfc82cd2b021a940b6ae8aa7c9",
+      "mode": "100644",
+      "bytes": 3508
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/settings.js",
+      "git_blob": "669bb722cede3be04824687d005e0bdab96ecf7d",
+      "mode": "100644",
+      "bytes": 6896
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/staging.js",
+      "git_blob": "f851fb0b62abc4398c59f39a685489ef92ccfeb0",
+      "mode": "100644",
+      "bytes": 16107
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/studio-decisions.js",
+      "git_blob": "1de0dc036e3be4f89913c56ff062c20c13eaf9bc",
+      "mode": "100644",
+      "bytes": 6766
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/studio.js",
+      "git_blob": "2576ca818ba550bcf96fe20e13836e75cb960e46",
+      "mode": "100644",
+      "bytes": 17148
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/pages/wizard.js",
+      "git_blob": "c29ba51107024fca2be6c0c15ab7217c3989b9c6",
+      "mode": "100644",
+      "bytes": 14283
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/sse.js",
+      "git_blob": "45acafe33068992dbf6bd264d6fd1777def1dca2",
+      "mode": "100644",
+      "bytes": 892
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/store.js",
+      "git_blob": "b1fffab4dd50130890769a1efb311188a1ac0996",
+      "mode": "100644",
+      "bytes": 528
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/ui.js",
+      "git_blob": "e140d772ed211a4155e0a6a15f96b712ddcd0049",
+      "mode": "100644",
+      "bytes": 8247
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/styles.css",
+      "git_blob": "430e10e0437052b7def9ae904dcbfb5fb91d8c26",
+      "mode": "100644",
+      "bytes": 32346
+    },
+    {
+      "path": "07_新框架_v0/src/nw/task_models.py",
+      "git_blob": "8fbb90976e3035039ff60e39e272cd673f7fabc8",
+      "mode": "100644",
+      "bytes": 7819
+    },
+    {
+      "path": "07_新框架_v0/src/nw/tasks.py",
+      "git_blob": "3560aae6c58e1b8ae20c9e11f27603923347d32a",
+      "mode": "100644",
+      "bytes": 13010
+    },
+    {
+      "path": "07_新框架_v0/tests/fake_binding_reviews.py",
+      "git_blob": "97d1a74c08f858c70315b0511a4e3dfb1aa9030c",
+      "mode": "100644",
+      "bytes": 2114
+    },
+    {
+      "path": "07_新框架_v0/tests/fake_material_work.py",
+      "git_blob": "a862968be59e87390fc322e3434bed91cdbc7390",
+      "mode": "100644",
+      "bytes": 3395
+    },
+    {
+      "path": "07_新框架_v0/tests/fake_phase_work.py",
+      "git_blob": "749380ed1917f3af29503094488c459010ba8ab2",
+      "mode": "100644",
+      "bytes": 15930
+    },
+    {
+      "path": "07_新框架_v0/tests/fake_semantic_clauses.py",
+      "git_blob": "6b65498b98363bd88d0bfe19692c793cac2595fc",
+      "mode": "100644",
+      "bytes": 3161
+    },
+    {
+      "path": "07_新框架_v0/tests/story_fixture.py",
+      "git_blob": "c80d47b0490f6ac40e66f436dcb9b075d524a83f",
+      "mode": "100644",
+      "bytes": 3092
+    },
+    {
+      "path": "07_新框架_v0/tests/test_ab.py",
+      "git_blob": "fb6cf2df8d3cb1cb663c08d8120f43b1a5ac0048",
+      "mode": "100644",
+      "bytes": 10578
+    },
+    {
+      "path": "07_新框架_v0/tests/test_ab_cli.py",
+      "git_blob": "25b8b9467b99f6b5d422dae7b7370d0c84d87a44",
+      "mode": "100644",
+      "bytes": 3790
+    },
+    {
+      "path": "07_新框架_v0/tests/test_acceptance.py",
+      "git_blob": "d9da71a4bd1b686dcaed8357b9935247ac83b3ed",
+      "mode": "100644",
+      "bytes": 8144
+    },
+    {
+      "path": "07_新框架_v0/tests/test_batch31_full_integration.py",
+      "git_blob": "2448dea2e622598110d000ada47b4d279afb677c",
+      "mode": "100644",
+      "bytes": 12060
+    },
+    {
+      "path": "07_新框架_v0/tests/test_batch33_guard_and_studio.py",
+      "git_blob": "0c32be052de720e8ab4f59a2d0e825ad817abc4e",
+      "mode": "100644",
+      "bytes": 17084
+    },
+    {
+      "path": "07_新框架_v0/tests/test_batch34_triage_and_studio.py",
+      "git_blob": "2a6eccc14e553ef87d645b9523d5824a33e6419e",
+      "mode": "100644",
+      "bytes": 6942
+    },
+    {
+      "path": "07_新框架_v0/tests/test_batch35_frontend_and_f2.py",
+      "git_blob": "e636d9e369c8833234e4de3430253f14420a6a4f",
+      "mode": "100644",
+      "bytes": 6011
+    },
+    {
+      "path": "07_新框架_v0/tests/test_batch36_frontend_v2.py",
+      "git_blob": "674c416fc3be4fb8e789800285be52ebbe7264a7",
+      "mode": "100644",
+      "bytes": 5698
+    },
+    {
+      "path": "07_新框架_v0/tests/test_batch37_gemini_guards.py",
+      "git_blob": "b5eb92485295ecee7c839877df40ed06399e82e5",
+      "mode": "100644",
+      "bytes": 34966
+    },
+    {
+      "path": "07_新框架_v0/tests/test_call_recovery.py",
+      "git_blob": "882c716d7d981cebf681a996b1c28b2b92b5fff7",
+      "mode": "100644",
+      "bytes": 5583
+    },
+    {
+      "path": "07_新框架_v0/tests/test_cards.py",
+      "git_blob": "76bdeb2565ac2bcfd4c9c3b9ead66f838f5a76d1",
+      "mode": "100644",
+      "bytes": 10800
+    },
+    {
+      "path": "07_新框架_v0/tests/test_chapter_records.py",
+      "git_blob": "7c8510cf2a412cb93d01753555201a34123d1239",
+      "mode": "100644",
+      "bytes": 8168
+    },
+    {
+      "path": "07_新框架_v0/tests/test_chapter_state.py",
+      "git_blob": "2bd67782698ac4878a613de7aab7139d5a44385d",
+      "mode": "100644",
+      "bytes": 7445
+    },
+    {
+      "path": "07_新框架_v0/tests/test_cli.py",
+      "git_blob": "cfa309b3b81a265bd1989c2a8a25772012af7286",
+      "mode": "100644",
+      "bytes": 2159
+    },
+    {
+      "path": "07_新框架_v0/tests/test_context.py",
+      "git_blob": "95061f9f30b4689f1d333196d326c4cd2bb6236e",
+      "mode": "100644",
+      "bytes": 4437
+    },
+    {
+      "path": "07_新框架_v0/tests/test_delta.py",
+      "git_blob": "6a84831a18e78be31d01dc2fa14441a5cef1307f",
+      "mode": "100644",
+      "bytes": 7322
+    },
+    {
+      "path": "07_新框架_v0/tests/test_flow.py",
+      "git_blob": "898bd321f2defe3c153839bdacc61106d1852ff7",
+      "mode": "100644",
+      "bytes": 10061
+    },
+    {
+      "path": "07_新框架_v0/tests/test_flow_cli.py",
+      "git_blob": "d3358bf56cb14803efa84501ddd3909834dec265",
+      "mode": "100644",
+      "bytes": 1793
+    },
+    {
+      "path": "07_新框架_v0/tests/test_generation.py",
+      "git_blob": "924b8047e8349ed71d54d06e22b11cebb7a4a9a9",
+      "mode": "100644",
+      "bytes": 4815
+    },
+    {
+      "path": "07_新框架_v0/tests/test_library_adjudication.py",
+      "git_blob": "1be786c64e676f287b51a151bee36c1bbd54b657",
+      "mode": "100644",
+      "bytes": 15251
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_adjudication.py",
+      "git_blob": "fc1be4cc8781a6b0a0e17589b3b5bc6af98fc579",
+      "mode": "100644",
+      "bytes": 14712
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_binding_assembly.py",
+      "git_blob": "e98ffea24bd176ed2c3db60ebff803f509d2093e",
+      "mode": "100644",
+      "bytes": 3602
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_binding_review.py",
+      "git_blob": "832f2e81a169d5775313305930eaf98931e90df8",
+      "mode": "100644",
+      "bytes": 8802
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_catalog.py",
+      "git_blob": "8ae89b4ba0de3760086f2545c99a43a406f87354",
+      "mode": "100644",
+      "bytes": 21870
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_dynamic_refs.py",
+      "git_blob": "6e76a00f4e743e2ebae81a17f01fe86744b007b6",
+      "mode": "100644",
+      "bytes": 9886
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_dynamic_screening.py",
+      "git_blob": "57c60d2ae4afce29b993e68432d56ce5e13717ff",
+      "mode": "100644",
+      "bytes": 7312
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_functional_rebuild.py",
+      "git_blob": "fb55930e6b4f5a04e4660cde3574ce9aac1f0b11",
+      "mode": "100644",
+      "bytes": 9135
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_governance.py",
+      "git_blob": "0b36f2c1e42b73a9b3f224da49f75362f790c19c",
+      "mode": "100644",
+      "bytes": 7819
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_governance_execution.py",
+      "git_blob": "bfaf451c65e6b06e529e9d6d51c4c846d1bb043d",
+      "mode": "100644",
+      "bytes": 30327
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_governance_runtime.py",
+      "git_blob": "865721db79bea2b5c5a5106a7e56edd624f30cc3",
+      "mode": "100644",
+      "bytes": 8930
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_layer_regressions.py",
+      "git_blob": "81ac6eec0618eecb78106780bcbd47fd8848e127",
+      "mode": "100644",
+      "bytes": 11748
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_layers.py",
+      "git_blob": "d5c1c3c30845206cf23b894b93a5990a2bf9e84a",
+      "mode": "100644",
+      "bytes": 14186
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_parent_integrity.py",
+      "git_blob": "419ed843e273c4f18726569d14e85742f8b09081",
+      "mode": "100644",
+      "bytes": 3624
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_phase_contract.py",
+      "git_blob": "80caf600618033cb93b1d14ec1dceb1a5c7059ef",
+      "mode": "100644",
+      "bytes": 8714
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_phase_dependencies.py",
+      "git_blob": "4e4be4c4ed6d126f0c55fbc9bc3f8a4c6f20e2d9",
+      "mode": "100644",
+      "bytes": 6092
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_phase_flow.py",
+      "git_blob": "1424abf4472c1747118d25d0c2f146e0c8c6eeb7",
+      "mode": "100644",
+      "bytes": 57674
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_phase_projection.py",
+      "git_blob": "c3d6abafb91b7a8fbae26073a3920da4eac2527d",
+      "mode": "100644",
+      "bytes": 9274
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_phase_routes.py",
+      "git_blob": "297139a65571f954d5c2a49461e96ae15dda8d6f",
+      "mode": "100644",
+      "bytes": 22832
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_process.py",
+      "git_blob": "880e9396d1013be103f8ce279da651b9316ccaa5",
+      "mode": "100644",
+      "bytes": 3398
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_retranslation.py",
+      "git_blob": "7dd870f7afe82d5ac98b886893c0c24b5fdbad0f",
+      "mode": "100644",
+      "bytes": 1742
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_scope.py",
+      "git_blob": "f997ae480ee5f6c94465c709e94fb60e9d507d7d",
+      "mode": "100644",
+      "bytes": 21947
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_semantic_application.py",
+      "git_blob": "bba062a28a2ce3f67ea0113504c8b49d2a47b01f",
+      "mode": "100644",
+      "bytes": 4811
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_semantic_catalog.py",
+      "git_blob": "91b2a6637db9d6e8e724eaf89adb2d92d7b2af34",
+      "mode": "100644",
+      "bytes": 9173
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_semantic_clauses.py",
+      "git_blob": "a303a1f653ed494a21e201ce25c85af96d994338",
+      "mode": "100644",
+      "bytes": 20220
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_semantic_fidelity_regressions.py",
+      "git_blob": "15474500c62307a6a6abb308ac9c8edcf941314e",
+      "mode": "100644",
+      "bytes": 2274
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_semantic_handoff.py",
+      "git_blob": "f289e767db977d8447f2475bdd869a1f397c5835",
+      "mode": "100644",
+      "bytes": 1889
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_semantic_unresolved_gate.py",
+      "git_blob": "cd351d1fdc0ace85d46c60180c9d900b5e22301f",
+      "mode": "100644",
+      "bytes": 4639
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_source_semantics.py",
+      "git_blob": "2bd3cef51b047dd408c3cff796afda9141fee347",
+      "mode": "100644",
+      "bytes": 18803
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_source_set.py",
+      "git_blob": "3be787c23cf30ca712a3c9c29798f803f1ce6488",
+      "mode": "100644",
+      "bytes": 7776
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_stage_effects.py",
+      "git_blob": "1d4bdffe6dccc1812f5115fe39c19307f6125e9b",
+      "mode": "100644",
+      "bytes": 2418
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_stage_integration.py",
+      "git_blob": "21d8f0a2da74b707958101c424b5495475b527cd",
+      "mode": "100644",
+      "bytes": 9096
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_stage_lifecycle.py",
+      "git_blob": "b4462c4b7078a0ab6dbe6790ff0b410b8e03ef7e",
+      "mode": "100644",
+      "bytes": 10505
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_stage_procedures.py",
+      "git_blob": "b064f04da32872ad84be21c37d91eac1b369f16b",
+      "mode": "100644",
+      "bytes": 6645
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_stage_roundtrip.py",
+      "git_blob": "3190f3439c457f86c6c5025290c1a3c596d3f952",
+      "mode": "100644",
+      "bytes": 12539
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_template_contract.py",
+      "git_blob": "fac6537a4a3d6eb4d739bd18c036900e46553fea",
+      "mode": "100644",
+      "bytes": 18373
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_work_catalog.py",
+      "git_blob": "a616ec46bcec6b96f841c6db4ab5700ab26837e4",
+      "mode": "100644",
+      "bytes": 5175
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_work_contract.py",
+      "git_blob": "b774c46d783aac4afee22746f86accb586416f6a",
+      "mode": "100644",
+      "bytes": 4997
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_work_integration.py",
+      "git_blob": "6b40572d29d941a7c6366c6874c4d311f8128feb",
+      "mode": "100644",
+      "bytes": 8791
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_work_migration.py",
+      "git_blob": "0374c6b171d353fccae895aadb4078ce7910bcba",
+      "mode": "100644",
+      "bytes": 1460
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_work_session.py",
+      "git_blob": "825e584cb8b92f12df7e1415e953f9c8895b7240",
+      "mode": "100644",
+      "bytes": 3666
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_workflow.py",
+      "git_blob": "3825390be7dbbe8d183c2f5492ff103daac013ad",
+      "mode": "100644",
+      "bytes": 35580
+    },
+    {
+      "path": "07_新框架_v0/tests/test_material_workflow_gaps.py",
+      "git_blob": "6d1e0aa6ff8a28e6f2eb89363c41f70d8887951e",
+      "mode": "100644",
+      "bytes": 12950
+    },
+    {
+      "path": "07_新框架_v0/tests/test_migration_v5.py",
+      "git_blob": "31609e031a233f64f47862316384eeea8056821a",
+      "mode": "100644",
+      "bytes": 3881
+    },
+    {
+      "path": "07_新框架_v0/tests/test_migration_v6.py",
+      "git_blob": "784dc4ba102492baf8d110f63fe3e18ae2b42e34",
+      "mode": "100644",
+      "bytes": 2263
+    },
+    {
+      "path": "07_新框架_v0/tests/test_migration_v7.py",
+      "git_blob": "7101e334decfd46fa77703ed2dd8110a8e70ef57",
+      "mode": "100644",
+      "bytes": 1358
+    },
+    {
+      "path": "07_新框架_v0/tests/test_migration_v8.py",
+      "git_blob": "db98f47e26df796adeeafd784e33902803db5120",
+      "mode": "100644",
+      "bytes": 1905
+    },
+    {
+      "path": "07_新框架_v0/tests/test_novel_acceptance.py",
+      "git_blob": "5facb5d0090839685b186a3d2441f2ce67cc14b4",
+      "mode": "100644",
+      "bytes": 12643
+    },
+    {
+      "path": "07_新框架_v0/tests/test_novel_cli.py",
+      "git_blob": "6158c078b9d596a8951a35a68b31ea68ca212059",
+      "mode": "100644",
+      "bytes": 4190
+    },
+    {
+      "path": "07_新框架_v0/tests/test_novel_flow.py",
+      "git_blob": "3494f23a2012189fbfadbcc570f114254f4a03a3",
+      "mode": "100644",
+      "bytes": 11221
+    },
+    {
+      "path": "07_新框架_v0/tests/test_novel_recovery.py",
+      "git_blob": "b9d20e90a22c7b684fb5a8ea703ab174d7cea2df",
+      "mode": "100644",
+      "bytes": 10293
+    },
+    {
+      "path": "07_新框架_v0/tests/test_planning.py",
+      "git_blob": "f57513f0d94624112242f3850995e1f02f2553df",
+      "mode": "100644",
+      "bytes": 10276
+    },
+    {
+      "path": "07_新框架_v0/tests/test_providers.py",
+      "git_blob": "467fadd078897d8902cfa27c6c630d575ff25ebd",
+      "mode": "100644",
+      "bytes": 7808
+    },
+    {
+      "path": "07_新框架_v0/tests/test_selection.py",
+      "git_blob": "d92b2da5aaede7873bb3ba77fed6444092292fb2",
+      "mode": "100644",
+      "bytes": 2161
+    },
+    {
+      "path": "07_新框架_v0/tests/test_smoke.py",
+      "git_blob": "ed66d3c069d8e0e1a747f3cdc861a4ebea4d8400",
+      "mode": "100644",
+      "bytes": 114
+    },
+    {
+      "path": "07_新框架_v0/tests/test_sources.py",
+      "git_blob": "7fd8931f34d18de827a94e6b17a9891e50e37774",
+      "mode": "100644",
+      "bytes": 3017
+    },
+    {
+      "path": "07_新框架_v0/tests/test_store.py",
+      "git_blob": "551abf5aff4cdc1453480f5417155c9e7d1aa10c",
+      "mode": "100644",
+      "bytes": 7593
+    },
+    {
+      "path": "07_新框架_v0/tests/test_story_cli.py",
+      "git_blob": "1767bdf2d81a66a3f31a328269326d74b8dfe174",
+      "mode": "100644",
+      "bytes": 7083
+    },
+    {
+      "path": "07_新框架_v0/tests/test_story_context.py",
+      "git_blob": "b8de34828d7f6cefb45ae3c976a5f8930f8bd71f",
+      "mode": "100644",
+      "bytes": 6544
+    },
+    {
+      "path": "07_新框架_v0/tests/test_story_state.py",
+      "git_blob": "1006fcca7fae9a4a9197e231d9b09595aec0dd0c",
+      "mode": "100644",
+      "bytes": 8406
+    },
+    {
+      "path": "07_新框架_v0/tests/test_studio_v3_api_settings.py",
+      "git_blob": "2e37b0e5e4bd6e07469d902677bd938baee98aee",
+      "mode": "100644",
+      "bytes": 2314
+    },
+    {
+      "path": "07_新框架_v0/tests/test_studio_v3_branches.py",
+      "git_blob": "86b148ca76543bcd3c86f9957d7036abab48a65c",
+      "mode": "100644",
+      "bytes": 12323
+    },
+    {
+      "path": "07_新框架_v0/tests/test_studio_v3_library.py",
+      "git_blob": "bdd8f98452152ccf6916e91048133d56f739e858",
+      "mode": "100644",
+      "bytes": 16461
+    },
+    {
+      "path": "07_新框架_v0/tests/test_studio_v3_production.py",
+      "git_blob": "d8179014216197520eb183dfdfcf460556546c36",
+      "mode": "100644",
+      "bytes": 19202
+    },
+    {
+      "path": "07_新框架_v0/tests/test_studio_v3_references.py",
+      "git_blob": "ebf3d81b9f953372f537cf45ddc9e4e1b4150b0f",
+      "mode": "100644",
+      "bytes": 4443
+    },
+    {
+      "path": "07_新框架_v0/tests/test_tasks.py",
+      "git_blob": "ee6309ea59ba7bb33410c68183a3e178eaf621e0",
+      "mode": "100644",
+      "bytes": 10551
+    },
+    {
+      "path": "07_新框架_v0/tests/test_type_adjudication.py",
+      "git_blob": "e97dd10c239db04956ee401e32c894a1c93bc725",
+      "mode": "100644",
+      "bytes": 19638
+    },
+    {
+      "path": "07_新框架_v0/tests/test_type_auxiliary.py",
+      "git_blob": "83f06eb07e9da22ad002553f2d08fbb0b6703fc5",
+      "mode": "100644",
+      "bytes": 6685
+    },
+    {
+      "path": "07_新框架_v0/tests/test_work_knowledge.py",
+      "git_blob": "46a762647272f3955d6cee47eb494c1c4605e6b9",
+      "mode": "100644",
+      "bytes": 11484
+    },
+    {
+      "path": "07_新框架_v0/tools/materials_baseline.py",
+      "git_blob": "3fcc193356799ef0ed1c54628e8e4f1e33f6b7de",
+      "mode": "100644",
+      "bytes": 9265
+    },
+    {
+      "path": "07_新框架_v0/启动写作客户端.bat",
+      "git_blob": "b5049ad097ece32550ca70a9334558bbef36da1f",
+      "mode": "100644",
+      "bytes": 895
+    }
+  ]
+}

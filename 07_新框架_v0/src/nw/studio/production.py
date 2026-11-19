@@ -1,0 +1,293 @@
+"""The desktop client's asynchronous adapter over the existing durable workflow."""
+from dataclasses import asdict
+import json
+from pathlib import Path
+import threading
+from typing import Any, Callable
+from uuid import uuid4
+
+from nw.config import ConfigRequired, load_config, make_provider
+from nw.novel_flow import resume_job
+from nw.novel_store import JobRequest, cancel_job, show_job, start_job
+from nw.store import Store, now
+from nw.story_state import adopt_story
+from nw.task_models import Budget
+from nw.studio.production_inputs import brief_text, freeze_wizard, governance
+from nw.studio.production_store import ProductionStore
+from nw.studio.production_views import ProductionViews
+from nw.studio.production_branches import BranchMixin
+
+
+class ProductionService(BranchMixin, ProductionViews):
+    def __init__(self, studio: Any, library: Any, *, test_mode: bool = False,
+                 runtime_factory: Callable | None = None) -> None:
+        self.studio, self.library = studio, library
+        self.db = ProductionStore(studio.workspace)
+        self.test_mode, self.runtime_factory = test_mode, runtime_factory
+        self._lock = threading.RLock()
+        self._workers: dict[str, threading.Thread] = {}
+        self.changed = threading.Event()
+
+    def open_store(self, novel: dict) -> Store:
+        directory = (self.studio.workspace / novel['project_dir']).resolve()
+        if not directory.is_relative_to(self.studio.workspace.resolve()) or directory == self.studio.workspace.resolve():
+            raise ValueError('项目路径越界')
+        return Store(directory, test_mode=self.test_mode)
+
+    @staticmethod
+    def budget(raw: dict | None = None) -> Budget:
+        value = {'max_calls': 40, 'context_char_limit': 64000, 'output_limit': 4096, 'max_revisions': 2}
+        raw = raw or {}
+        if not isinstance(raw, dict) or set(raw) - set(value):
+            raise ValueError('无效的调用预算')
+        value.update(raw)
+        if any(type(item) is not int for item in value.values()) or not (
+            1 <= value['max_calls'] <= 1000 and 1000 <= value['context_char_limit'] <= 1000000
+            and 128 <= value['output_limit'] <= 100000 and 0 <= value['max_revisions'] <= 20
+        ):
+            raise ValueError('调用预算超出允许范围')
+        return Budget(**value)
+
+    def create(self, body: dict) -> dict:
+        wizard = freeze_wizard(body, self.library)
+        budget = self.budget(body.get('budget'))
+        ident = uuid4().hex
+        directory = f'novel-{ident[:12]}'
+        # Reserve the directory before publishing nw.db to workspace discovery.
+        # Concurrent shelf polling must not import a half-created book under a
+        # second ID or replace the author's frozen choices.
+        if not self.db.add(ident, directory, wizard['title'], wizard):
+            raise ValueError('立项目录已被占用，请重新提交立项')
+        try:
+            with Store(self.studio.workspace / directory, create=True, test_mode=self.test_mode) as store:
+                store.init_project(wizard['title'])
+                store.add_brief(brief_text(wizard), wizard['constraints'])
+                adopt_story(store, {'as_of_story_order': 0, 'disclosure_order': [0, 0, 0],
+                    'coverage': {'entities': [], 'predicates': []}, 'facts': [], 'card_refs': []}, {})
+                job = start_job(store, JobRequest('design', design_scope='book', budget=budget,
+                                                 governance_inputs=governance(wizard)))
+        except Exception as exc:
+            self.db.update(ident, status='paused', runtime_status='BLOCKED', reason=f'立项初始化未完成：{exc}')
+            raise
+        self.db.update(ident, job_id=job.id)
+        self.db.event(ident, 'creation', '立项完成，已保存作者偏好、参考来源和 Brief。', {'wizard': wizard})
+        return {'novel': self.db.get(ident), 'run': self.run(ident, {})}
+
+    def detail(self, ident: str) -> dict:
+        novel = self.db.get(ident)
+        project = self.project(novel)
+        volumes = []
+        active = {(row['card_id'], row['version']) for row in project['active_settings']}
+        with self.open_store(novel) as store:
+            for card in project['cards']:
+                if card['kind'] != 'volume' or (card['card_id'], card['version']) not in active:
+                    continue
+                try:
+                    chapter_ids = self.volume_chapters(store, card['card_id'], project['active_settings'])
+                except ValueError:
+                    continue
+                if chapter_ids:
+                    volumes.append({'id': card['card_id'], 'title': card['body'].get('title', card['card_id']),
+                                    'chapter_ids': sorted(chapter_ids)})
+        project['volumes'] = volumes
+        return {'novel': novel, 'project': project, 'volumes': volumes}
+
+    def project(self, novel: dict) -> dict:
+        return self.studio.project_overview(novel['project_dir'], branch=novel.get('current_branch', 'main'))
+
+    def _runtime(self) -> tuple[Any, Any]:
+        if self.runtime_factory is not None:
+            if not self.test_mode:
+                raise ValueError('测试模型只允许用于隔离测试库')
+            return self.runtime_factory()
+        config = load_config(self.studio.config_path)
+        provider = make_provider(config)
+        for spec in config.stage_models.values():
+            if spec.get('api_key_env'):
+                import os
+                if not os.environ.get(spec['api_key_env']):
+                    raise ConfigRequired(f"Missing environment variable: {spec['api_key_env']}")
+        return config, provider
+
+    def _new_job(self, novel: dict, body: dict, store: Store) -> str:
+        overview = self.project(novel)
+        scenes = [row['id'] for row in overview['scenes']
+                  if row['story_approved_on_branch'] and not row['accepted_draft_id']]
+        jobs = overview['jobs']
+        book = next((row for row in jobs if row['status'] == 'DONE' and row.get('step') == 'plan:book:apply'), None)
+        needs = self.branch_status(novel['id'])['needs_revalidation'] if novel.get('current_branch', 'main') != 'main' else []
+        revalidate = [row['id'] for row in overview['scenes'] if row['id'] in needs and row['accepted_draft_id']]
+        mode = body.get('mode') or ('revise' if revalidate else 'write' if scenes else 'design')
+        scope = body.get('scope') or ('chapter' if book else 'book')
+        if mode == 'design' and novel.get('current_branch', 'main') == 'main' and any(scene['accepted_draft_id'] for scene in overview['scenes']):
+            raise ValueError('已有正文后的追加设计需先建立候选分支并复核旧稿。'
+                             '请打开“⋯ → 制作候选与主线 → 建立候选”，完成旧稿复核后再合并。未启动模型调用。')
+        selected = body.get('scene_ids', revalidate[:1] if mode == 'revise' and revalidate else
+                            scenes if mode in ('write', 'revise', 'continue') else [])
+        if not isinstance(selected, list):
+            raise ValueError('场景必须是 ID 列表')
+        req = JobRequest(str(mode), branch_id=novel.get('current_branch', 'main'),
+                         design_scope=str(scope) if mode == 'design' else 'chapter',
+                         parent_id=book['outputs'].get('proposal_id') if mode == 'design' and scope != 'book' and book else None,
+                         scene_ids=selected, budget=self.budget(body.get('budget')),
+                         governance_inputs=governance(novel['wizard']) if mode == 'design' else {})
+        job = start_job(store, req)
+        self.db.update(novel['id'], job_id=job.id, status='designing' if mode == 'design' else 'writing')
+        self.db.event(novel['id'], 'design' if mode == 'design' else 'write',
+                      f'开始{scope if mode == "design" else "场景"}制作任务', {'job_id': job.id, 'mode': mode, 'scope': scope})
+        return job.id
+
+    def run(self, ident: str, body: dict, *, retry: bool = False, decision: dict | None = None) -> dict:
+        worker = self._workers.get(ident)
+        if worker and worker.is_alive():
+            novel = self.db.get(ident)
+            with self.open_store(novel) as store:
+                current = show_job(store, novel['job_id']) if novel['job_id'] else None
+            if current and current.status in ('DONE', 'CANCELLED', 'REJECTED', 'STALE'):
+                worker.join(timeout=5)
+        with self._lock:
+            novel = self.db.get(ident)
+            worker = self._workers.get(ident)
+            if worker and worker.is_alive():
+                if decision or body.get('mode'):
+                    raise ValueError('当前任务仍在运行或保存检查点，请等待完成或先取消当前任务')
+                return {'status': 'RUNNING', 'job_id': novel['job_id']}
+            if novel['status'] == 'done':
+                raise ValueError('已完稿书籍不能继续启动制作')
+            try:
+                config, provider = self._runtime()
+            except ConfigRequired as exc:
+                reason = f'CONFIG_REQUIRED: {exc}'
+                self.db.update(ident, runtime_status='CONFIG_REQUIRED', status='paused', reason=reason)
+                self.db.event(ident, 'configuration', reason, dedup=f'{ident}:config:{reason}')
+                return {'status': 'CONFIG_REQUIRED', 'reason': reason, 'job_id': novel['job_id']}
+            with self.open_store(novel) as store:
+                if decision and decision.get('job_id'):
+                    novel['job_id'] = decision['job_id']
+                    request = json.loads(store.connection.execute('SELECT request_json FROM novel_jobs WHERE id=?',
+                                                                  (novel['job_id'],)).fetchone()[0])
+                    novel['current_branch'] = request['branch_id']
+                    self.db.update(ident, job_id=novel['job_id'], current_branch=novel['current_branch'])
+                current = show_job(store, novel['job_id']) if novel['job_id'] else None
+                if body.get('mode') and current and current.status not in ('DONE', 'CANCELLED', 'REJECTED', 'STALE'):
+                    raise ValueError('请先处理或取消当前未完成任务，再启动指定的写作或重写操作')
+                if current is None or current.status in ('DONE', 'CANCELLED', 'REJECTED', 'STALE'):
+                    if decision:
+                        raise ValueError('确认节点已经失效')
+                    job_id = self._new_job(novel, body, store)
+                else:
+                    job_id = current.id
+                    if current.status == 'WAITING' and not decision:
+                        return {'status': 'WAITING', 'job_id': job_id, 'reason': '请先处理待确认节点'}
+                    with store.connection:
+                        store.connection.execute("UPDATE novel_jobs SET status='READY',reason=NULL WHERE id=? AND reason='AUTHOR_PAUSED'", (job_id,))
+                actual_mode = json.loads(store.connection.execute('SELECT request_json FROM novel_jobs WHERE id=?', (job_id,)).fetchone()[0])['mode']
+            self.db.update(ident, runtime_status='RUNNING', reason=None, status='designing' if
+                           actual_mode == 'design' else 'writing')
+            worker = threading.Thread(target=self._execute, args=(ident, job_id, config, provider, retry, decision), daemon=True)
+            self._workers[ident] = worker
+            worker.start()
+            return {'status': 'RUNNING', 'job_id': job_id}
+
+    def _execute(self, ident: str, job_id: str, config: Any, provider: Any, retry: bool, decision: dict | None) -> None:
+        def choose(step: str, gate: dict) -> dict | None:
+            if decision is None or decision['step'] != step or decision['token'] != gate['token']:
+                return None
+            return decision['choice']
+        try:
+            novel = self.db.get(ident)
+            with self.open_store(novel) as store:
+                result = resume_job(store, job_id, provider, config, choose, retry_failed=retry)
+            status = 'PAUSED' if result.reason == 'AUTHOR_PAUSED' else result.status
+            self.db.update(ident, runtime_status=status, reason=result.reason,
+                           status='paused' if status in ('PAUSED', 'BLOCKED', 'CANCELLED', 'REJECTED', 'STALE') else
+                           ('writing' if result.status == 'DONE' else novel['status']))
+            self.db.event(ident, 'status', result.reason or f'制作任务：{status}',
+                          {'job_id': job_id, 'status': status, 'step': result.step})
+            self.sync_history(ident)
+            self.sync_adoptions(ident)
+        except Exception as exc:
+            self.db.update(ident, runtime_status='BLOCKED', status='paused', reason=str(exc))
+            self.db.event(ident, 'error', str(exc), {'job_id': job_id})
+        finally:
+            self.changed.set()
+
+    def pause(self, ident: str) -> dict:
+        with self._lock:
+            novel = self.db.get(ident)
+            with self.open_store(novel) as store, store.connection:
+                if novel['job_id']:
+                    store.connection.execute("""UPDATE novel_jobs SET status='BLOCKED',reason='AUTHOR_PAUSED'
+                        WHERE id=? AND status IN ('READY','RUNNING','WAITING','BLOCKED')""", (novel['job_id'],))
+            active = bool(self._workers.get(ident) and self._workers[ident].is_alive())
+            self.db.update(ident, status='paused', runtime_status='PAUSING' if active else 'PAUSED', reason='AUTHOR_PAUSED')
+            self.db.event(ident, 'pause', '暂停请求已记录；当前模型调用完成后在下一检查点暂停。')
+            return {'status': 'PAUSING' if active else 'PAUSED', 'job_id': novel['job_id']}
+
+    def cancel(self, ident: str) -> dict:
+        with self._lock:
+            novel = self.db.get(ident)
+            if novel['job_id']:
+                with self.open_store(novel) as store:
+                    cancel_job(store, novel['job_id'])
+            self.db.update(ident, status='paused', runtime_status='CANCELLED', reason='CANCELLED')
+            self.db.event(ident, 'cancel', '作者取消了当前任务；已有产物和调用记录已保留。')
+            return {'status': 'CANCELLED', 'job_id': novel['job_id']}
+
+    def decide(self, ident: str, gate_id: str, body: dict) -> dict:
+        # The workflow can expose WAITING before its worker has finished
+        # archiving call history. Let that checkpoint settle before resuming;
+        # an early click must not race a second worker against the first one.
+        worker = self._workers.get(ident)
+        if worker and worker.is_alive():
+            novel = self.db.get(ident)
+            with self.open_store(novel) as store:
+                job = show_job(store, novel['job_id']) if novel['job_id'] else None
+                settling_gate = job.outputs.get('gate') if job and job.status == 'WAITING' else None
+            if settling_gate and settling_gate.get('token') == gate_id:
+                worker.join(timeout=5)
+        with self._lock:
+            gate = next((gate for gate in self.gates(ident)['gates'] if gate['id'] == gate_id), None)
+            if gate is None or body.get('token') != gate['token']:
+                raise ValueError('确认节点已变化，请刷新后重新确认')
+            action, reason = body.get('action'), str(body.get('reason', '')).strip()
+            if action not in gate['actions'] or not reason:
+                raise ValueError('请选择当前节点允许的操作并填写确认理由')
+            if action == 'approve' and gate['target'].get('candidates'):
+                roots = [row['root']['card_id'] for row in gate['target']['candidates']]
+                if body.get('root') not in roots:
+                    raise ValueError('请选择当前方案中的一个候选方案')
+            choice = {key: value for key, value in body.items() if key != 'token'}
+            result = self.run(ident, {}, decision={'token': gate['token'], 'step': gate['step'],
+                                                  'job_id': gate['job_id'], 'choice': choice})
+            if result['status'] == 'RUNNING':
+                self.db.event(ident, 'confirmation', f'作者提交确认：{action} · {reason}',
+                              {'gate_id': gate_id, 'choice': choice, 'token': gate['token']})
+            return result
+
+    def finish(self, ident: str) -> dict:
+        novel = self.db.get(ident)
+        if novel.get('current_branch', 'main') != 'main':
+            raise ValueError('候选分支合并回主稿后才能标记全书完稿')
+        project = self.project(novel)
+        if self._workers.get(ident) and self._workers[ident].is_alive() or self.gates(ident)['gates']:
+            raise ValueError('请先完成正在运行的任务和待确认节点')
+        if not project['managed_story']:
+            raise ValueError('旧项目需完成故事状态接管及独立审稿后才能标记完稿')
+        active_scenes = [row for row in project['scenes'] if row['story_approved_on_main']]
+        if not active_scenes or any(not row['accepted_draft_id'] for row in active_scenes):
+            raise ValueError('所有场景通过审稿并接受后才能标记完稿')
+        populated_chapters = {scene['chapter_id'] for scene in active_scenes}
+        with self.open_store(novel) as store:
+            for scene in active_scenes:
+                if scene['latest_draft_id'] != scene['accepted_draft_id']:
+                    raise ValueError('仍有较新草稿尚未接受，请先完成审稿')
+                review = self.review_for_draft(store, scene['id'], scene['accepted_draft_id'])
+                if not review or review['result'].get('recommendation') != 'pass':
+                    raise ValueError('已接受稿还缺少对应版本的通过审稿记录')
+        expected = novel['wizard'].get('chapter_count')
+        if expected and len(populated_chapters) < expected:
+            raise ValueError('存在空章或尚未达到立项设定的有效章节数')
+        self.db.update(ident, status='done', runtime_status='DONE', finished_at=now(), reason=None)
+        self.db.event(ident, 'completion', '作者确认全书完稿。')
+        return {'status': 'DONE'}

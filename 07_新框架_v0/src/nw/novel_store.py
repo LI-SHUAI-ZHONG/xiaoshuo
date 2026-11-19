@@ -84,7 +84,7 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
             or len(set(request.scene_ids)) != len(request.scene_ids) or not isinstance(request.budget, Budget)):
         raise ValueError('Invalid novel mode, branch, scenes or budget')
     if request.mode == 'design':
-        if request.scene_ids or request.scene_scopes or request.design_scope not in ('volume', 'chapter', 'scene', 'replan'):
+        if request.scene_ids or request.scene_scopes or request.design_scope not in ('book', 'volume', 'chapter', 'scene', 'replan'):
             raise ValueError('Design requires no scene IDs and a valid detail scope')
         if request.design_scope == 'replan' and not request.parent_id:
             raise ValueError('Replanning requires a parent proposal')
@@ -195,8 +195,12 @@ class Journal:
 
     def check_active(self, key: str, *, check_head: bool = True) -> None:
         self.current_step = key
-        if job_row(self.store, self.id)['status'] == 'CANCELLED':
+        current = job_row(self.store, self.id)
+        status = current['status']
+        if status == 'CANCELLED':
             raise JobPaused('CANCELLED', key, 'CANCELLED')
+        if status == 'BLOCKED' and current['reason'] == 'AUTHOR_PAUSED':
+            raise JobPaused('BLOCKED', key, 'AUTHOR_PAUSED')
         if check_head:
             actual = current_head(self.store, self.head.branch_id)
             if actual != self.head:
@@ -232,7 +236,9 @@ class Journal:
     def move(self, status: str, key: str | None, reason: str | None = None, **outputs: Any) -> JobResult:
         with self.store.connection:
             self.store.connection.execute("""UPDATE novel_jobs SET status=?,step_key=?,reason=?,output_json=?
-                WHERE id=? AND status<>'CANCELLED'""", (status, key, reason, canonical(outputs), self.id))
+                WHERE id=? AND status<>'CANCELLED'
+                AND (COALESCE(reason,'')<>'AUTHOR_PAUSED' OR ?='AUTHOR_PAUSED')""",
+                                          (status, key, reason, canonical(outputs), self.id, reason))
         return show_job(self.store, self.id)
 
     def gate(self, key: str, target: dict, decide: Callable, actions: dict[str, str],

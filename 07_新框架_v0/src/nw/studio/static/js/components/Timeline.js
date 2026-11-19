@@ -1,0 +1,2 @@
+import {esc,date} from '../ui.js';
+export function Timeline(events = []) { return `<ol class="timeline">${events.map((e,i)=>`<li class="timeline-item"><time>${esc(date(e.ts))}</time> <span class="tag">${esc(({created:'立项',design:'设计',write:'写作',review:'审稿',gate:'作者确认',status:'状态变更',run:'任务'}[e.kind] || e.kind))}</span><p>${esc(e.summary)}</p>${e.ref && Object.keys(e.ref).length?`<button class="ghost" data-event="${i}">查看当时记录</button>`:''}</li>`).join('')}</ol>`; }

@@ -334,7 +334,7 @@ class StudioService:
                 store.add_brief(brief_text.strip(), constraints.strip())
         return self.project_overview(dir_name)
 
-    def project_overview(self, project_name: str) -> dict[str, Any]:
+    def project_overview(self, project_name: str, *, branch: str = 'main') -> dict[str, Any]:
         with self._open_store(project_name) as store:
             proj = store.project()
             managed = store.managed_story()
@@ -342,14 +342,17 @@ class StudioService:
             active_slots: dict[str, Any] = {}
             active_settings: list[dict[str, Any]] = []
             approved_positions: dict[str, tuple[int, int]] = {}
+            main_positions: dict[str, tuple[int, int]] = {}
             if managed:
-                for brow in store.connection.execute('SELECT id, head_revision, parent_branch, forked_revision FROM story_branches WHERE enabled=1 ORDER BY id'):
+                for brow in store.connection.execute('SELECT id, head_revision, parent_branch_id AS parent_branch, parent_at_fork AS forked_revision FROM story_branches WHERE enabled=1 ORDER BY id'):
                     branches.append(dict(brow))
-                head = current_head(store, 'main')
+                head = current_head(store, branch)
                 snap = revision_state(store, head)
                 active_slots = snap.get('slots', {})
                 active_settings = snap.get('settings', [])
                 approved_positions = approved_scene_positions(store, snap)
+                main_positions = approved_positions if branch == 'main' else approved_scene_positions(
+                    store, revision_state(store, current_head(store, 'main')))
             briefs = [asdict(b) for b in store.briefs()]
             bibles = [asdict(b) for b in store.bible()]
             chapters = [asdict(c) for c in store.list('chapter')]
@@ -368,9 +371,10 @@ class StudioService:
                     'card': card_obj,
                     'drafts_count': len(drafts),
                     'latest_draft_id': drafts[-1].id if drafts else None,
-                    'accepted_draft_id': slot['draft_id'] if slot else (legacy_acc.draft_id if legacy_acc else None),
+                    'accepted_draft_id': slot['draft_id'] if slot else (legacy_acc.draft_id if legacy_acc and not managed else None),
                     'accepted_delta_id': slot['delta_id'] if slot else None,
-                    'story_approved_on_main': sc.id in approved_positions,
+                    'story_approved_on_main': sc.id in main_positions,
+                    'story_approved_on_branch': sc.id in approved_positions,
                 })
             scenes.sort(key=lambda s: (s['chapter_index'], s['index']))
             plans = self._list_plans(store)
@@ -378,6 +382,7 @@ class StudioService:
             cards = self._list_cards_internal(store)
             return {
                 'dir_name': project_name,
+                'branch_id': branch,
                 'project': asdict(proj),
                 'managed_story': managed,
                 'branches': branches,
@@ -852,6 +857,8 @@ class StudioService:
         """Return a single draft by ID for the Zen Reader / Diff View."""
         with self._open_store(project_name) as store:
             draft = store.get('draft', draft_id)
+            if draft.scene_id != scene_id:
+                raise ValueError('草稿不属于当前场景')
             return asdict(draft)
 
     def save_manual_draft(self, project_name: str, scene_id: str, text: str) -> dict[str, Any]:
@@ -1120,7 +1127,7 @@ class StudioService:
 
     def get_routing_config(self) -> dict[str, Any]:
         env_checks = {}
-        for env_name in ('NOVEL_GATEWAY_API_KEY', 'ANTHROPIC_COMPAT_API_KEY', 'OPENAI_API_KEY', 'GEMINI_API_KEY'):
+        for env_name in ('NW_API_KEY', 'NOVEL_GATEWAY_API_KEY', 'ANTHROPIC_COMPAT_API_KEY', 'OPENAI_API_KEY', 'GEMINI_API_KEY'):
             env_checks[env_name] = bool(os.environ.get(env_name))
         current: dict[str, Any] | None = None
         valid = False
@@ -1166,9 +1173,9 @@ class StudioService:
 
     def render_config_toml(self, payload: dict[str, Any]) -> str:
         model = payload.get('model') or {}
-        provider = str(model.get('provider') or 'ollama').strip()
-        base_url = str(model.get('base_url') or 'http://127.0.0.1:11434').strip()
-        model_name = str(model.get('model') or 'qwen2.5:14b').strip()
+        provider = str(model.get('provider') or 'openai_compat').strip()
+        base_url = str(model.get('base_url') or '').strip()
+        model_name = str(model.get('model') or '').strip()
         api_key_env = str(model.get('api_key_env') or '').strip()
         timeout = float(model.get('timeout') or 120)
 
@@ -1176,6 +1183,12 @@ class StudioService:
             raise ValueError('安全拦截：api_key_env 只能填写环境变量名（如 NOVEL_GATEWAY_API_KEY），严禁直接粘贴密钥明文！')
         if api_key_env and not _ENV_NAME_RE.match(api_key_env):
             raise ValueError('api_key_env 必须是合法的环境变量名（字母/数字/下划线）')
+        if not base_url:
+            raise ValueError('请填写 API 服务地址')
+        if not model_name:
+            raise ValueError('请填写模型名称')
+        if provider == 'openai_compat' and not api_key_env:
+            raise ValueError('请填写保存 API 密钥的环境变量名称')
 
         lines = [
             '# 由 07_新框架_v0 小说工作流客户端生成（严禁在此文件写入 API Key 明文）',

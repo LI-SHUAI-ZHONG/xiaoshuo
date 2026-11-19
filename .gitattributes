@@ -1,0 +1,3 @@
+# The material-version manifest hashes the original bytes, including mixed EOLs.
+# Store all nine existing originals byte-for-byte; never normalize their text.
+02_原版资料/** -text

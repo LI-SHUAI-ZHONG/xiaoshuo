@@ -239,7 +239,8 @@ def test_studio_http_end_to_end_offline_rehearsal(tmp_path: Path) -> None:
 
     try:
         code, html = call('GET', '/')
-        assert code == 200 and '小说工作流客户端' in html
+        # v3 explicitly replaces the v2 product title; keep the real HTTP check.
+        assert code == 200 and '小说生产客户端' in html
 
         code, status = call('GET', '/api/status')
         assert code == 200 and status['api_mode'] == 'offline_sandbox'

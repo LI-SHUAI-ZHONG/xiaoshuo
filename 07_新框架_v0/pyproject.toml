@@ -19,6 +19,7 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 "nw.materials.steps" = ["type_connection_data/*.json", "type_connection_data/*.jsonl"]
+"nw.studio" = ["static/*.html", "static/*.css", "static/*.js", "static/css/*.css", "static/css/pages/*.css", "static/js/*.js", "static/js/components/*.js", "static/js/pages/*.js", "static/icons/*.svg", "static/icons/*.ico"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

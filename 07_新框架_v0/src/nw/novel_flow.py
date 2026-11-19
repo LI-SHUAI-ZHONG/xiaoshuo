@@ -88,6 +88,9 @@ def resume_job(store: Store, job_id: str, provider: LLMProvider, config: Config,
 
 def _design(calls: JobCalls, decide: Decision) -> JobResult:
     journal = calls.journal
+    if journal.request['design_scope'] == 'book':
+        proposal, application = _plan_stage(calls, 'book', None, decide)
+        return journal.move('DONE', 'plan:book:apply', proposal_id=proposal, application=application)
     parent = journal.request['parent_id']
     if parent is None:
         parent, _ = _plan_stage(calls, 'book', None, decide)

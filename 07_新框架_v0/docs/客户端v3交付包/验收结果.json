@@ -1,0 +1,63 @@
+{
+  "browser-controls": {
+    "passed": true,
+    "branch_controls": true,
+    "timeline": true,
+    "stats": true,
+    "export": true,
+    "poll_fallback": true,
+    "cleanup": true,
+    "error_retry": true,
+    "mobile": true,
+    "errors": []
+  },
+  "browser-library": {
+    "passed": true,
+    "book_id": "5dfffc3dab1b4339a3884c8933038d55",
+    "option_key": "tone.TONE_SERIOUS",
+    "errors": []
+  },
+  "browser-official": {
+    "passed": true,
+    "workspace": "D:/搭建/07_新框架_v0/workspace",
+    "mutations": false,
+    "errors": []
+  },
+  "browser-production": {
+    "passed": true,
+    "id": "43b158f2e4874727a2976c5f7fecb249",
+    "errors": []
+  },
+  "browser-shell": {
+    "passed": true,
+    "errors": [],
+    "dimensions": {
+      "body": 390,
+      "viewport": 390,
+      "tabY": 784
+    }
+  },
+  "browser-wizard": {
+    "passed": true,
+    "id": "e9bd7eecfa6547fcbfbc4f4b2242c558",
+    "project_dir": "novel-e9bd7eecfa65",
+    "errors": []
+  },
+  "full_pytest": "1189 passed in 897.33s (0:14:57)",
+  "source_file_count": 756,
+  "source_file_bytes": 27046315,
+  "client_url": "http://127.0.0.1:8767/",
+  "cleanup": "blocked_by_policy",
+  "retained_test_data": "D:\\搭建\\07_新框架_v0\\build\\client-v3-validation",
+  "full_pytest_scope": "v3 初版整仓基线（本次通用 API 设置更新之前）",
+  "api_settings_tests": "22 passed in 5.59s",
+  "api_settings_browser": {
+    "passed": true,
+    "empty_fields_blocked": true,
+    "no_local_defaults": true,
+    "saved_api": true,
+    "reload_preserved": true,
+    "no_model_calls": true,
+    "errors": []
+  }
+}

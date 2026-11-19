@@ -65,22 +65,14 @@ def test_open_count_decreased(ledger_data):
 # ── Studio 前端修复验证 ──────────────────────────────────────────
 
 def test_app_js_switch_tab_has_catch():
-    """switchTab 中的异步调用必须有 .catch() 错误处理。"""
-    js_path = pathlib.Path(__file__).resolve().parents[1] / 'src' / 'nw' / 'studio' / 'static' / 'app.js'
-    if not js_path.is_file():
-        pytest.skip('app.js 不存在')
+    """v3 replaces the six legacy tabs with one error-handled module router.
+
+    Migration: docs/客户端v3初版验收.md records the replaced v2 contracts.
+    """
+    js_path = pathlib.Path(__file__).resolve().parents[1] / 'src' / 'nw' / 'studio' / 'static' / 'js' / 'app.js'
     js = js_path.read_text(encoding='utf-8')
-    # Find the switchTab function region
-    idx = js.find('function switchTab')
-    assert idx >= 0, 'switchTab function not found'
-    end = js.find('\n  }', idx)
-    switch_body = js[idx:end]
-    # All async calls should have .catch()
-    assert 'loadBlueprint().catch' in switch_body, 'loadBlueprint 缺少 .catch()'
-    assert 'searchMaterials().catch' in switch_body, 'searchMaterials 缺少 .catch()'
-    assert 'searchLedger().catch' in switch_body, 'searchLedger 缺少 .catch()'
-    assert 'loadRouting().catch' in switch_body, 'loadRouting 缺少 .catch()'
-    assert 'loadStateMatrix().catch' in switch_body, 'loadStateMatrix 缺少 .catch()'
+    assert 'hashchange' in js
+    assert 'catch' in js, '路由加载失败必须向作者显示错误'
 
 
 def test_app_js_json_parse_has_friendly_error():
@@ -93,14 +85,39 @@ def test_app_js_json_parse_has_friendly_error():
     assert '格式不正确' in js, 'JSON.parse 友好错误消息缺失'
 
 
-def test_server_path_traversal_check():
-    """server.py 路径遍历检查应使用 startswith 而非 parent==。"""
-    srv_path = pathlib.Path(__file__).resolve().parents[1] / 'src' / 'nw' / 'studio' / 'server.py'
-    if not srv_path.is_file():
-        pytest.skip('server.py 不存在')
-    code = srv_path.read_text(encoding='utf-8')
-    assert 'startswith(str(STATIC_DIR))' in code, '路径遍历检查应使用 startswith'
-    assert 'target.parent != STATIC_DIR' not in code, '旧的 parent 检查应已移除'
+def test_server_path_traversal_check(tmp_path, monkeypatch):
+    """v3: nested modules are served; prefix-sharing sibling paths stay private.
+
+    Replaces the unsafe v2 assertion requiring str.startswith(STATIC_DIR).
+    """
+    from http.client import HTTPConnection
+    from nw.studio import server as module
+    from nw.studio.api import StudioService
+
+    static = tmp_path / 'static'
+    (static / 'js').mkdir(parents=True)
+    (static / 'js' / 'app.js').write_text('export const safe = true;', encoding='utf-8')
+    sibling = tmp_path / 'static-private'
+    sibling.mkdir()
+    (sibling / 'secret.txt').write_text('DO_NOT_DISCLOSE_93742', encoding='utf-8')
+    monkeypatch.setattr(module, 'STATIC_DIR', static.resolve())
+    server = module.create_studio_server(StudioService(tmp_path / 'workspace'), port=0)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        for path, expected in [('/js/app.js', 200), ('/../static-private/secret.txt', 404),
+                               ('/%2e%2e/static-private/secret.txt', 404),
+                               ('/%2e%2e%2fstatic-private%2fsecret.txt', 404)]:
+            connection = HTTPConnection('127.0.0.1', server.server_port, timeout=5)
+            connection.request('GET', path)
+            response = connection.getresponse()
+            assert response.status == expected, path
+            assert b'DO_NOT_DISCLOSE_93742' not in response.read(), path
+            connection.close()
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)
 
 
 def test_api_ledger_cache_invalidation():

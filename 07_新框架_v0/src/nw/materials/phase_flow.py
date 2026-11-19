@@ -1026,6 +1026,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['continuity_ledger'] = continuity_ledger
         if (joint_plan := build_joint_material_plan(stage, sources)) is not None:
             payload['joint_material_plan'] = joint_plan
+        from nw.materials.author_references import author_stage_input
+        if author_input := author_stage_input(package, stage):
+            payload['author_input'] = author_input
         if chapter_handoff is not None:
             payload['chapter_handoff'] = chapter_handoff
         if chapter_summary is not None:

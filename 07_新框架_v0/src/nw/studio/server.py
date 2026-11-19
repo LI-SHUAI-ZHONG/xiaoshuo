@@ -6,6 +6,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
 import sqlite3
+import threading
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlsplit
 import webbrowser
@@ -28,8 +29,15 @@ def _first(query: dict[str, list[str]], key: str, default: str = '') -> str:
 
 
 def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: int = 8765) -> ThreadingHTTPServer:
+    from nw.studio.library import LibraryService
+    from nw.studio.production import ProductionService
+    from nw.studio.production_routes import ProductionRoutes
+    library = LibraryService(service.workspace, config_path=service.config_path, ledger_path=service.ledger_path)
+    production = ProductionService(service, library)
+    routes = ProductionRoutes(production, library)
+
     class StudioHandler(BaseHTTPRequestHandler):
-        server_version = 'NovelWorkflowStudio/1.0'
+        server_version = 'NovelWorkflowStudio/3.0'
 
         def log_message(self, format: str, *args: Any) -> None:
             return
@@ -41,7 +49,10 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
             self.send_header('Cache-Control', 'no-store')
             self.send_header('Content-Length', str(len(raw)))
             self.end_headers()
-            self.wfile.write(raw)
+            try:
+                self.wfile.write(raw)
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                self.close_connection = True
 
         def _read_json(self) -> dict[str, Any]:
             length = int(self.headers.get('Content-Length', '0') or '0')
@@ -56,9 +67,9 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
             return val
 
         def _serve_static(self, rel_path: str) -> None:
-            name = 'index.html' if rel_path in ('', '/') else rel_path.lstrip('/')
+            name = 'index.html' if rel_path in ('', '/') else unquote(rel_path).lstrip('/')
             target = (STATIC_DIR / name).resolve()
-            if not (str(target).startswith(str(STATIC_DIR)) and target.is_file()):
+            if not (target.is_relative_to(STATIC_DIR) and target.is_file()):
                 self._send_json(HTTPStatus.NOT_FOUND, {'error': f'未找到静态资源: {name}'})
                 return
             data = target.read_bytes()
@@ -67,7 +78,10 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
             self.send_header('Cache-Control', 'no-store')
             self.send_header('Content-Length', str(len(data)))
             self.end_headers()
-            self.wfile.write(data)
+            try:
+                self.wfile.write(data)
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                self.close_connection = True
 
         def do_GET(self) -> None:
             parts = urlsplit(self.path)
@@ -78,6 +92,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 return
             try:
                 segs = [unquote(s) for s in path.strip('/').split('/')][1:]
+                if routes.get(self, segs, query):
+                    return
                 if segs == ['status']:
                     return self._send_json(200, service.system_status())
                 if segs == ['projects']:
@@ -139,6 +155,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 if segs == ['config', 'routing']:
                     return self._send_json(200, service.get_routing_config())
                 self._send_json(404, {'error': f'未知 API 路径: {path}'})
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                self.close_connection = True
             except FileNotFoundError as exc:
                 self._send_json(404, {'error': str(exc)})
             except (ValueError, KeyError, sqlite3.Error) as exc:
@@ -153,8 +171,19 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 self._send_json(405, {'error': '仅 API 支持 POST'})
                 return
             try:
+                origin = self.headers.get('Origin')
+                if origin:
+                    source = urlsplit(origin)
+                    target = urlsplit('http://' + self.headers.get('Host', ''))
+                    if (source.scheme != 'http' or source.hostname not in ('localhost', '127.0.0.1', '::1')
+                            or source.netloc.lower() != target.netloc.lower()):
+                        return self._send_json(403, {'error': '只接受本地客户端的同源操作'})
+                if self.headers.get('Content-Type', '').split(';', 1)[0].strip().lower() != 'application/json':
+                    return self._send_json(415, {'error': '请使用 application/json 请求体'})
                 body = self._read_json()
                 segs = [unquote(s) for s in path.strip('/').split('/')][1:]
+                if routes.post(self, segs, body):
+                    return
                 if segs == ['projects']:
                     return self._send_json(201, service.create_project(
                         str(body['dir_name']),
@@ -221,6 +250,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 if segs == ['config', 'save']:
                     return self._send_json(200, service.save_routing_config(body))
                 self._send_json(404, {'error': f'未知 POST API 路径: {path}'})
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                self.close_connection = True
             except FileNotFoundError as exc:
                 self._send_json(404, {'error': str(exc)})
             except (ValueError, KeyError, sqlite3.Error) as exc:
@@ -228,7 +259,22 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
             except Exception as exc:
                 self._send_json(500, {'error': f'内部错误: {exc}'})
 
-    return ThreadingHTTPServer((host, int(port)), StudioHandler)
+    class StudioServer(ThreadingHTTPServer):
+        daemon_threads = True
+
+        def shutdown(self) -> None:
+            self.studio_shutdown.set()
+            super().shutdown()
+
+        def server_close(self) -> None:
+            self.studio_shutdown.set()
+            super().server_close()
+
+    server = StudioServer((host, int(port)), StudioHandler)
+    server.studio_shutdown = threading.Event()
+    server.production = production
+    server.library = library
+    return server
 
 
 def run_studio(workspace: Path | None = None, *, config_path: Path | None = None,
@@ -239,7 +285,7 @@ def run_studio(workspace: Path | None = None, *, config_path: Path | None = None
     url = f'http://{actual_host}:{actual_port}/'
     print(f'小说创作工作流客户端已启动: {url}')
     print(f'工作区路径: {service.workspace}')
-    print('当前支持完全离线沙盘操作（暂不接入外部 API 亦可完整管理项目、预演14步资料与排练状态机）。按 Ctrl+C 停止。')
+    print('v3 生产客户端：立项、制作台、书架、图鉴、知识库与预存库。模型密钥仅从环境读取。按 Ctrl+C 停止。')
     if open_browser:
         try:
             webbrowser.open(url)

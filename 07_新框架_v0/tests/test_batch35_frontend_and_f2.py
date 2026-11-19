@@ -73,8 +73,11 @@ def test_f2_batch35_resolutions_have_correct_model():
 # ── P2: Frontend enhancements ──
 
 def test_zen_reader_html_present():
-    """index.html should contain the Zen Reader section."""
-    html = (ROOT / 'src' / 'nw' / 'studio' / 'static' / 'index.html').read_text(encoding='utf-8')
+    """v3 renders reader/diff inside the actual Studio module, not a hidden shell.
+
+    See docs/客户端v3初版验收.md for the explicit migration of old DOM contracts.
+    """
+    html = (ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js' / 'pages' / 'studio.js').read_text(encoding='utf-8')
     assert 'zenReaderContainer' in html
     assert 'zenDiffContainer' in html
     assert 'btnZenDiff' in html
@@ -82,19 +85,20 @@ def test_zen_reader_html_present():
 
 
 def test_svg_graph_html_present():
-    """index.html should contain the SVG relationship graph section."""
-    html = (ROOT / 'src' / 'nw' / 'studio' / 'static' / 'index.html').read_text(encoding='utf-8')
-    assert 'svgGraphContainer' in html
-    assert 'relationSvg' in html
-    assert 'btnRenderGraph' in html
+    """v3 replaces the old graph panel with readable design output cards."""
+    js = (ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js' / 'ui.js').read_text(encoding='utf-8')
+    assert 'readable' in js
+    assert 'design-card' in js
+    assert 'esc(' in js
 
 
 def test_job_stepper_html_present():
-    """index.html should contain the Job Stepper Drawer section."""
-    html = (ROOT / 'src' / 'nw' / 'studio' / 'static' / 'index.html').read_text(encoding='utf-8')
-    assert 'jobDrawerSection' in html
-    assert 'jobStepperContent' in html
-    assert 'btnRefreshJobs' in html
+    """v3 production tree replaces the old Job Stepper drawer."""
+    root = ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js'
+    js = '\n'.join(path.read_text(encoding='utf-8') for path in root.rglob('*.js'))
+    assert '/progress' in js
+    assert 'ProgressTree' in js
+    assert 'EventSource' in js
 
 
 def test_app_js_zen_reader_functions():

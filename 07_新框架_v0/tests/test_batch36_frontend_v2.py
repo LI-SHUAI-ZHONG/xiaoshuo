@@ -1,265 +1,129 @@
-"""Batch 36 regression tests: complete frontend rebuild + UI enhancements."""
-import pathlib
+"""v3 migration of the former v2 frontend contract tests.
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+The six-tab, giant-single-file assertions are intentionally replaced. See
+`docs/客户端v3初版验收.md`; no ledger/backend coverage was removed.
+"""
+from html.parser import HTMLParser
+import base64
+from pathlib import Path
+import re
+import shutil
+import subprocess
+
+import pytest
+
+ROOT = Path(__file__).resolve().parent.parent
 STATIC = ROOT / 'src' / 'nw' / 'studio' / 'static'
 
 
-# ── HTML structure integrity ──
-
-def test_html_has_complete_app_shell():
-    """index.html must have the v2 app-shell structure."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'app-shell' in html
-    assert 'sidebar' in html
-    assert 'main-stage' in html
-    assert 'content-area' in html
-    assert 'topbar' in html
-
-
-def test_html_has_all_six_tabs():
-    """index.html must have all 6 tab panels."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    for tab_id in ['tab-projects', 'tab-pipeline', 'tab-scenes', 'tab-cards', 'tab-materials', 'tab-routing']:
-        assert tab_id in html, f'Missing tab: {tab_id}'
-
-
-def test_html_has_search_overlay():
-    """index.html must have the global search overlay."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'searchOverlay' in html
-    assert 'searchInput' in html
-    assert 'searchResults' in html
-
-
-def test_html_has_notification_panel():
-    """index.html must have the notification panel."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'notificationPanel' in html
-    assert 'notificationList' in html
-
-
-def test_html_has_modal_system():
-    """index.html must have the modal dialog system."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'modalBackdrop' in html
-    assert 'modalBody' in html
-    assert 'modalFooter' in html
-
-
-def test_html_has_theme_toggle():
-    """index.html must have the theme toggle button."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'btnThemeToggle' in html
-    assert 'data-theme' in html
-
-
-def test_html_has_stats_row():
-    """index.html must have the project stats dashboard."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'projectStatsRow' in html
-    assert 'statChapters' in html
-    assert 'statScenes' in html
-    assert 'statCards' in html
-
-
-def test_html_has_breadcrumb():
-    """index.html must have the breadcrumb navigation."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'breadcrumb' in html
-    assert 'breadcrumbPage' in html
-
-
-# ── CSS design system ──
-
-def test_css_has_design_system_variables():
-    """styles.css must have CSS custom properties for the design system."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert '--bg-app' in css
-    assert '--accent' in css
-    assert '--font-sans' in css
-    assert '--radius' in css
-    assert '--transition' in css
-
-
-def test_css_has_light_theme():
-    """styles.css must have a light theme override."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert 'data-theme="light"' in css
-
-
-def test_css_has_modal_styles():
-    """styles.css must have modal dialog styles."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert '.modal-backdrop' in css
-    assert '.modal-box' in css
-
-
-def test_css_has_search_overlay_styles():
-    """styles.css must have search overlay styles."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert '.search-overlay' in css
-    assert '.search-box' in css
-
-
-def test_css_has_notification_styles():
-    """styles.css must have notification panel styles."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert '.notification-panel' in css
-    assert '.notification-item' in css
-
-
-def test_css_has_loading_states():
-    """styles.css must have loading spinner and skeleton styles."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert '.loading-spinner' in css
-    assert '.skeleton' in css
-
-
-def test_css_has_responsive_breakpoints():
-    """styles.css must have responsive media queries."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert '@media' in css
-    assert 'max-width: 768px' in css
-
-
-def test_css_has_stat_card_styles():
-    """styles.css must have stats dashboard card styles."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert '.stat-card' in css
-    assert '.stat-value' in css
-
-
-def test_css_has_tooltip_styles():
-    """styles.css must have tooltip styles."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert 'data-tooltip' in css
-
-
-# ── JS controller ──
-
-def test_js_has_search_functionality():
-    """app.js must have search overlay functions."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'openSearch' in js
-    assert 'closeSearch' in js
-    assert 'performSearch' in js
-
-
-def test_js_has_theme_toggle():
-    """app.js must have theme toggle function."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'toggleTheme' in js
-    assert 'loadTheme' in js
-
-
-def test_js_has_modal_system():
-    """app.js must have modal dialog functions."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'showModal' in js
-    assert 'closeModal' in js
-
-
-def test_js_has_notification_system():
-    """app.js must have notification functions."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'addNotification' in js
-    assert 'renderNotifications' in js
-
-
-def test_js_has_keyboard_shortcuts():
-    """app.js must have keyboard shortcut setup."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'setupKeyboard' in js
-    assert 'Ctrl+K' in js or 'ctrlKey' in js
-
-
-def test_js_has_sidebar_toggle():
-    """app.js must have sidebar toggle function."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'toggleSidebar' in js
-
-
-def test_js_has_stats_dashboard():
-    """app.js must have stats update function."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'updateStats' in js
-
-
-def test_js_has_loading_state_management():
-    """app.js must have loading state management."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'setLoading' in js
-    assert 'loading-overlay' in js
-
-
-# ── Batch 35 backward compatibility ──
-
-def test_backward_compat_zen_reader():
-    """Zen Reader elements must still exist (backward compat with Batch 35 tests)."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'zenReaderContainer' in html
-    assert 'zenDiffContainer' in html
-    assert 'btnZenDiff' in html
-    assert 'btnZenRead' in html
-
-
-def test_backward_compat_svg_graph():
-    """SVG graph elements must still exist."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'svgGraphContainer' in html
-    assert 'relationSvg' in html
-    assert 'btnRenderGraph' in html
-
-
-def test_backward_compat_job_stepper():
-    """Job stepper elements must still exist."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    assert 'jobDrawerSection' in html
-    assert 'jobStepperContent' in html
-    assert 'btnRefreshJobs' in html
-
-
-def test_backward_compat_js_functions():
-    """Core JS functions from Batch 35 must still exist."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    assert 'renderZenDiff' in js
-    assert 'renderZenRead' in js
-    assert 'simpleDiff' in js
-    assert 'populateZenSelects' in js
-    assert 'renderRelationshipGraph' in js
-    assert 'refreshJobDrawer' in js
-    assert 'JOB_STEPS' in js
-
-
-def test_backward_compat_css_classes():
-    """Core CSS classes from Batch 35 must still exist."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    assert '.zen-reader-container' in css
-    assert '.svg-graph-container' in css
-    assert '.job-stepper-content' in css
-    assert '.diff-add' in css
-    assert '.node-circle' in css
-
-
-# ── File sizes (sanity check that we actually enhanced) ──
-
-def test_html_size_increased():
-    """index.html should be larger than v1 (was ~596 lines)."""
-    html = (STATIC / 'index.html').read_text(encoding='utf-8')
-    line_count = len(html.splitlines())
-    assert line_count > 400, f'HTML too small: {line_count} lines'
-
-
-def test_css_size_increased():
-    """styles.css should be larger than v1 (was ~702 lines)."""
-    css = (STATIC / 'styles.css').read_text(encoding='utf-8')
-    line_count = len(css.splitlines())
-    assert line_count > 500, f'CSS too small: {line_count} lines'
-
-
-def test_js_size_increased():
-    """app.js should be larger than v1 (was ~1259 lines)."""
-    js = (STATIC / 'app.js').read_text(encoding='utf-8')
-    line_count = len(js.splitlines())
-    assert line_count > 800, f'JS too small: {line_count} lines'
+class Shell(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.tags = []
+
+    def handle_starttag(self, tag, attrs):
+        self.tags.append((tag, dict(attrs)))
+
+
+def shell():
+    result = Shell()
+    result.feed((STATIC / 'index.html').read_text(encoding='utf-8'))
+    return result
+
+
+def test_html_loads_only_the_v3_module_entrypoint():
+    scripts = [attrs for tag, attrs in shell().tags if tag == 'script']
+    assert scripts == [{'type': 'module', 'src': '/js/app.js'}]
+    assert (STATIC / 'js' / 'app.js').is_file()
+
+
+def test_shell_contains_unique_accessible_regions():
+    tags = shell().tags
+    ids = [attrs['id'] for _, attrs in tags if 'id' in attrs]
+    assert len(ids) == len(set(ids)), 'Duplicate IDs make controls target the wrong region'
+    assert {'activityBar', 'sidebar', 'contentArea', 'bottomPanel', 'inspector', 'statusConnection'} <= set(ids)
+    assert any(tag == 'nav' and attrs.get('aria-label') for tag, attrs in tags)
+    assert any(tag == 'main' for tag, _ in tags)
+    assert any(attrs.get('aria-live') == 'polite' for _, attrs in tags)
+
+
+def test_shell_loads_all_local_styles_and_mobile_viewport():
+    tags = shell().tags
+    styles = [attrs['href'] for tag, attrs in tags if tag == 'link' and attrs.get('rel') == 'stylesheet']
+    assert styles
+    assert all(href.startswith('/css/') and (STATIC / href.lstrip('/')).is_file() for href in styles)
+    assert any(tag == 'meta' and attrs.get('name') == 'viewport' and 'device-width' in attrs['content'] for tag, attrs in tags)
+
+
+def test_search_and_notifications_are_real_dialogs():
+    tags = shell().tags
+    dialogs = {attrs.get('id') for tag, attrs in tags if tag == 'dialog'}
+    assert {'searchOverlay', 'notificationPanel', 'modalBackdrop', 'drawer'} <= dialogs
+
+
+@pytest.mark.parametrize('page', ['home', 'studio', 'library', 'book', 'atlas', 'kb', 'staging', 'settings'])
+def test_production_pages_are_modules(page):
+    text = (STATIC / 'js' / 'pages' / f'{page}.js').read_text(encoding='utf-8')
+    assert re.search(r'\bexport\b', text)
+    assert 'innerHTML' in text or 'render' in text
+
+
+def test_all_static_module_dependencies_exist():
+    for path in (STATIC / 'js').rglob('*.js'):
+        source = path.read_text(encoding='utf-8')
+        for specifier in re.findall(r'(?:from\s*|import\s*\()\s*[\"\']([^\"\']+)[\"\']', source):
+            assert specifier.startswith(('.', '/')), f'Runtime third-party dependency: {path}: {specifier}'
+            target = STATIC / specifier.lstrip('/') if specifier.startswith('/') else path.parent / specifier
+            assert target.resolve().is_relative_to(STATIC.resolve()) and target.is_file(), f'{path}: {specifier}'
+
+
+def node_run(source):
+    node = shutil.which('node')
+    if not node:
+        pytest.skip('Node is an optional local JS verification tool, not a runtime dependency')
+    result = subprocess.run([node, '--input-type=module'], input=source, encoding='utf-8', capture_output=True, timeout=20)
+    assert result.returncode == 0, result.stderr
+
+
+def test_every_es_module_parses_without_a_build_step():
+    node = shutil.which('node')
+    if not node:
+        pytest.skip('Node not installed')
+    for path in (STATIC / 'js').rglob('*.js'):
+        result = subprocess.run([node, '--input-type=module', '--check'], input=path.read_text(encoding='utf-8'), encoding='utf-8', capture_output=True, timeout=10)
+        assert result.returncode == 0, f'{path}: {result.stderr}'
+
+
+def test_api_adapter_sends_json_and_propagates_errors():
+    source = base64.b64encode((STATIC / 'js' / 'api.js').read_bytes()).decode('ascii')
+    node_run(f'''
+import assert from 'node:assert/strict';
+const {{api, ApiError}} = await import('data:text/javascript;base64,{source}');
+let seen;
+globalThis.fetch = async (url, options) => {{ seen = {{url, options}}; return {{ok:true, json:async()=>({{id:'saved'}})}}; }};
+assert.equal((await api.post('/novels', {{title:'甲'}})).id, 'saved');
+assert.equal(seen.url, '/api/novels');
+assert.equal(seen.options.headers['Content-Type'], 'application/json');
+assert.deepEqual(JSON.parse(seen.options.body), {{title:'甲'}});
+globalThis.fetch = async () => ({{ok:false, status:400, json:async()=>({{error:'必须审核证据'}})}});
+await assert.rejects(api.post('/staging/x/verify', {{}}), e => e instanceof ApiError && e.status===400 && e.message==='必须审核证据');
+globalThis.fetch = async () => ({{ok:true, status:200, json:async()=>{{throw new Error('invalid')}}}});
+await assert.rejects(api.get('/novels'));
+''')
+
+
+def test_theme_and_mobile_layout_use_the_v3_styles():
+    css = '\n'.join(path.read_text(encoding='utf-8') for path in (STATIC / 'css').rglob('*.css'))
+    assert 'data-theme="light"' in css or "data-theme='light'" in css
+    assert '--accent' in css and '--font-serif' in css
+    assert '959px' in css or '960px' in css
+    assert 'prefers-reduced-motion' in css
+
+
+def test_packaged_client_includes_nested_assets():
+    import tomllib
+    data = tomllib.loads((ROOT / 'pyproject.toml').read_text(encoding='utf-8'))
+    patterns = data['tool']['setuptools']['package-data']['nw.studio']
+    assert 'static/js/pages/*.js' in patterns
+    assert 'static/js/components/*.js' in patterns
+    assert 'static/css/*.css' in patterns
