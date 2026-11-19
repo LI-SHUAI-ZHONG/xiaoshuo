@@ -2,6 +2,8 @@
 
 正式位置是本目录、`../../src/nw/studio/`、`../../tests/test_studio_v3_*.py` 及下述资料基线。Codex 聊天附件目录只保留副本；客户端运行不依赖 `C:/Users/li/Documents/Codex/`。
 
+作者随后要求实际连接 GitHub 自动同步。客户端现使用仓库中直接跟踪的 `studio.config.toml`，并通过 `studio_data/runtime/` 自动保存/拉取实际书库和小说。旧版“个人小说一直只留本地”和“只有配置示例进 Git”的范围已被此要求替代。以 [GitHub 自动同步与资料位置](../GitHub自动同步与资料位置.md) 为当前运行说明。
+
 ## 内容与位置
 
 | 内容 | 仓库内位置 |
@@ -10,7 +12,8 @@
 | 客户端前后端与图标 | `../../src/nw/studio/` |
 | 参考用法阶段输入 | `../../src/nw/materials/author_references.py` |
 | 工作流衔接 | `../../src/nw/novel_flow.py`、`../../src/nw/novel_store.py` |
-| 开发与使用配置示例 | `../../config.example.toml`；实际密钥读取环境变量 |
+| 客户端实际 API 配置 | `../../studio.config.toml`；地址、模型及密钥变量名随 Git 保存，密钥值只读取环境变量 |
+| GitHub 同步配置与实际作品快照 | `../../studio.repository.toml`、`../../studio_data/runtime/` |
 | 自动化回归 | `../../tests/test_studio_v3_*.py` 及已明确迁移的旧客户端测试 |
 | 交付说明、快速上手、截图、测试日志 | 本目录对应 Markdown、PNG、TXT、JSON |
 | 浏览器验收脚本与隔离服务器 | 本目录 `验收脚本/`；输出默认写入 `build/`，不写正式小说库 |
@@ -35,15 +38,11 @@
 
 ```powershell
 python tools/materials_baseline.py verify
-python tools/materials_baseline.py restore --workspace workspace
-if (-not (Test-Path -LiteralPath config.toml)) {
-    Copy-Item -LiteralPath config.example.toml -Destination config.toml
-}
 $env:PYTHONPATH='src'
 python -m nw studio --host 127.0.0.1 --port 8767 --open-browser
 ```
 
-上述命令仅在本地没有 `config.toml` 时复制示例配置。随后在设置中填写通用 API 地址、模型名称和密钥环境变量名。运行客户端不需要 Node、Playwright 或前端构建。
+客户端从 Git 配置指定的基线自动恢复资料和实际作品。随后在设置中填写通用 API 地址、模型名称和密钥环境变量名，保存后进入 GitHub 自动同步。运行客户端不需要 Node、Playwright 或前端构建。
 
 恢复工具不会覆盖内容不同的已有文件；已有创作工作区请选择一个空目录先恢复。原件版本或受保护代码指纹不同会明确拒绝恢复，不能靠旧裁定库掩盖差异。所有路径相对工具所在仓库解析，不依赖原机器的 C 盘聊天目录。
 
@@ -66,6 +65,8 @@ python -m nw studio --host 127.0.0.1 --port 8767 --open-browser
 
 ## Git 保存范围
 
-本次源码、规格、交付文档、验收记录、图标、可移植验收脚本和有效资料基线已一同提交到本地 Git，尚未推送远程。逐文件 Git 对象和大小见 [仓库交付清单.json](仓库交付清单.json)；清单不递归收录自身及根目录地图。`workspace/` 中的个人小说状态、实际 API 配置和 `build/` 临时缓存继续保留原忽略规则；资料基线已在 `fixtures/` 单独归档，不依赖被忽略的运行库才能恢复。
+初次补全时已将源码、规格、交付文档、验收记录、图标、可移植验收脚本和有效资料基线提交本地 Git，随后按作者要求增加实际 GitHub 自动同步。API 非密钥配置直接跟踪，实际书库/小说通过 `studio_data/runtime/` 自动快照提交；密钥值和可再生临时缓存保留本机。
+
+[仓库交付清单.json](仓库交付清单.json) 是交付冻结时的逐文件 Git 对象和大小，不递归收录自身及根目录地图。后续日常自动同步以当前 Git 提交及 `studio_data/runtime/current.json` 为准。
 
 `原版资料完整`、`交付文件已提交`、`所有功能已完成`、`真实创作已验收`是不同结论。尚未实现的语义自动升级和设计单步重做等边界，仍以 `../客户端v3初版验收.md` 为准。

@@ -10,6 +10,7 @@ $('#btnSidebarToggle').innerHTML=icon('panel');$('#searchIcon').innerHTML=icon('
 $('#btnSidebarToggle').onclick=()=>toggleSidebar();
 $('#btnThemeToggle').onclick=()=>{persist({theme:store.theme==='dark'?'light':'dark'});document.documentElement.dataset.theme=store.theme;};
 $('#statusPanel').onclick=()=>togglePanel();
+$('#statusGit').onclick=()=>{location.hash='#/settings';};
 $('#statusGuards').onclick=()=>{if(['studio','book'].includes(state.route)){persist({inspector:!store.inspector});$('#inspector').hidden=!store.inspector;}};
 $('#globalProjectSelect').onchange=e=>{persist({activeNovel:e.target.value});if(e.target.value)location.hash=`#/studio/${enc(e.target.value)}`;};
 $('#runPill').onclick=()=>{if($('#runPill').dataset.novel)location.hash=`#/studio/${enc($('#runPill').dataset.novel)}`;};
@@ -47,3 +48,5 @@ async function bootstrap(){try{const [status,novels]=await Promise.all([api.get(
 window.addEventListener('hashchange',navigate);window.addEventListener('studio:created',()=>{api.get('/novels').then(r=>{state.novels=r.novels||[];refreshHeader();}).catch(fail);});
 api.get('/config/routing').then(c=>{const value=c.current?.model;const name=typeof value==='string'?value:value?.model;$('#statusModel').textContent=c.valid&&name?`模型：${name}`:'API 待配置';}).catch(()=>{});
 bootstrap();navigate();
+async function refreshGitStatus(){try{const value=await api.get('/repository');const names={disabled:'GitHub 未启用',pending:'GitHub 待同步',syncing:'GitHub 同步中',synced:'GitHub 已同步',error:'GitHub 同步未完成'};$('#statusGit').textContent=value.restart_required?'GitHub 已更新 · 请重启':names[value.state]||'GitHub 待检查';$('#statusGit').title=value.error||value.message;}catch{$('#statusGit').textContent='GitHub 状态待检查';}}
+refreshGitStatus();setInterval(()=>{if(!document.hidden)refreshGitStatus();},5000);

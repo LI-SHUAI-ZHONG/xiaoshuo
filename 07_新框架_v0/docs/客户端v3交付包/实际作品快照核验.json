@@ -1,0 +1,31 @@
+{
+  "entries": 12,
+  "archive_parts": 1,
+  "compressed_bytes": 131317,
+  "runtime_sha256": "8839397f90320c616a4f27c335fc26a26f08886237dd1b7cd057b4d9636eea76",
+  "formal_books": 1,
+  "files": [
+    "chaohen_ollama_smoke_20261101/nw.db",
+    "chaohen_ollama_smoke_20261101/nw.v4.20261118T042435746860Z.8440bd94.bak",
+    "chaohen_ollama_smoke_20261101/nw.v5.20261118T042435761985Z.31f0ba7a.bak",
+    "chaohen_ollama_smoke_20261101/nw.v6.20261118T042435777546Z.a9b4647b.bak",
+    "chaohen_ollama_smoke_20261101/nw.v7.20261118T042435793358Z.271517fe.bak",
+    "chaohen_ollama_smoke_20261101/nw.v8.20261118T042435810097Z.b4c33e82.bak",
+    "chaohen_ollama_smoke_20261101/nw.v9.20261118T042435828925Z.6c07da2b.bak",
+    "chaohen_ollama_smoke_20261101/smoke.measurements.json",
+    "chaohen_ollama_smoke_20261101/smoke.stderr.txt",
+    "chaohen_ollama_smoke_20261101/smoke.stdout.json",
+    "chaohen_ollama_smoke_20261101/smoke.verification.json",
+    "library/library.db"
+  ],
+  "model_calls": 0,
+  "restored_all_file_hashes_match": true,
+  "restored_project_table_counts": {
+    "projects": 1,
+    "briefs": 1,
+    "drafts": 1,
+    "task_calls": 0,
+    "novel_jobs": 0
+  },
+  "restored_workspace": "build\\github-runtime-restoration-proof\\workspace"
+}

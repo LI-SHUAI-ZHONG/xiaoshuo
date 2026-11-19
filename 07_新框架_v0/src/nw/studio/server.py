@@ -32,9 +32,14 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
     from nw.studio.library import LibraryService
     from nw.studio.production import ProductionService
     from nw.studio.production_routes import ProductionRoutes
+    from nw.studio.repository import RepositorySync
+    repository = RepositorySync(service)
+    repository.prepare()
+    service.repository_sync = repository
     library = LibraryService(service.workspace, config_path=service.config_path, ledger_path=service.ledger_path)
     production = ProductionService(service, library)
     routes = ProductionRoutes(production, library)
+    repository.attach(production, library)
 
     class StudioHandler(BaseHTTPRequestHandler):
         server_version = 'NovelWorkflowStudio/3.0'
@@ -84,6 +89,13 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 self.close_connection = True
 
         def do_GET(self) -> None:
+            if self.path.startswith('/api/') and not urlsplit(self.path).path.endswith('/events'):
+                with repository.data_lock:
+                    self._get()
+            else:
+                self._get()
+
+        def _get(self) -> None:
             parts = urlsplit(self.path)
             path = parts.path
             query = parse_qs(parts.query)
@@ -92,6 +104,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 return
             try:
                 segs = [unquote(s) for s in path.strip('/').split('/')][1:]
+                if segs == ['repository']:
+                    return self._send_json(200, repository.status())
                 if routes.get(self, segs, query):
                     return
                 if segs == ['status']:
@@ -165,6 +179,15 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 self._send_json(500, {'error': f'内部错误: {exc}'})
 
         def do_POST(self) -> None:
+            if urlsplit(self.path).path == '/api/repository/sync':
+                return self._post()
+            try:
+                with repository.mutation():
+                    self._post()
+            except ValueError as exc:
+                self._send_json(409, {'error': str(exc)})
+
+        def _post(self) -> None:
             parts = urlsplit(self.path)
             path = parts.path
             if not path.startswith('/api/'):
@@ -182,6 +205,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                     return self._send_json(415, {'error': '请使用 application/json 请求体'})
                 body = self._read_json()
                 segs = [unquote(s) for s in path.strip('/').split('/')][1:]
+                if segs == ['repository', 'sync']:
+                    return self._send_json(202, repository.trigger())
                 if routes.post(self, segs, body):
                     return
                 if segs == ['projects']:
@@ -268,12 +293,15 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
 
         def server_close(self) -> None:
             self.studio_shutdown.set()
+            repository.close()
             super().server_close()
 
     server = StudioServer((host, int(port)), StudioHandler)
     server.studio_shutdown = threading.Event()
     server.production = production
     server.library = library
+    server.repository = repository
+    repository.start()
     return server
 
 

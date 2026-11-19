@@ -118,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
         epilog="fake is available only through the isolated automated test API.",
     )
     parser.add_argument('--workspace', type=Path)
-    parser.add_argument('--config', type=Path, default=ROOT / 'config.toml')
+    parser.add_argument('--config', type=Path)
     parser.add_argument('--project', help='project directory name')
     commands = parser.add_subparsers(dest='command')
     ab = commands.add_parser('ab').add_subparsers(dest='action', required=True)
@@ -196,6 +196,8 @@ def main(argv: list[str] | None = None) -> int:
     studio.add_argument('--port', type=int, default=8765)
     studio.add_argument('--open-browser', action='store_true')
     args = parser.parse_args(argv)
+    if args.command != 'studio' and args.config is None:
+        args.config = ROOT / 'config.toml'
     if args.command is None:
         parser.print_help()
         return 0

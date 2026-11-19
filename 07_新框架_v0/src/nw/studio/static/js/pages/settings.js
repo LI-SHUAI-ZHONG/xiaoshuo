@@ -1,6 +1,7 @@
 import {api} from '../api.js';
 import {$,$$,esc,icon,drawer,busy,toast} from '../ui.js';
 import {persist} from '../store.js';
+import {mountRepositorySettings} from '../components/RepositorySettings.js';
 
 const API_PARAMS=new Set(['temperature','top_p','max_tokens','max_completion_tokens','seed','stop']);
 
@@ -21,7 +22,7 @@ export async function render(ctx){
     <form id="settingsForm" class="settings-form">
       <section class="settings-section">
         <div class="row spread" style="margin-bottom:20px"><h3 style="margin:0">通用 API</h3><span class="tag ${configured?'blue':'amber'}">${configured?'配置已保存 · 连接未验证':'等待填写 API 配置'}</span></div>
-        <div class="notice" style="margin-bottom:20px">支持 OpenAI 兼容的 Chat Completions 接口。填写你实际使用的服务，不预设服务商或模型；保存配置不会发起模型调用。</div>
+        <div class="notice" style="margin-bottom:20px">支持 OpenAI 兼容的 Chat Completions 接口。${config.repository_managed?'API 地址、模型和密钥变量名保存在仓库的共享配置中，并自动同步 GitHub。':'配置保存在当前工作区指定的配置文件中。'}实际密钥只读取环境变量，保存配置不会发起模型调用。</div>
         <div class="form-grid">
           <label class="field full"><span>API 服务地址</span><input id="modelBaseUrl" type="url" required value="${esc(model.base_url||'')}" placeholder="https://你的服务地址/v1"><small class="muted">填写基础地址，例如服务商提供的 /v1 地址；不包含 /chat/completions。</small></label>
           <label class="field"><span>模型名称</span><input id="modelName" required value="${esc(model.model||'')}" placeholder="填写服务商提供的实际模型名称" autocomplete="off"></label>
@@ -43,7 +44,7 @@ export async function render(ctx){
         <div class="field"><span>工作空间目录</span><p style="overflow-wrap:anywhere">${esc(current.workspace||ctx.state.status?.workspace||'由启动配置决定')}</p><small class="muted">更换目录后重新启动客户端生效。</small></div>
       </div></section>
       <div class="row spread"><button class="secondary" type="button" id="previewConfig">预览配置</button><button class="button" type="submit">${icon('check')} 保存 API 配置</button></div>
-    </form></div>`;
+    </form><div id="repositorySettings" style="margin-top:24px"></div></div>`;
 
   function keyStatus(){
     const name=$('#apiKeyEnv').value.trim(),present=config.env_present?.[name];
@@ -78,4 +79,5 @@ export async function render(ctx){
     });
   };
   if(ctx.params.get('section')==='appearance')$('#appearance').scrollIntoView({block:'start'});
+  await mountRepositorySettings(ctx);
 }

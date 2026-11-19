@@ -21,3 +21,6 @@ src/nw/materials/stage_workflow.py text eol=lf
 src/nw/materials/stage_effects.py text eol=lf
 src/nw/materials/recall.py text eol=lf
 src/nw/materials/phase_routes.py text eol=lf
+studio.config.toml text eol=lf
+studio.repository.toml text eol=lf
+studio_data/** -text

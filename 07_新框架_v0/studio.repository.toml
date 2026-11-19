@@ -1,0 +1,10 @@
+# 实际客户端连接的 GitHub 仓库由当前检出目录的 origin 决定。
+# 不保存 GitHub Token；使用本机已有 Git 凭据。
+[sync]
+enabled = true
+remote = "origin"
+branch = "master"
+interval_seconds = 60
+
+[data]
+materials_baseline = "fixtures/materials_runtime_baseline/v3-20261119"

@@ -199,7 +199,9 @@ class StudioService:
 
     def __init__(self, workspace: Path | None = None, *, config_path: Path | None = None,
                  ledger_path: Path | None = None) -> None:
-        self.config_path = (config_path or (ROOT / 'config.toml')).resolve()
+        shared = ROOT / 'studio.config.toml'
+        default_config = shared if shared.is_file() else ROOT / 'config.toml'
+        self.config_path = (config_path or default_config).resolve()
         if workspace is not None:
             self.workspace = workspace.resolve()
         elif self.config_path.is_file():
@@ -288,6 +290,7 @@ class StudioService:
             'f2_ledger': ledger_summary,
             'policy': POLICY,
             'priority_hierarchy': PRIORITY_HIERARCHY,
+            'repository_sync': self.repository_sync.status() if hasattr(self, 'repository_sync') else None,
         }
 
     # ---------- 2. Projects, Brief, Bible, Outline, Story Adoption ----------
@@ -1165,6 +1168,8 @@ class StudioService:
             'error': error,
             'config_path': str(self.config_path),
             'current': current,
+            'repository_managed': bool(getattr(self, 'repository_sync', None)
+                                       and self.repository_sync.enabled),
             'env_present': env_checks,
             'presets': ROUTING_PRESETS,
             'design_stages': [{'stage': s, **STAGE_LABELS[s]} for s in ORDER],
@@ -1206,7 +1211,7 @@ class StudioService:
         lines.extend([
             '',
             '[paths]',
-            f'workspace = {json.dumps(str(self.workspace))}',
+            f'workspace = {json.dumps(self.workspace.relative_to(self.config_path.parent).as_posix() if self.workspace.is_relative_to(self.config_path.parent) else str(self.workspace))}',
             '',
             '[workflow]',
             f'source_driven = {"true" if payload.get("source_driven", True) else "false"}',

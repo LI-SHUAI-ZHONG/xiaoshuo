@@ -1,8 +1,8 @@
 {
   "format_version": 1,
-  "scope": "client project, original source materials and byte-preservation attributes; excludes this manifest itself and repository-root map",
-  "files": 812,
-  "bytes": 371710996,
+  "scope": "frozen client delivery, original materials and attributes; excludes self and root map; later automatic sync uses its Git commit and runtime/current.json",
+  "files": 827,
+  "bytes": 371917393,
   "entries": [
     {
       "path": ".gitattributes",
@@ -66,9 +66,9 @@
     },
     {
       "path": "07_新框架_v0/.gitattributes",
-      "git_blob": "d2b6708bb887a3712c2345fdae602769770fc119",
+      "git_blob": "8b746bdf60651efc977bf0906ec11859677efe21",
       "mode": "100644",
-      "bytes": 1061
+      "bytes": 1148
     },
     {
       "path": "07_新框架_v0/.gitignore",
@@ -90,9 +90,9 @@
     },
     {
       "path": "07_新框架_v0/README.md",
-      "git_blob": "820222c35f0550adb8ddd6ddd32fd036f6563d81",
+      "git_blob": "295a91a2a1dc3b6e399245300e7fb45be3efc468",
       "mode": "100644",
-      "bytes": 35054
+      "bytes": 35143
     },
     {
       "path": "07_新框架_v0/config.example.toml",
@@ -111,6 +111,12 @@
       "git_blob": "5a49f12edcc929d32e21244819c07c20c52c4f84",
       "mode": "100644",
       "bytes": 5298
+    },
+    {
+      "path": "07_新框架_v0/docs/GitHub自动同步与资料位置.md",
+      "git_blob": "5025a31d039fab10e36c9ec660cd970e40d51a71",
+      "mode": "100644",
+      "bytes": 5153
     },
     {
       "path": "07_新框架_v0/docs/M4-plan.md",
@@ -203,10 +209,16 @@
       "bytes": 100
     },
     {
-      "path": "07_新框架_v0/docs/客户端v3交付包/README.md",
-      "git_blob": "6ec47fd415b3e6ee83a0746da2667fadad7ba30f",
+      "path": "07_新框架_v0/docs/客户端v3交付包/GitHub接入_完整回归日志.txt",
+      "git_blob": "5cf837ae5afd499443593444c86f235e6bc558d6",
       "mode": "100644",
-      "bytes": 6887
+      "bytes": 1394
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/README.md",
+      "git_blob": "0963a49512c4dcbde5406d7ee9458a78020f5e50",
+      "mode": "100644",
+      "bytes": 7404
     },
     {
       "path": "07_新框架_v0/docs/客户端v3交付包/browser-controls.json",
@@ -281,6 +293,12 @@
       "bytes": 1393
     },
     {
+      "path": "07_新框架_v0/docs/客户端v3交付包/实际作品快照核验.json",
+      "git_blob": "0434f53637f02c25c781b303c418d9215af1946e",
+      "mode": "100644",
+      "bytes": 1248
+    },
+    {
       "path": "07_新框架_v0/docs/客户端v3交付包/客户端_桌面图标.png",
       "git_blob": "a0e47a13a458a5225a6b571e047544121851d970",
       "mode": "100644",
@@ -300,9 +318,9 @@
     },
     {
       "path": "07_新框架_v0/docs/客户端v3交付包/客户端v3_交付说明.md",
-      "git_blob": "037af1d8064ed84e7e25284f0d57d87d3ab0a38d",
+      "git_blob": "313ba36e3ecc696e44f8bfedf7e77da5c7607b52",
       "mode": "100644",
-      "bytes": 12209
+      "bytes": 13903
     },
     {
       "path": "07_新框架_v0/docs/客户端v3交付包/快速上手.md",
@@ -371,6 +389,18 @@
       "bytes": 3408
     },
     {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_git_bootstrap.py",
+      "git_blob": "66e757c70ca7ef30cdcaee1b86dee06da27dd2fa",
+      "mode": "100644",
+      "bytes": 2486
+    },
+    {
+      "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_github_repository.cjs",
+      "git_blob": "4a6c877c747d01940438a6d15710881334195850",
+      "mode": "100644",
+      "bytes": 2625
+    },
+    {
       "path": "07_新框架_v0/docs/客户端v3交付包/验收脚本/check_protected.py",
       "git_blob": "786c083589e37b4fd1a80992d4fb33e6009fc59e",
       "mode": "100644",
@@ -426,9 +456,9 @@
     },
     {
       "path": "07_新框架_v0/docs/客户端v3初版验收.md",
-      "git_blob": "037af1d8064ed84e7e25284f0d57d87d3ab0a38d",
+      "git_blob": "313ba36e3ecc696e44f8bfedf7e77da5c7607b52",
       "mode": "100644",
-      "bytes": 12209
+      "bytes": 13903
     },
     {
       "path": "07_新框架_v0/docs/客户端v3框架设计规格.md",
@@ -636,9 +666,9 @@
     },
     {
       "path": "07_新框架_v0/src/nw/cli.py",
-      "git_blob": "36a0d930498b234565abb4bdbfd429fd951b5bad",
+      "git_blob": "2e4ca3b94206a6097b1ef9e2d02c8f1b5bb967a9",
       "mode": "100644",
-      "bytes": 14019
+      "bytes": 14089
     },
     {
       "path": "07_新框架_v0/src/nw/config.py",
@@ -4020,9 +4050,9 @@
     },
     {
       "path": "07_新框架_v0/src/nw/studio/api.py",
-      "git_blob": "224f27425299f04ac777cb55a64e23d1162be683",
+      "git_blob": "c524c7b511deca2886c3674f09aa503675a56c69",
       "mode": "100644",
-      "bytes": 65953
+      "bytes": 66454
     },
     {
       "path": "07_新框架_v0/src/nw/studio/catalog.py",
@@ -4091,10 +4121,28 @@
       "bytes": 7320
     },
     {
-      "path": "07_新框架_v0/src/nw/studio/server.py",
-      "git_blob": "e2ebc903aed0a3c45295f040276f945bfa91eba4",
+      "path": "07_新框架_v0/src/nw/studio/repository.py",
+      "git_blob": "acac66e812ee795a4f7e929f13932e0f8e163246",
       "mode": "100644",
-      "bytes": 16258
+      "bytes": 12224
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/repository_data.py",
+      "git_blob": "932403ee87d735d0c766348583b874af3f971ac3",
+      "mode": "100644",
+      "bytes": 9581
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/repository_git.py",
+      "git_blob": "9848864b7b07021e142a7c9c4d9142abe679f93c",
+      "mode": "100644",
+      "bytes": 9793
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/server.py",
+      "git_blob": "cdd41fa9dcc36ec2bc0122821093cb254dc468d2",
+      "mode": "100644",
+      "bytes": 17362
     },
     {
       "path": "07_新框架_v0/src/nw/studio/staging.py",
@@ -4146,9 +4194,9 @@
     },
     {
       "path": "07_新框架_v0/src/nw/studio/static/index.html",
-      "git_blob": "c928795840561f57ba08f57c24367ebd8bf06d11",
+      "git_blob": "78550590d2cbbe3c36037c237ddfe64eaee8e7c1",
       "mode": "100644",
-      "bytes": 4262
+      "bytes": 4354
     },
     {
       "path": "07_新框架_v0/src/nw/studio/static/js/api.js",
@@ -4158,9 +4206,9 @@
     },
     {
       "path": "07_新框架_v0/src/nw/studio/static/js/app.js",
-      "git_blob": "a18b48d78dd604109ede131e0a93fd1b2b366f8a",
+      "git_blob": "4db87a974bbefdf866ef2b958c369446e966385b",
       "mode": "100644",
-      "bytes": 13181
+      "bytes": 13790
     },
     {
       "path": "07_新框架_v0/src/nw/studio/static/js/components/BookCard.js",
@@ -4191,6 +4239,12 @@
       "git_blob": "a7458853b0b814461e001d4220d75340d644175b",
       "mode": "100644",
       "bytes": 1027
+    },
+    {
+      "path": "07_新框架_v0/src/nw/studio/static/js/components/RepositorySettings.js",
+      "git_blob": "be70af0162b10249e4b623b46d08551e64e76fb9",
+      "mode": "100644",
+      "bytes": 3646
     },
     {
       "path": "07_新框架_v0/src/nw/studio/static/js/components/Timeline.js",
@@ -4242,9 +4296,9 @@
     },
     {
       "path": "07_新框架_v0/src/nw/studio/static/js/pages/settings.js",
-      "git_blob": "669bb722cede3be04824687d005e0bdab96ecf7d",
+      "git_blob": "8a52c7dc15ca77579a9d97a4623d962c9702afbc",
       "mode": "100644",
-      "bytes": 6896
+      "bytes": 7232
     },
     {
       "path": "07_新框架_v0/src/nw/studio/static/js/pages/staging.js",
@@ -4305,6 +4359,36 @@
       "git_blob": "3560aae6c58e1b8ae20c9e11f27603923347d32a",
       "mode": "100644",
       "bytes": 13010
+    },
+    {
+      "path": "07_新框架_v0/studio.config.toml",
+      "git_blob": "6784fd26f6a60e73333e66ed3b11d6ef81ce8e83",
+      "mode": "100644",
+      "bytes": 275
+    },
+    {
+      "path": "07_新框架_v0/studio.repository.toml",
+      "git_blob": "5b385f5f027baf0095decb4d073a7dc9e9b57549",
+      "mode": "100644",
+      "bytes": 301
+    },
+    {
+      "path": "07_新框架_v0/studio_data/README.md",
+      "git_blob": "c572c41f4a0dc7bab8a321e3a16d0c8b30257f3c",
+      "mode": "100644",
+      "bytes": 1479
+    },
+    {
+      "path": "07_新框架_v0/studio_data/runtime/current.json",
+      "git_blob": "56078f773dbf1e47249eaa9c2c66fcc0fa1c461b",
+      "mode": "100644",
+      "bytes": 2781
+    },
+    {
+      "path": "07_新框架_v0/studio_data/runtime/runtime.zip.part001",
+      "git_blob": "28db9f6190fdb15e9c29bdeba9c31d25bb5835f0",
+      "mode": "100644",
+      "bytes": 131317
     },
     {
       "path": "07_新框架_v0/tests/fake_binding_reviews.py",
@@ -4811,6 +4895,12 @@
       "bytes": 8406
     },
     {
+      "path": "07_新框架_v0/tests/test_studio_repository_sync.py",
+      "git_blob": "d96a2297247451103ef23f5b75a1cfde87e4d385",
+      "mode": "100644",
+      "bytes": 15231
+    },
+    {
       "path": "07_新框架_v0/tests/test_studio_v3_api_settings.py",
       "git_blob": "2e37b0e5e4bd6e07469d902677bd938baee98aee",
       "mode": "100644",
@@ -4872,9 +4962,9 @@
     },
     {
       "path": "07_新框架_v0/启动写作客户端.bat",
-      "git_blob": "b5049ad097ece32550ca70a9334558bbef36da1f",
+      "git_blob": "4125af9e823424514db998a9f6dd6dba4af65a25",
       "mode": "100644",
-      "bytes": 895
+      "bytes": 965
     }
   ]
 }
