@@ -1,0 +1,146 @@
+{
+  "status": "DONE",
+  "verified_at_utc": "2026-11-19T19:53:25.207175+00:00",
+  "src_tree": "d65ffbc77a06c37aab7ca040fe9aa3a33895887d",
+  "src_worktree_status": "",
+  "source_hashes_verified": 405,
+  "changed_source_files": [],
+  "protected_files_match_pre_client_baseline": true,
+  "protected_originals": 9,
+  "protected_core_files": 21,
+  "protected_phase_routes_unchanged": true,
+  "library_counts_unchanged": {
+    "staging_books": 0,
+    "decomp_items": 0,
+    "type_kb": 0,
+    "upgrade_candidates": 0,
+    "upgrade_versions": 0,
+    "reviewed_adoptions": 0,
+    "novels": 1
+  },
+  "materials_unchanged": {
+    "rows": 22941,
+    "states": {
+      "design_ready": 6365,
+      "blocked": 9315,
+      "reference": 7261
+    },
+    "profiles": {
+      "dynamic_binding": 1,
+      "dynamic_relation": 1823,
+      "type_expression": 6584,
+      "type_combination": 8400,
+      "metadata": 592,
+      "type_identity": 646,
+      "type_transition": 48,
+      "type_link": 140,
+      "character": 346,
+      "world": 353,
+      "prose_review": 78,
+      "scope_review": 55,
+      "editor": 1,
+      "preflight": 1,
+      "knowledge": 89,
+      "anchor": 1801,
+      "plot": 304,
+      "opening": 11,
+      "scene": 57,
+      "continuity": 13,
+      "promise_process": 2,
+      "pov_process": 2,
+      "preflight_process": 2,
+      "material_selection": 42,
+      "usage_process": 2,
+      "timeline_process": 2,
+      "material_conversion": 43,
+      "example": 2,
+      "brief": 2,
+      "legacy": 7,
+      "expression": 91,
+      "upgrade_review": 60,
+      "static_relation": 1340,
+      "static_binding": 1
+    },
+    "selected_source_files": 6,
+    "adjudication_status": "current",
+    "explicit_binding_review_records": 28,
+    "note": "Review-record count excludes runtime-generated in-step uses; neither count proves semantic completion."
+  },
+  "stage_count": 14,
+  "direct_resource_references": 375,
+  "selectable_options": 717,
+  "distinct_option_source_files": 47,
+  "default_decomposition_stage_count": 7,
+  "audit_tool_ast_valid": true,
+  "pytest": {
+    "summary": "81 passed in 106.36s (0:01:46)",
+    "exit_code": 0,
+    "log": "专项回归日志.txt",
+    "log_sha256": "83b6ed792bd661bf8b70f3e0ee5c28aae031c5c4c7f87fcbed6f168f5c20b399"
+  },
+  "real_model_calls": 0,
+  "formal_novels_created": 0,
+  "limitations": [
+    "Not full original-clause semantic certification",
+    "No real-model or literary acceptance",
+    "No runtime implementation or schema changes in this milestone"
+  ],
+  "relative_links_verified": [
+    {
+      "report": "01_制作步骤对照表.md",
+      "target": "../../src/nw/materials/phase_routes.py#L11"
+    },
+    {
+      "report": "01_制作步骤对照表.md",
+      "target": "../../src/nw/materials/phase_flow.py#L1198"
+    },
+    {
+      "report": "01_制作步骤对照表.md",
+      "target": "../../src/nw/plan_contract.py#L28"
+    },
+    {
+      "report": "01_制作步骤对照表.md",
+      "target": "../../src/nw/materials/semantic_handoff.py#L9"
+    },
+    {
+      "report": "01_制作步骤对照表.md",
+      "target": "../../src/nw/studio/catalog.py#L20"
+    },
+    {
+      "report": "01_制作步骤对照表.md",
+      "target": "../../src/nw/studio/production_inputs.py#L10"
+    },
+    {
+      "report": "01_制作步骤对照表.md",
+      "target": "../../src/nw/studio/staging.py#L133"
+    },
+    {
+      "report": "01_制作步骤对照表.md",
+      "target": "../../src/nw/materials/author_references.py#L7"
+    },
+    {
+      "report": "04_核验记录.md",
+      "target": "专项回归日志.txt"
+    },
+    {
+      "report": "04_核验记录.md",
+      "target": "核验结果.json"
+    },
+    {
+      "report": "README.md",
+      "target": "01_制作步骤对照表.md"
+    },
+    {
+      "report": "README.md",
+      "target": "02_资料供给清单.json"
+    },
+    {
+      "report": "README.md",
+      "target": "03_断点与改造顺序.md"
+    },
+    {
+      "report": "README.md",
+      "target": "04_核验记录.md"
+    }
+  ]
+}
