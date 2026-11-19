@@ -55,6 +55,7 @@ python -m nw studio --host 127.0.0.1 --port 8767 --open-browser
 - 随后的通用 API 设置改动：相关专项 `22 passed in 5.59s`，浏览器保存/重载记录见 `通用API设置验收.json`。
 - 仓库交付包复验：同一专项实际 `22 passed in 3.40s`；直接从本目录运行可移植浏览器脚本，配置空值拦截、预览、保存和刷新全部通过，未发起模型调用。六份 Node 脚本语法和保护文件复核通过。
 - 受保护文件校验：`protected-baseline.json`、`protected-check.json` 与 `验收脚本/check_protected.py`。
+- 全新 Git 检出实测：从本地提交 `0382f27` 使用 `git clone --no-hardlinks` 建立独立副本，并明确开启 `core.autocrlf=true`。仅用该副本的文件完成 16 文件恢复；九份原件、21 个核心文件、阶段路由指纹均相同，资料裁定有效，首页/设置模块/图标/状态/类型接口全部 HTTP 200。原始记录为 [全新Git检出恢复核验.json](全新Git检出恢复核验.json)。
 - 浏览器测试的正文均来自有显式标记的隔离 FAKE 测试模型。正式工作区没有接受任何测试正文；真实模型创作验收仍未完成。
 
 可选的浏览器脚本需要当前环境提供 `@playwright/test`。可通过 `PLAYWRIGHT_MODULE` 指定已有包的位置、通过 `PLAYWRIGHT_CHROMIUM_EXECUTABLE` 指定已有 Chromium/Chrome、通过 `STUDIO_CHECK_OUTPUT` 指定截图输出目录。
@@ -65,6 +66,6 @@ python -m nw studio --host 127.0.0.1 --port 8767 --open-browser
 
 ## Git 保存范围
 
-本次源码、规格、交付文档、验收记录、图标、可移植验收脚本和有效资料基线应一同提交到 Git。`workspace/` 中的个人小说状态、实际 API 配置和 `build/` 临时缓存继续保留原忽略规则；资料基线已在 `fixtures/` 单独归档，不依赖被忽略的运行库才能恢复。
+本次源码、规格、交付文档、验收记录、图标、可移植验收脚本和有效资料基线已一同提交到本地 Git，尚未推送远程。逐文件 Git 对象和大小见 [仓库交付清单.json](仓库交付清单.json)；清单不递归收录自身及根目录地图。`workspace/` 中的个人小说状态、实际 API 配置和 `build/` 临时缓存继续保留原忽略规则；资料基线已在 `fixtures/` 单独归档，不依赖被忽略的运行库才能恢复。
 
 `原版资料完整`、`交付文件已提交`、`所有功能已完成`、`真实创作已验收`是不同结论。尚未实现的语义自动升级和设计单步重做等边界，仍以 `../客户端v3初版验收.md` 为准。

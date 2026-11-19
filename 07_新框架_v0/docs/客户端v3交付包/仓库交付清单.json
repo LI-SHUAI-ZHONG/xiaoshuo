@@ -1,8 +1,8 @@
 {
   "format_version": 1,
   "scope": "client project, original source materials and byte-preservation attributes; excludes this manifest itself and repository-root map",
-  "files": 811,
-  "bytes": 371708349,
+  "files": 812,
+  "bytes": 371710996,
   "entries": [
     {
       "path": ".gitattributes",
@@ -204,9 +204,9 @@
     },
     {
       "path": "07_新框架_v0/docs/客户端v3交付包/README.md",
-      "git_blob": "f063b0a2330ce9c13739f706e25229d27d5a5e8d",
+      "git_blob": "6ec47fd415b3e6ee83a0746da2667fadad7ba30f",
       "mode": "100644",
-      "bytes": 6290
+      "bytes": 6887
     },
     {
       "path": "07_新框架_v0/docs/客户端v3交付包/browser-controls.json",
@@ -269,6 +269,12 @@
       "bytes": 110
     },
     {
+      "path": "07_新框架_v0/docs/客户端v3交付包/全新Git检出恢复核验.json",
+      "git_blob": "c872d282377c1ae6ed0c8ee7587e20e781691911",
+      "mode": "100644",
+      "bytes": 1004
+    },
+    {
       "path": "07_新框架_v0/docs/客户端v3交付包/完整回归日志.txt",
       "git_blob": "59684932c6087dde5ab1d3330e6e45c5c25b0c99",
       "mode": "100644",
@@ -294,9 +300,9 @@
     },
     {
       "path": "07_新框架_v0/docs/客户端v3交付包/客户端v3_交付说明.md",
-      "git_blob": "6a5229ebdce6ca359bf34a5c3e9052969de2be61",
+      "git_blob": "037af1d8064ed84e7e25284f0d57d87d3ab0a38d",
       "mode": "100644",
-      "bytes": 11686
+      "bytes": 12209
     },
     {
       "path": "07_新框架_v0/docs/客户端v3交付包/快速上手.md",
@@ -420,9 +426,9 @@
     },
     {
       "path": "07_新框架_v0/docs/客户端v3初版验收.md",
-      "git_blob": "6a5229ebdce6ca359bf34a5c3e9052969de2be61",
+      "git_blob": "037af1d8064ed84e7e25284f0d57d87d3ab0a38d",
       "mode": "100644",
-      "bytes": 11686
+      "bytes": 12209
     },
     {
       "path": "07_新框架_v0/docs/客户端v3框架设计规格.md",
