@@ -1,0 +1,19 @@
+........................................................................ [ 57%]
+........................................F.............                   [100%]
+================================== FAILURES ===================================
+___ test_repository_snapshot_restores_method_versions_and_original_evidence ___
+tests\test_studio_methods.py:280: in test_repository_snapshot_restores_method_versions_and_original_evidence
+    restore(archive, other)
+src\nw\studio\repository_data.py:178: in restore
+    extra = {p.relative_to(workspace).as_posix() for p in runtime_files(workspace)} - expected
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^
+src\nw\studio\repository_data.py:40: in runtime_files
+    folders = [p for p in workspace.iterdir() if p.is_dir() and not p.name.startswith(('_', '.'))
+                          ^^^^^^^^^^^^^^^^^^^
+C:\Users\li\AppData\Local\Programs\Python\Python314\Lib\pathlib\__init__.py:836: in iterdir
+    with os.scandir(root_dir) as scandir_it:
+         ^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [WinError 3] 系统找不到指定的路径。: 'D:\\搭建\\07_新框架_v0\\build\\client-v3-validation\\methods-final-20261119\\test_repository_snapshot_resto0\\other-checkout'
+=========================== short test summary info ===========================
+FAILED tests/test_studio_methods.py::test_repository_snapshot_restores_method_versions_and_original_evidence
+1 failed, 125 passed in 199.56s (0:03:19)

@@ -13,6 +13,8 @@ from nw.studio.kb import KnowledgeMixin
 from nw.studio.recommend import RecommendationMixin
 from nw.studio.staging import StagingMixin
 from nw.studio.library_util import encode, timestamp
+from nw.studio.method_migration import SCHEMA as METHOD_SCHEMA, migrate_legacy
+from nw.studio.method_store import MethodMixin
 
 
 SCHEMA = '''
@@ -54,7 +56,7 @@ CREATE TABLE IF NOT EXISTS usage_stats (
 '''
 
 
-class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin):
+class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMixin):
     def __init__(self, workspace_root: Path, *, config_path: Path | None = None,
                  ledger_path: Path | None = None) -> None:
         self.workspace = Path(workspace_root).resolve()
@@ -70,6 +72,8 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin):
             columns = {row['name'] for row in conn.execute('PRAGMA table_info(staging_books)')}
             if 'decomposition_requested' not in columns:
                 conn.execute('ALTER TABLE staging_books ADD COLUMN decomposition_requested INTEGER NOT NULL DEFAULT 1')
+            conn.executescript(METHOD_SCHEMA)
+        migrate_legacy(self)
         from nw.studio.staging_model import recover_decompositions
         recover_decompositions(self)
 

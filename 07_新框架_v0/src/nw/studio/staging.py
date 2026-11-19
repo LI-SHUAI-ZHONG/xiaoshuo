@@ -186,6 +186,8 @@ class StagingMixin:
                               encode(item['stages']), item['usage_text'], encode(item['evidence']),
                               'draft', now, now, origin))
             conn.execute("UPDATE staging_books SET status='pending_verify',progress=1,error='',updated_at=? WHERE id=?", (now, ident))
+        from nw.studio.method_migration import migrate_legacy
+        migrate_legacy(self)
         return self.get_staging(ident)
 
     def decompose_book(self, ident: str, body: dict) -> dict:

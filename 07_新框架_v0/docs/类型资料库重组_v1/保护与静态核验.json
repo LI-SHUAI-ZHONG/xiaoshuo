@@ -1,0 +1,138 @@
+{
+  "status": "DONE",
+  "verified_at_utc": "2026-11-19T20:49:12.624819+00:00",
+  "baseline_commit": "93c52553411cb4001bb5fc586828cefb4035e704",
+  "protected_files": {
+    "matches_pre_client_baseline": true,
+    "original_files": 9,
+    "core_files": 21,
+    "fingerprints": {
+      "adjudication": "96e6c60fe1c2a67c2fe378b9c606c017b665f95d48345eedbb8986802706b71a",
+      "phase_routes": "106fb65e449616b28e4c9f8081b76a54e1850bb2d6fa639128bfc4393b93124e",
+      "originals": {
+        "02_原版资料\\原始资料\\动态网络.txt": "d6093b82fe6e072bdff7300fadcf175112b988d319c6b836f5d5b881b5282cc6",
+        "02_原版资料\\原始资料\\类型系统.txt": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582",
+        "02_原版资料\\原始资料\\类型连接.txt": "e7b7f8f2d1bb7f1af3007ed24da1d3531f767a08c14db94e79346264eafed7b0",
+        "02_原版资料\\原始资料\\融合清单.json": "bd66e8f62d34f70917102405af895c0b07b79c13fd2d1ea65ebfba3bd4853aeb",
+        "02_原版资料\\原始资料\\资料库.txt": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed",
+        "02_原版资料\\原始资料\\锚点网络.txt": "9b7ea71e53613a453fe71fa0a862411f65f22328a38ee7b97db7fd5bab7be759",
+        "02_原版资料\\原始资料\\静态网络.txt": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197",
+        "02_原版资料\\网络完整数据\\动态连接完整数据.json": "af71e27756c693e1e4fee85feb7ff300780fd7d27c93d4df34f94ac3daebb8e6",
+        "02_原版资料\\网络完整数据\\静态连接完整数据.json": "21b25fa76405e67428367cd7aec3e2176f1a4a01b259daaae82b58c6f3fc72c9"
+      }
+    }
+  },
+  "python_ast_files": 8,
+  "python_file_limit_400": true,
+  "javascript_syntax_files": [
+    "src\\nw\\studio\\static\\js\\pages\\methods.js",
+    "src\\nw\\studio\\static\\js\\pages\\kb.js",
+    "src\\nw\\studio\\static\\js\\pages\\atlas.js"
+  ],
+  "source_hashes": {
+    "src/nw/studio/catalog.py": "5d7676962b05ff609ce3b6c965977358c1fe141c022b3dac1812311eeeb043a5",
+    "src/nw/studio/library.py": "dd1f757bacdf3357788d34066c9a12bb446be8efacacd90b3d33e9c720d0fde7",
+    "src/nw/studio/method_catalog.py": "40578e6accb365a44b5c2198355ff6568e26c269e62e56047b89b5620f6f1046",
+    "src/nw/studio/method_contract.py": "95f35e0c12a6379abbe3f907eab8c86294d92e7c317ee6f63c230bd89fc4fcb2",
+    "src/nw/studio/method_evidence.py": "daebc713f0213d3bf10631a2aebff59b9a4213e92f1f74217e1347c471fa7601",
+    "src/nw/studio/method_migration.py": "8cdeb2b4ba4b7d165cbd54e16002732578433d9000f7dae9f742b2720d2f5d45",
+    "src/nw/studio/method_routes.py": "ef408c1e40ae4edc30274b78cd5e6a2be6c728d7cbbb64a50c8712114b51b7b0",
+    "src/nw/studio/method_store.py": "484f01b4a1b271a839147f54ff7643463691491fee1dd62598a027548151a719",
+    "src/nw/studio/production_inputs.py": "af0d450e4a5032bd4e5eb56cd86aadd3fdbf9ea2bf8a4920047aa6c278cf9d0e",
+    "src/nw/studio/production_routes.py": "b0d8a74bc257385be276bfd39513afffcdfdd61d836a325bf15e4f6244b06bac",
+    "src/nw/studio/staging.py": "3ed5e89578340043a88f412f0b1b8d2a61f45f562821849744e4e3a8f36da199",
+    "src/nw/studio/static/css/pages.css": "41712685097eb75ca2853c3744db425b12b4479f827caea8e9aef72d63d93f3b",
+    "src/nw/studio/static/js/pages/atlas.js": "6edaecf1c3d56d0cfb39621eb9da5857558fb53052db1f8ba58b6c65840818c9",
+    "src/nw/studio/static/js/pages/kb.js": "d4b5820d9a80df9356d3d74c8667611fee0e40f2b9d1ec64c92ae013aecc0b2a",
+    "src/nw/studio/static/js/pages/methods.js": "fe6b9ea292f5ce5131ec8fd0dafe5f709c588fe09378ba381f15b5d2bc91a146",
+    "tests/test_studio_methods.py": "b7af1038f908a4aa2cfb50c4db346e2d5175f3048e98f265912f49381bc60d0b",
+    "tests/test_studio_methods_http.py": "6fddaaefb863298c4ab1c37815ffa6f22dd1667288d60bc07cb4d891206d8ec0"
+  },
+  "catalog_tasks": 21,
+  "catalog_stages": 14,
+  "catalog_matches_actual_service_definition": true,
+  "pytest": {
+    "studio": "128 passed in 202.49s (0:03:22)",
+    "final_method_http": "42 passed in 8.92s",
+    "overlapping_counts_not_added": true
+  },
+  "screenshots": {
+    "方法库_390px.jpg": {
+      "bytes": 45983,
+      "sha256": "a676f8f8c61a44efec795e9c225e60bf143aa46982c81e949b2cca7679a6e828"
+    },
+    "方法库_桌面.jpg": {
+      "bytes": 64036,
+      "sha256": "fefb6e4d8f0caf0b251ca51542990bbf061d2a49acb6d18ea1e5b4db64af292a"
+    }
+  },
+  "formal_runtime_proof": "正式客户端与资料核验.json",
+  "real_model_calls": 0,
+  "formal_methods_created": 0,
+  "relative_links_verified": [
+    {
+      "report": "01_生产任务与资料需求.md",
+      "target": "任务目录.json"
+    },
+    {
+      "report": "01_生产任务与资料需求.md",
+      "target": "../制作步骤与类型资料库审计_2026-11-19/02_资料供给清单.json"
+    },
+    {
+      "report": "04_验收记录.md",
+      "target": "Studio专项回归.txt"
+    },
+    {
+      "report": "04_验收记录.md",
+      "target": "方法与HTTP最终复验.txt"
+    },
+    {
+      "report": "04_验收记录.md",
+      "target": "补测首轮日志.txt"
+    },
+    {
+      "report": "04_验收记录.md",
+      "target": "界面核验/方法库_桌面.jpg"
+    },
+    {
+      "report": "04_验收记录.md",
+      "target": "界面核验/方法库_390px.jpg"
+    },
+    {
+      "report": "04_验收记录.md",
+      "target": "正式客户端与资料核验.json"
+    },
+    {
+      "report": "04_验收记录.md",
+      "target": "保护与静态核验.json"
+    },
+    {
+      "report": "README.md",
+      "target": "../制作步骤与类型资料库审计_2026-11-19/README.md"
+    },
+    {
+      "report": "README.md",
+      "target": "01_生产任务与资料需求.md"
+    },
+    {
+      "report": "README.md",
+      "target": "02_分层大纲覆盖规格.md"
+    },
+    {
+      "report": "README.md",
+      "target": "03_方法结构与兼容迁移.md"
+    },
+    {
+      "report": "README.md",
+      "target": "04_验收记录.md"
+    },
+    {
+      "report": "README.md",
+      "target": "任务目录.json"
+    },
+    {
+      "report": "README.md",
+      "target": "界面核验/"
+    }
+  ]
+}

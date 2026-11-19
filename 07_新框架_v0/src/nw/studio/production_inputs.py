@@ -7,10 +7,7 @@ from nw.task_models import canonical
 
 SLOTS = {'genre': 'genre_ids', 'tone': 'tone_ids', 'style': 'style_ids', 'narration': 'narration_ids',
          'world': 'world_ids', 'character': 'character_ids', 'structure': 'structure_ids', 'hook': 'mechanism_ids'}
-STAGES = {'genre': ['type_selection', 'type_adaptation'], 'tone': ['expression_design'],
-          'style': ['expression_design'], 'narration': ['scene_design', 'expression_design'],
-          'world': ['world_design'], 'character': ['character_design'],
-          'structure': ['plot_design', 'scene_design'], 'hook': ['plot_design', 'event_design']}
+STAGES = catalog.SLOT_STAGES
 
 
 def freeze_wizard(body: dict, library: Any) -> dict:

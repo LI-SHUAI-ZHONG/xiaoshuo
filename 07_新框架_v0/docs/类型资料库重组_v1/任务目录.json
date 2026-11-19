@@ -1,0 +1,2499 @@
+{
+  "schema_version": 1,
+  "tasks": [
+    {
+      "id": "type_choice",
+      "name": "类型选择与边界",
+      "purpose": "确定本项目采用的类型、读者预期和边界。",
+      "stages": [
+        "type_selection"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "brief"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "type_selection",
+          "field": "boundaries",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "type_selection",
+          "field": "concepts",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "type_selection",
+          "field": "selection",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "type_adaptation",
+      "name": "类型组合与适配",
+      "purpose": "把已选类型及其冲突落实为可执行的适配条件。",
+      "stages": [
+        "type_adaptation"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "type_selection"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "type_adaptation",
+          "field": "adaptations",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "type_adaptation",
+          "field": "boundaries",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "type_adaptation",
+          "field": "focuses",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "world_rules",
+      "name": "世界规则与限制",
+      "purpose": "明确规则、资源、例外、未知及行动限制。",
+      "stages": [
+        "world_design"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "type_selection",
+        "type_adaptation"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "world_design",
+          "field": "limitations",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "world_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "world"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "world_design",
+          "field": "unknowns",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "character_arc",
+      "name": "人物目标与弧光",
+      "purpose": "明确独立目标、行为边界、变化条件及事件中的选择和代价。",
+      "stages": [
+        "character_design",
+        "plot_design",
+        "state_transition"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "world_design"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "character_design",
+          "field": "capabilities",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "character_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "character"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "character_design",
+          "field": "states",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "state_transition",
+          "field": "patches",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "state_transition",
+          "field": "transitions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "relationships",
+      "name": "人物关系与势力",
+      "purpose": "确定真实关系端点、成立条件和后续变化的前置。",
+      "stages": [
+        "static_relations",
+        "state_propagation"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "world_design",
+        "character_design"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "static_relations",
+          "field": "relations",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "static_relations",
+          "field": "requirements",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "state_propagation",
+          "field": "candidates",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "state_propagation",
+          "field": "waiting",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "main_plot",
+      "name": "全书主线与结局兑现",
+      "purpose": "建立总问题、关键选择、代价、转折及结局兑现的因果关系。",
+      "stages": [
+        "plot_design"
+      ],
+      "scopes": [
+        "book"
+      ],
+      "input_kinds": [
+        "type_adaptation",
+        "world_design",
+        "character_design",
+        "static_relations"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "book"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "subplot",
+      "name": "支线与主线交汇",
+      "purpose": "规定支线的独立目标、交汇事件及对主线的实际作用。",
+      "stages": [
+        "plot_design",
+        "event_design"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "plot_design",
+        "character_design",
+        "static_relations"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "event_design",
+          "field": "candidates",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "volume_outline",
+      "name": "分卷目标与转折",
+      "purpose": "承接全书主线，确定本卷目标、关键事件、转向与交接。",
+      "stages": [
+        "plot_design"
+      ],
+      "scopes": [
+        "volume"
+      ],
+      "input_kinds": [
+        "parent_outline",
+        "accepted_state"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "volume"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chapter_outline",
+      "name": "连续章纲与承接",
+      "purpose": "说明每章承担的目标、选择、后果及相邻章问题的回应。",
+      "stages": [
+        "plot_design",
+        "scene_design"
+      ],
+      "scopes": [
+        "chapter"
+      ],
+      "input_kinds": [
+        "parent_outline",
+        "accepted_state"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "chapters",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "scene"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_actions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "event_chain",
+      "name": "事件触发与因果",
+      "purpose": "把剧情节点落实为有前驱、参与者和完成门的事件候选。",
+      "stages": [
+        "event_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "world_design",
+        "character_design",
+        "static_relations",
+        "plot_design"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "event_design",
+          "field": "candidates",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "action_chain",
+      "name": "行动、阻碍与代价",
+      "purpose": "定义对象、动作、阻碍、应对、结果及失败或等待条件。",
+      "stages": [
+        "action_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "event_design",
+        "character_design",
+        "world_design"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "action_design",
+          "field": "candidates",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "action_design",
+          "field": "waiting",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scene_composition",
+      "name": "场景职责与选择",
+      "purpose": "落实视角、进入状态、人物目标、冲突、选择与计划结果。",
+      "stages": [
+        "scene_design"
+      ],
+      "scopes": [
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "parent_outline",
+        "event_design",
+        "action_design"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "scene_design",
+          "field": "chapters",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "scene"
+          ],
+          "scopes": [
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_actions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "state_change",
+      "name": "人物与关系状态变化",
+      "purpose": "以事件和行动为依据确定实际前后值及变化条件。",
+      "stages": [
+        "state_transition"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "character_design",
+        "action_design",
+        "scene_design"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "state_transition",
+          "field": "patches",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "state_transition",
+          "field": "transitions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "state_propagation",
+      "name": "后果与影响传播",
+      "purpose": "明确多实体影响条件、确认门和不能自动传播的情况。",
+      "stages": [
+        "state_propagation"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "static_relations",
+        "state_transition"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "state_propagation",
+          "field": "candidates",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "state_propagation",
+          "field": "waiting",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "anchors",
+      "name": "可见线索与表现锚点",
+      "purpose": "把行动、信息和状态落实到观察者可感知的具体表现。",
+      "stages": [
+        "anchor_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "action_design",
+        "scene_design",
+        "state_transition",
+        "state_propagation"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "anchor_design",
+          "field": "beats",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "anchor_design",
+          "field": "selected_propagations",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "information",
+      "name": "信息披露与悬念",
+      "purpose": "规定读者和各人物所知、披露次序、误读及纠正依据。",
+      "stages": [
+        "plot_design",
+        "scene_design",
+        "expression_design"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "character_design",
+        "plot_design"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "chapters",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "scene"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_actions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "expression_design",
+          "field": "guidance",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hook",
+      "name": "钩子与问题接力",
+      "purpose": "说明设问、利益或危险、当前回应、下一步升级及兑现。",
+      "stages": [
+        "plot_design",
+        "event_design",
+        "scene_design",
+        "expression_design"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "plot_design",
+        "accepted_state"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "event_design",
+          "field": "candidates",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "chapters",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "scene"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_actions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "expression_design",
+          "field": "guidance",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "foreshadow",
+      "name": "伏笔埋设、提示与回收",
+      "purpose": "区分埋设、提示、误读、揭示与回收，并保留多处证据。",
+      "stages": [
+        "plot_design",
+        "scene_design",
+        "expression_design"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "plot_design",
+        "parent_outline",
+        "accepted_state"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "chapters",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "scene"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_actions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "expression_design",
+          "field": "guidance",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pacing",
+      "name": "节奏与情绪序列",
+      "purpose": "在实际事件和章场序列上设计张弛、情绪触发及转换。",
+      "stages": [
+        "plot_design",
+        "scene_design",
+        "anchor_design",
+        "expression_design"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "plot_design",
+        "parent_outline"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "plot_design",
+          "field": "directions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "event_nodes",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "plot",
+            "promise",
+            "volume",
+            "chapter"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "promise_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "plot_design",
+          "field": "reader_plan",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "chapters",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "members",
+          "artifact_kinds": [
+            "stage_product",
+            "scene"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_actions",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "scene_design",
+          "field": "selected_events",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "anchor_design",
+          "field": "beats",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "anchor_design",
+          "field": "selected_propagations",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "expression_design",
+          "field": "guidance",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "expression",
+      "name": "叙事、对话与文风",
+      "purpose": "按场景功能、声线、知情边界和已选结果确定具体呈现。",
+      "stages": [
+        "expression_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "character_design",
+        "scene_design",
+        "anchor_design"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "expression_design",
+          "field": "guidance",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "method_binding",
+      "name": "方法交接与核验",
+      "purpose": "确定方法产物的消费者、执行任务及可回查的检查证据。",
+      "stages": [
+        "bind_scope"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "input_kinds": [
+        "parent_outline",
+        "accepted_state"
+      ],
+      "allowed_outputs": [
+        {
+          "stage": "bind_scope",
+          "field": "material_bindings",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "bind_scope",
+          "field": "method_guidance",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        },
+        {
+          "stage": "bind_scope",
+          "field": "process_bindings",
+          "artifact_kinds": [
+            "stage_product"
+          ],
+          "scopes": [
+            "book",
+            "volume",
+            "chapter",
+            "scene"
+          ]
+        }
+      ]
+    }
+  ],
+  "scopes": {
+    "book": "全书",
+    "volume": "卷",
+    "chapter": "章",
+    "scene": "场景"
+  },
+  "stages": [
+    {
+      "id": "type_selection",
+      "name": "类型选择",
+      "required_stages": [],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "boundaries",
+        "concepts",
+        "selection"
+      ],
+      "consumers": [
+        "type_adaptation",
+        "world_design",
+        "character_design",
+        "static_relations",
+        "plot_design",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "type_adaptation",
+      "name": "类型适配",
+      "required_stages": [
+        "type_selection"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "adaptations",
+        "boundaries",
+        "focuses"
+      ],
+      "consumers": [
+        "world_design",
+        "character_design",
+        "static_relations",
+        "plot_design",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "world_design",
+      "name": "世界设计",
+      "required_stages": [
+        "type_selection",
+        "type_adaptation"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "limitations",
+        "members",
+        "unknowns"
+      ],
+      "consumers": [
+        "character_design",
+        "static_relations",
+        "plot_design",
+        "event_design",
+        "action_design",
+        "scene_design",
+        "state_propagation",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "character_design",
+      "name": "人物设计",
+      "required_stages": [
+        "type_selection",
+        "type_adaptation",
+        "world_design"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "capabilities",
+        "members",
+        "states"
+      ],
+      "consumers": [
+        "static_relations",
+        "plot_design",
+        "event_design",
+        "action_design",
+        "scene_design",
+        "state_transition",
+        "state_propagation",
+        "anchor_design",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "static_relations",
+      "name": "静态关系",
+      "required_stages": [
+        "type_selection",
+        "type_adaptation",
+        "world_design",
+        "character_design"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "relations",
+        "requirements"
+      ],
+      "consumers": [
+        "plot_design",
+        "event_design",
+        "action_design",
+        "scene_design",
+        "state_transition",
+        "state_propagation",
+        "anchor_design",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "plot_design",
+      "name": "剧情设计",
+      "required_stages": [
+        "type_selection",
+        "type_adaptation",
+        "world_design",
+        "character_design",
+        "static_relations"
+      ],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "directions",
+        "event_nodes",
+        "members",
+        "promise_plan",
+        "reader_plan"
+      ],
+      "consumers": [
+        "event_design",
+        "action_design",
+        "scene_design",
+        "state_transition",
+        "state_propagation",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "event_design",
+      "name": "事件设计",
+      "required_stages": [
+        "world_design",
+        "character_design",
+        "static_relations",
+        "plot_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "candidates"
+      ],
+      "consumers": [
+        "action_design",
+        "scene_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "action_design",
+      "name": "行动设计",
+      "required_stages": [
+        "world_design",
+        "character_design",
+        "static_relations",
+        "plot_design",
+        "event_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "candidates",
+        "waiting"
+      ],
+      "consumers": [
+        "scene_design",
+        "state_transition",
+        "state_propagation",
+        "anchor_design",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "scene_design",
+      "name": "场景设计",
+      "required_stages": [
+        "world_design",
+        "character_design",
+        "static_relations",
+        "plot_design",
+        "event_design",
+        "action_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "chapters",
+        "events",
+        "members",
+        "selected_actions",
+        "selected_events"
+      ],
+      "consumers": [
+        "state_transition",
+        "state_propagation",
+        "anchor_design",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "state_transition",
+      "name": "状态变化",
+      "required_stages": [
+        "character_design",
+        "static_relations",
+        "plot_design",
+        "action_design",
+        "scene_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "patches",
+        "transitions"
+      ],
+      "consumers": [
+        "state_propagation",
+        "anchor_design",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "state_propagation",
+      "name": "状态传播",
+      "required_stages": [
+        "world_design",
+        "character_design",
+        "static_relations",
+        "plot_design",
+        "action_design",
+        "scene_design",
+        "state_transition"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "candidates",
+        "waiting"
+      ],
+      "consumers": [
+        "anchor_design",
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "anchor_design",
+      "name": "锚点设计",
+      "required_stages": [
+        "character_design",
+        "static_relations",
+        "action_design",
+        "scene_design",
+        "state_transition",
+        "state_propagation"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "beats",
+        "selected_propagations"
+      ],
+      "consumers": [
+        "expression_design"
+      ],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "expression_design",
+      "name": "表达设计",
+      "required_stages": [
+        "type_selection",
+        "type_adaptation",
+        "character_design",
+        "world_design",
+        "static_relations",
+        "plot_design",
+        "action_design",
+        "scene_design",
+        "state_transition",
+        "state_propagation",
+        "anchor_design"
+      ],
+      "scopes": [
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "guidance"
+      ],
+      "consumers": [],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    },
+    {
+      "id": "bind_scope",
+      "name": "绑定汇总",
+      "required_stages": [],
+      "scopes": [
+        "book",
+        "volume",
+        "chapter",
+        "scene"
+      ],
+      "output_fields": [
+        "material_bindings",
+        "method_guidance",
+        "process_bindings"
+      ],
+      "consumers": [],
+      "note": "绑定读取本范围实际前步；命名交接可追加输入。"
+    }
+  ],
+  "input_kinds": {
+    "brief": "立项需求",
+    "parent_outline": "已批准的上层大纲",
+    "accepted_state": "已接受正文及状态",
+    "type_selection": "类型选择",
+    "type_adaptation": "类型适配",
+    "world_design": "世界设计",
+    "character_design": "人物设计",
+    "static_relations": "静态关系",
+    "plot_design": "剧情设计",
+    "event_design": "事件设计",
+    "action_design": "行动设计",
+    "scene_design": "场景设计",
+    "state_transition": "状态变化",
+    "state_propagation": "状态传播",
+    "anchor_design": "锚点设计",
+    "expression_design": "表达设计",
+    "bind_scope": "绑定汇总"
+  },
+  "consumers": {
+    "type_selection": "类型选择",
+    "type_adaptation": "类型适配",
+    "world_design": "世界设计",
+    "character_design": "人物设计",
+    "static_relations": "静态关系",
+    "plot_design": "剧情设计",
+    "event_design": "事件设计",
+    "action_design": "行动设计",
+    "scene_design": "场景设计",
+    "state_transition": "状态变化",
+    "state_propagation": "状态传播",
+    "anchor_design": "锚点设计",
+    "expression_design": "表达设计",
+    "bind_scope": "绑定汇总",
+    "writer": "正文写作",
+    "review": "独立审稿",
+    "acceptance": "范围验收"
+  },
+  "artifact_kinds": {
+    "stage_product": "步骤产物",
+    "world": "世界卡",
+    "character": "人物卡",
+    "plot": "剧情卡",
+    "promise": "伏笔/承诺卡",
+    "volume": "卷纲",
+    "chapter": "章纲",
+    "scene": "场景卡"
+  },
+  "output_labels": {
+    "selection": "实际类型选择",
+    "concepts": "类型概念",
+    "boundaries": "边界",
+    "adaptations": "适配方案",
+    "focuses": "本书侧重",
+    "members": "具体设计卡",
+    "limitations": "规则限制",
+    "unknowns": "待定事项",
+    "states": "人物状态",
+    "capabilities": "能力与边界",
+    "relations": "关系设计",
+    "requirements": "关系使用要求",
+    "directions": "剧情方向",
+    "reader_plan": "读者信息与情绪序列",
+    "promise_plan": "伏笔与承诺安排",
+    "event_nodes": "剧情事件节点",
+    "candidates": "条件候选",
+    "waiting": "待补前置",
+    "chapters": "章场安排",
+    "events": "实际场景事件",
+    "selected_events": "选定事件",
+    "selected_actions": "选定行动",
+    "patches": "状态变更单",
+    "transitions": "变化依据",
+    "beats": "可观察的呈现节拍",
+    "selected_propagations": "选定传播",
+    "guidance": "表达指导",
+    "material_bindings": "资料到产物的绑定",
+    "process_bindings": "制作过程绑定",
+    "method_guidance": "方法执行要求"
+  },
+  "output_artifact_kinds": {
+    "type_selection": {
+      "boundaries": [
+        "stage_product"
+      ],
+      "selection": [
+        "stage_product"
+      ],
+      "concepts": [
+        "stage_product"
+      ]
+    },
+    "type_adaptation": {
+      "boundaries": [
+        "stage_product"
+      ],
+      "focuses": [
+        "stage_product"
+      ],
+      "adaptations": [
+        "stage_product"
+      ]
+    },
+    "world_design": {
+      "members": [
+        "stage_product",
+        "world"
+      ],
+      "unknowns": [
+        "stage_product"
+      ],
+      "limitations": [
+        "stage_product"
+      ]
+    },
+    "character_design": {
+      "states": [
+        "stage_product"
+      ],
+      "members": [
+        "stage_product",
+        "character"
+      ],
+      "capabilities": [
+        "stage_product"
+      ]
+    },
+    "static_relations": {
+      "requirements": [
+        "stage_product"
+      ],
+      "relations": [
+        "stage_product"
+      ]
+    },
+    "plot_design": {
+      "members": [
+        "stage_product",
+        "plot",
+        "promise",
+        "volume",
+        "chapter"
+      ],
+      "event_nodes": [
+        "stage_product"
+      ],
+      "directions": [
+        "stage_product"
+      ],
+      "reader_plan": [
+        "stage_product"
+      ],
+      "promise_plan": [
+        "stage_product"
+      ]
+    },
+    "event_design": {
+      "candidates": [
+        "stage_product"
+      ]
+    },
+    "action_design": {
+      "waiting": [
+        "stage_product"
+      ],
+      "candidates": [
+        "stage_product"
+      ]
+    },
+    "scene_design": {
+      "events": [
+        "stage_product"
+      ],
+      "selected_events": [
+        "stage_product"
+      ],
+      "members": [
+        "stage_product",
+        "scene"
+      ],
+      "selected_actions": [
+        "stage_product"
+      ],
+      "chapters": [
+        "stage_product"
+      ]
+    },
+    "state_transition": {
+      "patches": [
+        "stage_product"
+      ],
+      "transitions": [
+        "stage_product"
+      ]
+    },
+    "state_propagation": {
+      "waiting": [
+        "stage_product"
+      ],
+      "candidates": [
+        "stage_product"
+      ]
+    },
+    "anchor_design": {
+      "selected_propagations": [
+        "stage_product"
+      ],
+      "beats": [
+        "stage_product"
+      ]
+    },
+    "expression_design": {
+      "guidance": [
+        "stage_product"
+      ]
+    },
+    "bind_scope": {
+      "method_guidance": [
+        "stage_product"
+      ],
+      "material_bindings": [
+        "stage_product"
+      ],
+      "process_bindings": [
+        "stage_product"
+      ]
+    }
+  },
+  "external_requires": {
+    "writer": [
+      "approved_scene_design",
+      "current_pov_context"
+    ],
+    "review": [
+      "frozen_draft",
+      "source_bound_design"
+    ],
+    "acceptance": [
+      "passing_independent_review",
+      "reviewed_state_delta",
+      "author_decision"
+    ],
+    "governance": [
+      "source_original",
+      "workflow_policy"
+    ]
+  },
+  "required_sections": {
+    "applicability": "适用条件",
+    "prerequisites": "所需前置",
+    "operations": "具体操作",
+    "outputs": "预期产物",
+    "downstream": "下游用途",
+    "acceptance": "验收方法",
+    "evidence": "原作证据",
+    "non_applicability": "不适用情况"
+  },
+  "missing_input_policy": "return_design",
+  "runtime_integration": "not_connected",
+  "notes": [
+    "目录是生产需求，不能当作原作拆解或类型写法的完整经验。",
+    "本步只建立方法库；自动多层拆解及项目卡生成、执行回执在后续里程碑接通。"
+  ]
+}

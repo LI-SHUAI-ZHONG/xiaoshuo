@@ -21,7 +21,8 @@ SLOT_STAGES = {
     'genre': ['type_selection', 'type_adaptation'],
     'tone': ['expression_design'], 'style': ['expression_design'],
     'narration': ['scene_design', 'expression_design'], 'world': ['world_design'],
-    'character': ['character_design'], 'structure': ['plot_design'], 'hook': ['plot_design'],
+    'character': ['character_design'], 'structure': ['plot_design', 'scene_design'],
+    'hook': ['plot_design', 'event_design'],
 }
 
 

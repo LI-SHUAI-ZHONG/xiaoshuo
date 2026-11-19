@@ -2,6 +2,7 @@
 import json
 from typing import Any
 from urllib.parse import quote
+from nw.studio import method_routes
 
 
 def first(query: dict, key: str, default: str = '') -> str:
@@ -14,7 +15,10 @@ class ProductionRoutes:
 
     def get(self, handler: Any, segs: list[str], query: dict) -> bool:
         lib, app = self.library, self.production
-        data = None
+        data = method_routes.get(lib, segs, query)
+        if data is not None:
+            handler._send_json(200, data)
+            return True
         if segs == ['genres']:
             data = lib.genres()
         elif segs == ['recommend']:
@@ -69,7 +73,10 @@ class ProductionRoutes:
 
     def post(self, handler: Any, segs: list[str], body: dict) -> bool:
         lib, app = self.library, self.production
-        data, status = None, 200
+        data, status = method_routes.post(lib, segs, body), 200
+        if data is not None:
+            handler._send_json(201 if segs == ['kb', 'methods'] else 200, data)
+            return True
         if segs == ['novels']:
             data, status = app.create(body), 201
         elif len(segs) >= 3 and segs[0] == 'novels':
