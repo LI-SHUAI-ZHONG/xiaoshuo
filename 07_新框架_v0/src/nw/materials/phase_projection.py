@@ -60,7 +60,12 @@ def verify_chain(session: dict) -> None:
         step_products = verify_followup(row, products, sources, context, session.get('calls', []))
         if BASIS_STAGE in step_products:
             context['allowed_input_stages'] = [*dependencies, BASIS_STAGE]
+        from nw.materials import design_network
+        offered = design_network.candidates(row['stage'], products, context)
+        require(canonical(row.get('network_design_candidates', [])) == canonical(offered),
+                '世界或人物设计方法的冻结前置与实际交付不一致')
         validate_phase(clean,row['stage'],step_products,selected,context)
+        design_network.validate(row['stage'], clean['products'], offered, products, context)
         plan=row.get('production_methods')
         if session.get('production_method_policy'):
             require(plan is not None,'project method selection and prerequisites were removed')
@@ -146,6 +151,9 @@ def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
     records={row['stage']:row for row in session['stages']};sources={row['source']['id']:row for row in session['sources']}
     context=session.get('context',{})
     result=selected_checks(records,scene,ids,context)
+    if 'scene_design' in records:
+        from nw.materials.design_network import scene_checks as network_scene_checks
+        result.extend(network_scene_checks(records['scene_design'], scene))
     multi_actions=(context.get('multi_action_policy')==MULTI_ACTION_POLICY and len(selected_action_ids(
         records.get('scene_design',{}).get('products',{})).get(scene,[]))>1)
     if session.get('production_method_policy'):

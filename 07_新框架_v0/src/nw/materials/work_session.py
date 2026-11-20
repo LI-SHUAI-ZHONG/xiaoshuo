@@ -72,6 +72,9 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
         shape=schema(payload['stage'],sources,
             payload.get('readable_source_ids',[]),payload.get('inputs'),allow_requests=payload.get('mode')!='execute',
             contracts=payload.get('source_contracts'), type_network_inputs=bool(payload.get('type_network_policy')))
+        if payload.get('network_design_candidates'):
+            from nw.materials.design_network import add_schema
+            add_schema(shape, payload['network_design_candidates'])
         if 'static_relations_basis' in payload:
             from nw.materials.static_followup_call import FOLLOWUP_FIELDS
             products = shape['properties']['products']

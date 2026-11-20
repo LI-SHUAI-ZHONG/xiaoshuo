@@ -1231,6 +1231,17 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        from nw.materials import design_network
+        design_candidates = design_network.candidates(stage, products, stage_context)
+        if guidance := design_network.guidance(stage, payload['demand'], products, context):
+            payload['network_design_guidance'] = guidance
+            suffix += '\n这些是当前类型与前置需求有关的设计问题。依据本项目已选拆解方法设计具体卡片，缺少证据时保留待核。'
+        if design_candidates:
+            payload['network_design_candidates'] = design_candidates
+            suffix += ('\nnetwork_design_candidates 已核实上游项目字段。按本步需要采用，required=true 的已选剧情须交接。'
+                       '在 products._network_design_uses 写 {id,operation,output_refs}。operation 说明实际操作，'
+                       '每个 output_refs 填本步具体字段的 JSON 指针，落点保留上游可辨认的项目细节。'
+                       '人物只能落在该角色参与的产物。场景使用 goal、conflict 或 allowed_disclosure；带 selector 的交付只落实在实际选用对应事件或动作的场景。')
         if world_candidates:
             suffix += ('\n若本页全部方法的适用条件与本书需求不符，可只返回 {stage:"world_design",world_method_gap:'
                        '{design_basis:[{kind,path}],exclusions:[{method_id,reason}],missing:"需要哪种方法以及原因"}}。'
@@ -1465,6 +1476,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '对应的项目依据。核对同一产物中的纪年、时期、地理与制度条件。')
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
+            if design_candidates:
+                payload['output_contract']['products']['_network_design_uses'] = []
             if method_plan is not None and package.get('production_method_policy', {}).get('world_selection') == 'ai':
                 payload['output_contract']['products'].update(_method_applications=[], _method_receipts=[])
             if type_network_enabled and stage == 'type_selection':
@@ -1514,6 +1527,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 clean,_=project_methods.split(value)
                 if method_plan is None and clean!=value:raise ValueError('PROJECT_METHOD: 未请求的方法执行记录')
                 validate_phase(clean,stage,products,sources,stage_context)
+                design_network.validate(stage, clean['products'], design_candidates, products, stage_context)
                 applied_plan = finalize(method_plan, value['products']) if ai_world else method_plan
                 if world_candidates:
                     visible = {m['method']['id'] for m in payload['production_methods']}
@@ -1564,6 +1578,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     'binding_reviews':reviews,'deferred_sources':deferred,
                     'source_selection':selection,
                     'source_ids':[s['source']['id'] for s in sources]}
+            if design_candidates:
+                record['network_design_candidates'] = design_candidates
             if network_context is not None and stage == 'plot_design':
                 record['prepared_static_sources'] = stage_context['prepared_static_sources']
             if network_context is not None and early_static:
@@ -1675,6 +1691,11 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             if package.get('same_stage_network_policy') == FOLLOWUP_POLICY:
                 context['same_stage_network_policy'] = FOLLOWUP_POLICY
         network = network_materials(desk, package)
+        from nw.materials.design_network_catalog import POLICY as DESIGN_NETWORK_POLICY, load_catalog
+        if package.get('design_network_policy') == DESIGN_NETWORK_POLICY:
+            context['design_network_policy'] = DESIGN_NETWORK_POLICY
+            context['design_network_catalog'] = load_catalog(desk, *network)
+            context['parent_design_network'] = package.get('parent_design_network', [])
         if package.get('type_network_policy') == TYPE_NETWORK_POLICY:
             from nw.materials.type_network_catalog import load_type_network_bases
 

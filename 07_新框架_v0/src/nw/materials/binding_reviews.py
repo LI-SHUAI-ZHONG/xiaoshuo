@@ -140,7 +140,8 @@ def verify_session_bindings(session: dict,workspace: Path,*,test_mode: bool=Fals
     control=context.get('retrieval_control')
     binder=next((r['products'] for r in session['stages'] if r['stage']=='bind_scope'),{})
     configured=configured_sources(binder)
-    if not uses and not control and not configured:return
+    design_proofs = any(r.get('network_design_candidates') for r in session['stages'])
+    if not uses and not control and not configured and not design_proofs:return
     require(context.get('binding_policy')==POLICY,'historical candidate routes need review before new execution')
     fresh=load_reviews(workspace,test_mode=test_mode)
     sources={**context.get('material_source_snapshots',{}),**{s['source']['id']:s for s in session['sources']}}
@@ -160,6 +161,10 @@ def verify_session_bindings(session: dict,workspace: Path,*,test_mode: bool=Fals
                 'dynamic network type scope differs from the selected original types')
         if typed:
             require(context.get('type_network_families') == families, 'verified main-type families changed')
+        if design_proofs:
+            from nw.materials.design_network_catalog import verify_pins
+            from nw.materials.work_catalog import SourceDesk
+            verify_pins(session, SourceDesk(workspace, test_mode=test_mode))
         proof_by_stage = {}
         if typed:
             proof_by_stage['type_adaptation'] = context.get('type_network_bases', {})

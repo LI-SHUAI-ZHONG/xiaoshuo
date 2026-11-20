@@ -107,7 +107,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     require(isinstance(value,dict) and FIELDS[stage]|{'_uses'}<=value.keys()
             and not value.keys()-FIELDS[stage]-{'_uses','_excluded','_requirements','_criteria'}
             -({'static_bindings'} if stage=='plot_design' else set())-{'_governance','_receipts'}
-            -({'adaptation_inputs'} if type_network_inputs else set()),'wrong stage product fields')
+            -({'adaptation_inputs'} if type_network_inputs else set())
+            -({'_network_design_uses'} if context.get('design_network_policy') else set()),'wrong stage product fields')
     if '_governance' in value:
         config=value['_governance']
         require(stage=='type_selection' and isinstance(config,dict) and set(config)=={'project_config'}

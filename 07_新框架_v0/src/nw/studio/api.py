@@ -789,6 +789,10 @@ class StudioService:
                                'same_stage_network_policy': FOLLOWUP_POLICY,
                                'network_type_scope': resolve_type_scope(self.workspace, selected_types, families=families)}
             authored, rules = network_materials(desk, package)
+            if stage in ('world_design', 'character_design'):
+                from nw.materials.design_network_catalog import POLICY as DESIGN_NETWORK_POLICY, load_catalog
+                network_context.update(design_network_policy=DESIGN_NETWORK_POLICY,
+                                       design_network_catalog=load_catalog(desk, authored, rules))
             if stage == 'type_adaptation':
                 from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
                 from nw.materials.type_network_catalog import load_type_network_bases
@@ -821,6 +825,8 @@ class StudioService:
                            trace=selection, step_pool=step_pool, prepared=prepared, network_context=network_context)
         if step_pool is not None:
             step_pool = {**step_pool, **prepared}
+        from nw.materials.design_network_catalog import audit as design_audit
+        design_rules = design_audit(stage, network_context or {})
         joint_plan = build_joint_material_plan(stage, sources)
         source_keys = [s['source']['key'] for s in sources] if step_pool is None else []
         base_prompt = (STEP_PROMPT if step_pool is None else STEP_SOURCE_PROMPT) + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
@@ -857,6 +863,7 @@ class StudioService:
             'stage_source_policy': package.get('stage_source_policy'),
             **({'network_type_scope': network_context['network_type_scope']} if network_context is not None else {}),
             **({'network_waiting': network_waiting} if network_waiting else {}),
+            **({'network_design_audit': design_rules} if design_rules else {}),
             'deferred_reviews_count': len(deferred),
             'queries_executed': selection.get('queries', []),
             'rendered_prompt': rendered_prompt,

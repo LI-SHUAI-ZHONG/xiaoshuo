@@ -148,7 +148,16 @@ def early_waiting(stage: str, authored: dict, rules: dict, products: dict, conte
                 or not type_matches(rule['valid_types'], context.get('network_type_scope', {})) or _adopted(rule, bound)):
             continue
         basis = rows.get(rule['static_id'])
-        if stage == 'type_adaptation' and _type_network_active(context):
+        if (reviewed := context.get('design_network_catalog', {}).get(rule['key'])) and reviewed['owner'] == stage:
+            from nw.materials.design_network_catalog import OWNERS
+            spec = OWNERS[reviewed['owner']].SPECS[rule['key']]
+            if spec['status'] == 'unresolved':
+                reason = spec['blocked_reason']
+            elif reviewed['basis_stage'] == 'action_design':
+                reason = '待行动步骤核验同一角色的能力、事件和世界限制'
+            else:
+                reason = '待独立冻结本项目世界规则与限制' if stage == 'world_design' else '待独立冻结人物字段及本条所需的世界或关系依据'
+        elif stage == 'type_adaptation' and _type_network_active(context):
             decision, missing = _type_network_decision(ident, rule, products, context)
             if decision is not None:
                 continue
