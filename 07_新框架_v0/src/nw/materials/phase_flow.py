@@ -429,6 +429,13 @@ dependency_source_ids来自前步实际采用资料的后续引用；只在当�
 资料不够时可先输出{stage,requests:[{action:search,query:具体用途,cursor:0}或{action:read,id:本步候选ID}]}，
 检索结果可翻页；读取全文后才能使用。每次只处理当前步骤，预算不够时停止，不能伪造已读或省略必要资料。'''
 
+STEP_SOURCE_PROMPT = (STEP_PROMPT
+    .replace('先读原文及运用层', '先读 sources 各条的 step_use 与已核定的使用条件')
+    .replace('已交付本步请求的完整原文', '已交付请求的本步用法')
+    .replace('保留本步请求回读的原件及对应运用层', '保留本步请求查看的用法及其审核依据')
+    .replace('检索结果可翻页；读取全文后才能使用', '检索和读条目限于本步；使用已交付的本步用法须同时核对适用条件')
+    + '\nsource_contracts 和来源位置供核对适用条件与证据。已有评审指令和上游交接按已确认的要求核对。')
+
 ASSEMBLY_PROMPT='''[MATERIAL_ASSEMBLY] 当前阶段的设计已由前面各步模型真实生成并通过前置产物校验。
 只输出输入output_contract的JSON引用以确认组装，不另造、替换或补写故事内容。'''
 
@@ -815,10 +822,23 @@ def _admission(desk: SourceDesk, source: dict, stage: str, package: dict, *,
     return None, allows_stage_candidate(source,stage,context)
 
 
-def _stage_search(desk: SourceDesk,stage: str,query: str,cursor: int=0,*,trace: dict | None=None) -> dict:
-    profiles={r['profile'] for r in desk.rows if stage in route_method(r)['stages']}
-    result=desk.search(query,cursor=cursor,limit=40,profiles=profiles)
-    result['items']=[row for row in result['items'] if stage in route_method(row)['stages']]
+def _step_source_pool(desk: SourceDesk, stage: str, package: dict) -> dict[str, str] | None:
+    from nw.materials.stage_input import STEP_SOURCE_POLICY, step_uses
+    if package.get('stage_source_policy') != STEP_SOURCE_POLICY:
+        return None
+    uses = step_uses(package['stage_materials'][stage])
+    return {row['id']: uses[row['key']] for row in desk.rows
+            if row['key'] in uses and stage in route_method(row)['stages']}
+
+
+def _stage_search(desk: SourceDesk,stage: str,query: str,cursor: int=0,*,trace: dict | None=None,
+                  step_pool: dict[str, str] | None = None) -> dict:
+    if step_pool is None:
+        profiles={r['profile'] for r in desk.rows if stage in route_method(r)['stages']}
+        result=desk.search(query,cursor=cursor,limit=40,profiles=profiles)
+        result['items']=[row for row in result['items'] if stage in route_method(row)['stages']]
+    else:
+        result = desk.search(query, cursor=cursor, limit=40, step_uses=step_pool)
     if trace is not None:trace['queries'].append({'query':query,'cursor':cursor,
         'returned':[{'id':r['id'],'key':r['key'],'sha256':r['sha256']} for r in result['items']]})
     return result
@@ -872,7 +892,10 @@ def retrieval_need(stage: str,package: dict,products: dict) -> str:
 
 
 def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_sources: list[dict] | None=None,
-             *,reviewed_only: bool=False,deferrals: list | None=None,trace: dict | None=None) -> list[dict]:
+             *,reviewed_only: bool=False,deferrals: list | None=None,trace: dict | None=None,
+             step_pool: dict[str, str] | None = None) -> list[dict]:
+    if step_pool is None:
+        step_pool = _step_source_pool(desk, stage, package)
     type_selection=products.get('type_selection',{}).get('products')
     def usable(source: dict) -> bool:
         if not reviewed_only:return source['use_mode']=='project_method'
@@ -890,16 +913,17 @@ def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_so
          if row['request']['disposition']=='required' and (desk.binding_review(desk.read(row['source']['id']),stage,
              package['scope']) is not None if reviewed_only else
              stage in route_method({**row['source'],'profile':row['profile']})['stages'])]
-    ids=list(dict.fromkeys([*ids,*deferred_source_ids(desk,stage,products,studied_sources or [])]))
+    related = deferred_source_ids(desk, stage, products, studied_sources or [])
+    ids = list(dict.fromkeys([*ids, *(ident for ident in related if step_pool is None or ident in step_pool)]))
     demand=retrieval_need(stage,package,products)
-    candidates=_stage_search(desk,stage,demand,trace=trace)['items']
+    candidates=_stage_search(desk,stage,demand,trace=trace,step_pool=step_pool)['items']
     template=next((key for key,value in TEMPLATE_STAGES.items() if value==stage),None)
-    if template:candidates=_stage_search(desk,stage,template,trace=trace)['items']+candidates
+    if template:candidates=_stage_search(desk,stage,template,trace=trace,step_pool=step_pool)['items']+candidates
     brief_text = (str(package.get('brief', {}).get('text', '')) + ' '
                   + str(package.get('brief', {}).get('constraints', ''))).casefold()
     single_pov = (any(w in brief_text for w in ('单视角', '单一视角', '固定视角', '受限第三人称', '第三人称有限', '第一人称'))
                   and not any(w in brief_text for w in ('多视角', '切换视角', '视角切换', '视角轮换', '双视角', '群像', '配角pov', '配角视角')))
-    stage_has_default = (package.get('current_source_set') is True
+    stage_has_default = (step_pool is None and package.get('current_source_set') is True
                          and STAGE_MATERIALS.get(stage) == DEFAULT_STAGE_MATERIALS.get(stage))
     if stage_has_default:
         from nw.materials.stage_input import extract_step_keys
@@ -935,7 +959,7 @@ def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_so
     for query in FUNCTION_QUERIES[stage]:
         cursor=0;selected=False
         for _ in range(3):
-            page=_stage_search(desk,stage,query,cursor,trace=trace)
+            page=_stage_search(desk,stage,query,cursor,trace=trace,step_pool=step_pool)
             for row in page['items']:
                 source=desk.read(row['id'])
                 if usable(source) and auto_fit(source):
@@ -980,8 +1004,18 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.production_methods.handoff import deliveries
     method_handoffs=deliveries(stage,products,context.get('production_method_parents',[])) if method_plan is not None else []
     deferred=[]
-    prompt = STEP_PROMPT + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
     material = package.get('stage_materials', {}).get(stage, '')
+    step_pool = _step_source_pool(desk, stage, package)
+    prompt = (STEP_PROMPT if step_pool is None else STEP_SOURCE_PROMPT) + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
+
+    def stage_source(source: dict, contract: dict, *, full_text: bool = False) -> dict:
+        use = None if step_pool is None else step_pool.get(source['source']['id'], '')
+        return model_source(source, stage=stage, semantics=contract, full_text=full_text, step_use=use)
+
+    def source_delivery(ident: str) -> dict:
+        if step_pool is None:
+            return {'complete_original_delivered': True}
+        return {'step_material_delivered': ident in step_pool}
     chapter_handoff = package.get('chapter_handoff') if stage == 'plot_design' else None
     handoff_instruction = '\n' + plot_design_chapters.CHAPTER_HANDOFF if chapter_handoff is not None else ''
     chapter_summary = package.get('chapter_summary') if chapter_handoff is not None else None
@@ -995,7 +1029,13 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         'upstream':[product_ref(products[n]) for n in deps],
         'control_review_sha256':context.get('retrieval_control',{}).get('review',{}).get('sha256'),
         'queries':[],'offered':[],'selected':[]}
-    sources=_sources(desk,stage,package,products,studied_sources,reviewed_only=True,deferrals=deferred,trace=selection)
+    if step_pool is not None:
+        selection['stage_source_policy'] = package['stage_source_policy']
+    sources=_sources(desk,stage,package,products,studied_sources,reviewed_only=True,deferrals=deferred,trace=selection,
+                     step_pool=step_pool)
+    dependencies = deferred_source_ids(desk, stage, products, studied_sources or [])
+    if step_pool is not None:
+        dependencies = [ident for ident in dependencies if ident in step_pool]
     responses=[];offered=set();calls=[];read_full=set();readings={}
     for turn in range(max_rounds):
         contracts=[desk.semantic_contract(source) for source in sources]
@@ -1009,12 +1049,12 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         payload={'policy':POLICY,'stage':stage,'scope':package['scope'],
             'mode':'execute' if read_full else 'read_or_execute',
             'function_queries':list(FUNCTION_QUERIES[stage]),
-            'dependency_source_ids':deferred_source_ids(desk,stage,products,studied_sources or []),
+            'dependency_source_ids':dependencies,
             'brief':package['brief'],
             'retrieval_need':retrieval_need(stage,package,products),
             'demand':' '.join((package['brief']['text'],package['brief']['constraints'])),
-            'inputs':inputs,'sources':[model_source(s,stage=stage,full_text=s['source']['id'] in read_full,
-                semantics=next(c for c in contracts if c['source_id']==s['source']['id'])) for s in sources],
+            'inputs':inputs,'sources':[stage_source(s, contract, full_text=s['source']['id'] in read_full)
+                                       for s, contract in zip(sources, contracts, strict=True)],
             'source_contracts':[model_semantics(c) for c in contracts],
             'semantic_requirements':handoffs_for(stage,products),
             'source_use_reviews':[model_review(reviews[c['source_id']],c,stage)
@@ -1040,6 +1080,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        if step_pool is not None:
+            payload['stage_source_policy'] = package['stage_source_policy']
         if stage == 'type_adaptation' and governance and context.get('dynamic_reference_checks'):
             suffix += '\n' + type_adaptation_combination_review.DYNAMIC_REFERENCE_USE
         if screen_scene:
@@ -1092,18 +1134,18 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     suffix += '\n' + type_selection_type_rules.SOURCE_MAPPING_USE
         if readings:
             payload['source_readings']=[
-                {**reading, 'source':model_source(source,stage=stage,full_text=True,semantics=desk.semantic_contract(source))}
+                {**reading, 'source':stage_source(source,desk.semantic_contract(source),full_text=True)}
                 for source,reading in readings.values()]
         if governance:
             payload['governance']={'contract_fingerprint':governance['contract']['fingerprint'],
                 'configuration_required':stage=='type_selection',
                 'instruction':'类型选择用_governance.project_config逐一归入genre_ids/mechanism_ids/structure_ids/style_ids/tone_ids；只填本步selection的实际ID。规则检查会在本步、重开及采用前重跑，不能自行签署作者/独立评审。'}
         if payload['method_requirements']:
-            payload['method_requirement_sources']=[model_source(s,stage=stage,full_text=True,semantics=desk.semantic_contract(s))
+            payload['method_requirement_sources']=[stage_source(s,desk.semantic_contract(s),full_text=True)
                 for ident in sorted({r['source_id'] for r in payload['method_requirements']})
                 for s in [desk.read(ident)]]
         if payload['semantic_requirements']:
-            payload['semantic_requirement_sources']=[model_source(s,stage=stage,full_text=True,semantics=desk.semantic_contract(s))
+            payload['semantic_requirement_sources']=[stage_source(s,desk.semantic_contract(s),full_text=True)
                 for ident in sorted({r['source_id'] for r in payload['semantic_requirements']})
                 for s in [desk.read(ident)]]
         if stage_provider.name!='ollama':payload['output_contract']=output_contract(stage,products,sources)
@@ -1178,7 +1220,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         responses=[]
         for action in raw['requests']:
             if action['action']=='search':
-                found=_stage_search(desk,stage,action['query'],action.get('cursor',0),trace=selection);responses.append(found)
+                found=_stage_search(desk,stage,action['query'],action.get('cursor',0),trace=selection,step_pool=step_pool);responses.append(found)
                 offered.update(row['id'] for row in found['items'])
             else:
                 require(action['id'] in set(payload['readable_source_ids']),'read was not requested from this step search results')
@@ -1196,7 +1238,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                                 'reason':'当前步骤的原义用途还需核定。'}
                             deferred.append(entry)
                         reading={'status':entry['status'],'reason':entry['reason'],'execution_admitted':False,
-                                 'complete_original_delivered':True}
+                                 **source_delivery(ident)}
                         readings[ident]=(source,reading)
                         selection.setdefault('read',[]).append({'source':source['source'],**reading})
                     responses.append({'read':ident,**readings[ident][1]})
@@ -1204,7 +1246,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 if action['id'] not in {s['source']['id'] for s in sources}:sources.append(source)
                 read_full.add(action['id'])
                 reading={'read':action['id'],'use_mode':source['use_mode'],'execution_admitted':True,
-                         'complete_original_delivered':True}
+                         **source_delivery(action['id'])}
                 selection.setdefault('read',[]).append({'source':source['source'],**reading})
                 responses.append(reading)
     raise ValueError('MATERIAL_STAGE: '+stage+' lookup budget exhausted before producing actual products')

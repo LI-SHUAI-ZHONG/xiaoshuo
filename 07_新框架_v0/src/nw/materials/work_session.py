@@ -18,8 +18,16 @@ from nw.task_models import InputManifest,TaskRequest,canonical,content_sha256
 from nw.tasks import freeze_manifest,read_input_manifest,run_task
 
 
-def model_source(source: dict,*,stage: str | None=None,semantics: dict | None=None, full_text: bool=False) -> dict:
+def model_source(source: dict,*,stage: str | None=None,semantics: dict | None=None, full_text: bool=False,
+                 step_use: str | None = None) -> dict:
     result={key:value for key,value in source.items() if key!='application_layers'}
+    if step_use is not None:
+        if stage:
+            type_connections.apply_step_text(result, source, stage)
+        result.pop('original_text')
+        result['step_use'] = step_use
+        result['application_layers'] = (semantics or {}).get('application_guidance', [])
+        return result
     layers=[]
     for layer in source['application_layers']:
         raw=layer['text'];match=re.search(r'(?m)^```json[^\n]*\n',raw)
@@ -79,7 +87,10 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
     elif previous and previous['attempt']>1:
         retry_of=saved['retry_of']
     model_payload={key:value for key,value in payload.items() if key!='mode'}
-    if payload.get('mode'):
+    if payload.get('stage_source_policy'):
+        model_payload['current_instruction'] = ('所请求的本步资料已交付。现在提交本步设计产物或逐项说明为何不适用。'
+            if payload['mode'] == 'execute' else '按本步资料与实际前置完成设计，需要补查时只在本步查找。')
+    elif payload.get('mode'):
         model_payload['current_instruction']=('本步请求的完整原文已经交付，现在提交实际设计产物。'
             if payload['mode']=='execute' else '使用已给原文与上游产物完成当前设计；确实缺方法时才检索、读取。')
     payload_text=canonical(model_payload)
@@ -90,7 +101,8 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
         system_text=prompt+prompt_suffix
     if step_material and not saved:
         from nw.materials.stage_input import step_material_prompt
-        step_sources=[*sources,*payload.get('method_requirement_sources',()),*payload.get('semantic_requirement_sources',())]
+        step_sources=[] if payload.get('stage_source_policy') else [
+            *sources,*payload.get('method_requirement_sources',()),*payload.get('semantic_requirement_sources',())]
         system_text=step_material_prompt(prompt,step_material,(s['source']['key'] for s in step_sources))+prompt_suffix
     messages=[{'role':'system','content':system_text},{'role':'user','content':payload_text}]
     params,_=prepare_call(store,request.budget_id,provider.name,config.params,messages)

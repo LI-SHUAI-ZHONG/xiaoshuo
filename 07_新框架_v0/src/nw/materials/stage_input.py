@@ -1,11 +1,13 @@
 """Stage-sized model inputs backed by complete immutable source snapshots."""
 from collections.abc import Iterable
+from functools import lru_cache
 import re
 
 from nw.materials.binding import BOOK
 from nw.task_models import canonical, content_sha256
 
 POLICY='stage-material-input-v1'
+STEP_SOURCE_POLICY = 'step-material-selection-v1'
 _STEP_HEADING = re.compile(r'^#{2,6}\s+(.+?)\s*$')
 _ASCII_HEAD_PREFIX = re.compile(r'^([A-Z][A-Z0-9_.-]+)\s+\S')
 _STEP_INTRO = re.compile(r'^【[^】\r\n]+的资料】$')
@@ -45,6 +47,27 @@ def step_material_prompt(prompt: str, material: str, keys: Iterable[str]) -> str
     wanted = {key for key in keys if isinstance(key, str) and key}
     if not wanted:
         return prompt
+
+    uses = _step_uses(material, wanted)
+    if uses:
+        sections = '\n\n'.join(f'### {key}\n【本步用法】\n{use}' for key, use in uses.items())
+        prompt += '\n\n按当前步骤和已给来源执行下列用法。\n' + sections
+    return prompt
+
+
+def _connection_uses(material: str, wanted: set[str] | None = None) -> dict[str, str]:
+    if '《类型连接》原条按需要读取' not in material:
+        return {}
+    from nw.materials.steps import type_connections
+    stages = {stage for stage in type_connections.STEPS if (instructions := type_connections.step_instructions(stage))
+              and instructions in material}
+    records = type_connections.records()
+    return {key: type_connections.record_use(entry[1]['original'])[1]
+            for key in (records if wanted is None else wanted)
+            if (entry := records.get(key)) is not None and entry[0] in stages}
+
+
+def _step_uses(material: str, wanted: set[str], *, connections: dict[str, str] | None = None) -> dict[str, str]:
     excerpts: dict[str, list[list[str]]] = {}
     titles: list[str] = []
     instructions: list[str] | None = None
@@ -136,34 +159,13 @@ def step_material_prompt(prompt: str, material: str, keys: Iterable[str]) -> str
                 instructions.append(line)
     flush()
 
-    if '《类型连接》原条按需要读取' in material:
-        from nw.materials.steps import type_connections
-        recs = type_connections.records()
-        active_conn_stages = {
-            st for st in type_connections.STEPS
-            if (si := type_connections.step_instructions(st)) and si in material
-        }
-        for key in wanted:
-            if key not in excerpts and (entry := recs.get(key)) is not None:
-                conn_stage, conn_row = entry
-                if conn_stage in active_conn_stages:
-                    _, conn_use = type_connections.record_use(conn_row['original'])
-                    _add_usage(excerpts, key, [conn_use])
+    connections = _connection_uses(material, wanted) if connections is None else connections
+    for key in wanted:
+        if key not in excerpts and key in connections:
+            _add_usage(excerpts, key, [connections[key]])
 
-    sections = []
-    for key_title, groups in excerpts.items():
-        merged: list[str] = ['【本步用法】']
-        seen_lines: set[str] = set()
-        for grp in groups:
-            for item in grp[1:]:
-                if item not in seen_lines:
-                    seen_lines.add(item)
-                    merged.append(item)
-        if len(merged) > 1:
-            sections.append('### ' + key_title + '\n' + '\n'.join(merged))
-    if sections:
-        prompt += '\n\n按当前步骤和已给来源执行下列用法。\n' + '\n\n'.join(sections)
-    return prompt
+    return {key: '\n'.join(dict.fromkeys(line for group in groups for line in group[1:]))
+            for key, groups in excerpts.items()}
 
 
 def extract_step_keys(material: str) -> set[str]:
@@ -227,6 +229,13 @@ def extract_step_keys(material: str) -> set[str]:
             found.update(titles)
             found.update(group_defs)
     return found
+
+
+@lru_cache(maxsize=32)
+def step_uses(material: str) -> dict[str, str]:
+    """Read the authored step uses, including its bundled type connection data."""
+    connections = _connection_uses(material)
+    return _step_uses(material, extract_step_keys(material) | connections.keys(), connections=connections)
 
 
 def check_source_keys(checks: Iterable[dict]) -> set[str]:
@@ -302,7 +311,7 @@ def model_material(row: dict, *, book: bool) -> dict:
 
 def model_package(package: dict) -> dict:
     result={key:value for key,value in package.items() if key not in {
-        'material_recall','material_input','stage_materials','chapter_handoff','chapter_summary','chapter_reviews',
+        'material_recall','material_input','stage_materials','stage_source_policy','chapter_handoff','chapter_summary','chapter_reviews',
         'type_hierarchy_enabled','type_source_scope_enabled','type_name_evidence_enabled','governance_inputs','dynamic_reference_checks','dynamic_screening_enabled'}}
     if package.get('materials'):
         result['materials']=[model_material(row,book=package['scope']=='book') for row in package['materials']]

@@ -194,7 +194,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         existing = store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest_id,)).fetchone()
         if existing:
             _, previous_package = read_input_manifest(store, manifest_id)
-            for key in ('stage_materials', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
+            for key in ('stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled'):
                 if key in previous_package:
@@ -222,6 +222,9 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 package['stage_materials'] = {
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
                 }
+                if staged_catalog:
+                    from nw.materials.stage_input import STEP_SOURCE_POLICY
+                    package['stage_source_policy'] = STEP_SOURCE_POLICY
         while methods and len(prompt) + len(canonical(model_package(package))) > budget.context_char_limit:
             methods.pop()
         sources = _source_refs(store, [*cards, *methods])

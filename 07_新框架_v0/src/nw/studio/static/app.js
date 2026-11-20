@@ -424,7 +424,7 @@
                 </div>
               </div>
               <div class="small">${esc(s.meaning)}</div>
-              <div class="small muted truncate">${esc(s.original_preview)}</div>
+              <div class="small muted truncate">${esc(s.step_use ?? s.original_preview ?? '')}</div>
             </div>`).join("")
         : `<div class="muted small">未召回资料。</div>`;
 

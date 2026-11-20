@@ -130,24 +130,32 @@ class SourceDesk:
                 'topics':topics,'operations':['search(query,cursor)','read(id)'],
                 'state_policy':'来源资格与项目方法用途分开；template、blocked仍可研读，不自动升为事实'}
 
-    def search(self,query: str,*,cursor: int=0,limit: int=12,profiles: set[str] | None=None) -> dict:
+    def search(self,query: str,*,cursor: int=0,limit: int=12,profiles: set[str] | None=None,
+               step_uses: dict[str, str] | None = None) -> dict:
         if not isinstance(query,str) or not query.strip() or type(cursor) is not int or cursor<0 or type(limit) is not int or not 1<=limit<=40:
             raise ValueError('MATERIAL_WORK: invalid source search')
         raw_words=_keywords([query])
         words=(raw_words-_META_BIGRAMS) if len(raw_words)>4 and (raw_words-_META_BIGRAMS) else raw_words
         qfold=query.strip().casefold()
         ranked=[]
-        for row in self.rows:
+        rows = self.rows if step_uses is None else (self.by_id[ident] for ident in step_uses)
+        for row in rows:
             if profiles is not None and row['profile'] not in profiles:continue
             key=row['key'] or '';meaning=row['meaning'] or ''
             functional=str(row.get('function_text','')).casefold()
+            if step_uses is not None:
+                meaning = step_uses[row['id']]
+                functional = ''
             score=(50 if qfold in key.casefold() else (20 if len(qfold)<=40 and qfold in meaning.casefold() else 0))
             score+=len(words&_keywords([key]))*8+len(words&_keywords([meaning]))*3
             score+=sum(word.casefold() in functional for word in words)
             if score:
                 result={key:row[key] for key in ('id','key','profile','state','meaning','file_sha256','sha256')}
                 if row.get('execution_stages'):result['execution_stages']=row['execution_stages']
-                if row.get('function_text'):result['function_text']=row['function_text']
+                if step_uses is not None:
+                    result['meaning'] = meaning[:240]
+                elif row.get('function_text'):
+                    result['function_text']=row['function_text']
                 ranked.append((-score,row['id'],result))
         ranked.sort(key=lambda item:item[:2]);page=ranked[cursor:cursor+limit]
         return {'query':query,'total':len(ranked),'cursor':cursor,

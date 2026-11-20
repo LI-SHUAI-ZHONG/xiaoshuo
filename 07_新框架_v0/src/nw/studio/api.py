@@ -26,10 +26,12 @@ from nw.materials.phase_flow import (
     STAGE_INSTRUCTIONS,
     STAGE_MATERIALS,
     STEP_PROMPT,
+    STEP_SOURCE_PROMPT,
     _sources,
+    _step_source_pool,
 )
 from nw.materials.phase_routes import EXTERNAL_REQUIRES, ORDER, POLICY, REQUIRES, phase_order, route_method
-from nw.materials.stage_input import step_material_prompt
+from nw.materials.stage_input import STEP_SOURCE_POLICY, step_material_prompt
 from nw.materials.step_guard import (
     PRIORITY_HIERARCHY,
     build_continuity_ledger,
@@ -658,6 +660,8 @@ class StudioService:
             selected = selection_status(self.workspace)
             if selected:
                 package['current_source_set'] = selected['sha256']
+                package['stage_materials'] = {stage: STAGE_MATERIALS.get(stage, '')}
+                package['stage_source_policy'] = STEP_SOURCE_POLICY
         mock_products: dict[str, dict] = {}
         if simulate_prior_products:
             if stage != 'type_selection':
@@ -747,10 +751,12 @@ class StudioService:
             'offered': [],
             'selected': [],
         }
-        sources = _sources(desk, stage, package, {}, [], reviewed_only=True, deferrals=deferred, trace=selection)
+        step_pool = _step_source_pool(desk, stage, package)
+        sources = _sources(desk, stage, package, mock_products, [], reviewed_only=True, deferrals=deferred,
+                           trace=selection, step_pool=step_pool)
         joint_plan = build_joint_material_plan(stage, sources)
-        source_keys = [s['source']['key'] for s in sources]
-        base_prompt = STEP_PROMPT + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
+        source_keys = [s['source']['key'] for s in sources] if step_pool is None else []
+        base_prompt = (STEP_PROMPT if step_pool is None else STEP_SOURCE_PROMPT) + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
         rendered_prompt = step_material_prompt(base_prompt, STAGE_MATERIALS.get(stage, ''), source_keys)
 
         formatted_sources = []
@@ -764,7 +770,8 @@ class StudioService:
                 'use_mode': s['use_mode'],
                 'meaning': s.get('meaning', ''),
                 'issues_count': sum(len(v) for v in s.get('source_issues', {}).values()),
-                'original_preview': str(s.get('original_text', ''))[:500],
+                **({'original_preview': str(s.get('original_text', ''))[:500]} if step_pool is None
+                   else {'step_use': step_pool.get(meta['id'], '')}),
             })
         return {
             'catalog_available': True,
@@ -779,6 +786,7 @@ class StudioService:
             'joint_material_plan': joint_plan,
             'sources_count': len(formatted_sources),
             'sources': formatted_sources,
+            'stage_source_policy': package.get('stage_source_policy'),
             'deferred_reviews_count': len(deferred),
             'queries_executed': selection.get('queries', []),
             'rendered_prompt': rendered_prompt,
