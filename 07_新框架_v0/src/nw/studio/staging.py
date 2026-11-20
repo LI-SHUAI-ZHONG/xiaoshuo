@@ -26,10 +26,14 @@ class StagingMixin:
         path = (self.root / row['file_path']).resolve()
         if not path.is_relative_to(self.root.resolve()):
             raise ValueError('预存文件路径越界')
-        text = path.read_text(encoding='utf-8')
-        if hashlib.sha256(text.encode('utf-8')).hexdigest() != row['sha256']:
-            raise ValueError('预存原文已改变，请重新导入，证据不能沿用')
-        return text
+        raw = path.read_bytes()
+        if hashlib.sha256(raw).hexdigest() == row['sha256']:
+            return raw.decode('utf-8')
+        # Earlier Windows imports expanded LF on write, including the LF in a CRLF pair.
+        legacy = raw.replace(b'\r\n', b'\n')
+        if hashlib.sha256(legacy).hexdigest() == row['sha256']:
+            return legacy.decode('utf-8')
+        raise ValueError('预存原文已改变，请重新导入，证据不能沿用')
 
     def list_staging(self, status: str = '') -> dict:
         if status and status not in STATES:
@@ -66,8 +70,8 @@ class StagingMixin:
         filename = str(body.get('filename') or '导入小说.txt')
         if Path(filename).suffix.lower() not in ('.txt', '.md'):
             raise ValueError('初版支持 TXT / Markdown 文件')
-        if not isinstance(text, str) or not text.strip() or len(text.encode('utf-8')) > 6 * 1024 * 1024:
-            raise ValueError('请导入非空、UTF-8 内容不超过 6MB 的小说')
+        if not isinstance(text, str) or not text.strip() or len(text.encode('utf-8')) > 12 * 1024 * 1024:
+            raise ValueError('请导入非空、UTF-8 内容不超过 12 MiB 的小说')
         title = str(body.get('title') or Path(filename).stem).strip()
         if not title or len(title) > 200:
             raise ValueError('书名不能为空或超过 200 字')
@@ -80,7 +84,7 @@ class StagingMixin:
         folder = self.root / 'imports'
         folder.mkdir(exist_ok=True)
         target = folder / f'{ident}.txt'
-        target.write_text(text, encoding='utf-8')
+        target.write_bytes(text.encode('utf-8'))
         chapters = []
         for match in re.finditer(r'(?m)^(?:#{1,6}\s+[^\r\n]+|第[〇零一二三四五六七八九十百千万\d]+[卷章回节][^\r\n]*)', text):
             chapters.append({'title': match[0], 'start': match.start()})

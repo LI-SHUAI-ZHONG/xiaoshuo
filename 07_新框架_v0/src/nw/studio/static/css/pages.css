@@ -25,3 +25,14 @@
 .book-list .shelf-item>.shelf-trash{align-self:center;margin:0 14px}
 .cache-paths{margin:12px 0 20px;overflow-wrap:anywhere}
 .cache-paths p+p{margin-top:10px}
+
+.length-tiers{border:0;padding:0;margin:0;min-width:0}
+.length-tiers legend{font-weight:600;padding:0;margin-bottom:8px}
+.length-tier-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:8px;margin:0 0 8px}
+.length-tier{display:flex;gap:8px;align-items:baseline;cursor:pointer;padding:10px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-input)}
+.length-tier:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.length-tier input{margin:0;flex:none}
+.length-tier strong{font-size:13px;white-space:nowrap}
+.length-range{display:block;color:var(--muted)}
+.length-recommended{color:var(--accent);margin-left:4px;font-weight:600;white-space:nowrap}
+.length-chapter-rule{margin:12px 0}

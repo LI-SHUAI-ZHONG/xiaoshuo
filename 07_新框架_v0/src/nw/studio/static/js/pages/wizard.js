@@ -4,7 +4,7 @@ import {STEPS, stepsBar, WizardStep, OptionCard, slotName} from '../components/W
 import {RecCard} from '../components/RecCard.js';
 import {wizardMethods} from './project-methods.js';
 import {methodChoices, methodRecommendations} from './wizard-methods.js';
-import {lengthFields, lengthSummary, readLengthFields} from '../components/LengthPlan.js';
+import {lengthFields, lengthSummary, readLengthFields, readTierRecommendation} from '../components/LengthPlan.js';
 
 const fields = {tone:'tone_ids', style:'style_ids', narration:'narration_ids', world:'world_ids',
   character:'character_ids', structure:'structure_ids', hook:'mechanism_ids'};
@@ -17,7 +17,8 @@ export async function openWizard(prefill) {
   const chosen = {};
   let step = prefill ? 1 : 0, revision = 0, selectedMain = '', selectedSub = '';
   let secondary = [], genres = [], combinations = [], rec = [], options = [], methods = [], currentVersions = {};
-  let title = '', idea = '', constraints = '', lengthPlan = {}, useMethods = false;
+  let title = '', idea = '', constraints = '', lengthPlan = {length_mode:'tiered'}, useMethods = false;
+  let tierRecommendation = null;
 
   const alive = () => token === session && dialog.open;
   const types = () => [selectedMain, selectedSub, ...secondary].filter(Boolean);
@@ -79,7 +80,7 @@ export async function openWizard(prefill) {
       constraints = $('#wizardConstraints').value.trim();
       useMethods = $('#wizardUseMethods').checked;
     }
-    if (step === 6 && $('#targetWords')) {
+    if (step === 6 && $('#modalBody [data-tier-mode]')) {
       lengthPlan = readLengthFields($('#modalBody'));
     }
   }
@@ -92,17 +93,19 @@ export async function openWizard(prefill) {
     $('#modalBody').scrollTop = 0;
     footer(true);
     try {
-      const [library, legacy, optionResult] = await Promise.all([
+      const [library, legacy, optionResult, tierData] = await Promise.all([
         slot !== 'confirm' || selectedMethods.size ? api.get(`/kb/method-recommendations?${query({
           slot:slot === 'confirm' ? 'genre' : slot, types:types(), selected:[...selectedMethods.keys()]})}`) : {},
         slot !== 'confirm' ? api.get(`/recommend?${query({slot, types:types()})}`) : {},
         slot !== 'confirm' && slot !== 'genre' ? api.get(`/options?${query({slot})}`) : {},
+        slot === 'structure' ? readTierRecommendation(types()) : null,
       ]);
       if (!alive() || current !== revision) return;
       methods = library.recommendations || [];
       currentVersions = library.current_versions || {};
       rec = legacy.recommendations || [];
       options = optionResult.options || [];
+      if (tierData) tierRecommendation = tierData;
       rememberOptions(options);
       render();
     } catch (error) {
@@ -233,8 +236,7 @@ export async function openWizard(prefill) {
     const {slot, name} = STEPS[step];
     $('#modalBody').innerHTML = stepsBar(step) + WizardStep({name, description:`基于 ${names()}`,
       lengthPlan:slot === 'structure' ? `<section aria-label="篇幅计划"><h3>篇幅计划</h3>
-        <p class="muted">可只填总字数，也可留空由 AI 按类型和剧情规划全书与章场篇幅。完稿时核对主稿已接受字数。</p>
-        ${lengthFields(lengthPlan)}</section>` : '',
+        ${lengthFields(lengthPlan, tierRecommendation)}</section>` : '',
       methods:libraryPanel(), recommendations:rec, options, selected:selections(slot)});
     bindLegacy(slot);
     $$('#modalBody [data-option]').forEach(button => button.onclick = () => {
@@ -274,7 +276,7 @@ export async function openWizard(prefill) {
     const summary = STEPS.slice(1, 8).map(({name, slot}) => `<dt>${name}</dt><dd>${esc(selections(slot).map(key => known.get(key)?.name || key).join('、') || '由设计阶段展开')}</dd>`).join('');
     $('#modalBody').innerHTML = stepsBar(8) + `<div class="wizard-confirm"><h2>确认立项卡</h2>
       <div class="card"><dl class="selection-summary"><dt>类型</dt><dd>${esc(names())}</dd>${summary}
-        ${!lengthPlan.target_words ? '<dt>全书篇幅</dt><dd>由 AI 在书纲中提出</dd>' : ''}${lengthSummary(lengthPlan)}</dl></div>
+        ${lengthSummary(lengthPlan, tierRecommendation?.tiers)}</dl></div>
       ${methodChoices(selectedMethods, currentVersions)}
       ${selectedMethods.size ? '<button type="button" class="secondary" data-refresh-wizard-methods>刷新所选方法的版本</button>' : ''}
       <div class="divider"></div><div class="stack">

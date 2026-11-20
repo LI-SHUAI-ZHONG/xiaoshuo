@@ -53,6 +53,11 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
             appended += ' ' + ACTION_REVIEW_PROMPT
         if any(check.get('layer_contract', {}).get('policy') == NETWORK_LAYER_POLICY for check in contract['checks']):
             appended += ' ' + NETWORK_LAYER_REVIEW
+    from nw.chapter_break import REVIEW as BREAK_REVIEW, WRITING as BREAK_WRITING, chapter_end
+    if chapter_end(package):
+        appended += ' ' + (BREAK_REVIEW if purpose == 'review' else BREAK_WRITING)
+        if purpose == 'revise' and review and review.get('chapter_break'):
+            data['chapter_break_revision'] = '补完末段动作或对话，在自然节拍换章。'
     keys = check_source_keys(contract['checks']) if contract else writing_keys
     body = canonical(data)
     prompt = step_material_prompt(prompt, material, keys)

@@ -192,6 +192,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 project_inputs = dict(material_governance['plot_design'])
                 project_inputs.pop('length_policy', None)
                 project_inputs.pop('length_auto', None)
+                project_inputs.pop('length_recommendation', None)
                 if project_inputs:
                     material_governance['plot_design'] = project_inputs
                 elif governance_inputs['plot_design']:
@@ -291,9 +292,12 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             length = design_context(store, package['brief'], state, parent_card, automatic=automatic,
                                     parent_chapters=parent_chapters)
             if length:
+                suggestion = (governance_inputs or {}).get('plot_design', {}).get('length_recommendation')
+                if suggestion and length['policy'].get('length_mode') == 'tiered' and not length['policy'].get('target_words'):
+                    length['length_recommendation'] = suggestion
                 package['length_context'] = length
         if package.get('length_context'):
-            prompt += '\n' + instructions('plan')
+            prompt += '\n' + instructions('plan', package['length_context'])
         while methods and len(prompt) + len(canonical(model_package(package))) > budget.context_char_limit:
             methods.pop()
         sources = _source_refs(store, [*cards, *methods])
@@ -402,8 +406,10 @@ def _save_candidates(store: Store, ident: str, raw: dict, package: dict) -> Plan
             if row['kind'] == 'scene':
                 if package.get('length_context'):
                     book = candidate['body']['length_plan']
-                    body['length_policy'] = {**package['length_context']['policy'], 'target_words': book['target_words'],
-                                             'chapter_count': book['chapter_count']}
+                    policy = package['length_context']['policy']
+                    body['length_policy'] = {**policy, 'target_words': book['target_words']}
+                    if policy.get('length_mode') != 'tiered':
+                        body['length_policy']['chapter_count'] = book['chapter_count']
                 elif 'length_override' in package:
                     body['length_policy'] = package['length_override']
                 body['story_time'] = str(orders[row['key']])

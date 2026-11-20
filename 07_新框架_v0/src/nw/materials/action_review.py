@@ -46,8 +46,14 @@ def _design_problems(checks: list[dict], rows: list[dict], draft: Draft):
                 yield row, str(error)
 
 
-def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Draft | None) -> dict:
+def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Draft | None,
+                  *, ending: bool = False) -> dict:
     result = evidence.review_result(run, contract, draft, comparison)
+    if ending:
+        from nw.chapter_break import break_is_natural, chapter_break_from_notes
+        result['chapter_break'] = chapter_break_from_notes(result['notes'])
+        if not break_is_natural(result['chapter_break'], draft):
+            result['recommendation'] = 'revise'
     if contract:
         for row, reason in _design_problems(contract['checks'], result['material_checks'], draft):
             row.update(status='failed', reason=reason)

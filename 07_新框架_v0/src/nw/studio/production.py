@@ -6,6 +6,7 @@ import threading
 from typing import Any, Callable
 from uuid import uuid4
 
+from nw.chapter_break import require_break_review
 from nw.config import ConfigRequired, load_config, make_provider
 from nw.novel_flow import resume_job
 from nw.novel_store import JobRequest, cancel_job, show_job, start_job
@@ -15,6 +16,7 @@ from nw.story_state import adopt_story
 from nw.task_models import Budget
 from nw.studio.production_inputs import brief_text, freeze_wizard, governance
 from nw.studio.production_store import ProductionStore
+from nw.story_delta import read_delta
 from nw.studio.production_length import change_length, manuscript_length, retire_unstarted_book, verify_finish_length
 from nw.studio.production_views import ProductionViews
 from nw.studio.production_branches import BranchMixin
@@ -130,7 +132,10 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
         scenes = [row['id'] for row in overview['scenes']
                   if row['story_approved_on_branch'] and not row['accepted_draft_id']]
         from nw.length_plan import approved_book_application
-        book_id, _ = approved_book_application(store, {'settings': overview['active_settings']})
+        wizard = novel['wizard']
+        needs_tier_proposal = wizard.get('length_mode') == 'tiered' and not wizard.get('target_words')
+        book_id, _ = approved_book_application(store, {'settings': overview['active_settings']},
+                                                tiered_only=needs_tier_proposal)
         needs = self.branch_status(novel['id'])['needs_revalidation'] if novel.get('current_branch', 'main') != 'main' else []
         revalidate = [row['id'] for row in overview['scenes'] if row['id'] in needs and row['accepted_draft_id']]
         mode = body.get('mode') or ('revise' if revalidate else 'write' if scenes else 'design')
@@ -327,9 +332,16 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                         raise ValueError('已接受稿还缺少对应版本的通过审稿记录')
                 length = manuscript_length(store, novel['wizard'])
                 expected = length['effective_chapter_count']
-                if expected and len(populated_chapters) < expected:
+                if length.get('length_mode') != 'tiered' and expected and len(populated_chapters) < expected:
                     raise ValueError('存在空章或尚未达到立项设定的有效章节数')
                 verify_finish_length(length)
+                active_by_id = {scene['id']: scene for scene in active_scenes}
+                for chapter in length['chapters']:
+                    ending = chapter['scenes'][-1]
+                    if ending.get('length_mode') == 'tiered':
+                        scene = active_by_id[ending['scene_id']]
+                        delta = read_delta(store, scene['accepted_delta_id'])
+                        require_break_review(store, store.get('draft', delta.draft_id), delta.manifest_id)
                 for fmt in ('txt', 'md'):
                     self._write_export(store, novel, project['chapters'], active_scenes, '全书', fmt)
             self.db.update(ident, status='done', runtime_status='DONE', finished_at=now(), reason=None)

@@ -87,3 +87,113 @@ def test_revision_budget_is_validated_before_creating_a_novel(app):
     with pytest.raises(ValueError, match='预算'):
         app.create(payload)
     assert app.studio.list_projects() == []
+
+
+@pytest.mark.parametrize('tier,low,high', [
+    (300_000, 200_000, 399_999), (500_000, 400_000, 749_999),
+    (1_000_000, 750_000, 1_249_999), (1_500_000, 1_250_000, 1_749_999),
+    (2_000_000, 1_750_000, 2_250_000),
+])
+def test_tier_recommendation_and_finish_share_closed_boundaries(tier, low, high):
+    from nw.length_settings import book_word_range, nearest_word_tier
+    from nw.studio.production_length import verify_finish_length
+    assert book_word_range(tier) == (low, high)
+    assert nearest_word_tier(low) == nearest_word_tier(high) == tier
+    assert nearest_word_tier(low - 1) != tier and nearest_word_tier(high + 1) != tier
+    ready = {'length_mode': 'tiered', 'minimum_words': low, 'maximum_words': high,
+             'chapters': [{'index': 1, 'accepted_words': 2000}, {'index': 2, 'accepted_words': 2500}]}
+    for valid in (low, tier, high):
+        verify_finish_length({**ready, 'accepted_words': valid})
+    for invalid in (low - 1, high + 1):
+        with pytest.raises(ValueError, match='档位'):
+            verify_finish_length({**ready, 'accepted_words': invalid})
+    for invalid in (1999, 2501):
+        with pytest.raises(ValueError, match='第2章'):
+            verify_finish_length({**ready, 'accepted_words': tier, 'chapters': [{'index': 2, 'accepted_words': invalid}]})
+
+
+def test_upgrading_a_project_uses_current_tier_choice_and_preserves_old_brief(app):
+    raw = {**wizard(app), 'target_words': 51000, 'chapter_count': 44, 'volume_count': 2,
+           'chapter_target_words': 1200, 'scene_target_words': 420, 'word_tolerance_pct': 4}
+    novel = app.create(raw)['novel']
+    plan = app.configure_length(novel['id'], {'length_mode': 'tiered', 'target_words': 500000})['length_plan']
+    assert (plan['minimum_words'], plan['maximum_words'], plan['chapter_min_words'], plan['chapter_max_words']) == (
+        400000, 749999, 2000, 2500)
+    actual = app.db.get(novel['id'])['wizard']
+    assert actual['volume_count'] == 2
+    assert not set(('chapter_count', 'chapter_target_words', 'scene_target_words', 'word_tolerance_pct')) & actual.keys()
+    assert governance(actual)['plot_design']['length_auto']
+    with pytest.raises(ValueError, match='篇幅'):
+        app.configure_length(novel['id'], {'target_words': 51000})
+    with pytest.raises(ValueError, match='固定配额'):
+        app.configure_length(novel['id'], {'chapter_count': 44})
+    with app.open_store(novel) as store:
+        assert '51000' in store.briefs()[0].text
+    assert app.db.get(novel['id'])['wizard']['target_words'] == 500000
+    cleared = app.configure_length(novel['id'], {'target_words': None})['length_plan']
+    assert cleared['length_mode'] == 'tiered' and cleared['effective_target_words'] is None
+
+
+def test_tier_suggestion_is_frozen_by_the_library_and_explicit_choice_wins(app, monkeypatch):
+    from nw.studio.production_inputs import freeze_wizard, governance
+    raw = {**wizard(app), 'length_mode': 'tiered', 'length_recommendation': {'recommended_tier': 2_000_000}}
+    votes = {'types': raw['genre_ids'], 'recommended_tier': 500000, 'counts': {'500000': 2},
+             'sample_count': 2, 'eligible_count': 2, 'outside_count': 0}
+    monkeypatch.setattr(app.library, 'recommend_length', lambda types: dict(votes))
+    saved = freeze_wizard(raw, app.library)
+    assert saved['length_recommendation'] == votes
+    assert governance(saved)['plot_design']['length_recommendation'] == votes
+    explicit = freeze_wizard({**raw, 'target_words': 300000}, app.library)
+    assert 'length_recommendation' not in governance(explicit)['plot_design']
+    assert governance(explicit)['plot_design']['length_policy']['target_words'] == 300000
+
+
+def test_finished_manuscript_within_tier_can_close_before_the_estimated_chapter_count(app):
+    from nw.acceptance import accept_batch
+    from nw.config import Config
+    from nw.models import Run
+    from nw.planning import plan_input, propose_plan
+    from nw.store import now
+    from nw.story_state import current_head
+    from nw.studio.production import ProductionService
+    from nw.task_models import Budget, canonical
+    from story_fixture import draft_for, proposal
+    from test_planning import Planner, apply
+    from test_studio_length_recommendations import reference
+
+    app = ProductionService(app.studio, app.library, test_mode=True)
+    form = {**wizard(app), 'length_mode': 'tiered'}
+    reference(app.library, '证据。' * 100000, '隔离参考样本', form['genre_ids'])
+    novel = app.create(form)['novel']
+    assert app.detail(novel['id'])['length_plan']['minimum_words'] is None
+    with app.open_store(novel) as store:
+        planner = Planner('book')
+        for candidate in planner.output['candidate_cards']:
+            candidate['body']['length_plan'] = {'target_words': 300000, 'chapter_count': 137, 'reason': '[FAKE] 长篇证据调查'}
+        route = Config('fake', 'http://localhost', 'test', '', 5, {}, store.directory, source_driven=False)
+        job_row = store.connection.execute('SELECT request_json FROM novel_jobs WHERE id=?', (novel['job_id'],)).fetchone()
+        inputs = {'plot_design': json.loads(job_row[0])['governance_inputs']['plot_design']}
+        direction = propose_plan(store, 1, 'book', planner, route, Budget(1, 64000, 4000), governance_inputs=inputs)
+        frozen = plan_input(store, direction.id)[1]
+        assert frozen['length_context']['length_recommendation']['recommended_tier'] == 300000
+        assert frozen['length_context']['length_recommendation']['sample_count'] == 1
+        apply(store, direction)
+        head = current_head(store)
+        requests = []
+        lengths = [2000, 2200, 2500] * 30
+        for index, size in enumerate(lengths, 1):
+            chapter = store.add_chapter(index, f'证据 {index}')
+            scene = store.add_scene(chapter.id, 1, '{}')
+            draft = draft_for(store, scene.id, '[FAKE]' + '档' * (size - 7) + '。')
+            requests.append(proposal(store, head, draft, []))
+            snapshot = {'messages': [{'content': canonical({'draft': {'id': draft.id}})}]}
+            store.add_run(Run('review-' + scene.id, scene.id, 'review', 'author', 'test-review', '{}',
+                              canonical(snapshot), '{}', '{"recommendation":"pass"}', 'complete', '{}', now(), now()))
+        accept_batch(store, requests, head, 'approve-isolated-manuscript')
+    summary = app.detail(novel['id'])['length_plan']
+    assert summary['effective_target_words'] == 300000 and summary['effective_chapter_count'] == 137
+    assert summary['accepted_words'] == sum(lengths) and summary['remaining_words'] == 0
+    assert len(summary['chapters']) == 90 and summary['delta_words'] == 0
+    assert app.finish(novel['id'])['status'] == 'DONE'
+    text, _ = app.export(novel['id'])
+    assert '第90章 证据 90' in text

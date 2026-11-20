@@ -70,8 +70,13 @@ class StoryProvider:
         if 'chapter_word_budget' in scene_body or 'length_policy' in scene_body:
             # The chapter rationale can describe a later reveal outside this scene's POV.
             scene_body = {key: value for key, value in scene_body.items() if key not in ('chapter_word_budget', 'length_policy')}
+        progress = project.get('chapter_length_progress')
+        if progress and progress.get('length_mode') == 'tiered':
+            estimate = scene_body['word_budget']
+            scene_body = {k: v for k, v in scene_body.items() if k != 'word_budget'}
+            scene_body['scene_length_estimate'] = {'estimated_words': estimate['target_words'], 'reason': estimate['reason']}
         items.append(ContextItem('scene:' + scene['card_id'], canonical(scene_body), '本场任务'))
-        if progress := project.get('chapter_length_progress'):
+        if progress:
             items.append(ContextItem('chapter:length', canonical(progress), '按已接受稿与其余场景分配的本场可写字数'))
         from nw.length_plan import model_approved_cards
         for card in model_approved_cards(project['settings']):
@@ -237,6 +242,9 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         source_keys.update(check_source_keys(scene_checks(design, scoped=True)) & _WRITING_SCOPE_KEYS)
     from nw.context.registry import get_provider
 
+    if inputs.get('chapter_length_progress', {}).get('length_mode') == 'tiered':
+        from nw.chapter_break import WRITING
+        base_prompt += ' ' + WRITING
     prompt = step_material_prompt(base_prompt, WRITING_MATERIAL, source_keys)
     provider = get_provider('story')
     assembled = asdict(provider.build(inputs, card))

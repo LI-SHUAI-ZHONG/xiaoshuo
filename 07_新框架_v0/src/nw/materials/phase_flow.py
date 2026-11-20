@@ -1237,7 +1237,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if context.get('length_context') and stage in ('plot_design', 'scene_design'):
             from nw.length_plan import instructions, model_length_context
             payload['length_context'] = model_length_context(context['length_context'])
-            suffix += '\n' + instructions(stage)
+            suffix += '\n' + instructions(stage, context['length_context'])
         from nw.materials import design_network
         design_candidates = design_network.candidates(stage, products, stage_context)
         if guidance := design_network.guidance(stage, payload['demand'], products, context):

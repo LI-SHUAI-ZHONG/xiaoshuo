@@ -82,8 +82,8 @@ def _body(kind: str, value: object) -> dict:
             if key == 'length_policy':
                 from nw.length_settings import parse_length_changes
                 policy = value[key]
-                if (not isinstance(policy, dict) or any(type(v) is not int for v in policy.values())
-                        or parse_length_changes(policy) != policy):
+                if (not isinstance(policy, dict) or parse_length_changes(policy) != policy
+                        or any(type(v) is not int for k, v in policy.items() if k != 'length_mode')):
                     raise ValueError('场景引用的项目篇幅必须是冻结的篇幅配置')
             elif key == 'length_plan':
                 check_book(value[key])

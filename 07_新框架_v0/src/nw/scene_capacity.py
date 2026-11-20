@@ -46,13 +46,13 @@ class SceneCapacity:
         # token as a CJK planning estimate; actual messages are checked again.
         prose_chars = planned['max_words'] if planned else max(self.caps[k] for k in ('write', 'revise') if k in self.caps)
         basis = 'approved_scene_max_words' if planned else 'one_cjk_character_per_output_token'
-        if planned:
-            for item in package['items']:
-                if item['source'] == 'chapter:length':
-                    upper = json.loads(item['text'])['feasible_max_words']
-                    if upper < prose_chars:
-                        prose_chars, basis = upper, 'feasible_chapter_scene_max_words'
-                    break
+        for item in package['items']:
+            if item['source'] == 'chapter:length':
+                progress = json.loads(item['text'])
+                upper = progress['feasible_max_words']
+                if progress.get('length_mode') == 'tiered' or planned and upper < prose_chars:
+                    prose_chars, basis = upper, 'feasible_chapter_scene_max_words'
+                break
         try:
             return self._check_stages(prompt, package, keys, prose_chars, basis)
         except BudgetExceeded as exc:

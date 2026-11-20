@@ -2,12 +2,77 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from hashlib import sha256
+import json
 
 from nw.studio import catalog
 from nw.studio.library_util import timestamp
 
 
 class RecommendationMixin:
+    def recommend_length(self, types: list[str]) -> dict:
+        """Each complete, approved source casts one vote in the selected genre."""
+        from nw.length_settings import WORD_TIERS, book_word_range, nearest_word_tier
+
+        selected = catalog.canonical_types(types)
+        required = set(selected)
+        counts = {tier: 0 for tier in WORD_TIERS}
+        seen = set()
+        if required:
+            with self.connect() as conn:
+                rows = conn.execute("""
+                    SELECT b.file_path, b.sha256, b.confirmed_types_json, v.body_json, v.body_sha256
+                    FROM staging_books b JOIN corpus_structures h ON h.book_id=b.id
+                    JOIN corpus_structure_versions v ON v.book_id=h.book_id AND v.version=h.approved_version
+                    JOIN corpus_structure_reviews r ON r.book_id=v.book_id AND r.version=v.version
+                    LEFT JOIN corpus_jobs j ON j.id=v.job_id
+                    WHERE b.status='archived' AND r.decision='approve' AND v.source_sha256=b.sha256
+                    AND json_extract(v.body_json,'$.source_extent.status')='complete'
+                    AND coalesce(json_extract(j.runtime_json,'$.provider'),'') NOT IN ('fake','test-only')
+                    AND trim(b.title) NOT LIKE '[FAKE]%' AND trim(b.filename) NOT LIKE '[FAKE]%'
+                """)
+                for row in rows:
+                    tags = json.loads(row['confirmed_types_json'])
+                    if not required.issubset(tags):
+                        continue
+                    # The review applies to these exact structure and source bytes.
+                    if sha256(row['body_json'].encode('utf-8')).hexdigest() != row['body_sha256']:
+                        continue
+                    try:
+                        text = self._book_text(row)
+                    except (OSError, ValueError):
+                        continue
+                    if text.lstrip().startswith('[FAKE]'):
+                        continue
+                    # Whitespace variants of an imported work still cast one vote.
+                    prose = ''.join(text.split())
+                    identity = sha256(prose.encode('utf-8')).digest()
+                    if identity in seen:
+                        continue
+                    seen.add(identity)
+                    tier = nearest_word_tier(len(prose))
+                    if tier is not None:
+                        counts[tier] += 1
+        eligible = sum(counts.values())
+        top_count = max(counts.values())
+        leaders = [tier for tier, votes in counts.items() if votes and votes == top_count]
+        if not required:
+            status = 'no_types'
+        elif not seen:
+            status = 'no_samples'
+        elif not leaders:
+            status = 'outside_tiers'
+        else:
+            status = 'recommended' if len(leaders) == 1 else 'tied'
+        tiers = []
+        for tier in WORD_TIERS:
+            lower, upper = book_word_range(tier)
+            tiers.append({'target_words': tier, 'min_words': lower, 'max_words': upper})
+        return {'types': selected, 'tiers': tiers, 'counts': {str(k): v for k, v in counts.items()},
+                'status': status, 'recommended_tier': leaders[0] if len(leaders) == 1 else None,
+                'leading_tiers': leaders, 'sample_count': len(seen), 'eligible_count': eligible,
+                'outside_count': len(seen) - eligible}
+
     def _approved_items(self, slot: str = '') -> list[dict]:
         if slot and slot not in catalog.SLOTS:
             raise ValueError('未知板块')

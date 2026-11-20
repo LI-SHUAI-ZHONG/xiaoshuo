@@ -6,7 +6,8 @@ from typing import Any
 
 from nw.store import Store
 from nw.story_models import StateHead
-from nw.length_settings import WORD_FIELDS, saved_brief_length
+from nw.length_settings import (CHAPTER_MAX_WORDS, CHAPTER_MIN_WORDS, WORD_FIELDS, WORD_TIERS, book_word_range,
+                                saved_brief_length)
 from nw.story_state import approved_scene_positions
 
 def count_words(text: str) -> int:
@@ -28,6 +29,10 @@ def check_budget(value: Any) -> None:
 
 def check_reference(budget: dict, policy: dict, kind: str) -> None:
     check_budget(budget)
+    if policy.get('length_mode') == 'tiered':
+        if kind == 'chapter' and (budget['min_words'], budget['max_words']) != (CHAPTER_MIN_WORDS, CHAPTER_MAX_WORDS):
+            raise ValueError('本项目的章篇幅须完整保留 2000–2500 字区间')
+        return
     given = policy.get(kind + '_target_words')
     if budget.get('reference_words') != given:
         raise ValueError(f'{kind} 篇幅的 reference_words 必须与本项目给定的参考字数一致')
@@ -61,26 +66,29 @@ def approved_length_budgets(store: Store, state: dict | None) -> dict:
     """Resolve only the current branch's real scene-card versions, including chapter budgets they inherit."""
     active = {(r['card_id'], r['version']) for r in state['settings']} if state is not None else None
     retired = set((state or {}).get('stale_plan_scenes', ()))
-    scenes, chapters = {}, {}
+    scenes, chapters, tiered_scenes = {}, {}, set()
     rows = store.connection.execute("""
         SELECT s.id, s.chapter_id, c.card_id, c.version,
-               json_extract(c.body_json, '$.word_budget'), json_extract(c.body_json, '$.chapter_word_budget')
+               json_extract(c.body_json, '$.word_budget'), json_extract(c.body_json, '$.chapter_word_budget'),
+               json_extract(c.body_json, '$.length_policy.length_mode')
         FROM scenes s JOIN cards c
           ON c.card_id=json_extract(s.card_json,'$.story.scene_ref.card_id')
          AND c.version=json_extract(s.card_json,'$.story.scene_ref.version')
         WHERE json_type(c.body_json,'$.word_budget')='object'""")
-    for scene_id, chapter_id, card_id, version, scene_json, chapter_json in rows:
+    for scene_id, chapter_id, card_id, version, scene_json, chapter_json, mode in rows:
         if scene_id in retired or (active is not None and (card_id, version) not in active):
             continue
         scenes[scene_id] = json.loads(scene_json)
+        if mode == 'tiered':
+            tiered_scenes.add(scene_id)
         if chapter_json:
             budget = json.loads(chapter_json)
             if chapters.setdefault(chapter_id, budget) != budget:
                 raise ValueError('同一章的已批准场景引用了不同篇幅方案，须先重做章设计')
-    return {'chapters': chapters, 'scenes': scenes}
+    return {'chapters': chapters, 'scenes': scenes, 'tiered_scenes': tiered_scenes}
 
 
-def approved_book_application(store: Store, state: dict) -> tuple[str | None, dict]:
+def approved_book_application(store: Store, state: dict, *, tiered_only: bool = False) -> tuple[str | None, dict]:
     active = {(r['card_id'], r['version']) for r in state['settings']}
     if not active:
         return None, {}
@@ -90,21 +98,22 @@ def approved_book_application(store: Store, state: dict) -> tuple[str | None, di
               AND c.version=json_extract(a.mapping_json,'$.root.version')
             JOIN task_calls t ON t.id=a.proposal_id JOIN input_manifests m ON m.id=t.manifest_id
             WHERE coalesce(json_extract(a.mapping_json,'$.length_scope'), json_extract(m.package_json,'$.scope'))='book'
-            ORDER BY a.rowid DESC""")
+              AND (? = 0 OR json_extract(m.package_json,'$.length_context.policy.length_mode')='tiered')
+            ORDER BY a.rowid DESC""", (tiered_only,))
     for proposal, ident, version, value in rows:
         if (ident, version) in active:
             return proposal, json.loads(value) if value else {}
     return None, {}
 
 
-def approved_book_plan(store: Store, state: dict) -> dict:
-    return approved_book_application(store, state)[1]
+def approved_book_plan(store: Store, state: dict, *, tiered_only: bool = False) -> dict:
+    return approved_book_application(store, state, tiered_only=tiered_only)[1]
 
 
 def design_context(store: Store, brief: dict, state: dict | None, parent: dict | None,
                    *, automatic: bool = False, parent_chapters: tuple = ()) -> dict | None:
     policy = saved_brief_length(brief['text'])
-    if not automatic and not any(policy.get(k) for k in WORD_FIELDS):
+    if not automatic and policy.get('length_mode') != 'tiered' and not any(policy.get(k) for k in WORD_FIELDS):
         return None
     slots = state['slots'] if state is not None else {s: {'draft_id': d} for s, d in
              store.connection.execute('SELECT scene_id, draft_id FROM accepted')}
@@ -117,6 +126,7 @@ def design_context(store: Store, brief: dict, state: dict | None, parent: dict |
     total = 0
     reserved = 0
     pending_max = {}
+    open_tiered_chapters = set()
     accepted_by_chapter = {}
     active = manuscript_scene_ids(store, state)
     for scene in store.list('scene'):
@@ -130,6 +140,8 @@ def design_context(store: Store, brief: dict, state: dict | None, parent: dict |
         else:
             words = budgets['scenes'].get(scene.id, {}).get('target_words', 0)
             reserved += words
+            if scene.id in budgets['tiered_scenes']:
+                open_tiered_chapters.add(scene.chapter_id)
             upper = budgets['scenes'].get(scene.id, {}).get('max_words', 0)
             pending_max[scene.chapter_id] = pending_max.get(scene.chapter_id, 0) + upper
         chapter_index = chapter_indices[scene.chapter_id]
@@ -139,14 +151,33 @@ def design_context(store: Store, brief: dict, state: dict | None, parent: dict |
             level['open_scenes'] = level.get('open_scenes', 0) + 1
     for chapter_id, limit in list(pending_max.items()):
         if budget := budgets['chapters'].get(chapter_id):
-            pending_max[chapter_id] = min(limit, max(0, budget['max_words'] - accepted_by_chapter.get(chapter_id, 0)))
+            accepted = accepted_by_chapter.get(chapter_id, 0)
+            room = max(0, budget['max_words'] - accepted)
+            if chapter_id in open_tiered_chapters:
+                row = levels[chapter_indices[chapter_id]]
+                estimated = max(0, budget['target_words'] - accepted)
+                reserved += estimated - (row['allocated_words'] - accepted)
+                row['allocated_words'] = accepted + estimated
+                pending_max[chapter_id] = room
+            else:
+                pending_max[chapter_id] = min(limit, room)
     for chapter_id, index in chapter_indices.items():
         if index in levels:
             levels[index]['accepted_words'] = accepted_by_chapter.get(chapter_id, 0)
             levels[index]['pending_max_words'] = pending_max.get(chapter_id, 0)
     inherited = (parent or {}).get('body', {}).get('length_plan', {})
+    if policy.get('length_mode') == 'tiered' and inherited.get('target_words') not in WORD_TIERS:
+        inherited = {}
     target = policy.get('target_words') or inherited.get('target_words')
-    return {'policy': policy, 'parent_plan': inherited, 'accepted_words': total, 'pending_planned_words': reserved,
+    ranges = {}
+    if policy.get('length_mode') == 'tiered' and not target:
+        ranges['book_tiers'] = [{'tier': tier, 'min_words': book_word_range(tier)[0],
+                                 'max_words': book_word_range(tier)[1]} for tier in WORD_TIERS]
+    if policy.get('length_mode') == 'tiered' and target:
+        lower, upper = book_word_range(target)
+        ranges = {'book_min_words': lower, 'book_max_words': upper,
+                  'words_to_book_range': max(0, lower-total), 'words_until_book_max': upper-total}
+    return {**ranges, 'policy': policy, 'parent_plan': inherited, 'accepted_words': total, 'pending_planned_words': reserved,
             'pending_max_words': sum(pending_max.values()), 'parent_chapters': list(parent_chapters),
             'remaining_words': target - total if target else None, 'existing_chapters': levels}
 
@@ -170,7 +201,18 @@ def model_approved_cards(cards: list[dict]) -> list[dict]:
             for card in cards]
 
 
-def instructions(stage: str) -> str:
+def instructions(stage: str, context: dict | None = None) -> str:
+    if (context or {}).get('policy', {}).get('length_mode') == 'tiered':
+        plot = ('每个方向 body 填 length_plan={target_words,chapter_count,reason}。target_words 填所选全书档位，'
+                '未指定时优先对照 length_context.length_recommendation（如有）与类型、剧情，自 300000/500000/1000000/1500000/2000000 中选择。'
+                '可在档位区间内写到承诺兑现、故事自然结束。chapter_count 是按剧情给出的预计章数，可随推进调整。'
+                '章卡和卷卡 body 填 word_budget={min_words,target_words,max_words,reason}；'
+                '章卡统一 min_words=2000、max_words=2500，target_words 为区间内的粗估。'
+                'reason 说明适合换章的情节、动作、选择或视角段落。')
+        scene = ('场卡 body 填 word_budget={min_words,target_words,max_words,reason} 作场面规划估计。'
+                 '每章保留 2000–2500 字，场景可按剧情伸缩。章末选完整的自然段、场景或叙事节拍收束后换下一章，'
+                 '允许保留悬念。切勿按固定字符截句、凑字数或截断正在进行的段落。')
+        return {'plot_design': plot, 'scene_design': scene, 'plan': plot + scene}.get(stage, '')
     plot = ('篇幅设计：directions 的每个正文方向 body（阶段 directions 数组中直接是 body）均含 '
             'length_plan={target_words,chapter_count,reason}。依据类型、冲突升级、兑现与 length_context 的剩余字数规划；'
             '有明确全书目标和章数须原值沿用，未指定时由你设计。已批准 parent_plan 继续生效，有新明确要求按新要求。'
@@ -187,6 +229,12 @@ def instructions(stage: str) -> str:
 def validate_direction(body: dict, context: dict) -> None:
     book = body.get('length_plan')
     check_book(book)
+    if context['policy'].get('length_mode') == 'tiered':
+        book_word_range(book['target_words'])
+        tier = context['policy'].get('target_words') or context['parent_plan'].get('target_words')
+        if tier and tier != book['target_words']:
+            raise ValueError('书纲所选档位须与本项目当前档位一致')
+        return
     for key in ('target_words', 'chapter_count'):
         given = context['policy'].get(key) or context['parent_plan'].get(key)
         if given and book[key] != given:
@@ -203,7 +251,8 @@ def chapter_budget(chapter: dict, members: dict, context: dict) -> dict:
 def validate_allocations(chapters: list, members: dict, context: dict) -> None:
     for chapter in chapters:
         budget = chapter_budget(chapter, members, context)
-        if chapter['card'] or not context['existing_chapters'].get(str(chapter['index']), {}).get('word_budget'):
+        if (context['policy'].get('length_mode') == 'tiered' or chapter['card']
+                or not context['existing_chapters'].get(str(chapter['index']), {}).get('word_budget')):
             check_reference(budget, context['policy'], 'chapter')
         else:
             check_budget(budget)
@@ -214,6 +263,8 @@ def validate_allocations(chapters: list, members: dict, context: dict) -> None:
             if 'chapter_word_budget' in body and body['chapter_word_budget'] != budget:
                 raise ValueError('场景须承接同一份章篇幅方案')
             planned += body['word_budget']['target_words']
+        if context['policy'].get('length_mode') == 'tiered':
+            continue
         if chapter['card'] and planned != budget['target_words']:
             raise ValueError('各场目标字数之和须等于新章目标字数')
         prior = context['existing_chapters'].get(str(chapter['index']), {}).get('allocated_words', 0)
@@ -228,6 +279,8 @@ def validate_candidate(candidate: dict, scope: str, context: dict) -> None:
         if row['kind'] in ('chapter', 'volume') and scope != 'book':
             check_budget(row['body'].get('word_budget'))
     validate_allocations(candidate['chapters'], members, context)
+    if context['policy'].get('length_mode') == 'tiered':
+        return  # Estimated chapter counts may change while a long book is produced.
     # At the point all planned chapters have coordinates, the book must be reachable
     # somewhere within both the chapter range and the sum of its scene ranges.
     new_chapters = [ch for ch in candidate['chapters'] if ch['card']]
@@ -270,9 +323,12 @@ def chapter_progress(store: Store, scene_id: str, state: dict, budgets: dict) ->
     active = manuscript_scene_ids(store, state)
     accepted = open_count = other_min = other_max = 0
     unknown_max = False
+    is_last_scene = True
     for scene in store.list('scene'):
         if scene.chapter_id != target.chapter_id or scene.id == scene_id or scene.id not in active:
             continue
+        if scene.index > target.index:
+            is_last_scene = False
         if slot := state['slots'].get(scene.id):
             accepted += count_words(store.get('draft', slot['draft_id']).text)
         else:
@@ -285,6 +341,12 @@ def chapter_progress(store: Store, scene_id: str, state: dict, budgets: dict) ->
     progress = {'chapter_min_words': chapter['min_words'], 'chapter_target_words': chapter['target_words'],
                 'chapter_max_words': chapter['max_words'], 'accepted_other_words': accepted,
                 'other_unwritten_scenes': open_count}
+    if scene_id in budgets.get('tiered_scenes', ()):
+        # Scenes can expand or contract. Other unwritten scenes only need room for nonempty prose.
+        progress.update(length_mode='tiered', chapter_end=is_last_scene,
+                        feasible_min_words=1 if open_count else max(1, CHAPTER_MIN_WORDS - accepted),
+                        feasible_max_words=CHAPTER_MAX_WORDS - accepted - open_count)
+        return progress
     if own := budgets['scenes'].get(scene_id):
         lower = own['min_words'] if unknown_max else max(own['min_words'], chapter['min_words'] - accepted - other_max)
         upper = min(own['max_words'], chapter['max_words'] - accepted - other_min)
@@ -298,7 +360,8 @@ def chapter_progress(store: Store, scene_id: str, state: dict, budgets: dict) ->
 def draft_feedback(store: Store, scene_id: str, state: dict, text: str, budgets: dict) -> list[str]:
     actual = count_words(text)
     scene_budget = budgets['scenes'].get(scene_id)
-    issues = _feedback(actual, scene_budget, '本场') if scene_budget else []
+    tiered = scene_id in budgets.get('tiered_scenes', ())
+    issues = _feedback(actual, scene_budget, '本场') if scene_budget and not tiered else []
     progress = chapter_progress(store, scene_id, state, budgets)
     if not progress:
         return issues

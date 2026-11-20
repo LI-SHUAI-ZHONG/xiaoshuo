@@ -3,7 +3,7 @@ from collections import defaultdict
 import json
 import re
 
-from nw.length_settings import LENGTH_FIELDS
+from nw.length_settings import LENGTH_FIELDS, parse_length_changes
 from nw.materials.phase_routes import phase_order, product_ref
 from nw.materials.semantic_application import has_content, input_value, pointer_tokens, require
 
@@ -72,11 +72,15 @@ def _from_wizard_length(quote: str, text: str) -> bool:
         values = json.loads(data)
     except ValueError:
         return False
-    if (not isinstance(values, dict) or not values or not values.keys() <= set(LENGTH_FIELDS)
-            or any(type(value) is not int or (not 0 <= value <= 99 if key == 'word_tolerance_pct' else value < 1)
-                   for key, value in values.items())):
+    if not isinstance(values, dict) or not values.keys() <= set(LENGTH_FIELDS):
         return False
-    lines = {f'{json.dumps(key)}:{value}' for key, value in values.items() if key != 'word_tolerance_pct'}
+    try:
+        if parse_length_changes(values) != values:
+            return False
+    except ValueError:
+        return False
+    lines = {f'{json.dumps(key)}:{value}' for key, value in values.items()
+             if type(value) is int and key != 'word_tolerance_pct'}
     return bool(lines) and quote in data and (quote == data or quote in lines)
 
 

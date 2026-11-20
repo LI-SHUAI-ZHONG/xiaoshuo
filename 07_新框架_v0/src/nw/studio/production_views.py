@@ -282,22 +282,27 @@ class ProductionViews:
     @staticmethod
     def review_for_draft(store: Any, scene: str, draft_id: str) -> dict | None:
         """Only a review whose frozen prompt names this exact version can clear it."""
-        for run in reversed(store.list('run')):
-            if run.scene_id != scene or run.kind != 'review' or run.finish_reason != 'complete':
-                continue
+        records = store.connection.execute("""SELECT id,input_snapshot_json,output_text FROM runs
+            WHERE scene_id=? AND kind='review' AND finish_reason='complete' ORDER BY rowid DESC""", (scene,))
+        for run in records:
             try:
-                snapshot = json.loads(run.input_snapshot_json)
+                snapshot = json.loads(run['input_snapshot_json'])
                 payload = json.loads(snapshot['messages'][-1]['content'])
                 if payload.get('draft', {}).get('id') != draft_id:
                     continue
-                result = json.loads(run.output_text)
+                result = json.loads(run['output_text'])
                 if isinstance(result, dict):
                     checkpoint = store.connection.execute('''SELECT status,output_json FROM novel_steps
-                        WHERE json_extract(output_json,'$.run_id')=? ORDER BY rowid DESC LIMIT 1''', (run.id,)).fetchone()
-                    if checkpoint is not None and checkpoint['status'] != 'DONE':
-                        return {'run_id': run.id, 'result': {'recommendation': 'invalid',
-                                'notes': json.loads(checkpoint['output_json']).get('reason', '审稿输出尚未通过校验')}}
-                    return {'run_id': run.id, 'result': result}
+                        WHERE json_extract(output_json,'$.run_id')=? ORDER BY rowid DESC LIMIT 1''', (run['id'],)).fetchone()
+                    if checkpoint is not None:
+                        validated = json.loads(checkpoint['output_json'])
+                        if checkpoint['status'] != 'DONE':
+                            return {'run_id': run['id'], 'result': {'recommendation': 'invalid',
+                                    'notes': validated.get('reason', '审稿输出尚未通过校验')}}
+                        if validated.get('recommendation') in ('pass', 'revise'):
+                            result = {key: value for key, value in validated.items()
+                                      if key not in ('manifest_id', 'draft_id', 'run_id')}
+                    return {'run_id': run['id'], 'result': result}
             except (ValueError, KeyError, TypeError, IndexError):
                 continue
         return None

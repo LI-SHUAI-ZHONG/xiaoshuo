@@ -164,6 +164,8 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
     prior = j.request['original_drafts'].get(scene)
     review = None
     round_no = int(prior is not None)
+    from nw.chapter_break import chapter_end
+    ending = chapter_end(frozen['package'])
     max_revisions = read_budget(j.store, j.id).max_revisions
     draft = j.store.get('draft', prior) if prior else None
     def verify() -> None:
@@ -180,7 +182,7 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
         length_feedback = scene_length_feedback(j.store, scene, frozen['manifest'], draft.text)
         contract, comparison = review_contract(j.store, draft, frozen['manifest'])
         def assess(run: Run) -> dict:
-            result = review_result(run, contract, draft, comparison)
+            result = review_result(run, contract, draft, comparison, ending=ending)
             if length_feedback:
                 result.update(recommendation='revise', length_feedback=length_feedback)
             return result
@@ -199,6 +201,8 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
             if length_feedback:
                 raise JobPaused('BLOCKED', key, '篇幅偏差：' + '；'.join(length_feedback),
                                 draft_id=draft.id, length_feedback=length_feedback)
+            if ending:
+                raise JobPaused('BLOCKED', key, '章末仍需修订以通过本版末段的独立审稿', draft_id=draft.id)
             if contract:
                 raise JobPaused('BLOCKED', key, 'MATERIAL_EVIDENCE: the current draft requires a passing review',
                                 draft_id=draft.id, material_checks=review['material_checks'])
@@ -209,7 +213,7 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
             break
         round_no += 1
     hypotheses = state_hypotheses(scene_materials(j.store, scene), review.get('material_checks', []), draft.id)
-    delta = _extract(calls, scene, draft, frozen, review_run.id if contract else None, hypotheses)
+    delta = _extract(calls, scene, draft, frozen, review_run.id if contract or ending else None, hypotheses)
     key = f'{prefix}:check'
     j.check_active(key)
     findings = check_delta(j.store, delta)

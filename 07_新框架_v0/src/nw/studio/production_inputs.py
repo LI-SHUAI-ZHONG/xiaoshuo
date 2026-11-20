@@ -100,7 +100,18 @@ def freeze_wizard(body: dict, library: Any) -> dict:
             raise ValueError('AI 篇幅设计选项必须为布尔值')
         wizard['auto_length'] = raw['auto_length']
     wizard.update(length_fields(parse_length_changes(raw)))
+    if wizard.get('length_mode') == 'tiered' and not wizard.get('target_words'):
+        freeze_length_recommendation(wizard, library)
     return wizard
+
+
+def freeze_length_recommendation(wizard: dict, library) -> None:
+    wizard.pop('length_recommendation', None)
+    result = library.recommend_length(wizard.get('genre_ids', []))
+    if result['recommended_tier'] is not None:
+        wizard['length_recommendation'] = {key: result[key] for key in (
+            'types', 'recommended_tier', 'counts', 'sample_count', 'eligible_count', 'outside_count')}
+
 
 
 def governance(wizard: dict) -> dict:
@@ -122,8 +133,10 @@ def governance(wizard: dict) -> dict:
     filtered = {stage: {key: value for key, value in content.items() if value}
                 for stage, content in result.items() if any(content.values())}
     length = length_fields(wizard)
-    if wizard.get('auto_length'):
+    if wizard.get('auto_length') or wizard.get('length_mode') == 'tiered':
         filtered.setdefault('plot_design', {})['length_auto'] = True
+    if wizard.get('length_recommendation') and not wizard.get('target_words') and wizard.get('length_mode') == 'tiered':
+        filtered.setdefault('plot_design', {})['length_recommendation'] = wizard['length_recommendation']
     if length or wizard.get('length_policy_updated') or wizard.get('auto_length'):
         filtered.setdefault('plot_design', {})['length_policy'] = length
     return filtered

@@ -25,6 +25,8 @@ class ProductionRoutes:
             data = lib.genres()
         elif segs == ['recommend']:
             data = lib.recommend(first(query, 'slot', 'genre'), first(query, 'types').split(',') if first(query, 'types') else [])
+        elif segs == ['recommendations', 'length']:
+            data = lib.recommend_length(first(query, 'types').split(',') if first(query, 'types') else [])
         elif segs == ['options']:
             data = lib.options(first(query, 'slot', 'tone'), first(query, 'parent'))
         elif segs == ['novel-cache']:

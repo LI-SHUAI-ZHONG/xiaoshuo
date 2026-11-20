@@ -59,12 +59,12 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
             except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                 self.close_connection = True
 
-        def _read_json(self) -> dict[str, Any]:
+        def _read_json(self, limit_mib: int = 8) -> dict[str, Any]:
             length = int(self.headers.get('Content-Length', '0') or '0')
             if length <= 0:
                 return {}
-            if length > 8 * 1024 * 1024:
-                raise ValueError('请求体超过 8MB 上限')
+            if length > limit_mib * 1024 * 1024:
+                raise ValueError(f'请求体超过 {limit_mib}MB 上限')
             raw = self.rfile.read(length).decode('utf-8')
             val = json.loads(raw) if raw.strip() else {}
             if not isinstance(val, dict):
@@ -203,8 +203,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                         return self._send_json(403, {'error': '只接受本地客户端的同源操作'})
                 if self.headers.get('Content-Type', '').split(';', 1)[0].strip().lower() != 'application/json':
                     return self._send_json(415, {'error': '请使用 application/json 请求体'})
-                body = self._read_json()
                 segs = [unquote(s) for s in path.strip('/').split('/')][1:]
+                body = self._read_json(24 if segs == ['staging'] else 8)
                 if segs == ['repository', 'sync']:
                     return self._send_json(202, repository.trigger())
                 if routes.post(self, segs, body):
