@@ -12,7 +12,7 @@ from nw.materials.phase_routes import POLICY,REQUIRES,TEMPLATE_STAGES,phase_orde
 from nw.materials.phase_lifecycle import requirements_for,writing_sources
 from nw.materials.phase_dependencies import deferred_source_ids
 from nw.materials.source_semantics import POLICY as SEMANTIC_POLICY
-from nw.materials.phase_context import visible_facts
+from nw.materials.phase_context import ACTION_STATE_POLICY, visible_facts
 from nw.materials.phase_projection import compile_candidates,verify_chain
 from nw.materials.steps import type_connections
 from nw.materials.steps import (
@@ -823,12 +823,38 @@ def _admission(desk: SourceDesk, source: dict, stage: str, package: dict, *,
 
 
 def _step_source_pool(desk: SourceDesk, stage: str, package: dict) -> dict[str, str] | None:
-    from nw.materials.stage_input import STEP_SOURCE_POLICY, step_uses
-    if package.get('stage_source_policy') != STEP_SOURCE_POLICY:
+    from nw.materials.stage_input import LEGACY_STEP_SOURCE_POLICY, STEP_SOURCE_POLICY, step_uses, step_uses_by_line
+    policy = package.get('stage_source_policy')
+    if policy not in (LEGACY_STEP_SOURCE_POLICY, STEP_SOURCE_POLICY):
         return None
-    uses = step_uses(package['stage_materials'][stage])
-    return {row['id']: uses[row['key']] for row in desk.rows
-            if row['key'] in uses and stage in route_method(row)['stages']}
+    material = package['stage_materials'][stage]
+    if policy == LEGACY_STEP_SOURCE_POLICY:
+        uses = step_uses(material)
+        return {row['id']: uses[row['key']] for row in desk.rows
+                if row['key'] in uses and stage in route_method(row)['stages']}
+
+    by_line = step_uses_by_line(material)
+    ids_by_key: dict[str, list[str]] = {}
+    for row in desk.rows:
+        if row['key'] in by_line and stage in route_method(row)['stages']:
+            ids_by_key.setdefault(row['key'], []).append(row['id'])
+    located = [ident for key, ids in ids_by_key.items() if by_line[key].keys() - {None} for ident in ids]
+    spans = desk.source_lines(located) if located else {}
+    pool: dict[str, str] = {}
+    for key, ids in ids_by_key.items():
+        uses_at = by_line[key]
+        positions = uses_at.keys() - {None}
+        if not positions:
+            pool.update((ident, uses_at[None]) for ident in ids)
+            continue
+        for line in sorted(positions):
+            exact = [ident for ident in ids if ident in spans and spans[ident][0] == line]
+            matches = exact or [ident for ident in ids if ident in spans and spans[ident][0] <= line <= spans[ident][1]]
+            if len(matches) == 1:
+                ident = matches[0]
+                sections = (pool.get(ident), uses_at[line], uses_at.get(None) if len(ids) == 1 else None)
+                pool[ident] = '\n'.join(dict.fromkeys(filter(None, sections)))
+    return pool
 
 
 def _stage_search(desk: SourceDesk,stage: str,query: str,cursor: int=0,*,trace: dict | None=None,
@@ -871,9 +897,15 @@ def model_semantics(contract: dict) -> dict:
 
 
 def retrieval_need(stage: str,package: dict,products: dict) -> str:
-    cues=[package['brief']['text'],package['brief']['constraints']]
+    brief = [package['brief']['text'], package['brief']['constraints']]
+    action_state = stage == 'action_design' and package.get('action_state_policy') == ACTION_STATE_POLICY
+    cues = [] if action_state else list(brief)
     fields={'title','name','want','goal','conflict','choice','planned_result','voice','rule','limits',
             'trigger','information','expectation','emotion','setup','payoff','observable','action','condition','relation'}
+    list_fields = {'selection','boundaries','limitations','reader_plan','promise_plan'}
+    if action_state:
+        fields.update(('event', 'obstacle', 'setting', 'completion_condition', 'completion_gate'))
+        list_fields.update(('abilities', 'limits'))
     def visit(value: object,parent: str='') -> None:
         if isinstance(value,dict):
             for key,item in value.items():
@@ -882,12 +914,26 @@ def retrieval_need(stage: str,package: dict,products: dict) -> str:
                 elif isinstance(item,(dict,list)):visit(item,key)
         elif isinstance(value,list):
             for item in value[:8]:
-                if isinstance(item,str) and parent in {'selection','boundaries','limitations','reader_plan','promise_plan'}:
+                if isinstance(item,str) and parent in list_fields:
                     cues.append(item[:120])
                 elif isinstance(item,(dict,list)):visit(item,parent)
     required=list(products) if stage=='bind_scope' else REQUIRES[stage]
+    if action_state:
+        for name, field in (('plot_design', 'event_nodes'), ('event_design', 'candidates')):
+            visit(products.get(name, {}).get('products', {}).get(field, []))
+        event_need = ' '.join(cues)[:880]
+        cues.clear()
+        required = ('character_design', 'static_relations', 'world_design')
     for name in required:
         if name in products:visit(products[name]['products'])
+    if action_state:
+        from nw.selection import _keywords
+        requested = _keywords([event_need, brief[0][:200], brief[1][:150]])
+        facts = [f'{row["predicate"]} {canonical(row["value"])[:120]}'
+                 for row in visible_facts(stage, products, package)]
+        facts.sort(key=lambda terms: -len(_keywords([terms]) & requested))
+        return ' '.join(part for part in (event_need, ' '.join(facts)[:640], ' '.join(cues)[:320],
+                                          brief[0][:200], brief[1][:150]) if part)
     return ' '.join(cues)[:2200]
 
 
@@ -995,6 +1041,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.materials.phase_lifecycle import CANDIDATE_SELECTION
     from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY, scene_source_placements
     scoped_sources = context.get('scene_source_binding_policy') == SCENE_SOURCE_BINDING_POLICY
+    action_state = stage == 'action_design' and context.get('action_state_policy') == ACTION_STATE_POLICY
     stage_config, stage_provider = resolve_stage_runtime(config, provider, stage)
     state=readiness(stage,products,package['scope'])
     if state['missing']:raise ValueError('MATERIAL_WAITING_INPUTS: '+','.join(state['missing']))
@@ -1027,8 +1074,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     chapter_reviews = package.get('chapter_reviews') if chapter_handoff is not None else None
     if chapter_reviews:
         handoff_instruction += '\n' + plot_design_chapters.CHAPTER_REVIEWS
+    demand = retrieval_need(stage, package, products)
     selection={'policy':'task-block-subitem-selection-v1','before_stage':stage,
-        'function':{'stage':stage,'task':retrieval_need(stage,package,products)},
+        'function':{'stage':stage,'task':demand},
         'upstream':[product_ref(products[n]) for n in deps],
         'control_review_sha256':context.get('retrieval_control',{}).get('review',{}).get('sha256'),
         'queries':[],'offered':[],'selected':[]}
@@ -1054,7 +1102,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             'function_queries':list(FUNCTION_QUERIES[stage]),
             'dependency_source_ids':dependencies,
             'brief':package['brief'],
-            'retrieval_need':retrieval_need(stage,package,products),
+            'retrieval_need':demand,
             'demand':' '.join((package['brief']['text'],package['brief']['constraints'])),
             'inputs':inputs,'sources':[stage_source(s, contract, full_text=s['source']['id'] in read_full)
                                        for s, contract in zip(sources, contracts, strict=True)],
@@ -1161,11 +1209,15 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if inherited:
             payload['inherited_stage']={'ref':product_ref(inherited),'products':inherited['products'],
                 'authority':'author_selected_parent_design_preserve_unless_explicit_replan'}
-        if stage in ('character_design','scene_design','state_transition','state_propagation'):
-            from nw.materials.phase_contract import entity_ids
-            entities=entity_ids(products,context)
+        if action_state or stage in ('character_design','scene_design','state_transition','state_propagation'):
             payload['accepted_state']=stage_context['accepted_state']
             if stage=='state_propagation':payload['accepted_changes']=package.get('accepted_changes',[])
+        if action_state:
+            payload['action_state_policy'] = ACTION_STATE_POLICY
+            suffix += ('\naccepted_state是当前分支冻结的已接受事实。用它核对可用资源、物件去向和既成后果，'
+                       '照此设计动作的可行选择、阻碍、应对与代价。'
+                       '资料适用条款用到状态时，在input_refs引用实际索引，例如fact:0:/value。'
+                       '对照story_order和角色知情范围。时间或必要前提未确定时，给出与前提对应的候选或指出待补项。')
         if stage=='bind_scope':
             from nw.materials.binding import material_prompt
             from nw.materials.stage_input import model_material
@@ -1305,6 +1357,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['current_source_set']=selected['sha256']
     if 'scene_source_binding_policy' in package:
         context['scene_source_binding_policy'] = package['scene_source_binding_policy']
+    if 'action_state_policy' in package:
+        context['action_state_policy'] = package['action_state_policy']
     if package.get('dynamic_reference_checks'):
         context['dynamic_reference_checks'] = True
     from nw.production_methods.handoff import inherited

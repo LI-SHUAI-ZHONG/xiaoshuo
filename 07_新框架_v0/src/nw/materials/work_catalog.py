@@ -1,5 +1,6 @@
 """A readable method desk, separate from approval to assert source/story facts."""
 from collections import Counter
+from collections.abc import Iterable
 from contextlib import closing
 import json
 from pathlib import Path
@@ -114,6 +115,16 @@ class SourceDesk:
     def _connect(self) -> sqlite3.Connection:
         db=sqlite3.connect(self.path.resolve().as_uri()+'?mode=ro',uri=True);db.row_factory=sqlite3.Row
         return db
+
+    def source_lines(self, ids: Iterable[str]) -> dict[str, tuple[int, int]]:
+        """Look up coordinates for named source IDs without opening their text."""
+        wanted = canonical(list(ids))
+        with closing(_connect(self.workspace, write=False)) as db:
+            rows = db.execute('''WITH wanted AS (SELECT value FROM json_each(?))
+                SELECT id,line_start,line_end FROM fragments WHERE id IN wanted
+                UNION ALL
+                SELECT id,line_start,line_end FROM material_units WHERE id IN wanted''', (wanted,))
+            return {row['id']: (row['line_start'], row['line_end']) for row in rows}
 
     def directory(self) -> dict:
         topics={};examples={}

@@ -94,6 +94,77 @@ def test_normal_driver_places_template_after_inputs_and_never_runs_global_readin
         assert again==driven and len(provider.calls)==calls
 
 
+@pytest.mark.parametrize(('key_state', 'expected_action'), [
+    ('钥匙在手', '[FAKE] 持已有钥匙开档柜，再借灯核对封条'),
+    ('钥匙已归还', '[FAKE] 先请值守人批准借用钥匙，再借灯核对封条'),
+])
+def test_action_step_accepts_branch_state_and_keeps_event_needs_in_search(tmp_path, key_state: str,
+                                                                     expected_action: str) -> None:
+    from dataclasses import asdict
+    from nw.cards import decide_card, save_card
+    from nw.materials.phase_context import ACTION_STATE_POLICY, visible_facts
+    from nw.materials.semantic_application import input_value
+    from nw.novel_flow import JobRequest, resume_job, start_job
+    from nw.tasks import read_input_manifest
+    from test_material_workflow import choose
+
+    class StateModel(PhaseModel):
+        def generate(self, messages: list[dict], **params) -> GenResult:
+            result = super().generate(messages, **params)
+            body = json.loads(messages[-1]['content'])
+            if body.get('stage') != 'action_design':
+                return result
+            assert body['action_state_policy'] == ACTION_STATE_POLICY
+            [world_fact] = body['accepted_state']
+            assert world_fact['holder'] == 'WORLD' and world_fact['evidence']
+            action = ('[FAKE] 持已有钥匙开档柜，再借灯核对封条' if world_fact['value'] == '钥匙在手'
+                      else '[FAKE] 先请值守人批准借用钥匙，再借灯核对封条')
+            raw = json.loads(result.text)
+            raw['products']['candidates'][0]['action'] = action
+            result.text = json.dumps(raw, ensure_ascii=False)
+            return result
+
+    template_catalog(tmp_path)
+    with Store(tmp_path / 'story', create=True, test_mode=True) as store:
+        store.init_project('前次事实影响动作')
+        store.add_brief('基调安排与城市氛围。' * 280, '遵守实际调查时间顺序')
+        ref = save_card(store, {'card_id': 'key', 'kind': 'world', 'origin': 'author',
+                                'body': {'title': '档柜钥匙', 'rule': '使用前核对钥匙可用状态',
+                                         'limits': '需保管人批准', 'visibility': 'public'}}, None)
+        approval = decide_card(store, ref, 'approved', '批准资源设定')
+        fact = {'entity_id': ref.card_id, 'predicate': '钥匙去向', 'value': key_state, 'holder': 'WORLD',
+                'claim': 'fact', 'story_order': 0, 'disclosure_order': [0, 0, 0]}
+        adopt_story(store, baseline(card_refs=[{**asdict(ref), 'decision_id': approval.id}],
+            facts=[fact, {**fact, 'holder': 'yan', 'claim': 'belief', 'value': '猜测钥匙已丢'},
+                   {**fact, 'entity_id': 'unrelated', 'value': '未授权对象状态'}]), {})
+        provider = StateModel()
+        job = start_job(store, JobRequest('design', budget=Budget(32, 90000, 4000))).id
+        assert resume_job(store, job, provider, config(store)).step == 'plan:book:confirm'
+        preview = resume_job(store, job, provider, config(store), choose)
+        assert preview.step == 'plan:chapter:confirm', preview.reason
+        action_input = next(json.loads(messages[-1]['content']) for messages in provider.calls
+                            if json.loads(messages[-1]['content']).get('stage') == 'action_design')
+        assert action_input['accepted_state'][0]['value'] == key_state
+        query = action_input['retrieval_need']
+        assert len(query) <= 2200 and all(text in query for text in
+            (key_state, '查明封条是否被替换', '铜丝藏在纸角下', '遵守实际调查时间顺序'))
+        assert '猜测钥匙已丢' not in query and '未授权对象状态' not in query
+        result = resume_job(store, job, provider, config(store), choose)
+        assert result.status == 'DONE', result.reason
+
+        call = store.connection.execute('SELECT manifest_id FROM task_calls WHERE id=?',
+                                        (result.outputs['proposal_id'],)).fetchone()
+        _, frozen = read_input_manifest(store, call['manifest_id'])
+        session = frozen['material_work']
+        stages = {row['stage']: row for row in session['stages']}
+        assert stages['action_design']['products']['candidates'][0]['action'] == expected_action
+        replayed = visible_facts('action_design', stages, session['context'])
+        assert replayed == action_input['accepted_state']
+        assert input_value('fact:0:/value', 'action_design', stages, {'accepted_state': replayed}) == key_state
+        legacy = {k:v for k,v in session['context'].items() if k != 'action_state_policy'}
+        assert not visible_facts('action_design', stages, legacy)
+
+
 def test_dynamic_filter_uses_actual_type_and_scene_inputs(tmp_path, monkeypatch):
     from nw.materials.phase_projection import verify_chain
     from nw.tasks import read_input_manifest

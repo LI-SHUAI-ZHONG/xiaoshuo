@@ -77,8 +77,8 @@ def test_current_source_set_design_uses_authored_step_material_and_pins_original
     from nw.call_budget import create_budget
     from nw.llm.base import GenResult
     from nw.materials.adjudication import build_adjudications
-    from nw.materials.phase_flow import STAGE_MATERIALS
-    from nw.materials.stage_input import STEP_SOURCE_POLICY
+    from nw.materials.phase_flow import STAGE_MATERIALS, _step_source_pool
+    from nw.materials.stage_input import LEGACY_STEP_SOURCE_POLICY, STEP_SOURCE_POLICY
     from nw.materials.work_session import drive_plan
     from nw.planning import prepare_plan_task
     from nw.store import Store
@@ -91,19 +91,32 @@ def test_current_source_set_design_uses_authored_step_material_and_pins_original
     from nw.materials import library_adjudication
 
     _, selection, _, _ = catalog(tmp_path, extra_library=(
+        '\n### 1.1_当前方法\n【定义】另一处同名原条讨论事后复盘与动机变化。\n'
+        '【指令】先记录事后判断变化，再对照实际事件。\n'
         '\n### 1.2_未入步方法\n【定义】依据真实人物目标设计动作后果并描写已发生事件。\n'
         '【指令】呈现当前调查目的和人物承担的实际代价。\n'))
     source_pin = next(row for row in selection['sources'] if row['family'] == 'library')
     monkeypatch.setitem(library_adjudication._PINNED, 'library', source_pin['file_sha256'])
     build_adjudications(tmp_path)
     desk = SourceDesk(tmp_path)
-    source = next(row for row in desk.rows if row['key'] == '1.1_当前方法')
+    namesakes = [row for row in desk.rows if row['key'] == '1.1_当前方法']
+    spans = desk.source_lines(row['id'] for row in namesakes)
+    source, other = sorted(namesakes, key=lambda row: spans[row['id']][0])
     outside = next(row for row in desk.rows if row['key'] == '1.2_未入步方法')
     assert source['id'] not in desk.binding_reviews
     assert source['state'] == outside['state'] == 'design_ready'
     authored = '先核对人物目标与已经批准的调查身份，再限定本步行动选择。'
-    monkeypatch.setitem(STAGE_MATERIALS, 'character_design',
-                        f'【人物设计的资料】\n人物取材。\n\n### 1.1_当前方法\n【本步用法】\n{authored}\n')
+    material = f'【人物设计的资料】\n人物取材。\n\n### 1.1_当前方法\n【原文位置】第1行\n【本步用法】\n{authored}\n'
+    monkeypatch.setitem(STAGE_MATERIALS, 'character_design', material)
+    other_use = '按同名原条自己的内容回顾已经发生的判断变化。'
+    both = (material + f'\n### 1.1_当前方法\n【原文位置】第{spans[other["id"]][0]}行\n'
+            f'【本步用法】\n{other_use}\n')
+    def pool(text: str, policy: str) -> dict:
+        return _step_source_pool(desk, 'character_design', {'stage_materials': {'character_design': text},
+                                                           'stage_source_policy': policy})
+    assert pool(both, STEP_SOURCE_POLICY) == {source['id']: authored, other['id']: other_use}
+    assert pool(material.replace('第1行','第99999行'), STEP_SOURCE_POLICY) == {}
+    assert pool(material, LEGACY_STEP_SOURCE_POLICY) == {row['id']: authored for row in namesakes}
 
     class StepReader(PhaseModel):
         def __init__(self):
@@ -121,11 +134,13 @@ def test_current_source_set_design_uses_authored_step_material_and_pins_original
                 assert '读取全文后才能使用' not in messages[0]['content']
                 if not self.read_step_use:
                     self.read_step_use = True
-                    requests = [{'action': 'search', 'query': '未入步方法'}, {'action': 'read', 'id': source['id']}]
+                    requests = [{'action': 'search', 'query': '当前方法'},
+                                {'action': 'search', 'query': '未入步方法'}, {'action': 'read', 'id': source['id']}]
                     return GenResult(json.dumps({'stage': 'character_design', 'requests': requests}),
                                      'complete', {}, 'test', {})
-                page, read = body['responses']
-                assert all(item['id'] == source['id'] for item in page['items'])
+                page, outside_page, read = body['responses']
+                assert [item['id'] for item in page['items']] == [source['id']]
+                assert all(item['id'] == source['id'] for item in outside_page['items'])
                 assert read['step_material_delivered'] and 'complete_original_delivered' not in read
             return super().generate(messages, **params)
 
@@ -147,7 +162,7 @@ def test_current_source_set_design_uses_authored_step_material_and_pins_original
         assert any(use['source_id'] == source['id'] for use in step['products']['_uses'])
         assert any(row['source']['id'] == source['id'] and '人物目标' in row['original_text']
                    for row in session['sources'])
-        assert all(row['source']['id'] != outside['id'] for row in session['sources'])
+        assert all(row['source']['id'] not in {outside['id'], other['id']} for row in session['sources'])
         from nw.materials.binding_reviews import verify_session_bindings
         verify_session_bindings(session, tmp_path, test_mode=True)
 

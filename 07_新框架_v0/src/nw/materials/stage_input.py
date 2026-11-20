@@ -7,7 +7,8 @@ from nw.materials.binding import BOOK
 from nw.task_models import canonical, content_sha256
 
 POLICY='stage-material-input-v1'
-STEP_SOURCE_POLICY = 'step-material-selection-v1'
+LEGACY_STEP_SOURCE_POLICY = 'step-material-selection-v1'
+STEP_SOURCE_POLICY = 'step-material-selection-v2'
 _STEP_HEADING = re.compile(r'^#{2,6}\s+(.+?)\s*$')
 _ASCII_HEAD_PREFIX = re.compile(r'^([A-Z][A-Z0-9_.-]+)\s+\S')
 _STEP_INTRO = re.compile(r'^【[^】\r\n]+的资料】$')
@@ -16,9 +17,11 @@ _COMBO_ROW = re.compile(r'^\d+｜(?:design_ready|blocked|reference)｜\{"[a-z_]*
 _ANCHOR_ROW = re.compile(r'^\d+｜\|\s*([A-Z]+\d+\.\d+)\s*\|')
 _ORIG_JSON_ROW = re.compile(r'^【原文行\s*\d+】\{"[a-z_]*id"\s*:\s*"([^"]+)"')
 _JSON_BLOCK_ID = re.compile(r'^\s*"(?:stable_id|filter_id|rule_id)"\s*:\s*"([^"]+)"')
+_STEP_SOURCE_LINE = re.compile(r'^【原文位置】[^\n]*?第\s*(\d+)(?:\s*[–—-]\s*\d+)?\s*行\s*$')
 
 
-def _add_usage(excerpts: dict[str, list[list[str]]], key: str, lines: list[str]) -> None:
+def _add_usage(excerpts: dict[str, list[tuple[int | None, list[str]]]], key: str, lines: list[str],
+               source_line: int | None = None) -> None:
     cleaned = [ln.rstrip() for ln in lines if ln.strip()]
     if not cleaned:
         return
@@ -30,7 +33,7 @@ def _add_usage(excerpts: dict[str, list[list[str]]], key: str, lines: list[str])
     else:
         body = cleaned
     if body:
-        excerpts.setdefault(key, []).append(['【本步用法】', *body])
+        excerpts.setdefault(key, []).append((source_line, body))
 
 
 def step_material_prompt(prompt: str, material: str, keys: Iterable[str]) -> str:
@@ -67,27 +70,31 @@ def _connection_uses(material: str, wanted: set[str] | None = None) -> dict[str,
             if (entry := records.get(key)) is not None and entry[0] in stages}
 
 
-def _step_uses(material: str, wanted: set[str], *, connections: dict[str, str] | None = None) -> dict[str, str]:
-    excerpts: dict[str, list[list[str]]] = {}
+def _step_excerpts(material: str, wanted: set[str], *, connections: dict[str, str] | None = None
+                   ) -> dict[str, list[tuple[int | None, list[str]]]]:
+    excerpts: dict[str, list[tuple[int | None, list[str]]]] = {}
     titles: list[str] = []
     instructions: list[str] | None = None
     instruction_targets: list[str] = []
     group_defs: dict[str, str] = {}
+    source_line: int | None = None
 
-    def flush() -> None:
-        nonlocal instructions, instruction_targets
+    def flush(*, next_source: bool = False) -> None:
+        nonlocal instructions, instruction_targets, source_line
         if instructions is not None and instruction_targets:
             for target in instruction_targets:
                 if target in group_defs:
-                    _add_usage(excerpts, target, [f'原表定义：{group_defs[target]}', *instructions])
+                    _add_usage(excerpts, target, [f'原表定义：{group_defs[target]}', *instructions], source_line)
                 else:
-                    _add_usage(excerpts, target, instructions)
+                    _add_usage(excerpts, target, instructions, source_line)
         instructions = None
         instruction_targets = []
+        if next_source:
+            source_line = None
 
     for line in material.splitlines():
         if match := _STEP_HEADING.fullmatch(line):
-            flush()
+            flush(next_source=True)
             head = match[1]
             titles = [head]
             if m_ascii := _ASCII_HEAD_PREFIX.match(head):
@@ -95,21 +102,26 @@ def _step_uses(material: str, wanted: set[str], *, connections: dict[str, str] |
             group_defs = {}
             continue
         if match := _ORIG_JSON_ROW.match(line):
-            flush()
+            flush(next_source=True)
             titles = [match[1]]
             group_defs = {}
             continue
         if match := _DYN_ROW.match(line):
-            flush()
+            flush(next_source=True)
             titles = [match[1]]
             continue
         if match := _COMBO_ROW.match(line):
-            flush()
+            flush(next_source=True)
             titles = [match[1]]
             continue
         if match := _ANCHOR_ROW.match(line):
-            flush()
+            flush(next_source=True)
             titles = [match[1]]
+            continue
+        if line.startswith('【原文位置】'):
+            flush(next_source=True)
+            if match := _STEP_SOURCE_LINE.fullmatch(line):
+                source_line = int(match[1])
             continue
         if instructions is None and (match := _JSON_BLOCK_ID.match(line)):
             if match[1] in wanted and match[1] not in titles:
@@ -118,7 +130,7 @@ def _step_uses(material: str, wanted: set[str], *, connections: dict[str, str] |
         if line[:1].isdigit() and '｜' in line and not line.startswith('【'):
             parts = line.split('｜')
             if len(parts) >= 9 and parts[0].isdigit() and parts[1].isdigit():
-                flush()
+                flush(next_source=True)
                 edge_key = f'{parts[2].strip()} / {parts[3].strip()} / {parts[4].strip()}'
                 if len(parts) >= 10 and parts[9].strip():
                     titles = []
@@ -130,7 +142,7 @@ def _step_uses(material: str, wanted: set[str], *, connections: dict[str, str] |
         if line[:1].isdigit() and '|' in line and '｜' not in line:
             cols = [c.strip() for c in line.split('|')]
             if cols[0].isdigit() and len(cols) >= 3:
-                flush()
+                flush(next_source=True)
                 if len(cols) == 3:
                     if cols[1] in wanted:
                         group_defs[cols[1]] = cols[2]
@@ -164,8 +176,12 @@ def _step_uses(material: str, wanted: set[str], *, connections: dict[str, str] |
         if key not in excerpts and key in connections:
             _add_usage(excerpts, key, [connections[key]])
 
-    return {key: '\n'.join(dict.fromkeys(line for group in groups for line in group[1:]))
-            for key, groups in excerpts.items()}
+    return excerpts
+
+
+def _step_uses(material: str, wanted: set[str], *, connections: dict[str, str] | None = None) -> dict[str, str]:
+    return {key: '\n'.join(dict.fromkeys(line for _, lines in groups for line in lines))
+            for key, groups in _step_excerpts(material, wanted, connections=connections).items()}
 
 
 def extract_step_keys(material: str) -> set[str]:
@@ -236,6 +252,20 @@ def step_uses(material: str) -> dict[str, str]:
     """Read the authored step uses, including its bundled type connection data."""
     connections = _connection_uses(material)
     return _step_uses(material, extract_step_keys(material) | connections.keys(), connections=connections)
+
+
+@lru_cache(maxsize=32)
+def step_uses_by_line(material: str) -> dict[str, dict[int | None, str]]:
+    """Keep instructions attached to their explicitly authored source positions."""
+    connections = _connection_uses(material)
+    result = {}
+    for key, groups in _step_excerpts(material, extract_step_keys(material) | connections.keys(),
+                                      connections=connections).items():
+        by_line: dict[int | None, list[str]] = {}
+        for source_line, lines in groups:
+            by_line.setdefault(source_line, []).extend(lines)
+        result[key] = {source_line: '\n'.join(dict.fromkeys(lines)) for source_line, lines in by_line.items()}
+    return result
 
 
 def check_source_keys(checks: Iterable[dict]) -> set[str]:
@@ -313,7 +343,7 @@ def model_package(package: dict) -> dict:
     result={key:value for key,value in package.items() if key not in {
         'material_recall','material_input','stage_materials','stage_source_policy','chapter_handoff','chapter_summary','chapter_reviews',
         'type_hierarchy_enabled','type_source_scope_enabled','type_name_evidence_enabled','governance_inputs',
-        'dynamic_reference_checks','dynamic_screening_enabled','scene_source_binding_policy'}}
+        'dynamic_reference_checks','dynamic_screening_enabled','scene_source_binding_policy','action_state_policy'}}
     if package.get('materials'):
         result['materials']=[model_material(row,book=package['scope']=='book') for row in package['materials']]
         result['material_input']={'policy':POLICY,'full_sources_frozen_for_verification':True}
