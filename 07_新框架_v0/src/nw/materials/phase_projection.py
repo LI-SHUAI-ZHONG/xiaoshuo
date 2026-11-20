@@ -5,6 +5,7 @@ from nw.materials.phase_contract import validate_phase,require
 from nw.materials.phase_scene_checks import anchor_beat_observable, selected_checks
 from nw.materials.scene_actions import MULTI_ACTION_POLICY, action_choice, selected_action_ids
 from nw.materials.phase_context import visible_facts
+from nw.materials.network_workflow import EARLY_POLICY
 from nw.story_state import IDENTITY_STATUS_PREFIX
 from nw.task_models import canonical,content_sha256
 
@@ -37,6 +38,10 @@ def verify_chain(session: dict) -> None:
             prepared = row.get('prepared_static_sources', [])
             require(prepared == context.get('prepared_static_sources') and set(prepared) <= set(row['source_ids']),
                     'static prerequisite input sources changed or were not offered')
+        if context.get('early_network_policy') == EARLY_POLICY and row['stage'] == 'static_relations':
+            prepared = row.get('prepared_static_sources')
+            require(isinstance(prepared, list) and prepared == context.get('early_static_sources')
+                    and set(prepared) <= set(row['source_ids']), 'early static prerequisite sources changed or were not offered')
         if context.get('binding_policy'):
             require(canonical(row.get('binding_reviews'))==canonical({ident:session['context']['binding_reviews'][ident]
                     for ident in row['source_ids'] if ident in session['context']['binding_reviews']}),

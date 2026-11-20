@@ -7,7 +7,7 @@ from nw.task_models import _text,canonical
 from nw.materials.template_contract import extra_refs,validate_extra,validate_template_uses
 from nw.materials.phase_lifecycle import writing_sources,validate_requirements,validate_selected_requirements
 from nw.materials.semantic_products import (validate_plot_products,validate_dynamic_dependencies,
-    validate_anchor_products,validate_static_bindings)
+    validate_anchor_products,validate_static_bindings,validate_early_static)
 
 FIELDS={
  'type_selection':{'selection','concepts','boundaries'},
@@ -36,10 +36,10 @@ def _method_stages(source: dict,context: dict) -> list[str]:
         if review:
             return [u['stage'] for u in review['uses'] if context.get('scope') in
                     u.get('scopes',['book','volume','chapter','scene','replan'])]
-        from nw.materials.network_workflow import prepared_plot_source
+        from nw.materials.network_workflow import prepared_static_source
         stages = route_method(source)['stages']
-        if prepared_plot_source(source, context) and 'plot_design' not in stages:
-            stages = [*stages, 'plot_design']
+        stages += [stage for stage in ('static_relations', 'plot_design')
+                   if stage not in stages and prepared_static_source(source, stage, context)]
         return [stage for stage in stages
                 if allows_stage_candidate(source,stage,context)]
     if not context.get('legacy_replay'):return route_method(source)['stages']
@@ -300,6 +300,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             validate_dynamic_dependencies(stage,value,products,sources,context)
     from nw.materials.semantic_application import validate_semantic_applications
     validate_semantic_applications(stage,value,products,sources,context)
+    if stage == 'static_relations' and not context.get('legacy_replay'):
+        validate_early_static(value, products, sources, context)
     if check_anchor and multiple_actions:
         validate_anchor_products(value, products, sources, context)
     if strict_network and not context.get('legacy_replay'):

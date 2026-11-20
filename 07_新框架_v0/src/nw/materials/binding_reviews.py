@@ -31,10 +31,9 @@ def allows_stage_candidate(source: dict, stage: str, context: dict) -> bool:
     if ref.get('path','').endswith('/类型连接.txt'):
         from nw.materials.steps.type_connections import allows_adaptation
         return stage == 'type_adaptation' and allows_adaptation(source,context.get('type_selection',{}))
-    if stage == 'plot_design':
-        from nw.materials.network_workflow import prepared_plot_source
-        if prepared_plot_source(source, context):
-            return True
+    from nw.materials.network_workflow import prepared_static_source
+    if prepared_static_source(source, stage, context):
+        return True
     return stage in route_method(source)['stages']
 
 

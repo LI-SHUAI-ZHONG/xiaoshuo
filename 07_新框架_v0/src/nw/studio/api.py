@@ -754,15 +754,19 @@ class StudioService:
             'offered': [],
             'selected': [],
         }
-        prepared, network_context = {}, None
+        prepared, network_waiting, network_context = {}, {}, None
         if package.get('current_source_set') and stage in phase_order(scope):
-            from nw.materials.network_workflow import POLICY as NETWORK_POLICY, resolve_type_scope, step_sources
+            from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY, early_waiting, resolve_type_scope, step_sources
             selected_types = mock_products.get('type_selection', {}).get('products', {})
             network_context = {'network_prerequisite_policy': NETWORK_POLICY,
+                               'early_network_policy': EARLY_POLICY,
                                'network_type_scope': resolve_type_scope(self.workspace, selected_types)}
             authored, rules = network_materials(desk, package)
             step_pool, prepared = step_sources(stage, authored, rules, mock_products, network_context, desk.by_id)
             network_context['prepared_static_sources'] = sorted(prepared)
+            if stage == 'static_relations':
+                network_context['early_static_sources'] = sorted(prepared)
+            network_waiting = early_waiting(stage, authored, rules, mock_products, network_context, desk.by_id)
         else:
             step_pool = _step_source_pool(desk, stage, package)
         sources = _sources(desk, stage, package, mock_products, [], reviewed_only=True, deferrals=deferred,
@@ -803,6 +807,7 @@ class StudioService:
             'sources': formatted_sources,
             'stage_source_policy': package.get('stage_source_policy'),
             **({'network_type_scope': network_context['network_type_scope']} if network_context is not None else {}),
+            **({'network_waiting': network_waiting} if network_waiting else {}),
             'deferred_reviews_count': len(deferred),
             'queries_executed': selection.get('queries', []),
             'rendered_prompt': rendered_prompt,

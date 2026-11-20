@@ -2,9 +2,12 @@ from copy import deepcopy
 
 import pytest
 
-from nw.materials.network_workflow import POLICY, resolve_type_scope, step_sources
-from nw.materials.semantic_products import original, validate_dynamic_dependencies, validate_prepared_static
+from nw.materials.binding_reviews import POLICY as BINDING_POLICY
+from nw.materials.network_workflow import EARLY_POLICY, POLICY, resolve_type_scope, step_sources
+from nw.materials.phase_contract import _method_stages
+from nw.materials.semantic_products import original, validate_dynamic_dependencies, validate_early_static, validate_prepared_static
 from test_material_semantic_application import at, source, used
+from test_material_phase_contract import record
 
 
 def relationship(item: dict) -> dict:
@@ -65,6 +68,101 @@ def test_prepared_static_use_has_a_real_relationship_and_clause_output() -> None
     clause['output_refs'] = ['/directions/0/choice']
     with pytest.raises(ValueError, match='clauses must establish'):
         validate_prepared_static(value, [static], context)
+
+
+def test_early_static_stage_admits_only_its_prepared_source_and_respects_review_scope() -> None:
+    static = source('1.1_主角 / 130_核心悬念 / 绑定')
+    static['execution_stages'] = ['plot_design']
+    static['source']['file_sha256'] = 'isolated-route-test-file'
+    ident = static['source']['id']
+    base = {'binding_policy': BINDING_POLICY, 'scope': 'chapter', 'current_source_set': 'isolated-source-set',
+            'network_prerequisite_policy': POLICY, 'binding_reviews': {}}
+    assert _method_stages(static, base) == ['plot_design']
+    prepared = {**base, 'early_network_policy': EARLY_POLICY, 'early_static_sources': [ident]}
+    assert _method_stages(static, prepared) == ['plot_design', 'static_relations']
+    reviewed = {**prepared, 'binding_reviews': {ident: {'uses': [{'stage': 'plot_design'}]}}}
+    assert _method_stages(static, reviewed) == ['plot_design']
+
+
+@pytest.mark.parametrize(('defect', 'message'), [
+    ('wrong_type', 'original edge type'),
+    ('same_endpoints', 'two distinct project endpoints'),
+    ('vague_condition', 'concrete condition'),
+    ('wrong_relation', 'actual relation rows'),
+    ('whole_collection', 'exact relation row'),
+    ('other_row', 'exact relation row'),
+    ('also_other_row', 'exact relation row'),
+    ('endpoint_id_only', 'fields for both actual endpoints'),
+    ('different_endpoint', 'fields for both actual endpoints'),
+    ('brief_only', 'fields for both actual endpoints'),
+])
+def test_early_static_use_requires_exact_relation_and_both_real_endpoints(defect: str, message: str) -> None:
+    static = source('1.1_主角 / 130_核心悬念 / 绑定')
+    ident = static['source']['id']
+    partners = [{'card_id': 'partner', 'kind': 'character', 'body': {'want': '核实旧档真伪'}},
+                {'card_id': 'other', 'kind': 'character', 'body': {'want': '保全守门职位'}}]
+    context = {'early_network_policy': EARLY_POLICY, 'network_prerequisite_policy': POLICY, 'early_static_sources': [ident],
+               'approved_cards': partners, 'allowed_input_stages': ['character_design']}
+    member = {'key': 'yan', 'kind': 'character', 'body': {'want': '查明旧印真正归属'}}
+    products = {'character_design': record('character_design', {'members': [member]})}
+    relation = {key: result for key, result in relationship(static).items() if key != 'source_id'}
+    value = {'relations': [relation, {**relation, 'id': 'separate'}]}
+    used(value, static, 'relation:defined')
+    inputs = ['input:character_design:/products/members/0/body/want', 'approved:partner:/body/want']
+    clause = {'applicability': 'applies', 'input_refs': inputs[:], 'output_refs': ['/relations/0/condition']}
+    value['_criteria'] = [{'source_id': ident, 'clauses': [clause]}]
+    validate_early_static(value, products, [static], context)
+
+    if defect == 'wrong_type':
+        relation['relation'] = '转化'
+    elif defect == 'same_endpoints':
+        relation['target'] = 'yan'
+    elif defect == 'vague_condition':
+        relation['condition'] = '待确认是否具备条件'
+    elif defect == 'wrong_relation':
+        value['_uses'][0]['output_refs'] = ['relation:absent']
+    elif defect == 'whole_collection':
+        clause['output_refs'] = ['/relations']
+    elif defect == 'other_row':
+        clause['output_refs'] = ['/relations/1/condition']
+    elif defect == 'also_other_row':
+        clause['output_refs'].append('/relations/1/condition')
+    elif defect == 'endpoint_id_only':
+        clause['input_refs'][0] = 'input:character_design:/members/0/key'
+    elif defect == 'different_endpoint':
+        clause['input_refs'][1] = 'approved:other:/body/want'
+    else:
+        clause['input_refs'] = ['brief:/text']
+    with pytest.raises(ValueError, match=message):
+        validate_early_static(value, products, [static], context)
+
+    # Schemes frozen before early preparation still replay with their original rules.
+    validate_early_static(value, products, [static], {key: result for key, result in context.items()
+                                                     if key != 'early_network_policy'})
+
+
+@pytest.mark.parametrize('bad_ref', ['brief:/text', 'input:static_relations:/relations/1/condition',
+                                     'input:static_relations:/relations/0/id', 'input:static_relations:/relations'])
+def test_early_dynamic_plot_clauses_require_their_exact_prior_static_use(bad_ref: str) -> None:
+    static = source('1.1_主角 / 130_核心悬念 / 绑定')
+    dynamic = source('C00001')
+    products, value = at('plot_design')
+    relation = {key: result for key, result in relationship(static).items() if key != 'source_id'}
+    static_output = {'relations': [relation, {**relation, 'id': 'different'}]}
+    used(static_output, static, 'relation:defined')
+    products['static_relations'] = record('static_relations', static_output)
+    used(value, dynamic, 'direction:0')
+    refs = ['input:static_relations:/products/relations/0/condition', 'input:static_relations:/relations/0']
+    clauses = [{'applicability': 'applies', 'input_refs': [ref], 'output_refs': ['/directions/0/choice']} for ref in refs]
+    value['_criteria'] = [{'source_id': dynamic['source']['id'], 'clauses': clauses}]
+    original_context = {'network_prerequisite_policy': POLICY, 'network_type_scope': {'GENRE_XUANYI': ['悬疑']},
+                        'method_sources': [static, dynamic]}
+    context = {**original_context, 'early_network_policy': EARLY_POLICY}
+    validate_dynamic_dependencies('plot_design', value, products, [dynamic], context)
+    clauses[1]['input_refs'] = [bad_ref]
+    with pytest.raises(ValueError, match='plot clause must cite its actual upstream static relationship'):
+        validate_dynamic_dependencies('plot_design', value, products, [dynamic], context)
+    validate_dynamic_dependencies('plot_design', value, products, [dynamic], original_context)
 
 
 @pytest.mark.parametrize('defect', ['missing_use', 'unrelated_ref', 'id_only', 'wrong_actor', 'wrong_type'])

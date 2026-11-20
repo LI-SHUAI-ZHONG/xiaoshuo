@@ -190,6 +190,10 @@ def dynamic_rejection(source: dict, products: dict, context: dict) -> str:
     return ''
 
 
+def _cites_relation(ref: str, cited: set[str]) -> bool:
+    return ref in cited or any(f'{ref}/{field}' in cited for field in ('source', 'target', 'relation', 'condition'))
+
+
 def _validate_action_relation(value: dict, ident: str, inputs: dict, products: dict, context: dict) -> None:
     people = {row['key'] for row in _product(products, 'character_design').get('members', [])}
     people.update(row['card_id'] for row in context.get('approved_cards', []) if row['kind'] == 'character')
@@ -202,9 +206,83 @@ def _validate_action_relation(value: dict, ident: str, inputs: dict, products: d
                  if clause['applicability'] == 'applies' and any(
                      output in ('/candidates', target) or output.startswith(target + '/')
                      for output in clause['output_refs']) for path in clause['input_refs']}
-        require(any((ref in cited or any(f'{ref}/{field}' in cited for field in ('source', 'target', 'relation', 'condition'))) and
+        require(any(_cites_relation(ref, cited) and
                     (not {row['source'], row['target']} <= people or candidate['actor'] in (row['source'], row['target']))
                     for ref, row in inputs.items()), 'dynamic action must cite its actual adopted static relationship')
+
+
+def _static_endpoint(reference: str, products: dict, context: dict) -> str | None:
+    from nw.materials.semantic_application import has_content, input_value, pointer_tokens
+
+    match = re.fullmatch(r'(input|approved):(.+):(/.*)', reference)
+    if match is None:
+        return None
+    kind, key, pointer = match.groups()
+    tokens = pointer_tokens(pointer)
+    if kind == 'approved' and tokens[0] == 'body':
+        if any(card['card_id'] == key and card['kind'] in ('world', 'character', 'promise')
+               for card in context.get('approved_cards', [])):
+            return key if has_content(input_value(reference, 'static_relations', products, context)) else None
+        return None
+    if kind != 'input' or key not in ('world_design', 'character_design'):
+        return None
+    if tokens[0] == 'products':
+        tokens = tokens[1:]
+    if len(tokens) < 3 or tokens[0] != 'members' or not tokens[1].isdigit() or tokens[2] != 'body':
+        return None
+    resolved = input_value(reference, 'static_relations', products, context)
+    return _product(products, key)['members'][int(tokens[1])]['key'] if has_content(resolved) else None
+
+
+def validate_early_static(value: dict, products: dict, sources: list[dict], context: dict) -> None:
+    """Require both real ends and the original relation type before handing off an early edge."""
+    from nw.materials.network_workflow import EARLY_POLICY, prepared_static_source
+    from nw.materials.semantic_application import concrete
+
+    if context.get('early_network_policy') != EARLY_POLICY:
+        return
+    uses = {item['source_id']: set(item['output_refs']) for item in value['_uses']}
+    clauses = {row['source_id']: [c for c in row['clauses'] if c['applicability'] == 'applies']
+               for row in value.get('_criteria', [])}
+    rows = {'relation:' + row['id']: (index, row) for index, row in enumerate(value['relations'])}
+    for item in sources:
+        ident = item['source']['id']
+        if ident not in uses or not prepared_static_source(item, 'static_relations', context):
+            continue
+        edge = original(item)
+        require(isinstance(edge, dict) and all(_text(edge.get(key)) for key in ('source', 'target', 'type'))
+                and not edge.get('generated_from_static') and not edge.get('effect')
+                and bool(uses[ident]) and uses[ident] <= rows.keys(),
+                'early static source needs an original static edge and actual relation rows')
+        paths = {f'/relations/{rows[ref][0]}' for ref in uses[ident]}
+        applied = clauses.get(ident, [])
+        require(all(any(output == path or output.startswith(path + '/') for path in paths)
+                    for clause in applied for output in clause['output_refs']
+                    if output == '/relations' or output.startswith('/relations/')),
+                'early static clauses must name the exact relation row')
+        for ref in sorted(uses[ident]):
+            index, row = rows[ref]
+            require(row['relation'] == edge['type'], 'early static relation differs from the original edge type')
+            require(row['source'] != row['target'], 'early static relation needs two distinct project endpoints')
+            require(concrete(row['condition']) and not row['condition'].strip().startswith(('待定', '待确认', '待补')),
+                    'early static relation needs a concrete condition')
+            path = f'/relations/{index}'
+            matching = [clause for clause in applied if any(
+                output == path or output.startswith(path + '/') for output in clause['output_refs'])]
+            require(bool(matching), 'early static clauses must name the exact relation row')
+            inputs = {reference for clause in matching for reference in clause['input_refs']}
+            endpoints = {_static_endpoint(reference, products, context) for reference in inputs}
+            require({row['source'], row['target']} <= endpoints,
+                    'early static relation needs substantive card fields for both actual endpoints')
+
+
+def _validate_plot_relation(value: dict, ident: str, inputs: dict) -> None:
+    upstream = [ref for ref in inputs if ref.startswith('input:static_relations:/relations/')]
+    criteria = next((row for row in value.get('_criteria', []) if row['source_id'] == ident), {})
+    inputs_by_clause = [{path.replace(':/products/', ':/', 1) for path in clause['input_refs']}
+                        for clause in criteria.get('clauses', []) if clause['applicability'] == 'applies']
+    require(bool(inputs_by_clause) and all(any(_cites_relation(ref, cited) for ref in upstream)
+        for cited in inputs_by_clause), 'dynamic plot clause must cite its actual upstream static relationship')
 
 
 def validate_prepared_static(value: dict, sources: list[dict], context: dict) -> None:
@@ -230,7 +308,7 @@ def validate_prepared_static(value: dict, sources: list[dict], context: dict) ->
 
 
 def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources: list[dict],context: dict) -> None:
-    from nw.materials.network_workflow import DYNAMIC_PROFILES, POLICY
+    from nw.materials.network_workflow import DYNAMIC_PROFILES, EARLY_POLICY, POLICY
 
     strict = context.get('network_prerequisite_policy') == POLICY
     used={r['source_id'] for r in value.get('_uses',[])}
@@ -248,6 +326,8 @@ def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources:
             relations = list(inputs.values())
             if stage == 'action_design':
                 _validate_action_relation(value, ident, inputs, products, context)
+            if stage == 'plot_design' and context.get('early_network_policy') == EARLY_POLICY:
+                _validate_plot_relation(value, ident, inputs)
         else:
             relations=adopted_relation(item,products,context)
         require(bool(relations),'dynamic source has no actual adopted static relationship')

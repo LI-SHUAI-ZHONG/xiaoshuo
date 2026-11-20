@@ -1076,7 +1076,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.materials.phase_lifecycle import CANDIDATE_SELECTION
     from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY, scene_source_placements
     from nw.materials.scene_actions import MULTI_ACTION_POLICY
-    from nw.materials.network_workflow import prepared_plot_source, step_sources
+    from nw.materials.network_workflow import EARLY_POLICY, early_waiting, prepared_static_source, step_sources
     from nw.materials.semantic_products import dynamic_rejection
     scoped_sources = context.get('scene_source_binding_policy') == SCENE_SOURCE_BINDING_POLICY
     multi_actions = context.get('multi_action_policy') == MULTI_ACTION_POLICY
@@ -1094,12 +1094,17 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     method_handoffs=deliveries(stage,products,context.get('production_method_parents',[])) if method_plan is not None else []
     deferred=[]
     material = package.get('stage_materials', {}).get(stage, '')
-    prepared, network_context = {}, None
+    prepared, network_waiting, network_context = {}, {}, None
+    early_static = stage == 'static_relations' and context.get('early_network_policy') == EARLY_POLICY
+    early_plot = stage == 'plot_design' and context.get('early_network_policy') == EARLY_POLICY
     if network is not None:
         authored, rules = network
         step_pool, prepared = step_sources(stage, authored, rules, products, context, desk.by_id)
         network_context = {**context, 'method_sources': studied_sources or [],
                            'prepared_static_sources': sorted(prepared)}
+        if early_static:
+            network_context['early_static_sources'] = sorted(prepared)
+        network_waiting = early_waiting(stage, authored, rules, products, context, desk.by_id)
     else:
         step_pool = _step_source_pool(desk, stage, package)
     prompt = (STEP_PROMPT if step_pool is None else STEP_SOURCE_PROMPT) + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
@@ -1131,6 +1136,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         'queries':[],'offered':[],'selected':[]}
     if step_pool is not None:
         selection['stage_source_policy'] = package['stage_source_policy']
+    if network_waiting:
+        selection['network_waiting'] = network_waiting
     sources=_sources(desk,stage,package,products,studied_sources,reviewed_only=True,deferrals=deferred,trace=selection,
                      step_pool=step_pool,prepared=prepared,network_context=network_context)
     search_pool = {**step_pool, **prepared} if step_pool is not None else None
@@ -1150,6 +1157,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if network_context is not None and stage == 'plot_design':
             stage_context['prepared_static_sources'] = sorted(s['source']['id'] for s in sources
                                                                if s['source']['id'] in prepared)
+        if network_context is not None and early_static:
+            stage_context['early_static_sources'] = sorted(s['source']['id'] for s in sources
+                                                           if s['source']['id'] in prepared)
         payload={'policy':POLICY,'stage':stage,'scope':package['scope'],
             'mode':'execute' if read_full else 'read_or_execute',
             'function_queries':list(FUNCTION_QUERIES[stage]),
@@ -1184,6 +1194,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        if network_waiting:
+            payload['network_waiting'] = network_waiting
+            suffix += '\nnetwork_waiting 列出现有项缺少的前置。只采用实际有前置的资料，缺前置时按其他已符合条件的输入完成本步。'
         from nw.materials.network_layers import INSTRUCTION as NETWORK_LAYER_INSTRUCTION, uses_fields
         for source, contract, model_contract in zip(sources, contracts, payload['source_contracts'], strict=True):
             if uses_fields(source, contract, stage_context):
@@ -1221,7 +1234,13 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '缺少真实项目端点或剧情条件时，说明缘由并排除该资料。')
         if network_context is not None and stage == 'static_relations':
             suffix += '\n静网关系准备交给动网时，relation保留原关系类型，condition记录本项目双方真实的成立条件。'
-        if network_context is not None and stage == 'action_design':
+            if early_static:
+                payload['prepared_static_sources'] = stage_context['early_static_sources']
+                if payload['prepared_static_sources']:
+                    suffix += ('\n为剧情准备的静网来源，采用时把_uses指向relation:id，把适用条款指向/relations/序号。'
+                               'input_refs应引用真实支撑关系双方的世界、人物或已批准卡片字段，condition写出实际成立条件。'
+                               '端点需要尚未形成的转折、弧光、承诺等剧情产物时，说明缺项并排除此来源。')
+        if network_context is not None and (stage == 'action_design' or early_plot):
             from nw.materials.semantic_products import original, _network_relation_inputs
             relation_inputs = {}
             for source in sources:
@@ -1232,7 +1251,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                         relation_inputs[source['source']['id']] = sorted(refs)
             if relation_inputs:
                 payload['dynamic_relation_inputs'] = relation_inputs
-                suffix += ('\n采用由静网派生的动网规则时，在每个对应动作的适用条款input_refs中，'
+                target = '每条剧情适用条款的' if early_plot else '每个对应动作的适用条款'
+                suffix += ('\n采用由静网派生的动网规则时，在' + target + 'input_refs中，'
                            '引用dynamic_relation_inputs给出的实际关系或其具体字段。')
         if scoped_sources and stage in CANDIDATE_SELECTION:
             payload['scene_source_binding_policy'] = SCENE_SOURCE_BINDING_POLICY
@@ -1386,6 +1406,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     'source_ids':[s['source']['id'] for s in sources]}
             if network_context is not None and stage == 'plot_design':
                 record['prepared_static_sources'] = stage_context['prepared_static_sources']
+            if network_context is not None and early_static:
+                record['prepared_static_sources'] = stage_context['early_static_sources']
             if method_plan is not None:record['production_methods']=method_plan
             if screening and stage=='bind_scope':
                 from nw.materials.dynamic_screening import screening_report
@@ -1408,7 +1430,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 review, admitted=_admission(desk,source,stage,package,
                     type_selection=products.get('type_selection',{}).get('products'),network_context=network_context)
                 require(stage in route_method(source)['stages'] or review is not None
-                        or stage == 'plot_design' and prepared_plot_source(source, network_context or {}),
+                        or prepared_static_source(source, stage, network_context or {}),
                         'method belongs to a different step')
                 if not admitted:
                     ident=source['source']['id']
@@ -1446,7 +1468,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.binding_reviews import POLICY as BINDING_POLICY,verify_session_bindings
     from nw.materials.governance_runtime import load_governance,verify_session_governance
     from nw.materials.source_set import selection_status
-    from nw.materials.network_workflow import POLICY as NETWORK_POLICY, resolve_type_scope
+    from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY, resolve_type_scope
     selected=selection_status(workspace)
     if selected:
         package={**package,'current_source_set':selected['sha256']}
@@ -1479,6 +1501,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     network = None
     if selected and package.get('network_prerequisite_policy') == NETWORK_POLICY:
         context['network_prerequisite_policy'] = NETWORK_POLICY
+        if package.get('early_network_policy') == EARLY_POLICY:
+            context['early_network_policy'] = EARLY_POLICY
         network = network_materials(desk, package)
     if package.get('dynamic_reference_checks'):
         context['dynamic_reference_checks'] = True
@@ -1518,6 +1542,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             context['network_type_scope'] = resolve_type_scope(workspace, record['products'])
         if network is not None and stage == 'plot_design':
             context['prepared_static_sources'] = record['prepared_static_sources']
+        if 'early_network_policy' in context and stage == 'static_relations':
+            context['early_static_sources'] = record['prepared_static_sources']
     session={'policy':POLICY,'id':'stages:'+request.id,'scope':package['scope'],'context':context,
              'stages':list(products.values()),'sources':list(sources.values()),'calls':calls}
     if package.get('production_method_policy'):

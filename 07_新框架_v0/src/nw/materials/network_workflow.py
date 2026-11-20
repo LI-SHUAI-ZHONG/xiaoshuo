@@ -1,5 +1,5 @@
 """Prepare actual static relationships before admitting derived dynamic methods."""
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 import unicodedata
 
@@ -7,8 +7,10 @@ from nw.materials.template_support import product
 
 
 POLICY = 'network-prerequisites-v1'
+EARLY_POLICY = 'network-early-prerequisites-v1'
 DYNAMIC_PROFILES = {'dynamic_relation', 'dynamic_binding'}
 STATIC_PROFILES = {'static_relation', 'static_binding'}
+EARLY_STAGES = ('type_adaptation', 'world_design', 'character_design', 'static_relations', 'plot_design')
 
 
 def _name(value: str) -> str:
@@ -75,6 +77,64 @@ def prepared_plot_source(source: dict, context: dict) -> bool:
             and ref['id'] in context.get('prepared_static_sources', []))
 
 
+def prepared_static_source(source: dict, stage: str, context: dict) -> bool:
+    if stage == 'plot_design':
+        return prepared_plot_source(source, context)
+    ref = source['source']
+    return (stage == 'static_relations' and context.get('early_network_policy') == EARLY_POLICY
+            and context.get('network_prerequisite_policy') == POLICY and ref['profile'] in STATIC_PROFILES
+            and ref['id'] in context.get('early_static_sources', []))
+
+
+def _adopted(rule: dict, bound: dict) -> bool:
+    return any(row['relation'] == rule['relation'] for row in bound.get(rule['static_id'], {}).values())
+
+
+def _prepare_for_plot(authored: dict, rules: dict, context: dict, rows: dict) -> dict[str, str]:
+    usages = {ident: text for pool in authored.values() for ident, text in pool.items()}
+    usages.update(authored.get('plot_design', {}))
+    usages.update(authored.get('static_relations', {}))
+    linked = defaultdict(list)
+    for ident in authored.get('plot_design', {}):
+        rule = rules.get(ident)
+        if not rule or not rule['derived'] or rows[ident]['state'] != 'design_ready':
+            continue
+        basis = rule['static_id']
+        if (basis in usages and rows[basis]['state'] == 'design_ready'
+                and rows[basis].get('profile') in STATIC_PROFILES
+                and type_matches(rule['valid_types'], context.get('network_type_scope', {}))):
+            linked[basis].append(rule['key'])
+    return {basis: ('为剧情规则' + '、'.join(sorted(keys)) + '核对关系是否能在本步先落实。'
+                    '仅在已有世界或人物卡确能分别支撑两个端点及成立条件时建立关系；'
+                    '需要剧情产物时留待补设计。原步用法：' + usages[basis]) for basis, keys in linked.items()}
+
+
+def early_waiting(stage: str, authored: dict, rules: dict, products: dict, context: dict, rows: dict) -> dict:
+    if context.get('early_network_policy') != EARLY_POLICY or stage not in EARLY_STAGES:
+        return {}
+    bound = bound_relations(products)
+    counts = Counter()
+    examples = []
+    for ident in authored.get(stage, {}):
+        rule = rules.get(ident)
+        if (not rule or not rule['derived'] or rows[ident]['state'] != 'design_ready'
+                or not type_matches(rule['valid_types'], context.get('network_type_scope', {})) or _adopted(rule, bound)):
+            continue
+        basis = rows.get(rule['static_id'])
+        if not basis or basis['state'] != 'design_ready':
+            reason = '缺少具有制作资格的唯一静网依据'
+        elif stage == 'static_relations':
+            reason = '等待独立保存的静网关系，本轮产物不能自证'
+        elif stage == 'plot_design':
+            reason = '上游未落实本项目的对应静网关系'
+        else:
+            reason = '本步早于静网关系阶段，等待可验证的实际前置'
+        counts[reason] += 1
+        if len(examples) < 6:
+            examples.append({'key': rule['key'], 'static_key': basis['key'] if basis else None, 'reason': reason})
+    return {'counts': dict(counts), 'examples': examples} if counts else {}
+
+
 def _static_inputs(rules: dict, authored: dict, scope: dict, bound: dict, rows: dict) -> dict[str, str]:
     uses = {ident: text for pool in authored.values() for ident, text in pool.items()}
     linked = defaultdict(list)
@@ -87,7 +147,7 @@ def _static_inputs(rules: dict, authored: dict, scope: dict, bound: dict, rows: 
                 ref = rule['static_id']
                 if (ref in uses and rows[ref]['state'] == 'design_ready' and rows[ident]['state'] == 'design_ready'
                         and type_matches(rule['valid_types'], scope)
-                        and not any(r['relation'] == rule['relation'] for r in bound.get(ref, {}).values())):
+                        and not _adopted(rule, bound)):
                     link = rule['key']
                     if link not in linked[ref]:
                         linked[ref].append(link)
@@ -107,8 +167,10 @@ def step_sources(stage: str, authored: dict, rules: dict, products: dict, contex
     for ident, use in authored[stage].items():
         rule = rules.get(ident)
         if rule is None or (type_matches(rule['valid_types'], scope) and
-                (not rule['derived'] or any(row['relation'] == rule['relation']
-                    for row in bound.get(rule['static_id'], {}).values()))):
+                (not rule['derived'] or _adopted(rule, bound))):
             pool[ident] = use
-    prepared = _static_inputs(rules, authored, scope, bound, rows) if stage == 'plot_design' else {}
+    if stage == 'static_relations' and context.get('early_network_policy') == EARLY_POLICY:
+        prepared = _prepare_for_plot(authored, rules, context, rows)
+    else:
+        prepared = _static_inputs(rules, authored, scope, bound, rows) if stage == 'plot_design' else {}
     return pool, prepared
