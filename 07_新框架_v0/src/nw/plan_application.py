@@ -100,6 +100,8 @@ def apply_plan(store: Store, proposal_id: str, decision_id: str, *,
     proposal = planning.show_plan(store, proposal_id)
     manifest, frozen = planning.plan_input(store, proposal_id)
     if frozen.get('material_work'):
+        from nw.production_methods.selection import verify_sources
+        verify_sources(store,frozen['material_work'])
         from nw.materials.work_catalog import SourceDesk
         SourceDesk(store.directory.parent).verify(frozen['material_work']['sources'])
         if frozen['material_work'].get('policy') in STAGED_POLICIES:

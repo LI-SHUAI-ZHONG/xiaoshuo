@@ -135,11 +135,16 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
                                        j.id, call_id(j.id, propose, 1), parent_id=parent, branch=j.head.branch_id,
                                        materials=j.request.get('materials', ()),
                                        material_deferrals=j.request.get('material_deferrals'),
-                                       governance_inputs=gov_for_scope)
+                                       governance_inputs=gov_for_scope,
+                                       production_method_policy=j.request.get('production_method_policy'))
         from nw.materials.work_session import drive_plan
         _,package=read_input_manifest(j.store,request.manifest_id)
+        def choose_method(stage: str,target: dict,validate_choice: Callable) -> dict:
+            key=f'plan:{scope}:methods:{stage}'
+            choice=j.gate(key,target,decide,{'approve':'novel_confirm','reject':'novel_reject'},validate_choice)
+            return {'choice':choice,'decision_id':f'{j.id}:{key}'}
         request,_=drive_plan(j.store,request,package,plan_calls.provider,plan_calls.config,retry_failed=calls.retry_failed,
-                            verify=lambda:j.check_active(propose))
+                            verify=lambda:j.check_active(propose),method_decision=choose_method)
         return request
 
     def validate(output: dict) -> None:
@@ -157,6 +162,8 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         if frozen.get('material_work'):
             from nw.materials.work_catalog import SourceDesk
             SourceDesk(j.store.directory.parent).verify(frozen['material_work']['sources'])
+            from nw.production_methods.selection import verify_sources
+            verify_sources(j.store,frozen['material_work'])
         if asdict(outline_ref(j.store)) != manifest['dependency_refs'][0]:
             raise JobPaused('STALE', propose, 'STALE_OUTLINE')
         selected = {CardRef(card['card_id'], card['version']) for card in frozen['method_cards']}

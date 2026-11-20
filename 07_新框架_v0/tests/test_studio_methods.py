@@ -66,7 +66,7 @@ def test_task_catalog_uses_real_stages_products_and_one_legacy_mapping(library):
     assert STAGES is catalog.SLOT_STAGES
     assert STAGES['structure'] == ['plot_design', 'scene_design']
     assert STAGES['hook'] == ['plot_design', 'event_design']
-    assert result['runtime_integration'] == 'not_connected'
+    assert result['runtime_integration'] == 'project_design_and_review'
 
 
 @pytest.mark.parametrize('section', SECTIONS)

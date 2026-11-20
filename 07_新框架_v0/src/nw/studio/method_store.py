@@ -55,7 +55,7 @@ class MethodMixin:
             'structure_origin': origin,
             'created_at': raw['created_at'], 'updated_at': head['updated_at'],
             'authority': 'reference_method', 'missing_input_policy': 'return_design',
-            'runtime_integration': 'not_connected'}
+            'runtime_integration': 'project_design_and_review' if origin else 'requires_approved_structure'}
 
     def get_method(self, ident: str, version: int | None = None) -> dict:
         with self.connect() as conn:

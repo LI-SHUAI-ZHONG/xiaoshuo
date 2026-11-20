@@ -219,7 +219,7 @@ def _start_task(store: Store, request: TaskRequest, request_json: str, root: str
             validation, reason = 'INVALID', 'INVALID_STRUCTURED_OUTPUT'
             if request.kind in ('plan','material_work') and str(exc).startswith(
                     ('MATERIAL_DESIGN:','MATERIAL_WORK:','MATERIAL_STAGE:','MATERIAL_WAITING_INPUTS:',
-                     'MATERIAL_GOVERNANCE:')):
+                     'MATERIAL_GOVERNANCE:','PROJECT_METHOD:','METHOD_DESIGN_REQUIRED:','STALE_PROJECT_METHOD:')):
                 reason = str(exc)
     elif status == 'UNKNOWN':
         reason = 'PROVIDER_OUTCOME_UNKNOWN'

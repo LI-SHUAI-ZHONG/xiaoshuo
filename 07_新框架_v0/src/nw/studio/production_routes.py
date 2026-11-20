@@ -35,7 +35,9 @@ class ProductionRoutes:
                 data = app.detail(ident)
             elif len(segs) == 3:
                 action = segs[2]
-                if action == 'progress':
+                if action == 'methods':
+                    data = app.method_usage(ident)
+                elif action == 'progress':
                     data = app.progress(ident)
                 elif action == 'branches':
                     data = app.branch_status(ident)
@@ -86,7 +88,9 @@ class ProductionRoutes:
         elif len(segs) >= 3 and segs[0] == 'novels':
             ident, action = segs[1:3]
             if len(segs) == 3:
-                if action == 'run':
+                if action == 'methods':
+                    data = app.configure_methods(ident,body)
+                elif action == 'run':
                     data = app.run(ident, body)
                 elif action == 'retry':
                     data = app.run(ident, body, retry=True)

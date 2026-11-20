@@ -16,9 +16,10 @@ from nw.studio.production_inputs import brief_text, freeze_wizard, governance
 from nw.studio.production_store import ProductionStore
 from nw.studio.production_views import ProductionViews
 from nw.studio.production_branches import BranchMixin
+from nw.studio.production_methods import ProductionMethodMixin
 
 
-class ProductionService(BranchMixin, ProductionViews):
+class ProductionService(ProductionMethodMixin, BranchMixin, ProductionViews):
     def __init__(self, studio: Any, library: Any, *, test_mode: bool = False,
                  runtime_factory: Callable | None = None) -> None:
         self.studio, self.library = studio, library
@@ -65,7 +66,8 @@ class ProductionService(BranchMixin, ProductionViews):
                 adopt_story(store, {'as_of_story_order': 0, 'disclosure_order': [0, 0, 0],
                     'coverage': {'entities': [], 'predicates': []}, 'facts': [], 'card_refs': []}, {})
                 job = start_job(store, JobRequest('design', design_scope='book', budget=budget,
-                                                 governance_inputs=governance(wizard)))
+                                                 governance_inputs=governance(wizard),
+                                                 production_method_policy=wizard.get('production_methods',{})))
         except Exception as exc:
             self.db.update(ident, status='paused', runtime_status='BLOCKED', reason=f'立项初始化未完成：{exc}')
             raise
@@ -130,7 +132,8 @@ class ProductionService(BranchMixin, ProductionViews):
                          design_scope=str(scope) if mode == 'design' else 'chapter',
                          parent_id=book['outputs'].get('proposal_id') if mode == 'design' and scope != 'book' and book else None,
                          scene_ids=selected, budget=self.budget(body.get('budget')),
-                         governance_inputs=governance(novel['wizard']) if mode == 'design' else {})
+                         governance_inputs=governance(novel['wizard']) if mode == 'design' else {},
+                         production_method_policy=novel['wizard'].get('production_methods',{}) if mode=='design' else {})
         job = start_job(store, req)
         self.db.update(novel['id'], job_id=job.id, status='designing' if mode == 'design' else 'writing')
         self.db.event(novel['id'], 'design' if mode == 'design' else 'write',
@@ -253,7 +256,9 @@ class ProductionService(BranchMixin, ProductionViews):
             action, reason = body.get('action'), str(body.get('reason', '')).strip()
             if action not in gate['actions'] or not reason:
                 raise ValueError('请选择当前节点允许的操作并填写确认理由')
-            if action == 'approve' and gate['target'].get('candidates'):
+            if gate['target'].get('kind')=='production_method_selection':
+                self.validate_method_choice(gate['target'],body)
+            elif action == 'approve' and gate['target'].get('candidates'):
                 roots = [row['root']['card_id'] for row in gate['target']['candidates']]
                 if body.get('root') not in roots:
                     raise ValueError('请选择当前方案中的一个候选方案')

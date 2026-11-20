@@ -13,7 +13,7 @@ export async function renderMethods(ctx){
   if(!ctx.alive())return;
   const flat=genres.genres.flatMap(g=>[g,...g.children]);
   const taskNames=Object.fromEntries(catalog.tasks.map(t=>[t.id,t.name]));
-  $('#kbContent').innerHTML=`<div class="notice">方法按生产任务和制作层级组织，类型用于筛选。参考作品可先建立多层结构，再从已批准结构提炼有来源的方法。方法独立审核；本项目设计卡生成与正文核验待后续步骤接通。</div>
+  $('#kbContent').innerHTML=`<div class="notice">方法按生产任务和制作层级组织，类型用于筛选。从已批准的多层结构提炼方法并独立审核；项目启用后按实际需求确认方法与前置，生成具体设计卡、交接下游并核对正文。方法批准不等于已经用于某本小说。</div>
     <form id="methodFilters" class="row wrap method-filters">
     ${field('生产任务',`<select name="task"><option value="">全部生产任务</option>${options(taskNames,ctx.params.get('task')||'')}</select>`)}
     ${field('层级',`<select name="scope"><option value="">全书 / 卷 / 章 / 场景</option>${options(catalog.scopes,ctx.params.get('scope')||'')}</select>`)}

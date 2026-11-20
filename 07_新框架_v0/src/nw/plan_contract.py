@@ -87,6 +87,7 @@ def _chapters(rows: object, scope: str, members: dict[str, dict]) -> None:
         raise ValueError('Invalid chapter materialization for scope')
     chapter_cards = {key for key, row in members.items() if row['kind'] == 'chapter'}
     scene_cards = {key for key, row in members.items() if row['kind'] == 'scene'}
+    if scope=='book' and not rows and not scene_cards:return  # outline cards are designs; no prose coordinates yet
     used_chapters = set()
     for chapter in rows:
         if (not isinstance(chapter, dict) or set(chapter) != {'index', 'card', 'scenes'} or

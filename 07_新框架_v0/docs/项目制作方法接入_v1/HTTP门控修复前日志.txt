@@ -1,0 +1,15 @@
+F.F.                                                                     [100%]
+================================== FAILURES ===================================
+___ test_http_selects_a_real_method_then_reports_actual_project_placements ____
+tests\test_studio_project_methods.py:60: in test_http_selects_a_real_method_then_reports_actual_project_placements
+    assert status==200,result
+E   AssertionError: {'error': "'root'"}
+E   assert 400 == 200
+_______ test_http_rejects_wrong_method_selection_and_untrusted_mutation _______
+tests\test_studio_project_methods.py:88: in test_http_rejects_wrong_method_selection_and_untrusted_mutation
+    assert request('POST',root+'/gates/'+gate['id'],{'token':gate['token'],'action':'approve','reason':'[FAKE] 不存在的方法','method_ids':['missing']})[0]==200
+E   assert 400 == 200
+=========================== short test summary info ===========================
+FAILED tests/test_studio_project_methods.py::test_http_selects_a_real_method_then_reports_actual_project_placements
+FAILED tests/test_studio_project_methods.py::test_http_rejects_wrong_method_selection_and_untrusted_mutation
+2 failed, 2 passed in 14.17s

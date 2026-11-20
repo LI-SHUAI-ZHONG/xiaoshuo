@@ -61,9 +61,13 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
                 prompt_suffix: str = '') -> tuple[dict,dict]:
     if provider.name=='ollama' and payload.get('stage'):
         from nw.materials.phase_schema import schema
-        config=replace(config,params={**config.params,'format':schema(payload['stage'],sources,
+        shape=schema(payload['stage'],sources,
             payload.get('readable_source_ids',[]),payload.get('inputs'),allow_requests=payload.get('mode')!='execute',
-            contracts=payload.get('source_contracts'))})
+            contracts=payload.get('source_contracts'))
+        if 'production_methods' in payload:
+            from nw.production_methods.runtime import extra_fields
+            shape=extra_fields(shape)
+        config=replace(config,params={**config.params,'format':shape})
     root=_ident(f'{version}:{request.id}:{index}')
     previous=store.connection.execute('SELECT id,attempt,status,validation,request_json FROM task_calls WHERE root_id=? ORDER BY attempt DESC LIMIT 1',(root,)).fetchone()
     saved=json.loads(previous['request_json']) if previous else None
@@ -176,8 +180,8 @@ def legacy_study_plan(store: Store,request: TaskRequest,package: dict,provider: 
 
 
 def drive_plan(store: Store,request: TaskRequest,package: dict,provider: LLMProvider,config: Config,*,
-               retry_failed: bool=False,verify=None,max_rounds: int=8) -> tuple[TaskRequest,dict]:
+               retry_failed: bool=False,verify=None,max_rounds: int=8,method_decision=None) -> tuple[TaskRequest,dict]:
     """Normal entry: create actual upstream products before calling each method."""
     from nw.materials.phase_flow import drive_phases
     return drive_phases(store,request,package,provider,config,retry_failed=retry_failed,
-                        verify=verify,max_rounds=max_rounds)
+                        verify=verify,max_rounds=max_rounds,method_decision=method_decision)

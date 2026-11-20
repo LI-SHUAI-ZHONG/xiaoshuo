@@ -102,6 +102,6 @@ def method_catalog() -> dict:
             'operations': '具体操作', 'outputs': '预期产物', 'downstream': '下游用途',
             'acceptance': '验收方法', 'evidence': '原作证据', 'non_applicability': '不适用情况'},
         'missing_input_policy': 'return_design',
-        'runtime_integration': 'not_connected',
+        'runtime_integration': 'project_design_and_review',
         'notes': ['目录是生产需求，不能当作原作拆解或类型写法的完整经验。',
-                  '本步只建立方法库；自动多层拆解及项目卡生成、执行回执在后续里程碑接通。']}
+                  '项目启用后按实际类型、任务、前置确认和具体产物执行；方法获批不代表已经用于任何小说。']}

@@ -96,7 +96,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                       config: Config, budget_id: str, ident: str, *, parent_id: str | None = None,
                       branch: str = 'main', materials: list[dict] = (),
                       material_deferrals: dict | None = None,
-                      governance_inputs: dict | None = None) -> tuple[TaskRequest, dict]:
+                      governance_inputs: dict | None = None,
+                      production_method_policy: dict | None = None) -> tuple[TaskRequest, dict]:
     from nw.call_budget import read_budget
 
     budget = read_budget(store, budget_id)
@@ -165,7 +166,15 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         if inherited.get('work_application'):
             session=inherited['work_session']
             package['parent_material_work']={'application':inherited['work_application'],
-                'stages':session.get('stages',[]),'work_plan':session.get('result',{}).get('work_plan',[])}
+                'stages':session.get('stages',[]),'work_plan':session.get('result',{}).get('work_plan',[]),
+                'selected_direction':{k:v for k,v in parent_card['body'].items() if k not in ('members','unknowns')}}
+        if production_method_policy:
+            from nw.production_methods.policy import normalize
+            package['production_method_policy']=normalize(production_method_policy)
+        elif inherited.get('work_session',{}).get('production_method_policy'):
+            # Turning off new selection cannot abandon an approved parent's design obligations.
+            previous_policy=inherited['work_session']['production_method_policy']
+            package['production_method_policy']={**previous_policy,'tasks':[]}
         if recall:
             package['material_recall'] = recall
         if governance_inputs is not None:

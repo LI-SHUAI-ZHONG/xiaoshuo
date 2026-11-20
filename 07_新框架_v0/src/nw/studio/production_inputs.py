@@ -79,6 +79,9 @@ def freeze_wizard(body: dict, library: Any) -> dict:
                                  for key in sorted(keys) if (slot, key) not in recorded)
     wizard['author_references'] = library.freeze_references(wizard['choices'], wizard['genre_ids'])
     wizard['upgrade_snapshot'] = library.approved_upgrades(wizard['genre_ids'])
+    if raw.get('production_methods') is not None:
+        from nw.production_methods.policy import normalize
+        wizard['production_methods']=normalize(raw['production_methods'],types=wizard['genre_ids'])
     for field in ('target_words', 'chapter_count', 'volume_count'):
         if raw.get(field) not in (None, ''):
             value = int(raw[field])
@@ -92,14 +95,14 @@ def governance(wizard: dict) -> dict:
     result = {stage: {'author_preferences': {}} for stage in ORDER}
     for slot, field in SLOTS.items():
         for stage in STAGES[slot]:
-            if wizard[field]:
+            if wizard.get(field):
                 result[stage]['author_preferences'][slot] = wizard[field]
-    config = {field: wizard[field] for field in (
+    config = {field: wizard.get(field,[]) for field in (
         'genre_ids', 'tone_ids', 'style_ids', 'structure_ids', 'mechanism_ids')}
     if any(config.values()):
         result['type_selection']['project_config'] = config
-    for name, rows in (('author_references', wizard['author_references']),
-                       ('upgrade_references', wizard['upgrade_snapshot'].get('items', []))):
+    for name, rows in (('author_references', wizard.get('author_references',[])),
+                       ('upgrade_references', wizard.get('upgrade_snapshot',{}).get('items', []))):
         for row in rows:
             for stage in row.get('stages', row.get('stage', [])):
                 if stage in result:

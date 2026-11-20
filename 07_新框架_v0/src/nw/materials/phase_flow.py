@@ -965,7 +965,7 @@ def _requests(value: dict,stage: str,readable: set[str] | None=None) -> None:
 def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLMProvider,config: Config,
                    desk: SourceDesk,stage: str,products: dict,context: dict,retry_failed: bool,
                    verify: Callable | None,max_rounds: int,index: int,*,studied_sources: list[dict] | None=None,
-                   governance: dict | None=None) -> tuple[dict,list[dict],list[dict]]:
+                   governance: dict | None=None,method_plan: dict | None=None) -> tuple[dict,list[dict],list[dict]]:
     from nw.materials.work_session import _study_call,model_source
     from nw.materials.step_guard import build_continuity_ledger, build_joint_material_plan
     stage_config, stage_provider = resolve_stage_runtime(config, provider, stage)
@@ -976,6 +976,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     screen_scene=bool(screening) and (stage=='scene_design' or 'scene_design' in products)
     deps=input_stages(stage,products,dynamic_screening=bool(screening))
     inputs={key:{'ref':product_ref(products[key]),'products':products[key]['products']} for key in deps}
+    from nw.production_methods import runtime as project_methods
+    from nw.production_methods.handoff import deliveries
+    method_handoffs=deliveries(stage,products,context.get('production_method_parents',[])) if method_plan is not None else []
     deferred=[]
     prompt = STEP_PROMPT + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
     material = package.get('stage_materials', {}).get(stage, '')
@@ -1029,6 +1032,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         from nw.materials.author_references import author_stage_input
         if author_input := author_stage_input(package, stage):
             payload['author_input'] = author_input
+        payload.update(project_methods.packet(method_plan,method_handoffs))
         if chapter_handoff is not None:
             payload['chapter_handoff'] = chapter_handoff
         if chapter_summary is not None:
@@ -1124,7 +1128,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 require(payload['mode']!='execute','requested method originals are delivered; actual step products are required')
                 _requests(value,stage,set(payload['readable_source_ids']))
             else:
-                validate_phase(value,stage,products,sources,stage_context)
+                clean,_=project_methods.split(value)
+                if method_plan is None and clean!=value:raise ValueError('PROJECT_METHOD: 未请求的方法执行记录')
+                validate_phase(clean,stage,products,sources,stage_context)
+                project_methods.validate_output(value,stage,products,method_plan,context.get('production_method_parents',[]))
                 if screen_scene:
                     from nw.materials.dynamic_screening import require_scene_limits,screening_report
 
@@ -1137,10 +1144,17 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 if report and report['status']=='failed':
                     bad=[r['rule_id'] for r in report['checks'] if r['status']=='failed']
                     raise ValueError('MATERIAL_GOVERNANCE: '+','.join(dict.fromkeys(bad)))
+        def verify_method_call() -> None:
+            if verify:verify()
+            if method_plan is not None:
+                from nw.production_methods.selection import verify_sources
+                verify_sources(store,{'stages':[*products.values(),{'production_methods':method_plan}],
+                    'production_method_parents':context.get('production_method_parents',[])})
         raw,receipt=_study_call(store,request,stage_config,stage_provider,index*max_rounds+turn,payload,sources,
-            desk,retry_failed,verify,prompt=prompt,validator=validate,
+            desk,retry_failed,verify_method_call,prompt=prompt,validator=validate,
             version='source-step-v4',read_only_sources=[source for source,_ in readings.values()],
-            step_material=material,prompt_suffix=suffix)
+            step_material=material,prompt_suffix=suffix+(project_methods.PROMPT if method_plan is not None else ''))
+        verify_method_call()
         calls.append(receipt)
         if 'products' in raw:
             from nw.materials.governance_runtime import check_stage_governance,freeze_report
@@ -1153,6 +1167,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     'binding_reviews':reviews,'deferred_sources':deferred,
                     'source_selection':selection,
                     'source_ids':[s['source']['id'] for s in sources]}
+            if method_plan is not None:record['production_methods']=method_plan
             if screening and stage=='bind_scope':
                 from nw.materials.dynamic_screening import screening_report
 
@@ -1196,13 +1211,15 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
 
 
 def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMProvider,config: Config,*,
-                 retry_failed: bool=False,verify: Callable | None=None,max_rounds: int=8) -> tuple[TaskRequest,dict]:
+                 retry_failed: bool=False,verify: Callable | None=None,max_rounds: int=8,method_decision=None) -> tuple[TaskRequest,dict]:
     workspace=store.directory.parent
     if not (workspace/'materials/catalog.db').is_file():
-        if config.source_driven or package.get('governance_inputs'):
+        if config.source_driven or package.get('governance_inputs') or package.get('production_method_policy'):
             raise ValueError('MATERIAL_WORK: MATERIAL_CATALOG_REQUIRED: index source materials before novel design')
         return request,package
     desk=SourceDesk(workspace,test_mode=store.test_mode)
+    from nw.production_methods.selection import preflight as method_preflight
+    method_preflight(store,package)
     from nw.materials.binding_reviews import POLICY as BINDING_POLICY,verify_session_bindings
     from nw.materials.governance_runtime import load_governance,verify_session_governance
     from nw.materials.source_set import selection_status
@@ -1215,7 +1232,10 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         require(session.get('policy')==POLICY,'legacy global study must be redesigned through actual creation steps')
         verify_chain(session);desk.verify(session['sources'])
         verify_session_bindings(session,workspace,test_mode=store.test_mode)
-        verify_session_governance(session,workspace);return request,package
+        verify_session_governance(session,workspace)
+        from nw.production_methods.selection import verify_sources
+        verify_sources(store,session)
+        return request,package
     products={};sources={};calls=[]
     context={'scope':package['scope'],'brief':package['brief'],'semantic_policy':SEMANTIC_POLICY,
              'binding_policy':BINDING_POLICY,'binding_test_mode':store.test_mode,'binding_reviews':{},
@@ -1226,6 +1246,9 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['current_source_set']=selected['sha256']
     if package.get('dynamic_reference_checks'):
         context['dynamic_reference_checks'] = True
+    from nw.production_methods.handoff import inherited
+    parents=inherited(package) if package.get('production_method_policy') else []
+    context['production_method_parents']=parents
     if package.get('dynamic_screening_enabled') and package['scope']!='book':
         from nw.materials.dynamic_screening import load_dynamic_screening
 
@@ -1248,12 +1271,17 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.binding_assembly import freeze_required_sources
     freeze_required_sources(desk,package.get('materials',[]),context)
     for index,stage in enumerate(phase_order(package['scope'])):
+        from nw.production_methods.selection import prepare as prepare_project_methods
+        method_plan=prepare_project_methods(store,request,package,stage,products,method_decision)
         record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,context,
-                                          retry_failed,verify,max_rounds,index,studied_sources=list(sources.values()),governance=governance)
+                                          retry_failed,verify,max_rounds,index,studied_sources=list(sources.values()),governance=governance,
+                                          method_plan=method_plan)
         products[stage]=record;sources.update({row['source']['id']:row for row in read});calls.extend(receipts)
         context['binding_reviews'].update(record['binding_reviews'])
     session={'policy':POLICY,'id':'stages:'+request.id,'scope':package['scope'],'context':context,
              'stages':list(products.values()),'sources':list(sources.values()),'calls':calls}
+    if package.get('production_method_policy'):
+        session.update(production_method_policy=package['production_method_policy'],production_method_parents=parents)
     if governance:session['governance']=governance
     session['semantic_contracts']=list({c['source_id']:c for row in products.values()
         for c in row['semantic_contracts']}.values())

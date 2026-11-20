@@ -30,6 +30,7 @@ class JobRequest:
     materials: list[dict] = field(default_factory=list)
     material_deferrals: dict[str, str] = field(default_factory=dict)
     governance_inputs: dict[str, dict] = field(default_factory=dict)
+    production_method_policy: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -103,6 +104,10 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
             request.governance_inputs and request.mode != 'design'):
         raise ValueError('MATERIAL_GOVERNANCE: design governance_inputs require stage or scope mappings')
     materials = resolve_materials(store.directory.parent, request.materials)
+    if request.production_method_policy:
+        from nw.production_methods.policy import normalize
+        normalize(request.production_method_policy)
+        if request.mode!='design':raise ValueError('制作方法只在设计任务配置；写作继承已批准设计')
     ident = uuid4().hex
     with store.connection:
         store.connection.execute('BEGIN IMMEDIATE')

@@ -78,6 +78,9 @@ def _verify_context(calls: JobCalls, key: str, scene: str, manifest: dict) -> No
     j = calls.journal
     j.check_active(key)
     design = scene_materials(j.store, scene)
+    if design.get('work_session'):
+        from nw.production_methods.selection import verify_sources
+        verify_sources(j.store,design['work_session'])
     if manifest.get('material_design_sha256') != (content_sha256(design) if design else None):
         raise ValueError('STALE_MATERIAL: approved scene design changed')
     verify_materials(j.store.directory.parent, design.get('materials', ()))

@@ -44,7 +44,14 @@ def verify_chain(session: dict) -> None:
                     if s['source']['id'] in {u['source_id'] for u in row['products']['_uses']}]) and
                 selection.get('control_review_sha256')==session['context'].get('retrieval_control',{}).get('review',{}).get('sha256'),
                 'pre-step source selection trace changed or was omitted')
-        validate_phase({'stage':row['stage'],'products':row['products']},row['stage'],products,selected,context)
+        from nw.production_methods import runtime as project_methods
+        raw={'stage':row['stage'],'products':row['products']};clean,_=project_methods.split(raw)
+        validate_phase(clean,row['stage'],products,selected,context)
+        plan=row.get('production_methods')
+        if session.get('production_method_policy'):
+            require(plan is not None,'project method selection and prerequisites were removed')
+        elif plan is not None:raise ValueError('PROJECT_METHOD: unrequested method execution')
+        project_methods.validate_output(raw,row['stage'],products,plan,session.get('production_method_parents',[]))
         if session.get('governance'):
             from nw.materials.governance_runtime import verify_stage_governance
             verify_stage_governance(session['governance'],row.get('governance'),row['stage'],
@@ -65,9 +72,10 @@ def compile_candidates(session: dict) -> list[dict]:
     directions=products['plot_design']['directions'];result=[]
     for body in directions:
         members=[];chapters=[]
-        if scope!='book':
-            for stage in ('world_design','character_design','plot_design','scene_design'):
+        if scope!='book' or session.get('production_method_policy'):
+            for stage in ('world_design','character_design','plot_design',*(['scene_design'] if scope!='book' else [])):
                 members.extend(deepcopy(products[stage]['members']))
+        if scope!='book':
             scenes={row['key']:row for row in members if row['kind']=='scene'}
             actions={row['id']:row for row in products['action_design']['candidates']}
             for selection in products['scene_design']['selected_actions']:
@@ -81,6 +89,8 @@ def compile_candidates(session: dict) -> list[dict]:
                    'open_world_rules':list(products['world_design']['unknowns']),'material_work':deepcopy(proof)}
         if binder['material_bindings']:candidate['material_bindings']=deepcopy(binder['material_bindings'])
         if binder['process_bindings']:candidate['process_bindings']=deepcopy(binder['process_bindings'])
+        from nw.production_methods.assembly import verify as verify_method_assembly
+        verify_method_assembly(candidate,session)
         result.append(candidate)
     return result
 
@@ -111,6 +121,9 @@ def validate_candidate(candidate: dict,session: dict) -> None:
 def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
     records={row['stage']:row for row in session['stages']};sources={row['source']['id']:row for row in session['sources']}
     result=selected_checks(records,scene,ids)
+    if session.get('production_method_policy'):
+        from nw.production_methods.handoff import scene_checks
+        result+=scene_checks(session,scene)
     if session.get('policy')==POLICY:
         from nw.materials.semantic_application import make_semantic_checks
         result+=make_semantic_checks(session,scene,ids)
