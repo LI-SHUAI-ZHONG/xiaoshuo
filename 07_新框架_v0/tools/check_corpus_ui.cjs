@@ -9,8 +9,16 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
   const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   try{
-    await page.goto(`${meta.base}/#/staging/${meta.book_id}`);
+    await page.goto(`${meta.base}/#/staging`);
+    await page.locator('#importBooks').click();
+    await page.locator('#stagingFiles').setInputFiles({name:'[FAKE] 世界拆解浏览器测试.md',mimeType:'text/markdown',
+      buffer:Buffer.from(meta.reference_text,'utf8')});
+    await page.locator('#confirmImport').click();
+    await page.getByRole('link',{name:/世界拆解浏览器测试/}).click();
+    await page.locator('#reviewTypes').selectOption('GENRE_XUANYI');
+    await page.locator('#reviewBookForm button[type=submit]').click();
     await expect(page.locator('#initializeCorpus')).toBeVisible();
+    const bookUrl=page.url();
     await page.locator('#initializeCorpus').click();
     await page.locator('#initializeCorpusForm [name=extent]').selectOption('complete');
     await page.locator('#initializeCorpusForm [name=note]').fill('[FAKE] 浏览器测试全文声明，不是实际完整作品。');
@@ -19,18 +27,23 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
     await expect(page.locator('#corpusVersion')).toHaveValue('1');
     await page.locator('#startCorpus').click();
     await page.locator('#corpusRunForm [name=note]').fill('[FAKE] 隔离自动拆解验收');
-    await page.locator('#estimateCorpus').click();await expect(page.locator('#corpusEstimate')).toContainText('最低 12 次调用');
+    await page.locator('#estimateCorpus').click();await expect(page.locator('#corpusEstimate')).toContainText('最低 13 次调用');
     await page.locator('#corpusRunForm button[type=submit]').click();
     await expect(page.locator('#corpusVersion')).toHaveValue('2',{timeout:20000});
     await expect(page.locator('#corpusJobPanel')).toContainText('已完成');
     await page.screenshot({path:path.join(out,'结构总览_桌面.png'),fullPage:true});
     await page.locator('[data-corpus-tab=threads]').click();
-    await expect(page.locator('#corpusSection .corpus-record')).toHaveCount(7);
+    await expect(page.locator('#corpusSection .corpus-record')).toHaveCount(8);
     await page.locator('#corpusDomainFilter').selectOption('hook');await page.locator('#applyCorpusFilter').click();
     await expect(page.locator('#corpusSection .corpus-record')).toHaveCount(1);
     await page.locator('[data-corpus-detail]').click();await expect(page.locator('#drawerBody')).toContainText('对应实际事件序列');
     await expect(page.locator('#drawerBody blockquote')).not.toHaveCount(0);
     await page.screenshot({path:path.join(out,'钩子与跨章证据.png')});
+    await page.locator('#drawer [data-close-drawer]').click();
+    await page.locator('#corpusDomainFilter').selectOption('world_rules');await page.locator('#applyCorpusFilter').click();
+    await page.locator('[data-corpus-detail]').click();
+    await expect(page.locator('#drawerBody')).toContainText('影碑破裂时也须扣签');
+    await expect(page.locator('#drawerBody blockquote').last()).toContainText('留下复验笔录');
     await page.locator('#drawer [data-close-drawer]').click();
     await page.locator('[data-corpus-tab=distribution]').click();
     await expect(page.locator('#corpusSection')).toContainText('不是类型配额');
@@ -46,7 +59,7 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
     await page.locator('#corpusReviewForm button[type=submit]').click();
     await expect(page.locator('#extractCorpusMethods')).toBeEnabled();
     await page.locator('#extractCorpusMethods').click();
-    await page.locator('#corpusRunForm [name=threads][value=T_hook]').check();
+    await page.locator('#corpusRunForm [name=threads][value=T_world_rules]').check();
     await page.locator('#corpusRunForm button[type=submit]').click();
     await expect(page.locator('#corpusJobPanel')).toContainText('已完成',{timeout:20000});
     await page.locator('[data-corpus-tab=overview]').click();
@@ -54,7 +67,38 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
     await page.getByText('方法版本 1 · 依据结构版本 3 →').click();
     await expect(page.locator('#drawerBody')).toContainText('依据已批准结构版本 3');
     await expect(page.locator('#drawerBody')).toContainText('具体操作');
+    await expect(page.locator('#drawerBody')).toContainText('世界卡');
+    await expect(page.locator('#drawerBody')).toContainText('场景设计');
+    await page.locator('#methodReview [name=note]').fill('[FAKE] 已核对规则、受影响事件及原文。');
+    await page.locator('#methodReview button[type=submit]').click();
+    await expect(page.locator('#drawerBody .tag').first()).toContainText('已批准');
     await page.locator('#drawer [data-close-drawer]').click();
+    await page.goto(`${meta.base}/#/home`);
+    await page.locator('[data-new-novel]:visible').first().click();
+    await page.locator('[data-main=GENRE_XUANYI]').click();
+    await expect(page.locator('#wizardNext')).toBeEnabled();
+    await page.locator('#wizardNext').click();
+    for(let step=1;step<=7;step++){
+      await expect(page.locator('#wizardNext')).toBeEnabled();
+      await page.locator('#wizardSkip').click();
+    }
+    await expect(page.locator('#modalBody')).toContainText('无需预写世界卡');
+    await expect(page.locator('#wizardUseMethods')).not.toBeChecked();
+    await page.locator('#wizardTitle').fill('[FAKE] 无作者世界设定的向导项目');
+    await page.locator('#wizardIdea').fill('[FAKE] 记录员在首班渡船离岸前追查失踪的放行簿。');
+    const created=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname==='/api/novels');
+    await page.locator('#wizardNext').click();
+    const response=await created;expect(response.ok()).toBe(true);
+    const novel=(await response.json()).novel;
+    await expect(page).toHaveURL(new RegExp('#/studio/'+novel.id+'$'));
+    const detail=await page.request.get(`${meta.base}/api/novels/${encodeURIComponent(novel.id)}`);
+    expect(detail.ok()).toBe(true);
+    const wizard=(await detail.json()).novel.wizard;
+    expect(wizard.genre_ids).toEqual(['GENRE_XUANYI']);
+    expect(wizard.world_ids).toEqual([]);
+    expect(wizard.method_references).toEqual([]);
+    expect(wizard.production_methods.world_selection).toBe('ai');
+    expect(wizard.production_methods.tasks).toEqual(['world_rules']);
     await page.goto(`${meta.base}/#/staging/${meta.retry_book_id}`);
     await expect(page.locator('#corpusJobPanel')).toContainText('已暂停');
     await page.locator('#resumeCorpusJob').click();
@@ -68,7 +112,7 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
     await expect(page.locator('#drawerBody')).toContainText('messages');
     await page.locator('#drawer [data-close-drawer]').click();
     await page.setViewportSize({width:390,height:844});
-    await page.goto(`${meta.base}/#/staging/${meta.book_id}`);
+    await page.goto(bookUrl);
     await page.locator('[data-corpus-tab=distribution]').click();
     const dimensions=await page.evaluate(()=>({viewport:innerWidth,body:document.body.scrollWidth}));
     expect(dimensions.body).toBeLessThanOrEqual(dimensions.viewport);
@@ -80,7 +124,8 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
     const form=await page.locator('#corpusRecordForm').evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth}));
     expect(form.scroll).toBeLessThanOrEqual(form.width);
     expect(errors).toEqual([]);
-    const result={passed:true,isolated:true,provider:meta.provider,desktop:{width:1440,height:1000},mobile:dimensions,form,errors};
+    const result={passed:true,isolated:true,provider:meta.provider,desktop:{width:1440,height:1000},mobile:dimensions,form,errors,
+      created_novel:{id:novel.id,world_ids:wizard.world_ids,production_methods:wizard.production_methods}};
     fs.writeFileSync(path.join(out,'浏览器核验.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result));
   }catch(error){await page.screenshot({path:path.join(out,'failure.png'),fullPage:true});throw error;}
   finally{await browser.close();}

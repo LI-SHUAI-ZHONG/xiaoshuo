@@ -35,7 +35,7 @@ def recommendations(reader: MethodReader, slot: str, types: list[str], selected:
     for row, match in matches:
         body = row['body']
         placements = uses(body, slot)
-        if not placements:
+        if not placements or (slot == 'world' and (match['level'] == 'cross_type' or reader.world_source(row, types) is None)):
             continue
         result.append({'id': row['id'], 'version': row['version'], 'title': body['title'], 'type_match': match,
                        'uses': placements, 'applicability': body['applicability'],
@@ -65,6 +65,8 @@ def freeze_preferences(reader: MethodReader, requested: object, types: list[str]
         if method is None or method[0]['version'] != version or not uses(method[0]['body'], slot):
             raise ValueError('所选方法的批准版本或适用类型已变化，请刷新方法推荐后重新选择')
         row, match = method
+        if slot == 'world' and (match['level'] == 'cross_type' or reader.world_source(row, types) is None):
+            raise ValueError('所选世界方法缺少对应类型参考小说中的世界规则和受影响事件，请刷新方法推荐')
         pin = reader.snapshot(row)
         reader.verify(pin)
         frozen.append({**item, 'title': row['body']['title'], 'type_match': match,

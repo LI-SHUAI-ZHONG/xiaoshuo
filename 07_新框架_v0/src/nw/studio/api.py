@@ -734,11 +734,30 @@ class StudioService:
                     }
                 }
 
+        world_supply = {}
+        if stage == 'world_design':
+            info = {'source': '已审核的参考小说世界规则拆解', 'status': 'waiting_for_upstream',
+                    'note': '实际制作依据本轮类型选择和适配需求。步骤内静网资料用于已有设定的辅助校对。'}
+            if simulate_prior_products:
+                from nw.production_methods.sources import MethodReader
+                from nw.production_methods.world_selection import build_world_target
+                adaptation = mock_products['type_adaptation']
+                adaptation['products']['adaptations'][0]['type_refs'] = ['GENRE_XUANYI']
+                adaptation.update(stage='type_adaptation', task_id='studio-rehearsal:type_adaptation',
+                                  sha256=content_sha256(adaptation['products']))
+                trial = {**package, 'brief': {**package['brief'], 'project_id': 'studio-rehearsal'},
+                         'production_method_policy': {'tasks': ['world_rules'], 'max_methods': 6}}
+                reader = MethodReader(self.workspace)
+                count = build_world_target(reader, trial, mock_products)['candidate_total'] if reader.db_path.exists() else 0
+                info.update(status='candidates_available' if count else 'needs_reference_method',
+                            sample_genre='悬疑', candidate_total=count)
+            world_supply['world_method_supply'] = info
         deps = list(REQUIRES[stage])
         continuity_ledger = build_continuity_ledger(stage, mock_products, deps, {'approved_cards': []})
         multi_char = build_multi_character_coordination(stage, mock_products, {'approved_cards': []})
         if desk is None:
             return {
+                **world_supply,
                 'catalog_available': False,
                 'stage': stage,
                 'scope': scope,
@@ -822,6 +841,7 @@ class StudioService:
                    else {'step_use': step_pool.get(meta['id'], '')}),
             })
         return {
+            **world_supply,
             'catalog_available': True,
             'stage': stage,
             'zh_title': STAGE_LABELS.get(stage, {}).get('zh', stage),

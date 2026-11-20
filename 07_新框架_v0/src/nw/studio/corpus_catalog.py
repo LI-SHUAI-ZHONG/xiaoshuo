@@ -1,8 +1,10 @@
 """Analytical fields describe observations and inferences, never universal quotas."""
 from copy import deepcopy
 
+SCHEMA_VERSION = 2
 DOMAINS = {'main_plot': '全书主线', 'subplot': '支线与交汇', 'character_arc': '人物弧光',
-           'hook': '钩子与回应', 'foreshadow': '伏笔与回收', 'information': '信息披露', 'pacing': '节奏与情绪'}
+           'hook': '钩子与回应', 'foreshadow': '伏笔与回收', 'information': '信息披露', 'pacing': '节奏与情绪',
+           'world_rules': '世界规则、制度与资源约束'}
 LEVELS = {'book': '全书', 'volume': '卷', 'chapter': '章', 'scene': '场景'}
 LINKS = {'causes': '导致', 'enables': '提供条件', 'opposes': '形成阻力', 'responds': '回应问题',
          'escalates': '升级问题', 'foreshadows': '埋设 / 暗示', 'hints': '再次提示',
@@ -21,6 +23,10 @@ DETAILS = {
                     'character_before': '人物原先所知', 'character_after': '人物后来所知', 'disclosure_order': '披露次序与效果'},
     'pacing': {'sequence': '事件节奏序列', 'tension_release': '紧张与释放', 'emotional_triggers': '情绪触发',
                'transitions': '章场转换', 'scope_basis': '统计 / 判断范围与限制'},
+    'world_rules': {'rule': '原文可核对的运行规律、制度或资源门槛',
+                    'scope': '约束谁、需要哪些条件、由谁或何物执行',
+                    'boundary': '适用边界、例外或原文尚未说明的部分',
+                    'decision_effect': '受约束的事件、选择及其实际后果'},
 }
 FIELDS = {
     'units': {'id': '标识', 'level': '层级', 'title': '标题', 'parent_id': '上级', 'start': '字符起点',
@@ -45,9 +51,16 @@ OVERVIEW = {'central_question': '全书总问题', 'mainline': '主线因果与�
             'information_payoffs': '信息与承诺兑现', 'structure': '卷章组织及转折', 'limitations': '未知与覆盖限制'}
 
 
-def corpus_catalog() -> dict:
-    return {'schema_version': 1, 'domains': DOMAINS, 'levels': LEVELS, 'link_kinds': LINKS,
-        'overview_fields': OVERVIEW, 'row_fields': deepcopy(FIELDS), 'domain_details': deepcopy(DETAILS),
+def domains_for(version: int) -> dict:
+    if type(version) is not int or version not in (1, SCHEMA_VERSION):
+        raise ValueError('不支持的拆解结构版本')
+    return {key: value for key, value in DOMAINS.items() if version >= 2 or key != 'world_rules'}
+
+
+def corpus_catalog(version: int = SCHEMA_VERSION) -> dict:
+    domains = domains_for(version)
+    return {'schema_version': version, 'domains': domains, 'levels': LEVELS, 'link_kinds': LINKS,
+        'overview_fields': OVERVIEW, 'row_fields': deepcopy(FIELDS), 'domain_details': {k: deepcopy(DETAILS[k]) for k in domains},
         'source_extents': {'complete': '作者确认完整作品', 'excerpt': '摘录 / 不完整文本', 'unknown': '完整性未确认'},
         'thread_statuses': {'open': '未决', 'resolved': '已兑现 / 已结束', 'uncertain': '存疑'},
         'domain_statuses': {'observed': '已观察', 'not_observed': '当前覆盖范围未见', 'uncertain': '存疑'},

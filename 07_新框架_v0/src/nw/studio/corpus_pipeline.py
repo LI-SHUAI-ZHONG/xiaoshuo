@@ -3,7 +3,7 @@ from copy import deepcopy
 import json
 
 from nw.studio.corpus_calls import PipelineStop, check_control, model_call
-from nw.studio.corpus_catalog import DOMAINS
+from nw.studio.corpus_catalog import domains_for
 from nw.studio.corpus_context import choose_window, relation_events, window_payload
 from nw.studio.corpus_contract import normalize_document
 from nw.studio.corpus_merge import merge_fragment, resolve_fragment
@@ -37,7 +37,7 @@ def do_read(service: object, job: dict, state: dict, config: object, provider: o
         def validator(raw: dict) -> dict:
             return resolve_fragment(raw,doc,content,span=span,prefix=prefix,phase=phase)
         patch,seq=model_call(service,job['id'],config,provider,key=f'{phase}:{index}',phase=phase,
-                             messages=messages(phase,payload),validator=validator)
+                             messages=messages(phase,payload,version=doc['schema_version']),validator=validator)
         state['document']=merge_fragment(doc,patch)
         state['coverage']['survey_ranges' if phase=='survey' else 'detail_ranges'].append({**span,'call_seq':seq})
         state[cursor_key]+=1;save_state(service,job['id'],state,phase)
@@ -76,7 +76,7 @@ def do_windows(service: object, job: dict, state: dict, config: object, provider
                     raise ValueError('必须先形成有来源节点的全局结构和覆盖限制，再进入章场细拆')
             return patch
         patch,_=model_call(service,job['id'],config,provider,key=key,phase=phase,
-                           messages=messages(phase,payload),validator=validator)
+                           messages=messages(phase,payload,version=doc['schema_version']),validator=validator)
         state['document']=merge_fragment(doc,patch);state[cursor_key]=next_cursor;state.pop('pending_window',None)
         save_state(service,job['id'],state,phase)
 
@@ -99,6 +99,8 @@ def derive_methods(service: object, job: dict, state: dict, config: object, prov
                 raise ValueError('每条线索每次只能返回0–3个有明确依据的方法')
             for candidate in raw['methods']:
                 if set(candidate.get('basis',{}).get('thread_ids',[]))!={thread['id']}:raise ValueError('方法须依据当前选定线索')
+                if thread['domain']=='world_rules' and 'world_rules' not in candidate.get('body',{}).get('tasks',[]):
+                    raise ValueError('世界规则线索只能提炼有世界设计用途的方法，缺乏依据可返回空列表')
                 prepare_method(service,structure,candidate)
             return raw['methods']
         candidates,_=model_call(service,job['id'],config,provider,key=f'methods:{index}',phase='methods',
@@ -139,8 +141,9 @@ def run_job(service: object, job_id: str, config: object, provider: object) -> N
                     'threads':deepcopy(state['document']['threads']),'sha256':body_hash(state['document'])}
                 save_state(service,job_id,state,'detail')
             do_read(service,job,state,config,provider,content,'detail')
-            while state['domain_index']<len(DOMAINS):
-                domain=list(DOMAINS)[state['domain_index']]
+            domains=list(domains_for(state['document']['schema_version']))
+            while state['domain_index']<len(domains):
+                domain=domains[state['domain_index']]
                 do_windows(service,job,state,config,provider,content,'relations',domain)
                 state['domain_index']+=1;state['relation_cursor']=0;save_state(service,job_id,state,'relations')
         publish(service,job,state,content)

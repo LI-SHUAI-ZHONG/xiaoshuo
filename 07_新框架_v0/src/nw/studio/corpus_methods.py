@@ -2,13 +2,56 @@
 import json
 from uuid import uuid4
 
+from nw.studio.catalog import canonical_types
 from nw.studio.library_util import encode, timestamp
 from nw.studio.method_contract import draft
 from nw.studio.method_evidence import resolve
 from nw.studio.method_store import digest
 
 TASK_FOR_DOMAIN={'main_plot':'main_plot','subplot':'subplot','character_arc':'character_arc',
-    'hook':'hook','foreshadow':'foreshadow','information':'information','pacing':'pacing'}
+    'hook':'hook','foreshadow':'foreshadow','information':'information','pacing':'pacing','world_rules':'world_rules'}
+
+
+def check_world_method(service: object, structure: dict, body: dict, basis: dict) -> None:
+    document=structure['body']
+    threads=[t for t in document['threads'] if t['id'] in basis['thread_ids'] and t['domain']=='world_rules']
+    if not threads:
+        raise ValueError('世界方法须来自已核实的世界规则线索，请先从原作拆解规则和受影响的事件')
+    confirmed=json.loads(service._staging_row(structure['book_id'])['confirmed_types_json'])
+    tags={tag for value in confirmed for tag in canonical_types([value])}
+    if not set(body['type_tags'])<=tags:
+        raise ValueError('世界方法的适用类型超出参考作品已确认类型')
+    quotes={(e['start'],e['end'],e['quote']) for e in body['evidence'] if e['book_id']==structure['book_id']}
+    cited={e['id'] for e in document['evidence'] if (e['start'],e['end'],e['quote']) in quotes}
+    events={e['id']:e for e in document['events'] if e['id'] in basis['event_ids']}
+    links=[link for link in document['links'] if link['id'] in basis['link_ids']]
+    basis_evidence={i for row in [*events.values(),*links,*[t for t in document['threads'] if t['id'] in basis['thread_ids']]]
+                    for i in row['evidence_ids']}
+    if not quotes<={(e['start'],e['end'],e['quote']) for e in document['evidence'] if e['id'] in basis_evidence}:
+        raise ValueError('世界方法引文须属于所选线索、事件或关系的证据')
+    causal_links=[link for link in links if link['kind'] in ('causes','enables','opposes')]
+    observed={row['domain'] for row in document['domains'] if row['status']=='observed'}
+    if 'world_rules' not in observed:
+        raise ValueError('原作的世界规则尚待核实，不能提炼为可采用的方法')
+    for thread in threads:
+        if thread['status']=='uncertain' or not all(thread['details'].values()) or not cited.intersection(thread['evidence_ids']):
+            raise ValueError('须提供原作规则、条件、局限与实际后果及可定位的规则证据')
+        nodes=set(thread['node_ids']) & events.keys()
+        consequences={i for i in nodes if events[i]['result'] and cited.intersection(events[i]['evidence_ids'])}
+        if len(nodes)==1 and any(cited.intersection(thread['evidence_ids'],events[i]['evidence_ids']) for i in consequences):
+            continue
+        if not any(link['thread_id']==thread['id'] and link['source'] in nodes and link['target'] in consequences
+                   and cited.intersection(events[link['source']]['evidence_ids']) for link in causal_links):
+            raise ValueError('世界方法须引用受规则影响的实际事件与结果，跨事件须有因果或约束关系及两端证据')
+    output_keys={out['key'] for out in body['outputs'] if (out['stage'],out['field'],out['artifact_kind'])
+                 ==('world_design','members','world')}
+    if not any(row['output_key'] in output_keys and row['consumer'] in
+               ('character_design','static_relations','plot_design','event_design','action_design','scene_design')
+               for row in body['downstream']):
+        raise ValueError('世界方法须生成本项目世界卡，并说明人物、关系、剧情、事件、行动或场景步骤如何使用')
+    if not any(row['input_kind'] in ('brief','type_selection','type_adaptation','parent_outline','accepted_state')
+               for row in body['prerequisites']):
+        raise ValueError('世界方法须明确所需的本项目立项、类型、上层设计或已接受状态前置')
 
 
 def origin_status(service: object, method_id: str, version: int, body: dict, conn: object) -> tuple[dict | None,list[dict]]:
@@ -24,6 +67,8 @@ def origin_status(service: object, method_id: str, version: int, body: dict, con
             raise ValueError('方法证据不在其冻结的结构版本内')
         if structure['body']['source_extent']['status']!='complete' and set(body['scopes'])&{'book','volume'}:
             raise ValueError('不完整或未确认完整性的文本，不能支撑全书/整卷方法结论')
+        if structure['body'].get('schema_version',1)>=2 and 'world_rules' in body['tasks']:
+            check_world_method(service,structure,body,origin['basis'])
         origin['source_extent']=structure['body']['source_extent']
     except (OSError,ValueError,KeyError) as exc:
         issues=[{'field':'origin','message':str(exc)}]
@@ -64,6 +109,8 @@ def prepare_method(service: object, structure: dict, candidate: dict, *, complet
         raise ValueError('方法必须引用当前已批准结构中的真实证据')
     if document['source_extent']['status']!='complete' and set(body['scopes'])&{'book','volume'}:
         raise ValueError('摘录或完整性未知时不能提炼全书/整卷方法')
+    if complete and 'world_rules' in body['tasks']:
+        check_world_method(service,structure,body,basis)
     if len(encode(body).encode('utf-8'))>96*1024:raise ValueError('提炼方法超过96KiB，请分用途提炼')
     pins,errors=resolve(service,body['evidence'])
     if errors:raise ValueError('；'.join(i['message'] for i in errors))

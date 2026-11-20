@@ -1,5 +1,5 @@
 """Explicit stage prompts for read-map, global integration, detail and derivation."""
-from nw.studio.corpus_catalog import corpus_catalog
+from nw.studio.corpus_catalog import SCHEMA_VERSION, corpus_catalog
 from nw.studio.library_util import encode
 from nw.studio.method_catalog import method_catalog
 
@@ -16,7 +16,7 @@ BASE=(
     '返回可包含characters/events/threads/links/evidence/units/domains/uncertainties/overview/character_updates，'
     '没有新增的列表省略或置空，禁止输出items或可复用方法。每个记录按目录row_fields完整列字段。'
     'threads.details按该domain对应domain_details列键；线程状态resolved必须有实际回应/回收关系。'
-    '输入目录：'+encode(corpus_catalog())
+    '输入目录：'
 )
 INSTRUCTIONS={
     'survey': '通读映射：只提取本片段有证据的人物和少量关键总览事件。events.granularity=overview，unit_id使用当前章节，parent_event_ids=[]。不输出方法，不提前声称已读全书。',
@@ -26,8 +26,21 @@ INSTRUCTIONS={
 }
 
 
-def messages(phase: str, payload: dict) -> list[dict]:
-    return [{'role':'system','content':BASE+'\n本步：'+INSTRUCTIONS[phase]},
+WORLD_READ = {
+    'survey': '同时保留决定事件能否发生的制度、资源或规律及受其影响的关键选择和结果。摘录能支持两者的原文。',
+    'overview': '全书主线因果须交代哪些原作规则允许或阻止了关键事件，条件或效果未知时记录未知。',
+    'detail': '用实际章场原文区分人物声称的规则和真正生效的规则。保留执行者、资源、例外及受限后的行动与结果。',
+    'relations': '本职责若为world_rules，把规则、适用主体与条件、边界或未知、受影响的选择和后果填入details。'
+                 '同一事件呈现规则和后果时保留其证据；两处才成立时以causes/enables/opposes连接并引用两端。'
+                 '没有依据应按覆盖范围记为未见或存疑，不能为填满目录推定制度、资源或例外。',
+}
+
+
+def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION) -> list[dict]:
+    instruction = BASE+encode(corpus_catalog(version))+'\n本步：'+INSTRUCTIONS[phase]
+    if version >= 2:
+        instruction += WORLD_READ[phase]
+    return [{'role':'system','content':instruction},
             {'role':'user','content':encode({'phase':phase,**payload})}]
 
 
@@ -44,4 +57,10 @@ def method_messages(payload: dict) -> list[dict]:
         'outputs[{key,stage,field,artifact_kind,description}], downstream[{output_key,consumer,usage}],'
         'acceptance[{output_key,check,evidence_required}], applicability/non_applicability均为字符串数组。'
         '方法目录：'+encode(method_catalog()))
+    if payload['thread']['domain']=='world_rules':
+        instruction += ('本次从world_rules原作观察提炼；证据须定位约束及其改变实际选择或后果的事件。'
+                        '单场足以证明时引用该事件，否则引用能解释前后因果的关系及两端原文。不能只转述通用世界观模板。'
+                        '依据本项目立项需求、已选类型或类型适配，将原作机制转成设计操作，原作设定仅作来源。'
+                        '输出含world_design.members的world世界卡，明确规则、条件及已知限制或未知，写明哪一步'
+                        '用它限制人物选择、剧情或场景，并给出核验依据。无法提炼时返回空列表。')
     return [{'role':'system','content':instruction},{'role':'user','content':encode({'phase':'methods',**payload})}]

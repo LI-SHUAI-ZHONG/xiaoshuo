@@ -6,8 +6,8 @@ import {recordsHtml,recordDrawer,sourceDrawer,sectionNames,stateNames} from './c
 
 export async function renderCorpus(ctx,book){
   const root=`/staging/${enc(book.id)}/corpus`;
-  const catalog=await api.get('/corpus/catalog',ctx.signal);if(!ctx.alive())return;
-  let record,tab='overview',page=0,search='',unitFilter='',domainFilter='',timer,stopped=false,shownJob='',jobDetail=null;
+  const latestCatalog=await api.get('/corpus/catalog',ctx.signal);if(!ctx.alive())return;
+  let record,catalog,tab='overview',page=0,search='',unitFilter='',domainFilter='',timer,stopped=false,shownJob='',jobDetail=null;
   ctx.onCleanup(()=>{stopped=true;clearTimeout(timer);});
   ctx.sidebar('参考作品结构',[['staging','返回预存库','inbox'],[`staging/${enc(book.id)}?view=legacy`,'旧局部拆解 / 分类','file'],['kb/items','类型资料库','layers']],
     '<strong>先看整本关系，再提炼方法</strong>原文观察、分析推断与方法分别审核。文本完整性由作者声明，不按篇幅猜测。');
@@ -17,6 +17,8 @@ export async function renderCorpus(ctx,book){
     if(stopped||!ctx.alive())return;clearTimeout(timer);
     record=await api.get(`${root}${ctx.params.get('version')?'?version='+enc(ctx.params.get('version')):''}`,ctx.signal);
     if(stopped||!ctx.alive())return;
+    catalog={...latestCatalog,domains:Object.fromEntries(Object.entries(latestCatalog.domains)
+      .filter(([id])=>Object.hasOwn(record.statistics.thread_counts,id)))};
     paint();await paintJobs();
     if(active())timer=setTimeout(poll,1500);
   }
@@ -38,7 +40,8 @@ export async function renderCorpus(ctx,book){
       <div class="row wrap corpus-toolbar"><span class="tag blue">${record.initialized?`${stateNames[record.status]||record.status} · 版本 ${record.version}`:'尚未建立结构'}</span><span class="tag">${esc(catalog.source_extents[record.body.source_extent.status])}</span>
       <span class="muted">${record.body.events.length} 个实际事件 · ${record.body.threads.length} 条线索/弧光 · ${record.body.links.length} 条关系</span>
       ${record.history.length?`<select id="corpusVersion" aria-label="拆解版本">${record.history.map(v=>`<option value="${v.version}" ${v.version===record.version?'selected':''}>版本 ${v.version} · ${v.decision==='approve'?'已批准':v.decision==='reject'?'已退回':'待审核'}</option>`).join('')}</select>`:''}</div>
-      <p class="notice">读过全部已导入字符，不等于原作完整或分析正确。原文证据按位置与版本核对；推断和边界仍需作者审读。生成的方法另行审核，尚未接本项目设计卡生成。</p>
+      <p class="notice">请按原文位置核对规则、事件因果和适用边界。方法单独审核后，项目可按前置需求和已选类型生成设计卡。</p>
+      ${record.body.schema_version<latestCatalog.schema_version?'<p class="notice">此版本按原有制作职责展示。重新运行多层自动拆解可从原文补查世界规则，结果保存为新版本。</p>':''}
       <div class="row wrap corpus-toolbar">${!record.initialized?'<button class="secondary" id="initializeCorpus">人工建立目录</button>':''}<button class="button" id="startCorpus" ${active()?'disabled':''}>多层自动拆解</button>
       ${canEdit?'<button class="secondary" id="editCorpusExtent">核对文本完整性</button>':''}
       ${canEdit&&!record.review?'<button class="secondary" id="reviewCorpus">审核当前结构</button>':''}

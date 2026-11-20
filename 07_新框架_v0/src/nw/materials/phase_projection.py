@@ -65,6 +65,11 @@ def verify_chain(session: dict) -> None:
         if session.get('production_method_policy'):
             require(plan is not None,'project method selection and prerequisites were removed')
         elif plan is not None:raise ValueError('PROJECT_METHOD: unrequested method execution')
+        if row['stage'] == 'world_design' and plan is not None:
+            from nw.production_methods.world_selection import finalize, verify_context
+            verify_context(plan, session, products)
+            require(canonical(finalize(plan, row['products'])) == canonical(plan),
+                    '世界设计实际采用的方法与保存的版本记录不一致')
         project_methods.validate_output(raw,row['stage'],products,plan,session.get('production_method_parents',[]))
         if session.get('governance'):
             from nw.materials.governance_runtime import verify_stage_governance

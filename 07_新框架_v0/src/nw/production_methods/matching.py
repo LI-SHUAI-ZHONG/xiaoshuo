@@ -7,7 +7,7 @@ TYPE_PRIORITY = {'subgenre': 0, 'main': 1, 'cross_type': 2}
 
 def type_match(selected: list[str], tagged: list[str]) -> dict | None:
     taxonomy = type_map()
-    chosen = set(canonical_types(selected))
+    chosen = {ident for tag in selected for ident in canonical_types([tag])}
     if not tagged:
         return {'level': 'cross_type', 'type_ids': [], 'type_names': []}
 

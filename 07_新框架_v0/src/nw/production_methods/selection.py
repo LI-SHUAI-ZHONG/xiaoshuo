@@ -2,9 +2,11 @@
 from dataclasses import replace
 import json
 
+from nw.production_methods.handoff import inherited
 from nw.production_methods.inputs import binding,registry
 from nw.production_methods.matching import TYPE_PRIORITY, type_match
 from nw.production_methods.policy import needed
+from nw.production_methods.world_selection import build_world_target, finalize, is_ai_world
 from nw.production_methods.sources import MethodReader,relevant,stage_tasks
 from nw.studio.method_catalog import TASKS
 from nw.task_models import InputManifest,canonical,content_sha256
@@ -28,15 +30,25 @@ def preflight(store: object,package: dict,request_id: str) -> None:
     reader=MethodReader(store.directory.parent)
     for stage in stages:
         required=needed(policy,stage,scope)
-        if not required:continue
+        if not required or is_ai_world(policy, stage):continue
         rows=relevant(reader,policy,stage,scope,policy['type_ids'])
         covered={t for row in rows for t in stage_tasks(row['body'], stage, scope)}
         if not set(required)<=covered:
             raise ValueError('METHOD_DESIGN_REQUIRED: '+stage+' 缺少对应类型、层级的已批准拆解方法：'+','.join(sorted(set(required)-covered))+'；尚未请求制作模型，请先补方法资料')
 
 
+def uses_world_selection(package: dict, stage: str) -> bool:
+    policy = package['production_method_policy']
+    if is_ai_world(policy, stage):
+        return True
+    return (stage == 'world_design' and policy.get('world_selection') == 'ai' and not policy['tasks']
+            and any(r.get('approved_parent') and r.get('world_design_basis') for r in inherited(package)))
+
+
 def build_target(reader: MethodReader, package: dict, stage: str, products: dict) -> dict:
     policy = package['production_method_policy']
+    if uses_world_selection(package, stage):
+        return build_world_target(reader, package, products)
     scope = package['scope']
     inputs = registry(package, products)
     required = needed(policy, stage, scope)
@@ -67,6 +79,9 @@ def gate_target(gate: dict) -> dict:
 
 
 def check_bindings(target: dict, inputs: dict) -> None:
+    for kind, ref in target.get('upstream_refs', {}).items():
+        if canonical(inputs.get(kind, {}).get('ref')) != canonical(ref):
+            raise ValueError('STALE_PROJECT_METHOD: 世界设计需求所依据的前置版本已改变')
     for candidate in target['candidates']:
         for actual in candidate['inputs'].values():
             current = inputs.get(actual['kind'])
@@ -98,6 +113,7 @@ def validate_choice(reader: MethodReader, target: dict, choice: dict) -> None:
 def prepare(store: object,request: object,package: dict,stage: str,products: dict,choose: object = None) -> dict | None:
     policy=package.get('production_method_policy')
     if not policy:return None
+    ai = uses_world_selection(package, stage)
     scope = package['scope']
     key = method_step(scope, stage)
     reader = MethodReader(store.directory.parent)
@@ -115,8 +131,14 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
         raise ValueError('STALE_PROJECT_METHOD: 本步最初的选材记录缺失')
     else:
         target = build_target(reader, package, stage, products)
+        if ai:
+            target['manifest_id'] = ident
         missing = target['missing_tasks']
         if missing:
+            if ai:
+                lack = '；须先补本步缺少的前置：' + '、'.join(target['unavailable_inputs']) if target['unavailable_inputs'] else ''
+                raise ValueError('METHOD_DESIGN_REQUIRED: 世界设计（'+ '、'.join(target['type_ids']) + '，' + scope + '）缺少与实际类型相符、有世界规则线索、原作事件与引文依据、'
+                                 '可交付世界设计卡的已批准拆解方法。请在类型资料库补对应类型参考作品的世界规则拆解和方法' + lack)
             names='、'.join(TASKS[t]['name'] for t in missing)
             unavailable=[p for c in target['candidates'] for p in c['missing']]
             raise ValueError('METHOD_DESIGN_REQUIRED: '+stage+' 缺少可执行的已批准方法或前置：'+names+
@@ -124,7 +146,11 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
         base,_=read_input_manifest(store,request.manifest_id)
         manifest=replace(InputManifest(**base),id=ident,purpose='material_work',context_sha256=content_sha256(target))
         freeze_manifest(store,manifest,target)
-    check_bindings(target, registry(package, products))
+    if ai != (target.get('selection_mode') in ('ai', 'inherit_world')) or ai and (target.get('manifest_id') != ident or saved_gate):
+        raise ValueError('STALE_PROJECT_METHOD: 本步冻结的选材方式与任务不一致')
+    check_bindings(target, registry(package, products, ai_world=ai))
+    if ai:
+        return {'target': target, 'selected': [], 'decision': None}
     ready={c['method']['id']:c for c in target['candidates'] if not c['missing']}
     if not ready and not target['required_tasks'] and not saved_gate:return {'target':target,'selected':[],'decision':None}
     if choose is None:raise ValueError('METHOD_AUTHOR_APPROVAL_REQUIRED: 请在制作台核对方法及其前置后确认')
@@ -140,6 +166,43 @@ def verify_sources(store: object,session: dict) -> None:
     for record in session.get('stages',[]):
         plan=record.get('production_methods')
         if not plan:continue
+        if plan['target'].get('selection_mode') in ('ai', 'inherit_world'):
+            target = plan['target']
+            _, frozen = read_input_manifest(store, target['manifest_id'])
+            if canonical(target) != canonical(frozen):
+                raise ValueError('STALE_PROJECT_METHOD: AI 世界方法候选与冻结输入不一致')
+            if record.get('products') is not None:
+                actual = finalize(plan, record['products'])
+                if target['selection_mode'] == 'ai' and record.get('task_id'):
+                    call = store.connection.execute('SELECT manifest_id,validation,result_json FROM task_calls WHERE id=?',
+                                                    (record['task_id'],)).fetchone()
+                    if not call or call['validation'] != 'VALID':
+                        raise ValueError('STALE_PROJECT_METHOD: AI 世界设计缺少有效生成记录')
+                    _, saved_call = read_input_manifest(store, call['manifest_id'])
+                    payload = saved_call['study_input']
+                    offered = {c['method']['id']: c for c in payload.get('production_methods', [])}
+                    original = json.loads(call['result_json']).get('products', {}).get('_method_applications')
+                    if (payload.get('stage') != target['stage'] or payload.get('scope') != target['scope']
+                            or payload.get('production_method_selection', {}).get('mode') != 'ai'
+                            or canonical(record['products']['_method_applications']) != canonical(original)
+                            or any(offered.get(c['method']['id']) != c for c in plan['selected'])):
+                        raise ValueError('STALE_PROJECT_METHOD: 实际世界设计的方法或执行记录不在本次调用送达的候选页内')
+                if canonical(actual) != canonical(plan):
+                    raise ValueError('STALE_PROJECT_METHOD: 已保存的 AI 世界方法与实际使用记录不符')
+            elif target['selection_mode'] == 'inherit_world':
+                if plan['selected'] or plan['decision'] is not None:
+                    raise ValueError('STALE_PROJECT_METHOD: 父纲承接步骤出现新的方法选择记录')
+            elif plan['selected'] or plan['decision'] is not None:
+                # Finalized plans can also be verified by the runtime prior to downstream calls.
+                ids = (plan.get('decision') or {}).get('method_ids', [])
+                actual = finalize(plan, {'_method_applications': [{'method_id': key} for key in ids]})
+                if canonical(actual) != canonical(plan):
+                    raise ValueError('STALE_PROJECT_METHOD: AI 世界方法选择记录已改变')
+            for item in (plan['selected'] or target['candidates']):
+                pin = item['method']
+                reader.verify(pin, require_current=False, world_types=target['type_ids'],
+                              source_type_match=item['source_type_match'])
+            continue
         for item in plan['selected']:reader.verify(item['method'], require_current=False)
         if plan['selected']:
             decision=plan['decision'];row=store.connection.execute('SELECT targets_json FROM story_decisions WHERE id=?',(decision['decision_id'],)).fetchone()

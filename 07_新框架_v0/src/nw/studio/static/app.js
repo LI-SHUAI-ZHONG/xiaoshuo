@@ -395,6 +395,11 @@
       });
       $("simStatsBadge").textContent = `召回 ${res.sources_count || 0} 份 · Prompt ${res.rendered_prompt_chars || 0} 字`;
 
+      const world = res.world_method_supply;
+      if (world) {
+        const sample = world.sample_genre ? `；${world.sample_genre}演练可用拆解方法 ${world.candidate_total} 项` : '；需先运行类型选择和适配';
+        $("simStatsBadge").textContent = `步骤辅助资料 ${res.sources_count || 0} 份${sample}`;
+      }
       const jp = res.joint_material_plan;
       $("simJointPlanBox").innerHTML = jp ? `
         <strong>多资料联合创作协同方案</strong>

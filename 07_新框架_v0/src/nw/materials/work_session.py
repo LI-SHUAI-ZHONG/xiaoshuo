@@ -79,7 +79,11 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
             products['required'] = list(FOLLOWUP_FIELDS)
         if 'production_methods' in payload:
             from nw.production_methods.runtime import extra_fields
-            shape=extra_fields(shape)
+            ai_world = payload.get('production_method_selection', {}).get('mode') == 'ai'
+            shape = extra_fields(shape, ai_world=ai_world)
+            if ai_world:
+                from nw.production_methods.world_gap import schema as gap_schema
+                shape = {'anyOf': [*shape.get('anyOf', [shape]), gap_schema({'candidates': payload['production_methods']})]}
         config=replace(config,params={**config.params,'format':shape})
     root=_ident(f'{version}:{request.id}:{index}')
     previous=store.connection.execute('SELECT id,attempt,status,validation,request_json FROM task_calls WHERE root_id=? ORDER BY attempt DESC LIMIT 1',(root,)).fetchone()

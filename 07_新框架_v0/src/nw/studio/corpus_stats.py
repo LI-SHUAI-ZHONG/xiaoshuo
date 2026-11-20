@@ -1,4 +1,5 @@
 """Counts refer to registered observations, never universal genre targets."""
+from nw.studio.corpus_catalog import domains_for
 from nw.studio.corpus_index import range_coverage
 
 
@@ -32,7 +33,7 @@ def corpus_statistics(document: dict,coverage: dict) -> dict:
             if key and target in rows and thread['id'] not in rows[target][key]:rows[target][key].append(thread['id'])
     length=max((u['end'] for u in units.values()),default=0)
     return {'chapter_ranges':list(rows.values()),'thread_counts':{domain:sum(t['domain']==domain for t in document['threads'])
-        for domain in ('main_plot','subplot','character_arc','hook','foreshadow','information','pacing')},
+        for domain in domains_for(document.get('schema_version',1))},
         'open_thread_ids':[t['id'] for t in document['threads'] if t['status']!='resolved'],
         'survey':range_coverage(coverage.get('survey_ranges',[]),length),
         'detail':range_coverage(coverage.get('detail_ranges',[]),length),

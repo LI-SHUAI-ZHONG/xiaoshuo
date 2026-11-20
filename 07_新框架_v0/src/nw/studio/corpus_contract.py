@@ -2,12 +2,12 @@
 from copy import deepcopy
 import re
 
-from nw.studio.corpus_catalog import DETAILS, DOMAINS, FIELDS, LEVELS, LINKS, OVERVIEW
+from nw.studio.corpus_catalog import DETAILS, DOMAINS, FIELDS, LEVELS, LINKS, OVERVIEW, domains_for
 from nw.studio.library_util import encode
 
 ID = re.compile(r'^[A-Za-z][A-Za-z0-9_]{0,95}$')
 REF_LISTS = {'evidence_ids','characters','parent_event_ids','node_ids'}
-LIMITS = {'units':10000,'characters':3000,'events':30000,'threads':15000,'links':60000,'evidence':60000,'domains':7}
+LIMITS = {'units':10000,'characters':3000,'events':30000,'threads':15000,'links':60000,'evidence':60000,'domains':len(DOMAINS)}
 
 
 def string(value: object, label: str, limit: int = 4000, *, strip: bool = True) -> str:
@@ -32,13 +32,14 @@ def references(value: object) -> list[str]:
 def normalize_document(raw: dict, content: str) -> dict:
     if not isinstance(raw,dict) or set(raw)-{'schema_version','source_extent','overview',*FIELDS,'uncertainties'}:
         raise ValueError('拆解结构含未知字段或不是对象')
-    if raw.get('schema_version',1)!=1: raise ValueError('不支持的拆解结构版本')
+    version=raw.get('schema_version',1)
+    domains=domains_for(version)
     extent=raw.get('source_extent',{'status':'unknown','note':''})
     if not isinstance(extent,dict) or set(extent)!={'status','note'} or extent['status'] not in ('complete','excerpt','unknown'):
         raise ValueError('请明确参考文本完整性及作者说明')
     overview=raw.get('overview',{})
     if not isinstance(overview,dict) or set(overview)-OVERVIEW.keys(): raise ValueError('全书总览字段无效')
-    result={'schema_version':1,'source_extent':{'status':extent['status'],'note':string(extent['note'],'完整性说明')},
+    result={'schema_version':version,'source_extent':{'status':extent['status'],'note':string(extent['note'],'完整性说明')},
             'overview':{k:string(overview.get(k,''),OVERVIEW[k],12000) for k in OVERVIEW}}
     for section,fields in FIELDS.items():
         rows=raw.get(section,[])
@@ -68,7 +69,7 @@ def normalize_document(raw: dict, content: str) -> dict:
                 if not 0<=clean['start']<clean['end']<=len(content): raise ValueError('卷章场范围越界')
             if section=='events' and clean['granularity'] not in ('overview','detail'): raise ValueError('事件粒度无效')
             if section in ('threads','domains'):
-                if clean['domain'] not in DOMAINS: raise ValueError('制作职责无效')
+                if clean['domain'] not in domains: raise ValueError('制作职责不属于本版拆解结构')
                 allowed=('open','resolved','uncertain') if section=='threads' else ('observed','not_observed','uncertain')
                 if clean['status'] not in allowed: raise ValueError('分析状态无效')
             if section=='links' and (clean['kind'] not in LINKS or clean['certainty'] not in ('observed','inferred')):

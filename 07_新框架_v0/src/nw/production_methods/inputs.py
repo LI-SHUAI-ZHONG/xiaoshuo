@@ -5,7 +5,7 @@ from nw.materials.phase_routes import product_ref
 from nw.task_models import content_sha256
 
 
-def registry(package: dict,products: dict) -> dict:
+def registry(package: dict,products: dict, *, ai_world: bool = False) -> dict:
     result={'brief':{'kind':'brief','status':'author_input','ref':{'id':package['brief']['project_id'],
         'version':package['brief']['version'],'sha256':content_sha256(package['brief'])},'value':package['brief']}}
     if package.get('branch_head') is not None:
@@ -17,8 +17,9 @@ def registry(package: dict,products: dict) -> dict:
         for row in (package.get('parent_material_work') or {}).get('stages',[]):
             result[row['stage']]={'kind':row['stage'],'status':'approved_parent','ref':{
                 **product_ref(row),'parent':result['parent_outline']['ref']},'value':row['products']}
+    status = 'frozen_upstream' if ai_world else 'proposed_requires_author'
     for stage,row in products.items():
-        result[stage]={'kind':stage,'status':'proposed_requires_author','ref':product_ref(row),'value':row['products']}
+        result[stage]={'kind':stage,'status':status,'ref':product_ref(row),'value':row['products']}
     return result
 
 

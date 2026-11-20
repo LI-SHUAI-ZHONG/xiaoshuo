@@ -1,5 +1,5 @@
 """Graph/coverage integrity checks; author review decides literary interpretations."""
-from nw.studio.corpus_catalog import DETAILS, DOMAINS, OVERVIEW
+from nw.studio.corpus_catalog import DETAILS, OVERVIEW, domains_for
 from nw.studio.corpus_index import range_coverage
 
 
@@ -104,7 +104,7 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
     check(processed==len(events),'links','因果图存在环；请核对实际因果或明确时间环等特殊结构依据','warning')
     dispositions={d['domain']:d for d in body['domains']}
     check(len(dispositions)==len(body['domains']),'domains','制作职责分析状态重复')
-    for domain,label in DOMAINS.items():
+    for domain,label in domains_for(body.get('schema_version',1)).items():
         row=dispositions.get(domain)
         check(bool(row),'domains','尚未检查：'+label)
         if row:
@@ -112,6 +112,10 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
             found=any(t['domain']==domain for t in threads.values())
             check(row['status']!='observed' or found,'domains','标为已观察但没有实际线索/事件链：'+label)
             check(row['status']!='not_observed' or not found,'domains','已有线索却标为未观察：'+label)
+            if domain=='world_rules' and row['status']=='observed':
+                grounded=any(t['domain']==domain and t['status']!='uncertain' and all(t['details'].values())
+                             and any(events.get(i,{}).get('result') for i in t['node_ids']) for t in threads.values())
+                check(grounded,'domains','标为已观察的世界规则须有适用条件、边界说明及受影响事件的实际后果')
     check(bool(events),'events','尚无有证据的事件节点')
     if coverage is not None:
         reviewed=set(coverage.get('reviewed_units',[]))

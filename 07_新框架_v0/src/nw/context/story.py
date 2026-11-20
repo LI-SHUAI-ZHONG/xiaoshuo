@@ -77,7 +77,9 @@ class StoryProvider:
             items.append(ContextItem('reader', canonical(project['reader']),
                                      '读者此前也已得知的本场可用信息'))
         for check in project.get('material_checks', ()):
-            items.append(ContextItem('material:' + check['id'], canonical(check), '作者采用的本场资料约束'))
+            purpose = ('本场已绑定的世界规则与写法约束' if check['id'] in project.get('ai_world_checks', ())
+                       else '作者采用的本场资料约束')
+            items.append(ContextItem('material:' + check['id'], canonical(check), purpose))
         for mapping in project.get('mappings', []):
             items.append(ContextItem('rule:' + mapping['ref']['card_id'], canonical(mapping), '场景问题与写法检验'))
         return package(items)
@@ -204,6 +206,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
             if native_preconditions:
                 from nw.materials.phase_projection import verify_current_state
                 verify_current_state(design['work_session'],design['material_key'],design.get('process_ids',{}),author.facts)
+        inputs['ai_world_checks'] = {c['id'] for c in checks if c.get('selection_origin') == 'ai_world'}
         inputs['material_checks'] = writer_checks(design)
         ids = {row['id'] for row in inputs['material_checks']}
         source_keys.update(check_source_keys(check for check in checks if check['id'] in ids))

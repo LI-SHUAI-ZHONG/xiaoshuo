@@ -1096,6 +1096,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     inputs={key:{'ref':product_ref(products[key]),'products':products[key]['products']} for key in deps}
     from nw.production_methods import runtime as project_methods
     from nw.production_methods.handoff import deliveries
+    from nw.production_methods.selection import finalize
+    ai_world = (stage == 'world_design' and method_plan is not None
+                and method_plan['target'].get('selection_mode') in ('ai', 'inherit_world'))
     method_handoffs=deliveries(stage,products,context.get('production_method_parents',[])) if method_plan is not None else []
     deferred=[]
     material = package.get('stage_materials', {}).get(stage, '')
@@ -1128,7 +1131,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     edge = context['world_network_bases'][ident]['edge']
                     world_matches.setdefault(group, []).append({'key': key, 'source_id': ident,
                                                                 'relation': edge['source'] + ' → ' + edge['target']})
-        network_waiting = early_waiting(stage, authored, rules, products, context, desk.by_id)
+        if not ai_world:
+            network_waiting = early_waiting(stage, authored, rules, products, context, desk.by_id)
     else:
         step_pool = _step_source_pool(desk, stage, package)
     prompt = (STEP_PROMPT if step_pool is None else STEP_SOURCE_PROMPT) + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
@@ -1171,7 +1175,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     if step_pool is not None:
         dependencies = [ident for ident in dependencies if ident in search_pool]
     responses=[];offered=set();calls=[];read_full=set();readings={}
-    for turn in range(max_rounds):
+    world_candidates = method_plan['target']['candidates'] if ai_world else []
+    page_size = method_plan['target'].get('page_size', 1) if ai_world else 1
+    page_count = max(1, (len(world_candidates) + page_size - 1) // page_size)
+    page = 0
+    for turn in range(max_rounds + page_count - 1):
         contracts=[desk.semantic_contract(source) for source in sources]
         reviews={s['source']['id']:review for s in sources
                  if (review:=desk.binding_review(s,stage,package['scope'])) is not None}
@@ -1213,6 +1221,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if author_input := author_stage_input(package, stage):
             payload['author_input'] = author_input
         payload.update(project_methods.packet(method_plan,method_handoffs))
+        if world_candidates:
+            payload['production_methods'] = world_candidates[page * page_size : (page + 1) * page_size]
+            payload['production_method_selection'].update(page=page + 1, pages=page_count)
         if chapter_handoff is not None:
             payload['chapter_handoff'] = chapter_handoff
         if chapter_summary is not None:
@@ -1220,6 +1231,23 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        if world_candidates:
+            suffix += ('\n若本页全部方法的适用条件与本书需求不符，可只返回 {stage:"world_design",world_method_gap:'
+                       '{design_basis:[{kind,path}],exclusions:[{method_id,reason}],missing:"需要哪种方法以及原因"}}。'
+                       '逐项说明排除本页每个候选的具体原因。系统会继续检查下一页，资料不足时返回补拆解。')
+        if any(entry.get('world_design_basis') for entry in method_handoffs):
+            suffix += ('\n对已生成的本书世界规则逐条回执。剧情步骤让每个可选方向在冲突、选择、代价或后果上体现该规则。'
+                       '场景步骤将规则落到具体场景的目标、冲突、抉择或结果，并仅向同一批场景交付写审指导。')
+        if ai_world:
+            payload['output_schema'] = SCHEMAS[stage].replace('待作者确认事项', '尚无依据且本步无需决定的事项')
+            suffix += '\n细化已批准的父规则时沿用原世界卡 key，以便剧情和写审辨别当前版本。新增独立规则使用新 key。'
+        if stage in ('type_selection', 'type_adaptation') and package.get('production_method_policy', {}).get('world_selection') == 'ai':
+            from nw.studio.catalog import type_map
+            taxonomy = type_map()
+            genre_ids = package['production_method_policy']['type_ids'] or [k for k,v in taxonomy.items() if not v.get('parent_id')]
+            payload['project_genres'] = [{'id': k, 'name': taxonomy[k]['name']} for k in genre_ids]
+            suffix += ('\n为后续世界设计保留实际类型编号。selection.id 使用与本书相符的 project_genres 目录编号，'
+                       'basis 说明选型依据；adaptations.type_refs 引用本轮 selection.id，parameters 或 limits 写具体的本书制作需求。')
         if type_network_enabled and stage == 'type_selection':
             payload['type_network_policy'] = TYPE_NETWORK_POLICY
             payload['adaptation_input_fields'] = FIELD_LABELS
@@ -1437,6 +1465,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '对应的项目依据。核对同一产物中的纪年、时期、地理与制度条件。')
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
+            if method_plan is not None and package.get('production_method_policy', {}).get('world_selection') == 'ai':
+                payload['output_contract']['products'].update(_method_applications=[], _method_receipts=[])
             if type_network_enabled and stage == 'type_selection':
                 payload['output_contract']['products']['adaptation_inputs'] = {}
             if network_context is not None and stage == 'plot_design':
@@ -1471,14 +1501,25 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            'scene_independent_sources可按实际写作用途落场。'
                            '本步才采用的资料也要让_uses、适用条款与method_guidance指向实际应用场景。')
         def validate(value: dict) -> None:
-            if 'requests' in value:
+            if 'world_method_gap' in value:
+                from nw.production_methods.world_gap import validate_gap
+                require(bool(world_candidates), '当前步骤没有待判定的世界方法候选')
+                validate_gap(value, {**method_plan['target'], 'candidates': payload['production_methods']})
+            elif 'requests' in value:
+                if world_candidates:
+                    require(turn - page < max_rounds - 1, '本步补查次数已达上限，请提交设计或具体资料缺项')
                 require(payload['mode']!='execute','requested method originals are delivered; actual step products are required')
                 _requests(value,stage,set(payload['readable_source_ids']))
             else:
                 clean,_=project_methods.split(value)
                 if method_plan is None and clean!=value:raise ValueError('PROJECT_METHOD: 未请求的方法执行记录')
                 validate_phase(clean,stage,products,sources,stage_context)
-                project_methods.validate_output(value,stage,products,method_plan,context.get('production_method_parents',[]))
+                applied_plan = finalize(method_plan, value['products']) if ai_world else method_plan
+                if world_candidates:
+                    visible = {m['method']['id'] for m in payload['production_methods']}
+                    if not set(applied_plan['decision']['method_ids']) <= visible:
+                        raise ValueError('PROJECT_METHOD: 世界设计只可采用本页实际送达的候选')
+                project_methods.validate_output(value,stage,products,applied_plan,context.get('production_method_parents',[]))
                 if screen_scene:
                     from nw.materials.dynamic_screening import require_scene_limits,screening_report
 
@@ -1497,12 +1538,21 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 from nw.production_methods.selection import verify_sources
                 verify_sources(store,{'stages':[*products.values(),{'production_methods':method_plan}],
                     'production_method_parents':context.get('production_method_parents',[])})
-        raw,receipt=_study_call(store,request,stage_config,stage_provider,index*max_rounds+turn,payload,sources,
+        call_index = turn if world_candidates else index*max_rounds+turn
+        call_version = 'world-method-pages-v1' if world_candidates else 'source-step-v4'
+        raw,receipt=_study_call(store,request,stage_config,stage_provider,call_index,payload,sources,
             desk,retry_failed,verify_method_call,prompt=prompt,validator=validate,
-            version='source-step-v4',read_only_sources=[source for source,_ in readings.values()],
-            step_material=material,prompt_suffix=suffix+(project_methods.PROMPT if method_plan is not None else ''))
+            version=call_version,read_only_sources=[source for source,_ in readings.values()],
+            step_material=material,prompt_suffix=suffix+(project_methods.prompt(method_plan) if method_plan is not None else ''))
         verify_method_call()
         calls.append(receipt)
+        if 'world_method_gap' in raw:
+            from nw.production_methods.world_gap import validate_gap
+            reason = validate_gap(raw, {**method_plan['target'], 'candidates': payload['production_methods']})
+            if page + 1 == page_count:
+                raise ValueError(f'{reason}（已核对 {len(world_candidates)} 个候选，可补资料后新建设计任务）')
+            page += 1
+            continue
         if 'products' in raw:
             from nw.materials.governance_runtime import check_stage_governance,freeze_report
             selection['offered']=[s['source'] for s in sources]
@@ -1518,7 +1568,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 record['prepared_static_sources'] = stage_context['prepared_static_sources']
             if network_context is not None and early_static:
                 record['prepared_static_sources'] = stage_context['early_static_sources']
-            if method_plan is not None:record['production_methods']=method_plan
+            if method_plan is not None:
+                record['production_methods'] = finalize(method_plan, raw['products']) if ai_world else method_plan
             if screening and stage=='bind_scope':
                 from nw.materials.dynamic_screening import screening_report
 

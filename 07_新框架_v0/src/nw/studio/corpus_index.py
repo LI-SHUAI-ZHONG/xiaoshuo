@@ -1,7 +1,7 @@
 """Literal source boundaries and explicit coverage, independent of model opinions."""
 import re
 
-from nw.studio.corpus_catalog import OVERVIEW
+from nw.studio.corpus_catalog import OVERVIEW, SCHEMA_VERSION
 
 
 def source_units(content: str) -> list[dict]:
@@ -38,7 +38,7 @@ def source_units(content: str) -> list[dict]:
 
 
 def empty_document(content: str, extent: str = 'unknown', note: str = '') -> dict:
-    return {'schema_version':1, 'source_extent':{'status':extent,'note':note},
+    return {'schema_version':SCHEMA_VERSION, 'source_extent':{'status':extent,'note':note},
         'overview':{key:'' for key in OVERVIEW}, 'units':source_units(content),
         'characters':[],'events':[],'threads':[],'links':[],'evidence':[],'domains':[],'uncertainties':[]}
 

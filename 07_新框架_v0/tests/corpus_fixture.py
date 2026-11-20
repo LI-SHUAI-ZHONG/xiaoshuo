@@ -82,7 +82,7 @@ class CorpusModel:
             person=events[0]['characters'][0]
             row=thread(domain,events,person,refs,'resolved' if payload['last_window'] else 'open')
             kind={'main_plot':'causes','subplot':'crosses','character_arc':'changes_character','hook':'responds',
-                'foreshadow':'pays_off','information':'reveals','pacing':'emotional_shift'}[domain]
+                'foreshadow':'pays_off','information':'reveals','pacing':'emotional_shift','world_rules':'enables'}[domain]
             available={e['id']:e for e in [*payload['frontier_events'],*events]}
             first=events[0];last=events[-1];links=[]
             prior=next((t for t in payload['open_threads'] if t['domain']==domain),None)

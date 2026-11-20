@@ -45,7 +45,7 @@ def choose_window(document: dict, events: list[dict], cursor: int, *, phase: str
     for event in events[cursor:]:
         proposed=[*selected,event]
         payload=window_payload(document,proposed,domain=domain,prefix=prefix,last=cursor+len(proposed)==len(events),global_basis=global_basis)
-        size=sum(len(m['content']) for m in messages(phase,payload))
+        size=sum(len(m['content']) for m in messages(phase,payload,version=document['schema_version']))
         if size>maximum and selected:break
         selected=proposed;next_cursor+=1
         if size>maximum:break  # model_call records and rejects; never truncate the mandatory context.

@@ -33,10 +33,11 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
             books = {}
             return [self._method_row(dict(row),row['approved_version'],conn,books) for row in heads]
 
-    def snapshot(self,row: dict) -> dict:
+    def snapshot(self,row: dict, *, structure: dict | None = None) -> dict:
         origin=row['structure_origin']
         if not origin:raise ValueError('METHOD_DESIGN_REQUIRED: 方法尚无已批准的多层拆解依据')
-        with self.connect() as conn:structure=self._corpus_row(origin['book_id'],origin['structure_version'],conn)
+        if structure is None:
+            with self.connect() as conn:structure=self._corpus_row(origin['book_id'],origin['structure_version'],conn)
         body=structure['body'];basis=origin['basis']
         instance={'book_id':origin['book_id'],'version':structure['version'],'body_sha256':structure['body_sha256'],
             'source_sha256':structure['source_sha256'],'source_extent':body['source_extent'],'overview':body['overview'],
@@ -46,7 +47,24 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
         result['instance']=instance;result['snapshot_sha256']=content_sha256(result)
         return result
 
-    def verify(self,pin: dict, *, require_current: bool = True) -> None:
+    def world_source(self, row: dict, types: list[str]) -> tuple[dict, dict] | None:
+        """Only a corresponding novel and an evidenced rule affecting a real event qualify."""
+        origin = row['structure_origin']
+        book = self._staging_row(origin['book_id'])
+        tags = json.loads(book['confirmed_types_json'])
+        source_match = type_match(types, tags)
+        if not source_match or source_match['level'] == 'cross_type':
+            return None
+        with self.connect() as conn:
+            structure = self._corpus_row(origin['book_id'], origin['structure_version'], conn)
+        # v2 availability includes the library's rule-to-event citation and output checks.
+        # Historical v1 methods remain readable, but their tags alone cannot supply new rules.
+        if not row['available'] or structure['body'].get('schema_version', 1) < 2:
+            return None
+        return self.snapshot(row, structure=structure), {**source_match, 'source_type_ids': tags}
+
+    def verify(self,pin: dict, *, require_current: bool = True, world_types: list[str] | None = None,
+               source_type_match: dict | None = None) -> None:
         saved={k:v for k,v in pin.items() if k!='snapshot_sha256'}
         if content_sha256(saved)!=pin.get('snapshot_sha256'):raise ValueError('STALE_PROJECT_METHOD: 方法快照已被改写')
         try:
@@ -57,7 +75,14 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
             raise ValueError('STALE_PROJECT_METHOD: 方法已有不同的批准版本，请刷新候选后重新确认')
         if not row['available'] or row['body_sha256']!=pin['body_sha256']:
             raise ValueError('STALE_PROJECT_METHOD: 已选方法或原作证据失效，请核对资料后重新确认')
-        if canonical(self.snapshot(row))!=canonical(pin):raise ValueError('STALE_PROJECT_METHOD: 冻结的拆解实例或原文证据已改变')
+        if world_types is None:
+            actual = self.snapshot(row)
+        else:
+            source = self.world_source(row, world_types)
+            if source is None or source[1] != source_type_match:
+                raise ValueError('STALE_PROJECT_METHOD: 原作类型、世界规则结构或原文证据已改变')
+            actual = source[0]
+        if canonical(actual)!=canonical(pin):raise ValueError('STALE_PROJECT_METHOD: 冻结的拆解实例或原文证据已改变')
 
 
 def matching_methods(reader: MethodReader, types: list[str]) -> list[tuple[dict, dict]]:
@@ -81,6 +106,9 @@ def stage_tasks(body: dict, stage: str, scope: str) -> set[str]:
 
 def relevant(reader: MethodReader, policy: dict, stage: str, scope: str, types: list[str]) -> list[dict]:
     tasks = set(policy['tasks'])
+    production_scope = 'chapter' if scope == 'replan' else scope
+    if not policy.get('preferred_methods') and not any(stage in TASKS[task]['stages'] and production_scope in TASKS[task]['scopes'] for task in tasks):
+        return []
     if not tasks:
         return []
     preferred = policy.get('preferred_methods', {})

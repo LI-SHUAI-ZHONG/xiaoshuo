@@ -39,9 +39,22 @@ class ProductionMethodMixin:
             for row in rows:
                 payload=json.loads(row['package_json'])['study_input'];value=json.loads(row['result_json']) or {}
                 selected=payload['production_methods'];products=value.get('products',{})
+                selection = payload.get('production_method_selection', {})
+                ai_selected = selection.get('mode') == 'ai'
+                if ai_selected and row['validation'] != 'VALID':
+                    continue
                 for item in selected:
                     method=item['method'];app=next((a for a in products.get('_method_applications',[]) if a['method_id']==method['id']),None)
+                    evidence = {}
+                    if ai_selected:
+                        if app is None:
+                            continue
+                        from nw.production_methods.contracts import at
+                        evidence = {'selection_origin': 'ai', 'design_needs': [
+                            {**b, 'value': at(selection['demand'][b['kind']], b['path']), 'ref': selection['upstream_refs'][b['kind']]}
+                            for b in app['design_basis']]}
                     uses.append({'task_id':row['id'],'stage':payload['stage'],'scope':payload['scope'],
+                        **evidence,
                         'method_id':method['id'],'method_version':method['version'],'title':method['body']['title'],
                         'structure_origin':method['structure_origin'],'validation':row['validation'],
                         'application':app,'inputs':{k:{'kind':v['kind'],'ref':v['ref']} for k,v in item['inputs'].items()}})

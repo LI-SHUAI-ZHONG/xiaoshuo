@@ -16,7 +16,7 @@ export async function openWizard(prefill) {
   const chosen = {};
   let step = prefill ? 1 : 0, revision = 0, selectedMain = '', selectedSub = '';
   let secondary = [], genres = [], combinations = [], rec = [], options = [], methods = [], currentVersions = {};
-  let title = '', idea = '', constraints = '', targetWords = '', chapterCount = '', volumeCount = '', useMethods = true;
+  let title = '', idea = '', constraints = '', targetWords = '', chapterCount = '', volumeCount = '', useMethods = false;
 
   const alive = () => token === session && dialog.open;
   const types = () => [selectedMain, selectedSub, ...secondary].filter(Boolean);
@@ -117,7 +117,6 @@ export async function openWizard(prefill) {
         if (!prior && selectedMethods.size >= 24) { toast('最多保存 24 条方法偏好', true); return; }
         selectedMethods.set(method.id, {id:method.id, version:method.version, slot:STEPS[step].slot, title:method.title});
         currentVersions[method.id] = method.version;
-        useMethods = true;
       }
       render();
     });
@@ -281,7 +280,7 @@ export async function openWizard(prefill) {
     if (!idea) { $('#wizardIdea').focus(); toast('请先填写一句话故事构想', true); return; }
     const payload = {
       title:title || '未命名小说', idea, constraints, genre_ids:types(),
-      production_methods:useMethods ? {} : undefined,
+      production_methods:useMethods ? {world_selection:'ai'} : {world_selection:'ai', tasks:['world_rules']},
       method_preferences:[...selectedMethods.values()].map(({id, version, slot}) => ({id, version, slot})),
       choices:types().map(id => ({slot:'genre', option_key:'genre.' + id, ...recMeta.get('genre.' + id)})),
       target_words:targetWords ? Number(targetWords) : undefined,

@@ -7,6 +7,7 @@ from uuid import uuid4
 from nw.call_control import execution_lock
 from nw.config import ConfigRequired, load_config, make_provider, resolve_stage_runtime
 from nw.studio.corpus_calls import artifact
+from nw.studio.corpus_catalog import DOMAINS
 from nw.studio.corpus_checks import graph_issues
 from nw.studio.corpus_index import empty_document, source_spans
 from nw.studio.library_util import encode, timestamp
@@ -14,9 +15,9 @@ from nw.studio.library_util import encode, timestamp
 ACTIVE=('pending','running','paused','failed')
 
 
-def runtime_profile(config: object) -> dict:
+def runtime_profile(config: object, version: int) -> dict:
     return {'provider':config.provider,'model':config.model,'base_url':config.base_url,
-            'params':config.params,'timeout':config.timeout,'pipeline_version':'corpus-v1'}
+            'params':config.params,'timeout':config.timeout,'pipeline_version':f'corpus-v{version}'}
 
 
 def options_for(raw: dict, *, extent: dict, minimum: int) -> dict:
@@ -43,7 +44,7 @@ class CorpusJobsMixin:
         raw=dict(request);raw.setdefault('note',current['body']['source_extent']['note'] or '等待作者确认完整性')
         options=options_for(raw,extent=current['body']['source_extent'],minimum=0)
         spans=source_spans(current['body']['units'],options['chunk_chars'])
-        minimum=2*len(spans)+8
+        minimum=2*len(spans)+1+len(DOMAINS)
         return {'book_id':book_id,'characters':len(content),'chapter_units':len({s['unit_id'] for s in spans}),
             'source_spans':len(spans),'minimum_structure_calls':minimum,
             'note':'最低次数不含长文本额外整合批次或重试；每次发送前仍受调用/字符预算限制。',
@@ -62,6 +63,7 @@ class CorpusJobsMixin:
             calls=[dict(r) for r in conn.execute('SELECT seq,call_key,phase,status,error,created_at,updated_at FROM corpus_calls WHERE job_id=? ORDER BY seq',(ident,))]
         result=dict(row);state=json.loads(result.pop('state_json'));result['options']=json.loads(result.pop('options_json'))
         result['runtime']=json.loads(result.pop('runtime_json'));result['calls']=calls
+        result['structure_schema_version']=state['document'].get('schema_version',1)
         result['progress']={k:state.get(k) for k in ('survey_cursor','overview_cursor','detail_cursor','domain_index','relation_cursor','method_cursor','published_version','published_methods')}
         result['coverage']=state.get('coverage',{});result['calls_used']=len(calls)
         return result
@@ -96,7 +98,7 @@ class CorpusJobsMixin:
         unit_errors=[i['message'] for i in graph_issues(body,len(content)) if i['field']=='units' and i['severity']=='error']
         if unit_errors:raise ValueError('请先修正章节目录：'+'；'.join(unit_errors[:8]))
         spans=source_spans(body['units'],options['chunk_chars'])
-        base=current['latest_version'];minimum=2*len(spans)+8
+        base=current['latest_version'];minimum=2*len(spans)+1+len(DOMAINS)
         state={'document':body,'spans':spans,'coverage':{'survey_ranges':[],'detail_ranges':[],'reviewed_units':[]},
                'survey_cursor':0,'overview_cursor':0,'detail_cursor':0,'domain_index':0,'relation_cursor':0,'method_cursor':0,'candidates':[]}
         if kind=='methods':
@@ -117,7 +119,7 @@ class CorpusJobsMixin:
             now=timestamp()
             conn.execute('INSERT INTO corpus_jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                 (ident,book_id,kind,'pending','','methods' if kind=='methods' else 'survey',book['sha256'],base,
-                 encode(options),encode(runtime_profile(config)),encode(state),'',book['status'],now,now))
+                 encode(options),encode(runtime_profile(config,state['document']['schema_version'])),encode(state),'',book['status'],now,now))
         try:self._launch_corpus(book_id,ident,config,provider)
         except Exception:
             with self.connect() as conn:conn.execute("UPDATE corpus_jobs SET status='failed',error=?,updated_at=? WHERE id=?",('任务未能启动，未请求模型',timestamp(),ident))
@@ -162,7 +164,7 @@ class CorpusJobsMixin:
             if not isinstance(request.get('options',{}),dict) or set(request.get('options',{}))-{'max_calls','max_input_chars'}:
                 raise ValueError('续接只可调整调用上限和输入预算；其他分析参数改变须新建任务')
             config,provider=self._corpus_runtime()
-            if runtime_profile(config)!=job['runtime']:raise ValueError('模型配置已改变，请恢复原配置续接或取消后新建，不能混用结果')
+            if runtime_profile(config,job['structure_schema_version'])!=job['runtime']:raise ValueError('模型配置已改变，请恢复原配置续接或取消后新建，不能混用结果')
             current=self.get_corpus(book_id)
             actual=current['approved_version'] if job['kind']=='methods' else current['latest_version']
             if actual!=job['base_version']:raise ValueError('拆解结构已修改，请取消旧任务后重建')

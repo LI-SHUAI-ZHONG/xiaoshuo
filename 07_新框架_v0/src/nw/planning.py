@@ -166,6 +166,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         if inherited.get('work_application'):
             session=inherited['work_session']
             package['parent_material_work']={'application':inherited['work_application'],
+                **({'production_method_parents': session['production_method_parents']}
+                   if any(p.get('world_design_basis') for p in session.get('production_method_parents', [])) else {}),
                 'stages':session.get('stages',[]),'work_plan':session.get('result',{}).get('work_plan',[]),
                 'selected_direction':{k:v for k,v in parent_card['body'].items() if k not in ('members','unknowns')}}
         if production_method_policy:
