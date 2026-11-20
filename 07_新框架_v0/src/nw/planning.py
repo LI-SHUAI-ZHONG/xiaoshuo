@@ -199,7 +199,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
                         'multi_action_policy', 'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
-                        'type_network_policy', 'world_network_policy', 'world_advancement_policy'):
+                        'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy'):
                 if key in previous_package:
                     package[key] = previous_package[key]
         else:
@@ -237,6 +237,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     from nw.materials.network_layers import POLICY as NETWORK_LAYER_POLICY
                     from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
                     from nw.materials.world_advancement import POLICY as WORLD_ADVANCEMENT_POLICY
+                    from nw.materials.world_conversion import POLICY as WORLD_CONVERSION_POLICY
                     from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
                     from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY
                     from nw.materials.stage_input import STEP_SOURCE_POLICY
@@ -247,6 +248,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     package['type_network_policy'] = TYPE_NETWORK_POLICY
                     package['world_network_policy'] = WORLD_NETWORK_POLICY
                     package['world_advancement_policy'] = WORLD_ADVANCEMENT_POLICY
+                    package['world_conversion_policy'] = WORLD_CONVERSION_POLICY
                     package['network_layer_policy'] = NETWORK_LAYER_POLICY
         while methods and len(prompt) + len(canonical(model_package(package))) > budget.context_char_limit:
             methods.pop()

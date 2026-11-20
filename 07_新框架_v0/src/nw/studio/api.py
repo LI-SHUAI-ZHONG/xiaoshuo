@@ -779,10 +779,12 @@ class StudioService:
             if stage == 'world_design':
                 from nw.materials.type_network_catalog import load_world_network_bases
                 from nw.materials.world_advancement import POLICY as WORLD_ADVANCEMENT_POLICY
+                from nw.materials.world_conversion import POLICY as WORLD_CONVERSION_POLICY
                 from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
 
                 network_context.update(world_network_policy=WORLD_NETWORK_POLICY,
-                                       world_advancement_policy=WORLD_ADVANCEMENT_POLICY)
+                                       world_advancement_policy=WORLD_ADVANCEMENT_POLICY,
+                                       world_conversion_policy=WORLD_CONVERSION_POLICY)
                 network_context['world_network_bases'] = load_world_network_bases(desk, authored, rules, network_context)
             step_pool, prepared = step_sources(stage, authored, rules, mock_products, network_context, desk.by_id)
             network_context['prepared_static_sources'] = sorted(prepared)

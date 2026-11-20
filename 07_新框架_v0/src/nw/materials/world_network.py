@@ -124,16 +124,20 @@ def _approved_formula(card: dict, terms: tuple[str, ...]) -> dict | None:
 
 def enabled_rules(context: dict) -> set[str]:
     from nw.materials.world_advancement import POLICY as ADVANCEMENT_POLICY, RULES as ADVANCEMENT_RULES
+    from nw.materials.world_conversion import POLICY as CONVERSION_POLICY, RULES as CONVERSION_RULES
 
     rules = set(RULES) if context.get('world_network_policy') == POLICY else set()
     if context.get('world_advancement_policy') == ADVANCEMENT_POLICY:
         rules.update(ADVANCEMENT_RULES)
+    if context.get('world_conversion_policy') == CONVERSION_POLICY:
+        rules.update(CONVERSION_RULES)
     return rules
 
 
 def availability(key: str, valid_types: object, products: dict, context: dict) -> tuple[dict | None, list[str]]:
     from nw.materials.network_workflow import type_matches
     from nw.materials.world_advancement import RULES as ADVANCEMENT_RULES, approved_advancement
+    from nw.materials.world_conversion import RULES as CONVERSION_RULES, approved_conversion
 
     if key not in enabled_rules(context):
         return None, []
@@ -150,12 +154,16 @@ def availability(key: str, valid_types: object, products: dict, context: dict) -
     if not refs:
         return None, ['已选且符合原条的类型']
     packet = {'type_ids': list(refs), 'type_refs': refs, 'output': 'members'}
-    if key in ADVANCEMENT_RULES:
-        cards = [proof for card in context.get('approved_cards', [])
-                 if (proof := approved_advancement(card, key)) is not None]
-        if not cards:
-            return None, ['同一份已批准世界卡中的' + ADVANCEMENT_RULES[key]]
-        return {**packet, 'cards': cards, 'kind': 'advancement'}, []
+    for kind, requirements, approved in (
+        ('advancement', ADVANCEMENT_RULES, approved_advancement),
+        ('conversion', CONVERSION_RULES, approved_conversion),
+    ):
+        if key in requirements:
+            cards = [proof for card in context.get('approved_cards', [])
+                     if (proof := approved(card, key)) is not None]
+            if not cards:
+                return None, ['同一份已批准世界卡中的' + requirements[key]]
+            return {**packet, 'cards': cards, 'kind': kind}, []
     factor, terms = RULES[key]
     cards = [proof for card in context.get('approved_cards', []) if (proof := _approved_formula(card, terms)) is not None]
     if not cards:
@@ -239,8 +247,8 @@ def validate_world_network_use(source: dict, raw: dict, value: dict, products: d
     for index in selected:
         require(fields[index] == {'rule', 'limits'}, 'each adopted world member must hand off both its rule and limits')
         body, basis = value['members'][index]['body'], cited[index]
-        if ready.get('kind') == 'advancement':
+        if kind := ready.get('kind'):
             require(body['rule'] == basis['rule'] and body['limits'] == basis['limits'],
-                    'world advancement must preserve the complete approved requirements and applicability limits')
+                    f'world {kind} must preserve the complete approved requirements and applicability limits')
         else:
             _validate_formula_output(body, basis)

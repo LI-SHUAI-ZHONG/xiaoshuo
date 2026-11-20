@@ -1243,7 +1243,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 if ready is not None:
                     prerequisites[ref['id']] = {**ready, 'static_source': context['world_network_bases'][ref['id']]}
             payload['world_network_prerequisites'] = prerequisites
-            if any(data.get('kind') != 'advancement' for data in prerequisites.values()):
+            if any('kind' not in data for data in prerequisites.values()):
                 suffix += ('\nworld_network_prerequisites 中的算式条目只提供本项目已批准的公式、该变量定义和适用范围。'
                            '每条适用原义要引用同一批准世界卡的规则和限制字段，并引用实际已选且适用的类型。'
                            '将原计算式、对应变量定义及限制原样保留在此次采用的世界设计产物中。'
@@ -1254,6 +1254,13 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '原样保留该卡完整 rule、limits，_uses登记实际member:ID，每条适用原义引用实际类型及同卡rule和limits，'
                            'output_refs指向实际/members/序号/body/rule或limits，交给本范围将实际运行的步骤。'
                            '依据只证明本条所指条件或标志，其他门槛待有项目证据再采用。')
+            if any(data.get('kind') == 'conversion' for data in prerequisites.values()):
+                suffix += ('\n标为 conversion 的规则只采用同一份已批准世界卡中已明确的转化路径和适用限制。'
+                           '保留完整 rule、limits。核对原起始状态、转化方法与触发、实际产物。'
+                           '涉及效率时保留作者明确给定的计量口径，分别识别有效产出比例与损耗率。涉及守恒时保留产物和损耗、转移或回收的去向，'
+                           '沿用作者给定的计量和范围。未给出的比率、去向和额外触发条件继续待核。'
+                           '_uses登记实际member:ID，每条适用原义引用实际类型及同卡rule和limits，'
+                           'output_refs指向实际/members/序号/body/rule或limits，交给本范围将实际运行的步骤。')
         if network_waiting:
             payload['network_waiting'] = network_waiting
             suffix += '\nnetwork_waiting 列出现有项缺少的前置。只采用实际有前置的资料，缺前置时按其他已符合条件的输入完成本步。'
@@ -1535,6 +1542,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.network_followup import POLICY as FOLLOWUP_POLICY
     from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
     from nw.materials.world_advancement import POLICY as WORLD_ADVANCEMENT_POLICY
+    from nw.materials.world_conversion import POLICY as WORLD_CONVERSION_POLICY
     from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY, enabled_rules as enabled_world_rules
     selected=selection_status(workspace)
     if selected:
@@ -1582,6 +1590,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             context['world_network_policy'] = WORLD_NETWORK_POLICY
         if package.get('world_advancement_policy') == WORLD_ADVANCEMENT_POLICY:
             context['world_advancement_policy'] = WORLD_ADVANCEMENT_POLICY
+        if package.get('world_conversion_policy') == WORLD_CONVERSION_POLICY:
+            context['world_conversion_policy'] = WORLD_CONVERSION_POLICY
         if enabled_world_rules(context):
             from nw.materials.type_network_catalog import load_world_network_bases
 
