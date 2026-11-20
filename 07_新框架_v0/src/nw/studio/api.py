@@ -654,6 +654,7 @@ class StudioService:
         package: dict[str, Any] = {
             'scope': scope,
             'brief': {'text': brief_text, 'constraints': constraints, 'version': 1},
+            'action_template_priority_enabled': True,
         }
         if desk is not None:
             from nw.materials.source_set import selection_status

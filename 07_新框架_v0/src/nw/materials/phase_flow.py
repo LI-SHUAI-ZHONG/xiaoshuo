@@ -964,7 +964,10 @@ def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_so
     demand=retrieval_need(stage,package,products)
     candidates=_stage_search(desk,stage,demand,trace=trace,step_pool=step_pool)['items']
     template=next((key for key,value in TEMPLATE_STAGES.items() if value==stage),None)
-    if template:candidates=_stage_search(desk,stage,template,trace=trace,step_pool=step_pool)['items']+candidates
+    prioritize_exact_template = stage == 'action_design' and package.get('action_template_priority_enabled')
+    template_matches = _stage_search(desk,stage,template,trace=trace,step_pool=step_pool)['items'] if template else []
+    if not prioritize_exact_template:
+        candidates = template_matches + candidates
     brief_text = (str(package.get('brief', {}).get('text', '')) + ' '
                   + str(package.get('brief', {}).get('constraints', ''))).casefold()
     single_pov = (any(w in brief_text for w in ('单视角', '单一视角', '固定视角', '受限第三人称', '第三人称有限', '第一人称'))
@@ -994,6 +997,17 @@ def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_so
 
     # A bounded initial working set; the model can search/read more at THIS step.
     selected_count=0
+    if prioritize_exact_template:
+        for row in template_matches:
+            if row['key'] != template:
+                continue
+            source = desk.read(row['id'])
+            if usable(source) and auto_fit(source):
+                if row['id'] not in ids:
+                    ids.append(row['id'])
+                selected_count = 1
+                break
+        candidates = [row for row in candidates if row['key'] != template]
     for row in candidates:
         source=desk.read(row['id'])
         if usable(source) and auto_fit(source):

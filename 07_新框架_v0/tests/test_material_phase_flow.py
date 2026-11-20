@@ -165,6 +165,36 @@ def test_action_step_accepts_branch_state_and_keeps_event_needs_in_search(tmp_pa
         assert not visible_facts('action_design', stages, legacy)
 
 
+def test_only_the_exact_action_template_precedes_sources_for_the_current_event(monkeypatch) -> None:
+    from nw.materials.phase_context import ACTION_STATE_POLICY
+    from nw.materials.phase_flow import FUNCTION_QUERIES, _sources
+    from nw.materials.work_catalog import SourceDesk
+
+    class FixtureDesk(SourceDesk):
+        def __init__(self) -> None:
+            keys = {'template': 'TDR_TEMPLATE_005', 'loose_match': 'TDR_019', 'resource': '125.13_资源消耗速率'}
+            self.rows = [{'id': ident, 'key': key, 'profile': 'world', 'state': 'design_ready',
+                          'meaning': '', 'file_sha256': ident, 'sha256': ident} for ident, key in keys.items()]
+            self.by_id = {row['id']: row for row in self.rows}
+
+        def read(self, ident: str) -> dict:
+            return {'source': self.by_id[ident], 'use_mode': 'project_method'}
+
+    monkeypatch.setitem(FUNCTION_QUERIES, 'action_design', ())
+    desk = FixtureDesk()
+    pool = {'template': '核对动作能力', 'loose_match': '其他分类', 'resource': '从钥匙消耗确认当前行动的资源限制'}
+    package = {'scope': 'chapter', 'brief': {'text': '125.13_资源消耗速率', 'constraints': ''},
+               'action_state_policy': ACTION_STATE_POLICY}
+    traces = {'queries': []}
+    old = _sources(desk, 'action_design', package, {}, step_pool=pool)
+    assert [row['source']['id'] for row in old] == ['template', 'loose_match']
+    current = _sources(desk, 'action_design', {**package, 'action_template_priority_enabled': True},
+                       {}, step_pool=pool, trace=traces)
+    assert [row['source']['id'] for row in current] == ['template', 'resource']
+    assert any(row['query'] == 'TDR_TEMPLATE_005' and 'loose_match' in {item['id'] for item in row['returned']}
+               for row in traces['queries'])
+
+
 def test_dynamic_filter_uses_actual_type_and_scene_inputs(tmp_path, monkeypatch):
     from nw.materials.phase_projection import verify_chain
     from nw.tasks import read_input_manifest

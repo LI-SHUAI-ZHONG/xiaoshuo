@@ -197,7 +197,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             for key in ('stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
-                        'action_state_policy'):
+                        'action_state_policy', 'action_template_priority_enabled'):
                 if key in previous_package:
                     package[key] = previous_package[key]
         else:
@@ -224,6 +224,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 package['dynamic_screening_enabled'] = True
                 package['scene_source_binding_policy'] = SCENE_SOURCE_BINDING_POLICY
                 package['action_state_policy'] = ACTION_STATE_POLICY
+                package['action_template_priority_enabled'] = True
                 package['stage_materials'] = {
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
                 }
