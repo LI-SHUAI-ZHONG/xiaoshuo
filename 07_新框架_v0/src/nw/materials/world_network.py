@@ -1,10 +1,11 @@
-"""Ground the existing power-formula rules in a single approved world card."""
+"""Match world-design rules to the selected type and one approved world card."""
 import ast
 import math
 import re
 import unicodedata
 
 from nw.materials.phase_routes import phase_order, product_ref
+from nw.materials.world_resources import POLICY as RESOURCE_POLICY, resource_families
 from nw.materials.semantic_application import has_content, pointer_tokens, require
 
 
@@ -131,6 +132,9 @@ def enabled_rules(context: dict) -> set[str]:
         rules.update(ADVANCEMENT_RULES)
     if context.get('world_conversion_policy') == CONVERSION_POLICY:
         rules.update(CONVERSION_RULES)
+    if context.get('world_resource_policy') == RESOURCE_POLICY:
+        for requirements, _ in resource_families():
+            rules.update(requirements)
     return rules
 
 
@@ -154,10 +158,11 @@ def availability(key: str, valid_types: object, products: dict, context: dict) -
     if not refs:
         return None, ['已选且符合原条的类型']
     packet = {'type_ids': list(refs), 'type_refs': refs, 'output': 'members'}
-    for kind, requirements, approved in (
-        ('advancement', ADVANCEMENT_RULES, approved_advancement),
-        ('conversion', CONVERSION_RULES, approved_conversion),
-    ):
+    families = [('advancement', ADVANCEMENT_RULES, approved_advancement),
+                ('conversion', CONVERSION_RULES, approved_conversion)]
+    if context.get('world_resource_policy') == RESOURCE_POLICY:
+        families.extend(('resource', requirements, approved) for requirements, approved in resource_families())
+    for kind, requirements, approved in families:
         if key in requirements:
             cards = [proof for card in context.get('approved_cards', [])
                      if (proof := approved(card, key)) is not None]

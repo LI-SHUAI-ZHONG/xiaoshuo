@@ -1107,6 +1107,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     world_network_enabled = stage == 'world_design' and bool(enabled_world_rules(context))
     type_ready = {}
     world_ready = {}
+    resource_matches = []
     if network is not None:
         authored, rules = network
         step_pool, prepared = step_sources(stage, authored, rules, products, context, desk.by_id)
@@ -1119,6 +1120,14 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             type_ready = {ident: use for ident, use in step_pool.items() if ident in context['type_network_bases']}
         if world_network_enabled:
             world_ready = {ident: use for ident, use in step_pool.items() if ident in context['world_network_bases']}
+            from nw.materials.world_resources import POLICY as RESOURCE_POLICY, resource_families
+            if context.get('world_resource_policy') == RESOURCE_POLICY:
+                keys = {key for family, _ in resource_families() for key in family}
+                for ident in world_ready:
+                    if rules[ident]['key'] in keys:
+                        edge = context['world_network_bases'][ident]['edge']
+                        resource_matches.append({'key': rules[ident]['key'], 'source_id': ident,
+                                                 'relation': edge['source'] + ' → ' + edge['target']})
         network_waiting = early_waiting(stage, authored, rules, products, context, desk.by_id)
     else:
         step_pool = _step_source_pool(desk, stage, package)
@@ -1243,6 +1252,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 if ready is not None:
                     prerequisites[ref['id']] = {**ready, 'static_source': context['world_network_bases'][ref['id']]}
             payload['world_network_prerequisites'] = prerequisites
+            if resource_matches:
+                payload['world_resource_matches'] = resource_matches
+                suffix += '\nworld_resource_matches 列出本步由批准卡支持的全部资源规则。按当前需求选择，需要首屏以外的规则时用 key 补查。'
             if any('kind' not in data for data in prerequisites.values()):
                 suffix += ('\nworld_network_prerequisites 中的算式条目只提供本项目已批准的公式、该变量定义和适用范围。'
                            '每条适用原义要引用同一批准世界卡的规则和限制字段，并引用实际已选且适用的类型。'
@@ -1261,6 +1273,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '沿用作者给定的计量和范围。未给出的比率、去向和额外触发条件继续待核。'
                            '_uses登记实际member:ID，每条适用原义引用实际类型及同卡rule和limits，'
                            'output_refs指向实际/members/序号/body/rule或limits，交给本范围将实际运行的步骤。')
+            if any(data.get('kind') == 'resource' for data in prerequisites.values()):
+                suffix += ('\n标为 resource 的资料逐条说明本项目选用的资源、实际环节及适用条件。'
+                           '依所用规则保留取得资格与成本、流动和循环的前后条件、或供需和稀缺等级的项目依据。'
+                           '同卡的 rule 和 limits 原样交接，适用条款引用实际类型、批准卡及产物对应字段，'
+                           '由本范围真实运行的下游步骤使用。')
         if network_waiting:
             payload['network_waiting'] = network_waiting
             suffix += '\nnetwork_waiting 列出现有项缺少的前置。只采用实际有前置的资料，缺前置时按其他已符合条件的输入完成本步。'
@@ -1543,6 +1560,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
     from nw.materials.world_advancement import POLICY as WORLD_ADVANCEMENT_POLICY
     from nw.materials.world_conversion import POLICY as WORLD_CONVERSION_POLICY
+    from nw.materials.world_resources import POLICY as WORLD_RESOURCE_POLICY
     from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY, enabled_rules as enabled_world_rules
     selected=selection_status(workspace)
     if selected:
@@ -1592,6 +1610,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             context['world_advancement_policy'] = WORLD_ADVANCEMENT_POLICY
         if package.get('world_conversion_policy') == WORLD_CONVERSION_POLICY:
             context['world_conversion_policy'] = WORLD_CONVERSION_POLICY
+        if package.get('world_resource_policy') == WORLD_RESOURCE_POLICY:
+            context['world_resource_policy'] = WORLD_RESOURCE_POLICY
         if enabled_world_rules(context):
             from nw.materials.type_network_catalog import load_world_network_bases
 
