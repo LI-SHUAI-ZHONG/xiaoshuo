@@ -161,14 +161,15 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     workspace = tmp_path / 'data'
     workspace.mkdir()
     template_catalog(workspace)
-    with Store(workspace / 'test-book', create=True, test_mode=True) as store:
+    books = tmp_path / 'novels'
+    with Store(workspace / 'test-book', projects_root=books, create=True, test_mode=True) as store:
         store.init_project('[FAKE] 端到端隔离验收')
         store.add_brief('[FAKE] 调查封条和钥匙的来源')
         adopt_story(store, baseline(), {})
     class IsolatedStudio(StudioService):
         def _open_store(self, project_name, *, create=False):
-            return Store(self.workspace / project_name, create=create, test_mode=True)
-    studio = IsolatedStudio(workspace, config_path=tmp_path / 'absent.toml')
+            return Store(self.workspace / project_name, projects_root=self.projects_root, create=create, test_mode=True)
+    studio = IsolatedStudio(workspace, projects_root=books, config_path=tmp_path / 'absent.toml')
     library = LibraryService(workspace)
     class ClientModel(PhaseModel, StageModel):
         def generate(self, messages, **params):
@@ -253,6 +254,14 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     text, filename = app.export(ident, 'md')
     assert '[FAKE]' in text and filename.endswith('.md')
     assert '第1章' in text
+    book_dir = books / novel['project_dir']
+    assert (book_dir / 'nw.db').is_file()
+    assert next((book_dir / '正文').glob('*.md'))
+    assert not (workspace / novel['project_dir']).exists()
+    assert (book_dir / '成品' / '全书.md').read_bytes() == text.encode('utf-8')
+    chapter_text, _ = app.export(ident, 'txt', 'chapter:1')
+    assert (book_dir / '成品' / '第1章.txt').read_bytes() == chapter_text.encode('utf-8')
+    assert app.detail(ident)['project']['data_directory'] == str(book_dir)
     assert app.quality(ident)['review']['recommendation'] == 'pass'
     # A frozen preference is not adoption. The passing review must accompany
     # an actual selected product (or explicitly checked option).
@@ -286,7 +295,18 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     updated_wizard['chapter_count'] = 1
     with app.db.connect() as db:
         db.execute('UPDATE novels SET wizard_json=? WHERE id=?', (json.dumps(updated_wizard), ident))
+    # A failed final file cannot publish a completed project. The same job is retryable.
+    full_txt = book_dir / '成品' / '全书.txt'
+    full_md = book_dir / '成品' / '全书.md'
+    full_md.unlink()
+    full_txt.mkdir()
+    with pytest.raises(OSError):
+        app.finish(ident)
+    assert app.db.get(ident)['status'] != 'done'
+    full_txt.rmdir()
     app.finish(ident)
+    assert full_txt.read_bytes() == chapter_text.encode('utf-8')
+    assert full_md.read_bytes() == text.encode('utf-8')
     assert app.list('done')['novels'][0]['id'] == ident
     assert any(event['kind'] == 'write' for event in app.timeline(ident)['events'])
     with pytest.raises(ValueError, match='卷方案'):

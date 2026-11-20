@@ -24,7 +24,7 @@ export async function mountRepositorySettings(ctx){
           <div class="field full"><span>Git 版本</span><p>${value.local_commit?esc(value.local_commit.slice(0,12)):'等待首次同步'}</p></div>
         </div>
         <details class="details" ${expanded?'open':''}><summary>查看客户端实际使用的位置</summary>
-          ${[['Git 工作目录',value.repository],['实际 API 配置（随 Git 保存）',value.config_path],['资料原件',value.original_materials],['运行资料',value.runtime_materials],['作品运行工作区',value.runtime_workspace],['作品在 Git 中的快照',value.git_runtime_snapshot]].map(([name,path])=>`<p><strong>${esc(name)}</strong><br><span class="muted" style="overflow-wrap:anywhere">${esc(path||'未配置')}</span></p>`).join('')}
+          ${[['Git 工作目录',value.repository],['实际 API 配置（随 Git 保存）',value.config_path],['资料原件',value.original_materials],['运行资料',value.runtime_materials],['工作流资料与书库目录',value.runtime_workspace],['小说实际保存目录',value.novel_storage_path],['作品在 Git 中的快照',value.git_runtime_snapshot]].map(([name,path])=>`<p><strong>${esc(name)}</strong><br><span class="muted" style="overflow-wrap:anywhere">${esc(path||'未配置')}</span></p>`).join('')}
         </details>
         <div class="row" style="margin-top:16px"><button class="secondary" id="syncGithubNow" type="button" ${!value.enabled||value.state==='syncing'?'disabled':''}>立即同步 GitHub</button><small class="muted">配置、书库、参考作品和正式小说数据随仓库保存；实际 API Key 留在本机环境变量。</small></div>
       </section>`;

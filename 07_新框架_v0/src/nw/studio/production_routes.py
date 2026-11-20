@@ -27,6 +27,8 @@ class ProductionRoutes:
             data = lib.recommend(first(query, 'slot', 'genre'), first(query, 'types').split(',') if first(query, 'types') else [])
         elif segs == ['options']:
             data = lib.options(first(query, 'slot', 'tone'), first(query, 'parent'))
+        elif segs == ['novel-cache']:
+            data = app.novel_cache()
         elif segs == ['novels']:
             data = app.list(first(query, 'status'))
         elif len(segs) >= 2 and segs[0] == 'novels':
@@ -85,10 +87,14 @@ class ProductionRoutes:
             return True
         if segs == ['novels']:
             data, status = app.create(body), 201
+        elif segs == ['novel-cache', 'clear']:
+            data = app.clear_novel_cache()
         elif len(segs) >= 3 and segs[0] == 'novels':
             ident, action = segs[1:3]
             if len(segs) == 3:
-                if action == 'methods':
+                if action == 'trash':
+                    data = app.trash_novel(ident)
+                elif action == 'methods':
                     data = app.configure_methods(ident,body)
                 elif action == 'run':
                     data = app.run(ident, body)

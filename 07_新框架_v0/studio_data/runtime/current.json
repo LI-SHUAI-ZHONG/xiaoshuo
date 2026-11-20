@@ -1,74 +1,19 @@
 {
   "format_version": 1,
-  "content_sha256": "6ba68a632113381626fbd254339b1ccbe5977ec1550828196bbd953851700590",
+  "content_sha256": "edbcf509a7d652a6f608d4b6f267c7066352086ab0c098f8d6d1e60ac18c6510",
   "entries": [
     {
-      "path": "chaohen_ollama_smoke_20261101/nw.db",
-      "bytes": 380928,
-      "sha256": "e2e65d419605b8417843be052ff079c40564dfefebc9fa4e53bcc43a2a9c68aa"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/nw.v4.20261118T042435746860Z.8440bd94.bak",
-      "bytes": 151552,
-      "sha256": "e7225b2b798b6d257a4db940fe3969201213c3973ff82e6c19dba9a9976fdc75"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/nw.v5.20261118T042435761985Z.31f0ba7a.bak",
-      "bytes": 188416,
-      "sha256": "d04f4f549cebd311123145798157ddc43f08eecfa28b68d6af39daed03ee6137"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/nw.v6.20261118T042435777546Z.a9b4647b.bak",
-      "bytes": 258048,
-      "sha256": "d1f20a52d4dc1382f0428c31d2bdc192195cb58196107c8d6879173a62cb1776"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/nw.v7.20261118T042435793358Z.271517fe.bak",
-      "bytes": 339968,
-      "sha256": "e56514aa2e582160a70ad3a2a72e1ac14c57f6d223864fdb48d232e07575c2c5"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/nw.v8.20261118T042435810097Z.b4c33e82.bak",
-      "bytes": 364544,
-      "sha256": "e5b11ef59024ddccb1e84a010778728946a61c1caaf42f2f67946bd6b503a549"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/nw.v9.20261118T042435828925Z.6c07da2b.bak",
-      "bytes": 380928,
-      "sha256": "cda96d780f3b5c3fdaeccbc7c2211e2a832f1343b901712cd4d6bb4944adc72e"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/smoke.measurements.json",
-      "bytes": 8697,
-      "sha256": "569d5b29cb7942f1aa12f52e879a133c6705ed32de7ab53516fc9d17c4de5599"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/smoke.stderr.txt",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/smoke.stdout.json",
-      "bytes": 14817,
-      "sha256": "4b56e7993afe1b1fd33bccc7caaa2da3c7cd07df7ba69b11f6d0b806d7e31483"
-    },
-    {
-      "path": "chaohen_ollama_smoke_20261101/smoke.verification.json",
-      "bytes": 73966,
-      "sha256": "7b29213ba505b45eff3fb5446912d5c447ba02b18ea6caf0a5bc615781a18f83"
-    },
-    {
       "path": "library/library.db",
-      "bytes": 208896,
-      "sha256": "d5dd85e1830bae491cc07853e9fccd5eb620d5c2e0627ec34adfcdedb57210c6"
+      "bytes": 221184,
+      "sha256": "c04ccc38f56da84d452c7edcee8602d704e41ccf66a08a4f82bfd6f6a85992ee"
     }
   ],
-  "archive_sha256": "ce181cc2b2ac345144676f2a053afce7de466b7fd3a21b059525de9878124372",
+  "archive_sha256": "f91b7d19ef08b5d22df4a75dfcbca797af9b09da9d6bdf0df8d0a88510ab8aba",
   "parts": [
     {
       "path": "runtime.zip.part001",
-      "bytes": 133469,
-      "sha256": "ce181cc2b2ac345144676f2a053afce7de466b7fd3a21b059525de9878124372"
+      "bytes": 6318,
+      "sha256": "f91b7d19ef08b5d22df4a75dfcbca797af9b09da9d6bdf0df8d0a88510ab8aba"
     }
   ]
 }

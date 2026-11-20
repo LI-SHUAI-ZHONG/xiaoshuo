@@ -112,6 +112,10 @@ class RecommendationMixin:
         if any(key not in valid for key in option_keys):
             raise ValueError('采用记录含未知选项')
         with self.connect() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            has_production = conn.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='novel_deletions'").fetchone()
+            if has_production and conn.execute('SELECT 1 FROM novel_deletions WHERE novel_id=?', (novel_id,)).fetchone():
+                return
             conn.executemany('INSERT OR IGNORE INTO reviewed_adoptions VALUES(?,?,?,?,?)',
                              [(novel_id, scene_id, key, reviewed_ref, timestamp()) for key in set(option_keys)])
         self._refresh_stats()
@@ -123,6 +127,7 @@ class RecommendationMixin:
             for type_id in row['type_tags']:
                 groups[(row['option_key'], row['slot'], type_id)].add(row['book_id'])
         with self.connect() as conn:
+            conn.execute('BEGIN IMMEDIATE')
             adopts = {r['option_key']: r['n'] for r in conn.execute(
                 'SELECT option_key,COUNT(*) AS n FROM reviewed_adoptions GROUP BY option_key')}
             conn.execute('DELETE FROM usage_stats')

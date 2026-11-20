@@ -10,6 +10,7 @@ from nw.config import ConfigRequired, load_config, make_provider
 from nw.novel_flow import resume_job
 from nw.novel_store import JobRequest, cancel_job, show_job, start_job
 from nw.store import Store, now
+from nw.project_paths import project_directory
 from nw.story_state import adopt_story
 from nw.task_models import Budget
 from nw.studio.production_inputs import brief_text, freeze_wizard, governance
@@ -17,9 +18,10 @@ from nw.studio.production_store import ProductionStore
 from nw.studio.production_views import ProductionViews
 from nw.studio.production_branches import BranchMixin
 from nw.studio.production_methods import ProductionMethodMixin
+from nw.studio.novel_cache import NovelCacheMixin
 
 
-class ProductionService(ProductionMethodMixin, BranchMixin, ProductionViews):
+class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, ProductionViews):
     def __init__(self, studio: Any, library: Any, *, test_mode: bool = False,
                  runtime_factory: Callable | None = None) -> None:
         self.studio, self.library = studio, library
@@ -28,12 +30,11 @@ class ProductionService(ProductionMethodMixin, BranchMixin, ProductionViews):
         self._lock = threading.RLock()
         self._workers: dict[str, threading.Thread] = {}
         self.changed = threading.Event()
+        self.novel_cache()
 
-    def open_store(self, novel: dict) -> Store:
-        directory = (self.studio.workspace / novel['project_dir']).resolve()
-        if not directory.is_relative_to(self.studio.workspace.resolve()) or directory == self.studio.workspace.resolve():
-            raise ValueError('项目路径越界')
-        return Store(directory, test_mode=self.test_mode)
+    def open_store(self, novel: dict, *, create: bool = False) -> Store:
+        directory = project_directory(self.studio.workspace, novel['project_dir'])
+        return Store(directory, test_mode=self.test_mode, create=create, projects_root=self.studio.projects_root)
 
     @staticmethod
     def budget(raw: dict | None = None) -> Budget:
@@ -50,6 +51,10 @@ class ProductionService(ProductionMethodMixin, BranchMixin, ProductionViews):
         return Budget(**value)
 
     def create(self, body: dict) -> dict:
+        with self._lock:
+            return self._create(body)
+
+    def _create(self, body: dict) -> dict:
         wizard = freeze_wizard(body, self.library)
         budget = self.budget(body.get('budget'))
         ident = uuid4().hex
@@ -60,8 +65,9 @@ class ProductionService(ProductionMethodMixin, BranchMixin, ProductionViews):
         if not self.db.add(ident, directory, wizard['title'], wizard):
             raise ValueError('立项目录已被占用，请重新提交立项')
         try:
-            with Store(self.studio.workspace / directory, create=True, test_mode=self.test_mode) as store:
-                store.init_project(wizard['title'])
+            with self.open_store({'project_dir': directory}, create=True) as store:
+                project = store.init_project(wizard['title'])
+                self.db.update(ident, project_id=project.id)
                 store.add_brief(brief_text(wizard), wizard['constraints'])
                 adopt_story(store, {'as_of_story_order': 0, 'disclosure_order': [0, 0, 0],
                     'coverage': {'entities': [], 'predicates': []}, 'facts': [], 'card_refs': []}, {})
@@ -271,28 +277,31 @@ class ProductionService(ProductionMethodMixin, BranchMixin, ProductionViews):
             return result
 
     def finish(self, ident: str) -> dict:
-        novel = self.db.get(ident)
-        if novel.get('current_branch', 'main') != 'main':
-            raise ValueError('候选分支合并回主稿后才能标记全书完稿')
-        project = self.project(novel)
-        if self._workers.get(ident) and self._workers[ident].is_alive() or self.gates(ident)['gates']:
-            raise ValueError('请先完成正在运行的任务和待确认节点')
-        if not project['managed_story']:
-            raise ValueError('旧项目需完成故事状态接管及独立审稿后才能标记完稿')
-        active_scenes = [row for row in project['scenes'] if row['story_approved_on_main']]
-        if not active_scenes or any(not row['accepted_draft_id'] for row in active_scenes):
-            raise ValueError('所有场景通过审稿并接受后才能标记完稿')
-        populated_chapters = {scene['chapter_id'] for scene in active_scenes}
-        with self.open_store(novel) as store:
-            for scene in active_scenes:
-                if scene['latest_draft_id'] != scene['accepted_draft_id']:
-                    raise ValueError('仍有较新草稿尚未接受，请先完成审稿')
-                review = self.review_for_draft(store, scene['id'], scene['accepted_draft_id'])
-                if not review or review['result'].get('recommendation') != 'pass':
-                    raise ValueError('已接受稿还缺少对应版本的通过审稿记录')
-        expected = novel['wizard'].get('chapter_count')
-        if expected and len(populated_chapters) < expected:
-            raise ValueError('存在空章或尚未达到立项设定的有效章节数')
-        self.db.update(ident, status='done', runtime_status='DONE', finished_at=now(), reason=None)
-        self.db.event(ident, 'completion', '作者确认全书完稿。')
-        return {'status': 'DONE'}
+        with self._lock:
+            novel = self.db.get(ident)
+            if novel.get('current_branch', 'main') != 'main':
+                raise ValueError('候选分支合并回主稿后才能标记全书完稿')
+            project = self.project(novel)
+            if self._workers.get(ident) and self._workers[ident].is_alive() or self.gates(ident)['gates']:
+                raise ValueError('请先完成正在运行的任务和待确认节点')
+            if not project['managed_story']:
+                raise ValueError('旧项目需完成故事状态接管及独立审稿后才能标记完稿')
+            active_scenes = [row for row in project['scenes'] if row['story_approved_on_main']]
+            if not active_scenes or any(not row['accepted_draft_id'] for row in active_scenes):
+                raise ValueError('所有场景通过审稿并接受后才能标记完稿')
+            populated_chapters = {scene['chapter_id'] for scene in active_scenes}
+            with self.open_store(novel) as store:
+                for scene in active_scenes:
+                    if scene['latest_draft_id'] != scene['accepted_draft_id']:
+                        raise ValueError('仍有较新草稿尚未接受，请先完成审稿')
+                    review = self.review_for_draft(store, scene['id'], scene['accepted_draft_id'])
+                    if not review or review['result'].get('recommendation') != 'pass':
+                        raise ValueError('已接受稿还缺少对应版本的通过审稿记录')
+                expected = novel['wizard'].get('chapter_count')
+                if expected and len(populated_chapters) < expected:
+                    raise ValueError('存在空章或尚未达到立项设定的有效章节数')
+                for fmt in ('txt', 'md'):
+                    self._write_export(store, novel, project['chapters'], active_scenes, '全书', fmt)
+            self.db.update(ident, status='done', runtime_status='DONE', finished_at=now(), reason=None)
+            self.db.event(ident, 'completion', '作者确认全书完稿。')
+            return {'status': 'DONE'}

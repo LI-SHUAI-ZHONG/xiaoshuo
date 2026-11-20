@@ -16,8 +16,8 @@ from nw.acceptance import accept_batch
 from nw.cards import decide_card, decision_history, link_cards, read_card, read_decision, read_links, save_card
 from nw.chapter_records import chapter_index, chapter_review, chapter_summary
 from nw.chapter_state import chapter_state
-from nw.cli import project_directory
-from nw.config import ConfigRequired, ROOT, load_config
+from nw.project_paths import project_directory, projects_root_for
+from nw.config import ConfigRequired, ROOT, configured_workspace, load_config
 from nw.context.story import StoryScope, WRITE_PROMPT, build_story_context, scene_scope
 from nw.materials.phase_contract import FIELDS
 from nw.materials.phase_flow import (
@@ -158,15 +158,17 @@ _ENV_NAME_RE = re.compile(r'^[A-Za-z_][A-Za-z0-9_]{1,63}$')
 
 def _default_ledger_path(workspace: Path | None = None) -> Path:
     ws = workspace or (ROOT / 'workspace')
+    local = ws / 'materials' / 'F2_统一问题台账.jsonl'
+    if ws.resolve() != (ROOT / 'workspace').resolve():
+        return local
     for candidate in (
-        ws / 'materials' / 'F2_统一问题台账.jsonl',
-        ROOT / 'workspace' / 'materials' / 'F2_统一问题台账.jsonl',
+        local,
         ROOT.parent / '08_工作流设计' / 'F2_统一问题台账.jsonl',
         ROOT.parent / '08_工作流设计' / '05_资料问题台账.jsonl',
     ):
         if candidate.is_file():
             return candidate
-    return ws / 'materials' / 'F2_统一问题台账.jsonl'
+    return local
 
 
 def _anti_forgetting_notes(stage: str) -> list[str]:
@@ -201,7 +203,7 @@ class StudioService:
     """Thread-safe local service exposing the complete novel workflow to the Studio frontend."""
 
     def __init__(self, workspace: Path | None = None, *, config_path: Path | None = None,
-                 ledger_path: Path | None = None) -> None:
+                 ledger_path: Path | None = None, projects_root: Path | None = None) -> None:
         shared = ROOT / 'studio.config.toml'
         default_config = shared if shared.is_file() else ROOT / 'config.toml'
         self.config_path = (config_path or default_config).resolve()
@@ -209,12 +211,13 @@ class StudioService:
             self.workspace = workspace.resolve()
         elif self.config_path.is_file():
             try:
-                self.workspace = load_config(self.config_path).workspace.resolve()
+                self.workspace = configured_workspace(self.config_path)
             except ConfigRequired:
                 self.workspace = (ROOT / 'workspace').resolve()
         else:
             self.workspace = (ROOT / 'workspace').resolve()
         self.workspace.mkdir(parents=True, exist_ok=True)
+        self.projects_root = projects_root_for(self.workspace, projects_root)
         self.ledger_path = (ledger_path or _default_ledger_path(self.workspace)).resolve()
         self._lock = threading.Lock()
         self._desk = None
@@ -256,7 +259,7 @@ class StudioService:
 
     def _open_store(self, project_name: str, *, create: bool = False) -> Store:
         directory = project_directory(self.workspace, project_name)
-        return Store(directory, create=create)
+        return Store(directory, create=create, projects_root=self.projects_root)
 
     # ---------- 1. System & Workspace Status ----------
 
@@ -285,6 +288,7 @@ class StudioService:
         }
         return {
             'workspace': str(self.workspace),
+            'projects_root': str(self.projects_root),
             'config_path': str(self.config_path),
             'api_mode': cfg_state['mode'],
             'config_valid': cfg_state['valid'],
@@ -300,13 +304,13 @@ class StudioService:
 
     def list_projects(self) -> list[dict[str, Any]]:
         items: list[dict[str, Any]] = []
-        if not self.workspace.is_dir():
+        if not self.projects_root.is_dir():
             return items
-        for child in sorted(self.workspace.iterdir(), key=lambda p: p.name.lower()):
-            if not child.is_dir() or child.name == 'materials' or not (child / 'nw.db').is_file():
+        for child in sorted(self.projects_root.iterdir(), key=lambda p: p.name.lower()):
+            if not child.is_dir() or child.name.casefold() in ('materials', '_novel_cache') or not (child / 'nw.db').is_file():
                 continue
             try:
-                with Store(child) as store:
+                with self._open_store(child.name) as store:
                     proj = store.project()
                     managed = store.managed_story()
                     head = asdict(current_head(store, 'main')) if managed else None
@@ -388,6 +392,7 @@ class StudioService:
             cards = self._list_cards_internal(store)
             return {
                 'dir_name': project_name,
+                'data_directory': str(store.data_directory),
                 'branch_id': branch,
                 'project': asdict(proj),
                 'managed_story': managed,

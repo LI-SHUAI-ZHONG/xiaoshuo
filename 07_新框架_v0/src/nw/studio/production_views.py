@@ -1,7 +1,11 @@
 """Read-only production snapshots and exports from actual persisted artifacts."""
 from dataclasses import asdict
 from datetime import datetime, timezone
+from hashlib import sha256
 import json
+from pathlib import Path
+import re
+from tempfile import NamedTemporaryFile
 from typing import Any
 
 from nw.materials.phase_routes import phase_order
@@ -291,28 +295,58 @@ class ProductionViews:
         novel = self.db.get(ident)
         project = self.project(novel)
         chapters = project['chapters']
+        label = '全书'
         if scope.startswith('chapter:'):
             target = scope.split(':', 1)[1]
             chapters = [row for row in chapters if row['id'] == target or str(row['index']) == target]
+            if chapters:
+                label = f"第{chapters[0]['index']}章"
         elif scope.startswith('volume:'):
             target = scope.split(':', 1)[1]
             with self.open_store(novel) as store:
                 chapter_ids = self.volume_chapters(store, target, project['active_settings'])
             chapters = [row for row in chapters if row['id'] in chapter_ids]
+            label = '卷-' + self._export_label(target)
         elif scope not in ('book', 'all', ''):
             raise ValueError('无效的导出范围')
+        with self.open_store(novel) as store:
+            text = self._write_export(store, novel, chapters, project['scenes'], label, fmt)
+        return text, f"{novel['id']}.{fmt}"
+
+    def _write_export(self, store: Any, novel: dict, chapters: list, scenes: list, label: str, fmt: str) -> str:
         lines = [('# ' if fmt == 'md' else '') + novel['title'], '']
         count = 0
-        with self.open_store(novel) as store:
-            for chapter in chapters:
-                texts = [store.get('draft', scene['accepted_draft_id']).text for scene in project['scenes']
-                         if scene['chapter_id'] == chapter['id'] and scene['accepted_draft_id']]
-                if texts:
-                    count += len(texts)
-                    lines.extend([('## ' if fmt == 'md' else '') + f"第{chapter['index']}章 {chapter['title']}", '', '\n\n'.join(texts), ''])
+        for chapter in chapters:
+            texts = [store.get('draft', scene['accepted_draft_id']).text for scene in scenes
+                     if scene['chapter_id'] == chapter['id'] and scene['accepted_draft_id']]
+            if texts:
+                count += len(texts)
+                lines.extend([('## ' if fmt == 'md' else '') + f"第{chapter['index']}章 {chapter['title']}", '', '\n\n'.join(texts), ''])
         if not count:
             raise ValueError('所选范围还没有已接受的正文，完成审稿并接受后即可导出')
-        return '\n'.join(lines), f"{novel['id']}.{fmt}"
+        text = '\n'.join(lines)
+        branch = novel.get('current_branch', 'main')
+        if branch != 'main':
+            label += '-候选-' + self._export_label(branch)
+        path = store.data_file('成品', f'{label}.{fmt}')
+        path.parent.mkdir(exist_ok=True)
+        # A download and its on-disk copy represent the same accepted set of scenes.
+        staged = NamedTemporaryFile('w', encoding='utf-8', newline='', dir=path.parent,
+                                   prefix='.export-', suffix='.tmp', delete=False)
+        tmp = Path(staged.name)
+        try:
+            with staged:
+                staged.write(text)
+            tmp.replace(path)
+        finally:
+            tmp.unlink(missing_ok=True)
+        return text
+
+    @staticmethod
+    def _export_label(identity: str) -> str:
+        if re.fullmatch(r'[\w-]{1,56}', identity):
+            return identity
+        return sha256(identity.encode('utf-8')).hexdigest()[:24]
 
     @staticmethod
     def volume_chapters(store: Any, volume_id: str, active_settings: list[dict]) -> set[str]:

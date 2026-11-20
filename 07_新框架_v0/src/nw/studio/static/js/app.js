@@ -1,6 +1,7 @@
 import {api,enc} from './api.js';
+import {moveToNovelCache} from './components/NovelCache.js';
 import {store,state,persist} from './store.js';
-import {$,$$,esc,icon,empty,loading,fail,toast,modal,drawer,date,number} from './ui.js';
+import {$,$$,esc,icon,empty,loading,busy,fail,toast,modal,drawer,date,number} from './ui.js';
 const NAV=[['home','首页','home'],['studio','制作台','pen'],['library','成品仓库','library'],['atlas','类型图鉴','atlas'],['kb','知识库','brain'],['staging','预存库','inbox'],['settings','设置','settings']];
 const content=$('#contentArea'); let generation=0, controller=null, cleanup=null;
 document.documentElement.dataset.theme=store.theme;
@@ -16,6 +17,31 @@ $('#globalProjectSelect').onchange=e=>{persist({activeNovel:e.target.value});if(
 $('#runPill').onclick=()=>{if($('#runPill').dataset.novel)location.hash=`#/studio/${enc($('#runPill').dataset.novel)}`;};
 $('#searchTrigger').onclick=openSearch;$('#btnNotifications').onclick=openNotifications;
 document.addEventListener('click',event=>{const target=event.target.closest('button,a');if(!target)return;
+  if(target.matches('[data-trash-novel]')) {
+    busy(target, async () => {
+      if (!await moveToNovelCache(target)) return;
+      const id = target.dataset.trashNovel;
+      const active = store.activeNovel === id;
+      if (active) {
+        persist({activeNovel:''});
+        state.logs = []; state.outputs = []; state.problems = [];
+        $('#statusTask').textContent = '就绪';
+        $('#statusWords').textContent = '0 字';
+        $('#statusBudget').textContent = '调用 —';
+        $('#statusGuards').textContent = '守卫 0';
+        renderPanel();
+      }
+      state.novels = state.novels.filter(n => n.id !== id);
+      refreshHeader();
+      const [page, current] = location.hash.slice(2).split('?')[0].split('/').map(decodeURIComponent);
+      if ((page === 'book' || page === 'studio') && (current === id || (!current && active))) {
+        location.hash = '#/library?tab=' + (target.dataset.bookStatus === 'done' ? 'done' : 'writing');
+      } else if (['home', 'library', 'studio', ''].includes(page)) {
+        await navigate();
+      }
+    });
+    return;
+  }
   if(target.matches('[data-close-modal]'))$('#modalBackdrop').close();
   if(target.matches('[data-close-drawer]'))$('#drawer').close();
   if(target.matches('[data-close-search]'))$('#searchOverlay').close();

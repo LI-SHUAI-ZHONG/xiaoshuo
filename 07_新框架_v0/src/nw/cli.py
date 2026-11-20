@@ -4,13 +4,13 @@ import argparse
 from dataclasses import asdict
 import json
 from pathlib import Path
-import re
 import sqlite3
 import sys
 from typing import Any
 
 from nw.store import Store
-from nw.config import ConfigRequired, ROOT, load_config, make_provider
+from nw.project_paths import project_directory, projects_root_for
+from nw.config import ConfigRequired, ROOT, configured_workspace, load_config, make_provider
 from nw.generation import write_scene, review_draft
 from nw.flow.engine import FlowEngine
 from nw.experiments.ab import Experiment
@@ -27,19 +27,6 @@ def decide_interactively(node: str, payload: dict) -> str:
     except EOFError:
         return 'pause'
 
-
-def project_directory(workspace: Path, name: str) -> Path:
-    """Require a single Windows-compatible directory name inside workspace."""
-    reserved = {'CON', 'PRN', 'AUX', 'NUL'} | {f'{p}{n}' for p in ('COM', 'LPT') for n in range(1, 10)}
-    if (not name or name in ('.', '..') or name.endswith((' ', '.'))
-            or re.search(r'[<>:"/\\|?*\x00-\x1f]', name)
-            or name.split('.')[0].upper() in reserved):
-        raise ValueError('Invalid project directory name')
-    root = workspace.resolve()
-    directory = (root / name).resolve()
-    if directory.parent != root:
-        raise ValueError('Project directory must stay inside workspace')
-    return directory
 
 
 def dispatch(store: Store, args: argparse.Namespace) -> Any:
@@ -212,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == 'materials':
             workspace = args.workspace
             if workspace is None:
-                workspace = load_config(args.config).workspace if args.config.exists() else ROOT / 'workspace'
+                workspace = configured_workspace(args.config)
             print(json.dumps(material_cli.dispatch(workspace, args), ensure_ascii=False, indent=2))
             return 0
         settings = None
@@ -220,11 +207,10 @@ def main(argv: list[str] | None = None) -> int:
         needs_model = (legacy_model or (args.command == 'story' and args.action == 'extract')
                        or (args.command == 'plan' and args.action in ('propose', 'retry'))
                        or (args.command == 'novel' and args.action == 'resume'))
-        if args.workspace is None and args.config.exists():
-            settings = load_config(args.config)
-        args.workspace = args.workspace or (settings.workspace if settings else ROOT / 'workspace')
+        args.workspace = args.workspace or configured_workspace(args.config)
         directory = project_directory(args.workspace, args.project)
-        if needs_model and not (directory / 'nw.db').is_file():
+        data_directory = project_directory(projects_root_for(args.workspace), args.project)
+        if needs_model and not (data_directory / 'nw.db').is_file():
             settings = settings or load_config(args.config)
         with Store(directory, create=args.command == 'init') as store:
             if legacy_model and store.managed_story():

@@ -48,11 +48,28 @@ def _validate_endpoint(provider: str, url: str, model: str, key_env: str, timeou
             'api_key_env': key_env, 'timeout': timeout, 'params': dict(params)}
 
 
-def load_config(path: Path) -> Config:
+def _read_toml(path: Path) -> dict:
     try:
-        data = tomllib.loads(path.read_text(encoding='utf-8'))
+        return tomllib.loads(path.read_text(encoding='utf-8'))
     except (OSError, ValueError):
         raise ConfigRequired('Provide a readable valid TOML file with --config') from None
+
+
+def _workspace_path(path: Path, data: dict) -> Path:
+    try:
+        workspace = Path(data.get('paths', {}).get('workspace', ROOT / 'workspace'))
+    except (TypeError, AttributeError):
+        raise ConfigRequired('Set a valid paths.workspace in the configuration') from None
+    return (path.resolve().parent / workspace).resolve()
+
+
+def configured_workspace(path: Path) -> Path:
+    """Read the workspace independently of model availability for local book operations."""
+    return _workspace_path(path, _read_toml(path)) if path.is_file() else ROOT / 'workspace'
+
+
+def load_config(path: Path) -> Config:
+    data = _read_toml(path)
     try:
         cfg = data['model']
         if set(cfg) - {'provider', 'base_url', 'model', 'api_key_env', 'timeout'}:
@@ -62,9 +79,7 @@ def load_config(path: Path) -> Config:
             cfg.get('api_key_env', ''), float(cfg.get('timeout', 120)),
             data.get('params', {}),
         )
-        workspace = Path(data.get('paths', {}).get('workspace', str(ROOT / 'workspace')))
-        if not workspace.is_absolute():
-            workspace = path.resolve().parent / workspace
+        workspace = _workspace_path(path, data)
         workflow=data.get('workflow',{})
         if not isinstance(workflow,dict) or set(workflow)-{'source_driven'} or type(workflow.get('source_driven',True)) is not bool:
             raise ValueError()

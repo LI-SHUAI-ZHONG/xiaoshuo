@@ -1,6 +1,7 @@
 import {api} from '../api.js';
 import {$,$$,esc,icon,drawer,busy,toast} from '../ui.js';
 import {persist} from '../store.js';
+import {mountNovelCacheSettings} from '../components/NovelCache.js';
 import {mountRepositorySettings} from '../components/RepositorySettings.js';
 
 const API_PARAMS=new Set(['temperature','top_p','max_tokens','max_completion_tokens','seed','stop']);
@@ -14,7 +15,7 @@ export async function render(ctx){
   const configured=Boolean(config.valid&&stored.provider==='openai_compat');
   const staged=stored.provider==='openai_compat'?current.stage_models||{}:{};
   const apiKeyEnv=model.api_key_env||'NW_API_KEY';
-  ctx.sidebar('设置',[['settings','通用 API','settings'],['settings?section=appearance','外观与工作空间','sun']],
+  ctx.sidebar('设置',[['settings','通用 API','settings'],['settings?section=appearance','外观与工作空间','sun'],['settings?section=cache','小说存储与缓存','inbox']],
     '<strong>使用通用 OpenAI 兼容接口</strong>填写服务地址、模型名称和密钥环境变量名。设计、写作和审稿默认共用此接口。');
   $('#statusModel').textContent=configured?'API 配置已保存':'API 待配置';
   ctx.content.innerHTML=`<div class="page">
@@ -41,10 +42,10 @@ export async function render(ctx){
       </details>
       <section class="settings-section" id="appearance"><h3>外观与工作空间</h3><div class="form-grid">
         <label class="field"><span>主题</span><select id="appearanceTheme"><option value="dark" ${ctx.store.theme==='dark'?'selected':''}>深色 · 专注创作</option><option value="light" ${ctx.store.theme==='light'?'selected':''}>浅色 · 清晰阅读</option></select></label>
-        <div class="field"><span>工作空间目录</span><p style="overflow-wrap:anywhere">${esc(current.workspace||ctx.state.status?.workspace||'由启动配置决定')}</p><small class="muted">更换目录后重新启动客户端生效。</small></div>
+        <div class="field"><span>工作流资料目录</span><p style="overflow-wrap:anywhere">${esc(current.workspace||ctx.state.status?.workspace||'由启动配置决定')}</p><small class="muted">小说的保存位置见下方「小说存储与缓存」。</small></div>
       </div></section>
       <div class="row spread"><button class="secondary" type="button" id="previewConfig">预览配置</button><button class="button" type="submit">${icon('check')} 保存 API 配置</button></div>
-    </form><div id="repositorySettings" style="margin-top:24px"></div></div>`;
+    </form><section class="settings-section" id="novelCacheSettings" style="margin-top:24px" aria-label="小说存储与缓存"><h3>小说存储与缓存</h3><p class="muted">正在读取目录…</p></section><div id="repositorySettings" style="margin-top:24px"></div></div>`;
 
   function keyStatus(){
     const name=$('#apiKeyEnv').value.trim(),present=config.env_present?.[name];
@@ -79,5 +80,6 @@ export async function render(ctx){
     });
   };
   if(ctx.params.get('section')==='appearance')$('#appearance').scrollIntoView({block:'start'});
-  await mountRepositorySettings(ctx);
+  if(ctx.params.get('section')==='cache')$('#novelCacheSettings').scrollIntoView({block:'start'});
+  await Promise.all([mountNovelCacheSettings(ctx), mountRepositorySettings(ctx)]);
 }

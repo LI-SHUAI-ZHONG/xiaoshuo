@@ -12,6 +12,7 @@ from typing import Any, Iterator
 from uuid import uuid4
 
 from nw.studio import repository_data as data
+from nw.studio.project_migration import migrate_legacy_projects
 from nw.studio.repository_git import GitRepository, SyncError
 
 PROJECT = Path(__file__).resolve().parents[3]
@@ -22,6 +23,7 @@ class RepositorySync:
                  git: GitRepository | None = None) -> None:
         self.service, self.project = service, project.resolve()
         self.workspace = service.workspace.resolve()
+        self.projects_root = service.projects_root
         self.folder = self.project / 'studio_data/runtime'
         self.marker = self.workspace / '_git_sync/state.json'
         self.data_lock = threading.RLock()
@@ -70,7 +72,8 @@ class RepositorySync:
                       config_path=str(self.service.config_path),
                       original_materials=str(self.git.root / '02_原版资料') if self.git else '',
                       runtime_materials=str(self.workspace / 'materials'),
-                      runtime_workspace=str(self.workspace), git_runtime_snapshot=str(self.folder),
+                      runtime_workspace=str(self.workspace), novel_storage_path=str(self.projects_root),
+                      git_runtime_snapshot=str(self.folder),
                       runtime_snapshot=self.saved.get('runtime_sha', ''),
                       materials_snapshot=self.saved.get('materials_sha', ''))
         return result
@@ -104,6 +107,7 @@ class RepositorySync:
         self.saved['materials_sha'] = signature
 
     def prepare(self) -> None:
+        migrate_legacy_projects(self.workspace, self.projects_root)
         if not self.enabled or self.git is None:
             return
         try:
@@ -111,19 +115,23 @@ class RepositorySync:
                 self._materials()
                 stored = data.load_manifest(self.folder)
                 if stored:
-                    files = data.runtime_files(self.workspace)
+                    if (self.workspace / '_git_sync/snapshot-cache').is_dir():
+                        data.verify_parts(self.folder, stored)
+                        data.cleanup_legacy_snapshot(self.workspace, stored)
+                    files = data.runtime_files(self.workspace, self.projects_root)
                     previous = self.saved.get('runtime_sha')
                     recovery = self.workspace / '_git_sync/restore_pending.json'
                     interrupted = json.loads(recovery.read_text(encoding='utf-8')) if recovery.is_file() else {}
                     resuming = (not interrupted.get('complete', True)
                                 and interrupted.get('content_sha256') == stored['content_sha256'])
                     if not files or resuming:
-                        data.restore(self.folder, self.workspace)
+                        data.restore(self.folder, self.workspace, self.projects_root)
                     elif previous and previous != stored['content_sha256']:
-                        local = data.snapshot(self.workspace, self.folder, persist=False)
-                        if local['content_sha256'] != previous:
+                        local = data.snapshot(self.workspace, self.folder, projects_root=self.projects_root, persist=False)
+                        if local['content_sha256'] == previous:
+                            data.restore(self.folder, self.workspace, self.projects_root)
+                        elif local['content_sha256'] != stored['content_sha256']:
                             raise SyncError('LOCAL_DATA_CONFLICT', 'Git 与本机作品资料都已改变，已保留双方版本；请先处理资料冲突')
-                        data.restore(self.folder, self.workspace)
                     self.saved['runtime_sha'] = stored['content_sha256']
                 self._save_marker()
                 self.restore_required = False
@@ -164,7 +172,7 @@ class RepositorySync:
 
     def _capture(self) -> None:
         self.git.check_workspace()
-        current = data.snapshot(self.workspace, self.folder)
+        current = data.snapshot(self.workspace, self.folder, projects_root=self.projects_root)
         self.git.commit_data()
         self.saved['runtime_sha'] = current['content_sha256']
         self._save_marker()
@@ -202,7 +210,7 @@ class RepositorySync:
                         if any(path.startswith(code) or path.endswith('/pyproject.toml') for path in changed):
                             self._state['restart_required'] = True
                         self._materials()
-                        stored = data.restore(self.folder, self.workspace)
+                        stored = data.restore(self.folder, self.workspace, self.projects_root)
                         if stored:
                             self.saved['runtime_sha'] = stored['content_sha256']
                         self.restore_required = False

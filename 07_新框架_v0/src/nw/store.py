@@ -11,6 +11,7 @@ from uuid import uuid4
 
 from nw import models as m
 from nw.migrations import upgrade
+from nw.project_paths import FORMAL_BOOKS_ROOT, FORMAL_WORKSPACE, contained_file, project_directory, projects_root_for
 from nw.llm.base import GenResult
 
 RECORDS = {
@@ -27,18 +28,26 @@ def now() -> str:
 
 
 class Store:
-    def __init__(self, directory: Path, *, create: bool = False, test_mode: bool = False) -> None:
+    def __init__(self, directory: Path, *, create: bool = False, test_mode: bool = False,
+                 projects_root: Path | None = None) -> None:
+        # The logical workspace is also the immutable source of materials and methods.
         self.directory = Path(directory)
+        root = projects_root_for(self.directory.parent, projects_root)
+        self.data_directory = (self.directory.resolve() if projects_root is None and root == self.directory.parent.resolve()
+                               else project_directory(root, self.directory.name))
         self.test_mode = test_mode
-        production = Path(__file__).resolve().parents[2] / 'workspace'
-        if test_mode and (self.directory.resolve().is_relative_to(production.resolve())
-                          or 'projects' in [p.lower() for p in self.directory.resolve().parts]):
+        if test_mode and (self.directory.resolve().is_relative_to(FORMAL_WORKSPACE.resolve())
+                          or self.data_directory.is_relative_to(FORMAL_BOOKS_ROOT.resolve())
+                          or 'projects' in [p.lower() for p in self.data_directory.parts]):
             raise ValueError('test store cannot use production workspace or projects directories')
-        db = self.directory / 'nw.db'
+        db = self.data_file('nw.db')
+        name = self.directory.name
+        if create and not db.is_file() and (name.startswith(('_', '.')) or name.casefold() in ('library', 'materials')):
+            raise ValueError('作品目录名不能以 _ 或 . 开头，也不能使用系统保留的 library、materials')
         if not create and not db.is_file():
             raise FileNotFoundError(f'Project database does not exist: {db}')
         if create:
-            self.directory.mkdir(parents=True, exist_ok=True)
+            self.data_directory.mkdir(parents=True, exist_ok=True)
         self.connection = sqlite3.connect(db)
         self.connection.row_factory = sqlite3.Row
         self.connection.execute('PRAGMA foreign_keys=ON')
@@ -52,6 +61,9 @@ class Store:
         except BaseException:
             self.connection.close()
             raise
+
+    def data_file(self, *parts: str) -> Path:
+        return contained_file(self.data_directory, *parts)
 
     def __enter__(self) -> 'Store':
         return self
@@ -191,7 +203,7 @@ class Store:
     def _export_path(self, draft: m.Draft) -> Path:
         scene = self.get('scene', draft.scene_id)
         chapter = self.get('chapter', scene.chapter_id)
-        return self.directory / '正文' / f'ch{chapter.index:02d}_s{scene.index:02d}.md'
+        return self.data_file('正文', f'ch{chapter.index:02d}_s{scene.index:02d}.md')
 
     def _export(self, draft: m.Draft) -> None:
         if self.get('run', draft.run_id).provider == 'fake' and not self.test_mode:

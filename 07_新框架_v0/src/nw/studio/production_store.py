@@ -20,6 +20,9 @@ class ProductionStore:
                     status TEXT NOT NULL, wizard_json TEXT NOT NULL, created_at TEXT NOT NULL,
                     finished_at TEXT, updated_at TEXT NOT NULL, job_id TEXT,
                     runtime_status TEXT NOT NULL DEFAULT 'READY', reason TEXT);
+                CREATE TABLE IF NOT EXISTS novel_deletions (
+                    novel_id TEXT PRIMARY KEY, project_dir TEXT NOT NULL, project_id TEXT, deleted_at TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS novel_deleted_project ON novel_deletions(project_id);
                 CREATE TABLE IF NOT EXISTS wizard_choices (
                     novel_id TEXT NOT NULL, step INTEGER, slot TEXT NOT NULL, option_key TEXT NOT NULL,
                     recommended INTEGER NOT NULL DEFAULT 0, rec_rank INTEGER, rec_level TEXT,
@@ -31,6 +34,8 @@ class ProductionStore:
                 CREATE INDEX IF NOT EXISTS timeline_novel ON timeline_events(novel_id,id);
             ''')
             columns = {row['name'] for row in db.execute('PRAGMA table_info(novels)')}
+            if 'project_id' not in columns:
+                db.execute('ALTER TABLE novels ADD COLUMN project_id TEXT')
             if 'current_branch' not in columns:
                 db.execute("ALTER TABLE novels ADD COLUMN current_branch TEXT NOT NULL DEFAULT 'main'")
 
@@ -65,12 +70,17 @@ class ProductionStore:
     def add(self, ident: str, directory: str, title: str, wizard: dict) -> bool:
         timestamp = now()
         with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            if db.execute('SELECT 1 FROM novel_deletions WHERE novel_id=? OR project_id=?', (ident, ident)).fetchone():
+                return False
             inserted = db.execute('''INSERT INTO novels
                 (id,project_dir,title,status,wizard_json,created_at,updated_at)
                 VALUES (?,?,?,'designing',?,?,?) ON CONFLICT(project_dir) DO NOTHING''',
                                   (ident, directory, title, canonical(wizard), timestamp, timestamp))
             if inserted.rowcount == 0:
                 return False
+            if wizard.get('imported'):
+                db.execute('UPDATE novels SET project_id=? WHERE id=?', (ident, ident))
             for choice in wizard.get('choices', []):
                 db.execute('INSERT OR IGNORE INTO wizard_choices VALUES (?,?,?,?,?,?,?)', (
                     ident, choice.get('step'), choice['slot'], choice['option_key'],
@@ -78,7 +88,7 @@ class ProductionStore:
         return True
 
     def update(self, ident: str, **fields: Any) -> None:
-        if not fields or set(fields) - {'status', 'job_id', 'runtime_status', 'reason', 'finished_at', 'current_branch'}:
+        if not fields or set(fields) - {'status', 'job_id', 'runtime_status', 'reason', 'finished_at', 'current_branch', 'project_id'}:
             raise ValueError('无效的制作状态更新')
         fields['updated_at'] = now()
         with self.connect() as db:
@@ -89,8 +99,9 @@ class ProductionStore:
               timestamp: str | None = None) -> None:
         with self.connect() as db:
             db.execute('''INSERT OR IGNORE INTO timeline_events
-                (novel_id,ts,kind,ref_json,summary,dedup_key) VALUES (?,?,?,?,?,?)''',
-                       (ident, timestamp or now(), kind, canonical(ref or {}), summary, dedup))
+                (novel_id,ts,kind,ref_json,summary,dedup_key) SELECT ?,?,?,?,?,? WHERE EXISTS
+                (SELECT 1 FROM novels WHERE id=?)''',
+                       (ident, timestamp or now(), kind, canonical(ref or {}), summary, dedup, ident))
 
     def timeline(self, ident: str) -> dict[str, Any]:
         self.get(ident)

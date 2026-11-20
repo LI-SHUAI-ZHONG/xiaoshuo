@@ -18,3 +18,10 @@
 
 /* Versioned corpus structure and analytical evidence. */
 .corpus-toolbar{margin:18px 0;gap:10px}.corpus-tabs{display:flex;flex-wrap:wrap;gap:4px}.corpus-tabs button{padding:10px 12px;white-space:nowrap;min-height:40px}.corpus-text{white-space:pre-wrap;overflow-wrap:anywhere;margin-top:12px}.corpus-record{display:grid;gap:12px;min-width:0}.corpus-record p{overflow-wrap:anywhere;white-space:pre-wrap}.corpus-source{width:100%;max-width:100%;font-family:var(--font-serif);margin-top:16px}.corpus-job{margin:20px 0;display:grid;gap:12px}.corpus-job select{max-width:100%}#corpusRecordForm select,#corpusRecordForm textarea,#corpusRecordForm input{max-width:100%;width:100%}
+.shelf-item{min-width:0;display:flex;flex-direction:column;border-radius:10px;background:var(--bg-panel)}
+.shelf-item>.book-card{flex:1}
+.shelf-item>.shelf-trash{align-self:flex-end;margin:0 14px 10px;font-size:11px}
+.book-list .shelf-item{flex-direction:row;align-items:center}
+.book-list .shelf-item>.shelf-trash{align-self:center;margin:0 14px}
+.cache-paths{margin:12px 0 20px;overflow-wrap:anywhere}
+.cache-paths p+p{margin-top:10px}

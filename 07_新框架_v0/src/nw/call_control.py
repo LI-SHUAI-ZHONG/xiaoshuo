@@ -1,21 +1,27 @@
 """Cross-process model call locking and adapter reuse."""
-from contextlib import contextmanager
+from contextlib import AbstractContextManager, contextmanager
 import errno
 import hashlib
 import os
+from pathlib import Path
 from typing import Iterator
 
 from nw.llm.base import GenResult, LLMProvider
 from nw.store import Store
+from nw.project_paths import contained_file
+
+
+def execution_lock(store: Store, operation_id: str) -> AbstractContextManager[bool]:
+    name = hashlib.sha256(operation_id.encode('utf-8')).hexdigest() + '.lock'
+    root = getattr(store, 'data_directory', store.directory)
+    return lock_file(contained_file(root, 'locks', name))
 
 
 @contextmanager
-def execution_lock(store: Store, operation_id: str) -> Iterator[bool]:
-    directory = store.directory / 'locks'
-    directory.mkdir(exist_ok=True)
-    name = hashlib.sha256(operation_id.encode('utf-8')).hexdigest() + '.lock'
+def lock_file(path: Path) -> Iterator[bool]:
+    path.parent.mkdir(exist_ok=True)
     # Never unlink: another process might hold or be opening the existing file.
-    with (directory / name).open('a+b') as handle:
+    with path.open('a+b') as handle:
         handle.seek(0)
         if os.name == 'nt':
             import msvcrt
