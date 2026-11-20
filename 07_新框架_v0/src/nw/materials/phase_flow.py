@@ -1107,7 +1107,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     world_network_enabled = stage == 'world_design' and bool(enabled_world_rules(context))
     type_ready = {}
     world_ready = {}
-    resource_matches = []
+    world_matches = {}
     if network is not None:
         authored, rules = network
         step_pool, prepared = step_sources(stage, authored, rules, products, context, desk.by_id)
@@ -1120,14 +1120,14 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             type_ready = {ident: use for ident, use in step_pool.items() if ident in context['type_network_bases']}
         if world_network_enabled:
             world_ready = {ident: use for ident, use in step_pool.items() if ident in context['world_network_bases']}
-            from nw.materials.world_resources import POLICY as RESOURCE_POLICY, resource_families
-            if context.get('world_resource_policy') == RESOURCE_POLICY:
-                keys = {key for family, _ in resource_families() for key in family}
-                for ident in world_ready:
-                    if rules[ident]['key'] in keys:
-                        edge = context['world_network_bases'][ident]['edge']
-                        resource_matches.append({'key': rules[ident]['key'], 'source_id': ident,
-                                                 'relation': edge['source'] + ' → ' + edge['target']})
+            from nw.materials.world_network import project_families
+            groups = {key: group for group, requirements, _ in project_families(context) for key in requirements}
+            for ident in world_ready:
+                key = rules[ident]['key']
+                if group := groups.get(key):
+                    edge = context['world_network_bases'][ident]['edge']
+                    world_matches.setdefault(group, []).append({'key': key, 'source_id': ident,
+                                                                'relation': edge['source'] + ' → ' + edge['target']})
         network_waiting = early_waiting(stage, authored, rules, products, context, desk.by_id)
     else:
         step_pool = _step_source_pool(desk, stage, package)
@@ -1252,8 +1252,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 if ready is not None:
                     prerequisites[ref['id']] = {**ready, 'static_source': context['world_network_bases'][ref['id']]}
             payload['world_network_prerequisites'] = prerequisites
-            if resource_matches:
-                payload['world_resource_matches'] = resource_matches
+            if 'market' in world_matches:
+                payload['world_market_matches'] = world_matches['market']
+                suffix += '\nworld_market_matches 列出由批准世界卡支持的价值、汇率及交易规则。需要时用 key 搜索并读取。'
+            if 'resource' in world_matches:
+                payload['world_resource_matches'] = world_matches['resource']
                 suffix += '\nworld_resource_matches 列出本步由批准卡支持的全部资源规则。按当前需求选择，需要首屏以外的规则时用 key 补查。'
             if any('kind' not in data for data in prerequisites.values()):
                 suffix += ('\nworld_network_prerequisites 中的算式条目只提供本项目已批准的公式、该变量定义和适用范围。'
@@ -1278,6 +1281,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '依所用规则保留取得资格与成本、流动和循环的前后条件、或供需和稀缺等级的项目依据。'
                            '同卡的 rule 和 limits 原样交接，适用条款引用实际类型、批准卡及产物对应字段，'
                            '由本范围真实运行的下游步骤使用。')
+            if any(data.get('kind') == 'market' for data in prerequisites.values()):
+                suffix += ('\n标为 market 的依据来自本项目批准卡。保留具体市场、适用时期、参与资格、计量与兑换方向。'
+                           '采用交易方式时，保留该方式的条件、成本、例外或争议处理。待定比率保持待定。'
+                           '将同一批准卡的 rule 和 limits 原样交接到具体世界产物，并指定本范围内的后续步骤回执。')
         if network_waiting:
             payload['network_waiting'] = network_waiting
             suffix += '\nnetwork_waiting 列出现有项缺少的前置。只采用实际有前置的资料，缺前置时按其他已符合条件的输入完成本步。'
@@ -1561,6 +1568,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.world_advancement import POLICY as WORLD_ADVANCEMENT_POLICY
     from nw.materials.world_conversion import POLICY as WORLD_CONVERSION_POLICY
     from nw.materials.world_resources import POLICY as WORLD_RESOURCE_POLICY
+    from nw.materials.world_market import POLICY as WORLD_MARKET_POLICY
     from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY, enabled_rules as enabled_world_rules
     selected=selection_status(workspace)
     if selected:
@@ -1612,6 +1620,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             context['world_conversion_policy'] = WORLD_CONVERSION_POLICY
         if package.get('world_resource_policy') == WORLD_RESOURCE_POLICY:
             context['world_resource_policy'] = WORLD_RESOURCE_POLICY
+        if package.get('world_market_policy') == WORLD_MARKET_POLICY:
+            context['world_market_policy'] = WORLD_MARKET_POLICY
         if enabled_world_rules(context):
             from nw.materials.type_network_catalog import load_world_network_bases
 

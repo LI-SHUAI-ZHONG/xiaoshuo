@@ -1,10 +1,12 @@
 """Match world-design rules to the selected type and one approved world card."""
+from collections.abc import Callable, Iterator
 import ast
 import math
 import re
 import unicodedata
 
 from nw.materials.phase_routes import phase_order, product_ref
+from nw.materials.world_market import POLICY as MARKET_POLICY, market_families
 from nw.materials.world_resources import POLICY as RESOURCE_POLICY, resource_families
 from nw.materials.semantic_application import has_content, pointer_tokens, require
 
@@ -123,6 +125,14 @@ def _approved_formula(card: dict, terms: tuple[str, ...]) -> dict | None:
             'limits_ref': f'approved:{ident}:/body/limits'}
 
 
+def project_families(context: dict) -> Iterator[tuple[str, dict, Callable[[dict, str], dict | None]]]:
+    for group, policy, families in (('resource', RESOURCE_POLICY, resource_families),
+                                    ('market', MARKET_POLICY, market_families)):
+        if context.get('world_' + group + '_policy') == policy:
+            for requirements, approved in families():
+                yield group, requirements, approved
+
+
 def enabled_rules(context: dict) -> set[str]:
     from nw.materials.world_advancement import POLICY as ADVANCEMENT_POLICY, RULES as ADVANCEMENT_RULES
     from nw.materials.world_conversion import POLICY as CONVERSION_POLICY, RULES as CONVERSION_RULES
@@ -132,9 +142,8 @@ def enabled_rules(context: dict) -> set[str]:
         rules.update(ADVANCEMENT_RULES)
     if context.get('world_conversion_policy') == CONVERSION_POLICY:
         rules.update(CONVERSION_RULES)
-    if context.get('world_resource_policy') == RESOURCE_POLICY:
-        for requirements, _ in resource_families():
-            rules.update(requirements)
+    for _, requirements, _ in project_families(context):
+        rules.update(requirements)
     return rules
 
 
@@ -160,8 +169,7 @@ def availability(key: str, valid_types: object, products: dict, context: dict) -
     packet = {'type_ids': list(refs), 'type_refs': refs, 'output': 'members'}
     families = [('advancement', ADVANCEMENT_RULES, approved_advancement),
                 ('conversion', CONVERSION_RULES, approved_conversion)]
-    if context.get('world_resource_policy') == RESOURCE_POLICY:
-        families.extend(('resource', requirements, approved) for requirements, approved in resource_families())
+    families.extend(project_families(context))
     for kind, requirements, approved in families:
         if key in requirements:
             cards = [proof for card in context.get('approved_cards', [])

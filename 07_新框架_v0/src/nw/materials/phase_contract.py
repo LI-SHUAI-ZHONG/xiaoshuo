@@ -322,4 +322,4 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         if stage == 'bind_scope' and context.get('scope', 'chapter') != 'book':
             validate_scene_sources(value, products)
     from nw.materials.semantic_handoff import validate_handoffs
-    validate_handoffs(stage,value,products)
+    validate_handoffs(stage,value,products,context)
