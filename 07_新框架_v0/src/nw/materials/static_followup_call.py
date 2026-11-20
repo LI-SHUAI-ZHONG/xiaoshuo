@@ -56,7 +56,7 @@ def run_followup(store: Store, request: TaskRequest, package: dict, provider: LL
     search_trace: dict = {'queries': []}
     sources = _sources(desk, stage, {**package, 'materials': required}, upstream, ctx['method_sources'], reviewed_only=True,
                        step_pool=pool, network_context=ctx, source_query=query, deferrals=deferred, trace=search_trace,
-                       relation_matched=tuple(pool) if len(pool) == 1 else ())
+                       priority_ids=tuple(pool) if len(pool) == 1 else ())
     if not sources:
         return basis, basis_sources, calls
     contracts = [desk.semantic_contract(source) for source in sources]

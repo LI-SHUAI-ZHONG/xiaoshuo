@@ -946,13 +946,13 @@ def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_so
              *,reviewed_only: bool=False,deferrals: list | None=None,trace: dict | None=None,
              step_pool: dict[str, str] | None = None, prepared: dict[str, str] | None = None,
              network_context: dict | None = None, skip_required: frozenset[str] = frozenset(),
-             source_query: str | None = None, relation_matched: tuple[str, ...] = ()) -> list[dict]:
+             source_query: str | None = None, priority_ids: tuple[str, ...] = ()) -> list[dict]:
     if step_pool is None:
         step_pool = _step_source_pool(desk, stage, package)
     type_selection=products.get('type_selection',{}).get('products')
     from nw.materials.semantic_products import dynamic_rejection
     def usable(source: dict) -> bool:
-        if network_context is not None and dynamic_rejection(source, products, network_context):
+        if network_context is not None and dynamic_rejection(source, products, network_context, stage=stage):
             return False
         if not reviewed_only:return source['use_mode']=='project_method'
         if _admission(desk,source,stage,package,type_selection=type_selection,network_context=network_context)[1]:return True
@@ -972,10 +972,10 @@ def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_so
     if network_context is not None:
         for ident in ids:
             source = desk.read(ident)
-            if reason := dynamic_rejection(source, products, network_context):
+            if reason := dynamic_rejection(source, products, network_context, stage=stage):
                 raise ValueError('MATERIAL_WAITING_INPUTS: ' + source['source']['key'] + ' ' + reason)
     related = deferred_source_ids(desk, stage, products, studied_sources or [])
-    ids = list(dict.fromkeys([*ids, *relation_matched,
+    ids = list(dict.fromkeys([*ids, *priority_ids,
                             *(ident for ident in related if step_pool is None or ident in step_pool)]))
     demand=source_query or retrieval_need(stage,package,products)
     candidates=_stage_search(desk,stage,demand,trace=trace,step_pool=step_pool)['items']
@@ -1080,6 +1080,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.materials.scene_actions import MULTI_ACTION_POLICY
     from nw.materials.network_workflow import EARLY_POLICY, early_waiting, prepared_static_source, same_stage_rules, step_sources
     from nw.materials.semantic_products import dynamic_rejection
+    from nw.materials.type_network import FIELD_LABELS, POLICY as TYPE_NETWORK_POLICY, availability
     scoped_sources = context.get('scene_source_binding_policy') == SCENE_SOURCE_BINDING_POLICY
     multi_actions = context.get('multi_action_policy') == MULTI_ACTION_POLICY
     action_state = stage == 'action_design' and context.get('action_state_policy') == ACTION_STATE_POLICY
@@ -1100,6 +1101,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     early_static = stage == 'static_relations' and context.get('early_network_policy') == EARLY_POLICY
     early_plot = stage == 'plot_design' and context.get('early_network_policy') == EARLY_POLICY
     followup_ids = frozenset()
+    type_network_enabled = context.get('type_network_policy') == TYPE_NETWORK_POLICY
+    type_ready = {}
     if network is not None:
         authored, rules = network
         step_pool, prepared = step_sources(stage, authored, rules, products, context, desk.by_id)
@@ -1108,6 +1111,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if early_static:
             network_context['early_static_sources'] = sorted(prepared)
             followup_ids = frozenset(same_stage_rules(authored, rules, context, desk.by_id))
+        if type_network_enabled and stage == 'type_adaptation':
+            type_ready = {ident: use for ident, use in step_pool.items() if ident in context['type_network_bases']}
         network_waiting = early_waiting(stage, authored, rules, products, context, desk.by_id)
     else:
         step_pool = _step_source_pool(desk, stage, package)
@@ -1143,7 +1148,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     if network_waiting:
         selection['network_waiting'] = network_waiting
     sources=_sources(desk,stage,package,products,studied_sources,reviewed_only=True,deferrals=deferred,trace=selection,
-                     step_pool=step_pool,prepared=prepared,network_context=network_context,skip_required=followup_ids)
+                     step_pool=step_pool,prepared=prepared or type_ready,network_context=network_context,
+                     skip_required=followup_ids,priority_ids=tuple(type_ready) if len(type_ready) == 1 else ())
     search_pool = {**step_pool, **prepared} if step_pool is not None else None
     dependencies = deferred_source_ids(desk, stage, products, studied_sources or [])
     if step_pool is not None:
@@ -1198,6 +1204,28 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        if type_network_enabled and stage == 'type_selection':
+            payload['type_network_policy'] = TYPE_NETWORK_POLICY
+            payload['adaptation_input_fields'] = FIELD_LABELS
+            suffix += ('\n可选 adaptation_inputs 只记录本项目已明确的类型适配前置。各项写 {ref,quote}：'
+                       'ref 用 brief:/text、brief:/constraints 或已批准的 brief/plot 卡片具体字段，quote 逐字抄取已有明确内容。'
+                       '按含义区分读者承诺、惯例、突破、创新范围、融合方式、主辅分工、篇幅、商业策略、融合比例口径、市场定位和检查依据。'
+                       '作者未明确的、不同意的、尚待选择的内容保持缺项。向导自动拼接的偏好标签不代表承诺；篇幅可用作者设置的立项参数。')
+        if type_network_enabled and stage == 'type_adaptation':
+            prerequisites = {}
+            for source in sources:
+                ref = source['source']
+                if ref['id'] not in type_ready:
+                    continue
+                ready, _ = availability(ref['key'], rules[ref['id']]['valid_types'], products, context)
+                if ready is not None:
+                    prerequisites[ref['id']] = {**ready, 'static_source': context['type_network_bases'][ref['id']]}
+            payload['type_network_prerequisites'] = prerequisites
+            if prerequisites:
+                suffix += ('\n采用 type_network_prerequisites 中的条目时，按原静网方向核对已选类型与作者实际承诺。'
+                           '每条适用原义须引用本项目对应的实际类型行及所列全部作者前置，写入指定的 adaptations 行或具体 boundaries 项。'
+                           '_uses 登记同一产物，原义条款的 output_refs 指向其具体字段，并交给本方案实际运行的后续步骤承接。'
+                           '作者尚未明确的篇幅、分工、比例口径或商业意图保留待定。')
         if network_waiting:
             payload['network_waiting'] = network_waiting
             suffix += '\nnetwork_waiting 列出现有项缺少的前置。只采用实际有前置的资料，缺前置时按其他已符合条件的输入完成本步。'
@@ -1334,6 +1362,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 for s in [desk.read(ident)]]
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
+            if type_network_enabled and stage == 'type_selection':
+                payload['output_contract']['products']['adaptation_inputs'] = {}
             if network_context is not None and stage == 'plot_design':
                 payload['output_contract']['products']['static_bindings'] = []
         inherited=next((row for row in package.get('parent_material_work',{}).get('stages',[]) if row['stage']==stage),None)
@@ -1430,7 +1460,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 require(action['id'] in set(payload['readable_source_ids']),'read was not requested from this step search results')
                 source=desk.read(action['id'])
                 if network_context is not None:
-                    reason = dynamic_rejection(source, products, network_context)
+                    reason = dynamic_rejection(source, products, network_context, stage=stage)
                     require(not reason, source['source']['key'] + '：' + reason)
                 review, admitted=_admission(desk,source,stage,package,
                     type_selection=products.get('type_selection',{}).get('products'),network_context=network_context)
@@ -1475,6 +1505,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.source_set import selection_status
     from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY, resolve_type_scope
     from nw.materials.network_followup import POLICY as FOLLOWUP_POLICY
+    from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
     selected=selection_status(workspace)
     if selected:
         package={**package,'current_source_set':selected['sha256']}
@@ -1512,6 +1543,11 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             if package.get('same_stage_network_policy') == FOLLOWUP_POLICY:
                 context['same_stage_network_policy'] = FOLLOWUP_POLICY
         network = network_materials(desk, package)
+        if package.get('type_network_policy') == TYPE_NETWORK_POLICY:
+            from nw.materials.type_network_catalog import load_type_network_bases
+
+            context['type_network_policy'] = TYPE_NETWORK_POLICY
+            context['type_network_bases'] = load_type_network_bases(desk, *network)
     if package.get('dynamic_reference_checks'):
         context['dynamic_reference_checks'] = True
     from nw.production_methods.handoff import inherited
@@ -1551,7 +1587,10 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         products[stage]=record;sources.update({row['source']['id']:row for row in read});calls.extend(receipts)
         context['binding_reviews'].update(record['binding_reviews'])
         if network is not None and stage == 'type_selection':
-            context['network_type_scope'] = resolve_type_scope(workspace, record['products'])
+            families = {} if context.get('type_network_policy') == TYPE_NETWORK_POLICY else None
+            context['network_type_scope'] = resolve_type_scope(workspace, record['products'], families=families)
+            if families is not None:
+                context['type_network_families'] = families
         if network is not None and stage == 'plot_design':
             context['prepared_static_sources'] = record['prepared_static_sources']
         if 'early_network_policy' in context and stage == 'static_relations':

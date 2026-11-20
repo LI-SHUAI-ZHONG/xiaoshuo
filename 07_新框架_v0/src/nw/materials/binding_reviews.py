@@ -151,8 +151,25 @@ def verify_session_bindings(session: dict,workspace: Path,*,test_mode: bool=Fals
                 'the selected material version changed')
     from nw.materials.network_workflow import POLICY as NETWORK_POLICY, resolve_type_scope
     if context.get('network_prerequisite_policy') == NETWORK_POLICY:
-        require(context.get('network_type_scope') == resolve_type_scope(workspace, selection),
+        from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
+
+        typed = context.get('type_network_policy') == TYPE_NETWORK_POLICY
+        families = {} if typed else None
+        require(context.get('network_type_scope') == resolve_type_scope(workspace, selection, families=families),
                 'dynamic network type scope differs from the selected original types')
+        if typed:
+            require(context.get('type_network_families') == families, 'verified main-type families changed')
+            bases = context.get('type_network_bases', {})
+            offered = {ident for row in session['stages'] if row['stage'] == 'type_adaptation'
+                       for ident in row['source_ids'] if ident in bases}
+            if offered:
+                from nw.materials.type_network_catalog import edge_proof
+                from nw.materials.work_catalog import SourceDesk
+
+                desk = SourceDesk(workspace, test_mode=test_mode)
+                for ident in sorted(offered):
+                    require(edge_proof(sources[ident], desk.read(bases[ident]['static_id'])) == bases[ident],
+                            'type adaptation static source changed or could no longer be verified')
     if control:
         review=reviewed_source(control['source'],fresh,test_mode=test_mode,stage='retrieval')
         require(review is not None and canonical(review)==canonical(control['review']),'retrieval control changed')

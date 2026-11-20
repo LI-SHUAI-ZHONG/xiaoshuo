@@ -176,8 +176,9 @@ def _network_relation_inputs(source: dict, raw: dict, products: dict, context: d
             if row['relation'] == raw['type']}
 
 
-def dynamic_rejection(source: dict, products: dict, context: dict) -> str:
+def dynamic_rejection(source: dict, products: dict, context: dict, *, stage: str | None = None) -> str:
     from nw.materials.network_workflow import DYNAMIC_PROFILES, POLICY, type_matches
+    from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY, availability
 
     if context.get('network_prerequisite_policy') != POLICY or source['source']['profile'] not in DYNAMIC_PROFILES:
         return ''
@@ -185,8 +186,14 @@ def dynamic_rejection(source: dict, products: dict, context: dict) -> str:
     if isinstance(raw, dict):
         if not type_matches(raw.get('valid_types'), context.get('network_type_scope', {})):
             return '已选类型不在原条适用范围，或缺少可核对的类型依据'
-        if raw.get('generated_from_static') and not _network_relation_inputs(source, raw, products, context):
-            return '缺少本项目已落实的对应静态关系'
+        if raw.get('generated_from_static'):
+            if stage == 'type_adaptation' and context.get('type_network_policy') == TYPE_NETWORK_POLICY:
+                if source['source']['id'] not in context.get('type_network_bases', {}):
+                    return '缺少具有制作资格且可核对的本步静网原条'
+                ready, missing = availability(source['source']['key'], raw.get('valid_types'), products, context)
+                return '' if ready is not None else '等待' + '、'.join(missing)
+            if not _network_relation_inputs(source, raw, products, context):
+                return '缺少本项目已落实的对应静态关系'
     return ''
 
 
@@ -315,6 +322,7 @@ def validate_prepared_static(value: dict, sources: list[dict], context: dict) ->
 def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources: list[dict],context: dict) -> None:
     from nw.materials.network_followup import BASIS_STAGE, POLICY as FOLLOWUP_POLICY, STAGE as FOLLOWUP_STAGE
     from nw.materials.network_workflow import DYNAMIC_PROFILES, EARLY_POLICY, POLICY
+    from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY, validate_type_network_use
 
     strict = context.get('network_prerequisite_policy') == POLICY
     used={r['source_id'] for r in value.get('_uses',[])}
@@ -323,11 +331,14 @@ def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources:
         if ident not in used:
             continue
         if strict:
-            reason = dynamic_rejection(item, products, context)
+            reason = dynamic_rejection(item, products, context, stage=stage)
             require(not reason, item['source']['key'] + '：' + reason)
         raw=original(item)
         if not isinstance(raw,dict) or not raw.get('generated_from_static'):continue
         if strict and item['source']['profile'] in DYNAMIC_PROFILES:
+            if stage == 'type_adaptation' and context.get('type_network_policy') == TYPE_NETWORK_POLICY:
+                validate_type_network_use(item, raw, value, products, context)
+                continue
             inputs = _network_relation_inputs(item, raw, products, context)
             relations = list(inputs.values())
             if stage == 'action_design':

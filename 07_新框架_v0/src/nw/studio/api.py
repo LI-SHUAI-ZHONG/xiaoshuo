@@ -759,11 +759,18 @@ class StudioService:
             from nw.materials.network_followup import POLICY as FOLLOWUP_POLICY
             from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY, early_waiting, resolve_type_scope, step_sources
             selected_types = mock_products.get('type_selection', {}).get('products', {})
+            families = {} if stage == 'type_adaptation' else None
             network_context = {'network_prerequisite_policy': NETWORK_POLICY,
                                'early_network_policy': EARLY_POLICY,
                                'same_stage_network_policy': FOLLOWUP_POLICY,
-                               'network_type_scope': resolve_type_scope(self.workspace, selected_types)}
+                               'network_type_scope': resolve_type_scope(self.workspace, selected_types, families=families)}
             authored, rules = network_materials(desk, package)
+            if stage == 'type_adaptation':
+                from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
+                from nw.materials.type_network_catalog import load_type_network_bases
+
+                network_context.update(type_network_policy=TYPE_NETWORK_POLICY, type_network_families=families,
+                                       type_network_bases=load_type_network_bases(desk, authored, rules))
             step_pool, prepared = step_sources(stage, authored, rules, mock_products, network_context, desk.by_id)
             network_context['prepared_static_sources'] = sorted(prepared)
             if stage == 'static_relations':

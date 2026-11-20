@@ -98,12 +98,16 @@ def validate_phase(raw: dict,stage: str,products: dict,sources: list[dict],conte
 
 
 def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: dict) -> None:
+    from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY, validate_adaptation_inputs
+
     require(isinstance(raw,dict) and set(raw)=={'stage','products'} and raw['stage']==stage,'wrong stage output')
     value=raw['products']
     require('<填写' not in canonical(value),'unfilled transport shape is not an actual project product')
+    type_network_inputs = stage == 'type_selection' and context.get('type_network_policy') == TYPE_NETWORK_POLICY
     require(isinstance(value,dict) and FIELDS[stage]|{'_uses'}<=value.keys()
             and not value.keys()-FIELDS[stage]-{'_uses','_excluded','_requirements','_criteria'}
-            -({'static_bindings'} if stage=='plot_design' else set())-{'_governance','_receipts'},'wrong stage product fields')
+            -({'static_bindings'} if stage=='plot_design' else set())-{'_governance','_receipts'}
+            -({'adaptation_inputs'} if type_network_inputs else set()),'wrong stage product fields')
     if '_governance' in value:
         config=value['_governance']
         require(stage=='type_selection' and isinstance(config,dict) and set(config)=={'project_config'}
@@ -114,6 +118,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     entities=entity_ids(products,context)
     if stage=='type_selection':
         require(isinstance(value['selection'],list) and isinstance(value['boundaries'],list),'type choice and boundaries required')
+        if type_network_inputs:
+            validate_adaptation_inputs(value, products, context)
     elif stage=='world_design':
         _members(value['members'],{'world'},entities)
         require(all(isinstance(value[k],list) and all(_text(v) for v in value[k]) for k in ('limitations','unknowns')),'world limits required')

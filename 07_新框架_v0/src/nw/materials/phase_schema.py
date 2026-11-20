@@ -30,7 +30,7 @@ def card(kind: str) -> dict:
 
 
 def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | None=None,*,allow_requests: bool=True,
-           contracts: list[dict] | None=None) -> dict:
+           contracts: list[dict] | None=None, type_network_inputs: bool=False) -> dict:
     state={'type':'object','additionalProperties':ANY,'minProperties':1}
     use=obj({**strings('source_id','operation'),'output_refs':array(TEXT,1)})
     use['properties']['operation']={'type':'string','minLength':8,'maxLength':160}
@@ -155,7 +155,13 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
     fields={key:shapes[key] for key in sorted(FIELDS[stage])};fields.update(common)
     if stage!='type_selection':fields.pop('_governance')
     if stage=='plot_design':fields['static_bindings']=shapes['static_bindings']
-    final=obj({'stage':{'const':stage},'products':obj(fields,('_excluded','_requirements','static_bindings','_governance','_receipts'))})
+    if stage == 'type_selection' and type_network_inputs:
+        from nw.materials.type_network import INPUT_FIELDS
+
+        names = tuple(sorted(INPUT_FIELDS))
+        fields['adaptation_inputs'] = obj({name: obj(strings('ref', 'quote')) for name in names}, names)
+    final=obj({'stage':{'const':stage},'products':obj(fields,('_excluded','_requirements','static_bindings','_governance',
+                                                            '_receipts','adaptation_inputs'))})
     if not allow_requests:return final
     actions=[obj({'action':{'const':'search'},'query':TEXT,'cursor':{'type':'integer','minimum':0}},('cursor',))]
     if readable:actions.append(obj({'action':{'const':'read'},'id':{'enum':list(readable)}}))

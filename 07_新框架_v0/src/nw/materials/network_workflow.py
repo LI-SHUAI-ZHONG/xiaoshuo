@@ -17,7 +17,7 @@ def _name(value: str) -> str:
     return unicodedata.normalize('NFKC', value).strip().casefold()
 
 
-def resolve_type_scope(workspace: Path, selection: dict) -> dict[str, list[str]]:
+def resolve_type_scope(workspace: Path, selection: dict, *, families: dict[str, str] | None = None) -> dict[str, list[str]]:
     """Use agreed original names and parent IDs for the actual type selections."""
     from nw.materials.type_adjudication import TYPE_TABLE
     from nw.materials.type_sources import MAIN_TYPES, SUBTYPES, original_type_records
@@ -42,6 +42,10 @@ def resolve_type_scope(workspace: Path, selection: dict) -> dict[str, list[str]]
         labels = {label}
         if kind == 'SUBGENRE' and parent in agreed and agreed[parent][0] == 'GENRE':
             labels.add(agreed[parent][1])
+            if families is not None:
+                families[ident] = parent
+        elif kind == 'GENRE' and families is not None:
+            families[ident] = ident
         result[ident] = sorted(labels)
     return result
 
@@ -144,7 +148,12 @@ def early_waiting(stage: str, authored: dict, rules: dict, products: dict, conte
                 or not type_matches(rule['valid_types'], context.get('network_type_scope', {})) or _adopted(rule, bound)):
             continue
         basis = rows.get(rule['static_id'])
-        if not basis or basis['state'] != 'design_ready':
+        if stage == 'type_adaptation' and _type_network_active(context):
+            decision, missing = _type_network_decision(ident, rule, products, context)
+            if decision is not None:
+                continue
+            reason = '等待' + '、'.join(missing)
+        elif not basis or basis['state'] != 'design_ready':
             reason = '缺少具有制作资格的唯一静网依据'
         elif stage == 'static_relations':
             reason = '等待独立保存的静网关系，本轮产物不能自证'
@@ -156,6 +165,20 @@ def early_waiting(stage: str, authored: dict, rules: dict, products: dict, conte
         if len(examples) < 6:
             examples.append({'key': rule['key'], 'static_key': basis['key'] if basis else None, 'reason': reason})
     return {'counts': dict(counts), 'examples': examples} if counts else {}
+
+
+def _type_network_active(context: dict) -> bool:
+    from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
+
+    return context.get('type_network_policy') == TYPE_NETWORK_POLICY
+
+
+def _type_network_decision(ident: str, rule: dict, products: dict, context: dict) -> tuple[dict | None, list[str]]:
+    from nw.materials.type_network import availability
+
+    if ident not in context.get('type_network_bases', {}):
+        return None, ['具有制作资格且可核对的本步静网原条']
+    return availability(rule['key'], rule['valid_types'], products, context)
 
 
 def _static_inputs(rules: dict, authored: dict, scope: dict, bound: dict, rows: dict) -> dict[str, str]:
@@ -192,6 +215,10 @@ def step_sources(stage: str, authored: dict, rules: dict, products: dict, contex
         if rule is None or (type_matches(rule['valid_types'], scope) and
                 (not rule['derived'] or _adopted(rule, bound))):
             pool[ident] = use
+        elif stage == 'type_adaptation' and _type_network_active(context):
+            decision, _ = _type_network_decision(ident, rule, products, context)
+            if decision is not None:
+                pool[ident] = use
     if stage == 'static_relations' and context.get('early_network_policy') == EARLY_POLICY:
         prepared = _prepare_for_plot(authored, rules, context, rows)
         for basis, hint in _prepare_for_followup(authored, rules, context, rows).items():

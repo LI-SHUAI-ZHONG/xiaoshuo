@@ -71,7 +71,7 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
         from nw.materials.phase_schema import schema
         shape=schema(payload['stage'],sources,
             payload.get('readable_source_ids',[]),payload.get('inputs'),allow_requests=payload.get('mode')!='execute',
-            contracts=payload.get('source_contracts'))
+            contracts=payload.get('source_contracts'), type_network_inputs=bool(payload.get('type_network_policy')))
         if 'static_relations_basis' in payload:
             from nw.materials.static_followup_call import FOLLOWUP_FIELDS
             products = shape['properties']['products']
