@@ -32,6 +32,10 @@ def verify_chain(session: dict) -> None:
                  'accepted_state':visible_facts(row['stage'],products,session['context'])}
         if session['policy']==POLICY:
             context.update(require_semantics=True,semantic_contracts=session.get('semantic_contracts',[]))
+        if context.get('network_prerequisite_policy') and row['stage']=='plot_design':
+            prepared = row.get('prepared_static_sources', [])
+            require(prepared == context.get('prepared_static_sources') and set(prepared) <= set(row['source_ids']),
+                    'static prerequisite input sources changed or were not offered')
         if context.get('binding_policy'):
             require(canonical(row.get('binding_reviews'))==canonical({ident:session['context']['binding_reviews'][ident]
                     for ident in row['source_ids'] if ident in session['context']['binding_reviews']}),

@@ -344,7 +344,7 @@ def model_package(package: dict) -> dict:
         'material_recall','material_input','stage_materials','stage_source_policy','chapter_handoff','chapter_summary','chapter_reviews',
         'type_hierarchy_enabled','type_source_scope_enabled','type_name_evidence_enabled','governance_inputs',
         'dynamic_reference_checks','dynamic_screening_enabled','scene_source_binding_policy','action_state_policy',
-        'action_template_priority_enabled'}}
+        'action_template_priority_enabled','network_prerequisite_policy'}}
     if package.get('materials'):
         result['materials']=[model_material(row,book=package['scope']=='book') for row in package['materials']]
         result['material_input']={'policy':POLICY,'full_sources_frozen_for_verification':True}

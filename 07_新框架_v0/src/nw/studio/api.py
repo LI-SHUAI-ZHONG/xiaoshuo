@@ -29,6 +29,7 @@ from nw.materials.phase_flow import (
     STEP_SOURCE_PROMPT,
     _sources,
     _step_source_pool,
+    network_materials,
 )
 from nw.materials.phase_routes import EXTERNAL_REQUIRES, ORDER, POLICY, REQUIRES, phase_order, route_method
 from nw.materials.stage_input import STEP_SOURCE_POLICY, step_material_prompt
@@ -661,14 +662,15 @@ class StudioService:
             selected = selection_status(self.workspace)
             if selected:
                 package['current_source_set'] = selected['sha256']
-                package['stage_materials'] = {stage: STAGE_MATERIALS.get(stage, '')}
+                package['stage_materials'] = {name: STAGE_MATERIALS.get(name, '')
+                                              for name in (*phase_order(scope), stage)}
                 package['stage_source_policy'] = STEP_SOURCE_POLICY
         mock_products: dict[str, dict] = {}
         if simulate_prior_products:
             if stage != 'type_selection':
                 mock_products['type_selection'] = {
                     'products': {
-                        'selection': [{'id': 'TYPE_SUSPENSE', 'label': '悬疑推理'}],
+                        'selection': [{'id': 'GENRE_XUANYI', 'label': '悬疑'}],
                         'boundaries': ['单视角受限知情，禁止未铺垫的机械降神解谜'],
                     }
                 }
@@ -752,9 +754,21 @@ class StudioService:
             'offered': [],
             'selected': [],
         }
-        step_pool = _step_source_pool(desk, stage, package)
+        prepared, network_context = {}, None
+        if package.get('current_source_set') and stage in phase_order(scope):
+            from nw.materials.network_workflow import POLICY as NETWORK_POLICY, resolve_type_scope, step_sources
+            selected_types = mock_products.get('type_selection', {}).get('products', {})
+            network_context = {'network_prerequisite_policy': NETWORK_POLICY,
+                               'network_type_scope': resolve_type_scope(self.workspace, selected_types)}
+            authored, rules = network_materials(desk, package)
+            step_pool, prepared = step_sources(stage, authored, rules, mock_products, network_context, desk.by_id)
+            network_context['prepared_static_sources'] = sorted(prepared)
+        else:
+            step_pool = _step_source_pool(desk, stage, package)
         sources = _sources(desk, stage, package, mock_products, [], reviewed_only=True, deferrals=deferred,
-                           trace=selection, step_pool=step_pool)
+                           trace=selection, step_pool=step_pool, prepared=prepared, network_context=network_context)
+        if step_pool is not None:
+            step_pool = {**step_pool, **prepared}
         joint_plan = build_joint_material_plan(stage, sources)
         source_keys = [s['source']['key'] for s in sources] if step_pool is None else []
         base_prompt = (STEP_PROMPT if step_pool is None else STEP_SOURCE_PROMPT) + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
@@ -788,6 +802,7 @@ class StudioService:
             'sources_count': len(formatted_sources),
             'sources': formatted_sources,
             'stage_source_policy': package.get('stage_source_policy'),
+            **({'network_type_scope': network_context['network_type_scope']} if network_context is not None else {}),
             'deferred_reviews_count': len(deferred),
             'queries_executed': selection.get('queries', []),
             'rendered_prompt': rendered_prompt,

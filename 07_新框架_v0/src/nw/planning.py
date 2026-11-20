@@ -197,7 +197,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             for key in ('stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
-                        'action_state_policy', 'action_template_priority_enabled'):
+                        'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy'):
                 if key in previous_package:
                     package[key] = previous_package[key]
         else:
@@ -229,8 +229,10 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
                 }
                 if staged_catalog:
+                    from nw.materials.network_workflow import POLICY as NETWORK_POLICY
                     from nw.materials.stage_input import STEP_SOURCE_POLICY
                     package['stage_source_policy'] = STEP_SOURCE_POLICY
+                    package['network_prerequisite_policy'] = NETWORK_POLICY
         while methods and len(prompt) + len(canonical(model_package(package))) > budget.context_char_limit:
             methods.pop()
         sources = _source_refs(store, [*cards, *methods])

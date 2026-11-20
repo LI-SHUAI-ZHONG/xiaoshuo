@@ -153,10 +153,13 @@ def test_current_source_set_design_uses_authored_step_material_and_pins_original
         request, package = prepare_plan_task(store, 1, 'book', provider, config(store), budget, 'six-source-plan')
         assert not package.get('materials')
         assert package['stage_source_policy'] == STEP_SOURCE_POLICY
+        from nw.materials.network_workflow import POLICY as NETWORK_POLICY
+        assert package['network_prerequisite_policy'] == NETWORK_POLICY
         from nw.materials.scene_source_bindings import POLICY
         assert package['scene_source_binding_policy'] == POLICY
         _, frozen = drive_plan(store, request, package, provider, config(store))
         session = frozen['material_work']
+        assert session['context']['network_prerequisite_policy'] == NETWORK_POLICY
         assert session['context']['scene_source_binding_policy'] == POLICY
         step = next(row for row in session['stages'] if row['stage'] == 'character_design')
         assert any(use['source_id'] == source['id'] for use in step['products']['_uses'])

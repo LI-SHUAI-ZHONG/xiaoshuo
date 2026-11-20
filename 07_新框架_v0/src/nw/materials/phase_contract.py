@@ -35,7 +35,11 @@ def _method_stages(source: dict,context: dict) -> list[str]:
         if review:
             return [u['stage'] for u in review['uses'] if context.get('scope') in
                     u.get('scopes',['book','volume','chapter','scene','replan'])]
-        return [stage for stage in route_method(source)['stages']
+        from nw.materials.network_workflow import prepared_plot_source
+        stages = route_method(source)['stages']
+        if prepared_plot_source(source, context) and 'plot_design' not in stages:
+            stages = [*stages, 'plot_design']
+        return [stage for stage in stages
                 if allows_stage_candidate(source,stage,context)]
     if not context.get('legacy_replay'):return route_method(source)['stages']
     from nw.materials.phase_routes import ROUTES,TEMPLATE_STAGES
@@ -286,14 +290,22 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     validate_template_uses(stage,value,products,sources,context)
     validate_requirements(stage,value,products,output_refs(stage,value))
     validate_selected_requirements(stage,value,products,context)
+    from nw.materials.network_workflow import POLICY as NETWORK_POLICY
+    strict_network = context.get('network_prerequisite_policy') == NETWORK_POLICY
     if not context.get('legacy_replay'):
         from nw.materials.step_guard import validate_cross_step_consistency
         validate_cross_step_consistency(stage, value, products, context)
         if stage=='plot_design':validate_plot_products(value,sources,context)
         if stage=='anchor_design':validate_anchor_products(value,products,sources)
-        validate_dynamic_dependencies(stage,value,products,sources,context)
+        if not strict_network:
+            validate_dynamic_dependencies(stage,value,products,sources,context)
     from nw.materials.semantic_application import validate_semantic_applications
     validate_semantic_applications(stage,value,products,sources,context)
+    if strict_network and not context.get('legacy_replay'):
+        if stage == 'plot_design':
+            from nw.materials.semantic_products import validate_prepared_static
+            validate_prepared_static(value, sources, context)
+        validate_dynamic_dependencies(stage,value,products,sources,context)
     if context.get('scene_source_binding_policy'):
         from nw.materials.scene_source_bindings import POLICY, validate_candidate_sources, validate_scene_sources
         require(context['scene_source_binding_policy'] == POLICY, 'unknown scene source binding policy')

@@ -151,12 +151,104 @@ def adopted_relation(source: dict,products: dict,context: dict) -> list[dict]:
     return matches
 
 
+def _network_relation_inputs(source: dict, raw: dict, products: dict, context: dict) -> dict[str, dict]:
+    from nw.materials.network_workflow import STATIC_PROFILES, bound_relations
+
+    related = source.get('related_sources', [])
+    if len(related) > 1:
+        return {}
+    candidates = set()
+    for item in context.get('method_sources', []):
+        ref = item['source']
+        if ref['profile'] not in STATIC_PROFILES or (related and ref['id'] != related[0]):
+            continue
+        if not related and source['source']['profile'] != 'dynamic_binding':
+            continue
+        basis = original(item)
+        if (isinstance(basis, dict) and not basis.get('generated_from_static') and not basis.get('effect')
+                and all(_text(raw.get(k)) and basis.get(k) == raw[k] for k in ('source', 'target', 'type'))):
+            candidates.add(ref['id'])
+    if len(candidates) != 1:
+        return {}
+    [ident] = candidates
+    return {ref: row for ref, row in bound_relations(products).get(ident, {}).items()
+            if row['relation'] == raw['type']}
+
+
+def dynamic_rejection(source: dict, products: dict, context: dict) -> str:
+    from nw.materials.network_workflow import DYNAMIC_PROFILES, POLICY, type_matches
+
+    if context.get('network_prerequisite_policy') != POLICY or source['source']['profile'] not in DYNAMIC_PROFILES:
+        return ''
+    raw = original(source)
+    if isinstance(raw, dict):
+        if not type_matches(raw.get('valid_types'), context.get('network_type_scope', {})):
+            return '已选类型不在原条适用范围，或缺少可核对的类型依据'
+        if raw.get('generated_from_static') and not _network_relation_inputs(source, raw, products, context):
+            return '缺少本项目已落实的对应静态关系'
+    return ''
+
+
+def _validate_action_relation(value: dict, ident: str, inputs: dict, products: dict, context: dict) -> None:
+    people = {row['key'] for row in _product(products, 'character_design').get('members', [])}
+    people.update(row['card_id'] for row in context.get('approved_cards', []) if row['kind'] == 'character')
+    criteria = next((row for row in value.get('_criteria', []) if row['source_id'] == ident), {})
+    for index, candidate in enumerate(value['candidates']):
+        if ident not in candidate['source_ids']:
+            continue
+        target = f'/candidates/{index}'
+        cited = {path.replace(':/products/', ':/', 1) for clause in criteria.get('clauses', [])
+                 if clause['applicability'] == 'applies' and any(
+                     output in ('/candidates', target) or output.startswith(target + '/')
+                     for output in clause['output_refs']) for path in clause['input_refs']}
+        require(any((ref in cited or any(f'{ref}/{field}' in cited for field in ('source', 'target', 'relation', 'condition'))) and
+                    (not {row['source'], row['target']} <= people or candidate['actor'] in (row['source'], row['target']))
+                    for ref, row in inputs.items()), 'dynamic action must cite its actual adopted static relationship')
+
+
+def validate_prepared_static(value: dict, sources: list[dict], context: dict) -> None:
+    from nw.materials.network_workflow import prepared_plot_source
+
+    uses = {item['source_id']: set(item['output_refs']) for item in value['_uses']}
+    criteria = {row['source_id']: {path for clause in row['clauses'] if clause['applicability'] == 'applies'
+                                   for path in clause['output_refs']} for row in value.get('_criteria', [])}
+    for item in sources:
+        ident = item['source']['id']
+        if ident not in uses or not prepared_plot_source(item, context):
+            continue
+        edge = original(item)
+        actual = {}
+        for index, row in enumerate(value.get('static_bindings', [])):
+            if row['source_id'] == ident and isinstance(edge, dict) and row['relation'] == edge.get('type'):
+                actual['relation:' + row['id']] = f'/static_bindings/{index}'
+        require(uses[ident] <= actual.keys(), 'prepared static source needs its own exact plot relationship')
+        paths = criteria.get(ident, set())
+        proved = {ref for ref, pointer in actual.items() if any(
+            path in ('/static_bindings', pointer) or path.startswith(pointer + '/') for path in paths)}
+        require(uses[ident] == proved, 'prepared static clauses must establish the cited plot relationship')
+
+
 def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources: list[dict],context: dict) -> None:
+    from nw.materials.network_workflow import DYNAMIC_PROFILES, POLICY
+
+    strict = context.get('network_prerequisite_policy') == POLICY
     used={r['source_id'] for r in value.get('_uses',[])}
     for item in sources:
+        ident = item['source']['id']
+        if ident not in used:
+            continue
+        if strict:
+            reason = dynamic_rejection(item, products, context)
+            require(not reason, item['source']['key'] + '：' + reason)
         raw=original(item)
-        if item['source']['id'] not in used or not isinstance(raw,dict) or not raw.get('generated_from_static'):continue
-        relations=adopted_relation(item,products,context)
+        if not isinstance(raw,dict) or not raw.get('generated_from_static'):continue
+        if strict and item['source']['profile'] in DYNAMIC_PROFILES:
+            inputs = _network_relation_inputs(item, raw, products, context)
+            relations = list(inputs.values())
+            if stage == 'action_design':
+                _validate_action_relation(value, ident, inputs, products, context)
+        else:
+            relations=adopted_relation(item,products,context)
         require(bool(relations),'dynamic source has no actual adopted static relationship')
         if stage=='state_propagation':
             own=[r for r in value['candidates'] if item['source']['id'] in r['source_ids']]

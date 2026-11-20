@@ -31,6 +31,10 @@ def allows_stage_candidate(source: dict, stage: str, context: dict) -> bool:
     if ref.get('path','').endswith('/类型连接.txt'):
         from nw.materials.steps.type_connections import allows_adaptation
         return stage == 'type_adaptation' and allows_adaptation(source,context.get('type_selection',{}))
+    if stage == 'plot_design':
+        from nw.materials.network_workflow import prepared_plot_source
+        if prepared_plot_source(source, context):
+            return True
     return stage in route_method(source)['stages']
 
 
@@ -146,6 +150,10 @@ def verify_session_bindings(session: dict,workspace: Path,*,test_mode: bool=Fals
         selected=selection_status(workspace)
         require(selected is not None and selected['sha256']==context['current_source_set'],
                 'the selected material version changed')
+    from nw.materials.network_workflow import POLICY as NETWORK_POLICY, resolve_type_scope
+    if context.get('network_prerequisite_policy') == NETWORK_POLICY:
+        require(context.get('network_type_scope') == resolve_type_scope(workspace, selection),
+                'dynamic network type scope differs from the selected original types')
     if control:
         review=reviewed_source(control['source'],fresh,test_mode=test_mode,stage='retrieval')
         require(review is not None and canonical(review)==canonical(control['review']),'retrieval control changed')

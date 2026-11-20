@@ -126,6 +126,43 @@ class SourceDesk:
                 SELECT id,line_start,line_end FROM material_units WHERE id IN wanted''', (wanted,))
             return {row['id']: (row['line_start'], row['line_end']) for row in rows}
 
+    def dynamic_rules(self) -> dict[str, dict]:
+        """Read the existing network adjudication fields used before delivery."""
+        if not self.has_reviews:
+            return {}
+        from nw.materials.network_workflow import STATIC_PROFILES
+        result = {}
+        with closing(self._connect()) as db:
+            for ident, raw in db.execute('''SELECT c.owner_id, c.payload_json FROM contracts c
+                JOIN positions p ON p.id=c.owner_id WHERE p.profile IN ('dynamic_relation','dynamic_binding')'''):
+                if ident not in self.by_id:
+                    continue
+                review = json.loads(raw)
+                fields = review['contract']
+                related = review.get('related', [])
+                result[ident] = {'key': self.by_id[ident]['key'], 'valid_types': fields.get('valid_types'),
+                                 'derived': bool(fields.get('generated_from_static')),
+                                 'static_id': related[0] if len(related) == 1 else None,
+                                 'relation': fields.get('relation')}
+        for ident, metadata in result.items():
+            if self.by_id[ident]['profile'] != 'dynamic_binding':
+                continue
+            try:
+                raw = json.loads(self.read(ident)['original_text'])
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(raw, dict):
+                continue
+            metadata.update(valid_types=raw.get('valid_types'), derived=bool(raw.get('generated_from_static')),
+                            relation=raw.get('type'))
+            signature = tuple(raw.get(key) for key in ('source', 'target', 'type'))
+            if metadata['derived'] and not metadata['static_id'] and all(isinstance(k, str) for k in signature):
+                matches = [row['id'] for row in self.rows if row['profile'] in STATIC_PROFILES
+                           and row['key'] == ' / '.join(signature)]
+                if len(matches) == 1:
+                    metadata['static_id'] = matches[0]
+        return result
+
     def directory(self) -> dict:
         topics={};examples={}
         for row in self.rows:
