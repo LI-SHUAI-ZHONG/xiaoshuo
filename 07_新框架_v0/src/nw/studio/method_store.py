@@ -40,6 +40,9 @@ class MethodMixin:
                               (head['id'], version)).fetchone()
         pins = json.loads(raw['evidence_json'])
         resolved, unavailable = resolve(self, body['evidence'], pins=pins, books=books)
+        from nw.studio.corpus_methods import origin_status
+        origin, origin_issues = origin_status(self, head['id'], version, body, conn)
+        unavailable += origin_issues
         issues = completeness(body)
         state = {'approve': 'approved', 'reject': 'rejected'}.get(review['decision'], 'draft') if review else 'draft'
         return {'id': head['id'], 'version': version, 'latest_version': head['latest_version'],
@@ -49,6 +52,7 @@ class MethodMixin:
             'available': state == 'approved' and not issues and not unavailable,
             'issues': issues, 'source_issues': unavailable, 'evidence_locations': resolved,
             'origin_item_id': head['origin_item_id'], 'legacy': json.loads(raw['legacy_json']),
+            'structure_origin': origin,
             'created_at': raw['created_at'], 'updated_at': head['updated_at'],
             'authority': 'reference_method', 'missing_input_policy': 'return_design',
             'runtime_integration': 'not_connected'}
@@ -98,6 +102,9 @@ class MethodMixin:
                 conn.execute('INSERT INTO production_methods VALUES(?,?,NULL,NULL,?,?)', (ident, version, now, now))
             conn.execute('INSERT INTO production_method_versions VALUES(?,?,?,?,?,?,?)',
                 (ident, version, encode(body), digest(body), encode(pins), legacy, now))
+            if version > 1:
+                from nw.studio.corpus_methods import inherit_origin
+                inherit_origin(conn, ident, expected, version)
         return self.get_method(ident)
 
     def review_method(self, ident: str, body: dict) -> dict:

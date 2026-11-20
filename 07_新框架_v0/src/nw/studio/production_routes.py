@@ -2,7 +2,7 @@
 import json
 from typing import Any
 from urllib.parse import quote
-from nw.studio import method_routes
+from nw.studio import method_routes, corpus_routes
 
 
 def first(query: dict, key: str, default: str = '') -> str:
@@ -15,7 +15,9 @@ class ProductionRoutes:
 
     def get(self, handler: Any, segs: list[str], query: dict) -> bool:
         lib, app = self.library, self.production
-        data = method_routes.get(lib, segs, query)
+        data = corpus_routes.get(lib, segs, query)
+        if data is None:
+            data = method_routes.get(lib, segs, query)
         if data is not None:
             handler._send_json(200, data)
             return True
@@ -73,7 +75,9 @@ class ProductionRoutes:
 
     def post(self, handler: Any, segs: list[str], body: dict) -> bool:
         lib, app = self.library, self.production
-        data, status = method_routes.post(lib, segs, body), 200
+        data, status = corpus_routes.post(lib, segs, body), 200
+        if data is None:
+            data = method_routes.post(lib, segs, body)
         if data is not None:
             handler._send_json(201 if segs == ['kb', 'methods'] else 200, data)
             return True

@@ -15,6 +15,9 @@ from nw.studio.staging import StagingMixin
 from nw.studio.library_util import encode, timestamp
 from nw.studio.method_migration import SCHEMA as METHOD_SCHEMA, migrate_legacy
 from nw.studio.method_store import MethodMixin
+from nw.studio.corpus_schema import SCHEMA as CORPUS_SCHEMA
+from nw.studio.corpus_store import CorpusMixin
+from nw.studio.corpus_jobs import CorpusJobsMixin, recover_corpus_jobs
 
 
 SCHEMA = '''
@@ -56,7 +59,7 @@ CREATE TABLE IF NOT EXISTS usage_stats (
 '''
 
 
-class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMixin):
+class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMixin, CorpusMixin, CorpusJobsMixin):
     def __init__(self, workspace_root: Path, *, config_path: Path | None = None,
                  ledger_path: Path | None = None) -> None:
         self.workspace = Path(workspace_root).resolve()
@@ -73,7 +76,9 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
             if 'decomposition_requested' not in columns:
                 conn.execute('ALTER TABLE staging_books ADD COLUMN decomposition_requested INTEGER NOT NULL DEFAULT 1')
             conn.executescript(METHOD_SCHEMA)
+            conn.executescript(CORPUS_SCHEMA)
         migrate_legacy(self)
+        recover_corpus_jobs(self)
         from nw.studio.staging_model import recover_decompositions
         recover_decompositions(self)
 

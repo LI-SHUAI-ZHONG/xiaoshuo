@@ -13,7 +13,7 @@ export async function renderMethods(ctx){
   if(!ctx.alive())return;
   const flat=genres.genres.flatMap(g=>[g,...g.children]);
   const taskNames=Object.fromEntries(catalog.tasks.map(t=>[t.id,t.name]));
-  $('#kbContent').innerHTML=`<div class="notice">方法按生产任务和制作层级组织，类型用于筛选。方法库审核独立保存；多层自动拆解、生成本项目设计卡及正文核验将在后续步骤接通。</div>
+  $('#kbContent').innerHTML=`<div class="notice">方法按生产任务和制作层级组织，类型用于筛选。参考作品可先建立多层结构，再从已批准结构提炼有来源的方法。方法独立审核；本项目设计卡生成与正文核验待后续步骤接通。</div>
     <form id="methodFilters" class="row wrap method-filters">
     ${field('生产任务',`<select name="task"><option value="">全部生产任务</option>${options(taskNames,ctx.params.get('task')||'')}</select>`)}
     ${field('层级',`<select name="scope"><option value="">全书 / 卷 / 章 / 场景</option>${options(catalog.scopes,ctx.params.get('scope')||'')}</select>`)}
@@ -48,6 +48,7 @@ export async function renderMethods(ctx){
       ${row.approved_version&&row.version!==row.approved_version?`<p class="notice">已批准版本 ${row.approved_version} 保留；当前版本单独审核。</p>`:''}
       ${issues.length?`<div class="notice"><strong>待补齐或核对</strong>${bullets(issues.map(i=>i.message))}</div>`:''}
       ${row.origin_item_id?'<p class="muted">来自旧拆解条目；原始短文与审核记录保留。</p>':''}
+      ${row.structure_origin?`<p class="notice">依据已批准结构版本 ${row.structure_origin.structure_version}；方法不等于本项目事实。<a class="text-link" href="#/staging/${enc(row.structure_origin.book_id)}?view=structure&version=${row.structure_origin.structure_version}" data-method-source>查看结构与多处原文证据 →</a></p>`:''}
       <section class="method-section"><h3>适用条件</h3>${bullets(body.applicability)}</section>
       <section class="method-section"><h3>所需前置</h3>${bullets(body.prerequisites.map(p=>`${catalog.input_kinds[p.input_kind]} / ${p.artifact}：${p.requirement}`))}</section>
       <section class="method-section"><h3>具体操作</h3>${bullets(body.operations.map(o=>o.instruction))}</section>
@@ -150,6 +151,7 @@ export async function renderMethods(ctx){
   $$('#methodFilters select').forEach(select=>select.onchange=()=>{offset=0;load().catch(fail);});
   $('#newMethod').onclick=()=>editMethod().catch(fail);
   await load();
+  if(ctx.params.get('method')&&ctx.alive()){try{const item=await api.get(`/kb/methods/${enc(ctx.params.get('method'))}`,ctx.signal);await showMethod(item.id,item.version);}catch(error){fail(error);}}
 }
 
 function* rowFields(root){for(const el of $$('input[name],select[name],textarea[name]',root))yield [el.name,el.value];}
