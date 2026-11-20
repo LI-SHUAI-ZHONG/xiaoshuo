@@ -3,7 +3,9 @@ from nw.materials import character_prerequisites, world_prerequisites
 from nw.materials.network_workflow import type_matches
 from nw.materials.type_network_catalog import edge_proof
 
-POLICY = 'frozen-design-prerequisites-v1'
+LEGACY_POLICY = 'frozen-design-prerequisites-v1'
+POLICY = 'frozen-design-prerequisites-v2'
+SUPPORTED = {LEGACY_POLICY, POLICY}
 OWNERS = {'world_design': world_prerequisites, 'character_design': character_prerequisites}
 ACTION_BASES = {'C00025', 'C00032'}
 
@@ -33,7 +35,7 @@ def load_catalog(desk, authored: dict, rules: dict) -> dict:
 
 
 def audit(stage: str, context: dict) -> list[dict]:
-    if context.get('design_network_policy') != POLICY or stage not in OWNERS:
+    if context.get('design_network_policy') not in SUPPORTED or stage not in OWNERS:
         return []
     return [dict(key=key, **OWNERS[stage].SPECS[key], basis_stage=row['basis_stage'])
             for key, row in sorted(context['design_network_catalog'].items()) if row['owner'] == stage

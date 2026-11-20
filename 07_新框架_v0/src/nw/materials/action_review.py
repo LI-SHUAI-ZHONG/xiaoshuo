@@ -2,6 +2,7 @@
 import json
 
 from nw.materials import evidence
+from nw.materials.design_semantics import check_review_evidence
 from nw.models import Draft, Run
 from nw.store import Store
 from nw.story_models import StateDelta
@@ -35,8 +36,22 @@ def _first_missing(actions: list[dict], rows: list[dict], draft_id: str) -> dict
     return None
 
 
+def _design_problems(checks: list[dict], rows: list[dict], draft: Draft):
+    by_id = {c['id']: c for c in checks}
+    for row in rows:
+        if row['status'] == 'pass' and row['id'].startswith('work:design-network:'):
+            try:
+                check_review_evidence(by_id[row['id']], row['evidence'], draft)
+            except ValueError as error:
+                yield row, str(error)
+
+
 def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Draft | None) -> dict:
     result = evidence.review_result(run, contract, draft, comparison)
+    if contract:
+        for row, reason in _design_problems(contract['checks'], result['material_checks'], draft):
+            row.update(status='failed', reason=reason)
+            result['recommendation'] = 'revise'
     actions = _actions(contract['checks']) if contract else []
     if len(actions) >= 2 and result['recommendation'] == 'pass':
         failed = _first_missing(actions, result['material_checks'], draft.id)
@@ -48,12 +63,15 @@ def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Dra
 
 def check_material_acceptance(store: Store, draft: Draft, delta: StateDelta) -> list[dict]:
     rows = evidence.check_material_acceptance(store, draft, delta)
-    if sum(row['id'].startswith(_ACTION_CHECK_PREFIX) for row in rows) >= 2:
+    if (any(row['id'].startswith('work:design-network:') for row in rows)
+            or sum(row['id'].startswith(_ACTION_CHECK_PREFIX) for row in rows) >= 2):
         # The base check has matched this frozen review message to the current contract.
         _, package = read_input_manifest(store, delta.manifest_id)
         reviewed = store.get('run', package['material_review_run'])
         snapshot = json.loads(reviewed.input_snapshot_json)
         contract = json.loads(snapshot['messages'][-1]['content'])['material_review']
+        for _, reason in _design_problems(contract['checks'], rows, draft):
+            raise ValueError(reason)
         actions = _actions(contract['checks'])
         if len(actions) >= 2 and _first_missing(actions, rows, draft.id) is not None:
             raise ValueError('MATERIAL_EVIDENCE: ' + ACTION_ORDER_REASON)

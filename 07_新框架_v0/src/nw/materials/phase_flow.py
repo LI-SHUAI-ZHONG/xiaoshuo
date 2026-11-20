@@ -1242,6 +1242,14 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                        '在 products._network_design_uses 写 {id,operation,output_refs}。operation 说明实际操作，'
                        '每个 output_refs 填本步具体字段的 JSON 指针，落点保留上游可辨认的项目细节。'
                        '人物只能落在该角色参与的产物。场景使用 goal、conflict 或 allowed_disclosure；带 selector 的交付只落实在实际选用对应事件或动作的场景。')
+        from nw.materials import design_semantics
+        if any(c.get('semantic_policy') for c in design_candidates):
+            suffix += ('\n采用带 semantic_policy 的条目时，实际落点应保留同一对象和成立条件。核对资源计量、制度允许或禁止的结果，'
+                       '或本人承诺的对象、事项与后果。可以设计失败、违规、违约或已证实的例外，并在实际选择与结果中体现。')
+        if stage == 'state_transition' and (scene_rules := design_semantics.scene_constraints(products)):
+            payload['adopted_scene_constraints'] = {name: [{k: row[k] for k in ('key', 'member', 'actor', 'event', 'ability', 'excerpts', 'commitment', 'consumption', 'scene_fields', 'check') if k in row}
+                                                           for row in rows] for name, rows in scene_rules.items()}
+            suffix += '\n按本场已采用的具体限制核对最终 choice 和 planned_result，使人物行动、代价和结果前后一致。'
         if world_candidates:
             suffix += ('\n若本页全部方法的适用条件与本书需求不符，可只返回 {stage:"world_design",world_method_gap:'
                        '{design_basis:[{kind,path}],exclusions:[{method_id,reason}],missing:"需要哪种方法以及原因"}}。'
@@ -1691,9 +1699,9 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             if package.get('same_stage_network_policy') == FOLLOWUP_POLICY:
                 context['same_stage_network_policy'] = FOLLOWUP_POLICY
         network = network_materials(desk, package)
-        from nw.materials.design_network_catalog import POLICY as DESIGN_NETWORK_POLICY, load_catalog
-        if package.get('design_network_policy') == DESIGN_NETWORK_POLICY:
-            context['design_network_policy'] = DESIGN_NETWORK_POLICY
+        from nw.materials.design_network_catalog import SUPPORTED as DESIGN_NETWORK_POLICIES, load_catalog
+        if package.get('design_network_policy') in DESIGN_NETWORK_POLICIES:
+            context['design_network_policy'] = package['design_network_policy']
             context['design_network_catalog'] = load_catalog(desk, *network)
             context['parent_design_network'] = package.get('parent_design_network', [])
         if package.get('type_network_policy') == TYPE_NETWORK_POLICY:

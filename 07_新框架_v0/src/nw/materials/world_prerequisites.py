@@ -83,8 +83,20 @@ def _direction(key: str, evidence: str) -> bool:
     return key not in _DIRECTED or left.search(evidence).start() < right.search(evidence).start()
 
 
-def _world_evidence(key: str, body: dict):
+def _world_evidence(key: str, body: dict, *, strict: bool = False):
+    from nw.materials.design_semantics import world_eligible, SPECIAL_WORLD
     left, right, detail = _TERMS[key]
+    if strict and key in SPECIAL_WORLD:
+        if any(_UNSET.search(s) and left.search(s) and right.search(s)
+               for s in _parts(body.get('rule')) + _parts(body.get('limits'))):
+            return
+        for clause in _parts(body.get('rule')):
+            if _UNSET.search(clause) or clause == SPECS[key]['condition']:
+                continue
+            for limit in _parts(body.get('limits')):
+                if not _UNSET.search(limit) and world_eligible(key, clause, limit, body):
+                    yield clause, limit
+        return
     limits = [s for s in _parts(body.get('limits')) if not _UNSET.search(s) and _BOUND.search(s)]
     if not limits:
         return
@@ -134,12 +146,19 @@ def _acts(value, ability, actor, cast, names):
 
 
 def _action_refs(key: str, products: dict, rule: str, context: dict):
+    from nw.materials.design_network_catalog import POLICY
     character = products.get('character_design')
     if not character:
         return
     product_ref(character)
     names = {r['card_id']: r['body'].get('name', '') for r in context.get('approved_cards', []) if r['kind'] == 'character'}
     names.update({r['key']: r['body'].get('name', '') for r in character['products'].get('members', []) if r['kind'] == 'character'})
+    name_refs = {c['card_id']: f"approved:{c['card_id']}:/body/name" for c in context.get('approved_cards', []) if c['kind'] == 'character'}
+    name_refs.update({m['key']: f'input:character_design:/members/{i}/body/name'
+                      for i, m in enumerate(character['products'].get('members', [])) if m['kind'] == 'character'})
+    people = {m['key'] for m in character['products'].get('members', []) if m['kind'] == 'character'}
+    people.update(c['entity'] for table in ('states', 'capabilities') for c in character['products'].get(table, []))
+    current_names = [names[who].removeprefix('[FAKE]').strip() for who in people if names.get(who)]
     dimension = _TERMS[key][1 if key == 'C00025' else 0]
     events = []
     # The completion gate of a successor belongs to its predecessor. Its own
@@ -172,9 +191,13 @@ def _action_refs(key: str, products: dict, rule: str, context: dict):
                 for item in fields:
                     if not _acts(event.get(item), name, actor, cast, names):
                         continue
-                    yield list(dict.fromkeys((f'input:character_design:/capabilities/{index}/abilities/{pos}',
-                                              f'input:character_design:/capabilities/{index}/{evidence[0]}/{evidence[1]}',
-                                              f'input:{stage}:/{field}/{j}/{item}')))
+                    refs = [f'input:character_design:/capabilities/{index}/abilities/{pos}',
+                            f'input:character_design:/capabilities/{index}/{evidence[0]}/{evidence[1]}',
+                            f'input:{stage}:/{field}/{j}/{item}']
+                    if (context.get('design_network_policy') == POLICY and key == 'C00025' and names.get(actor)
+                            and current_names.count(names[actor].removeprefix('[FAKE]').strip()) == 1):
+                        refs.append(name_refs[actor])
+                    yield list(dict.fromkeys(refs))
                     break
 
 
@@ -197,7 +220,8 @@ def matches(key: str, product: dict, *, products: dict, context: dict) -> list[d
         if card.get('kind') != 'world' or not card.get('key') or not isinstance(card.get('body'), dict):
             continue
         seen = set()
-        for rule, limit in _world_evidence(key, card['body']):
+        from nw.materials.design_network_catalog import POLICY
+        for rule, limit in _world_evidence(key, card['body'], strict=context.get('design_network_policy') == POLICY):
             if key in _ACTION_ONLY:
                 choices = _action_refs(key, products, rule, context)
             elif key in _TYPE_COMPARISONS:

@@ -1,7 +1,8 @@
 """Apply a source method only after independent project fields exist, then follow its actual placements."""
 import re
 
-from nw.materials.design_network_catalog import OWNERS, POLICY, audit
+from nw.materials.design_network_catalog import OWNERS, POLICY, SUPPORTED, audit
+from nw.materials import design_semantics
 from nw.materials.network_workflow import type_matches
 from nw.materials.phase_routes import product_ref
 from nw.materials.semantic_application import concrete, input_value, output_value, pointer_tokens, require
@@ -32,8 +33,11 @@ def _signature(row: dict) -> str:
         return (producer, *(p for p in parts if not p.isdecimal()))
 
     fields = sorted(canonical([field(e['ref']), e['value']]) for e in row['evidence'])
-    return content_sha256([row['key'], row['member'], row['source'], row['static'],
-                           [row.get(k) for k in ('actor', 'event', 'ability')], fields])
+    data = [row['key'], row['member'], row['source'], row['static'],
+            [row.get(k) for k in ('actor', 'event', 'ability')], fields]
+    if commitment := row.get('commitment'):
+        data.append({k: v for k, v in commitment.items() if k not in ('actor', 'member')})
+    return content_sha256(data)
 
 
 def _placements(record):
@@ -57,15 +61,27 @@ def inherited(parent: dict, members: dict | None = None, cards=()) -> list[dict]
             pin = (members or {}).get(row['member'])
             if pin is None:
                 pin = next(({k: c[k] for k in ('card_id', 'version')} for c in cards if c['card_id'] == row['member']), None)
-            result.append({'signature': _signature(row), 'producer': product_ref(plot), 'path': path, 'value': value,
+            afterward = {}
+            if row['key'] in design_semantics.RULES:
+                use = next(u for u in plot['products']['_network_design_uses'] if u['id'] == row['id'])
+                afterward['operation'] = use['operation']
+                if row.get('semantic_policy') != POLICY:
+                    # A new child can reuse a legacy decision only with its actual sibling outcomes.
+                    old_direction = plot['products']['directions'][index]
+                    afterward['legacy_outcomes'] = [old_direction[k] for k in design_semantics.DIRECTION_FIELDS if old_direction.get(k)]
+                if field := design_semantics.aftermath_field(row['key']):
+                    afterward[field] = design_semantics.with_aftermath(row, 'plot_design', plot['products'], index)[field]
+            result.append({**afterward, 'signature': _signature(row), 'producer': product_ref(plot), 'path': path, 'value': value,
                            'row': {k: v for k, v in row.items() if k not in ('id', 'deliveries', 'required')}, 'card': pin})
     return result
 
 
 def candidates(stage: str, products: dict, context: dict) -> list[dict]:
-    if context.get('design_network_policy') != POLICY or stage not in _PATHS:
+    if context.get('design_network_policy') not in SUPPORTED or stage not in _PATHS:
         return []
     prior = {}
+    confirmed_receipts = set()
+    rejected_receipts = {}
     if stage == 'plot_design' or stage == 'scene_design':
         for entry in context.get('parent_design_network', []):
             prior.setdefault(entry['signature'], []).append(entry)
@@ -89,6 +105,23 @@ def candidates(stage: str, products: dict, context: dict) -> list[dict]:
         for row, path, value in _placements(plot):
             prior.setdefault(_signature(row), []).append({'producer': product_ref(plot), 'path': path, 'value': value})
     result = []
+    current_people = products.get('character_design', {}).get('products', {})
+    live_people = {m['key'] for m in current_people.get('members', [])}
+    live_people.update(r['entity'] for group in ('states', 'capabilities') for r in current_people.get(group, []))
+
+    def recipient(entry, row):
+        old, card = entry['row'], entry.get('card') or {}
+        published = card.get('card_id')
+        if row['owner'] == 'character_design' and published in live_people:
+            return row['member'] == published
+        if row['member'] != old['member']:
+            return row['member'] == published
+        if row['owner'] == 'character_design' and published:
+            def names(candidate):
+                return {e['value'] for e in candidate['evidence'] if e['ref'].endswith('/body/name')}
+            return names(old) == names(row)
+        return True
+
     for key, pins in sorted(context.get('design_network_catalog', {}).items()):
         owner = pins['owner']
         methods = OWNERS[owner]
@@ -124,18 +157,48 @@ def candidates(stage: str, products: dict, context: dict) -> list[dict]:
                 event_stage, event_path = event.split(':')[1:]
                 field, pos = pointer_tokens(event_path)[:2]
                 row['event'] = products[event_stage]['products'][field][int(pos)]['id']
-            carried = prior.get(_signature(row), [])
+            if context.get('design_network_policy') == POLICY and key in design_semantics.RULES:
+                if not design_semantics.prepare(row, match):
+                    continue
+            carried = list(prior.get(_signature(row), []))
+            if row.get('semantic_policy') == POLICY:
+                carried = [r for r in carried if 'row' not in r or recipient(r, row)]
+                for entry in context.get('parent_design_network', []) if stage in ('plot_design', 'scene_design') else ():
+                    old = entry['row']
+                    if (old.get('semantic_policy') == POLICY or old['key'] != key or entry in carried
+                            or not recipient(entry, row)
+                            or old['source'] != pins['source'] or old['static'] != pins['static']):
+                        continue
+                    # A v1 signature can lack the v2 promise fields. Recheck the selected direction
+                    # against today's pinned project evidence before delivering it as an obligation.
+                    carried.append(entry)
+                valid = []
+                for receipt in carried:
+                    if 'row' in receipt and receipt['row'].get('semantic_policy') != POLICY:
+                        try:
+                            design_semantics.verify_receipt(row, receipt)
+                        except ValueError as error:
+                            rejected_receipts[id(receipt)] = error
+                            continue
+                        confirmed_receipts.add(id(receipt))
+                    valid.append(receipt)
+                carried = valid
             if stage not in spec['consumers'] and not carried:
                 continue
             row['id'] = 'design:' + content_sha256([stage, row])[:32]
             row.update(required=bool(carried), deliveries=[{k: v for k, v in item.items() if k not in ('row', 'card')}
                                                        for item in carried])
             result.append(row)
+    # A character may promise two different things. Find a valid landing for each
+    # selected old receipt across all of this member's methods before failing it.
+    for identity, error in rejected_receipts.items():
+        if identity not in confirmed_receipts:
+            raise error
     if stage in ('plot_design', 'scene_design'):
         # A detailed plan can retain an approved actor or world without creating another member for it.
         for entry in context.get('parent_design_network', []):
             old, card = entry['row'], entry.get('card')
-            if old['owner'] != 'world_design' or not card or any(r['key'] == old['key'] and r['member'] in (old['member'], card['card_id']) for r in result):
+            if not card:
                 continue
             pins = context['design_network_catalog'].get(old['key'])
             if not pins or pins['source'] != old['source'] or pins['static'] != old['static'] or not type_matches(
@@ -143,13 +206,29 @@ def candidates(stage: str, products: dict, context: dict) -> list[dict]:
                 continue
             if not any(c['card_id'] == card['card_id'] and c['version'] == card['version'] for c in context.get('approved_cards', [])):
                 continue
-            if any(m['key'] in (old['member'], card['card_id']) for m in products[old['owner']]['products']['members']):
+            member_ids = {old['member'], card['card_id']}
+            strict = context.get('design_network_policy') == POLICY and old['key'] in design_semantics.RULES
+            if old['owner'] == 'character_design':
+                if strict and old.get('semantic_policy') != POLICY and live_people & member_ids:
+                    require(id(entry) in confirmed_receipts, old['key'] + ' 已选父纲的承诺缺少可复核的对象或前置，请补原设计')
+                continue
+            if old['owner'] != 'world_design' or old['owner'] not in products:
+                continue
+            created = any(m['key'] in member_ids for m in products[old['owner']]['products']['members'])
+            if strict and created and old.get('semantic_policy') != POLICY:
+                require(id(entry) in confirmed_receipts, old['key'] + ' 已选父纲的世界前置须能在本步复核，请补原设计')
+            if created or any(r['key'] == old['key'] and r['member'] in member_ids for r in result):
                 continue
             if any(e['ref'].startswith('input:type_selection:') and e['value'] not in {
                     choice['label'] for choice in products['type_selection']['products']['selection']} for e in old['evidence']):
                 continue
             restored = {**old, 'member': card['card_id'], 'required': True,
                         'deliveries': [{k: v for k, v in entry.items() if k not in ('row', 'card')}]}
+            if strict:
+                # All adopted fields of the selected direction belong to this retained world.
+                related = [e for e in context['parent_design_network'] if e.get('card') == card and e['signature'] == entry['signature']]
+                restored['deliveries'] = [{k: v for k, v in e.items() if k not in ('row', 'card')} for e in related]
+                design_semantics.verify_retained(restored)
             restored['id'] = 'design:' + content_sha256([stage, old, card])[:32]
             if restored['id'] not in {r['id'] for r in result}:
                 result.append(restored)
@@ -190,6 +269,8 @@ def _participants(stage: str, value: dict, index: int) -> set | None:
 
 
 def validate(stage: str, value: dict, offered: list[dict], products: dict | None = None, context: dict | None = None) -> None:
+    if stage == 'state_transition' and (context or {}).get('design_network_policy') == POLICY:
+        design_semantics.check_patches(value, products or {})
     uses = value.get('_network_design_uses', [])
     require(isinstance(uses, list), '世界与人物设计采用记录须为列表')
     by_id = {row['id']: row for row in offered}
@@ -214,8 +295,16 @@ def validate(stage: str, value: dict, offered: list[dict], products: dict | None
             text = output_value(path, value)
             exact_ability = row['key'] == 'C00835' and isinstance(text, str) and any(
                 isinstance(v, str) and len(v.strip()) >= 2 and v.strip() in text for v in evidence)
-            require(concrete(text) and (exact_ability or _supports(text, evidence)), '落点未保留冻结前置的可辨认项目细节')
             index = int(match[1])
+            checked = row
+            if row.get('semantic_policy') == POLICY:
+                checked = design_semantics.with_aftermath(row, stage, value, index)
+                require(concrete(text), '采用记录须给出具体项目产物')
+                design_semantics.validate_use(checked, text, operation=use['operation'], stage=stage)
+            else:
+                require(concrete(text) and (exact_ability or _supports(text, evidence)), '落点未保留冻结前置的可辨认项目细节')
+            if checked.get('semantic_policy') == POLICY:
+                design_semantics.check_product(checked, stage, value, index, products or {})
             participants = _participants(stage, value, index)
             if stage == 'scene_design':
                 scene = value['members'][index]['key']
@@ -275,11 +364,13 @@ def scene_checks(record: dict, scene: str) -> list[dict]:
             continue
         result.append({'id': 'work:design-network:' + content_sha256([row['id'], path, scene])[:32],
             'profile': 'method_work', 'network_design_key': row['key'],
-            'binding': {'observable': value, 'check': row['check']},
+            'binding': {'observable': value, 'check': design_semantics.writing_check(row)},
             'method_artifact': {'source': row['source'], 'static': row['static'], 'origin': row['origin'],
                                 **{k: row[k] for k in ('actor', 'event', 'ability') if k in row},
                                 'upstream': row['upstream'], 'approved': row['approved'],
                                 'prerequisites': row['evidence'], 'scene_ref': product_ref(record), 'path': path,
+                                **{k: row[k] for k in ('semantic_policy', 'consumption', 'commitment', 'excerpts')
+                                   if k in row and row.get('semantic_policy') == POLICY},
                                 'application': next(u['operation'] for u in record['products']['_network_design_uses']
                                                     if u['id'] == row['id'])},
             'evidence_required': '对照本场实际文字核验该设计的可观察结果，并指出对应原句。'})

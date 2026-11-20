@@ -152,6 +152,8 @@ def enabled_rules(context: dict) -> set[str]:
 def availability(key: str, valid_types: object, products: dict, context: dict) -> tuple[dict | None, list[str]]:
     from nw.materials.network_workflow import type_matches
     from nw.materials.world_advancement import RULES as ADVANCEMENT_RULES, approved_advancement
+    from functools import partial
+    from nw.materials.design_network_catalog import POLICY as DESIGN_POLICY
     from nw.materials.world_conversion import RULES as CONVERSION_RULES, approved_conversion
 
     if key not in enabled_rules(context):
@@ -170,7 +172,7 @@ def availability(key: str, valid_types: object, products: dict, context: dict) -
         return None, ['已选且符合原条的类型']
     packet = {'type_ids': list(refs), 'type_refs': refs, 'output': 'members'}
     families = [('advancement', ADVANCEMENT_RULES, approved_advancement),
-                ('conversion', CONVERSION_RULES, approved_conversion)]
+                ('conversion', CONVERSION_RULES, partial(approved_conversion, strict=context.get('design_network_policy') == DESIGN_POLICY))]
     families.extend(project_families(context))
     for kind, requirements, approved in families:
         if key in requirements:

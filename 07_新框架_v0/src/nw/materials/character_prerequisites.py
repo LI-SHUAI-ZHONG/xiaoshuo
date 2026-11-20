@@ -286,6 +286,7 @@ def _external(key: str, member: dict, fields: dict, products: dict, context: dic
 
 
 def matches(key: str, product: dict, *, products: dict, context: dict) -> list[dict]:
+    from nw.materials import commitment_semantics as commitments
     if key not in SPECS:
         return []
     stage = 'world_design' if key in _WORLD else {'C00022': 'type_selection', 'C01153': 'static_relations'}.get(key)
@@ -303,6 +304,26 @@ def matches(key: str, product: dict, *, products: dict, context: dict) -> list[d
         if not name or _UNCERTAIN.search(name) or name in _UNSPECIFIC:
             continue
         fields = _fields(product, member, prefix)
+        if key in commitments.KEYS and context.get('design_network_policy') == commitments.POLICY:
+            cast = {row['key']: row['body'].get('name', '') for row, _ in people}
+            cast.update({c['card_id']: c['body'].get('name', '') for c in context.get('approved_cards', []) if c['kind'] == 'character'})
+            relations = _external(key, member, fields, products, context) if key == 'C01153' else [([], None)]
+            for refs, _ in relations:
+                relative = ''
+                if key == 'C01153':
+                    index = int(next(r.split('/')[2] for r in refs if r.startswith('input:static_relations:')))
+                    rel = products['static_relations']['products']['relations'][index]
+                    other = rel['target'] if rel['source'] == member['key'] else rel['source']
+                    relative = cast.get(other, '').replace('[FAKE]', '').strip()
+                    if not relative:
+                        continue
+                for paths, proof in commitments.match_promises(key, fields, name, list(cast.values()), relative=relative):
+                    all_paths = [*paths, f'{prefix}/name']
+                    row = {'member': member['key'], 'paths': [p for p in all_paths if p.startswith('/')],
+                           'upstream_refs': [p for p in all_paths if p.startswith('approved:')] + refs, 'commitment': proof}
+                    if row not in results:
+                        results.append(row)
+            continue
         paths = []
         for options, test in _RULES[key]:
             matching = [path for field in options.split() for path, text in fields.get(field, ())

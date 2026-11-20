@@ -182,7 +182,18 @@ def _path_detail(path: _Path, statement: str) -> str:
     return detail
 
 
-def _conservation(path: _Path, statement: str, normalized: str) -> str | None:
+def _same_origin(path: _Path, origin: str) -> bool:
+    names = {path.source, path.form + path.source, path.environment + path.form + path.source,
+             path.environment + path.source}
+    if location := _ENVIRONMENT.fullmatch(path.environment):
+        site = location['origin'] or location['site']
+        names.update(site + suffix for suffix in ('', '内', '中', '里'))
+    elif holder := re.fullmatch(r'(.+?)(?:持有|保管|储存)的', path.environment):
+        names.add(holder[1])
+    return origin in names
+
+
+def _conservation(path: _Path, statement: str, normalized: str, strict: bool) -> str | None:
     period = _PERIOD.match(normalized)
     if not period:
         return None
@@ -198,9 +209,10 @@ def _conservation(path: _Path, statement: str, normalized: str) -> str | None:
         return None
     origin = incoming['origin'].removeprefix('由').strip()
     product = output['product'].strip()
-    identifies_source = path.source in origin or origin in path.environment
+    identifies_source = (_same_origin(path, origin) if strict else
+                         normalized != statement or path.source in origin or origin in path.environment)
     if (not _concrete(origin) or product != path.product
-            or (normalized == statement and not identifies_source)
+            or not identifies_source
             or any(_OTHER_PERIOD.search(part) for part in parts)):
         return None
     flows = [incoming, output, *(match for match in destinations if match)]
@@ -211,7 +223,7 @@ def _conservation(path: _Path, statement: str, normalized: str) -> str | None:
     return statement
 
 
-def _measurements(path: _Path, statements: list[str]) -> tuple[dict[str, str], str | None]:
+def _measurements(path: _Path, statements: list[str], strict: bool) -> tuple[dict[str, str], str | None]:
     """Read consecutive definitions explicitly belonging to this path."""
     definitions: dict[str, str] = {}
     conservation = None
@@ -229,14 +241,14 @@ def _measurements(path: _Path, statements: list[str]) -> tuple[dict[str, str], s
                 return {}, None
             definitions[kind] = line
         elif _PERIOD.match(detail):
-            if conservation or not (conservation := _conservation(path, line, detail)):
+            if conservation or not (conservation := _conservation(path, line, detail, strict)):
                 return {}, None
         else:
             break
     return definitions, conservation
 
 
-def approved_conversion(card: dict, key: str) -> dict | None:
+def approved_conversion(card: dict, key: str, *, strict: bool = True) -> dict | None:
     """Return verbatim project evidence for a candidate, or leave it waiting."""
     if (key not in RULES or card.get('kind') != 'world' or card.get('status') != 'approved'
             or not isinstance(card.get('card_id'), str) or not card['card_id'].strip()
@@ -273,7 +285,7 @@ def approved_conversion(card: dict, key: str) -> dict | None:
             return None
         evidence.update(startup=startup, holding=holding)
     if key not in _START_FORMS:
-        definitions, conservation = _measurements(path, statements)
+        definitions, conservation = _measurements(path, statements, strict)
         if key == 'C00064':
             if not definitions or (len(definitions) != 2 and not conservation):
                 return None
