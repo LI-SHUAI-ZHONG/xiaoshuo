@@ -203,6 +203,7 @@ def validate_semantic_applications(stage: str, value: dict, products: dict,
     uses = [r.get('source_id') for r in value['_uses'] if isinstance(r, dict)]
     require(len(uses) == len(value['_uses']) and all(isinstance(i, str) for i in uses)
             and len(set(uses)) == len(uses), 'actual source uses must be unique')
+    uses_by_id = {row['source_id']: row for row in value['_uses']}
     require(isinstance(value.get('_criteria'), list), 'missing per-source criteria')
     by_id = {s['source']['id']: s for s in sources}; contracts = contracts_for(sources, context); seen = set()
     for row in value['_criteria']:
@@ -258,7 +259,12 @@ def validate_semantic_applications(stage: str, value: dict, products: dict,
         require(covered == obligations.keys(), 'every original source clause needs an applicability decision')
         require(any(c['applicability']=='applies' for c in row['clauses']),
                 'used method needs an actual applied clause; unresolved or inapplicable is not execution')
-        _validate_layer(row['layer_application'], by_id[ident], contract)
+        from nw.materials.network_layers import uses_fields, validate_bindings
+        if uses_fields(by_id[ident], contract, context):
+            validate_bindings(row, value, stage, products, context, _rejected_values(by_id[ident]),
+                              uses_by_id[ident]['output_refs'])
+        else:
+            _validate_layer(row['layer_application'], by_id[ident], contract)
     require(seen == set(uses), 'every actually used source needs its criteria contract')
 
 

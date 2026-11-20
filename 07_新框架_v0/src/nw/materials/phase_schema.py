@@ -40,6 +40,7 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
         ('genre_ids','mechanism_ids','structure_ids','style_ids','tone_ids')})})
     common['_receipts']=array(obj({**strings('id','operation'),'output_refs':array(TEXT,1)}))
     layer=obj(strings('trigger','operation','result','verification'))
+    network_layer=obj({'bindings':array(obj(strings('clause_id','trigger_ref','result_ref')),1)})
     clause=obj({**strings('id','reason','operation','observable','check'),
         'applicability':{'enum':['applies','not_applicable','source_unresolved']},
         'input_refs':array(TEXT),'output_refs':array(TEXT),
@@ -57,6 +58,10 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
             if ids:props['clauses']['items']['properties']['id']={'enum':ids}
             props['clauses']['minItems']=len(ids);props['clauses']['maxItems']=len(ids)
             props['layer_application']=layer if contract.get('application_required') else obj({})
+            if contract.get('network_layer_fields'):
+                props['layer_application']=deepcopy(network_layer)
+                if ids:
+                    props['layer_application']['properties']['bindings']['items']['properties']['clause_id']={'enum':ids}
             variants.append(variant)
         common['_criteria']['maxItems']=len(variants)
         if variants:common['_criteria']['items']={'anyOf':variants}

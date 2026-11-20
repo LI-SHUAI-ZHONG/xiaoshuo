@@ -10,15 +10,19 @@ def handoffs_for(stage: str,products: dict) -> list[dict]:
     result=[]
     for origin,record in products.items():
         for criterion in record['products'].get('_criteria',[]):
+            bindings=criterion.get('layer_application',{}).get('bindings',[])
             for clause in criterion['clauses']:
                 if clause['consumer']!=stage or clause['applicability']!='applies':continue
-                result.append({'id':'handoff:'+content_sha256({'origin':product_ref(record),
+                handoff={'id':'handoff:'+content_sha256({'origin':product_ref(record),
                     'source_id':criterion['source_id'],'clause_id':clause['id'],'consumer':stage}),
                     'source_id':criterion['source_id'],'clause_id':clause['id'],
                     'contract_sha256':criterion['contract_sha256'],'origin':product_ref(record),
                     'requirement':deepcopy(clause),
                     'actual_inputs':[{'path':r,'value':deepcopy(output_value(r,record['products']))}
-                                     for r in clause['output_refs']]})
+                                     for r in clause['output_refs']]}
+                if related := [row for row in bindings if row['clause_id']==clause['id']]:
+                    handoff['network_layer_bindings']=deepcopy(related)
+                result.append(handoff)
     return result
 
 

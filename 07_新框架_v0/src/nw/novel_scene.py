@@ -12,6 +12,7 @@ from nw.materials.action_review import (ACTION_ORDER_REASON, ACTION_REVIEW_PROMP
 from nw.materials.binding import verify_materials
 from nw.materials.evidence import (PROMPT as MATERIAL_REVIEW_PROMPT, review_contract, scene_materials,
                                    state_hypotheses)
+from nw.materials.network_layers import POLICY as NETWORK_LAYER_POLICY, REVIEW_INSTRUCTION as NETWORK_LAYER_REVIEW
 from nw.materials.stage_input import check_source_keys, step_material_prompt
 from nw.materials.steps.review import MATERIAL as REVIEW_MATERIAL
 from nw.materials.steps.writing import MATERIAL as WRITING_MATERIAL
@@ -102,11 +103,17 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
         # The independent reviewer can see author-only design and earlier chapter prose.
         if checks:
             ordered_actions_failed = any(check.get('reason') == ACTION_ORDER_REASON for check in checks)
+            visible_checks = []
+            for check in checks:
+                status = check['status']
+                if status == 'pass' and check['id'].startswith('work:layer:'):
+                    status = check['layer_check']['status']
+                visible_checks.append({'id': check['id'], 'status': status})
             data['review'] = {
                 'recommendation': review.get('recommendation'),
                 'notes': (ACTION_ORDER_REASON if ordered_actions_failed else
                           '在现有披露范围内，复核写作包中的检查点和场景叙述。'),
-                'material_checks': [{key: check[key] for key in ('id', 'status')} for check in checks],
+                'material_checks': visible_checks,
             }
         else:
             data['review'] = review
@@ -118,6 +125,8 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
         appended = ' ' + MATERIAL_REVIEW_PROMPT
         if any('action_order' in check for check in contract['checks']):
             appended += ' ' + ACTION_REVIEW_PROMPT
+        if any(check.get('layer_contract', {}).get('policy') == NETWORK_LAYER_POLICY for check in contract['checks']):
+            appended += ' ' + NETWORK_LAYER_REVIEW
     keys = check_source_keys(contract['checks']) if contract else frozen.get('writing_source_keys', ())
     body = canonical(data)
     prompt = step_material_prompt(prompt, material, keys)

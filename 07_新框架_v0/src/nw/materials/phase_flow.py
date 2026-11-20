@@ -1184,6 +1184,15 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        from nw.materials.network_layers import INSTRUCTION as NETWORK_LAYER_INSTRUCTION, uses_fields
+        for source, contract, model_contract in zip(sources, contracts, payload['source_contracts'], strict=True):
+            if uses_fields(source, contract, stage_context):
+                model_contract['network_layer_fields'] = True
+        if any(row.get('network_layer_fields') for row in payload['source_contracts']):
+            suffix += NETWORK_LAYER_INSTRUCTION
+        if any(row.get('network_layer_bindings') for row in payload['semantic_requirements']):
+            suffix += ('\n收到带 network_layer_bindings 的条款时，对照每个上游字段的实际值执行本步，并在回执写明具体承接方式和本步产物。'
+                       '若条件缺失，保留需要补齐的设计，不能把待确认的结果改成已发生事实。')
         if multi_actions and stage in ('action_design', 'scene_design', 'anchor_design'):
             payload['multi_action_policy'] = MULTI_ACTION_POLICY
             if stage == 'action_design':
@@ -1463,6 +1472,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['scene_source_binding_policy'] = package['scene_source_binding_policy']
     if 'multi_action_policy' in package:
         context['multi_action_policy'] = package['multi_action_policy']
+    if 'network_layer_policy' in package:
+        context['network_layer_policy'] = package['network_layer_policy']
     if 'action_state_policy' in package:
         context['action_state_policy'] = package['action_state_policy']
     network = None

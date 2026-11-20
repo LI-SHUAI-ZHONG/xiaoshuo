@@ -433,6 +433,122 @@ def test_layer_pins_trigger_existing_independent_layer_check_without_evidence_ch
     validate_review([row], {'checks': [check]}, draft, None)
 
 
+@pytest.mark.parametrize('stage', ['action_design', 'anchor_design'])
+def test_network_layer_projects_exact_fields_to_their_selected_actions_only(stage: str) -> None:
+    from nw.materials.network_layers import POLICY
+    from nw.materials.scene_actions import MULTI_ACTION_POLICY
+
+    session, _ = session_fixture(with_layer=True)
+    item = session['sources'][0]
+    item['source']['path'] = '原始资料/' + ('动态网络.txt' if stage == 'action_design' else '锚点网络.txt')
+    contract = compile_semantics(item)
+    secret = '[FAKE] 尚未披露的封条主使指示只供核对前置'
+    session['context'].update(network_layer_policy=POLICY, multi_action_policy=MULTI_ACTION_POLICY,
+                              semantic_contracts=[contract], brief={'text': secret})
+    _, actions, scenes, bound = session['stages']
+    action_products = actions['products']
+    for ident, text in [('action-b', '[FAKE] 将印痕转录到纸上'), ('action-c', '[FAKE] 后场才交证物')]:
+        action_products['candidates'].append({'id': ident, 'actor': 'yan', 'action': text})
+    scenes['products']['selected_actions'].extend([{'scene': 'scene-a', 'action': 'action-b'},
+                                                   {'scene': 'scene-b', 'action': 'action-c'}])
+    second_scene = deepcopy(scenes['products']['members'][0])
+    second_scene['key'] = 'scene-b'
+    scenes['products']['members'].append(second_scene)
+    bound['products']['method_guidance'].append({**bound['products']['method_guidance'][0], 'scene': 'scene-b'})
+    if stage == 'action_design':
+        outputs = action_products
+        paths = [f'/candidates/{index}/action' for index in range(3)]
+        outputs['_uses'][0]['output_refs'].extend(['action:action-b', 'action:action-c'])
+    else:
+        action_products.update(_uses=[], _criteria=[])
+        outputs = {'beats': [{'scene': 'scene-a' if row['id'] != 'action-c' else 'scene-b',
+                              'action_ref': row['id'], 'observable': row['action']}
+                             for row in action_products['candidates']],
+                   '_uses': [{'source_id': 'method', 'operation': '[FAKE] 按原义留下当前动作的可见证据',
+                              'output_refs': ['scene:scene-a', 'scene:scene-b']}]}
+        paths = [f'/beats/{index}/observable' for index in range(3)]
+
+    active = criterion(contract)
+    for clause in active['clauses']:
+        clause.update(output_refs=paths, input_refs=['brief:/text'], consumer='review')
+    active['layer_application'] = {'bindings': [{'clause_id': clause['id'], 'trigger_ref': 'brief:/text',
+                                                 'result_ref': path}
+                                                for clause in active['clauses'] for path in paths]}
+    outputs['_criteria'] = [active]
+    if stage == 'anchor_design':
+        session['stages'].insert(-1, record(stage, outputs))
+    for row in (actions, scenes, bound):
+        row['sha256'] = content_sha256(row['products'])
+
+    checks = module().make_semantic_checks(session, 'scene-a')
+    semantic = [row for row in checks if row['id'].startswith('work:semantic:')]
+    layers = [row for row in checks if row['id'].startswith('work:layer:')]
+    assert len(semantic) == len(layers) == 2 * len(contract['obligations'])
+    assert all('layer_contract' not in row for row in semantic)
+    assert len({row['id'] for row in layers}) == len(layers)
+    for row in layers:
+        ident = row['action_ref']
+        assert ident in ('action-a', 'action-b')
+        assert secret not in json.dumps(row['binding'], ensure_ascii=False)
+        proof = row['layer_contract']
+        assert proof['policy'] == POLICY
+        assert proof['application_guidance'][0]['source_ref']['id'] == 'runtime'
+        assert proof['original_clause']['id'] == row['method_artifact']['clause_id']
+        application = proof['layer_application']
+        assert application['trigger'] == {'path': 'brief:/text', 'value': secret}
+        index = ['action-a', 'action-b'].index(ident)
+        assert application['result'] == {'path': paths[index], 'value': action_products['candidates'][index]['action']}
+        assert '后场才交证物' not in json.dumps(row, ensure_ascii=False)
+        visible = json.loads(row['binding']['observable'])
+        assert visible['action_ref'] == ident
+        assert visible['result_path'] == paths[index]
+        if stage == 'anchor_design':
+            assert visible['visible_result'] == application['result']['value']
+        else:
+            assert 'visible_result' not in visible
+
+    second = module().make_semantic_checks(session, 'scene-b')
+    assert {row['action_ref'] for row in second if row['id'].startswith('work:layer:')} == {'action-c'}
+
+
+def test_new_static_layer_preserves_private_values_for_review_only(monkeypatch) -> None:
+    from nw.materials import evidence
+    from nw.materials.network_layers import POLICY
+
+    session, _ = session_fixture(with_layer=True)
+    item = session['sources'][0]
+    item['source']['path'] = '原始资料/静态网络.txt'
+    contract = compile_semantics(item)
+    hidden_trigger = '[FAKE] 未公开的关系前置只供核对'
+    hidden_result = '[FAKE] 旁观人物不知道印章保管权已经改变'
+    session['context'].update(network_layer_policy=POLICY, semantic_contracts=[contract], brief={'text': hidden_trigger})
+    action = session['stages'][1]
+    action['products'].update(_uses=[], _criteria=[])
+    action['sha256'] = content_sha256(action['products'])
+    result_path = '/relations/0/condition'
+    applied = criterion(contract, result_path)
+    for clause in applied['clauses']:
+        clause['input_refs'] = ['brief:/text']
+    applied['layer_application'] = {'bindings': [{'clause_id': clause['id'], 'trigger_ref': 'brief:/text',
+                                                  'result_ref': result_path} for clause in applied['clauses']]}
+    session['stages'].insert(1, record('static_relations', {
+        'relations': [{'id': 'kept', 'source': 'yan', 'target': 'custodian', 'condition': hidden_result}],
+        '_criteria': [applied],
+        '_uses': [{'source_id': 'method', 'operation': '[FAKE] 核对本案已成立的协作关系条件',
+                   'output_refs': ['relation:kept']}],
+    }))
+    checks = module().make_semantic_checks(session, 'scene-a')
+    assert checks and all('action_ref' not in row for row in checks)
+    monkeypatch.setattr(evidence, 'scene_checks', lambda _: checks)
+    writer = json.dumps(evidence.writer_checks({}), ensure_ascii=False)
+    assert result_path in writer
+    assert hidden_trigger not in writer and hidden_result not in writer
+    seen_by_reviewer = json.dumps(checks, ensure_ascii=False)
+    assert hidden_trigger in seen_by_reviewer and hidden_result in seen_by_reviewer
+    original_checks = [row for row in checks if row['id'].startswith('work:semantic:')]
+    assert original_checks[0]['method_artifact']['current_outputs'] == [{'path': result_path, 'value': hidden_result}]
+
+
 def test_review_package_growth_is_linear_in_original_clause_count():
     def size(count):
         session,data=session_fixture()

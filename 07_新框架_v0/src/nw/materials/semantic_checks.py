@@ -146,8 +146,62 @@ def _layer(contract: dict, criterion: dict) -> dict:
             'layer_application': deepcopy(criterion['layer_application'])}
 
 
+def _layer_field_checks(session_id: str, record: dict, source: dict, contract: dict, criterion: dict,
+                        records: dict, upstream: dict, context: dict, scene: str, ids: dict) -> list[dict]:
+    stage, value = record['stage'], record['products']
+    clauses = {row['id']: row for row in criterion['clauses']}
+    obligations = {row['id']: row for row in contract['obligations']}
+    chosen = selected_action_ids(records.get('scene_design', {}).get('products', {}))
+    selected = next((refs for key, refs in chosen.items() if _same_scene(key, scene, ids)), [])
+    checks = []
+    for use in criterion['layer_application']['bindings']:
+        result_path = use['result_ref']
+        outputs = current_scene_outputs(stage, value, [result_path], records, scene, ids)
+        if not outputs:
+            continue
+        field, *tokens = pointer_tokens(result_path)
+        action_ref = None
+        if stage == 'action_design' and field == 'candidates':
+            action_ref = value[field][int(tokens[0])]['id']
+        elif stage == 'anchor_design' and field == 'beats':
+            action_ref = value[field][int(tokens[0])].get('action_ref')
+            if action_ref is not None and action_ref not in selected:
+                continue
+        action = {'action_ref': action_ref} if action_ref is not None else {}
+        clause = clauses[use['clause_id']]
+        original = obligations[use['clause_id']]
+        trigger = {'path': use['trigger_ref'], 'value': _mapped(deepcopy(input_value(
+            use['trigger_ref'], stage, upstream, context)), ids)}
+        application = {'trigger': trigger, 'operation': clause['operation'], 'result': outputs[0],
+                       'verification': clause['check']}
+        layer = _layer(contract, {'layer_application': application})
+        layer['policy'] = context['network_layer_policy']
+        layer['original_clause'] = deepcopy(original)
+        visible = {'observable': clause['observable'], 'result_path': result_path, **action}
+        if stage == 'anchor_design' and field == 'beats' and tokens[1:] == ['observable']:
+            visible['visible_result'] = outputs[0]['value']
+        key = {'session': session_id, 'stage': stage, 'source_id': criterion['source_id'], 'scene': scene,
+               'clause_id': use['clause_id'], 'result_ref': result_path}
+        checks.append({'id': 'work:layer:' + content_sha256(key), 'profile': 'method_work', **action,
+            'binding': {'observable': canonical(visible),
+                        'check': canonical({'criterion': clause['check'], **action})},
+            'layer_contract': layer,
+            'method_sources': [{'source': deepcopy(source['source']),
+                                'original_quotes': [original['value']] if isinstance(original['value'], str)
+                                                    else [canonical(original['value'])],
+                                'source_text_sha256': contract['source_text_sha256'],
+                                'semantic_contract_ref': contract['sha256']}],
+            'method_operation': clause['operation'],
+            'method_artifact': {'stage': stage, 'product_ref': product_ref(record),
+                                'clause_id': use['clause_id'], **action},
+            'evidence_required': '独立核对这处产物对应的触发、操作、结果和可见效果，引用当前正文具体段落。'})
+    return checks
+
+
 def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> list[dict]:
     """Emit obligations, not pass statuses or automatic WORLD state changes."""
+    from nw.materials.network_layers import uses_fields
+
     ids = ids or {}; records = {row['stage']: row for row in session.get('stages', [])}
     sources = {row['source']['id']: row for row in session.get('sources', [])}
     context = deepcopy(session.get('context', {}))
@@ -160,7 +214,7 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
               if _same_scene(g.get('scene'), scene, ids)]
     placed = {ident for guide in guides for ident in guide.get('source_ids', [])}
     active = writing_sources(records, []) & placed
-    result = []; upstream = {};layer_checked=set();review_attached=set()
+    result = []; layer_fields = []; upstream = {};layer_checked=set();review_attached=set()
     for record in session.get('stages', []):
         stage = record['stage']; value = record['products']; product_ref(record)
         if '_criteria' not in value and not value.get('_uses'):
@@ -176,6 +230,10 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
             ident = criterion['source_id']
             if ident not in active: continue
             contract = contracts[ident]; original = {o['id']: o for o in contract['obligations']}
+            structured = uses_fields(sources[ident], contract, context)
+            if structured:
+                layer_fields.extend(_layer_field_checks(session.get('id'), record, sources[ident], contract, criterion,
+                                                        records, upstream, step_context, scene, ids))
             review = context.get('binding_reviews', {}).get(ident)
             reference_only = set()
             if review:
@@ -196,7 +254,8 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
                     if mode == 'applies' and not outputs:
                         continue
                     if mode == 'applies':
-                        visible = {'observable': application['observable'], 'actual_outputs': outputs}
+                        visible = {'observable': application['observable'],
+                                   'actual_outputs': [{'path': output['path']} for output in outputs] if structured else outputs}
                         check = {'criterion': application['check'], 'consumer': application['consumer'],
                                  'verification': 'independent_prose_review_required'}
                     else:
@@ -206,7 +265,8 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
                                  'verification': 'unverified_source_cannot_count_as_completed' if mode == 'source_unresolved'
                                                  else 'verify_current_task_nonapplicability_without_claiming_source_repair'}
                     proof = {'stage': stage, 'product_ref': product_ref(record),
-                             'application': deepcopy(application), 'layer_application': deepcopy(criterion['layer_application']),
+                             'application': deepcopy(application),
+                             **({} if structured else {'layer_application': deepcopy(criterion['layer_application'])}),
                              'actual_inputs':[{'path':ref,'value':_mapped(deepcopy(input_value(
                                  ref,stage,upstream,step_context)),ids)} for ref in application['input_refs']],
                              'current_outputs': outputs, 'source_issues': deepcopy(pending)}
@@ -237,10 +297,10 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
                                + ('原义缺项仍为未验证，不得补造或计为完成。' if mode == 'source_unresolved' else '')}
                     if action_ref is not None:
                         row['action_ref'] = action_ref
-                    if ((stage, ident, action_ref) not in layer_checked
+                    if (not structured and (stage, ident, action_ref) not in layer_checked
                             and (contract.get('application_guidance') or sources[ident].get('application_layers'))):
                         row['layer_contract'] = _layer(contract, criterion)
                         layer_checked.add((stage, ident, action_ref))
                     result.append(row)
         upstream[stage] = record
-    return _merge_clauses(result)
+    return _merge_clauses(result) + layer_fields
