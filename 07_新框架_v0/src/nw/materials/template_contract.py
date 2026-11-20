@@ -105,7 +105,7 @@ def validate_extra(stage: str, value: dict, products: dict, sources: list[dict],
         elif stage == 'action_design':
             validate_actions(value, products, sources, context)
         elif stage == 'scene_design':
-            validate_scene_selection(value, products)
+            validate_scene_selection(value, products, context)
         elif stage == 'state_propagation':
             validate_propagations(value, products, sources, context)
         elif stage == 'anchor_design':

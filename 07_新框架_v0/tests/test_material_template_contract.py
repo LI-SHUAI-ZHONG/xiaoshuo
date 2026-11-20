@@ -222,6 +222,69 @@ def test_scene_selects_one_existing_event_and_action_with_its_actual_actor() -> 
         check('scene_design', value)
 
 
+def test_multi_action_scene_accepts_two_present_event_actors_and_rejects_invalid_rows() -> None:
+    from nw.materials.scene_actions import MULTI_ACTION_POLICY
+
+    data = design()
+    scene = data['scene_design']
+    scene['members'][0]['body']['characters'].append('keeper')
+    data['plot_design']['event_nodes'][0]['actors'].append('keeper')
+    data['character_design']['capabilities'][1].update(can_act=True, abilities=['辨认印痕'])
+    action = deepcopy(data['action_design']['candidates'][0])
+    action.update(id='read', actor='keeper', action='判读拓片的印痕', requires=['辨认印痕'])
+    data['action_design']['candidates'].append(action)
+    scene['selected_actions'].append({'scene': 'scene', 'action': 'read'})
+    context = {'multi_action_policy': MULTI_ACTION_POLICY}
+    check('action_design', data['action_design'], records(data))
+    check('scene_design', scene, records(data), context)
+    with pytest.raises(ValueError, match='one action per scene'):
+        check('scene_design', scene, records(data))
+
+    repeated = deepcopy(scene)
+    repeated['selected_actions'].append({'scene': 'scene', 'action': 'lift'})
+    with pytest.raises(ValueError, match='repeats the same action'):
+        check('scene_design', repeated, records(data), context)
+
+    absent_actor = deepcopy(scene)
+    absent_actor['members'][0]['body']['characters'].remove('keeper')
+    with pytest.raises(ValueError, match='actor or event'):
+        check('scene_design', absent_actor, records(data), context)
+
+    action['event'] = 'question'
+    with pytest.raises(ValueError, match='actor or event'):
+        check('scene_design', scene, records(data), context)
+
+
+def test_scene_phase_choice_preserves_all_selected_actions_in_order() -> None:
+    from nw.materials.phase_contract import validate_phase
+    from nw.materials.scene_actions import MULTI_ACTION_POLICY
+    from nw.task_models import content_sha256
+    from test_material_phase_projection import chain
+
+    entries = chain()['stages']
+    scene_index = next(index for index, row in enumerate(entries) if row['stage'] == 'scene_design')
+    before = {row['stage']: row for row in entries[:scene_index]}
+    scene = entries[scene_index]['products']
+    actions = before['action_design']['products']['candidates']
+    first, = actions
+    second = dict(deepcopy(first), id='record-mark', action='把印痕的缺口记录到拓片上')
+    actions.append(second)
+    before['action_design']['sha256'] = content_sha256(before['action_design']['products'])
+    output = {'stage': 'scene_design', 'products': scene}
+    validate_phase(output, 'scene_design', before, [], {'scope': 'chapter'})
+
+    scene['selected_actions'].append({'scene': scene['selected_actions'][0]['scene'], 'action': second['id']})
+    body = scene['members'][0]['body']
+    context = {'scope': 'chapter', 'multi_action_policy': MULTI_ACTION_POLICY}
+    for choice in (first['action'], f"{second['action']}；{first['action']}"):
+        body['choice'] = choice
+        with pytest.raises(ValueError, match='selected action text in selection order'):
+            validate_phase(output, 'scene_design', before, [], context)
+
+    body['choice'] = f"{first['action']}；{second['action']}"
+    validate_phase(output, 'scene_design', before, [], context)
+
+
 def test_anchor_cannot_select_an_absent_propagation_or_other_scene_candidate() -> None:
     value = {'selected_propagations': [{'scene': 'scene', 'propagation': 'absent'}]}
     with pytest.raises(ValueError, match='MATERIAL_STAGE:'):

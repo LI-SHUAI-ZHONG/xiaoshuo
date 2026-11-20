@@ -1075,9 +1075,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.materials.step_guard import build_continuity_ledger, build_joint_material_plan
     from nw.materials.phase_lifecycle import CANDIDATE_SELECTION
     from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY, scene_source_placements
+    from nw.materials.scene_actions import MULTI_ACTION_POLICY
     from nw.materials.network_workflow import prepared_plot_source, step_sources
     from nw.materials.semantic_products import dynamic_rejection
     scoped_sources = context.get('scene_source_binding_policy') == SCENE_SOURCE_BINDING_POLICY
+    multi_actions = context.get('multi_action_policy') == MULTI_ACTION_POLICY
     action_state = stage == 'action_design' and context.get('action_state_policy') == ACTION_STATE_POLICY
     stage_config, stage_provider = resolve_stage_runtime(config, provider, stage)
     state=readiness(stage,products,package['scope'])
@@ -1101,6 +1103,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     else:
         step_pool = _step_source_pool(desk, stage, package)
     prompt = (STEP_PROMPT if step_pool is None else STEP_SOURCE_PROMPT) + '\n' + STAGE_INSTRUCTIONS.get(stage, '')
+    if multi_actions and stage == 'scene_design':
+        prompt = prompt.replace('scene.body.choice原样采用所选action.action',
+                                'scene.body.choice按本场选择顺序以全角分号连接各条action原文')
 
     def stage_source(source: dict, contract: dict, *, full_text: bool = False) -> dict:
         use = None if step_pool is None else search_pool.get(source['source']['id'], '')
@@ -1179,6 +1184,23 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        if multi_actions and stage in ('action_design', 'scene_design', 'anchor_design'):
+            payload['multi_action_policy'] = MULTI_ACTION_POLICY
+            if stage == 'action_design':
+                suffix += ('\n同一事件有多条需要在同一场分别呈现的行动时，各自形成候选ID。'
+                           '每条交代行动人、动作步骤、成立条件、代价和结果。互斥备选也各自保留，场景步骤选定实际组合。'
+                           '同一资料条款用在多条行动时，逐项指向各行动的实际产物字段，并说明各自要在正文呈现的效果。')
+            elif stage == 'scene_design':
+                payload['output_schema'] = payload['output_schema'].replace(
+                    '所选动作的action原文', '按selected_actions本场顺序用全角分号拼接各action原文').replace(
+                    '每场明确选一个事件和一个动作', '每场明确选一个事件和一条或多条按顺序发生的行动')
+                suffix += ('\n每场至少选一条行动。同场所选行动须对应本场选定事件及实际参与者。'
+                           'selected_actions的行序是本场正文的行动先后。互斥备选只选实际采用项。')
+            else:
+                suffix += ('\n同场多行动时，每条所选行动至少设计一个锚点节拍。按本场行动、动作步骤、before/during/after的顺序列出beats，'
+                           '各节拍填写该行动的action_ref、step_index、timing和实际触发依据。'
+                           '同场多行动的锚点资料条款须在output_refs指向实际的/beats/序号或字段，'
+                           'input_refs引用同一节拍的input:action_design:/candidates/序号或具体步骤。')
         if network_context is not None and stage not in ('type_selection', 'type_adaptation'):
             payload['network_type_scope'] = context.get('network_type_scope', {})
         if network_context is not None and stage == 'plot_design':
@@ -1439,6 +1461,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['current_source_set']=selected['sha256']
     if 'scene_source_binding_policy' in package:
         context['scene_source_binding_policy'] = package['scene_source_binding_policy']
+    if 'multi_action_policy' in package:
+        context['multi_action_policy'] = package['multi_action_policy']
     if 'action_state_policy' in package:
         context['action_state_policy'] = package['action_state_policy']
     network = None

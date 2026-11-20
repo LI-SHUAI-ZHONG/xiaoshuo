@@ -4,7 +4,7 @@ import json
 from uuid import uuid4
 
 from nw.call_control import execution_lock
-from nw.materials.evidence import check_material_acceptance
+from nw.materials.action_review import check_material_acceptance
 from nw.materials.scoped import check_scope_acceptance
 from nw.store import Store, now
 from nw.story_delta import check_delta, draft_ref, manifest_refs, prepare_delta, read_delta

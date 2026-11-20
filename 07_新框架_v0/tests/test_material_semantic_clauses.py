@@ -245,6 +245,93 @@ def test_unselected_future_action_is_not_forced_into_current_scene_checks():
     assert len(checks) == 1 and '下章离开' not in checks[0]['binding']['observable']
 
 
+def test_multi_action_clause_has_stable_distinct_checks_for_each_selected_action() -> None:
+    from nw.materials.scene_actions import MULTI_ACTION_POLICY
+
+    session, data = session_fixture(with_layer=True)
+    single = module().make_semantic_checks(session, 'scene-a')
+    session['context']['multi_action_policy'] = MULTI_ACTION_POLICY
+    assert module().make_semantic_checks(session, 'scene-a') == single
+    _, action, scene, _ = session['stages']
+    value = action['products']
+    value['candidates'].extend([
+        {'id': 'action-b', 'actor': 'yan', 'action': '[FAKE] 将印痕转录到纸上'},
+        {'id': 'future', 'actor': 'yan', 'action': '[FAKE] 下章才离开药铺'},
+    ])
+    value['_uses'][0]['output_refs'].extend(['action:action-b', 'action:future'])
+    for clause in value['_criteria'][0]['clauses']:
+        clause['output_refs'] = ['/candidates', '/candidates/0/action', '/candidates/1/action']
+    scene['products']['selected_actions'].insert(0, {'scene': 'scene-a', 'action': 'action-b'})
+    for row in (scene, action):
+        row['sha256'] = content_sha256(row['products'])
+
+    checks = module().make_semantic_checks(session, 'scene-a')
+    assert len(checks) == 2 * len(data[4]['semantic_contracts'][0]['obligations'])
+    assert len({row['id'] for row in checks}) == len(checks)
+    for row in checks:
+        expected = row['action_ref']
+        assert expected in ('action-b', 'action-a')
+        proof = row['method_artifact']
+        assert proof['action_ref'] == expected
+        visible = json.loads(row['binding']['observable'])
+        assert visible['action_ref'] == expected
+        assert visible['actual_outputs'] == proof['current_outputs']
+        assert [candidate['id'] for candidate in proof['current_outputs'][0]['value']] == [expected]
+        position = 0 if expected == 'action-a' else 1
+        assert proof['application']['output_refs'] == ['/candidates', f'/candidates/{position}/action']
+    assert {row['action_ref'] for row in checks if 'layer_contract' in row} == {'action-a', 'action-b'}
+    assert '下章才离开' not in json.dumps(checks, ensure_ascii=False)
+
+    scene['products']['selected_actions'].reverse()
+    scene['sha256'] = content_sha256(scene['products'])
+    assert {row['id'] for row in module().make_semantic_checks(session, 'scene-a')} == {row['id'] for row in checks}
+
+
+def test_multi_action_anchor_clauses_merge_per_action_and_keep_general_evidence() -> None:
+    from nw.materials.scene_actions import MULTI_ACTION_POLICY
+
+    session, data = session_fixture()
+    session['context']['multi_action_policy'] = MULTI_ACTION_POLICY
+    _, action, scene, _ = session['stages']
+    scene['products']['selected_actions'].append({'scene': 'scene-a', 'action': 'action-b'})
+    scene['sha256'] = content_sha256(scene['products'])
+    action['products']['candidates'].append({'id': 'action-b', 'action': '[FAKE] 转录印痕'})
+    action['products']['_uses'][0]['output_refs'].append('action:action-b')
+    for clause in action['products']['_criteria'][0]['clauses']:
+        clause['output_refs'] = ['/candidates']
+    action['sha256'] = content_sha256(action['products'])
+    anchor = {'beats': [
+        {'scene': 'scene-a', 'action_ref': 'action-a', 'observable': '[FAKE] 托起纸角'},
+        {'scene': 'scene-a', 'action_ref': 'action-b', 'observable': '[FAKE] 转录印痕'},
+        {'scene': 'scene-b', 'action_ref': 'action-b', 'observable': '[FAKE] 后场才见的另一份封条'},
+    ], 'selected_propagations': [{'scene': 'scene-a', 'propagation': 'trace'}],
+        '_uses': [{'source_id': 'method', 'operation': '[FAKE] 以观察细节落实当前场景的变化',
+                   'output_refs': ['scene:scene-a']}],
+        '_criteria': [criterion(data[1], '/beats')]}
+    for clause in anchor['_criteria'][0]['clauses']:
+        clause['consumer'] = 'review'
+        clause['output_refs'].extend(['/beats/1/observable', '/selected_propagations'])
+    session['stages'].insert(-1, record('anchor_design', anchor))
+
+    checks = module().make_semantic_checks(session, 'scene-a', {'scene-a': 'actual-a'})
+    assert len(checks) == 3 * len(data[1]['obligations'])
+    assert len({row['id'] for row in checks}) == len(checks)
+    for row in checks:
+        if 'action_ref' not in row:
+            proof = row['method_artifact']
+            assert proof['stage'] == 'anchor_design'
+            assert proof['current_outputs'] == [{'path': '/selected_propagations',
+                                                  'value': [{'scene': 'actual-a', 'propagation': 'trace'}]}]
+            continue
+        expected = row['action_ref']
+        first, second = row['method_artifact']['applications']
+        assert [first['stage'], second['stage']] == ['action_design', 'anchor_design']
+        assert [value['action_ref'] for value in second['current_outputs'][0]['value']] == [expected]
+        expected_paths = ['/beats', '/beats/1/observable'] if expected == 'action-b' else ['/beats']
+        assert [output['path'] for output in second['current_outputs']] == expected_paths
+    assert '后场才见' not in json.dumps(checks, ensure_ascii=False)
+
+
 def test_source_reference_example_is_recorded_without_requiring_a_prose_effect():
     from fake_binding_reviews import review_fixture
 

@@ -2,6 +2,7 @@
 import json
 import re
 
+from nw.materials.scene_actions import MULTI_ACTION_POLICY, selected_action_ids
 from nw.task_models import _text,canonical
 
 
@@ -256,16 +257,74 @@ def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources:
                     for s in relations) for r in own),'dynamic candidate differs from adopted static project endpoints')
 
 
-def validate_anchor_products(value: dict,products: dict,sources: list[dict]) -> None:
-    used={r['source_id'] for r in value.get('_uses',[])}
-    anchors=[s for s in sources if s['source']['id'] in used and s['source'].get('profile')=='anchor']
-    if not anchors:return
-    chosen={r['scene']:r['action'] for r in _product(products,'scene_design').get('selected_actions',[])}
-    actions={r['id']:r for r in _product(products,'action_design').get('candidates',[])}
+def _validate_anchor_source_beats(value: dict, anchor_ids: set[str], multi_scenes: set[str],
+                                  indices: dict[str, int]) -> None:
+    """Require each anchor source applied in a multi-action scene to locate its own beat and action."""
+    from nw.materials.semantic_application import pointer_tokens
+
+    targets = {row['source_id']: {ref[6:] for ref in row['output_refs'] if ref.startswith('scene:')}
+               for row in value.get('_uses', []) if row['source_id'] in anchor_ids}
+    criteria = {row['source_id']: row['clauses'] for row in value.get('_criteria', [])}
+    for ident, scenes in targets.items():
+        scene_coverage = set()
+        for clause in criteria.get(ident, []):
+            if clause['applicability'] != 'applies':
+                continue
+            for output in clause['output_refs']:
+                tokens = pointer_tokens(output)
+                if tokens[0] != 'beats':
+                    continue
+                if len(tokens) == 1:
+                    require(not (scenes & multi_scenes),
+                            'anchor source needs a concrete beat output for each applicable action')
+                    continue
+                beat = value['beats'][int(tokens[1])]
+                require(beat['scene'] in scenes, 'anchor source applies to a beat outside its scene use')
+                if beat['scene'] not in multi_scenes:
+                    continue
+                target = f"input:action_design:/candidates/{indices[beat['action_ref']]}"
+                step = f"{target}/steps/{beat['step_index']}"
+                refs = [ref.replace(':/products/', ':/', 1) for ref in clause['input_refs']]
+                require(any(ref == target or (ref.startswith(target + '/') and not ref.startswith(target + '/steps/'))
+                            or ref == step or ref.startswith(step + '/') for ref in refs),
+                        'anchor source must cite the action and step of its actual beat')
+                scene_coverage.add(beat['scene'])
+        require((scenes & multi_scenes) <= scene_coverage, 'anchor source use has no corresponding multi-action beat')
+
+
+def validate_anchor_products(value: dict, products: dict, sources: list[dict], context: dict | None = None) -> None:
+    used = {r['source_id'] for r in value.get('_uses', [])}
+    anchor_ids = {s['source']['id'] for s in sources if s['source']['id'] in used and s['source'].get('profile') == 'anchor'}
+    active = (context or {}).get('multi_action_policy') == MULTI_ACTION_POLICY
+    if not active and not anchor_ids:
+        return
+    chosen = selected_action_ids(_product(products, 'scene_design'))
+    if not active:
+        chosen = {scene: ids[-1:] for scene, ids in chosen.items()}
+    multi_scenes = {scene for scene, ids in chosen.items() if len(ids) > 1}
+    orders = {scene: {ident: index for index, ident in enumerate(ids)} for scene, ids in chosen.items()}
+    candidates = _product(products, 'action_design').get('candidates', [])
+    actions = {r['id']: r for r in candidates}
+    timing = {'before': 0, 'during': 1, 'after': 2}
+    seen: dict[str, set[str]] = {scene: set() for scene in multi_scenes}
+    last: dict[str, tuple[int, int, int]] = {}
     for row in value['beats']:
-        require(row.get('action_ref')==chosen.get(row['scene']) and row.get('action_ref') in actions,
-                'anchor has no actual selected upstream action')
-        action=actions[row['action_ref']]
-        require(type(row.get('step_index')) is int and 0<=row['step_index']<len(action['steps'])
-                and row.get('timing') in ('before','during','after') and _text(row.get('trigger_basis')),
+        scene, ref = row['scene'], row.get('action_ref')
+        has_action_fields = active and any(k in row for k in ('action_ref', 'step_index', 'timing', 'trigger_basis'))
+        if not anchor_ids and scene not in multi_scenes and not has_action_fields:
+            continue
+        require(_text(ref) and ref in orders.get(scene, {}) and ref in actions,
+                'anchor has no actual selected upstream action in this scene')
+        step = row.get('step_index')
+        require(type(step) is int and 0 <= step < len(actions[ref]['steps'])
+                and row.get('timing') in timing and _text(row.get('trigger_basis')),
                 'anchor needs an actual action beat, timing and source-condition basis')
+        if scene in multi_scenes:
+            position = (orders[scene][ref], step, timing[row['timing']])
+            require(scene not in last or position >= last[scene], 'anchors must follow the actual action and step order')
+            last[scene] = position
+            seen[scene].add(ref)
+    for scene in multi_scenes:
+        require(seen[scene] == orders[scene].keys(), 'each selected action needs a visible anchor beat in its scene')
+    if multi_scenes and anchor_ids:
+        _validate_anchor_source_beats(value, anchor_ids, multi_scenes, {r['id']: i for i, r in enumerate(candidates)})

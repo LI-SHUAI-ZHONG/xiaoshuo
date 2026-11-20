@@ -1,4 +1,5 @@
 """Conditional event, action and propagation designs never assert story facts."""
+from nw.materials.scene_actions import MULTI_ACTION_POLICY, action_choice
 from nw.materials.template_support import (capabilities, content, events, identified, members,
     product, references, require, rows, source_ids, strings, text, waiting)
 from nw.task_models import canonical
@@ -134,27 +135,37 @@ def validate_propagations(value: dict, products: dict, sources: list[dict], cont
     waiting(value, sources)
 
 
-def validate_scene_selection(value: dict, products: dict) -> None:
+def validate_scene_selection(value: dict, products: dict, context: dict | None = None) -> None:
     scenes = {row['key']: row['body'] for row in value['members']}
     actual_events = events(products)
     actions = {row['id']: row for row in product(products, 'action_design').get('candidates', [])}
+    multiple = (context or {}).get('multi_action_policy') == MULTI_ACTION_POLICY
     selected_events = {}
     for row in rows(value, 'selected_events', {'scene', 'event'}):
         require(text(row['scene']) and row['scene'] in scenes and row['scene'] not in selected_events
                 and text(row['event']) and row['event'] in actual_events,
                 'scene must select one actual event node or conditional event candidate')
         selected_events[row['scene']] = row['event']
-    selected_actions = set()
+    selected_actions: dict[str, dict[str, dict]] = {}
     for row in rows(value, 'selected_actions', {'scene', 'action'}):
-        require(text(row['scene']) and row['scene'] in scenes and row['scene'] not in selected_actions
-                and text(row['action']) and row['action'] in actions,
-                'scene must select one actual action candidate')
-        scene = scenes[row['scene']]; action = actions[row['action']]
+        require(text(row['scene']) and row['scene'] in scenes and text(row['action']) and row['action'] in actions,
+                'scene must select an actual action candidate')
+        ordered = selected_actions.setdefault(row['scene'], {})
+        require(multiple or not ordered, 'this plan requires one action per scene')
+        require(row['action'] not in ordered, 'scene repeats the same action candidate')
+        scene = scenes[row['scene']]
+        action = actions[row['action']]
         require(action['actor'] in {scene['pov'], *scene['characters']}
                 and action['event'] == selected_events.get(row['scene']),
                 'selected action actor or event does not belong to the actual scene selection')
-        selected_actions.add(row['scene'])
-    require(set(selected_events) == selected_actions == set(scenes), 'every actual scene needs one event and one action selection')
+        ordered[row['action']] = action
+    require(selected_events.keys() == selected_actions.keys() == scenes.keys(),
+            'every actual scene needs one event and at least one action selection')
+    for scene, ordered in selected_actions.items():
+        body = scenes[scene]
+        if 'choice' in body:
+            require(body['choice'] == action_choice(list(ordered.values())),
+                    'scene choice must preserve the selected action text in selection order')
 
 
 def validate_propagation_selection(value: dict, products: dict) -> None:

@@ -7,9 +7,11 @@ from nw.call_budget import prepare_call, read_budget
 from nw.call_control import model_settings
 from nw.cards import eligible_rule_refs
 from nw.context.story import WRITE_PROMPT, StoryScope, build_story_context, scene_scope
+from nw.materials.action_review import (ACTION_ORDER_REASON, ACTION_REVIEW_PROMPT, check_material_acceptance,
+                                        review_result)
 from nw.materials.binding import verify_materials
-from nw.materials.evidence import (PROMPT as MATERIAL_REVIEW_PROMPT, check_material_acceptance,
-                                   review_contract, review_result, scene_materials, state_hypotheses)
+from nw.materials.evidence import (PROMPT as MATERIAL_REVIEW_PROMPT, review_contract, scene_materials,
+                                   state_hypotheses)
 from nw.materials.stage_input import check_source_keys, step_material_prompt
 from nw.materials.steps.review import MATERIAL as REVIEW_MATERIAL
 from nw.materials.steps.writing import MATERIAL as WRITING_MATERIAL
@@ -99,9 +101,11 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
         checks = review.get('material_checks', ())
         # The independent reviewer can see author-only design and earlier chapter prose.
         if checks:
+            ordered_actions_failed = any(check.get('reason') == ACTION_ORDER_REASON for check in checks)
             data['review'] = {
                 'recommendation': review.get('recommendation'),
-                'notes': '在现有披露范围内，复核写作包中的检查点和场景叙述。',
+                'notes': (ACTION_ORDER_REASON if ordered_actions_failed else
+                          '在现有披露范围内，复核写作包中的检查点和场景叙述。'),
                 'material_checks': [{key: check[key] for key in ('id', 'status')} for check in checks],
             }
         else:
@@ -112,6 +116,8 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
     if contract is not None:
         data['material_review'] = contract
         appended = ' ' + MATERIAL_REVIEW_PROMPT
+        if any('action_order' in check for check in contract['checks']):
+            appended += ' ' + ACTION_REVIEW_PROMPT
     keys = check_source_keys(contract['checks']) if contract else frozen.get('writing_source_keys', ())
     body = canonical(data)
     prompt = step_material_prompt(prompt, material, keys)

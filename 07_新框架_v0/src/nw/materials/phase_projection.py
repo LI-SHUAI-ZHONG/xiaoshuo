@@ -2,7 +2,8 @@
 from copy import deepcopy
 from nw.materials.phase_routes import POLICY,STAGED_POLICIES,REQUIRES,phase_order,product_ref
 from nw.materials.phase_contract import validate_phase,require
-from nw.materials.phase_scene_checks import selected_checks
+from nw.materials.phase_scene_checks import anchor_beat_observable, selected_checks
+from nw.materials.scene_actions import MULTI_ACTION_POLICY, action_choice, selected_action_ids
 from nw.materials.phase_context import visible_facts
 from nw.story_state import IDENTITY_STATUS_PREFIX
 from nw.task_models import canonical,content_sha256
@@ -82,11 +83,16 @@ def compile_candidates(session: dict) -> list[dict]:
         if scope!='book':
             scenes={row['key']:row for row in members if row['kind']=='scene'}
             actions={row['id']:row for row in products['action_design']['candidates']}
-            for selection in products['scene_design']['selected_actions']:
-                scenes[selection['scene']]['body']['choice']=actions[selection['action']]['action']
+            selected=selected_action_ids(products['scene_design'])
+            multi_actions=session.get('context', {}).get('multi_action_policy')==MULTI_ACTION_POLICY
+            for scene, sequence in selected.items():
+                scenes[scene]['body']['choice']=(action_choice([actions[ident] for ident in sequence]) if multi_actions
+                                                else actions[sequence[-1]]['action'])
             for patch in products['state_transition']['patches']:
                 target=scenes[patch['scene']]['body'];chosen=target['choice']
-                target['choice']=chosen if chosen==patch['choice'] else chosen+'；'+patch['choice']
+                repeated=multi_actions and len(selected[patch['scene']])>1 and any(
+                    actions[ident]['action']==patch['choice'] for ident in selected[patch['scene']])
+                target['choice']=chosen if chosen==patch['choice'] or repeated else chosen+'；'+patch['choice']
                 target['planned_result']=patch['planned_result']
             chapters=deepcopy(products['scene_design']['chapters'])
         candidate={'kind':'plot','body':deepcopy(body),'members':members,'chapters':chapters,
@@ -124,7 +130,10 @@ def validate_candidate(candidate: dict,session: dict) -> None:
 
 def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
     records={row['stage']:row for row in session['stages']};sources={row['source']['id']:row for row in session['sources']}
-    result=selected_checks(records,scene,ids)
+    context=session.get('context',{})
+    result=selected_checks(records,scene,ids,context)
+    multi_actions=(context.get('multi_action_policy')==MULTI_ACTION_POLICY and len(selected_action_ids(
+        records.get('scene_design',{}).get('products',{})).get(scene,[]))>1)
     if session.get('production_method_policy'):
         from nw.production_methods.handoff import scene_checks
         result+=scene_checks(session,scene)
@@ -150,8 +159,11 @@ def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
     for stage,field in (('anchor_design','beats'),('expression_design','guidance')):
         for index,guide in enumerate(records.get(stage,{}).get('products',{}).get(field,[])):
             if guide['scene']!=scene:continue
+            observable=guide['observable']
+            if stage=='anchor_design' and multi_actions:
+                observable=anchor_beat_observable(guide,records,scene,ids)
             result.append({'id':f'work:stage:{stage}:{scene}:{index}','profile':'method_work',
-                'binding':{'observable':guide['observable'],'check':guide['check']},
+                'binding':{'observable':observable,'check':guide['check']},
                 'method_artifact':guide,
                 'evidence_required':'核对当前场景是否实际呈现已设计的动作、节拍和表达效果。'})
     ids=ids or {}

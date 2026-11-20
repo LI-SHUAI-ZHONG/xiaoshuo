@@ -538,17 +538,28 @@ def test_stage_reads_exact_unreviewed_original_and_can_continue_its_own_lookup(t
         assert any(any(s['source']['id'] == plot['id'] for s in call['frozen_sources']) for call in manifests)
 
 
-@pytest.mark.parametrize('omit_change',[False,True])
-def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp_path,omit_change):
+@pytest.mark.parametrize(('omit_change','multi'),[(False,False),(True,False),(False,True)])
+def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp_path,omit_change,multi):
     from nw.novel_flow import start_job,resume_job,JobRequest
     from test_material_workflow import choose
     from test_novel_flow import author
     from nw.story_state import current_head,revision_state,replay,baseline_for,selected_operations
+    from nw.materials.scene_actions import MULTI_ACTION_POLICY, action_choice
+
+    first = '[FAKE] 举灯辨认封条铜丝'
+    second = '[FAKE] 用木片托起纸角查看旧印'
+    first_sentence = '[FAKE] 沈砚举灯辨认封条下的铜丝，手背碰到铜丝被划伤。'
+    second_sentence = '他收回手，压低木片托住纸角，看清了旧印。'
     class StateModel(PhaseModel):
+        reviews = 0
+
         def generate(self,messages,**params):
             prompt=messages[0]['content'];payload=json.loads(messages[-1]['content'])
-            if '只输出正文' in prompt:
+            if '只输出正文' in prompt or multi and '修订本场' in prompt:
                 self.calls.append(messages)
+                if multi:
+                    return GenResult(first_sentence + second_sentence + ('他记下印痕。' if self.reviews else ''),
+                                     'complete',{},'test',{})
                 return GenResult('[FAKE] 沈砚用手试探封条下的铜丝，手背被划伤。他收回手，改用木片托住封条，看清了旧印。',
                                  'complete',{},'test',{})
             if '{"operations"' in prompt:
@@ -563,7 +574,52 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                             'evidence':[payload['evidence_format']]})
                         facts[key]=t['new_value']
                 return GenResult(json.dumps({'operations':operations},ensure_ascii=False),'complete',{},'test',{})
-            return super().generate(messages,**params)
+            result = super().generate(messages,**params)
+            if not multi:
+                return result
+            stage = payload.get('stage')
+            if stage in ('action_design', 'scene_design', 'anchor_design', 'state_transition'):
+                from copy import deepcopy
+                raw = json.loads(result.text)
+                products = raw['products']
+                if stage == 'action_design':
+                    assert payload['multi_action_policy'] == MULTI_ACTION_POLICY
+                    [base] = products['candidates']
+                    base['action'] = first
+                    extra = deepcopy(base)
+                    extra.update(id='archive', action=second)
+                    products['candidates'].append(extra)
+                    products['candidates'].append(dict(extra, id='alternative', action='[FAKE] 改从侧门调查'))
+                elif stage == 'scene_design':
+                    assert '一条或多条' in payload['output_schema']
+                    selected = products['selected_actions']
+                    selected.append(dict(selected[0], action='archive'))
+                    candidates = payload['inputs']['action_design']['products']['candidates']
+                    products['members'][0]['body']['choice'] = action_choice(candidates[:2])
+                elif stage == 'anchor_design':
+                    [beat] = products['beats']
+                    selected = payload['inputs']['scene_design']['products']['selected_actions']
+                    products['beats'] = [dict(beat, action_ref=entry['action']) for entry in selected]
+                else:
+                    products['patches'][0]['choice'] = second
+                result.text = json.dumps(raw, ensure_ascii=False)
+            if 'material_review' in payload:
+                raw = json.loads(result.text)
+                draft = payload['draft']['text']
+                contract = payload['material_review']
+                actions = [row for row in contract['checks'] if 'action_order' in row]
+                assert [row['action_order'] for row in actions] == [1, 2]
+                assert [row['method_artifact']['action'] for row in actions] == [first, second]
+                assert not any(row['id'].endswith(':alternative') for row in contract['checks'])
+                if self.reviews:
+                    checks = {row['id']: row for row in raw['material_checks']}
+                    split = len(first_sentence)
+                    for check, start, end in zip(actions, [0, split], [split, len(draft)], strict=True):
+                        checks[check['id']]['evidence'] = [{**contract['draft'], 'start': start, 'end': end,
+                                                           'quote': draft[start:end]}]
+                self.reviews += 1
+                result.text = json.dumps(raw, ensure_ascii=False)
+            return result
     template_catalog(tmp_path);provider=StateModel()
     with Store(tmp_path/'normal',create=True,test_mode=True) as store:
         store.init_project('模板正常路径');store.add_brief('调查封条与触碰铜丝后的变化');adopt_story(store,baseline(),{})
@@ -573,7 +629,16 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
         assert detail.step=='plan:chapter:confirm',detail.reason
         design=resume_job(store,job,provider,config(store),choose);assert design.status=='DONE',design.reason
         scene=design.outputs['application']['chapters'][0]['scenes'][0]['scene_id']
-        write=start_job(store,JobRequest('write',scene_ids=[scene],budget=Budget(12,90000,4000,0))).id
+        if multi:
+            from nw.context.story import build_story_context, scene_scope
+            with Store(store.directory,test_mode=True) as reopened:
+                package = build_story_context(reopened, scene, scene_scope(reopened, scene), 90000).package
+            actions = [json.loads(row['text']) for row in package['items']
+                       if row['source'].startswith('material:work:selected:action:')]
+            assert [json.loads(row['observable'])['action'] for row in actions] == [first, second]
+            [scene_body] = [json.loads(row['text']) for row in package['items'] if row['source'].startswith('scene:')]
+            assert scene_body['choice'] == first + '；' + second
+        write=start_job(store,JobRequest('write',scene_ids=[scene],budget=Budget(12,90000,4000,int(multi)))).id
         result=resume_job(store,write,provider,config(store),author())
         if omit_change:
             assert result.status=='BLOCKED' and 'MATERIAL_STATE_EVIDENCE' in result.reason
@@ -582,6 +647,10 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
             assert result.status=='DONE',result.reason
             head=current_head(store);facts=replay(baseline_for(store,'main'),selected_operations(store,revision_state(store,head)))
             assert any(f.predicate=='hand' and f.value=='划伤' for f in facts)
+            if multi:
+                assert provider.reviews == 2
+                [accepted] = store.list('accepted')
+                assert store.get('draft', accepted.draft_id).text.endswith('他记下印痕。')
 
 
 def test_type_source_mapping_follows_an_adopted_definition_to_adaptation(tmp_path, monkeypatch):

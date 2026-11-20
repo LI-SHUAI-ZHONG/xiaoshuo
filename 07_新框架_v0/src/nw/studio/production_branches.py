@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from nw.acceptance import (_require_promotion_reviews, _snapshot_dependencies, _topological,
                            promote_branch as apply_promotion, promotion_impacts, record_story_decision)
-from nw.materials.evidence import check_material_acceptance
+from nw.materials.action_review import check_material_acceptance
 from nw.novel_store import show_job
 from nw.story_delta import read_delta
 from nw.story_models import StateHead

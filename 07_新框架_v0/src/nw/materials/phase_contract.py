@@ -1,6 +1,7 @@
 """Validate actual upstream products before executing a creation method."""
 from nw.cards import _body
 from nw.materials.phase_routes import REQUIRES,readiness,product_ref,route_method
+from nw.materials.scene_actions import MULTI_ACTION_POLICY
 from nw.story_state import IDENTITY_STATUS_PREFIX, validate_identity_status
 from nw.task_models import _text,canonical
 from nw.materials.template_contract import extra_refs,validate_extra,validate_template_uses
@@ -165,11 +166,6 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
                 actor=people_bodies[person]
                 require(actor.get('visibility')=='public' or actor.get('visibility')=='holders'
                         and body['pov'] in actor.get('holders',[]),'scene character is hidden from the actual viewpoint')
-        actions={r['id']:r for r in products['action_design']['products']['candidates']}
-        for chosen in value['selected_actions']:
-            require(chosen['action'] in actions and chosen['scene'] in scenes
-                    and scenes[chosen['scene']]['body']['choice']==actions[chosen['action']]['action'],
-                    'scene choice must preserve the actual externally selected action candidate')
         from nw.plan_contract import _chapters
         all_members={r['key']:r for stage_name in ('world_design','character_design','plot_design')
                      for r in products[stage_name]['products']['members']}
@@ -292,15 +288,20 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     validate_selected_requirements(stage,value,products,context)
     from nw.materials.network_workflow import POLICY as NETWORK_POLICY
     strict_network = context.get('network_prerequisite_policy') == NETWORK_POLICY
+    check_anchor = stage == 'anchor_design' and not context.get('legacy_replay')
+    multiple_actions = context.get('multi_action_policy') == MULTI_ACTION_POLICY
     if not context.get('legacy_replay'):
         from nw.materials.step_guard import validate_cross_step_consistency
         validate_cross_step_consistency(stage, value, products, context)
         if stage=='plot_design':validate_plot_products(value,sources,context)
-        if stage=='anchor_design':validate_anchor_products(value,products,sources)
+        if check_anchor and not multiple_actions:
+            validate_anchor_products(value, products, sources, context)
         if not strict_network:
             validate_dynamic_dependencies(stage,value,products,sources,context)
     from nw.materials.semantic_application import validate_semantic_applications
     validate_semantic_applications(stage,value,products,sources,context)
+    if check_anchor and multiple_actions:
+        validate_anchor_products(value, products, sources, context)
     if strict_network and not context.get('legacy_replay'):
         if stage == 'plot_design':
             from nw.materials.semantic_products import validate_prepared_static

@@ -5,6 +5,7 @@ from nw.materials.binding_reviews import model_review
 from nw.materials.phase_lifecycle import CANDIDATE_SELECTION, writing_sources
 from nw.materials.phase_routes import product_ref
 from nw.materials.phase_context import visible_facts
+from nw.materials.scene_actions import MULTI_ACTION_POLICY, selected_action_ids
 from nw.materials.semantic_application import (contracts_for, output_value, pointer_tokens,
     input_value,require, resolve_pointer, unresolved_issues, validate_semantic_applications)
 from nw.task_models import canonical, content_sha256
@@ -12,11 +13,11 @@ import json
 
 
 def _merge_clauses(rows: list[dict]) -> list[dict]:
-    """One original clause is reviewed once with all current-scene applications."""
+    """Review each original clause once for a scene or for an individual action."""
     result=[];groups={}
     for row in rows:
         field=row['source_contract']['obligations'][0]
-        key=(field['source_id'],field['id'],row['source_applicability'])
+        key=(field['source_id'],field['id'],row['source_applicability'],row.get('action_ref'))
         if key not in groups:
             groups[key]=row;result.append(row);continue
         target=groups[key]
@@ -84,8 +85,10 @@ def _chapter_output(products: dict, reference: str, tokens: list[str], scene: st
 
 
 def current_scene_outputs(stage: str, products: dict, references: list[str], records: dict,
-                          scene: str, ids: dict) -> list[dict]:
+                          scene: str, ids: dict, *, action_ref: str | None = None) -> list[dict]:
     result = []; selected = _selected(stage, records, scene, ids)
+    if stage == 'action_design' and action_ref is not None and selected is not None:
+        selected &= {action_ref}
     for reference in references:
         tokens = pointer_tokens(reference)
         if stage == 'scene_design' and tokens[0] == 'chapters':
@@ -112,9 +115,27 @@ def current_scene_outputs(stage: str, products: dict, references: list[str], rec
                 current = [row for row in current or [] if row['id'] in selected] or None
             elif products['candidates'][int(tokens[1])]['id'] not in selected:
                 current = None
+        if stage == 'anchor_design' and tokens[0] == 'beats' and action_ref is not None:
+            if tokens == ['beats']:
+                current = [row for row in current or [] if row.get('action_ref') == action_ref] or None
+            elif current is not None and products['beats'][int(tokens[1])].get('action_ref') != action_ref:
+                current = None
         if current is not None:
             result.append({'path': reference, 'value': _mapped(current, ids)})
     return result
+
+
+def _output_groups(stage: str, products: dict, references: list[str], records: dict,
+                   scene: str, ids: dict, actions: list[str]) -> list[tuple[str | None, list[dict]]]:
+    field = {'action_design': 'candidates', 'anchor_design': 'beats'}.get(stage)
+    if field is None or len(actions) < 2:
+        return [(None, current_scene_outputs(stage, products, references, records, scene, ids))]
+    action_paths = [ref for ref in references if pointer_tokens(ref)[0] == field]
+    general_paths = [ref for ref in references if ref not in action_paths]
+    groups = [(None, current_scene_outputs(stage, products, general_paths, records, scene, ids))]
+    groups.extend((action, current_scene_outputs(stage, products, action_paths, records, scene, ids, action_ref=action))
+                  for action in actions)
+    return groups
 
 
 def _layer(contract: dict, criterion: dict) -> dict:
@@ -130,6 +151,10 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
     ids = ids or {}; records = {row['stage']: row for row in session.get('stages', [])}
     sources = {row['source']['id']: row for row in session.get('sources', [])}
     context = deepcopy(session.get('context', {}))
+    actions = []
+    if context.get('multi_action_policy') == MULTI_ACTION_POLICY:
+        scene_product = records.get('scene_design', {}).get('products', {})
+        actions = next((refs for key, refs in selected_action_ids(scene_product).items() if _same_scene(key, scene, ids)), [])
     if 'semantic_contracts' in session: context['semantic_contracts'] = session['semantic_contracts']
     guides = [g for g in records.get('bind_scope', {}).get('products', {}).get('method_guidance', [])
               if _same_scene(g.get('scene'), scene, ids)]
@@ -160,53 +185,62 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
                 field = original[application['id']]; mode = application['applicability']
                 if mode == 'not_applicable' and field['id'] in reference_only:
                     continue
-                outputs = current_scene_outputs(stage, value, application['output_refs'], records, scene, ids)
-                if mode == 'applies' and not outputs: continue
+                groups = _output_groups(stage, value, application['output_refs'], records, scene, ids,
+                                        actions if mode == 'applies' else [])
                 obligation = {'id': field['id'], 'text': field['value'] if isinstance(field['value'], str) else canonical(field['value']),
                               'kind': field['kind'], 'ref': deepcopy(field['source_ref']), 'source_id': ident}
                 pending = unresolved_issues(contract, field['id'], review)
                 scope = {'disposition': 'not_applicable' if mode in ('not_applicable','source_unresolved') else 'required',
                          'reason': application['reason']}
-                if mode == 'applies':
-                    visible = {'observable': application['observable'], 'actual_outputs': outputs}
-                    check = {'criterion': application['check'], 'consumer': application['consumer'],
-                             'verification': 'independent_prose_review_required'}
-                else:
-                    visible = {'applicability': mode, 'reason': application['reason'],
-                               'source_issues': deepcopy(pending)}
-                    check = {'consumer': application['consumer'], 'source_resolution': mode,
-                             'verification': 'unverified_source_cannot_count_as_completed' if mode == 'source_unresolved'
-                                             else 'verify_current_task_nonapplicability_without_claiming_source_repair'}
-                proof = {'stage': stage, 'product_ref': product_ref(record),
-                         'application': deepcopy(application), 'layer_application': deepcopy(criterion['layer_application']),
-                         'actual_inputs':[{'path':ref,'value':_mapped(deepcopy(input_value(
-                             ref,stage,upstream,step_context)),ids)} for ref in application['input_refs']],
-                         'current_outputs': outputs, 'source_issues': deepcopy(pending)}
-                if review:
-                    proof['binding_review_sha256']=review['sha256']
-                    if ident not in review_attached:
-                        applied={r['stage'] for r in session['stages']
-                            if any(u['source_id']==ident for u in r['products'].get('_uses',[]))}
-                        proof['reviewed_use']={'review_sha256':review['sha256'],
-                            'uses':[u for u in review['uses'] if u['stage'] in applied],
-                            'effect_status':'not_verified_by_binding_review'}
-                        review_attached.add(ident)
-                key = {'session': session.get('id'), 'stage': stage, 'source_id': ident, 'clause_id': field['id'], 'scene': scene}
-                row = {'id': 'work:semantic:' + content_sha256(key), 'profile': 'method_work' if mode=='applies' else 'prose_review',
-                       'binding': {'observable': canonical(visible), 'check': canonical(check),
-                                   'source_scope': {field['id']: scope}},
-                       'source_contract': {'obligations': [obligation]},
-                       'method_sources': [{'source': deepcopy(sources[ident]['source']),
-                           'original_quotes': [obligation['text']],
-                           'source_text_sha256': contract['source_text_sha256'],
-                           'semantic_contract_ref':contract['sha256']}],
-                       'method_operation': application['operation'], 'method_artifact': proof,
-                       'source_applicability': mode,
-                       'evidence_required': '逐条对照原义、真实输入和阶段产物核验本稿效果；计划、关键词和已读取不能通过。'
-                           + ('原义缺项仍为未验证，不得补造或计为完成。' if mode == 'source_unresolved' else '')}
-                if (stage,ident) not in layer_checked and (contract.get('application_guidance') or sources[ident].get('application_layers')):
-                    row['layer_contract'] = _layer(contract, criterion)
-                    layer_checked.add((stage,ident))
-                result.append(row)
+                for action_ref, outputs in groups:
+                    if mode == 'applies' and not outputs:
+                        continue
+                    if mode == 'applies':
+                        visible = {'observable': application['observable'], 'actual_outputs': outputs}
+                        check = {'criterion': application['check'], 'consumer': application['consumer'],
+                                 'verification': 'independent_prose_review_required'}
+                    else:
+                        visible = {'applicability': mode, 'reason': application['reason'],
+                                   'source_issues': deepcopy(pending)}
+                        check = {'consumer': application['consumer'], 'source_resolution': mode,
+                                 'verification': 'unverified_source_cannot_count_as_completed' if mode == 'source_unresolved'
+                                                 else 'verify_current_task_nonapplicability_without_claiming_source_repair'}
+                    proof = {'stage': stage, 'product_ref': product_ref(record),
+                             'application': deepcopy(application), 'layer_application': deepcopy(criterion['layer_application']),
+                             'actual_inputs':[{'path':ref,'value':_mapped(deepcopy(input_value(
+                                 ref,stage,upstream,step_context)),ids)} for ref in application['input_refs']],
+                             'current_outputs': outputs, 'source_issues': deepcopy(pending)}
+                    key = {'session': session.get('id'), 'stage': stage, 'source_id': ident, 'clause_id': field['id'], 'scene': scene}
+                    if action_ref is not None:
+                        key['action_ref'] = proof['action_ref'] = visible['action_ref'] = check['action_ref'] = action_ref
+                        proof['application']['output_refs'] = [output['path'] for output in outputs]
+                    if review:
+                        proof['binding_review_sha256']=review['sha256']
+                        if (ident, action_ref) not in review_attached:
+                            applied={r['stage'] for r in session['stages']
+                                if any(u['source_id']==ident for u in r['products'].get('_uses',[]))}
+                            proof['reviewed_use']={'review_sha256':review['sha256'],
+                                'uses':[u for u in review['uses'] if u['stage'] in applied],
+                                'effect_status':'not_verified_by_binding_review'}
+                            review_attached.add((ident, action_ref))
+                    row = {'id': 'work:semantic:' + content_sha256(key), 'profile': 'method_work' if mode=='applies' else 'prose_review',
+                           'binding': {'observable': canonical(visible), 'check': canonical(check),
+                                       'source_scope': {field['id']: scope}},
+                           'source_contract': {'obligations': [obligation]},
+                           'method_sources': [{'source': deepcopy(sources[ident]['source']),
+                               'original_quotes': [obligation['text']],
+                               'source_text_sha256': contract['source_text_sha256'],
+                               'semantic_contract_ref':contract['sha256']}],
+                           'method_operation': application['operation'], 'method_artifact': proof,
+                           'source_applicability': mode,
+                           'evidence_required': '逐条对照原义、真实输入和阶段产物核验本稿效果；计划、关键词和已读取不能通过。'
+                               + ('原义缺项仍为未验证，不得补造或计为完成。' if mode == 'source_unresolved' else '')}
+                    if action_ref is not None:
+                        row['action_ref'] = action_ref
+                    if ((stage, ident, action_ref) not in layer_checked
+                            and (contract.get('application_guidance') or sources[ident].get('application_layers'))):
+                        row['layer_contract'] = _layer(contract, criterion)
+                        layer_checked.add((stage, ident, action_ref))
+                    result.append(row)
         upstream[stage] = record
     return _merge_clauses(result)
