@@ -72,6 +72,88 @@ def test_used_methods_cannot_disappear_from_the_writable_scene_guidance():
         validate_phase(raw,'bind_scope',products,[],{'scope':'chapter'})
 
 
+def test_selected_action_source_must_reach_the_same_scene_in_writing_and_review() -> None:
+    from nw.materials.evidence import scene_checks, writer_checks
+    from nw.materials.phase_routes import POLICY as PHASE_POLICY
+    from nw.materials.scene_source_bindings import POLICY
+    from nw.materials.source_semantics import compile_semantics
+    from test_material_phase_projection import chain
+    from test_material_semantic_clauses import criterion, source
+
+    session = chain()
+    session['policy'] = PHASE_POLICY
+    binding = session['stages'][-1]
+    stages = prefix(session['stages'], 'bind_scope')
+    action = stages['action_design']['products']
+    selected = action['candidates'][0]
+    selected['source_ids'] = ['method']
+    action['_uses'] = [{'source_id': 'method', 'operation': '[FAKE] 依原义设计调查动作及应对顺序',
+                       'output_refs': ['action:' + selected['id']]}]
+    item = source()
+    contract = compile_semantics(item)
+    action['_criteria'] = [criterion(contract)]
+    for clause in action['_criteria'][0]['clauses']:
+        clause['consumer'] = 'review'
+    stages['action_design']['sha256'] = content_sha256(action)
+    stages['action_design']['source_ids'] = ['method']
+    session['sources'] = [item]
+    session['context']['brief'] = {'text': '[FAKE] 调查封条并核对观察与应对顺序'}
+    first = stages['scene_design']['products']
+    other = deepcopy(first['members'][0])
+    other['key'] = 'scene-b'
+    first['members'].append(other)
+    first['chapters'][0]['scenes'].append({'index': 2, 'card': 'scene-b', 'story_order': 2})
+    stages['scene_design']['sha256'] = content_sha256(first)
+
+    value = binding['products']
+    raw = {'stage': 'bind_scope', 'products': value}
+    strict = {**session['context'], 'scene_source_binding_policy': POLICY}
+    guide = {'source_ids': ['method'], 'observable': '[FAKE] 借灯先看清铜丝再伸入木片',
+             'check': '[FAKE] 核对两项动作以及纸角破损证据'}
+    value['method_guidance'] = [dict(guide, scene='scene-b')]
+    validate_phase(raw, 'bind_scope', stages, [], session['context'])
+    with pytest.raises(ValueError, match='lost its actual scene placement'):
+        validate_phase(raw, 'bind_scope', stages, [], strict)
+    value['method_guidance'].append(dict(guide, scene='scene'))
+    with pytest.raises(ValueError, match='assigned to the wrong scene'):
+        validate_phase(raw, 'bind_scope', stages, [], strict)
+    value['method_guidance'].pop(0)
+    validate_phase(raw, 'bind_scope', stages, [], strict)
+    binding['sha256'] = content_sha256(value)
+
+    design = {'materials': [], 'bindings': {}, 'work_session': session, 'work_application': {},
+              'material_key': 'scene', 'process_ids': {'scene': 'actual-a', 'scene-b': 'actual-b'}}
+    review = [row for row in scene_checks(design) if row['id'].startswith('work:semantic:')]
+    assert {row['method_sources'][0]['original_quotes'][0] for row in review} == {
+        row['value'] for row in contract['obligations']}
+    assert {row['id'] for row in review} <= {row['id'] for row in writer_checks(design)}
+    assert all(row['method_artifact']['current_outputs'][0]['value'] == selected['steps'][0]['action']
+               for row in review)
+    design['material_key'] = 'scene-b'
+    assert not any(row['id'].startswith('work:semantic:') for row in scene_checks(design))
+    assert not any(row['id'].startswith('work:semantic:') for row in writer_checks(design))
+
+
+def test_scene_source_placement_follows_each_selection_and_preserves_unselected_alternatives() -> None:
+    from nw.materials.phase_lifecycle import writing_sources
+    from nw.materials.scene_source_bindings import scene_source_placements
+
+    values = {
+        'event_design': {'_uses': [
+            {'source_id': 'shared', 'output_refs': ['event_candidate:adopted']},
+            {'source_id': 'spare', 'output_refs': ['event_candidate:unselected']},
+        ]},
+        'scene_design': {'members': [{'key': 'a'}, {'key': 'b'}],
+                         'selected_events': [{'event': 'adopted', 'scene': 'a'}]},
+        'state_propagation': {'_uses': [{'source_id': 'shared', 'output_refs': ['propagation:trace']}]},
+        'anchor_design': {'selected_propagations': [{'propagation': 'trace', 'scene': 'b'}]},
+        'plot_design': {'_uses': [{'source_id': 'global', 'output_refs': ['reader_plan']}]},
+    }
+    stages = {stage: record(stage, value) for stage, value in values.items()}
+    assert scene_source_placements(stages) == ({'shared': {'a', 'b'}}, {'global'})
+    assert writing_sources(stages, []) == {'shared', 'global'}
+
+
 def test_each_scene_needs_actual_anchor_and_expression_products():
     from test_material_phase_projection import chain
     for stage in ('anchor_design','expression_design'):

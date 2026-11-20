@@ -312,7 +312,8 @@ def model_material(row: dict, *, book: bool) -> dict:
 def model_package(package: dict) -> dict:
     result={key:value for key,value in package.items() if key not in {
         'material_recall','material_input','stage_materials','stage_source_policy','chapter_handoff','chapter_summary','chapter_reviews',
-        'type_hierarchy_enabled','type_source_scope_enabled','type_name_evidence_enabled','governance_inputs','dynamic_reference_checks','dynamic_screening_enabled'}}
+        'type_hierarchy_enabled','type_source_scope_enabled','type_name_evidence_enabled','governance_inputs',
+        'dynamic_reference_checks','dynamic_screening_enabled','scene_source_binding_policy'}}
     if package.get('materials'):
         result['materials']=[model_material(row,book=package['scope']=='book') for row in package['materials']]
         result['material_input']={'policy':POLICY,'full_sources_frozen_for_verification':True}

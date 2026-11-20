@@ -80,6 +80,9 @@ def test_normal_driver_places_template_after_inputs_and_never_runs_global_readin
         assert delivered==[('state_transition','TDR_TEMPLATE_003')]
         state_prompt=next(m[0]['content'] for m in provider.calls
                           if json.loads(m[-1]['content']).get('stage')=='state_transition')
+        [binding] = [body for m in provider.calls if (body := json.loads(m[-1]['content'])).get('stage') == 'bind_scope']
+        [source] = session['sources']
+        assert binding['required_scene_sources'] == {source['source']['id']: ['scene']}
         assert '核对当前变化事件与实际代价。' in state_prompt
         assert '不适用的材料' not in state_prompt
         assert not any('[MATERIAL_WORK]' in m[0]['content'] for m in provider.calls)

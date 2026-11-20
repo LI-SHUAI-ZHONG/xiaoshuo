@@ -1,13 +1,28 @@
 """Keep conditional alternatives distinct from selected scene obligations."""
+from collections import defaultdict
+
 from nw.task_models import _text
 
+CANDIDATE_SELECTION = {
+    'event_design': ('scene_design', 'selected_events', 'event', 'event_candidate'),
+    'action_design': ('scene_design', 'selected_actions', 'action', 'action'),
+    'state_propagation': ('anchor_design', 'selected_propagations', 'propagation', 'propagation'),
+}
 
-def selected_refs(products: dict) -> dict[str,set[str]]:
-    scene=products.get('scene_design',{}).get('products',{})
-    anchor=products.get('anchor_design',{}).get('products',{})
-    return {'event_design':{'event_candidate:'+r['event'] for r in scene.get('selected_events',[])},
-            'action_design':{'action:'+r['action'] for r in scene.get('selected_actions',[])},
-            'state_propagation':{'propagation:'+r['propagation'] for r in anchor.get('selected_propagations',[])}}
+
+def selected_scene_refs(products: dict) -> dict[str, dict[str, set[str]]]:
+    """Resolve each selected candidate reference to the scene or scenes that chose it."""
+    result = {}
+    for stage, (consumer, field, key, prefix) in CANDIDATE_SELECTION.items():
+        scenes = defaultdict(set)
+        for row in products.get(consumer, {}).get('products', {}).get(field, []):
+            scenes[f'{prefix}:{row[key]}'].add(row['scene'])
+        result[stage] = dict(scenes)
+    return result
+
+
+def selected_refs(products: dict) -> dict[str, set[str]]:
+    return {stage: set(refs) for stage, refs in selected_scene_refs(products).items()}
 
 
 def writing_sources(products: dict,current_uses: list[dict]) -> set[str]:

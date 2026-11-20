@@ -992,6 +992,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                    governance: dict | None=None,method_plan: dict | None=None) -> tuple[dict,list[dict],list[dict]]:
     from nw.materials.work_session import _study_call,model_source
     from nw.materials.step_guard import build_continuity_ledger, build_joint_material_plan
+    from nw.materials.phase_lifecycle import CANDIDATE_SELECTION
+    from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY, scene_source_placements
+    scoped_sources = context.get('scene_source_binding_policy') == SCENE_SOURCE_BINDING_POLICY
     stage_config, stage_provider = resolve_stage_runtime(config, provider, stage)
     state=readiness(stage,products,package['scope'])
     if state['missing']:raise ValueError('MATERIAL_WAITING_INPUTS: '+','.join(state['missing']))
@@ -1080,6 +1083,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        if scoped_sources and stage in CANDIDATE_SELECTION:
+            payload['scene_source_binding_policy'] = SCENE_SOURCE_BINDING_POLICY
+            suffix += ('\n候选的source_ids只填本步真的用于该候选的资料ID，与_uses中指向这个候选的记录完全一致。'
+                       '_criteria里适用条款的output_refs须用/candidates/序号/字段指到此次应用。'
+                       '同一资料在_uses与适用条款中指向的候选集合必须一致。排除项与等待项不能列为候选的依据。')
         if step_pool is not None:
             payload['stage_source_policy'] = package['stage_source_policy']
         if stage == 'type_adaptation' and governance and context.get('dynamic_reference_checks'):
@@ -1165,6 +1173,15 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                                                         deferrals=package.get('material_deferrals'))
             payload['binding_sources']=[model_material(r,book=package['scope']=='book') for r in package.get('materials',[])]
             payload['writing_source_ids']=sorted(writing_sources(products,[]))
+            if scoped_sources and package['scope'] != 'book':
+                required, flexible = scene_source_placements(products)
+                payload['scene_source_binding_policy'] = SCENE_SOURCE_BINDING_POLICY
+                payload['required_scene_sources'] = {ident: sorted(scenes) for ident, scenes in required.items()}
+                payload['scene_independent_sources'] = sorted(flexible)
+                suffix += ('\nrequired_scene_sources列出每条资料必须在method_guidance落入的场景。'
+                           '只要资料无其他与场景无关的用法，就不能再分配给额外场景。'
+                           'scene_independent_sources可按实际写作用途落场。'
+                           '本步才采用的资料也要让_uses、适用条款与method_guidance指向实际应用场景。')
         def validate(value: dict) -> None:
             if 'requests' in value:
                 require(payload['mode']!='execute','requested method originals are delivered; actual step products are required')
@@ -1286,6 +1303,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
              'accepted_state':package.get('accepted_state',[]),'accepted_changes':package.get('accepted_changes',[])}
     if selected:
         context['current_source_set']=selected['sha256']
+    if 'scene_source_binding_policy' in package:
+        context['scene_source_binding_policy'] = package['scene_source_binding_policy']
     if package.get('dynamic_reference_checks'):
         context['dynamic_reference_checks'] = True
     from nw.production_methods.handoff import inherited

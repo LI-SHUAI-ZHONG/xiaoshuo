@@ -193,6 +193,13 @@ def phase_output(provider: Any, messages: list[dict]) -> GenResult:
     provider.calls.append(messages)
     candidates=json.loads(fixture.text)['candidate_cards']
     products=project_products(stage,candidates,data['inputs'],data['sources'],scope)
+    if stage == 'bind_scope' and (required := data.get('required_scene_sources')):
+        independent = set(data['scene_independent_sources'])
+        guides = products['method_guidance']
+        for guide in guides:
+            guide['source_ids'] = [ident for ident in guide['source_ids']
+                                   if ident in independent or ident not in required or guide['scene'] in required[ident]]
+        products['method_guidance'] = [guide for guide in guides if guide['source_ids']]
     refs=sorted(output_refs(stage,products))
     products['_uses']=[{'source_id':s['source']['id'],'operation':'[FAKE] 根据原义执行当前测试步骤并形成实际场景产物',
                        'output_refs':([next(ref for ref in refs if ref.startswith('focus:'))]

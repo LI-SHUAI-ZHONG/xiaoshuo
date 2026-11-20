@@ -294,5 +294,11 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         validate_dynamic_dependencies(stage,value,products,sources,context)
     from nw.materials.semantic_application import validate_semantic_applications
     validate_semantic_applications(stage,value,products,sources,context)
+    if context.get('scene_source_binding_policy'):
+        from nw.materials.scene_source_bindings import POLICY, validate_candidate_sources, validate_scene_sources
+        require(context['scene_source_binding_policy'] == POLICY, 'unknown scene source binding policy')
+        validate_candidate_sources(stage, value)
+        if stage == 'bind_scope' and context.get('scope', 'chapter') != 'book':
+            validate_scene_sources(value, products)
     from nw.materials.semantic_handoff import validate_handoffs
     validate_handoffs(stage,value,products)

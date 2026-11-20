@@ -24,6 +24,42 @@ def used(value,item,ref):
                      'output_refs':[ref]}]
 
 
+@pytest.mark.parametrize(('defect', 'message'), [
+    ('excluded', 'candidate source IDs differ'),
+    ('missing', 'candidate source IDs differ'),
+    ('different_candidate', 'clauses and use record reference different candidates'),
+])
+def test_action_sources_agree_with_adoption_and_the_applied_clause_outputs(defect: str, message: str) -> None:
+    from nw.materials.scene_source_bindings import POLICY
+    from nw.materials.source_semantics import compile_semantics
+    from test_material_semantic_clauses import criterion, source as action_source
+
+    item = action_source()
+    products, value = at('action_design')
+    action = value['candidates'][0]
+    action['source_ids'] = ['method']
+    alternate = deepcopy(action)
+    alternate.update(id='alternate', source_ids=[])
+    value['candidates'].append(alternate)
+    used(value, item, 'action:' + action['id'])
+    value['_criteria'] = [criterion(compile_semantics(item))]
+    context = {'scope': 'chapter', 'scene_source_binding_policy': POLICY, 'require_semantics': True,
+               'brief': {'text': '[FAKE] 调查铜丝下的封条'}}
+    raw = {'stage': 'action_design', 'products': value}
+    validate_phase(raw, 'action_design', products, [item], context)
+
+    if defect == 'excluded':
+        value['_uses'] = value['_criteria'] = []
+        value['_excluded'] = [{'source_id': 'method', 'reason': '[FAKE] 本场不采用该动作方法'}]
+    elif defect == 'missing':
+        action['source_ids'] = []
+    else:
+        for clause in value['_criteria'][0]['clauses']:
+            clause['output_refs'] = ['/candidates/1/steps/0/action']
+    with pytest.raises(ValueError, match=message):
+        validate_phase(raw, 'action_design', products, [item], context)
+
+
 def test_reader_wave_cannot_be_an_arbitrary_nonempty_string():
     item=source('板块64 读者情感#读者情绪波形设计')
     products,value=at('plot_design');value['reader_plan']=['全部场景情绪保持同一水平']

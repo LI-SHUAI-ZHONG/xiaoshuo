@@ -196,7 +196,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             _, previous_package = read_input_manifest(store, manifest_id)
             for key in ('stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
-                        'dynamic_reference_checks', 'dynamic_screening_enabled'):
+                        'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy'):
                 if key in previous_package:
                     package[key] = previous_package[key]
         else:
@@ -214,11 +214,13 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             if (store.directory.parent / 'materials/catalog.db').is_file():
                 from nw.materials.phase_flow import STAGE_MATERIALS
                 from nw.materials.phase_routes import phase_order
+                from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY
                 package['type_hierarchy_enabled'] = True
                 package['type_source_scope_enabled'] = True
                 package['type_name_evidence_enabled'] = True
                 package['dynamic_reference_checks'] = True
                 package['dynamic_screening_enabled'] = True
+                package['scene_source_binding_policy'] = SCENE_SOURCE_BINDING_POLICY
                 package['stage_materials'] = {
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
                 }

@@ -2,7 +2,7 @@
 from copy import deepcopy
 
 from nw.materials.binding_reviews import model_review
-from nw.materials.phase_lifecycle import writing_sources
+from nw.materials.phase_lifecycle import CANDIDATE_SELECTION, writing_sources
 from nw.materials.phase_routes import product_ref
 from nw.materials.phase_context import visible_facts
 from nw.materials.semantic_application import (contracts_for, output_value, pointer_tokens,
@@ -46,14 +46,11 @@ def _same_scene(value: object, scene: str, ids: dict) -> bool:
 
 
 def _selected(stage: str, records: dict, scene: str, ids: dict) -> set[str] | None:
-    body = records.get('scene_design', {}).get('products', {})
-    if stage in ('event_design', 'action_design'):
-        field, key = ('selected_events', 'event') if stage == 'event_design' else ('selected_actions', 'action')
-        return {r[key] for r in body.get(field, []) if _same_scene(r['scene'], scene, ids)}
-    if stage == 'state_propagation':
-        return {r['propagation'] for r in records.get('anchor_design', {}).get('products', {}).get('selected_propagations', [])
-                if _same_scene(r['scene'], scene, ids)}
-    return None
+    if stage not in CANDIDATE_SELECTION:
+        return None
+    consumer, field, key, _ = CANDIDATE_SELECTION[stage]
+    body = records.get(consumer, {}).get('products', {})
+    return {row[key] for row in body.get(field, []) if _same_scene(row['scene'], scene, ids)}
 
 
 def _scene_row(value: object, scene: str, ids: dict) -> bool:
@@ -86,8 +83,8 @@ def _chapter_output(products: dict, reference: str, tokens: list[str], scene: st
     return scoped if len(tokens) == 1 else scoped[0]
 
 
-def _current_outputs(stage: str, products: dict, references: list[str], records: dict,
-                     scene: str, ids: dict) -> list[dict]:
+def current_scene_outputs(stage: str, products: dict, references: list[str], records: dict,
+                          scene: str, ids: dict) -> list[dict]:
     result = []; selected = _selected(stage, records, scene, ids)
     for reference in references:
         tokens = pointer_tokens(reference)
@@ -163,7 +160,7 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
                 field = original[application['id']]; mode = application['applicability']
                 if mode == 'not_applicable' and field['id'] in reference_only:
                     continue
-                outputs = _current_outputs(stage, value, application['output_refs'], records, scene, ids)
+                outputs = current_scene_outputs(stage, value, application['output_refs'], records, scene, ids)
                 if mode == 'applies' and not outputs: continue
                 obligation = {'id': field['id'], 'text': field['value'] if isinstance(field['value'], str) else canonical(field['value']),
                               'kind': field['kind'], 'ref': deepcopy(field['source_ref']), 'source_id': ident}

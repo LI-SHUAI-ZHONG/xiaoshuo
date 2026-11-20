@@ -180,7 +180,8 @@ def designed_story(tmp_path, pin, provider):
     detail = 'chapter' if provider.kind == 'chapter' else 'volume'
     job = start_job(store, JobRequest('design', budget=Budget(32, 90000, 4000), materials=[pin], design_scope=detail)).id
     assert resume_job(store, job, provider, config(store)).step == 'plan:book:confirm'
-    assert resume_job(store, job, provider, config(store), choose).step == f'plan:{detail}:confirm'
+    proposed = resume_job(store, job, provider, config(store), choose)
+    assert proposed.step == f'plan:{detail}:confirm', proposed.reason
     result = resume_job(store, job, provider, config(store), choose)
     assert result.status == 'DONE', result.reason
     scenes = [row['scene_id'] for chapter in result.outputs['application']['chapters'] for row in chapter['scenes']]
