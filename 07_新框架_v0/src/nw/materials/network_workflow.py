@@ -187,16 +187,16 @@ def _type_network_decision(ident: str, rule: dict, products: dict, context: dict
 
 
 def _world_network_active(context: dict) -> bool:
-    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
+    from nw.materials.world_network import enabled_rules
 
-    return context.get('world_network_policy') == WORLD_NETWORK_POLICY
+    return bool(enabled_rules(context))
 
 
 def world_network_decision(ident: str, key: str, valid_types: object,
                            products: dict, context: dict) -> tuple[dict | None, list[str]]:
-    from nw.materials.world_network import RULES, availability
+    from nw.materials.world_network import availability, enabled_rules
 
-    if key not in RULES:
+    if key not in enabled_rules(context):
         return None, ['逐条核对的世界设计前置']
     if ident not in context.get('world_network_bases', {}):
         return None, ['具有制作资格且可核对的本步静网原条']

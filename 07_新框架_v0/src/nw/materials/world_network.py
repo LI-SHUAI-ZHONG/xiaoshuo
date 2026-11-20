@@ -122,10 +122,20 @@ def _approved_formula(card: dict, terms: tuple[str, ...]) -> dict | None:
             'limits_ref': f'approved:{ident}:/body/limits'}
 
 
+def enabled_rules(context: dict) -> set[str]:
+    from nw.materials.world_advancement import POLICY as ADVANCEMENT_POLICY, RULES as ADVANCEMENT_RULES
+
+    rules = set(RULES) if context.get('world_network_policy') == POLICY else set()
+    if context.get('world_advancement_policy') == ADVANCEMENT_POLICY:
+        rules.update(ADVANCEMENT_RULES)
+    return rules
+
+
 def availability(key: str, valid_types: object, products: dict, context: dict) -> tuple[dict | None, list[str]]:
     from nw.materials.network_workflow import type_matches
+    from nw.materials.world_advancement import RULES as ADVANCEMENT_RULES, approved_advancement
 
-    if context.get('world_network_policy') != POLICY or key not in RULES:
+    if key not in enabled_rules(context):
         return None, []
     selection = products.get('type_selection', {})
     if selection.get('stage') != 'type_selection' or not selection.get('sha256'):
@@ -139,11 +149,18 @@ def availability(key: str, valid_types: object, products: dict, context: dict) -
             refs[ident] = f'input:type_selection:/selection/{index}'
     if not refs:
         return None, ['已选且符合原条的类型']
+    packet = {'type_ids': list(refs), 'type_refs': refs, 'output': 'members'}
+    if key in ADVANCEMENT_RULES:
+        cards = [proof for card in context.get('approved_cards', [])
+                 if (proof := approved_advancement(card, key)) is not None]
+        if not cards:
+            return None, ['同一份已批准世界卡中的' + ADVANCEMENT_RULES[key]]
+        return {**packet, 'cards': cards, 'kind': 'advancement'}, []
     factor, terms = RULES[key]
     cards = [proof for card in context.get('approved_cards', []) if (proof := _approved_formula(card, terms)) is not None]
     if not cards:
         return None, [f'同一份已批准世界卡中的力量公式、{factor}计量和适用限制']
-    return {'type_ids': list(refs), 'type_refs': refs, 'cards': cards, 'output': 'members'}, []
+    return {**packet, 'cards': cards}, []
 
 
 def _validate_basis(source: dict, raw: dict, context: dict) -> None:
@@ -165,7 +182,7 @@ def _validate_basis(source: dict, raw: dict, context: dict) -> None:
 def _cited_card(clause: dict, cards: list[dict]) -> dict:
     supplied = set(clause['input_refs'])
     matches = [card for card in cards if {card['rule_ref'], card['limits_ref']} <= supplied]
-    require(len(matches) == 1, 'world formula clause must cite formula and bounds from one approved world card')
+    require(len(matches) == 1, 'world clause must cite rule and bounds from one approved world card')
     card = matches[0]
     world_refs = {path for path in supplied if path.startswith('approved:') and path.endswith(('/body/rule', '/body/limits'))}
     require(world_refs == {card['rule_ref'], card['limits_ref']}, 'world formula clause cannot mix calculation cards')
@@ -185,7 +202,7 @@ def _validate_formula_output(body: dict, card: dict) -> None:
 
 
 def validate_world_network_use(source: dict, raw: dict, value: dict, products: dict, context: dict) -> None:
-    """Require each adopted variable rule to produce a traceable world and handoff."""
+    """Require each adopted rule to use the approved world mechanics and hand them off."""
     key, source_id = source['source']['key'], source['source']['id']
     require(raw.get('id') == key and raw.get('generated_from_static') is True, 'world formula use needs its derived dynamic original')
     _validate_basis(source, raw, context)
@@ -221,4 +238,9 @@ def validate_world_network_use(source: dict, raw: dict, value: dict, products: d
             fields[index].add(path[3])
     for index in selected:
         require(fields[index] == {'rule', 'limits'}, 'each adopted world member must hand off both its rule and limits')
-        _validate_formula_output(value['members'][index]['body'], cited[index])
+        body, basis = value['members'][index]['body'], cited[index]
+        if ready.get('kind') == 'advancement':
+            require(body['rule'] == basis['rule'] and body['limits'] == basis['limits'],
+                    'world advancement must preserve the complete approved requirements and applicability limits')
+        else:
+            _validate_formula_output(body, basis)

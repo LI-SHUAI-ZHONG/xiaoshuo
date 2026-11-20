@@ -46,7 +46,7 @@ def load_type_network_bases(desk: SourceDesk, authored: dict, rules: dict) -> di
     return load_network_bases(desk, authored, rules, 'type_adaptation', RULES)
 
 
-def load_world_network_bases(desk: SourceDesk, authored: dict, rules: dict) -> dict[str, dict]:
-    from nw.materials.world_network import RULES
+def load_world_network_bases(desk: SourceDesk, authored: dict, rules: dict, context: dict) -> dict[str, dict]:
+    from nw.materials.world_network import enabled_rules
 
-    return load_network_bases(desk, authored, rules, 'world_design', RULES)
+    return load_network_bases(desk, authored, rules, 'world_design', enabled_rules(context))

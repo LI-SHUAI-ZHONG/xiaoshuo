@@ -152,7 +152,7 @@ def verify_session_bindings(session: dict,workspace: Path,*,test_mode: bool=Fals
     from nw.materials.network_workflow import POLICY as NETWORK_POLICY, resolve_type_scope
     if context.get('network_prerequisite_policy') == NETWORK_POLICY:
         from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
-        from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
+        from nw.materials.world_network import enabled_rules as enabled_world_rules
 
         typed = context.get('type_network_policy') == TYPE_NETWORK_POLICY
         families = {} if typed else None
@@ -163,7 +163,7 @@ def verify_session_bindings(session: dict,workspace: Path,*,test_mode: bool=Fals
         proof_by_stage = {}
         if typed:
             proof_by_stage['type_adaptation'] = context.get('type_network_bases', {})
-        if context.get('world_network_policy') == WORLD_NETWORK_POLICY:
+        if enabled_world_rules(context):
             proof_by_stage['world_design'] = context.get('world_network_bases', {})
         offered = [(ident, proof) for row in session['stages'] if row['stage'] in proof_by_stage
                    for ident, proof in proof_by_stage[row['stage']].items() if ident in row['source_ids']]

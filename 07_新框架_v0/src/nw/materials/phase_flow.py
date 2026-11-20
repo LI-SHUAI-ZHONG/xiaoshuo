@@ -1082,7 +1082,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         same_stage_rules, step_sources, world_network_decision)
     from nw.materials.semantic_products import dynamic_rejection
     from nw.materials.type_network import FIELD_LABELS, POLICY as TYPE_NETWORK_POLICY, availability
-    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
+    from nw.materials.world_network import enabled_rules as enabled_world_rules
     scoped_sources = context.get('scene_source_binding_policy') == SCENE_SOURCE_BINDING_POLICY
     multi_actions = context.get('multi_action_policy') == MULTI_ACTION_POLICY
     action_state = stage == 'action_design' and context.get('action_state_policy') == ACTION_STATE_POLICY
@@ -1104,7 +1104,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     early_plot = stage == 'plot_design' and context.get('early_network_policy') == EARLY_POLICY
     followup_ids = frozenset()
     type_network_enabled = context.get('type_network_policy') == TYPE_NETWORK_POLICY
-    world_network_enabled = context.get('world_network_policy') == WORLD_NETWORK_POLICY and stage == 'world_design'
+    world_network_enabled = stage == 'world_design' and bool(enabled_world_rules(context))
     type_ready = {}
     world_ready = {}
     if network is not None:
@@ -1243,12 +1243,17 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 if ready is not None:
                     prerequisites[ref['id']] = {**ready, 'static_source': context['world_network_bases'][ref['id']]}
             payload['world_network_prerequisites'] = prerequisites
-            if prerequisites:
-                suffix += ('\nworld_network_prerequisites 只提供本项目已批准的公式、该变量定义和适用范围。'
+            if any(data.get('kind') != 'advancement' for data in prerequisites.values()):
+                suffix += ('\nworld_network_prerequisites 中的算式条目只提供本项目已批准的公式、该变量定义和适用范围。'
                            '每条适用原义要引用同一批准世界卡的规则和限制字段，并引用实际已选且适用的类型。'
                            '将原计算式、对应变量定义及限制原样保留在此次采用的世界设计产物中。'
                            '用_uses登记member:ID，output_refs指向实际/members/序号/body/rule或limits。'
                            'consumer须为本方案实际运行的后续阶段。不得从本轮新稿反推作者已经采用的公式或另定系数。')
+            if any(data.get('kind') == 'advancement' for data in prerequisites.values()):
+                suffix += ('\n标为 advancement 的规则依据同一已批准世界卡及原静边。保留项目定义的门槛、标志、并列要求及适用范围。'
+                           '原样保留该卡完整 rule、limits，_uses登记实际member:ID，每条适用原义引用实际类型及同卡rule和limits，'
+                           'output_refs指向实际/members/序号/body/rule或limits，交给本范围将实际运行的步骤。'
+                           '依据只证明本条所指条件或标志，其他门槛待有项目证据再采用。')
         if network_waiting:
             payload['network_waiting'] = network_waiting
             suffix += '\nnetwork_waiting 列出现有项缺少的前置。只采用实际有前置的资料，缺前置时按其他已符合条件的输入完成本步。'
@@ -1529,7 +1534,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY, resolve_type_scope
     from nw.materials.network_followup import POLICY as FOLLOWUP_POLICY
     from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
-    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
+    from nw.materials.world_advancement import POLICY as WORLD_ADVANCEMENT_POLICY
+    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY, enabled_rules as enabled_world_rules
     selected=selection_status(workspace)
     if selected:
         package={**package,'current_source_set':selected['sha256']}
@@ -1573,10 +1579,13 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             context['type_network_policy'] = TYPE_NETWORK_POLICY
             context['type_network_bases'] = load_type_network_bases(desk, *network)
         if package.get('world_network_policy') == WORLD_NETWORK_POLICY:
+            context['world_network_policy'] = WORLD_NETWORK_POLICY
+        if package.get('world_advancement_policy') == WORLD_ADVANCEMENT_POLICY:
+            context['world_advancement_policy'] = WORLD_ADVANCEMENT_POLICY
+        if enabled_world_rules(context):
             from nw.materials.type_network_catalog import load_world_network_bases
 
-            context['world_network_policy'] = WORLD_NETWORK_POLICY
-            context['world_network_bases'] = load_world_network_bases(desk, *network)
+            context['world_network_bases'] = load_world_network_bases(desk, *network, context)
     if package.get('dynamic_reference_checks'):
         context['dynamic_reference_checks'] = True
     from nw.production_methods.handoff import inherited

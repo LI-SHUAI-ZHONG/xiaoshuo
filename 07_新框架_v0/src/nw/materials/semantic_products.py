@@ -179,7 +179,7 @@ def _network_relation_inputs(source: dict, raw: dict, products: dict, context: d
 def dynamic_rejection(source: dict, products: dict, context: dict, *, stage: str | None = None) -> str:
     from nw.materials.network_workflow import DYNAMIC_PROFILES, POLICY, type_matches, world_network_decision
     from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY, availability
-    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
+    from nw.materials.world_network import enabled_rules as enabled_world_rules
 
     if context.get('network_prerequisite_policy') != POLICY or source['source']['profile'] not in DYNAMIC_PROFILES:
         return ''
@@ -193,7 +193,7 @@ def dynamic_rejection(source: dict, products: dict, context: dict, *, stage: str
                     return '缺少具有制作资格且可核对的本步静网原条'
                 ready, missing = availability(source['source']['key'], raw.get('valid_types'), products, context)
                 return '' if ready is not None else '等待' + '、'.join(missing)
-            if stage == 'world_design' and context.get('world_network_policy') == WORLD_NETWORK_POLICY:
+            if stage == 'world_design' and enabled_world_rules(context):
                 ref = source['source']
                 ready, missing = world_network_decision(ref['id'], ref['key'], raw.get('valid_types'), products, context)
                 return '' if ready is not None else '等待' + '、'.join(missing)
@@ -328,7 +328,7 @@ def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources:
     from nw.materials.network_followup import BASIS_STAGE, POLICY as FOLLOWUP_POLICY, STAGE as FOLLOWUP_STAGE
     from nw.materials.network_workflow import DYNAMIC_PROFILES, EARLY_POLICY, POLICY
     from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY, validate_type_network_use
-    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY, validate_world_network_use
+    from nw.materials.world_network import enabled_rules as enabled_world_rules, validate_world_network_use
 
     strict = context.get('network_prerequisite_policy') == POLICY
     used={r['source_id'] for r in value.get('_uses',[])}
@@ -345,7 +345,7 @@ def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources:
             if stage == 'type_adaptation' and context.get('type_network_policy') == TYPE_NETWORK_POLICY:
                 validate_type_network_use(item, raw, value, products, context)
                 continue
-            if stage == 'world_design' and context.get('world_network_policy') == WORLD_NETWORK_POLICY:
+            if stage == 'world_design' and enabled_world_rules(context):
                 validate_world_network_use(item, raw, value, products, context)
                 continue
             inputs = _network_relation_inputs(item, raw, products, context)
