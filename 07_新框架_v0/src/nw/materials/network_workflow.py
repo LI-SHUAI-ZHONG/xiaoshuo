@@ -58,7 +58,8 @@ def type_matches(valid_types: object, scope: dict[str, list[str]]) -> bool:
 def bound_relations(products: dict) -> dict[str, dict[str, dict]]:
     """Only relations with a corresponding recorded source use can serve as inputs."""
     result = defaultdict(dict)
-    for stage, field in (('static_relations', 'relations'), ('plot_design', 'static_bindings')):
+    for stage, field in (('static_relations', 'relations'), ('static_relations_basis', 'relations'),
+                         ('plot_design', 'static_bindings')):
         value = product(products, stage)
         uses = defaultdict(set)
         for use in value.get('_uses', []):
@@ -66,7 +67,7 @@ def bound_relations(products: dict) -> dict[str, dict[str, dict]]:
                 uses[ref].add(use['source_id'])
         for index, row in enumerate(value.get(field, [])):
             for ident in uses['relation:' + row['id']]:
-                if stage == 'static_relations' or row.get('source_id') == ident:
+                if field == 'relations' or row.get('source_id') == ident:
                     result[ident][f'input:{stage}:/{field}/{index}'] = row
     return dict(result)
 
@@ -107,6 +108,28 @@ def _prepare_for_plot(authored: dict, rules: dict, context: dict, rows: dict) ->
     return {basis: ('为剧情规则' + '、'.join(sorted(keys)) + '核对关系是否能在本步先落实。'
                     '仅在已有世界或人物卡确能分别支撑两个端点及成立条件时建立关系；'
                     '需要剧情产物时留待补设计。原步用法：' + usages[basis]) for basis, keys in linked.items()}
+
+
+def same_stage_rules(authored: dict, rules: dict, context: dict, rows: dict) -> dict[str, dict]:
+    from nw.materials.network_followup import POLICY as FOLLOWUP_POLICY
+
+    if context.get('same_stage_network_policy') != FOLLOWUP_POLICY:
+        return {}
+    step = authored.get('static_relations', {})
+    return {ident: rule for ident in step if (rule := rules.get(ident)) and rule['derived']
+            and rows[ident]['state'] == 'design_ready' and rule['static_id'] in step
+            and rows[rule['static_id']]['state'] == 'design_ready'
+            and rows[rule['static_id']].get('profile') in STATIC_PROFILES
+            and type_matches(rule['valid_types'], context.get('network_type_scope', {}))}
+
+
+def _prepare_for_followup(authored: dict, rules: dict, context: dict, rows: dict) -> dict[str, str]:
+    keys = defaultdict(list)
+    for rule in same_stage_rules(authored, rules, context, rows).values():
+        keys[rule['static_id']].append(rule['key'])
+    step = authored.get('static_relations', {})
+    return {basis: ('当项目内关系已成立时，为本步后半的' + '、'.join(sorted(names)) + '保存真实双方及成立条件。'
+                    '若缺少真实端点或条件，不登记此关系。原步用法：' + step[basis]) for basis, names in keys.items()}
 
 
 def early_waiting(stage: str, authored: dict, rules: dict, products: dict, context: dict, rows: dict) -> dict:
@@ -171,6 +194,8 @@ def step_sources(stage: str, authored: dict, rules: dict, products: dict, contex
             pool[ident] = use
     if stage == 'static_relations' and context.get('early_network_policy') == EARLY_POLICY:
         prepared = _prepare_for_plot(authored, rules, context, rows)
+        for basis, hint in _prepare_for_followup(authored, rules, context, rows).items():
+            prepared[basis] = '\n'.join(text for text in (prepared.get(basis), hint) if text)
     else:
         prepared = _static_inputs(rules, authored, scope, bound, rows) if stage == 'plot_design' else {}
     return pool, prepared

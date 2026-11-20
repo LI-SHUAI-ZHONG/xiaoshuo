@@ -278,11 +278,16 @@ def validate_early_static(value: dict, products: dict, sources: list[dict], cont
 
 def _validate_plot_relation(value: dict, ident: str, inputs: dict) -> None:
     upstream = [ref for ref in inputs if ref.startswith('input:static_relations:/relations/')]
+    _validate_relation_citations(value, ident, upstream,
+                                 'dynamic plot clause must cite its actual upstream static relationship')
+
+
+def _validate_relation_citations(value: dict, ident: str, upstream: list[str], message: str) -> None:
     criteria = next((row for row in value.get('_criteria', []) if row['source_id'] == ident), {})
     inputs_by_clause = [{path.replace(':/products/', ':/', 1) for path in clause['input_refs']}
                         for clause in criteria.get('clauses', []) if clause['applicability'] == 'applies']
     require(bool(inputs_by_clause) and all(any(_cites_relation(ref, cited) for ref in upstream)
-        for cited in inputs_by_clause), 'dynamic plot clause must cite its actual upstream static relationship')
+        for cited in inputs_by_clause), message)
 
 
 def validate_prepared_static(value: dict, sources: list[dict], context: dict) -> None:
@@ -308,6 +313,7 @@ def validate_prepared_static(value: dict, sources: list[dict], context: dict) ->
 
 
 def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources: list[dict],context: dict) -> None:
+    from nw.materials.network_followup import BASIS_STAGE, POLICY as FOLLOWUP_POLICY, STAGE as FOLLOWUP_STAGE
     from nw.materials.network_workflow import DYNAMIC_PROFILES, EARLY_POLICY, POLICY
 
     strict = context.get('network_prerequisite_policy') == POLICY
@@ -328,6 +334,10 @@ def validate_dynamic_dependencies(stage: str,value: dict,products: dict,sources:
                 _validate_action_relation(value, ident, inputs, products, context)
             if stage == 'plot_design' and context.get('early_network_policy') == EARLY_POLICY:
                 _validate_plot_relation(value, ident, inputs)
+            if stage == FOLLOWUP_STAGE and context.get('same_stage_network_policy') == FOLLOWUP_POLICY:
+                frozen = [ref for ref in inputs if ref.startswith(f'input:{BASIS_STAGE}:/relations/')]
+                _validate_relation_citations(value, ident, frozen,
+                                             'dynamic static clause must cite its independently frozen static relationship')
         else:
             relations=adopted_relation(item,products,context)
         require(bool(relations),'dynamic source has no actual adopted static relationship')

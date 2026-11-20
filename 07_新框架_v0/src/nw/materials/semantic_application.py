@@ -129,6 +129,14 @@ def input_value(reference: str, stage: str, products: dict, context: dict) -> ob
         require(ident in products, 'input stage does not exist')
         allowed = context.get('allowed_input_stages')
         require(allowed is None or ident in allowed, 'input stage was not sent to this step')
+        from nw.materials.network_followup import BASIS_STAGE, POLICY, RELATION_FIELDS, STAGE
+
+        if ident == BASIS_STAGE:
+            require(stage == STAGE and allowed is not None and context.get('same_stage_network_policy') == POLICY,
+                    'static relation basis is only available to its own frozen follow-up')
+            require(len(tokens) in (2, 3) and tokens[0] == 'relations'
+                    and (len(tokens) == 2 or tokens[2] in RELATION_FIELDS),
+                    'static relation basis needs one exact relation row or field')
         require(stage not in ORDER or ident not in ORDER or ORDER.index(ident) < ORDER.index(stage),
                 'input stage is not upstream')
         try:product_ref(products[ident])

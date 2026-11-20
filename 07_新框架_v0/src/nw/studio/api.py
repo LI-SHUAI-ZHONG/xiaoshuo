@@ -756,10 +756,12 @@ class StudioService:
         }
         prepared, network_waiting, network_context = {}, {}, None
         if package.get('current_source_set') and stage in phase_order(scope):
+            from nw.materials.network_followup import POLICY as FOLLOWUP_POLICY
             from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY, early_waiting, resolve_type_scope, step_sources
             selected_types = mock_products.get('type_selection', {}).get('products', {})
             network_context = {'network_prerequisite_policy': NETWORK_POLICY,
                                'early_network_policy': EARLY_POLICY,
+                               'same_stage_network_policy': FOLLOWUP_POLICY,
                                'network_type_scope': resolve_type_scope(self.workspace, selected_types)}
             authored, rules = network_materials(desk, package)
             step_pool, prepared = step_sources(stage, authored, rules, mock_products, network_context, desk.by_id)

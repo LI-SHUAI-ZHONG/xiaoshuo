@@ -5,6 +5,7 @@ from nw.materials.phase_contract import validate_phase,require
 from nw.materials.phase_scene_checks import anchor_beat_observable, selected_checks
 from nw.materials.scene_actions import MULTI_ACTION_POLICY, action_choice, selected_action_ids
 from nw.materials.phase_context import visible_facts
+from nw.materials.network_followup import BASIS_STAGE, verify_followup
 from nw.materials.network_workflow import EARLY_POLICY
 from nw.story_state import IDENTITY_STATUS_PREFIX
 from nw.task_models import canonical,content_sha256
@@ -56,7 +57,10 @@ def verify_chain(session: dict) -> None:
                 'pre-step source selection trace changed or was omitted')
         from nw.production_methods import runtime as project_methods
         raw={'stage':row['stage'],'products':row['products']};clean,_=project_methods.split(raw)
-        validate_phase(clean,row['stage'],products,selected,context)
+        step_products = verify_followup(row, products, sources, context, session.get('calls', []))
+        if BASIS_STAGE in step_products:
+            context['allowed_input_stages'] = [*dependencies, BASIS_STAGE]
+        validate_phase(clean,row['stage'],step_products,selected,context)
         plan=row.get('production_methods')
         if session.get('production_method_policy'):
             require(plan is not None,'project method selection and prerequisites were removed')

@@ -200,6 +200,7 @@ def _layer_field_checks(session_id: str, record: dict, source: dict, contract: d
 
 def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> list[dict]:
     """Emit obligations, not pass statuses or automatic WORLD state changes."""
+    from nw.materials.network_followup import BASIS_STAGE, basis_inputs
     from nw.materials.network_layers import uses_fields
 
     ids = ids or {}; records = {row['stage']: row for row in session.get('stages', [])}
@@ -223,9 +224,13 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
                                       if 'semantic_contracts' in record else {})}
         step_context['accepted_state']=visible_facts(stage,upstream,context)
         if 'inputs' in record:step_context['allowed_input_stages']=[r['stage'] for r in record['inputs']]
+        step_upstream = upstream
+        if basis := record.get('static_relations_basis'):
+            step_upstream = basis_inputs(upstream, basis)
+            step_context['allowed_input_stages'] = [*step_context['allowed_input_stages'], BASIS_STAGE]
         step_sources=[sources[i] for i in record.get('source_ids',list(sources))]
         contracts = contracts_for(step_sources, step_context)
-        validate_semantic_applications(stage, value, upstream, step_sources, step_context)
+        validate_semantic_applications(stage, value, step_upstream, step_sources, step_context)
         for criterion in value.get('_criteria', []):
             ident = criterion['source_id']
             if ident not in active: continue
@@ -233,7 +238,7 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
             structured = uses_fields(sources[ident], contract, context)
             if structured:
                 layer_fields.extend(_layer_field_checks(session.get('id'), record, sources[ident], contract, criterion,
-                                                        records, upstream, step_context, scene, ids))
+                                                        records, step_upstream, step_context, scene, ids))
             review = context.get('binding_reviews', {}).get(ident)
             reference_only = set()
             if review:
@@ -268,7 +273,7 @@ def make_semantic_checks(session: dict, scene: str, ids: dict | None = None) -> 
                              'application': deepcopy(application),
                              **({} if structured else {'layer_application': deepcopy(criterion['layer_application'])}),
                              'actual_inputs':[{'path':ref,'value':_mapped(deepcopy(input_value(
-                                 ref,stage,upstream,step_context)),ids)} for ref in application['input_refs']],
+                                 ref,stage,step_upstream,step_context)),ids)} for ref in application['input_refs']],
                              'current_outputs': outputs, 'source_issues': deepcopy(pending)}
                     key = {'session': session.get('id'), 'stage': stage, 'source_id': ident, 'clause_id': field['id'], 'scene': scene}
                     if action_ref is not None:

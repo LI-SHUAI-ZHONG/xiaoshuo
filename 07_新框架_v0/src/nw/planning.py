@@ -198,7 +198,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
-                        'multi_action_policy', 'network_layer_policy', 'early_network_policy'):
+                        'multi_action_policy', 'network_layer_policy', 'early_network_policy', 'same_stage_network_policy'):
                 if key in previous_package:
                     package[key] = previous_package[key]
         else:
@@ -232,12 +232,14 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
                 }
                 if staged_catalog:
+                    from nw.materials.network_followup import POLICY as NETWORK_FOLLOWUP_POLICY
                     from nw.materials.network_layers import POLICY as NETWORK_LAYER_POLICY
                     from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY
                     from nw.materials.stage_input import STEP_SOURCE_POLICY
                     package['stage_source_policy'] = STEP_SOURCE_POLICY
                     package['network_prerequisite_policy'] = NETWORK_POLICY
                     package['early_network_policy'] = EARLY_POLICY
+                    package['same_stage_network_policy'] = NETWORK_FOLLOWUP_POLICY
                     package['network_layer_policy'] = NETWORK_LAYER_POLICY
         while methods and len(prompt) + len(canonical(model_package(package))) > budget.context_char_limit:
             methods.pop()

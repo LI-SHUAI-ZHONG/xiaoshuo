@@ -945,7 +945,8 @@ def retrieval_need(stage: str,package: dict,products: dict) -> str:
 def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_sources: list[dict] | None=None,
              *,reviewed_only: bool=False,deferrals: list | None=None,trace: dict | None=None,
              step_pool: dict[str, str] | None = None, prepared: dict[str, str] | None = None,
-             network_context: dict | None = None) -> list[dict]:
+             network_context: dict | None = None, skip_required: frozenset[str] = frozenset(),
+             source_query: str | None = None, relation_matched: tuple[str, ...] = ()) -> list[dict]:
     if step_pool is None:
         step_pool = _step_source_pool(desk, stage, package)
     type_selection=products.get('type_selection',{}).get('products')
@@ -965,7 +966,7 @@ def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_so
         return False
     # Mandatory source commitments are not silently truncated by a top-k cap.
     ids=[row['source']['id'] for row in package.get('materials',[])
-         if row['request']['disposition']=='required' and (desk.binding_review(desk.read(row['source']['id']),stage,
+         if row['source']['id'] not in skip_required and row['request']['disposition']=='required' and (desk.binding_review(desk.read(row['source']['id']),stage,
              package['scope']) is not None if reviewed_only else
              stage in route_method({**row['source'],'profile':row['profile']})['stages'])]
     if network_context is not None:
@@ -974,8 +975,9 @@ def _sources(desk: SourceDesk,stage: str,package: dict,products: dict,studied_so
             if reason := dynamic_rejection(source, products, network_context):
                 raise ValueError('MATERIAL_WAITING_INPUTS: ' + source['source']['key'] + ' ' + reason)
     related = deferred_source_ids(desk, stage, products, studied_sources or [])
-    ids = list(dict.fromkeys([*ids, *(ident for ident in related if step_pool is None or ident in step_pool)]))
-    demand=retrieval_need(stage,package,products)
+    ids = list(dict.fromkeys([*ids, *relation_matched,
+                            *(ident for ident in related if step_pool is None or ident in step_pool)]))
+    demand=source_query or retrieval_need(stage,package,products)
     candidates=_stage_search(desk,stage,demand,trace=trace,step_pool=step_pool)['items']
     template=next((key for key,value in TEMPLATE_STAGES.items() if value==stage),None)
     prioritize_exact_template = stage == 'action_design' and package.get('action_template_priority_enabled')
@@ -1076,7 +1078,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.materials.phase_lifecycle import CANDIDATE_SELECTION
     from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY, scene_source_placements
     from nw.materials.scene_actions import MULTI_ACTION_POLICY
-    from nw.materials.network_workflow import EARLY_POLICY, early_waiting, prepared_static_source, step_sources
+    from nw.materials.network_workflow import EARLY_POLICY, early_waiting, prepared_static_source, same_stage_rules, step_sources
     from nw.materials.semantic_products import dynamic_rejection
     scoped_sources = context.get('scene_source_binding_policy') == SCENE_SOURCE_BINDING_POLICY
     multi_actions = context.get('multi_action_policy') == MULTI_ACTION_POLICY
@@ -1097,6 +1099,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     prepared, network_waiting, network_context = {}, {}, None
     early_static = stage == 'static_relations' and context.get('early_network_policy') == EARLY_POLICY
     early_plot = stage == 'plot_design' and context.get('early_network_policy') == EARLY_POLICY
+    followup_ids = frozenset()
     if network is not None:
         authored, rules = network
         step_pool, prepared = step_sources(stage, authored, rules, products, context, desk.by_id)
@@ -1104,6 +1107,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            'prepared_static_sources': sorted(prepared)}
         if early_static:
             network_context['early_static_sources'] = sorted(prepared)
+            followup_ids = frozenset(same_stage_rules(authored, rules, context, desk.by_id))
         network_waiting = early_waiting(stage, authored, rules, products, context, desk.by_id)
     else:
         step_pool = _step_source_pool(desk, stage, package)
@@ -1139,7 +1143,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     if network_waiting:
         selection['network_waiting'] = network_waiting
     sources=_sources(desk,stage,package,products,studied_sources,reviewed_only=True,deferrals=deferred,trace=selection,
-                     step_pool=step_pool,prepared=prepared,network_context=network_context)
+                     step_pool=step_pool,prepared=prepared,network_context=network_context,skip_required=followup_ids)
     search_pool = {**step_pool, **prepared} if step_pool is not None else None
     dependencies = deferred_source_ids(desk, stage, products, studied_sources or [])
     if step_pool is not None:
@@ -1237,7 +1241,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             if early_static:
                 payload['prepared_static_sources'] = stage_context['early_static_sources']
                 if payload['prepared_static_sources']:
-                    suffix += ('\n为剧情准备的静网来源，采用时把_uses指向relation:id，把适用条款指向/relations/序号。'
+                    preparation = '作为后续动网前置的静网来源' if followup_ids else '为剧情准备的静网来源'
+                    suffix += ('\n' + preparation + '，采用时把_uses指向relation:id，把适用条款指向/relations/序号。'
                                'input_refs应引用真实支撑关系双方的世界、人物或已批准卡片字段，condition写出实际成立条件。'
                                '端点需要尚未形成的转折、弧光、承诺等剧情产物时，说明缺项并排除此来源。')
         if network_context is not None and (stage == 'action_design' or early_plot):
@@ -1469,6 +1474,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.governance_runtime import load_governance,verify_session_governance
     from nw.materials.source_set import selection_status
     from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY, resolve_type_scope
+    from nw.materials.network_followup import POLICY as FOLLOWUP_POLICY
     selected=selection_status(workspace)
     if selected:
         package={**package,'current_source_set':selected['sha256']}
@@ -1503,6 +1509,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['network_prerequisite_policy'] = NETWORK_POLICY
         if package.get('early_network_policy') == EARLY_POLICY:
             context['early_network_policy'] = EARLY_POLICY
+            if package.get('same_stage_network_policy') == FOLLOWUP_POLICY:
+                context['same_stage_network_policy'] = FOLLOWUP_POLICY
         network = network_materials(desk, package)
     if package.get('dynamic_reference_checks'):
         context['dynamic_reference_checks'] = True
@@ -1536,6 +1544,10 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,context,
                                           retry_failed,verify,max_rounds,index,studied_sources=list(sources.values()),governance=governance,
                                           method_plan=method_plan,network=network)
+        if network is not None and stage == 'static_relations' and context.get('same_stage_network_policy') == FOLLOWUP_POLICY:
+            from nw.materials.static_followup_call import run_followup
+            record, read, receipts = run_followup(store, request, package, provider, config, desk, products, context,
+                network, record, read, receipts, list(sources.values()), retry_failed, verify, governance, index)
         products[stage]=record;sources.update({row['source']['id']:row for row in read});calls.extend(receipts)
         context['binding_reviews'].update(record['binding_reviews'])
         if network is not None and stage == 'type_selection':

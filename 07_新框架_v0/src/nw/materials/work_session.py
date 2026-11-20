@@ -72,6 +72,11 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
         shape=schema(payload['stage'],sources,
             payload.get('readable_source_ids',[]),payload.get('inputs'),allow_requests=payload.get('mode')!='execute',
             contracts=payload.get('source_contracts'))
+        if 'static_relations_basis' in payload:
+            from nw.materials.static_followup_call import FOLLOWUP_FIELDS
+            products = shape['properties']['products']
+            products['properties'] = {key: products['properties'][key] for key in FOLLOWUP_FIELDS}
+            products['required'] = list(FOLLOWUP_FIELDS)
         if 'production_methods' in payload:
             from nw.production_methods.runtime import extra_fields
             shape=extra_fields(shape)
