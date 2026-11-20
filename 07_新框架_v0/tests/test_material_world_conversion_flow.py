@@ -148,8 +148,8 @@ def _catalog(workspace: Path, monkeypatch: pytest.MonkeyPatch,
     return pairs
 
 
-def _approved_card(store: Store, rule: str, limits: str, title: str) -> dict:
-    card = save_card(store, {'card_id': CARD_ID, 'kind': 'world', 'origin': 'author', 'body': {
+def _approved_card(store: Store, rule: str, limits: str, title: str, ident: str = CARD_ID) -> dict:
+    card = save_card(store, {'card_id': ident, 'kind': 'world', 'origin': 'author', 'body': {
         'title': title, 'rule': rule, 'limits': limits, 'visibility': 'public'}}, None)
     decision = decide_card(store, card, 'approved', '已核对本项目采用的世界规则与适用范围')
     return {**asdict(card), 'decision_id': decision.id}
@@ -174,7 +174,7 @@ def _freeze_legacy_plan(store: Store, brief_version: int, job: str, provider: Mo
 
 class ApprovedWorldModel(Model):
     def __init__(self, case: WorldRuleCase, static: str, derived: str, *, genre: tuple[str, str], eligible: bool,
-                 waiting: bool, lookup: bool = False) -> None:
+                 waiting: bool, lookup: bool = False, version: int = 1) -> None:
         super().__init__()
         self.case = case
         self.static = static
@@ -183,6 +183,7 @@ class ApprovedWorldModel(Model):
         self.eligible = eligible
         self.waiting = waiting
         self.lookup = lookup
+        self.version = version
         self.adopted = {derived: case} if eligible else {}
 
     def generate(self, messages: list[dict], **params: Any) -> GenResult:
@@ -206,6 +207,11 @@ class ApprovedWorldModel(Model):
             handoffs = [row for row in payload['semantic_requirements'] if row['source_id'] == self.derived]
             assert bool(handoffs) == self.eligible
             if self.eligible:
+                if self.case.kind == 'history':
+                    guidance = payload['history_receipts']
+                    for row in handoffs:
+                        assert guidance[row['id']]['key'] == self.case.dynamic_key
+                        assert guidance[row['id']]['evidence'][0]['anchors']
                 delivered = {(item['path'], item['value']) for row in handoffs for item in row['actual_inputs']}
                 assert delivered == {(OUTPUT_RULE, self.case.rule), (OUTPUT_LIMITS, self.case.limits)}
                 for ident in self.adopted:
@@ -222,7 +228,7 @@ class ApprovedWorldModel(Model):
     def _world_products(self, payload: dict, products: dict) -> bool:
         offered = {item['source']['id'] for item in payload['sources']}
         prerequisites = payload.get('world_network_prerequisites', {})
-        if self.case.kind in ('resource', 'market'):
+        if self.case.kind in ('resource', 'market', 'history'):
             available = payload.get(f'world_{self.case.kind}_matches', [])
             matches = [row for row in available if row['key'] == self.case.dynamic_key]
             for ident, method in self.adopted.items():
@@ -255,7 +261,7 @@ class ApprovedWorldModel(Model):
             assert evidence['static_source']['source']['key'] == self.case.static_key
             assert evidence['static_source']['edge']['condition'] == self.case.condition
             [card] = evidence['cards']
-            assert card['card_id'] == CARD_ID and card['version'] == 1
+            assert card['card_id'] == CARD_ID and card['version'] == self.version
             assert card['rule_ref'] == RULE_REF and card['limits_ref'] == LIMITS_REF
             assert card['rule'] == self.case.rule and card['limits'] == self.case.limits
             for field, expected_text in self.case.expected_evidence:
@@ -298,19 +304,24 @@ def test_world_conversion_flows_through_live_selection_and_reopened_plot(
 def assert_world_flow(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, case: WorldRuleCase,
                       rule: str, genre: tuple[str, str], legacy: bool, *, lookup: bool = False,
                       also_adopt: tuple[WorldRuleCase, ...] = (), input_limits: str | None = None,
-                      rejection: str | None = None, altered_plot: tuple[str, str] | None = None) -> None:
+                      rejection: str | None = None, altered_plot: tuple[str, str] | None = None,
+                      extra_card: tuple[str, str] | None = None, expected_ready: bool | None = None,
+                      altered_sibling: tuple[str, str] | None = None) -> None:
     pairs = _catalog(tmp_path, monkeypatch, (case, *also_adopt))
     static, derived = pairs[case.dynamic_key]
     supported = genre == SELECTED_GENRE and not legacy
     limits = case.limits if input_limits is None else input_limits
-    eligible = supported and rule == case.rule and limits == case.limits
+    eligible = supported and (rule == case.rule and limits == case.limits if expected_ready is None else expected_ready)
     provider = ApprovedWorldModel(case, static, derived, genre=genre, eligible=eligible, waiting=supported and not eligible, lookup=lookup)
     provider.adopted.update({pairs[other.dynamic_key][1]: other for other in also_adopt})
     path = tmp_path / 'project'
     with Store(path, create=True, test_mode=True) as store:
         store.init_project(case.title)
         brief = store.add_brief(f'作者已选{genre[1]}，按已批准世界卡调查{case.title}。')
-        adopt_story(store, baseline(card_refs=[_approved_card(store, rule, limits, case.title)]), {})
+        card_refs = [_approved_card(store, rule, limits, case.title)]
+        if extra_card is not None:
+            card_refs.append(_approved_card(store, *extra_card, case.title + '补录', 'second-world-rule'))
+        adopt_story(store, baseline(card_refs=card_refs), {})
         job = start_job(store, JobRequest('design', design_scope='book', budget=Budget(18, 90000, 4500))).id
         if legacy:
             _freeze_legacy_plan(store, brief.version, job, provider, monkeypatch, case)
@@ -355,6 +366,13 @@ def assert_world_flow(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, case: Wor
             changed['products']['directions'][0]['choice'] = altered_plot[0]
             changed['sha256'] = content_sha256(changed['products'])
             with pytest.raises(ValueError, match=altered_plot[1]):
+                verify_chain(altered)
+        if altered_sibling:
+            altered = deepcopy(session)
+            changed = next(row for row in altered['stages'] if row['stage'] == 'plot_design')
+            changed['products']['directions'][0]['conflict'] = altered_sibling[0]
+            changed['sha256'] = content_sha256(changed['products'])
+            with pytest.raises(ValueError, match=altered_sibling[1]):
                 verify_chain(altered)
         if eligible:
             changed_fields = {

@@ -7,6 +7,7 @@ import unicodedata
 
 from nw.materials.phase_routes import phase_order, product_ref
 from nw.materials.world_market import POLICY as MARKET_POLICY, market_families
+from nw.materials.world_history import POLICY as HISTORY_POLICY, history_families, consistent_history_cards
 from nw.materials.world_resources import POLICY as RESOURCE_POLICY, resource_families
 from nw.materials.semantic_application import has_content, pointer_tokens, require
 
@@ -127,7 +128,8 @@ def _approved_formula(card: dict, terms: tuple[str, ...]) -> dict | None:
 
 def project_families(context: dict) -> Iterator[tuple[str, dict, Callable[[dict, str], dict | None]]]:
     for group, policy, families in (('resource', RESOURCE_POLICY, resource_families),
-                                    ('market', MARKET_POLICY, market_families)):
+                                    ('market', MARKET_POLICY, market_families),
+                                    ('history', HISTORY_POLICY, history_families)):
         if context.get('world_' + group + '_policy') == policy:
             for requirements, approved in families():
                 yield group, requirements, approved
@@ -176,6 +178,10 @@ def availability(key: str, valid_types: object, products: dict, context: dict) -
                      if (proof := approved(card, key)) is not None]
             if not cards:
                 return None, ['同一份已批准世界卡中的' + requirements[key]]
+            if kind == 'history':
+                cards = consistent_history_cards(key, cards, context['approved_cards'])
+                if not cards:
+                    return None, ['裁定同一历史分期或同一地区同期历史后果的冲突记录']
             return {**packet, 'cards': cards, 'kind': kind}, []
     factor, terms = RULES[key]
     cards = [proof for card in context.get('approved_cards', []) if (proof := _approved_formula(card, terms)) is not None]

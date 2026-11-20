@@ -1252,6 +1252,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 if ready is not None:
                     prerequisites[ref['id']] = {**ready, 'static_source': context['world_network_bases'][ref['id']]}
             payload['world_network_prerequisites'] = prerequisites
+            if 'history' in world_matches:
+                payload['world_history_matches'] = world_matches['history']
+                suffix += '\nworld_history_matches 列出本步已由项目史实支持的分期及历史后果。需要时按 key 搜索读取。'
             if 'market' in world_matches:
                 payload['world_market_matches'] = world_matches['market']
                 suffix += '\nworld_market_matches 列出由批准世界卡支持的价值、汇率及交易规则。需要时用 key 搜索并读取。'
@@ -1281,6 +1284,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '依所用规则保留取得资格与成本、流动和循环的前后条件、或供需和稀缺等级的项目依据。'
                            '同卡的 rule 和 limits 原样交接，适用条款引用实际类型、批准卡及产物对应字段，'
                            '由本范围真实运行的下游步骤使用。')
+            if any(data.get('kind') == 'history' for data in prerequisites.values()):
+                suffix += ('\n标为 history 的条目沿用批准世界卡中的地点、纪年、已发生的事件与具体变化。'
+                           '保留同卡的 rule 和 limits，写入实际世界产物，并送给需要这些史实的下游。'
+                           '把有冲突、未确定或尚待调查的历史保留待核。')
             if any(data.get('kind') == 'market' for data in prerequisites.values()):
                 suffix += ('\n标为 market 的依据来自本项目批准卡。保留具体市场、适用时期、参与资格、计量与兑换方向。'
                            '采用交易方式时，保留该方式的条件、成本、例外或争议处理。待定比率保持待定。'
@@ -1419,6 +1426,15 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['semantic_requirement_sources']=[stage_source(s,desk.semantic_contract(s),full_text=True)
                 for ident in sorted({r['source_id'] for r in payload['semantic_requirements']})
                 for s in [desk.read(ident)]]
+        if payload['semantic_requirements'] and context.get('world_history_policy'):
+            from nw.materials.world_history import receipt_guidance
+            history = receipt_guidance(payload['semantic_requirements'], products, context,
+                                       {row['source']['id']: row['source']['key']
+                                        for row in payload['semantic_requirement_sources']})
+            if history:
+                payload['history_receipts'] = history
+                suffix += ('\n在回执引用的具体产物中，用项目史实推动人物选择、限制或后果。只有相对先后时沿用原事件与间隔。history_receipts 列出各回执'
+                           '对应的项目依据。核对同一产物中的纪年、时期、地理与制度条件。')
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
             if type_network_enabled and stage == 'type_selection':
@@ -1569,6 +1585,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.world_conversion import POLICY as WORLD_CONVERSION_POLICY
     from nw.materials.world_resources import POLICY as WORLD_RESOURCE_POLICY
     from nw.materials.world_market import POLICY as WORLD_MARKET_POLICY
+    from nw.materials.world_history import POLICY as WORLD_HISTORY_POLICY
     from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY, enabled_rules as enabled_world_rules
     selected=selection_status(workspace)
     if selected:
@@ -1622,6 +1639,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             context['world_resource_policy'] = WORLD_RESOURCE_POLICY
         if package.get('world_market_policy') == WORLD_MARKET_POLICY:
             context['world_market_policy'] = WORLD_MARKET_POLICY
+        if package.get('world_history_policy') == WORLD_HISTORY_POLICY:
+            context['world_history_policy'] = WORLD_HISTORY_POLICY
         if enabled_world_rules(context):
             from nw.materials.type_network_catalog import load_world_network_bases
 

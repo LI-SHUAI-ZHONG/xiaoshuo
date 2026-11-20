@@ -346,7 +346,7 @@ def model_package(package: dict) -> dict:
         'dynamic_reference_checks','dynamic_screening_enabled','scene_source_binding_policy','action_state_policy',
         'action_template_priority_enabled','network_prerequisite_policy','multi_action_policy','network_layer_policy',
         'early_network_policy','same_stage_network_policy','type_network_policy','world_network_policy',
-        'world_advancement_policy','world_conversion_policy','world_resource_policy','world_market_policy'}}
+        'world_advancement_policy','world_conversion_policy','world_resource_policy','world_market_policy','world_history_policy'}}
     if package.get('materials'):
         result['materials']=[model_material(row,book=package['scope']=='book') for row in package['materials']]
         result['material_input']={'policy':POLICY,'full_sources_frozen_for_verification':True}

@@ -782,12 +782,14 @@ class StudioService:
                 from nw.materials.world_conversion import POLICY as WORLD_CONVERSION_POLICY
                 from nw.materials.world_resources import POLICY as WORLD_RESOURCE_POLICY
                 from nw.materials.world_market import POLICY as WORLD_MARKET_POLICY
+                from nw.materials.world_history import POLICY as WORLD_HISTORY_POLICY
                 from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
 
                 network_context.update(world_network_policy=WORLD_NETWORK_POLICY,
                                        world_advancement_policy=WORLD_ADVANCEMENT_POLICY,
                                        world_conversion_policy=WORLD_CONVERSION_POLICY,
-                                       world_resource_policy=WORLD_RESOURCE_POLICY, world_market_policy=WORLD_MARKET_POLICY)
+                                       world_resource_policy=WORLD_RESOURCE_POLICY, world_market_policy=WORLD_MARKET_POLICY,
+                                       world_history_policy=WORLD_HISTORY_POLICY)
                 network_context['world_network_bases'] = load_world_network_bases(desk, authored, rules, network_context)
             step_pool, prepared = step_sources(stage, authored, rules, mock_products, network_context, desk.by_id)
             network_context['prepared_static_sources'] = sorted(prepared)

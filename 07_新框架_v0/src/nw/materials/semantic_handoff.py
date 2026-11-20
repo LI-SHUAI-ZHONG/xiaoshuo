@@ -39,9 +39,11 @@ def input_stages(stage: str,products: dict,*,dynamic_screening: bool=False) -> l
 def validate_handoffs(stage: str,value: dict,products: dict,context: dict | None = None) -> None:
     expected={r['id']:r for r in handoffs_for(stage,products)}
     from nw.materials.world_market import POLICY as MARKET_POLICY
-    market_sources = {}
-    if expected and context and context.get('world_market_policy') == MARKET_POLICY:
-        market_sources = {row['source']['id']: row['source']['key'] for row in context.get('method_sources', [])
+    from nw.materials.world_history import POLICY as HISTORY_POLICY, check_history_receipt
+    world_sources = {}
+    if expected and context and (context.get('world_market_policy') == MARKET_POLICY
+                                 or context.get('world_history_policy') == HISTORY_POLICY):
+        world_sources = {row['source']['id']: row['source']['key'] for row in context.get('method_sources', [])
                           if row['source']['id'] in context.get('world_network_bases', {})}
     receipts=value.get('_receipts',[]);seen=set()
     require(isinstance(receipts,list),'downstream receipts must be an explicit list')
@@ -52,8 +54,9 @@ def validate_handoffs(stage: str,value: dict,products: dict,context: dict | None
                 'downstream must execute each received source clause on actual products')
         fields = [output_value(ref, value) for ref in row['output_refs']]
         handoff = expected[row['id']]
-        if key := market_sources.get(handoff['source_id']):
+        if key := world_sources.get(handoff['source_id']):
             from nw.materials.world_market_receipts import check_market_receipt
             check_market_receipt(handoff, fields, products, context, key)
+            check_history_receipt(handoff, row['output_refs'], value, products, context, key)
         seen.add(row['id'])
     require(seen==expected.keys(),'source-bound upstream requirements disappeared at their named consumer')
