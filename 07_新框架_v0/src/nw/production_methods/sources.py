@@ -6,6 +6,7 @@ from pathlib import Path
 import sqlite3
 from typing import Iterator
 
+from nw.production_methods.matching import TYPE_PRIORITY, type_match
 from nw.studio.corpus_store import CorpusMixin
 from nw.studio.method_store import MethodMixin
 from nw.studio.staging import StagingMixin
@@ -29,7 +30,8 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
             tables={r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
             if 'production_methods' not in tables:return []
             heads=conn.execute('SELECT * FROM production_methods WHERE approved_version IS NOT NULL ORDER BY id').fetchall()
-            return [self._method_row(dict(row),row['approved_version'],conn) for row in heads]
+            books = {}
+            return [self._method_row(dict(row),row['approved_version'],conn,books) for row in heads]
 
     def snapshot(self,row: dict) -> dict:
         origin=row['structure_origin']
@@ -44,27 +46,44 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
         result['instance']=instance;result['snapshot_sha256']=content_sha256(result)
         return result
 
-    def verify(self,pin: dict) -> None:
+    def verify(self,pin: dict, *, require_current: bool = True) -> None:
         saved={k:v for k,v in pin.items() if k!='snapshot_sha256'}
         if content_sha256(saved)!=pin.get('snapshot_sha256'):raise ValueError('STALE_PROJECT_METHOD: 方法快照已被改写')
-        row=self.get_method(pin['id'],pin['version'])
-        if not row['available'] or row['approved_version']!=pin['version'] or row['body_sha256']!=pin['body_sha256']:
-            raise ValueError('STALE_PROJECT_METHOD: 方法、原作或批准版本已改变，请补设计并重建任务')
+        try:
+            row=self.get_method(pin['id'],pin['version'])
+        except FileNotFoundError as exc:
+            raise ValueError('STALE_PROJECT_METHOD: 已选方法版本不存在，请刷新候选') from exc
+        if require_current and row['approved_version']!=pin['version']:
+            raise ValueError('STALE_PROJECT_METHOD: 方法已有不同的批准版本，请刷新候选后重新确认')
+        if not row['available'] or row['body_sha256']!=pin['body_sha256']:
+            raise ValueError('STALE_PROJECT_METHOD: 已选方法或原作证据失效，请核对资料后重新确认')
         if canonical(self.snapshot(row))!=canonical(pin):raise ValueError('STALE_PROJECT_METHOD: 冻结的拆解实例或原文证据已改变')
 
 
-def relevant(reader: MethodReader,policy: dict,stage: str,scope: str,types: list[str]) -> list[dict]:
-    scope='chapter' if scope=='replan' else scope
-    from nw.studio.catalog import genres
-    parents={child['id']:parent['id'] for parent in genres() for child in parent['children']}
-    allowed=set(types)|{parents[t] for t in types if t in parents}
-    result=[]
+def matching_methods(reader: MethodReader, types: list[str]) -> list[tuple[dict, dict]]:
+    methods = []
     for row in reader.approved():
-        body=row['body']
-        if not row['available'] or not row['structure_origin'] or scope not in body['scopes']:continue
-        if not set(body['tasks'])&set(policy['tasks']):continue
-        if body['type_tags'] and not set(body['type_tags'])&allowed:continue
-        if not any(o['stage']==stage for o in body['outputs']):continue
-        if not any(stage in TASKS[t]['stages'] for t in set(body['tasks'])&set(policy['tasks'])):continue
-        result.append(reader.snapshot(row))
-    return result
+        if row['available'] and row['structure_origin']:
+            match = type_match(types, row['body']['type_tags'])
+            if match:
+                methods.append((row, match))
+    methods.sort(key=lambda item: item[0]['review']['created_at'], reverse=True)
+    methods.sort(key=lambda item: TYPE_PRIORITY[item[1]['level']])
+    return methods
+
+
+def stage_tasks(body: dict, stage: str, scope: str) -> set[str]:
+    scope = 'chapter' if scope == 'replan' else scope
+    if scope not in body['scopes'] or not any(output['stage'] == stage for output in body['outputs']):
+        return set()
+    return {task for task in body['tasks'] if scope in TASKS[task]['scopes'] and stage in TASKS[task]['stages']}
+
+
+def relevant(reader: MethodReader, policy: dict, stage: str, scope: str, types: list[str]) -> list[dict]:
+    tasks = set(policy['tasks'])
+    if not tasks:
+        return []
+    preferred = policy.get('preferred_methods', {})
+    return [reader.snapshot(row) for row, _ in matching_methods(reader, types)
+            if (applicable := stage_tasks(row['body'], stage, scope))
+            and (applicable & tasks or preferred.get(row['id']) == row['version'])]

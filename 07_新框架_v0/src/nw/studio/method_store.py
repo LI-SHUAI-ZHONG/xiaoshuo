@@ -165,6 +165,6 @@ class MethodMixin:
                     continue
                 result.append(row)
         return {'methods': result[offset:offset + limit], 'total': len(result), 'limit': limit, 'offset': offset,
-            'legacy_pending_count': pending, 'runtime_integration': 'not_connected',
+            'legacy_pending_count': pending, 'runtime_integration': 'project_design_and_review',
             'missing_input_policy': 'return_design',
-            'note': '已批准表示方法库审核通过；尚未接通本项目卡生成，不表示文学效果已验证。'}
+            'note': '来源有效且有已批准结构依据的方法会进入立项推荐和制作选材；实际采用在制作台确认。'}

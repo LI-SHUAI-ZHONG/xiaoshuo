@@ -1,4 +1,5 @@
 """Real HTTP method setup, approval gates, usage receipts and frozen-job compatibility."""
+from copy import deepcopy
 import http.client
 import json
 import threading
@@ -9,6 +10,9 @@ import pytest
 from nw.studio.api import StudioService
 from nw.studio.server import create_studio_server
 from nw.config import Config
+from nw.studio.corpus_methods import publish_methods
+from nw.studio.repository_data import restore, snapshot
+from nw.studio.production_store import ProductionStore
 from project_methods_fixture import seed_method,template_catalog,ProjectModel
 
 
@@ -96,3 +100,110 @@ def test_ui_modules_expose_method_gates_wizard_and_usage_panel(client):
     request,_,_,_=client
     for name,needle in [('project-methods','methodGate'),('studio-decisions','bindMethodGate'),('wizard','production_methods'),('studio','openProjectMethods')]:
         status,code=request('GET',f'/js/pages/{name}.js');assert status==200 and needle in code
+
+
+def test_wizard_and_stage_share_approved_type_matches_and_save_evidence(client, tmp_path):
+    request, settled, server, generic = client
+    library = server.production.library
+    origin = generic['structure_origin']
+
+    def add_method(title, types):
+        body = {**generic['body'], 'title': title, 'type_tags': types}
+        with library.connect() as conn:
+            method = publish_methods(library, conn, origin['book_id'], origin['structure_version'],
+                                     [{'body': body, 'basis': origin['basis']}])[0]
+        return method
+
+    exact = add_method('[FAKE] 密室指定方法', ['SUB_XUANYI_02'])
+    sibling = add_method('[FAKE] 心理悬疑指定方法', ['SUB_XUANYI_01'])
+    cross = add_method('[FAKE] 跨类型方法', [])
+    rec_path = '/api/kb/method-recommendations?slot=hook&types=GENRE_XUANYI'
+    child_path = rec_path + ',SUB_XUANYI_02'
+    assert [row['id'] for row in request('GET', child_path)[1]['recommendations']] == [generic['id']]
+    for method in (exact, sibling, cross):
+        status, result = request('POST', f"/api/kb/methods/{method['id']}/review",
+                                 {'version': 1, 'decision': 'approve', 'note': '[FAKE] 核对方法与实际原文'})
+        assert status == 200 and result['available'], result
+
+    ranked = request('GET', child_path)[1]['recommendations']
+    assert [(row['id'], row['type_match']['level']) for row in ranked] == [
+        (exact['id'], 'subgenre'), (generic['id'], 'main'), (cross['id'], 'cross_type')]
+    assert [row['id'] for row in request('GET', rec_path)[1]['recommendations']] == [generic['id'], cross['id']]
+    chosen = {'id': exact['id'], 'version': 1, 'slot': 'hook'}
+    novel = {'title': '[FAKE] 密室测试', 'idea': '[FAKE] 追查印记与登记者',
+             'genre_ids': ['GENRE_XUANYI', 'SUB_XUANYI_02'], 'production_methods': {'tasks': ['hook']},
+             'method_preferences': [chosen]}
+    assert request('POST', '/api/novels', {**novel, 'method_preferences': [{**chosen, 'id': sibling['id']}]})[0] == 400
+    assert request('POST', '/api/novels', {**novel, 'method_preferences': [{**chosen, 'slot': 'world'}]})[0] == 400
+    status, result = request('POST', '/api/novels', novel)
+    assert status == 201, result
+    ident = result['novel']['id']
+    references = result['novel']['wizard']['method_references']
+    assert references[0]['evidence'] == ranked[0]['evidence']
+    assert references[0]['evidence_locations'] == ranked[0]['evidence_locations']
+    assert references[0]['snapshot_sha256'] and references[0]['structure_origin']['structure_version'] == 1
+    assert result['novel']['wizard']['production_methods']['preferred_methods'] == {exact['id']: 1}
+    progress = settled(ident)
+    assert progress['status'] == 'WAITING', progress['reason']
+    gate = progress['gates'][0]
+    assert [(row['method']['id'], row['preferred']) for row in gate['target']['candidates']] == [
+        (exact['id'], True), (generic['id'], False), (cross['id'], False)]
+
+    folder, restored = tmp_path / 'tracked-runtime', tmp_path / 'restored-workspace'
+    restored.mkdir()
+    snapshot(library.workspace, folder)
+    restore(folder, restored)
+    assert ProductionStore(restored).get(ident)['wizard']['method_references'] == references
+
+
+def test_pending_gate_refresh_rebinds_latest_version_without_model_calls(client):
+    request, settled, server, method = client
+    ident = make(request)
+    progress = settled(ident)
+    assert progress['status'] == 'WAITING'
+    original = progress['gates'][0]
+    root = f'/api/novels/{ident}'
+    gate_path = f"{root}/gates/{original['id']}"
+    model = server.production._runtime()[1]
+    prior_calls = len(model.calls)
+    assert 'world_design' not in [value['kind'] for value in original['target']['candidates'][0]['inputs'].values()]
+    assert request('POST', gate_path + '/refresh', {}) == (200, {'gate': original, 'changed': False})
+
+    library = server.production.library
+    body = deepcopy(method['body'])
+    body['title'] += ' [FAKE] 更新世界规则前置'
+    body['prerequisites'][0]['input_kind'] = 'world_design'
+    library.save_method({'body': body, 'expected_version': 2}, method['id'])
+    rec_path = f"/api/kb/method-recommendations?slot=hook&types=GENRE_XUANYI&selected={method['id']}"
+    assert request('GET', rec_path)[1]['current_versions'] == {method['id']: 2}
+    library.review_method(method['id'], {'version': 3, 'decision': 'approve', 'note': '[FAKE] 核对更新的前置'})
+    assert request('GET', rec_path)[1]['current_versions'] == {method['id']: 3}
+    stale = {'title': '[FAKE] 过期立项选择', 'idea': '[FAKE] 查验印记', 'genre_ids': ['GENRE_XUANYI'],
+             'method_preferences': [{'id': method['id'], 'slot': 'hook', 'version': 2}]}
+    assert request('POST', '/api/novels', stale)[0] == 400
+
+    choice = {'action': 'approve', 'token': original['token'], 'method_ids': [method['id']], 'reason': '[FAKE] 核对前置'}
+    assert request('POST', gate_path, choice)[0] == 400
+    assert settled(ident)['status'] == 'WAITING'
+    status, result = request('POST', gate_path + '/refresh', {})
+    assert status == 200 and result['changed'], result
+    updated = result['gate']
+    version = updated['target']['candidates'][0]
+    assert version['method']['version'] == 3 and version['inputs']['i1']['kind'] == 'world_design'
+    assert version['inputs']['i1']['ref']['task_id']
+    assert updated['token'] != original['token'] and updated['job_id'] == original['job_id']
+    assert len(model.calls) == prior_calls
+    assert request('POST', gate_path, choice)[0] == 400
+    refreshed_path = f"{root}/gates/{updated['id']}"
+    assert request('POST', refreshed_path + '/refresh', {}) == (200, {'gate': updated, 'changed': False})
+    assert request('POST', refreshed_path, {**choice, 'token': updated['token']})[0] == 200
+    progress = settled(ident)
+    assert progress['status'] == 'WAITING' and progress['gates'][0]['id'] != updated['id']
+    assert request('POST', refreshed_path + '/refresh', {})[0] == 400
+    with server.production.open_store(server.production.db.get(ident)) as store:
+        rows = store.connection.execute('SELECT status,input_json FROM novel_steps WHERE job_id=? AND step_key=? '
+                                        'ORDER BY attempt', (updated['job_id'], updated['step'])).fetchall()
+        assert [row['status'] for row in rows] == ['STALE', 'DONE']
+        assert [json.loads(row['input_json'])['candidates'][0]['method']['version'] for row in rows] == [2, 3]
+    usage = request('GET', root + '/methods')[1]['uses']
+    assert any(row.get('method_version') == 3 and row.get('application') for row in usage)

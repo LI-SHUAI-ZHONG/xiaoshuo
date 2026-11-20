@@ -246,11 +246,15 @@ class Journal:
                                           (status, key, reason, canonical(outputs), self.id, reason))
         return show_job(self.store, self.id)
 
+    def gate_payload(self, key: str, target: dict, actions: list[str]) -> dict:
+        token = content_sha256({'job': self.id, 'step': key, 'target': target})
+        return {'token': token, **target, 'actions': actions}
+
     def gate(self, key: str, target: dict, decide: Callable, actions: dict[str, str],
              validate: Callable[[dict], None] | None = None) -> dict:
         row = self.latest(key)
-        token = content_sha256({'job': self.id, 'step': key, 'target': target})
-        gate = {'token': token, **target, 'actions': list(actions)}
+        gate = self.gate_payload(key, target, list(actions))
+        token = gate['token']
         if row is None:
             row = self.reserve(key, gate)
         if canonical(row['input']) != canonical(gate):

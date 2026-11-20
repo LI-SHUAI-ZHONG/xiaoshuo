@@ -42,6 +42,26 @@ def test_approving_new_method_version_invalidates_a_waiting_frozen_selection(pro
     assert len(model.calls)==before
 
 
+def test_approved_parent_keeps_its_version_when_new_chapter_chooses_latest(project):
+    store, library, method, model = project
+    job, waiting = start(store, model)
+    book = approve_direction(store, job, model, waiting)
+    assert book.status == 'DONE', book.reason
+    revised = {**method['body'], 'title': '[FAKE] 更新下一步的问题接力方法'}
+    library.save_method({'body': revised, 'expected_version': 2}, method['id'])
+    library.review_method(method['id'], {'version': 3, 'decision': 'approve', 'note': '[FAKE] 核对修订版'})
+
+    chapter, waiting = start(store, model, 'chapter', book.outputs['proposal_id'])
+    assert waiting.status == 'WAITING', waiting.reason
+    assert waiting.outputs['gate']['candidates'][0]['method']['version'] == 3
+    finished = approve_direction(store, chapter, model, waiting)
+    assert finished.status == 'DONE', finished.reason
+    session = finished.outputs['application']['material_design']['work_session']
+    assert {row['method']['version'] for row in session['production_method_parents']} == {2}
+    plot = next(row for row in session['stages'] if row['stage'] == 'plot_design')
+    assert plot['production_methods']['selected'][0]['method']['version'] == 3
+
+
 @pytest.mark.parametrize('place',[
     {'path':['_method_applications'],'value':'[FAKE] 标签'},
     {'path':['members',999,'body','goal'],'value':'[FAKE] 越界'},

@@ -138,9 +138,10 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
                                        governance_inputs=gov_for_scope,
                                        production_method_policy=j.request.get('production_method_policy'))
         from nw.materials.work_session import drive_plan
+        from nw.production_methods.selection import method_step
         _,package=read_input_manifest(j.store,request.manifest_id)
         def choose_method(stage: str,target: dict,validate_choice: Callable) -> dict:
-            key=f'plan:{scope}:methods:{stage}'
+            key=method_step(scope, stage)
             choice=j.gate(key,target,decide,{'approve':'novel_confirm','reject':'novel_reject'},validate_choice)
             return {'choice':choice,'decision_id':f'{j.id}:{key}'}
         request,_=drive_plan(j.store,request,package,plan_calls.provider,plan_calls.config,retry_failed=calls.retry_failed,

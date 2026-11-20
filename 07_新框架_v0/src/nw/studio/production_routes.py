@@ -102,6 +102,8 @@ class ProductionRoutes:
                     data = app.finish(ident)
             elif len(segs) == 4 and action == 'gates':
                 data = app.decide(ident, segs[3], body)
+            elif len(segs) == 5 and action == 'gates' and segs[4] == 'refresh':
+                data = app.refresh_methods(ident, segs[3], body)
             elif len(segs) == 4 and action == 'branches':
                 branch_actions = {'fork': app.fork_branch, 'select': app.select_branch, 'promote': app.promote_branch}
                 if segs[3] in branch_actions:

@@ -8,14 +8,23 @@ from nw.task_models import canonical
 
 
 class ProductionMethodMixin:
-    @staticmethod
-    def validate_method_choice(target: dict,choice: dict) -> None:
-        if choice.get('action')!='approve':return
-        selected=choice.get('method_ids');ready={c['method']['id']:c for c in target['candidates'] if not c['missing']}
-        if not isinstance(selected,list) or any(not isinstance(key,str) or key not in ready for key in selected) or len(set(selected))!=len(selected) or len(selected)>target['max_methods']:
-            raise ValueError('请选择当前有效且前置就绪的方法')
-        if not set(target['required_tasks'])<={t for key in selected for t in ready[key]['method']['body']['tasks']}:
-            raise ValueError('所选方法须覆盖当前必需制作职责')
+    def validate_method_choice(self, target: dict, choice: dict) -> None:
+        from nw.production_methods.selection import validate_choice
+        validate_choice(MethodReader(self.studio.workspace), target, choice)
+
+    def refresh_methods(self, ident: str, token: str, body: dict) -> dict:
+        from nw.production_methods.refresh import refresh_pending
+        if body:
+            raise ValueError('刷新方法候选不需要提交确认内容')
+        with self._lock:
+            novel = self.db.get(ident)
+            gate = next((row for row in self.gates(ident)['gates'] if row['id'] == token), None)
+            if gate is None or gate['target'].get('kind') != 'production_method_selection':
+                raise ValueError('选材节点已变化，请打开当前待确认步骤')
+            with self.open_store(novel) as store:
+                latest, changed = refresh_pending(store, gate['job_id'], token)
+        return {'gate': {**gate, 'id': latest['token'], 'token': latest['token'], 'target': latest},
+                'changed': changed}
 
     def method_usage(self,ident: str) -> dict:
         novel=self.db.get(ident);uses=[];reviews=[];current={}
@@ -51,6 +60,7 @@ class ProductionMethodMixin:
         except ValueError:available=[]
         return {'policy':novel['wizard'].get('production_methods',{}),'current_job_policy':current,
             'project_type_ids':novel['wizard'].get('genre_ids',[]),
+            'method_references':novel['wizard'].get('method_references',[]),
             'default_tasks':DEFAULT_TASKS,'available_methods':available,'uses':uses,'review_checks':reviews,
             'note':'送达、有效执行、作者批准设计和正文证据分别保存；出现记录不代表文学效果通过。'}
 
@@ -62,7 +72,11 @@ class ProductionMethodMixin:
             if worker and worker.is_alive():raise ValueError('请先暂停当前制作，等待调用保存后修改后续配置')
             novel=self.db.get(ident)
             if novel['status']=='done':raise ValueError('已完稿项目不能修改制作配置')
-            policy=normalize(body.get('policy'),types=novel['wizard'].get('genre_ids',[]))
+            configuration = body['policy']
+            if isinstance(configuration, dict):
+                preferences = {row['id']: row['version'] for row in novel['wizard'].get('method_references', [])}
+                configuration = {**configuration, 'preferred_methods': preferences}
+            policy=normalize(configuration,types=novel['wizard'].get('genre_ids',[]))
             wizard={**novel['wizard'],'production_methods':policy}
             if policy and not wizard.get('genre_ids'):wizard['genre_ids']=policy['type_ids']
             with self.db.connect() as conn:

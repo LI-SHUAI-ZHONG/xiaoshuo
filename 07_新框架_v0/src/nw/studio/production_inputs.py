@@ -79,9 +79,21 @@ def freeze_wizard(body: dict, library: Any) -> dict:
                                  for key in sorted(keys) if (slot, key) not in recorded)
     wizard['author_references'] = library.freeze_references(wizard['choices'], wizard['genre_ids'])
     wizard['upgrade_snapshot'] = library.approved_upgrades(wizard['genre_ids'])
-    if raw.get('production_methods') is not None:
+    method_choices = raw.get('method_preferences', [])
+    references = []
+    if 'method_preferences' in raw:
+        from nw.production_methods.sources import MethodReader
+        from nw.studio.method_recommendations import freeze_preferences
+        references = freeze_preferences(MethodReader(library.workspace), method_choices, selected_types)
+        wizard['method_references'] = references
+    if raw.get('production_methods') is not None or references:
         from nw.production_methods.policy import normalize
-        wizard['production_methods']=normalize(raw['production_methods'],types=wizard['genre_ids'])
+        configuration = raw.get('production_methods', {})
+        if isinstance(configuration, dict):
+            configuration = {**configuration, 'preferred_methods': {row['id']: row['version'] for row in references}}
+        if configuration is None:
+            raise ValueError('如需关闭制作方法，请先取消所选立项方法')
+        wizard['production_methods'] = normalize(configuration, types=selected_types)
     for field in ('target_words', 'chapter_count', 'volume_count'):
         if raw.get(field) not in (None, ''):
             value = int(raw[field])

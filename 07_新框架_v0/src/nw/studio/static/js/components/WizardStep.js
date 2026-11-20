@@ -4,4 +4,12 @@ export const STEPS = [{slot:'genre',name:'类型'},{slot:'tone',name:'风格'},{
 export const slotName = slot => STEPS.find(x=>x.slot===slot)?.name || slot;
 export function stepsBar(current) { return `<div class="wizard-steps">${STEPS.map((s,i)=>`<span class="wizard-step ${i===current?'current':i<current?'done':''}" ${i===current?'aria-current="step"':''}><b>${i<current?'✓':i+1}</b>${s.name}</span>`).join('')}</div>`; }
 export function OptionCard(option, selected = []) { const key = option.key || option.id; return `<button class="option-card ${selected.includes(key)?'selected':''}" data-option="${esc(key)}"><div class="grow"><h3>${esc(option.name)}</h3><p>${esc(option.description || '查看并选择此创作偏好')}</p></div>${icon(option.children?.length ? 'chevron' : selected.includes(key) ? 'check' : 'plus')}</button>`; }
-export function WizardStep({name, description, recommendations = [], options = [], selected = []}) { const recs = Array.from({length:3},(_,i)=>recommendations[i] || null); return `<h2>${esc(name)}</h2><p class="wizard-description">${esc(description)}</p><div class="row"><span class="tag blue">${icon('spark')} 本库推荐 TOP 3</span><small class="muted">仅统计审核通过的拆解用法</small></div><div class="rec-grid">${recs.map((r,i)=>RecCard(r,i,selected)).join('')}</div><div class="section-head"><h3>全部选项</h3><span class="count">${options.length} 项</span></div><div class="option-grid">${options.map(o=>OptionCard(o,selected)).join('')}</div>${!options.length?'<p class="muted">当前资料还没有此维度的选项，可以跳过，在立项卡中补充偏好。</p>':''}`; }
+export function WizardStep({name, description, methods = '', recommendations = [], options = [], selected = []}) {
+  const recs = recommendations.filter(Boolean);
+  return `<h2>${esc(name)}</h2><p class="wizard-description">${esc(description)}</p>
+    ${methods}
+    ${recs.length ? `<details class="details"><summary>选项用法参考</summary><div class="rec-grid">${recs.map((row, index) => RecCard(row, index, selected)).join('')}</div></details>` : ''}
+    <div class="section-head"><h3>创作偏好选项</h3></div>
+    <div class="option-grid">${options.map(option => OptionCard(option, selected)).join('')}</div>
+    ${!options.length ? '<p class="muted">这个板块暂无偏好选项，可在立项卡中补充。</p>' : ''}`;
+}

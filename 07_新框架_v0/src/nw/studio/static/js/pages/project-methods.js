@@ -1,5 +1,6 @@
 import {api,enc} from '../api.js';
 import {$,$$,esc,drawer,loading,readable,busy,toast,fail} from '../ui.js';
+import {matchLabel, methodEvidence} from '../components/MethodEvidence.js';
 
 const names={type_selection:'类型选择',type_adaptation:'类型适配',world_design:'世界设计',character_design:'人物设计',static_relations:'人物关系',plot_design:'剧情设计',event_design:'事件设计',action_design:'行动设计',scene_design:'场景设计',state_transition:'状态变化',state_propagation:'后果传播',anchor_design:'表现锚点',expression_design:'表达设计',bind_scope:'交接汇总',brief:'立项需求',parent_outline:'上层大纲',accepted_state:'已接受状态',hook:'钩子与问题接力',foreshadow:'伏笔与兑现',pacing:'节奏与情绪',main_plot:'主线与结局',character_arc:'人物弧光'};
 const words=value=>typeof value==='string'?[value]:Array.isArray(value)?value.flatMap(words):value&&typeof value==='object'?Object.entries(value).filter(([key])=>!key.startsWith('_')&&!['ref','source_ids','input_refs','output_refs'].includes(key)).flatMap(([,v])=>words(v)):[];
@@ -17,26 +18,64 @@ function usageRows(rows){
     <details class="details"><summary>高级 · 版本与具体字段</summary>${readable(row)}</details></article>`).join('');
 }
 
-export function wizardMethods(){
-  return `<fieldset class="method-section"><legend>参考作品制作方法</legend><label class="check-row"><input type="checkbox" id="wizardUseMethods" checked> 按已批准的拆解方法制作</label><p class="muted">默认要求人物弧光、全书主线、钩子和节奏方法。没有对应类型资料时会先提示补资料；每步选择方法并核对前置，再生成项目设计。</p><p class="muted">可在制作台“具体制作方法”调整任务。关闭后按既有资料流程设计，不会显示已采用新方法。</p></fieldset>`;
+export function wizardMethods(enabled, hasSelections) {
+  return `<fieldset class="method-section"><legend>参考作品制作方法</legend>
+    <label class="check-row"><input type="checkbox" id="wizardUseMethods" ${enabled ? 'checked' : ''} ${hasSelections ? 'disabled' : ''}> 按已批准的拆解方法制作</label>
+    <p class="muted">默认需要人物弧光、全书主线、钩子和节奏方法。制作台会在相关步骤列出候选及其前置，供你确认。</p>
+    ${hasSelections ? '<p class="muted">已选方法随立项保存。如需关闭，请先移除所选方法。</p>' : ''}
+  </fieldset>`;
 }
 
-export function methodGate(gate){
-  const target=gate.target;
-  drawer('选择具体方法并确认前置',`<p class="notice">核对方法的适用条件及所列前置的具体内容和版本。批准只确认本步取材与前置；新设计仍须最终审核。</p>
-    <p>当前步骤：${esc(names[target.stage]||target.stage)} · 必须覆盖：${target.required_tasks.map(k=>esc(names[k]||k)).join('、')||'可按本步需要选择'}</p>
-    <div class="stack">${target.candidates.map(item=>{const method=item.method;return `<section class="card"><label class="check-row"><input name="projectMethod" type="checkbox" value="${esc(method.id)}" ${item.missing.length?'disabled':''}> ${esc(method.body.title)} · v${method.version}</label>
-      <p>${method.body.applicability.map(esc).join('；')}</p><p class="muted">不适用：${method.body.non_applicability.map(esc).join('；')}</p>
-      ${item.missing.length?`<p class="error">缺前置：${item.missing.map(p=>esc(p.artifact)).join('、')}</p>`:''}
-      <details class="details"><summary>核对当前项目前置、操作和原作实例</summary>${methodDetails(item)}</details></section>`;}).join('')}</div>
-    <label class="field"><span>适用性判断与前置确认依据</span><textarea id="gateReason" required rows="4"></textarea></label>
-    <div class="row"><button class="button" data-method-action="approve">批准所选方法与前置</button><button class="secondary" data-method-action="reject">退回补设计</button></div>`);
+export function methodGate(gate, {checked = new Set(), reason = ''} = {}) {
+  const {target} = gate;
+  const missingTasks = (target.missing_tasks || []).map(key => esc(names[key] || key));
+  return drawer('选择具体方法并确认前置', `<p class="notice">核对方法的适用条件和项目前置。新生成的设计会另行提交审核。</p>
+    <div class="row spread wrap">
+      <p>${esc(names[target.stage] || target.stage)} · ${target.required_tasks.map(key => esc(names[key] || key)).join('、') || '按本步需要选用'}</p>
+      <button type="button" class="secondary" id="refreshMethodCandidates">刷新方法候选</button>
+    </div>
+    ${missingTasks.length ? `<p class="error">以下职责缺少前置就绪的方法 · ${missingTasks.join('、')}。可补充资料后刷新。</p>` : ''}
+    <div class="stack">${target.candidates.map(item => {
+      const {method} = item;
+      const snapshot = method.snapshot_sha256;
+      return `<section class="card">
+        <label class="check-row"><input name="projectMethod" type="checkbox" value="${esc(method.id)}" data-snapshot="${esc(snapshot)}" ${item.missing.length ? 'disabled' : checked.has(snapshot) ? 'checked' : ''}> ${esc(method.body.title)} · v${method.version}</label>
+        ${item.type_match || item.preferred ? `<p class="muted">${[matchLabel(item.type_match), item.preferred ? '立项已选' : ''].filter(Boolean).map(esc).join(' · ')}</p>` : ''}
+        <p>${method.body.applicability.map(esc).join('。')}</p><p class="muted">不适用情况 · ${method.body.non_applicability.map(esc).join('。')}</p>
+        ${item.missing.length ? `<p class="error">缺少前置 · ${item.missing.map(input => esc(input.artifact)).join('、')}</p>` : ''}
+        <details class="details"><summary>核对当前项目前置、操作和原作实例</summary>${methodDetails(item)}</details>
+      </section>`;
+    }).join('') || '<p class="muted">当前没有可以推荐的方法。</p>'}</div>
+    <label class="field"><span>适用性判断与前置确认依据</span><textarea id="gateReason" required rows="4">${esc(reason)}</textarea></label>
+    <div class="row wrap"><button class="button" data-method-action="approve" ${missingTasks.length ? 'disabled' : ''}>批准所选方法与前置</button>
+      <button class="secondary" data-method-action="reject">退回补设计</button></div>`);
 }
 
-export function bindMethodGate(gate,novelId,onSaved){
+export function bindMethodGate(gate, novelId, onSaved) {
+  const path = `/novels/${enc(novelId)}/gates/${enc(gate.id)}`;
+  const refresh = $('#refreshMethodCandidates');
+  refresh.onclick = () => busy(refresh, async () => {
+    const panel = $('#drawer');
+    const actions = $$('[data-method-action]').filter(button => !button.disabled);
+    actions.forEach(button => button.disabled = true);
+    try {
+      const result = await api.post(`${path}/refresh`);
+      if (panel.open && refresh.isConnected) {
+        if (result.changed) {
+          const checked = new Set($$('[name=projectMethod]:checked').map(input => input.dataset.snapshot));
+          methodGate(result.gate, {checked, reason:$('#gateReason').value});
+          bindMethodGate(result.gate, novelId, onSaved);
+        }
+        toast(result.changed ? '已更新方法候选，请核对新版本' : '方法候选已是最新版');
+      }
+      if (result.changed) await onSaved();
+    } finally {
+      actions.forEach(button => { if (button.isConnected) button.disabled = false; });
+    }
+  });
   $$('[data-method-action]').forEach(button=>button.onclick=()=>busy(button,async()=>{
     const reason=$('#gateReason').value.trim();if(!reason)throw new Error('请说明适用性判断与前置确认依据');
-    const result=await api.post(`/novels/${enc(novelId)}/gates/${enc(gate.id)}`,{action:button.dataset.methodAction,
+    const result=await api.post(path,{action:button.dataset.methodAction,
       reason,token:gate.token,method_ids:$$('[name=projectMethod]:checked').map(x=>x.value)});
     $('#drawer').close();toast(result.reason||'方法与前置确认已保存');await onSaved();
   }));
@@ -55,6 +94,10 @@ export async function showProjectMethods(novelId){
       <label class="field"><span>修改依据</span><textarea name="reason" required rows="3"></textarea></label>
       <p class="muted">保存用于下一次新建设计任务；关闭不撤销已批准父纲，仍须承接其设计。当前任务保留冻结配置；如需改当前任务，先取消后新建设计，已有正文继续按候选分支规则处理。</p>
       <button class="button" type="submit">保存后续制作配置</button></form>
+      ${data.method_references?.length ? `<section class="method-section"><h3>立项保存的方法版本</h3>${data.method_references.map(method => `
+        <details class="details"><summary>${esc(method.title)} · v${method.version} · ${esc(matchLabel(method.type_match))}</summary>
+          ${methodEvidence(method)}
+        </details>`).join('')}</section>` : ''}
       <section class="method-section"><h3>资料库已批准且有结构来源的方法：${data.available_methods.length}</h3>${data.available_methods.map(m=>`<p><a href="#/kb/items?method=${enc(m.id)}" data-project-method-source>${esc(m.title)} · v${m.version}</a></p>`).join('')||'<p>尚无完整方法。请先拆解对应类型作品并审核结构及方法。</p>'}</section>
       <section class="method-section" id="actualProjectMethodUses"><h3>本项目实际执行与下游回执</h3>${data.uses.length?usageRows(data.uses):'<p>尚无执行记录；开启配置不等于已经使用。</p>'}</section>
       <section class="method-section"><h3>正文独立审稿证据</h3>${data.review_checks.length?readable(data.review_checks):'<p>尚无正文方法核验证据。</p>'}</section>`;

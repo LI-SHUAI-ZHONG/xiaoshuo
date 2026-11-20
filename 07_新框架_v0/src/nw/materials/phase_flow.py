@@ -1219,7 +1219,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         return request,package
     desk=SourceDesk(workspace,test_mode=store.test_mode)
     from nw.production_methods.selection import preflight as method_preflight
-    method_preflight(store,package)
+    method_preflight(store,package,request.id)
     from nw.materials.binding_reviews import POLICY as BINDING_POLICY,verify_session_bindings
     from nw.materials.governance_runtime import load_governance,verify_session_governance
     from nw.materials.source_set import selection_status

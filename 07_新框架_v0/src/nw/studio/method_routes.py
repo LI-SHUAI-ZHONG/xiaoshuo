@@ -8,6 +8,13 @@ def get(library: Any, segs: list[str], query: dict) -> dict | None:
 
     if segs == ['kb', 'method-catalog']:
         return library.method_catalog()
+    if segs == ['kb', 'method-recommendations']:
+        from nw.production_methods.sources import MethodReader
+        from nw.studio.catalog import canonical_types
+        from nw.studio.method_recommendations import recommendations
+        types = canonical_types(value('types').split(',') if value('types') else [])
+        selected = value('selected').split(',') if value('selected') else []
+        return recommendations(MethodReader(library.workspace), value('slot'), types, selected)
     if segs == ['kb', 'methods']:
         return library.list_methods(task=value('task'), scope=value('scope'),
             types=value('types').split(',') if value('types') else [], status=value('status'),
