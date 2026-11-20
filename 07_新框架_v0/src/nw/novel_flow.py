@@ -30,7 +30,22 @@ Decision = Callable[[str, dict], dict | None]
 TERMINAL = frozenset({'DONE', 'CANCELLED', 'REJECTED', 'STALE'})
 
 
-def _freeze_model(journal: Journal, settings: dict) -> None:
+def _routing_identity(settings: dict, config: Config) -> dict:
+    """Window declarations guide local checks; only route/sampling changes break a frozen job."""
+    base = {key: getattr(config, key) for key in ('provider', 'base_url', 'model', 'api_key_env', 'timeout', 'params')}
+    stages = {}
+    for stage, spec in settings.get('stage_models', {}).items():
+        if not isinstance(spec, dict):
+            stages[stage] = spec
+            continue
+        route = {key: value for key, value in spec.items() if key != 'context_window_tokens'}
+        if route != base:
+            stages[stage] = route
+    return {**{key: value for key, value in settings.items() if key not in ('stage_models', 'context_window_tokens')},
+            'stage_models': stages}
+
+
+def _freeze_model(journal: Journal, settings: dict, config: Config) -> None:
     with journal.store.connection:
         journal.store.connection.execute('BEGIN IMMEDIATE')
         journal.check_active('model', check_head=False)
@@ -38,7 +53,8 @@ def _freeze_model(journal: Journal, settings: dict) -> None:
         frozen = canonical(settings)
         if row['model_json'] is None:
             journal.store.connection.execute('UPDATE novel_jobs SET model_json=? WHERE id=?', (frozen, journal.id))
-        elif row['model_json'] != frozen:
+        elif (row['model_json'] != frozen and
+              _routing_identity(json.loads(row['model_json']), config) != _routing_identity(settings, config)):
             raise JobPaused('BLOCKED', row['step_key'], 'CONFIG_CHANGED: restore the original model settings')
 
 
@@ -72,7 +88,7 @@ def resume_job(store: Store, job_id: str, provider: LLMProvider, config: Config,
             frozen_model = model_settings(provider, config.model, config.params, 'novel-job-v1')
             if config.stage_models:
                 frozen_model = {**frozen_model, 'stage_models': config.stage_models}
-            _freeze_model(journal, frozen_model)
+            _freeze_model(journal, frozen_model, config)
             extend_budget(store, job_id, max_calls, max_cost)
             journal.move('RUNNING', initial.step)
             if journal.request['mode'] == 'design':
@@ -153,7 +169,7 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         _, package = read_input_manifest(j.store, step['input']['request']['manifest_id'])
         from nw.materials.phase_projection import expand_output
         validate_plan(expand_output(output,package), scope, _known_cards(package), package.get('materials', ()),
-                      package.get('material_deferrals'),package.get('material_work'))
+                      package.get('material_deferrals'),package.get('material_work'),package.get('length_context'))
 
     def verify_plan() -> None:
         j.check_active(j.current_step or propose)

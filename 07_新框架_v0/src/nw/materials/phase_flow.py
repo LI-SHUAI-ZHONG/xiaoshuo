@@ -1213,6 +1213,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             'responses':responses,'output_schema':SCHEMAS[stage],
             'method_requirements':requirements_for(stage,products),
             'approved_cards':context['approved_cards'],'parent':package.get('parent')}
+        if context.get('length_context'):
+            from nw.length_plan import model_approved_cards
+            payload['approved_cards'] = model_approved_cards(payload['approved_cards'])
         if (continuity_ledger := build_continuity_ledger(stage, products, deps, stage_context)) is not None:
             payload['continuity_ledger'] = continuity_ledger
         if (joint_plan := build_joint_material_plan(stage, sources)) is not None:
@@ -1231,6 +1234,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        if context.get('length_context') and stage in ('plot_design', 'scene_design'):
+            from nw.length_plan import instructions, model_length_context
+            payload['length_context'] = model_length_context(context['length_context'])
+            suffix += '\n' + instructions(stage)
         from nw.materials import design_network
         design_candidates = design_network.candidates(stage, products, stage_context)
         if guidance := design_network.guidance(stage, payload['demand'], products, context):
@@ -1681,6 +1688,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
              'material_source_snapshots':{},
              'approved_cards':package.get('approved_cards',[]),
              'accepted_state':package.get('accepted_state',[]),'accepted_changes':package.get('accepted_changes',[])}
+    if package.get('length_context'):
+        context['length_context'] = package['length_context']
     if selected:
         context['current_source_set']=selected['sha256']
     if 'scene_source_binding_policy' in package:

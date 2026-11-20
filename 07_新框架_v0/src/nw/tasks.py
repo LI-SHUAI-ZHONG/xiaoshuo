@@ -184,7 +184,9 @@ def _start_task(store: Store, request: TaskRequest, request_json: str, root: str
                 for msg in messages)):
         raise ValueError('Task payload requires role/content messages')
     try:
-        params, estimate = prepare_call(store, request.budget_id, provider.name, config.params, messages)
+        params, estimate = prepare_call(store, request.budget_id, provider.name, config.params, messages,
+                                        context_window_tokens=getattr(config, 'context_window_tokens', None),
+                                        frozen_params=manifest['settings']['params'])
         settings = model_settings(provider, config.model, params, manifest['settings']['prompt_version'])
         if (provider.name != config.provider or manifest['purpose'] != request.kind or
                 canonical(settings) != canonical(manifest['settings'])):

@@ -341,12 +341,17 @@ def model_material(row: dict, *, book: bool) -> dict:
 
 def model_package(package: dict) -> dict:
     result={key:value for key,value in package.items() if key not in {
-        'material_recall','material_input','stage_materials','stage_source_policy','chapter_handoff','chapter_summary','chapter_reviews',
+        'length_override','material_recall','material_input','stage_materials','stage_source_policy','chapter_handoff','chapter_summary','chapter_reviews',
         'type_hierarchy_enabled','type_source_scope_enabled','type_name_evidence_enabled','governance_inputs',
         'dynamic_reference_checks','dynamic_screening_enabled','scene_source_binding_policy','action_state_policy',
         'action_template_priority_enabled','network_prerequisite_policy','multi_action_policy','network_layer_policy',
         'early_network_policy','same_stage_network_policy','type_network_policy','world_network_policy',
         'world_advancement_policy','world_conversion_policy','world_resource_policy','world_market_policy','world_history_policy','design_network_policy','parent_design_network'}}
+    if package.get('length_context'):
+        from nw.length_plan import model_approved_cards, model_length_context
+        result['length_context'] = model_length_context(package['length_context'])
+        if 'approved_cards' in package:
+            result['approved_cards'] = model_approved_cards(package['approved_cards'])
     if package.get('materials'):
         result['materials']=[model_material(row,book=package['scope']=='book') for row in package['materials']]
         result['material_input']={'policy':POLICY,'full_sources_frozen_for_verification':True}

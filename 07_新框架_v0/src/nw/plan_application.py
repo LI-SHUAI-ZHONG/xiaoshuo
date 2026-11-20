@@ -143,6 +143,8 @@ def apply_plan(store: Store, proposal_id: str, decision_id: str, *,
         result = {'root': asdict(root), 'decision_id': decision_id, 'approvals': approvals,
                   'chapters': chapters, 'stale_scenes': stale,
                   'branch_head': asdict(StateHead(head.branch_id, head.revision + 1)) if head else None}
+        if frozen.get('length_context'):
+            result['length_scope'] = proposal.scope
         if 'material_design' in chosen:
             result['material_design'] = chosen['material_design']
         if head is not None:

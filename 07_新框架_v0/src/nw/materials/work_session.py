@@ -190,6 +190,9 @@ def legacy_study_plan(store: Store,request: TaskRequest,package: dict,provider: 
     from nw.materials.stage_input import model_package,input_record
     from nw.plan_contract import plan_prompt
     prompt=plan_prompt(package['scope'])+material_prompt(package.get('materials',[]),book=package['scope']=='book',deferrals=package.get('material_deferrals'))+APPLICATION_PROMPT
+    if package.get('length_context'):
+        from nw.length_plan import instructions
+        prompt += '\n' + instructions('plan')
     package['material_input']=input_record(package)
     messages=[{'role':'system','content':prompt},{'role':'user','content':canonical(model_package(package))}]
     params,_=prepare_call(store,request.budget_id,provider.name,config.params,messages)

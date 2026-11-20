@@ -15,6 +15,7 @@ from nw.story_state import adopt_story
 from nw.task_models import Budget
 from nw.studio.production_inputs import brief_text, freeze_wizard, governance
 from nw.studio.production_store import ProductionStore
+from nw.studio.production_length import change_length, manuscript_length, retire_unstarted_book, verify_finish_length
 from nw.studio.production_views import ProductionViews
 from nw.studio.production_branches import BranchMixin
 from nw.studio.production_methods import ProductionMethodMixin
@@ -39,13 +40,13 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
     @staticmethod
     def budget(raw: dict | None = None) -> Budget:
         value = {'max_calls': 40, 'context_char_limit': 64000, 'output_limit': 4096, 'max_revisions': 2}
-        raw = raw or {}
+        raw = {} if raw is None else raw
         if not isinstance(raw, dict) or set(raw) - set(value):
             raise ValueError('无效的调用预算')
         value.update(raw)
         if any(type(item) is not int for item in value.values()) or not (
             1 <= value['max_calls'] <= 1000 and 1000 <= value['context_char_limit'] <= 1000000
-            and 128 <= value['output_limit'] <= 100000 and 0 <= value['max_revisions'] <= 20
+            and 128 <= value['output_limit'] <= 100000 and 0 <= value['max_revisions'] <= 2
         ):
             raise ValueError('调用预算超出允许范围')
         return Budget(**value)
@@ -57,6 +58,8 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
     def _create(self, body: dict) -> dict:
         wizard = freeze_wizard(body, self.library)
         budget = self.budget(body.get('budget'))
+        if body.get('budget'):
+            wizard['call_budget'] = dict(body['budget'])
         ident = uuid4().hex
         directory = f'novel-{ident[:12]}'
         # Reserve the directory before publishing nw.db to workspace discovery.
@@ -87,6 +90,8 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
         volumes = []
         active = {(row['card_id'], row['version']) for row in project['active_settings']}
         with self.open_store(novel) as store:
+            length = manuscript_length(store, novel['wizard'])
+            length['budget'] = asdict(self.budget(novel['wizard'].get('call_budget')))
             for card in project['cards']:
                 if card['kind'] != 'volume' or (card['card_id'], card['version']) not in active:
                     continue
@@ -98,7 +103,10 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                     volumes.append({'id': card['card_id'], 'title': card['body'].get('title', card['card_id']),
                                     'chapter_ids': sorted(chapter_ids)})
         project['volumes'] = volumes
-        return {'novel': novel, 'project': project, 'volumes': volumes}
+        return {'novel': novel, 'project': project, 'volumes': volumes, 'length_plan': length}
+
+    def configure_length(self, ident: str, body: dict) -> dict:
+        return change_length(self, ident, body)
 
     def project(self, novel: dict) -> dict:
         return self.studio.project_overview(novel['project_dir'], branch=novel.get('current_branch', 'main'))
@@ -121,12 +129,12 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
         overview = self.project(novel)
         scenes = [row['id'] for row in overview['scenes']
                   if row['story_approved_on_branch'] and not row['accepted_draft_id']]
-        jobs = overview['jobs']
-        book = next((row for row in jobs if row['status'] == 'DONE' and row.get('step') == 'plan:book:apply'), None)
+        from nw.length_plan import approved_book_application
+        book_id, _ = approved_book_application(store, {'settings': overview['active_settings']})
         needs = self.branch_status(novel['id'])['needs_revalidation'] if novel.get('current_branch', 'main') != 'main' else []
         revalidate = [row['id'] for row in overview['scenes'] if row['id'] in needs and row['accepted_draft_id']]
         mode = body.get('mode') or ('revise' if revalidate else 'write' if scenes else 'design')
-        scope = body.get('scope') or ('chapter' if book else 'book')
+        scope = body.get('scope') or ('chapter' if book_id else 'book')
         if mode == 'design' and novel.get('current_branch', 'main') == 'main' and any(scene['accepted_draft_id'] for scene in overview['scenes']):
             raise ValueError('已有正文后的追加设计需先建立候选分支并复核旧稿。'
                              '请打开“⋯ → 制作候选与主线 → 建立候选”，完成旧稿复核后再合并。未启动模型调用。')
@@ -134,10 +142,14 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                             scenes if mode in ('write', 'revise', 'continue') else [])
         if not isinstance(selected, list):
             raise ValueError('场景必须是 ID 列表')
+        overrides = body.get('budget', {})
+        if not isinstance(overrides, dict):
+            raise ValueError('无效的调用预算')
+        budget = self.budget({**novel['wizard'].get('call_budget', {}), **overrides})
         req = JobRequest(str(mode), branch_id=novel.get('current_branch', 'main'),
                          design_scope=str(scope) if mode == 'design' else 'chapter',
-                         parent_id=book['outputs'].get('proposal_id') if mode == 'design' and scope != 'book' and book else None,
-                         scene_ids=selected, budget=self.budget(body.get('budget')),
+                         parent_id=book_id if mode == 'design' and scope != 'book' else None,
+                         scene_ids=selected, budget=budget,
                          governance_inputs=governance(novel['wizard']) if mode == 'design' else {},
                          production_method_policy=novel['wizard'].get('production_methods',{}) if mode=='design' else {})
         job = start_job(store, req)
@@ -177,7 +189,23 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                                                                   (novel['job_id'],)).fetchone()[0])
                     novel['current_branch'] = request['branch_id']
                     self.db.update(ident, job_id=novel['job_id'], current_branch=novel['current_branch'])
+                if not decision and not body.get('mode'):
+                    retire_unstarted_book(store, novel, self.budget(novel['wizard'].get('call_budget')))
                 current = show_job(store, novel['job_id']) if novel['job_id'] else None
+                if 'use_saved_context_budget' in body:
+                    if (not retry or body['use_saved_context_budget'] is not True or not current
+                            or current.status != 'BLOCKED' or not any(code in (current.reason or '')
+                                for code in ('CONTEXT_TOO_LARGE', 'MODEL_CONTEXT_WINDOW'))):
+                        raise ValueError('只有因上下文超限而受阻的当前任务可使用已保存的预算重试')
+                    from nw.call_budget import raise_context_limits, read_budget
+                    saved = self.budget(novel['wizard'].get('call_budget'))
+                    actual = read_budget(store, current.id)
+                    change = raise_context_limits(store, current.id,
+                        context_char_limit=max(actual.context_char_limit, saved.context_char_limit),
+                        output_limit=max(actual.output_limit, saved.output_limit))
+                    if change['before'] != change['after']:
+                        self.db.event(ident, 'context_budget', '按已保存的设置提高受阻任务预算',
+                                      {'job_id':current.id, **change})
                 if body.get('mode') and current and current.status not in ('DONE', 'CANCELLED', 'REJECTED', 'STALE'):
                     raise ValueError('请先处理或取消当前未完成任务，再启动指定的写作或重写操作')
                 if current is None or current.status in ('DONE', 'CANCELLED', 'REJECTED', 'STALE'):
@@ -286,7 +314,7 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                 raise ValueError('请先完成正在运行的任务和待确认节点')
             if not project['managed_story']:
                 raise ValueError('旧项目需完成故事状态接管及独立审稿后才能标记完稿')
-            active_scenes = [row for row in project['scenes'] if row['story_approved_on_main']]
+            active_scenes = [row for row in project['scenes'] if row['in_branch_manuscript']]
             if not active_scenes or any(not row['accepted_draft_id'] for row in active_scenes):
                 raise ValueError('所有场景通过审稿并接受后才能标记完稿')
             populated_chapters = {scene['chapter_id'] for scene in active_scenes}
@@ -297,9 +325,11 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                     review = self.review_for_draft(store, scene['id'], scene['accepted_draft_id'])
                     if not review or review['result'].get('recommendation') != 'pass':
                         raise ValueError('已接受稿还缺少对应版本的通过审稿记录')
-                expected = novel['wizard'].get('chapter_count')
+                length = manuscript_length(store, novel['wizard'])
+                expected = length['effective_chapter_count']
                 if expected and len(populated_chapters) < expected:
                     raise ValueError('存在空章或尚未达到立项设定的有效章节数')
+                verify_finish_length(length)
                 for fmt in ('txt', 'md'):
                     self._write_export(store, novel, project['chapters'], active_scenes, '全书', fmt)
             self.db.update(ident, status='done', runtime_status='DONE', finished_at=now(), reason=None)

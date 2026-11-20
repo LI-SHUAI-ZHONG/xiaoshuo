@@ -187,7 +187,16 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             if (not isinstance(governance_inputs, dict) or governance_inputs.keys() - set(phase_order(scope))
                     or not all(isinstance(value, dict) for value in governance_inputs.values())):
                 raise ValueError('MATERIAL_GOVERNANCE: expected inputs keyed by current planning stage')
-            package['governance_inputs'] = governance_inputs
+            material_governance = dict(governance_inputs)
+            if 'plot_design' in material_governance:
+                project_inputs = dict(material_governance['plot_design'])
+                project_inputs.pop('length_policy', None)
+                project_inputs.pop('length_auto', None)
+                if project_inputs:
+                    material_governance['plot_design'] = project_inputs
+                elif governance_inputs['plot_design']:
+                    del material_governance['plot_design']
+            package['governance_inputs'] = material_governance
         if head:
             from nw.materials.stage_effects import accepted_feedback
             feedback = accepted_feedback(store, head)
@@ -199,7 +208,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         existing = store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest_id,)).fetchone()
         if existing:
             _, previous_package = read_input_manifest(store, manifest_id)
-            for key in ('stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
+            for key in ('length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
@@ -264,6 +273,27 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     package['design_network_policy'] = DESIGN_NETWORK_POLICY
                     package['world_history_policy'] = WORLD_HISTORY_POLICY
                     package['network_layer_policy'] = NETWORK_LAYER_POLICY
+        from nw.length_settings import effective_brief_text
+        from nw.length_plan import design_context, instructions
+        override = (governance_inputs or {}).get('plot_design', {}).get('length_policy')
+        if existing:
+            package['brief'] = previous_package['brief']
+            if 'governance_inputs' in previous_package:
+                package['governance_inputs'] = previous_package['governance_inputs']
+            if 'length_override' in previous_package:
+                package['length_override'] = previous_package['length_override']
+        elif override is not None:
+            package['length_override'] = override
+            package['brief']['text'] = effective_brief_text(package['brief']['text'], override)
+        automatic = (governance_inputs or {}).get('plot_design', {}).get('length_auto') is True
+        if not existing:
+            parent_chapters = tuple(ch['index'] for ch in (parent or {}).get('chapters', ()))
+            length = design_context(store, package['brief'], state, parent_card, automatic=automatic,
+                                    parent_chapters=parent_chapters)
+            if length:
+                package['length_context'] = length
+        if package.get('length_context'):
+            prompt += '\n' + instructions('plan')
         while methods and len(prompt) + len(canonical(model_package(package))) > budget.context_char_limit:
             methods.pop()
         sources = _source_refs(store, [*cards, *methods])
@@ -303,7 +333,7 @@ def _run_plan(store: Store, request: TaskRequest, package: dict, provider: LLMPr
     result = run_task(store, request, provider, config,
                       validate=lambda output: validate_plan(expand_output(output,package), package['scope'], _known_cards(package),
                                                             package.get('materials', ()),
-                                                            package.get('material_deferrals'),package.get('material_work')))
+                                                            package.get('material_deferrals'),package.get('material_work'),package.get('length_context')))
     if result.validation != 'VALID':
         raise ValueError(f'Plan {result.status}/{result.validation}: {result.reason or ""} {result.id}')
     return show_plan(store, request.id)
@@ -343,7 +373,7 @@ def _save_candidates(store: Store, ident: str, raw: dict, package: dict) -> Plan
     from nw.materials.phase_projection import expand_output
     raw=expand_output(raw,package)
     materials = package.get('materials', ())
-    validate_plan(raw, package['scope'], _known_cards(package), materials, package.get('material_deferrals'),package.get('material_work'))
+    validate_plan(raw, package['scope'], _known_cards(package), materials, package.get('material_deferrals'),package.get('material_work'),package.get('length_context'))
     parent = package['parent']
     roots, materialization, findings = [], [], []
     inherited = {card['card_id']: CardRef(card['card_id'], card['version']) for card in package['approved_cards']}
@@ -359,11 +389,26 @@ def _save_candidates(store: Store, ident: str, raw: dict, package: dict) -> Plan
             if row['kind'] == 'world':
                 open_rules.extend(row['body'].get('unknowns', []))
         open_rules = list(dict.fromkeys(open_rules))
+        chapter_budgets = {}
+        if package.get('length_context'):
+            from nw.length_plan import chapter_budget
+            local_members = {row['key']: row for row in candidate['members']}
+            for chapter in candidate['chapters']:
+                budget = chapter_budget(chapter, local_members, package['length_context'])
+                chapter_budgets.update({scene['card']: budget for scene in chapter['scenes']})
         for row in candidate['members']:
             ref = members[row['key']]
             body = _translate(row['body'], refs)
             if row['kind'] == 'scene':
+                if package.get('length_context'):
+                    book = candidate['body']['length_plan']
+                    body['length_policy'] = {**package['length_context']['policy'], 'target_words': book['target_words'],
+                                             'chapter_count': book['chapter_count']}
+                elif 'length_override' in package:
+                    body['length_policy'] = package['length_override']
                 body['story_time'] = str(orders[row['key']])
+                if row['key'] in chapter_budgets:
+                    body['chapter_word_budget'] = chapter_budgets[row['key']]
                 questions = [*body.get('unknowns', []), *open_rules]
                 if questions:
                     body['unknowns'] = list(dict.fromkeys(questions))

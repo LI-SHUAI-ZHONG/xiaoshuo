@@ -72,6 +72,8 @@ def _members(rows: object, existing: dict[str, str]) -> dict[str, dict]:
         if not _ids(body.get('holders', []), people):
             raise ValueError('Unknown visibility holder in plan')
         if row['kind'] == 'scene':
+            if 'length_policy' in body:
+                raise ValueError('项目篇幅配置由已批准方案绑定，场景不得重写')
             if (body['pov'] not in people or not _ids(body.get('characters'), people) or
                     not all(text(body.get(field)) for field in _SCENE_TEXT) or
                     set(body.get('character_goals', {})) != {body['pov'], *body['characters']}):
@@ -114,7 +116,7 @@ def _chapters(rows: object, scope: str, members: dict[str, dict]) -> None:
 
 
 def validate_plan(output: dict, scope: str, existing: dict[str, str], materials: list[dict] = (),
-                  material_deferrals: dict | None = None,material_work: dict | None = None) -> None:
+                  material_deferrals: dict | None = None,material_work: dict | None = None, length_context: dict | None = None) -> None:
     minimum=1 if scope!='book' and material_work and material_work.get('policy') in {'artifact-stage-binding-v3','artifact-stage-binding-v4'} else 2
     if output['scope'] != scope or not minimum <= len(output['candidate_cards']) <= 3:
         raise ValueError('Expected 2–3 candidates for the requested scope')
@@ -134,6 +136,12 @@ def validate_plan(output: dict, scope: str, existing: dict[str, str], materials:
         choices.add(choice)
         members = _members(candidate['members'], existing)
         _chapters(candidate['chapters'], scope, members)
+        if length_context:
+            from nw.length_plan import validate_candidate
+            validate_candidate(candidate, scope, length_context)
+        elif 'length_plan' in body or any({'word_budget', 'chapter_word_budget'} & member['body'].keys()
+                                           for member in members.values()):
+            raise ValueError('未冻结项目篇幅需求，不能给此方案附加写审字数约束')
         validate_bindings(candidate, scope, members, existing, materials, material_deferrals)
         from nw.materials.work_application import validate_work
         validate_work(candidate,material_work)

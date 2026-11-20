@@ -65,15 +65,30 @@ def _body(kind: str, value: object) -> dict:
     optional = set(_OPTIONAL[kind]) | {'creation_reason'}
     lists = set(_LISTS.get(kind, ())) | {'holders', 'tags', 'unknowns'}
     maps = set(_MAPS.get(kind, ()))
+    structured = {'plot': {'length_plan'}, 'chapter': {'word_budget'}, 'volume': {'word_budget'},
+                  'scene': {'word_budget', 'chapter_word_budget', 'length_policy'}}.get(kind, set())
     if (not isinstance(value, dict) or
             not required <= value.keys() or
-            value.keys() - required - optional - lists - maps - {'visibility'} - ({'members'} if kind == 'plot' else set()) or
+            value.keys() - required - optional - lists - maps - structured - {'visibility'} - ({'members'} if kind == 'plot' else set()) or
             any(not _text(value[key]) for key in required) or
             any(value[key] is not None and not _text(value[key]) for key in optional & value.keys()) or
             any(not _list_of_text(value[key]) for key in lists & value.keys()) or
             any(not isinstance(value[key], dict) or
                 any(not _text(k) or not _text(v) for k, v in value[key].items()) for key in maps & value.keys())):
         raise ValueError(f'Invalid {kind} card body')
+    if included := structured & value.keys():
+        from nw.length_plan import check_book, check_budget
+        for key in included:
+            if key == 'length_policy':
+                from nw.length_settings import parse_length_changes
+                policy = value[key]
+                if (not isinstance(policy, dict) or any(type(v) is not int for v in policy.values())
+                        or parse_length_changes(policy) != policy):
+                    raise ValueError('场景引用的项目篇幅必须是冻结的篇幅配置')
+            elif key == 'length_plan':
+                check_book(value[key])
+            else:
+                check_budget(value[key])
     if 'members' in value and (not isinstance(value['members'], list) or
             any(not _ref(ref) or set(ref) != {'kind', 'id', 'version', 'sha256'} or ref['kind'] != 'card'
                 for ref in value['members'])):

@@ -94,6 +94,8 @@ class ProductionRoutes:
             if len(segs) == 3:
                 if action == 'trash':
                     data = app.trash_novel(ident)
+                elif action == 'length':
+                    data = app.configure_length(ident, body)
                 elif action == 'methods':
                     data = app.configure_methods(ident,body)
                 elif action == 'run':

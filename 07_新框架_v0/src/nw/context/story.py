@@ -1,8 +1,10 @@
 
 """Scene work packages from explicit card and branch versions."""
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 import json
 
+from nw.call_budget import BudgetExceeded
 from nw.cards import card_input_ref, read_card, read_links
 from nw.context.base import ContextItem, ContextPackage, package
 from nw.materials.binding import verify_materials
@@ -54,6 +56,7 @@ class StoryWork:
     material_design_sha256: str | None = None
     prompt: str = WRITE_PROMPT
     writing_source_keys: tuple[str, ...] = ()
+    omitted_optional_groups: tuple[str, ...] = ()
 
 
 class StoryProvider:
@@ -63,8 +66,15 @@ class StoryProvider:
         items = []
         if project['brief'] is not None:
             items.append(ContextItem('brief', canonical(project['brief']), '作者需求与硬约束'))
-        items.append(ContextItem('scene:' + scene['card_id'], canonical(scene['body']), '本场任务'))
-        for card in project['settings']:
+        scene_body = scene['body']
+        if 'chapter_word_budget' in scene_body or 'length_policy' in scene_body:
+            # The chapter rationale can describe a later reveal outside this scene's POV.
+            scene_body = {key: value for key, value in scene_body.items() if key not in ('chapter_word_budget', 'length_policy')}
+        items.append(ContextItem('scene:' + scene['card_id'], canonical(scene_body), '本场任务'))
+        if progress := project.get('chapter_length_progress'):
+            items.append(ContextItem('chapter:length', canonical(progress), '按已接受稿与其余场景分配的本场可写字数'))
+        from nw.length_plan import model_approved_cards
+        for card in model_approved_cards(project['settings']):
             items.append(ContextItem('card:' + card['card_id'], canonical(card['body']), '本场确认设定'))
         items.append(ContextItem('pov:' + project['holder'], canonical(project['facts']), '此时POV所知与误信'))
         if project.get('previous'):
@@ -157,7 +167,8 @@ def _previous_refs(store: Store, snapshot: dict, facts: list[Fact],
 
 
 def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_limit: int, *,
-                        candidate_refs: tuple[tuple[str, str], ...] = (), base_prompt: str = WRITE_PROMPT) -> StoryWork:
+                        candidate_refs: tuple[tuple[str, str], ...] = (), base_prompt: str = WRITE_PROMPT,
+                        validate_capacity: Callable[[str, dict, set[str]], object] | None = None) -> StoryWork:
     """Freeze the same versioned information the model receives, with source receipts."""
     if type(char_limit) is not int or char_limit < 1:
         raise ValueError('Context character limit must be a positive integer')
@@ -186,7 +197,19 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     briefs = store.briefs()
     brief = briefs[-1] if briefs else None
     facts = [{key: value for key, value in asdict(f).items() if key != 'evidence'} for f in view.facts]
-    inputs = {'brief': asdict(brief) if brief else None, 'settings': settings, 'holder': view.holder, 'facts': facts}
+    visible_brief = asdict(brief) if brief else None
+    if visible_brief and 'length_policy' in card['body']:
+        from nw.length_settings import effective_brief_text
+        visible_brief['text'] = effective_brief_text(visible_brief['text'], card['body']['length_policy'])
+    inputs = {'brief': visible_brief, 'settings': settings, 'holder': view.holder, 'facts': facts}
+    if 'chapter_word_budget' in card['body'] and 'word_budget' in card['body']:
+        from nw.length_plan import approved_length_budgets, chapter_progress
+        progress = chapter_progress(store, scene_id, snapshot, approved_length_budgets(store, snapshot))
+        if progress and 'feasible_min_words' in progress:
+            if progress['feasible_min_words'] > progress['feasible_max_words']:
+                raise ValueError('WORD_BUDGET: 其余场的已接受和待写篇幅使本场无法同时满足批准的章、场区间，'
+                                 '请修订已接受的相关场，或调整章场篇幅方案')
+            inputs['chapter_length_progress'] = progress
     design = scene_materials(store, scene_id, scope.scene_ref)
     source_keys = set()
     if design:
@@ -217,8 +240,19 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     prompt = step_material_prompt(base_prompt, WRITING_MATERIAL, source_keys)
     provider = get_provider('story')
     assembled = asdict(provider.build(inputs, card))
-    if len(prompt) + len(canonical(assembled)) > char_limit:
-        raise ValueError('CONTEXT_TOO_LARGE: mandatory story inputs exceed the budget')
+    def fits(candidate: dict, *, mandatory: bool = False) -> bool:
+        try:
+            if validate_capacity is not None:
+                validate_capacity(prompt, candidate, source_keys)
+            if len(prompt) + len(canonical(candidate)) > char_limit:
+                raise BudgetExceeded('CONTEXT_TOO_LARGE: mandatory story inputs exceed the budget')
+            return True
+        except BudgetExceeded:
+            if mandatory:
+                raise
+            return False
+
+    fits(assembled, mandatory=True)
     predecessors, other_evidence = _previous_refs(store, snapshot, view.facts, disclosure)
     earlier = {ref.id for ref in predecessors}
     draft_texts: dict[str, str] = {}
@@ -267,18 +301,21 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     optional_parts = [('continuity', continuity), ('reader', already_disclosed)]
     if adjacent_previous is not None:
         optional_parts.insert(0, ('previous', adjacent_previous))
+    omitted = []
     for name, optional in optional_parts:
         trial = asdict(provider.build({**inputs, name: optional}, card))
-        if len(prompt) + len(canonical(trial)) <= char_limit:
+        if fits(trial):
             inputs[name] = optional
             assembled = trial
+        elif optional:
+            omitted.append(name)
     if inputs.get('reader'):
         predecessors, other_evidence = _previous_refs(store, snapshot, [*view.facts, *shared], disclosure)
     selection = select_rules(store, scene_ref, view)
     selected = []
     for mapping in selection.mappings:
         trial = asdict(provider.build({**inputs, 'mappings': [*selected, mapping]}, card))
-        if len(prompt) + len(canonical(trial)) > char_limit:
+        if not fits(trial):
             selection.excluded_reasons.append({'ref': mapping['ref'], 'reason': 'OPTIONAL_CONTEXT_BUDGET'})
         else:
             selected.append(mapping)
@@ -299,4 +336,4 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
                      legacy_ref('brief', store.project().id, brief) if brief else None,
                      tuple({'card_id': ref.id, 'version': ref.version} for ref in refs),
                      tuple(receipts.values()), predecessors, (*refs, *other_evidence), asdict(selection),
-                     content_sha256(design) if design else None, prompt, tuple(sorted(source_keys)))
+                     content_sha256(design) if design else None, prompt, tuple(sorted(source_keys)), tuple(omitted))

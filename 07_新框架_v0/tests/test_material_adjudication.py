@@ -229,6 +229,12 @@ def test_adjudicated_original_contract_reaches_normal_design_review_and_acceptan
         assert designed.status == 'DONE', designed.reason
         scene = designed.outputs['application']['chapters'][0]['scenes'][0]['scene_id']
         write = start_job(store, JobRequest('write', scene_ids=[scene], budget=Budget(8, 60000, 3000, 0))).id
+        # The independent original-source checks plus the reserved manuscript exceed 60k.
+        preflight = resume_job(store, write, provider, config(store), author())
+        assert preflight.status == 'BLOCKED' and 'CONTEXT_TOO_LARGE' in preflight.reason
+        assert not store.drafts(scene)
+        from nw.call_budget import raise_context_limits
+        raise_context_limits(store, write, context_char_limit=64000, output_limit=3000)
         result = resume_job(store, write, provider, config(store), author())
         if omit:
             assert result.status == 'BLOCKED' and 'every original source obligation' in result.reason

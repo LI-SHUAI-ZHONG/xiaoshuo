@@ -3,6 +3,7 @@ from collections import defaultdict
 import json
 import re
 
+from nw.length_settings import LENGTH_FIELDS
 from nw.materials.phase_routes import phase_order, product_ref
 from nw.materials.semantic_application import has_content, input_value, pointer_tokens, require
 
@@ -34,7 +35,6 @@ FIELD_LABELS = {
 
 _AUTHOR_PREFERENCES = '\n\n作者偏好（不代替设计步骤与冻结产物）：\n'
 _WIZARD_LENGTH = '\n\n立项参数：\n'
-_LENGTH_FIELDS = ('target_words', 'chapter_count', 'volume_count')
 _LENGTH_VALUE = re.compile(r'(?:(?<![第\d零〇一二两三四五六七八九十百千万亿])[\d零〇一二两三四五六七八九十百千万亿][\d零〇一二两三四五六七八九十百千万亿,.，]*\s*(?:字|章|卷)|长篇|中篇|短篇|微型小说)')
 _NO_DECISION = re.compile(r'(?:待定|待补|待确认|待选择|待讨论|尚未|暂定|暂无|未决定|未确定|未提供|还没确定|是否|或许|也许|可能会|可考虑|拟考虑|由设计步骤提出方案|仅供参考|仅为示例|只是示例|<填写)')
 _NEGATIVE = re.compile(r'(?:不采用|不打算|不选择|不考虑|不做|不进行|并非|不是|取消|不需要|无需|暂不|先不|不用|拒绝采用|不明确|没有)')
@@ -72,11 +72,12 @@ def _from_wizard_length(quote: str, text: str) -> bool:
         values = json.loads(data)
     except ValueError:
         return False
-    if (not isinstance(values, dict) or not values or not values.keys() <= set(_LENGTH_FIELDS)
-            or any(type(value) is not int or value < 1 for value in values.values())):
+    if (not isinstance(values, dict) or not values or not values.keys() <= set(LENGTH_FIELDS)
+            or any(type(value) is not int or (not 0 <= value <= 99 if key == 'word_tolerance_pct' else value < 1)
+                   for key, value in values.items())):
         return False
-    lines = {f'{json.dumps(key)}:{value}' for key, value in values.items()}
-    return quote in data and (quote == data or quote in lines)
+    lines = {f'{json.dumps(key)}:{value}' for key, value in values.items() if key != 'word_tolerance_pct'}
+    return bool(lines) and quote in data and (quote == data or quote in lines)
 
 
 def _commitment_found(field: str, quote: str, text: str) -> bool:

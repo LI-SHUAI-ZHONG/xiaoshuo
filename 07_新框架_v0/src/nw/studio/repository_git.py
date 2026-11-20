@@ -24,7 +24,10 @@ def shared_config_safe(path: Path) -> None:
         raise SyncError('CONFIG', '共享 API 配置必须使用仓库内相对目录 workspace')
     specs = [data.get('model', {}), *(v for v in data.get('stage_models', {}).values() if isinstance(v, dict))]
     for spec in specs:
-        if set(spec) - {'provider', 'base_url', 'model', 'api_key_env', 'timeout', 'params'}:
+        if ('context_window_tokens' in spec and
+                (type(spec['context_window_tokens']) is not int or spec['context_window_tokens'] <= 0)):
+            raise SyncError('CONFIG', '模型窗口只接受正整数 token 数')
+        if set(spec) - {'provider', 'base_url', 'model', 'api_key_env', 'timeout', 'params', 'context_window_tokens'}:
             raise SyncError('CONFIG_SECRET', 'API 配置含不支持的字段，未上传；只保存密钥环境变量名')
         name = spec.get('api_key_env', '')
         if name and not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', name):

@@ -17,7 +17,7 @@ from nw.cards import decide_card, decision_history, link_cards, read_card, read_
 from nw.chapter_records import chapter_index, chapter_review, chapter_summary
 from nw.chapter_state import chapter_state
 from nw.project_paths import project_directory, projects_root_for
-from nw.config import ConfigRequired, ROOT, configured_workspace, load_config
+from nw.config import ConfigRequired, ROOT, configured_workspace, load_config, model_window
 from nw.context.story import StoryScope, WRITE_PROMPT, build_story_context, scene_scope
 from nw.materials.phase_contract import FIELDS
 from nw.materials.phase_flow import (
@@ -50,6 +50,7 @@ from nw.novel_store import JobRequest, cancel_job, show_job, start_job
 from nw.planning import show_plan
 from nw.store import Store, now
 from nw.story_delta import check_delta, draft_digest, read_delta, save_delta
+from nw.studio.production_branches import latest_branch_draft_id
 from nw.story_extract import freeze_delta_input
 from nw.story_models import AcceptanceRequest, CardRef, StateHead
 from nw.story_state import adopt_story, approved_scene_positions, current_head, fork_story, position, revision_state, state_at
@@ -353,7 +354,9 @@ class StudioService:
             active_settings: list[dict[str, Any]] = []
             approved_positions: dict[str, tuple[int, int]] = {}
             main_positions: dict[str, tuple[int, int]] = {}
+            manuscript_scenes = set()
             if managed:
+                from nw.length_plan import manuscript_scene_ids
                 for brow in store.connection.execute('SELECT id, head_revision, parent_branch_id AS parent_branch, parent_at_fork AS forked_revision FROM story_branches WHERE enabled=1 ORDER BY id'):
                     branches.append(dict(brow))
                 head = current_head(store, branch)
@@ -361,6 +364,7 @@ class StudioService:
                 active_slots = snap.get('slots', {})
                 active_settings = snap.get('settings', [])
                 approved_positions = approved_scene_positions(store, snap)
+                manuscript_scenes = manuscript_scene_ids(store, snap, approved_positions=approved_positions)
                 main_positions = approved_positions if branch == 'main' else approved_scene_positions(
                     store, revision_state(store, current_head(store, 'main')))
             briefs = [asdict(b) for b in store.briefs()]
@@ -370,19 +374,30 @@ class StudioService:
             scenes: list[dict[str, Any]] = []
             for sc in store.list('scene'):
                 card_obj = json.loads(sc.card_json)
-                drafts = store.drafts(sc.id)
-                legacy_acc = store.accepted(sc.id)
+                draft_ids = [r[0] for r in store.connection.execute(
+                    'SELECT id FROM drafts WHERE scene_id=? ORDER BY version', (sc.id,))]
                 slot = active_slots.get(sc.id)
+                legacy_acc = store.accepted(sc.id) if not managed else None
+                accepted_id = slot['draft_id'] if slot else (legacy_acc.draft_id if legacy_acc else None)
+                latest_id = draft_ids[-1] if draft_ids else None
+                if managed and latest_id != accepted_id:
+                    latest_id = latest_branch_draft_id(store, sc.id, branch, accepted_id)
+                in_manuscript = not managed or sc.id in manuscript_scenes
+                binding = card_obj.get('story')
+                planned = isinstance(binding, dict) and binding.get('scene_ref')
+                in_workbench = in_manuscript or (not planned and bool(latest_id or not draft_ids))
                 scenes.append({
                     'id': sc.id,
                     'chapter_id': sc.chapter_id,
                     'chapter_index': chapter_by_id.get(sc.chapter_id, {}).get('index', 0),
                     'index': sc.index,
                     'card': card_obj,
-                    'drafts_count': len(drafts),
-                    'latest_draft_id': drafts[-1].id if drafts else None,
-                    'accepted_draft_id': slot['draft_id'] if slot else (legacy_acc.draft_id if legacy_acc and not managed else None),
+                    'drafts_count': len(draft_ids),
+                    'latest_draft_id': latest_id,
+                    'accepted_draft_id': accepted_id,
                     'accepted_delta_id': slot['delta_id'] if slot else None,
+                    'in_branch_manuscript': in_manuscript,
+                    'in_branch_workbench': in_workbench,
                     'story_approved_on_main': sc.id in main_positions,
                     'story_approved_on_branch': sc.id in approved_positions,
                 })
@@ -915,6 +930,12 @@ class StudioService:
             sc = store.get('scene', scene_id)
             ch = store.get('chapter', sc.chapter_id)
             drafts = [asdict(d) for d in store.drafts(scene_id)]
+            latest_id = drafts[-1]['id'] if drafts else None
+            if store.managed_story():
+                state = revision_state(store, current_head(store, branch))
+                accepted_id = state['slots'].get(scene_id, {}).get('draft_id')
+                if latest_id != accepted_id:
+                    latest_id = latest_branch_draft_id(store, scene_id, branch, accepted_id)
             runs = [
                 asdict(r) for r in store.list('run')
                 if r.scene_id == scene_id
@@ -923,8 +944,8 @@ class StudioService:
             if drafts:
                 placeholders = ','.join('?' for _ in drafts)
                 for drow in store.connection.execute(
-                    f'SELECT id FROM state_deltas WHERE draft_id IN ({placeholders}) ORDER BY rowid DESC',
-                    tuple(d['id'] for d in drafts),
+                    f'SELECT id FROM state_deltas WHERE branch_id=? AND draft_id IN ({placeholders}) ORDER BY rowid DESC',
+                    (branch, *(d['id'] for d in drafts)),
                 ):
                     delta = read_delta(store, drow['id'])
                     findings = [asdict(f) for f in check_delta(store, delta)]
@@ -940,6 +961,7 @@ class StudioService:
                 'scene': {'id': sc.id, 'chapter_id': sc.chapter_id, 'chapter_index': ch.index,
                           'chapter_title': ch.title, 'index': sc.index, 'card': json.loads(sc.card_json)},
                 'drafts': drafts,
+                'latest_draft_id': latest_id,
                 'runs': runs,
                 'deltas': deltas,
                 'context_preview': context_preview,
@@ -954,15 +976,17 @@ class StudioService:
                 raise ValueError('草稿不属于当前场景')
             return asdict(draft)
 
-    def save_manual_draft(self, project_name: str, scene_id: str, text: str) -> dict[str, Any]:
+    def save_manual_draft(self, project_name: str, scene_id: str, text: str, *, branch: str = 'main') -> dict[str, Any]:
         if not text.strip():
             raise ValueError('草稿正文不能为空')
         with self._open_store(project_name) as store:
+            if branch != 'main':
+                current_head(store, branch)
             run_id = uuid4().hex
             started = now()
             store.add_run(Run(
                 run_id, scene_id, 'write', 'author', 'manual-studio', '{}',
-                canonical({'source': 'studio_manual_author'}),
+                canonical({'source': 'studio_manual_author', 'branch_id': branch}),
                 canonical({'messages': []}), '', 'error', '{}', started, '',
             ))
             run, draft = store.finish_run(run_id, GenResult(
@@ -1240,6 +1264,8 @@ class StudioService:
                     'model': cfg.model,
                     'api_key_env': cfg.api_key_env,
                     'timeout': cfg.timeout,
+                    'context_window_tokens': cfg.context_window_tokens,
+                    'stage_overrides': tomllib.loads(self.config_path.read_text(encoding='utf-8')).get('stage_models', {}),
                     'params': cfg.params,
                     'workspace': str(cfg.workspace),
                     'source_driven': cfg.source_driven,
@@ -1293,6 +1319,8 @@ class StudioService:
             f'model = {json.dumps(model_name)}',
             f'api_key_env = {json.dumps(api_key_env)}',
             f'timeout = {timeout:g}',
+            *([f"context_window_tokens = {model_window(model['context_window_tokens'])}"]
+              if model.get('context_window_tokens') is not None else []),
             '',
             '[params]',
         ]
@@ -1315,7 +1343,7 @@ class StudioService:
                 if isinstance(spec, str):
                     lines.append(f'[stage_models.{stage_name}]')
                     lines.append(f'model = {json.dumps(spec)}')
-                elif isinstance(spec, dict) and spec.get('model'):
+                elif isinstance(spec, dict) and (spec.get('model') or spec.get('context_window_tokens') is not None):
                     sp_env = str(spec.get('api_key_env') or '').strip()
                     if _SECRET_LIKE_RE.match(sp_env):
                         raise ValueError(f'安全拦截：stage_models.{stage_name}.api_key_env 严禁填写密钥明文！')
@@ -1324,6 +1352,8 @@ class StudioService:
                         if field in spec and spec[field] not in (None, ''):
                             val = float(spec[field]) if field == 'timeout' else spec[field]
                             lines.append(f'{field} = {json.dumps(val) if not isinstance(val, float) else f"{val:g}"}')
+                    if spec.get('context_window_tokens') is not None:
+                        lines.append(f"context_window_tokens = {model_window(spec['context_window_tokens'])}")
                     if isinstance(spec.get('params'), dict) and spec['params']:
                         lines.append(f'[stage_models.{stage_name}.params]')
                         for pk, pv in spec['params'].items():
@@ -1336,7 +1366,7 @@ class StudioService:
         try:
             tmp.write_text(toml_text, encoding='utf-8')
             load_config(tmp)
+            tmp.replace(self.config_path)
         finally:
             tmp.unlink(missing_ok=True)
-        self.config_path.write_text(toml_text, encoding='utf-8')
         return {'saved': True, 'toml': toml_text, 'status': self.get_routing_config()}

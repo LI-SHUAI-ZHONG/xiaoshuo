@@ -138,13 +138,14 @@ def test_source_governance_is_not_bypassed_by_offline_test_provider(tmp_path):
 
 
 def test_existing_project_is_visible_and_manual_drafts_are_archived(app):
-    project = app.studio.create_project('existing', '旧书', brief_text='旧立项')
+    project = app.studio.create_project('existing', '旧书', brief_text='旧立项\n\n立项参数：\n{"target_words":120000}')
     chapter = app.studio.create_chapter('existing', 1, '初章')
     scene = app.studio.create_scene('existing', chapter['id'], 1, {'title': '开场'})
     draft = app.studio.save_manual_draft('existing', scene['id'], '作者手工正文。')
     listing = app.list()['novels']
     assert len(listing) == 1 and listing[0]['title'] == '旧书'
     assert listing[0]['words'] == 7
+    assert app.detail(listing[0]['id'])['length_plan']['effective_target_words'] == 120000
     events = app.timeline(listing[0]['id'])['events']
     assert any(row['ref'].get('draft_id') == draft['draft']['id'] for row in events)
     assert len(app.list()['novels']) == 1
@@ -174,6 +175,21 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     class ClientModel(PhaseModel, StageModel):
         def generate(self, messages, **params):
             result = super().generate(messages, **params)
+            if '[MATERIAL_STEP]' in messages[0]['content']:
+                payload = json.loads(messages[-1]['content'])
+                if context := payload.get('length_context'):
+                    raw = json.loads(result.text)
+                    products = raw['products']
+                    expected = context['policy'].get('target_words', 36)
+                    if payload['stage'] == 'plot_design':
+                        for direction in products['directions']:
+                            direction['length_plan'] = {'target_words': expected, 'chapter_count': 1,
+                                                        'reason': '[FAKE] 一章查明证据'}
+                    for member in products.get('members', []):
+                        if member['kind'] in ('chapter', 'scene'):
+                            member['body']['word_budget'] = {'target_words': expected, 'min_words': 25,
+                                                             'max_words': 48, 'reason': '[FAKE] 查清一项证据'}
+                    result.text = json.dumps(raw, ensure_ascii=False)
             if '{"operations"' in messages[0]['content']:
                 raw = json.loads(result.text)
                 for op in raw['operations']:
@@ -185,6 +201,9 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     app = ProductionService(studio, library, test_mode=True, runtime_factory=lambda: (config, model))
     novel = app.list()['novels'][0]
     ident = novel['id']
+    with app.db.connect() as db:
+        wizard_values = {**novel['wizard'], 'auto_length': True}
+        db.execute('UPDATE novels SET wizard_json=? WHERE id=?', (json.dumps(wizard_values), ident))
     def settled():
         app._workers[ident].join(timeout=40)
         assert not app._workers[ident].is_alive()
@@ -235,7 +254,14 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     assert app.db.get(ident)['status'] != 'done'
     release_timer = threading.Timer(0.2, done_archive_release.set)
     release_timer.start()
-    app.run(ident, {'mode': 'design', 'scope': 'chapter'})
+    # A long book's approved direction can outlive the studio's recent-job display.
+    from unittest.mock import patch
+    with patch.object(app.studio, '_list_jobs', return_value=[]):
+        app.run(ident, {'mode': 'design', 'scope': 'chapter'})
+    with app.open_store(novel) as history:
+        job = history.connection.execute('SELECT request_json FROM novel_jobs WHERE id=?',
+                                         (app.db.get(ident)['job_id'],)).fetchone()
+        assert json.loads(job[0])['parent_id'] == book_done['job']['outputs']['proposal_id']
     release_timer.join()
     app.sync_history = original_sync
     chapter_waiting = settled()
@@ -249,6 +275,12 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     with app.open_store(novel) as inspect:
         invalid = [dict(row) for row in inspect.connection.execute('SELECT kind,reason FROM task_calls WHERE validation=\'INVALID\'')]
     assert written['status'] == 'WAITING', (written['reason'], invalid)
+    with app.open_store(novel) as inspect:
+        from nw.length_plan import approved_book_plan, approved_length_budgets
+        from nw.story_state import current_head, revision_state
+        state = revision_state(inspect, current_head(inspect, 'main'))
+        assert approved_book_plan(inspect, state)['target_words'] == 36
+        assert [target['target_words'] for target in approved_length_budgets(inspect, state)['scenes'].values()] == [36]
     accepted = approve(written['gates'][0])
     assert accepted['status'] == 'DONE', accepted['reason']
     text, filename = app.export(ident, 'md')
@@ -295,6 +327,13 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     updated_wizard['chapter_count'] = 1
     with app.db.connect() as db:
         db.execute('UPDATE novels SET wizard_json=? WHERE id=?', (json.dumps(updated_wizard), ident))
+    # Completion compares only accepted main prose. An arbitrarily high target can't pass.
+    limits = app.configure_length(ident, {'target_words': 160000})['length_plan']
+    assert 0 < limits['accepted_words'] < 160000
+    with pytest.raises(ValueError, match='全书篇幅未达标'):
+        app.finish(ident)
+    assert app.db.get(ident)['status'] != 'done'
+    app.configure_length(ident, {'target_words': limits['accepted_words']})
     # A failed final file cannot publish a completed project. The same job is retryable.
     full_txt = book_dir / '成品' / '全书.txt'
     full_md = book_dir / '成品' / '全书.md'

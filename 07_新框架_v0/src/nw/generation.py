@@ -129,7 +129,7 @@ def call_model(store: Store, scene_id: str, provider: LLMProvider, model: str,
                params: dict, kind: str, messages: list[dict], context: dict,
                run_id: str | None = None, *, budget_id: str | None = None,
                manifest_id: str | None = None,
-               story_manifest: InputManifest | None = None,
+               story_manifest: InputManifest | None = None, context_window_tokens: int | None = None,
                before_reserve: Callable[[], None] | None = None) -> tuple[Run, Draft | None]:
     """Persist the request before sending; a previous run ID never sends twice."""
     check_test_provider(store, provider)
@@ -143,22 +143,27 @@ def call_model(store: Store, scene_id: str, provider: LLMProvider, model: str,
         if not acquired:
             raise RunInProgress(f'Run is being started: {run_id}')
         return _new_run(store, scene_id, provider, model, params, kind, messages, context,
-                        run_id, budget_id, manifest_id, story_manifest, before_reserve)
+                        run_id, budget_id, manifest_id, story_manifest, before_reserve, context_window_tokens)
 
 
 def _new_run(store: Store, scene_id: str, provider: LLMProvider, model: str, params: dict,
              kind: str, messages: list[dict], context: dict, run_id: str, budget_id: str | None,
              manifest_id: str | None, story_manifest: InputManifest | None,
-             before_reserve: Callable[[], None] | None) -> tuple[Run, Draft | None]:
-    params, estimate = prepare_call(store, budget_id, provider.name, params, messages)
+             before_reserve: Callable[[], None] | None, context_window_tokens: int | None) -> tuple[Run, Draft | None]:
+    saved = read_input_manifest(store, manifest_id) if manifest_id is not None and story_manifest is None else None
+    frozen_params = saved[0]['settings']['params'] if saved else None
+    if story_manifest is not None:
+        frozen_params = story_manifest.settings['params']
+    params, estimate = prepare_call(store, budget_id, provider.name, params, messages,
+                                    context_window_tokens=context_window_tokens, frozen_params=frozen_params)
     legacy = manifest_id is None and story_manifest is None
     if story_manifest is not None:
         settings = model_settings(provider, model, params, story_manifest.settings['prompt_version'])
         if manifest_id is not None or settings != story_manifest.settings or story_manifest.purpose != kind:
             raise ValueError('Story run inputs must match the frozen input manifest')
         manifest_id = story_manifest.id
-    elif not legacy:
-        manifest, package = read_input_manifest(store, manifest_id)
+    elif saved:
+        manifest, package = saved
         settings = model_settings(provider, model, params, manifest['settings']['prompt_version'])
         if (manifest['purpose'] != kind or canonical(settings) != canonical(manifest['settings'])
                 or canonical(package) != canonical(context)):

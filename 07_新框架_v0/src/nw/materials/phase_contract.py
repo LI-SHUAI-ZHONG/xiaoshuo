@@ -149,6 +149,16 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         from nw.plan_contract import _DIRECTION
         for body in value['directions']:
             _body('plot',body);require(all(_text(body.get(k)) for k in _DIRECTION),'incomplete direction product')
+        if length := context.get('length_context'):
+            from nw.length_plan import check_budget, check_reference, validate_direction
+            for body in value['directions']:
+                validate_direction(body, length)
+            if context.get('scope') != 'book':
+                for row in value['members']:
+                    if row['kind'] == 'chapter':
+                        check_reference(row['body'].get('word_budget'), length['policy'], 'chapter')
+                    elif row['kind'] == 'volume':
+                        check_budget(row['body'].get('word_budget'))
         require(isinstance(value['reader_plan'],list) and isinstance(value['promise_plan'],list),'reader and promise planning products required')
         for key in ('reader_plan','promise_plan'):
             require(all(_text(row) or isinstance(row,dict) and bool(row) for row in value[key]),
@@ -178,6 +188,9 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
                      for r in products[stage_name]['products']['members']}
         all_members.update(scenes)
         _chapters(value['chapters'],context.get('scope','chapter'),all_members)
+        if length := context.get('length_context'):
+            from nw.length_plan import validate_allocations
+            validate_allocations(value['chapters'], all_members, length)
         require(isinstance(value['events'],list),'candidate events must be explicit')
         ids=set()
         for event in value['events']:

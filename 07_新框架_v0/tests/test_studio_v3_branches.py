@@ -9,7 +9,10 @@ from nw.cards import decide_card, save_card
 from nw.novel_store import JobRequest, start_job
 from nw.store import Store
 from nw.story_state import adopt_story, apply_settings, current_head, revision_state
-from nw.studio.production_branches import BranchMixin
+from nw.studio.api import StudioService
+from nw.studio.library import LibraryService
+from nw.studio.production import ProductionService
+from nw.studio.production_branches import BranchMixin, latest_branch_draft_id
 from nw.studio.production_store import ProductionStore
 from nw.task_models import Budget
 from story_fixture import baseline, draft_for, proposal, seed_book
@@ -125,6 +128,90 @@ def test_new_chapter_settings_require_old_scene_revalidation(client: Client) -> 
     assert promoted['status'] == 'PROMOTED'
 
 
+def test_legacy_scene_length_and_export_follow_accepted_main_until_promotion(client: Client) -> None:
+    studio = StudioService(client.workspace, config_path=client.workspace / 'missing.toml')
+    app = ProductionService(studio, LibraryService(client.workspace), test_mode=True)
+    original = ['[FAKE] 初始第 1 场', '[FAKE] 初始第 2 场']
+    revised = [original[0], '档 案已还。\n' * 8]
+
+    def check(selected_texts: list[str], main_texts: list[str]) -> None:
+        # The length tab always measures the accepted main manuscript. Exports follow the selected branch.
+        length = app.detail('novel')['length_plan']
+        counts = [len(''.join(text.split())) for text in main_texts]
+        assert length['accepted_words'] == sum(counts)
+        chapter, = length['chapters']
+        assert chapter['accepted_words'] == sum(counts)
+        assert [scene['accepted_words'] for scene in chapter['scenes']] == counts
+        exported, _ = app.export('novel', 'txt')
+        assert exported == '测试\n\n第1章 章\n\n' + '\n\n'.join(selected_texts) + '\n'
+
+    check(original, original)
+    app.fork_branch('novel', {'name': 'candidate'})
+    with client.open_store(client.db.get('novel')) as store:
+        branch = current_head(store, 'candidate')
+        draft = draft_for(store, store.list('scene')[-1].id, revised[-1])
+        accept_batch(store, [proposal(store, branch, draft, [])], branch, 'length-replacement')
+    check(revised, original)
+    app.select_branch('novel', {'branch_id': 'main'})
+    check(original, original)
+    app.select_branch('novel', {'branch_id': 'candidate'})
+    assert app.promote_branch('novel', promote_body(client))['status'] == 'PROMOTED'
+    check(revised, revised)
+
+
+@pytest.mark.parametrize('main_source', ['manual', 'legacy'])
+def test_finish_ignores_candidate_versions_but_detects_earlier_pending_main(client: Client, main_source: str) -> None:
+    import json
+    from nw.llm.base import GenResult
+    from nw.models import Run
+    from nw.store import now
+
+    studio = StudioService(client.workspace, config_path=client.workspace / 'missing.toml')
+    app = ProductionService(studio, LibraryService(client.workspace), test_mode=True)
+    app.fork_branch('novel', {'name': 'candidate'})
+    with client.open_store(client.db.get('novel')) as store:
+        for scene in store.list('scene'):
+            draft_id = store.accepted(scene.id).draft_id
+            snapshot = {'messages': [{'content': json.dumps({'draft': {'id': draft_id}})}]}
+            run = Run('review-' + scene.id, scene.id, 'review', 'author', 'manual-review', '{}',
+                      json.dumps(snapshot), '{}', '', 'error', '{}', now(), '')
+            store.add_run(run)
+            store.finish_run(run.id, GenResult('{"recommendation":"pass"}', 'complete', {}, 'fixture', {}))
+        # Older clients did not record the writing branch on their runs.
+        changed = draft_for(store, scene.id, '旧客户端候选新稿')
+        head = current_head(store, 'candidate')
+        accept_batch(store, [proposal(store, head, changed, [])], head, 'candidate-only')
+    def check_current(draft_id: str, accepted: bool, branch: str) -> None:
+        item = next(row for row in app.project(client.db.get('novel'))['scenes'] if row['id'] == scene.id)
+        assert item['latest_draft_id'] == draft_id
+        node = next(child for parent in app.progress('novel')['tree'] for child in parent['children']
+                    if child.get('scene_id') == scene.id)
+        assert node['draft_id'] == draft_id and node['segments']['accept'] is accepted
+        assert app.quality('novel', scene.id)['draft_id'] == draft_id
+        workbench = studio.scene_workbench('project', scene.id, branch=branch)
+        assert workbench['latest_draft_id'] == draft_id
+        assert changed.id in {d['id'] for d in workbench['drafts']}  # explicit version comparison retains history
+        assert all(entry['delta']['branch_id'] == branch for entry in workbench['deltas'])
+
+    candidate = studio.save_manual_draft('project', scene.id, '候选分支里的未审改稿', branch='candidate')['draft']
+    check_current(candidate['id'], False, 'candidate')
+    app.select_branch('novel', {'branch_id': 'main'})
+    check_current(draft_id, True, 'main')
+    assert app.finish('novel')['status'] == 'DONE'
+    text, _ = app.export('novel')
+    assert '初始第 2 场' in text and '候选' not in text
+
+    if main_source == 'manual':
+        pending = studio.save_manual_draft('project', scene.id, '主线的待审稿')['draft']['id']
+    else:
+        with client.open_store(client.db.get('novel')) as store:
+            pending = draft_for(store, scene.id, '旧版创作的未归属草稿').id
+    studio.save_manual_draft('project', scene.id, '比主线更晚保存的候选稿', branch='candidate')
+    check_current(pending, False, 'main')
+    with pytest.raises(ValueError, match='较新草稿'):
+        app.finish('novel')
+
+
 def test_early_candidate_replacement_reports_downstream_scene(client: Client) -> None:
     client.fork_branch('novel', {'name': 'candidate'})
     with client.open_store(client.db.get('novel')) as store:
@@ -175,7 +262,7 @@ def test_existing_candidate_can_be_reopened(client: Client) -> None:
     assert len(result['branches']) == 2
 
 
-def test_real_next_chapter_plan_revise_write_and_explicit_promote(tmp_path: Path) -> None:
+def test_real_next_chapter_plan_revise_write_and_explicit_promote(tmp_path: Path, monkeypatch) -> None:
     """Exercise the actual planner/coordinator through chapter two in a test store."""
     import json
     from nw.config import Config
@@ -207,6 +294,9 @@ def test_real_next_chapter_plan_revise_write_and_explicit_promote(tmp_path: Path
             job = start_job(store, JobRequest(mode, branch_id=branch, scene_ids=[scene_id], budget=Budget(30, 64000, 4096)))
             outcome = resume_job(store, job.id, model, config)
             assert outcome.status == 'WAITING', outcome.reason
+            main_draft = store.accepted(scene_id)
+            if branch != 'main' and main_draft:
+                assert latest_branch_draft_id(store, scene_id, 'main', main_draft.draft_id) == main_draft.draft_id
             outcome = resume_job(store, job.id, model, config,
                                  lambda step, gate: {'action': 'accept', 'reason': '[FAKE] 核对冻结稿件及状态证据'})
             assert outcome.status == 'DONE', outcome.reason
@@ -227,6 +317,17 @@ def test_real_next_chapter_plan_revise_write_and_explicit_promote(tmp_path: Path
         run_scene('chapter-two', second_scene)
         assert store.accepted(first_scene).draft_id == original
         assert store.accepted(second_scene) is None
+    app = ProductionService(StudioService(client.workspace, config_path=client.workspace / 'missing.toml'),
+                            LibraryService(client.workspace), test_mode=True)
+    monkeypatch.setattr(app.studio, '_open_store', lambda name: Store(client.workspace / name, test_mode=True))
+
+    def scene_nodes() -> set[str]:
+        return {child['scene_id'] for node in app.progress('novel')['tree'] for child in node['children']
+                if child.get('scene_id')}
+    assert scene_nodes() == {first_scene, second_scene}
+    app.select_branch('novel', {'branch_id': 'main'})
+    assert scene_nodes() == {first_scene}
+    app.select_branch('novel', {'branch_id': 'chapter-two'})
     ready = client.branch_status('novel')
     assert ready['can_promote'], ready['blockers']
     result = client.promote_branch('novel', promote_body(client))

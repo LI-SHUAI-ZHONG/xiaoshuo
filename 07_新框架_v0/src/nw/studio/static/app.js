@@ -501,7 +501,7 @@
           </div>`).join("")
       : `<div class="muted small">暂无草稿。</div>`;
 
-    if (wb.drafts.length) $("deltaDraftId").value = wb.drafts[wb.drafts.length - 1].id;
+    $("deltaDraftId").value = wb.latest_draft_id || '';
     $("sceneDraftsList").querySelectorAll("[data-draft]").forEach(el => {
       el.addEventListener("click", () => { $("deltaDraftId").value = el.dataset.draft; });
     });

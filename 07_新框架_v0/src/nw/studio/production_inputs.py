@@ -1,6 +1,7 @@
 """Validate and freeze the author's wizard choices without inventing recommendations."""
 from typing import Any
 
+from nw.length_settings import length_fields, parse_length_changes, BRIEF_LENGTH
 from nw.materials.phase_routes import ORDER
 from nw.studio import catalog
 from nw.task_models import canonical
@@ -94,12 +95,11 @@ def freeze_wizard(body: dict, library: Any) -> dict:
         if configuration is None:
             raise ValueError('如需关闭制作方法，请先取消所选立项方法')
         wizard['production_methods'] = normalize(configuration, types=selected_types)
-    for field in ('target_words', 'chapter_count', 'volume_count'):
-        if raw.get(field) not in (None, ''):
-            value = int(raw[field])
-            if not 1 <= value <= 10000000:
-                raise ValueError(f'无效的篇幅: {field}')
-            wizard[field] = value
+    if 'auto_length' in raw:
+        if type(raw['auto_length']) is not bool:
+            raise ValueError('AI 篇幅设计选项必须为布尔值')
+        wizard['auto_length'] = raw['auto_length']
+    wizard.update(length_fields(parse_length_changes(raw)))
     return wizard
 
 
@@ -119,11 +119,17 @@ def governance(wizard: dict) -> dict:
             for stage in row.get('stages', row.get('stage', [])):
                 if stage in result:
                     result[stage].setdefault(name, []).append(row)
-    return {stage: {key: value for key, value in content.items() if value}
-            for stage, content in result.items() if any(content.values())}
+    filtered = {stage: {key: value for key, value in content.items() if value}
+                for stage, content in result.items() if any(content.values())}
+    length = length_fields(wizard)
+    if wizard.get('auto_length'):
+        filtered.setdefault('plot_design', {})['length_auto'] = True
+    if length or wizard.get('length_policy_updated') or wizard.get('auto_length'):
+        filtered.setdefault('plot_design', {})['length_policy'] = length
+    return filtered
 
 
 def brief_text(wizard: dict) -> str:
     choices = '\n'.join(f'{slot}: {"、".join(wizard[field]) or "由设计步骤提出方案"}' for slot, field in SLOTS.items())
-    return f"{wizard['idea']}\n\n作者偏好（不代替设计步骤与冻结产物）：\n{choices}\n\n立项参数：\n" + canonical({
-        key: wizard[key] for key in ('target_words', 'chapter_count', 'volume_count') if key in wizard})
+    return (f"{wizard['idea']}\n\n作者偏好（不代替设计步骤与冻结产物）：\n{choices}"
+            + BRIEF_LENGTH + canonical(length_fields(wizard)))

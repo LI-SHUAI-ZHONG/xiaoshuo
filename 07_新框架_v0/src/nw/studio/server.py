@@ -251,7 +251,8 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 if len(segs) == 5 and segs[0] == 'projects' and segs[2] == 'scenes':
                     proj, scene_id, act = segs[1], segs[3], segs[4]
                     if act == 'draft':
-                        return self._send_json(200, service.save_manual_draft(proj, scene_id, str(body['text'])))
+                        return self._send_json(200, service.save_manual_draft(
+                            proj, scene_id, str(body['text']), branch=str(body.get('branch', 'main'))))
                     if act == 'delta':
                         return self._send_json(200, service.save_manual_delta(proj, body))
                     if act == 'accept':

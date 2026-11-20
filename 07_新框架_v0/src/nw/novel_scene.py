@@ -3,20 +3,19 @@
 from dataclasses import asdict
 from typing import Callable
 
-from nw.call_budget import prepare_call, read_budget
+from nw.call_budget import BudgetExceeded, prepare_call, read_budget
 from nw.call_control import model_settings
 from nw.cards import eligible_rule_refs
 from nw.context.story import WRITE_PROMPT, StoryScope, build_story_context, scene_scope
-from nw.materials.action_review import (ACTION_ORDER_REASON, ACTION_REVIEW_PROMPT, check_material_acceptance,
-                                        review_result)
+from nw.materials.action_review import check_material_acceptance, review_result
 from nw.materials.binding import verify_materials
-from nw.materials.evidence import (PROMPT as MATERIAL_REVIEW_PROMPT, review_contract, scene_materials,
-                                   state_hypotheses)
-from nw.materials.network_layers import POLICY as NETWORK_LAYER_POLICY, REVIEW_INSTRUCTION as NETWORK_LAYER_REVIEW
-from nw.materials.stage_input import check_source_keys, step_material_prompt
+from nw.materials.evidence import review_contract, scene_materials, state_hypotheses
 from nw.materials.steps.review import MATERIAL as REVIEW_MATERIAL
 from nw.materials.steps.writing import MATERIAL as WRITING_MATERIAL
-from nw.models import Draft
+from nw.length_plan import scene_length_feedback
+from nw.models import Draft, Run
+from nw.scene_messages import REVIEW_PROMPT, REVISE_PROMPT, draft_messages
+from nw.scene_capacity import SceneCapacity
 from nw.novel_calls import JobCalls, call_id
 from nw.novel_store import JobPaused
 from nw.story_delta import (candidate_projection_digest, check_delta, draft_ref, manifest_refs, read_delta)
@@ -24,20 +23,21 @@ from nw.story_extract import freeze_delta_input, prepare_delta
 from nw.story_models import CardRef, StateDelta
 from nw.task_models import InputManifest, TaskRequest, TaskResult, canonical, content_sha256
 
-REVIEW_PROMPT = (
-    '审查本场与约束、场景目标、POV所知和前文的一致性。只输出 JSON '
-    '{"recommendation":"pass或revise","notes":"具体意见","core_changes":[]}。'
-    '只有影响核心人物目标、世界规则、重要生死、视角形式或终局承诺的变化才填入 core_changes。'
-)
-REVISE_PROMPT = (
-    '根据冻结的工作包、旧稿和审稿意见修订本场。保持作者已确认的设定与披露边界，只输出完整修订正文。'
-)
 CORE_PREDICATES = frozenset({'core_goal', 'protagonist_goal', 'world_rule', 'pov', 'ending', 'ending_promise',
                             'alive', 'death', 'life_status', '生死', '核心目标', '世界规则', '终局承诺', '视角'})
 
 
 def _settings(calls: JobCalls, prompt_version: str, messages: list[dict]) -> dict:
-    params, _ = prepare_call(calls.journal.store, calls.journal.id, calls.provider.name, calls.config.params, messages)
+    try:
+        params, _ = prepare_call(calls.journal.store, calls.journal.id, calls.provider.name, calls.config.params, messages,
+                                 context_window_tokens=getattr(calls.config, 'context_window_tokens', None))
+    except BudgetExceeded as exc:
+        stage = {'novel-review-v1': '审稿', 'novel-revise-v1': '修订', 'story-write-v1': '写作'}.get(
+            prompt_version, prompt_version)
+        chars = sum(len(message['content']) for message in messages)
+        limit = read_budget(calls.journal.store, calls.journal.id).context_char_limit
+        raise BudgetExceeded(f'{exc}。{stage}实际输入 {chars} 字符，任务上限 {limit}，模型 {calls.config.model}。'
+                             '请拆分场景或在核对窗口后调整预算。') from exc
     return model_settings(calls.provider, calls.config.model, params, prompt_version)
 
 
@@ -51,7 +51,11 @@ def _inputs(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...]) -> 
         scope = (StoryScope(j.head.branch_id, j.head.revision, **explicit) if explicit
                  else scene_scope(j.store, scene, j.head.branch_id))
         limit = read_budget(j.store, j.id).context_char_limit
-        work = build_story_context(j.store, scene, scope, limit, candidate_refs=chain, base_prompt=WRITE_PROMPT)
+        capacity = SceneCapacity(calls, scene, chain)
+        work = build_story_context(j.store, scene, scope, limit, candidate_refs=chain, base_prompt=WRITE_PROMPT,
+                                   validate_capacity=capacity.check)
+        capacity_report = capacity.check(work.prompt, work.package, set(work.writing_source_keys))
+        capacity_report['omitted_optional_groups'] = list(work.omitted_optional_groups)
         digest = candidate_projection_digest(j.store, j.head, chain, scene) if chain else None
         messages = [{'role': 'system', 'content': work.prompt}, {'role': 'user', 'content': canonical(work.package)}]
         write_calls = calls.for_stage('write')
@@ -64,7 +68,7 @@ def _inputs(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...]) -> 
             selection=work.selection, novel_job_id=j.id, material_design_sha256=work.material_design_sha256)
         row = j.reserve(key, {'package': work.package, 'manifest': asdict(manifest), 'messages': messages,
                               'writing_material': WRITING_MATERIAL, 'review_material': REVIEW_MATERIAL,
-                              'writing_source_keys': list(work.writing_source_keys)})
+                              'writing_source_keys': list(work.writing_source_keys), 'capacity_preflight': capacity_report})
     frozen = row['input']
     manifest = frozen['manifest']
     if manifest['candidate_delta_refs'] != [list(ref) for ref in chain] or (
@@ -95,42 +99,11 @@ def _verify_context(calls: JobCalls, key: str, scene: str, manifest: dict) -> No
 
 
 def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, review: dict | None,
-                 *, contract: dict | None = None) -> dict:
+                 *, contract: dict | None = None, length_feedback: list[str] | None = None) -> dict:
     package = frozen['package']
-    data = {'context': package, 'draft': asdict(draft)}
-    if review is not None:
-        checks = review.get('material_checks', ())
-        # The independent reviewer can see author-only design and earlier chapter prose.
-        if checks:
-            ordered_actions_failed = any(check.get('reason') == ACTION_ORDER_REASON for check in checks)
-            visible_checks = []
-            for check in checks:
-                status = check['status']
-                if status == 'pass' and check['id'].startswith('work:layer:'):
-                    status = check['layer_check']['status']
-                visible_checks.append({'id': check['id'], 'status': status})
-            data['review'] = {
-                'recommendation': review.get('recommendation'),
-                'notes': (ACTION_ORDER_REASON if ordered_actions_failed else
-                          '在现有披露范围内，复核写作包中的检查点和场景叙述。'),
-                'material_checks': visible_checks,
-            }
-        else:
-            data['review'] = review
-    prompt, version = (REVIEW_PROMPT, 'novel-review-v1') if purpose == 'review' else (REVISE_PROMPT, 'novel-revise-v1')
     material = frozen.get('review_material' if purpose == 'review' else 'writing_material', '')
-    appended = ''
-    if contract is not None:
-        data['material_review'] = contract
-        appended = ' ' + MATERIAL_REVIEW_PROMPT
-        if any('action_order' in check for check in contract['checks']):
-            appended += ' ' + ACTION_REVIEW_PROMPT
-        if any(check.get('layer_contract', {}).get('policy') == NETWORK_LAYER_POLICY for check in contract['checks']):
-            appended += ' ' + NETWORK_LAYER_REVIEW
-    keys = check_source_keys(contract['checks']) if contract else frozen.get('writing_source_keys', ())
-    body = canonical(data)
-    prompt = step_material_prompt(prompt, material, keys)
-    messages = [{'role': 'system', 'content': prompt+appended}, {'role': 'user', 'content': body}]
+    messages, version = draft_messages(package, purpose, draft, review, contract, material,
+                                       frozen.get('writing_source_keys', ()), length_feedback)
     dependencies = [*frozen['manifest']['dependency_refs'], asdict(draft_ref(draft))]
     if contract and 'comparison' in contract and contract['comparison']['ref'] not in dependencies:
         dependencies.append(contract['comparison']['ref'])
@@ -202,19 +175,30 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
         else:
             _, draft, _ = calls.for_stage('revise').run(
                 f'{prefix}:revise:{round_no}', scene,
-                lambda: _draft_input(calls, frozen, 'revise', draft, review or {}), verify=verify)
+                lambda: _draft_input(calls, frozen, 'revise', draft, review or {},
+                                     length_feedback=(review or {}).get('length_feedback')), verify=verify)
+        length_feedback = scene_length_feedback(j.store, scene, frozen['manifest'], draft.text)
         contract, comparison = review_contract(j.store, draft, frozen['manifest'])
+        def assess(run: Run) -> dict:
+            result = review_result(run, contract, draft, comparison)
+            if length_feedback:
+                result.update(recommendation='revise', length_feedback=length_feedback)
+            return result
+
         review_run, _, review = calls.for_stage('review').run(
             f'{prefix}:review:{round_no}', scene,
-            lambda: _draft_input(calls, frozen, 'review', draft, None, contract=contract),
-            lambda run: review_result(run, contract, draft, comparison), verify=verify)
+            lambda: _draft_input(calls, frozen, 'review', draft, None, contract=contract, length_feedback=length_feedback),
+            assess, verify=verify)
         if review['core_changes']:
             _core_gate(calls, decide, f'{prefix}:core:{round_no}',
                        {'scene_id': scene, 'draft': asdict(draft_ref(draft)), 'review': review})
         if review['recommendation'] == 'pass':
             break
-        if round_no == max_revisions:
+        if round_no >= max_revisions:
             key = f'{prefix}:review-limit'
+            if length_feedback:
+                raise JobPaused('BLOCKED', key, '篇幅偏差：' + '；'.join(length_feedback),
+                                draft_id=draft.id, length_feedback=length_feedback)
             if contract:
                 raise JobPaused('BLOCKED', key, 'MATERIAL_EVIDENCE: the current draft requires a passing review',
                                 draft_id=draft.id, material_checks=review['material_checks'])

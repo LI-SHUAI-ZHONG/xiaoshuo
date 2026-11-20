@@ -28,6 +28,13 @@ class Config:
     workspace: Path
     source_driven: bool = True
     stage_models: dict[str, dict] = field(default_factory=dict)
+    context_window_tokens: int | None = None
+
+
+def model_window(value: object) -> int | None:
+    if value is not None and (type(value) is not int or value < 1):
+        raise ValueError('模型上下文窗口须为正整数 token 数')
+    return value
 
 
 def _validate_endpoint(provider: str, url: str, model: str, key_env: str, timeout: float, params: dict) -> dict:
@@ -72,7 +79,7 @@ def load_config(path: Path) -> Config:
     data = _read_toml(path)
     try:
         cfg = data['model']
-        if set(cfg) - {'provider', 'base_url', 'model', 'api_key_env', 'timeout'}:
+        if set(cfg) - {'provider', 'base_url', 'model', 'api_key_env', 'timeout', 'context_window_tokens'}:
             raise ValueError()
         base = _validate_endpoint(
             cfg['provider'], cfg['base_url'], cfg['model'],
@@ -95,22 +102,25 @@ def load_config(path: Path) -> Config:
                     base['provider'], base['base_url'], spec, base['api_key_env'], base['timeout'], base['params'],
                 )
             elif isinstance(spec, dict):
-                if set(spec) - {'provider', 'base_url', 'model', 'api_key_env', 'timeout', 'params'}:
+                if set(spec) - {'provider', 'base_url', 'model', 'api_key_env', 'timeout', 'params', 'context_window_tokens'}:
                     raise ValueError()
                 sp_prov = spec.get('provider', base['provider'])
                 sp_params = spec.get('params', base['params'] if sp_prov == base['provider'] else {})
                 stage_models[stage_name] = _validate_endpoint(
                     sp_prov,
                     spec.get('base_url', base['base_url']),
-                    spec['model'],
+                    spec.get('model', base['model']) if 'context_window_tokens' in spec else spec['model'],
                     spec.get('api_key_env', base['api_key_env'] if sp_prov == base['provider'] else ''),
                     float(spec.get('timeout', base['timeout'])),
                     sp_params,
                 )
+                if 'context_window_tokens' in spec:
+                    stage_models[stage_name]['context_window_tokens'] = model_window(spec['context_window_tokens'])
             else:
                 raise ValueError()
         return Config(base['provider'], base['base_url'], base['model'], base['api_key_env'],
-                      base['timeout'], base['params'], workspace, workflow.get('source_driven', True), stage_models)
+                      base['timeout'], base['params'], workspace, workflow.get('source_driven', True), stage_models,
+                      model_window(cfg.get('context_window_tokens')))
     except (KeyError, TypeError, ValueError, AttributeError):
         raise ConfigRequired('Set valid model.provider, base_url, model, api_key_env (compatible API), timeout and supported params; never put keys in TOML') from None
 
@@ -120,6 +130,8 @@ def resolve_stage_runtime(config: Config, default_provider: LLMProvider, stage: 
     spec = config.stage_models.get(stage)
     if not spec or default_provider.name == 'fake':
         return config, default_provider
+    same_model = (spec['provider'], spec['base_url'], spec['model']) == (
+        config.provider, config.base_url, config.model)
     stage_cfg = replace(
         config,
         provider=spec['provider'],
@@ -128,6 +140,7 @@ def resolve_stage_runtime(config: Config, default_provider: LLMProvider, stage: 
         api_key_env=spec['api_key_env'],
         timeout=spec['timeout'],
         params=dict(spec['params']),
+        context_window_tokens=spec.get('context_window_tokens', config.context_window_tokens if same_model else None),
     )
     if (stage_cfg.provider == config.provider and stage_cfg.base_url == config.base_url
             and stage_cfg.api_key_env == config.api_key_env and stage_cfg.timeout == config.timeout):

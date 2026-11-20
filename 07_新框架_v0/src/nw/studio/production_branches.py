@@ -16,6 +16,33 @@ from nw.story_state import (baseline_for, branch_row, current_head, fork_story,
                             replay, revision_state, selected_operations)
 
 
+def latest_branch_draft_id(store: object, scene_id: str, branch: str, accepted_id: str | None) -> str | None:
+    """Keep inherited accepted prose until a later draft belongs to this branch."""
+    versions = store.connection.execute("""
+        SELECT d.id, COALESCE(json_extract(m.payload_json, '$.branch_id'),
+            CASE WHEN r.provider = 'author' AND json_extract(r.input_snapshot_json, '$.source') = 'studio_manual_author'
+                 THEN json_extract(r.input_snapshot_json, '$.branch_id') END) AS branch_id
+        FROM drafts d JOIN runs r ON r.id = d.run_id
+        LEFT JOIN input_manifests m ON m.id = json_extract(r.input_snapshot_json, '$.manifest_id')
+            AND json_extract(m.payload_json, '$.purpose') = r.kind
+        WHERE d.scene_id = ? AND d.version > COALESCE((SELECT version FROM drafts WHERE id = ?), 0)
+        ORDER BY d.version DESC
+        """, (scene_id, accepted_id))
+    for draft in versions:
+        if draft['branch_id']:
+            if draft['branch_id'] == branch:
+                return draft['id']
+            continue
+        # Unattributed historical drafts default to main unless commits prove their branch.
+        branches = {row[0] for row in store.connection.execute("""
+            SELECT DISTINCT c.branch_id FROM story_commits c, json_each(c.state_json, '$.slots') slot
+            WHERE slot.key = ? AND json_extract(slot.value, '$.draft_id') = ?
+            """, (scene_id, draft['id']))}
+        if branch in (branches or {'main'}):
+            return draft['id']
+    return accepted_id
+
+
 def _promotion_preview(store: object, main: StateHead, candidate: StateHead) -> dict:
     """Read-only checks mirror core preconditions; core remains authoritative."""
     old, new = revision_state(store, main), revision_state(store, candidate)

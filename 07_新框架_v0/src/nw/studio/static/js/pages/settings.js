@@ -13,7 +13,7 @@ export async function render(ctx){
   const stored=current.model&&typeof current.model==='object'?current.model:current;
   const model=stored.provider==='openai_compat'?stored:{};
   const configured=Boolean(config.valid&&stored.provider==='openai_compat');
-  const staged=stored.provider==='openai_compat'?current.stage_models||{}:{};
+  const staged=stored.provider==='openai_compat'?(current.stage_overrides??current.stage_models??{}):{};
   const apiKeyEnv=model.api_key_env||'NW_API_KEY';
   ctx.sidebar('设置',[['settings','通用 API','settings'],['settings?section=appearance','外观与工作空间','sun'],['settings?section=cache','小说存储与缓存','inbox']],
     '<strong>使用通用 OpenAI 兼容接口</strong>填写服务地址、模型名称和密钥环境变量名。设计、写作和审稿默认共用此接口。');
@@ -29,15 +29,19 @@ export async function render(ctx){
           <label class="field"><span>模型名称</span><input id="modelName" required value="${esc(model.model||'')}" placeholder="填写服务商提供的实际模型名称" autocomplete="off"></label>
           <label class="field"><span>API Key 环境变量名称</span><input id="apiKeyEnv" required pattern="[A-Za-z_][A-Za-z0-9_]*" value="${esc(apiKeyEnv)}" placeholder="例如 NW_API_KEY" autocomplete="off"><small class="muted">这里填写保存密钥的变量名，密钥从环境变量读取。</small></label>
           <label class="field"><span>调用超时（秒）</span><input id="modelTimeout" type="number" min="1" max="3600" required value="${Number(model.timeout||120)}"></label>
+          <label class="field"><span>模型上下文窗口（token）</span><input id="contextWindowTokens" type="number" min="1" step="1" value="${esc(model.context_window_tokens??'')}" placeholder="按服务商标注容量填写">
+            <small class="muted">选填。制作会按 token 估算输入、预留输出，并按字符数检查工作包。</small></label>
           <div class="field"><span>密钥变量状态</span><span class="tag" id="keyEnvStatus"></span><small class="muted">设置环境变量后，重新启动客户端使服务进程读取新值。</small></div>
         </div>
       </section>
       <details class="settings-section" id="stageModelSettings"><summary>分步骤模型（选填）</summary>
-        <p class="muted" style="margin:16px 0">留空使用上面的默认模型。可为设计、写作和审稿填写同一 API 支持的其他模型。</p>
+        <p class="muted" style="margin:16px 0">可单独指定模型或窗口。同一服务和模型可以共用通用窗口。改用其他模型时，请填写对应容量，留空时按输入字符预算检查。</p>
         <div class="form-grid">${[...(config.design_stages||[]),...(config.runtime_stages||[])].map(s=>{
           const spec=staged[s.stage];
           const value=typeof spec==='string'?spec:(!spec?.provider||spec.provider==='openai_compat'?spec?.model||'':'');
-          return `<label class="field"><span>${esc(s.zh||s.label||s.stage)}</span><input data-stage-model="${esc(s.stage)}" value="${esc(value)}" placeholder="跟随默认模型"></label>`;
+          const title=esc(s.zh||s.label||s.stage), stage=esc(s.stage);
+          return `<label class="field"><span>${title} · 模型</span><input data-stage-model="${stage}" value="${esc(value)}" placeholder="跟随默认模型"></label>
+            <label class="field"><span>${title} · 窗口（token）</span><input type="number" min="1" step="1" data-stage-window="${stage}" value="${esc(spec?.context_window_tokens??'')}"></label>`;
         }).join('')}</div>
       </details>
       <section class="settings-section" id="appearance"><h3>外观与工作空间</h3><div class="form-grid">
@@ -53,17 +57,35 @@ export async function render(ctx){
     $('#keyEnvStatus').classList.toggle('green',present===true);
   }
   function payload(){
-    const stage_models={};
+    const stage_models={...staged};
     $$('[data-stage-model]').forEach(el=>{
-      if(!el.value.trim())return;
-      const old=staged[el.dataset.stageModel];
-      const compatible=typeof old==='object'&&(!old.provider||old.provider==='openai_compat')?old:{};
-      stage_models[el.dataset.stageModel]={...compatible,model:el.value.trim()};
+      const stage=el.dataset.stageModel, old=staged[stage];
+      const spec=typeof old==='object'&&old&&(!old.provider||old.provider==='openai_compat')?{...old}:{};
+      const window=document.querySelector(`[data-stage-window="${CSS.escape(stage)}"]`).value;
+      if(el.value.trim())spec.model=el.value.trim();else delete spec.model;
+      if(window)spec.context_window_tokens=Number(window);else delete spec.context_window_tokens;
+      if(Object.keys(spec).length)stage_models[stage]=spec;else delete stage_models[stage];
     });
-    return {model:{provider:'openai_compat',base_url:$('#modelBaseUrl').value.trim(),model:$('#modelName').value.trim(),api_key_env:$('#apiKeyEnv').value.trim(),timeout:Number($('#modelTimeout').value)},
+    const window=$('#contextWindowTokens').value;
+    return {model:{provider:'openai_compat',base_url:$('#modelBaseUrl').value.trim(),model:$('#modelName').value.trim(),api_key_env:$('#apiKeyEnv').value.trim(),timeout:Number($('#modelTimeout').value),...(window?{context_window_tokens:Number(window)}:{})},
       params:Object.fromEntries(Object.entries(current.params||{}).filter(([key])=>API_PARAMS.has(key))),stage_models,
       source_driven:current.source_driven??current.workflow?.source_driven??true};
   }
+  const normalizeUrl = url => (url || '').trim().replace(/\/+$/, '');
+  function showWindowSource(){
+    const common = $('#modelName').value.trim(), url = normalizeUrl($('#modelBaseUrl').value);
+    $$('[data-stage-model]').forEach(el => {
+      const stage = el.dataset.stageModel, spec = staged[stage];
+      const sameModel = !el.value.trim() || el.value.trim() === common;
+      const sameService = (!spec?.provider || spec.provider === 'openai_compat')
+        && (!spec?.base_url || normalizeUrl(spec.base_url) === url);
+      const field = document.querySelector(`[data-stage-window="${CSS.escape(stage)}"]`);
+      field.placeholder = sameService && sameModel && $('#contextWindowTokens').value
+        ? '沿用通用窗口' : '未知，按字符预算检查';
+    });
+  }
+  $$('#modelName,#modelBaseUrl,#contextWindowTokens,[data-stage-model]').forEach(el => el.addEventListener('input',showWindowSource));
+  showWindowSource();
   $('#apiKeyEnv').oninput=keyStatus;keyStatus();
   $('#appearanceTheme').onchange=e=>{persist({theme:e.target.value});document.documentElement.dataset.theme=e.target.value;};
   $('#previewConfig').onclick=e=>{

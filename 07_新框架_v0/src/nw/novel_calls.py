@@ -53,6 +53,7 @@ class JobCalls:
             run, draft = call_model(j.store, scene_id, self.provider, self.config.model, self.config.params,
                                     manifest.purpose, frozen['messages'], frozen['package'], ident,
                                     budget_id=j.id, story_manifest=manifest,
+                                    context_window_tokens=getattr(self.config, 'context_window_tokens', None),
                                     before_reserve=verify or (lambda: j.check_active(key)))
         except BudgetExceeded as exc:
             raise self._blocked(key, str(exc)) from exc

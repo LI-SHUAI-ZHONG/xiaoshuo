@@ -145,6 +145,13 @@ def _accept_in_transaction(store: Store, requests: list[AcceptanceRequest], head
     for scene_id, delta in deltas.items():
         _check_settings_for_delta(store, snapshot, delta)
         snapshot['slots'][scene_id] = {'draft_id': delta.draft_id, 'delta_id': delta.id}
+    from nw.length_plan import approved_length_budgets, draft_feedback
+    budgets = approved_length_budgets(store, snapshot)
+    for scene_id, delta in deltas.items():
+        if budgets['scenes'] or budgets['chapters']:
+            issues = draft_feedback(store, scene_id, snapshot, store.get('draft', delta.draft_id).text, budgets)
+            if issues:
+                raise ValueError('WORD_BUDGET: ' + '；'.join(issues))
     order = _topological(_snapshot_dependencies(store, snapshot))
     if head.branch_id == 'main':
         affected = promotion_impacts(store, before, snapshot)

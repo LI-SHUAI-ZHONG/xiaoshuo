@@ -8,6 +8,8 @@ import re
 from tempfile import NamedTemporaryFile
 from typing import Any
 
+from nw.length_plan import count_words
+from nw.length_settings import saved_brief_length
 from nw.materials.phase_routes import phase_order
 from nw.materials.step_guard import build_continuity_ledger
 from nw.novel_store import show_job
@@ -49,6 +51,10 @@ class ProductionViews:
             wizard = {field: [] for field in SLOTS.values()}
             wizard.update(title=project['name'], idea=(project.get('latest_brief') or {}).get('text', ''),
                           constraints='', choices=[], author_references=[], upgrade_snapshot={'items': []}, imported=True)
+            try:
+                wizard.update(saved_brief_length(wizard['idea']))
+            except ValueError:
+                pass  # Handwritten legacy Briefs can contain free-form length preferences.
             if not self.db.add(project['id'], project['dir_name'], project['name'], wizard):
                 continue
             jobs = self.studio.project_overview(project['dir_name']).get('jobs', [])
@@ -106,8 +112,8 @@ class ProductionViews:
             words = 0
             for scene in project['scenes']:
                 draft_id = scene['accepted_draft_id'] or scene['latest_draft_id']
-                if draft_id:
-                    words += sum(not char.isspace() for char in store.get('draft', draft_id).text)
+                if draft_id and scene['in_branch_manuscript']:
+                    words += count_words(store.get('draft', draft_id).text)
         tree = []
         for job_row in reversed(project['jobs']):
             request = job_requests.get(job_row['id'], {})
@@ -134,7 +140,11 @@ class ProductionViews:
                              'scope': node_scope, 'status': 'done' if applied else job_row['status'].lower(), 'children': stage_nodes})
         for chapter in project['chapters']:
             children = []
-            for scene in (row for row in project['scenes'] if row['chapter_id'] == chapter['id']):
+            chapter_scenes = [row for row in project['scenes'] if row['chapter_id'] == chapter['id']]
+            visible_scenes = [row for row in chapter_scenes if row['in_branch_workbench']]
+            if chapter_scenes and not visible_scenes:
+                continue
+            for scene in visible_scenes:
                 review = reviews.get(scene['id'])
                 reviewed = bool(review and review['result'].get('recommendation') == 'pass')
                 accepted_current = bool(scene['accepted_draft_id'] and
@@ -166,6 +176,7 @@ class ProductionViews:
             logs.sort(key=lambda row: row['ts'])
         return {'novel_id': ident, 'status': runtime, 'novel_status': novel['status'], 'job': job,
                 'branch_id': novel.get('current_branch', 'main'),
+                'main_revision': next((row['head_revision'] for row in project['branches'] if row['id'] == 'main'), None),
                 'current_step': current_step, 'progress': percentage, 'tree': tree,
                 'gates': self.gates(ident)['gates'], 'words': words, 'connection': True,
                 'reason': novel['reason'] or (job.get('reason') if job else None),
@@ -228,8 +239,8 @@ class ProductionViews:
     def quality(self, ident: str, scene: str = '') -> dict:
         novel = self.db.get(ident)
         project = self.project(novel)
-        if not scene and project['scenes']:
-            scene = project['scenes'][0]['id']
+        if not scene:
+            scene = next((row['id'] for row in project['scenes'] if row['in_branch_workbench']), '')
         result = {'scene_id': scene or None, 'review': None, 'guards': [], 'materials': [], 'metrics': {}}
         with self.open_store(novel) as store:
             phases = self._phase_rows(store)
@@ -257,13 +268,15 @@ class ProductionViews:
                 store.get('scene', scene)
                 runs = [run for run in store.list('run') if run.scene_id == scene]
                 drafts = store.drafts(scene)
-                review = self.review_for_draft(store, scene, drafts[-1].id) if drafts else None
+                draft_id = next(row['latest_draft_id'] for row in project['scenes'] if row['id'] == scene)
+                review = self.review_for_draft(store, scene, draft_id) if draft_id else None
                 if review:
-                    result['review'] = {**review['result'], 'draft_id': drafts[-1].id, 'run_id': review['run_id']}
+                    result['review'] = {**review['result'], 'draft_id': draft_id, 'run_id': review['run_id']}
                     result['materials'] = review['result'].get('material_checks', [])
-                result['draft_id'] = drafts[-1].id if drafts else None
+                result['draft_id'] = draft_id
                 result['metrics'] = {'draft_versions': len(drafts), 'review_rounds': sum(run.kind == 'review' for run in runs),
-                                     'words': len(drafts[-1].text) if drafts else 0, 'model_calls': sum(run.provider != 'author' for run in runs)}
+                                     'words': count_words(store.get('draft', draft_id).text) if draft_id else 0,
+                                     'model_calls': sum(run.provider != 'author' for run in runs)}
         return result
 
     @staticmethod
@@ -318,7 +331,7 @@ class ProductionViews:
         count = 0
         for chapter in chapters:
             texts = [store.get('draft', scene['accepted_draft_id']).text for scene in scenes
-                     if scene['chapter_id'] == chapter['id'] and scene['accepted_draft_id']]
+                     if scene['chapter_id'] == chapter['id'] and scene['in_branch_manuscript'] and scene['accepted_draft_id']]
             if texts:
                 count += len(texts)
                 lines.extend([('## ' if fmt == 'md' else '') + f"第{chapter['index']}章 {chapter['title']}", '', '\n\n'.join(texts), ''])

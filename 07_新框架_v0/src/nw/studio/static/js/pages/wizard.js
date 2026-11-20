@@ -4,6 +4,7 @@ import {STEPS, stepsBar, WizardStep, OptionCard, slotName} from '../components/W
 import {RecCard} from '../components/RecCard.js';
 import {wizardMethods} from './project-methods.js';
 import {methodChoices, methodRecommendations} from './wizard-methods.js';
+import {lengthFields, lengthSummary, readLengthFields} from '../components/LengthPlan.js';
 
 const fields = {tone:'tone_ids', style:'style_ids', narration:'narration_ids', world:'world_ids',
   character:'character_ids', structure:'structure_ids', hook:'mechanism_ids'};
@@ -16,7 +17,7 @@ export async function openWizard(prefill) {
   const chosen = {};
   let step = prefill ? 1 : 0, revision = 0, selectedMain = '', selectedSub = '';
   let secondary = [], genres = [], combinations = [], rec = [], options = [], methods = [], currentVersions = {};
-  let title = '', idea = '', constraints = '', targetWords = '', chapterCount = '', volumeCount = '', useMethods = false;
+  let title = '', idea = '', constraints = '', lengthPlan = {}, useMethods = false;
 
   const alive = () => token === session && dialog.open;
   const types = () => [selectedMain, selectedSub, ...secondary].filter(Boolean);
@@ -52,7 +53,20 @@ export async function openWizard(prefill) {
       ${step ? '<button class="secondary" id="wizardPrev">上一步</button>' : '<button class="secondary" data-close-modal>取消</button>'}
       ${step > 0 && step < 8 ? '<button class="ghost" id="wizardSkip">跳过此步</button>' : ''}
       <button class="button" id="wizardNext" ${disabled ? 'disabled' : ''}>${last ? '开始制作' : `下一步：${STEPS[step + 1].name}`} ${icon(last ? 'play' : 'arrow')}</button>`;
-    const move = delta => { capture(); step += delta; repainted(); };
+    const move = delta => {
+      if (step === 6 && delta > 0) {
+        const invalid = $('#modalBody [data-length-field]:invalid,#modalBody [data-budget-field]:invalid');
+        if (invalid) {
+          const group = invalid.closest('details');
+          if (group) group.open = true;
+          invalid.reportValidity();
+          return;
+        }
+      }
+      capture();
+      step += delta;
+      repainted();
+    };
     $('#wizardPrev')?.addEventListener('click', () => move(-1));
     $('#wizardSkip')?.addEventListener('click', () => move(1));
     $('#wizardNext').onclick = last ? () => { capture(); submit(); } : () => move(1);
@@ -66,9 +80,7 @@ export async function openWizard(prefill) {
       useMethods = $('#wizardUseMethods').checked;
     }
     if (step === 6 && $('#targetWords')) {
-      targetWords = $('#targetWords').value;
-      chapterCount = $('#chapterCount').value;
-      volumeCount = $('#volumeCount').value;
+      lengthPlan = readLengthFields($('#modalBody'));
     }
   }
 
@@ -220,12 +232,10 @@ export async function openWizard(prefill) {
   function paintOptions() {
     const {slot, name} = STEPS[step];
     $('#modalBody').innerHTML = stepsBar(step) + WizardStep({name, description:`基于 ${names()}`,
-      methods:libraryPanel(), recommendations:rec, options, selected:selections(slot)}) + (slot === 'structure' ? `
-      <div class="section-head"><h3>篇幅计划</h3></div><div class="form-grid">
-        <label class="field"><span>目标总字数</span><input id="targetWords" type="number" min="1" value="${esc(targetWords)}"></label>
-        <label class="field"><span>计划章节数</span><input id="chapterCount" type="number" min="1" value="${esc(chapterCount)}"></label>
-        <label class="field"><span>计划卷数</span><input id="volumeCount" type="number" min="1" value="${esc(volumeCount)}"></label>
-      </div>` : '');
+      lengthPlan:slot === 'structure' ? `<section aria-label="篇幅计划"><h3>篇幅计划</h3>
+        <p class="muted">可只填总字数，也可留空由 AI 按类型和剧情规划全书与章场篇幅。完稿时核对主稿已接受字数。</p>
+        ${lengthFields(lengthPlan)}</section>` : '',
+      methods:libraryPanel(), recommendations:rec, options, selected:selections(slot)});
     bindLegacy(slot);
     $$('#modalBody [data-option]').forEach(button => button.onclick = () => {
       capture();
@@ -264,7 +274,7 @@ export async function openWizard(prefill) {
     const summary = STEPS.slice(1, 8).map(({name, slot}) => `<dt>${name}</dt><dd>${esc(selections(slot).map(key => known.get(key)?.name || key).join('、') || '由设计阶段展开')}</dd>`).join('');
     $('#modalBody').innerHTML = stepsBar(8) + `<div class="wizard-confirm"><h2>确认立项卡</h2>
       <div class="card"><dl class="selection-summary"><dt>类型</dt><dd>${esc(names())}</dd>${summary}
-        ${chapterCount ? `<dt>计划篇幅</dt><dd>${esc(chapterCount)} 章${targetWords ? ` · ${esc(targetWords)} 字` : ''}</dd>` : ''}</dl></div>
+        ${!lengthPlan.target_words ? '<dt>全书篇幅</dt><dd>由 AI 在书纲中提出</dd>' : ''}${lengthSummary(lengthPlan)}</dl></div>
       ${methodChoices(selectedMethods, currentVersions)}
       ${selectedMethods.size ? '<button type="button" class="secondary" data-refresh-wizard-methods>刷新所选方法的版本</button>' : ''}
       <div class="divider"></div><div class="stack">
@@ -283,9 +293,8 @@ export async function openWizard(prefill) {
       production_methods:useMethods ? {world_selection:'ai'} : {world_selection:'ai', tasks:['world_rules']},
       method_preferences:[...selectedMethods.values()].map(({id, version, slot}) => ({id, version, slot})),
       choices:types().map(id => ({slot:'genre', option_key:'genre.' + id, ...recMeta.get('genre.' + id)})),
-      target_words:targetWords ? Number(targetWords) : undefined,
-      chapter_count:chapterCount ? Number(chapterCount) : undefined,
-      volume_count:volumeCount ? Number(volumeCount) : undefined,
+      auto_length:true,
+      ...Object.fromEntries(Object.entries(lengthPlan).filter(([,value]) => value != null)),
     };
     for (const [slot, field] of Object.entries(fields)) {
       payload[field] = selections(slot);
