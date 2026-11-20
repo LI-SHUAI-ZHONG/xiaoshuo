@@ -153,6 +153,11 @@ def early_waiting(stage: str, authored: dict, rules: dict, products: dict, conte
             if decision is not None:
                 continue
             reason = '等待' + '、'.join(missing)
+        elif stage == 'world_design' and _world_network_active(context):
+            decision, missing = world_network_decision(ident, rule['key'], rule['valid_types'], products, context)
+            if decision is not None:
+                continue
+            reason = '等待' + '、'.join(missing)
         elif not basis or basis['state'] != 'design_ready':
             reason = '缺少具有制作资格的唯一静网依据'
         elif stage == 'static_relations':
@@ -179,6 +184,23 @@ def _type_network_decision(ident: str, rule: dict, products: dict, context: dict
     if ident not in context.get('type_network_bases', {}):
         return None, ['具有制作资格且可核对的本步静网原条']
     return availability(rule['key'], rule['valid_types'], products, context)
+
+
+def _world_network_active(context: dict) -> bool:
+    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
+
+    return context.get('world_network_policy') == WORLD_NETWORK_POLICY
+
+
+def world_network_decision(ident: str, key: str, valid_types: object,
+                           products: dict, context: dict) -> tuple[dict | None, list[str]]:
+    from nw.materials.world_network import RULES, availability
+
+    if key not in RULES:
+        return None, ['逐条核对的世界设计前置']
+    if ident not in context.get('world_network_bases', {}):
+        return None, ['具有制作资格且可核对的本步静网原条']
+    return availability(key, valid_types, products, context)
 
 
 def _static_inputs(rules: dict, authored: dict, scope: dict, bound: dict, rows: dict) -> dict[str, str]:
@@ -217,6 +239,10 @@ def step_sources(stage: str, authored: dict, rules: dict, products: dict, contex
             pool[ident] = use
         elif stage == 'type_adaptation' and _type_network_active(context):
             decision, _ = _type_network_decision(ident, rule, products, context)
+            if decision is not None:
+                pool[ident] = use
+        elif stage == 'world_design' and _world_network_active(context):
+            decision, _ = world_network_decision(ident, rule['key'], rule['valid_types'], products, context)
             if decision is not None:
                 pool[ident] = use
     if stage == 'static_relations' and context.get('early_network_policy') == EARLY_POLICY:

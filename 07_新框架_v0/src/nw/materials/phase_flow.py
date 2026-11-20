@@ -1078,9 +1078,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.materials.phase_lifecycle import CANDIDATE_SELECTION
     from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY, scene_source_placements
     from nw.materials.scene_actions import MULTI_ACTION_POLICY
-    from nw.materials.network_workflow import EARLY_POLICY, early_waiting, prepared_static_source, same_stage_rules, step_sources
+    from nw.materials.network_workflow import (EARLY_POLICY, early_waiting, prepared_static_source,
+        same_stage_rules, step_sources, world_network_decision)
     from nw.materials.semantic_products import dynamic_rejection
     from nw.materials.type_network import FIELD_LABELS, POLICY as TYPE_NETWORK_POLICY, availability
+    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
     scoped_sources = context.get('scene_source_binding_policy') == SCENE_SOURCE_BINDING_POLICY
     multi_actions = context.get('multi_action_policy') == MULTI_ACTION_POLICY
     action_state = stage == 'action_design' and context.get('action_state_policy') == ACTION_STATE_POLICY
@@ -1102,7 +1104,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     early_plot = stage == 'plot_design' and context.get('early_network_policy') == EARLY_POLICY
     followup_ids = frozenset()
     type_network_enabled = context.get('type_network_policy') == TYPE_NETWORK_POLICY
+    world_network_enabled = context.get('world_network_policy') == WORLD_NETWORK_POLICY and stage == 'world_design'
     type_ready = {}
+    world_ready = {}
     if network is not None:
         authored, rules = network
         step_pool, prepared = step_sources(stage, authored, rules, products, context, desk.by_id)
@@ -1113,6 +1117,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             followup_ids = frozenset(same_stage_rules(authored, rules, context, desk.by_id))
         if type_network_enabled and stage == 'type_adaptation':
             type_ready = {ident: use for ident, use in step_pool.items() if ident in context['type_network_bases']}
+        if world_network_enabled:
+            world_ready = {ident: use for ident, use in step_pool.items() if ident in context['world_network_bases']}
         network_waiting = early_waiting(stage, authored, rules, products, context, desk.by_id)
     else:
         step_pool = _step_source_pool(desk, stage, package)
@@ -1147,9 +1153,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         selection['stage_source_policy'] = package['stage_source_policy']
     if network_waiting:
         selection['network_waiting'] = network_waiting
+    verified_pool = type_ready or world_ready
     sources=_sources(desk,stage,package,products,studied_sources,reviewed_only=True,deferrals=deferred,trace=selection,
-                     step_pool=step_pool,prepared=prepared or type_ready,network_context=network_context,
-                     skip_required=followup_ids,priority_ids=tuple(type_ready) if len(type_ready) == 1 else ())
+                     step_pool=step_pool,prepared=prepared or verified_pool,network_context=network_context,
+                     skip_required=followup_ids,priority_ids=tuple(verified_pool) if len(verified_pool) == 1 else ())
     search_pool = {**step_pool, **prepared} if step_pool is not None else None
     dependencies = deferred_source_ids(desk, stage, products, studied_sources or [])
     if step_pool is not None:
@@ -1226,6 +1233,22 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '每条适用原义须引用本项目对应的实际类型行及所列全部作者前置，写入指定的 adaptations 行或具体 boundaries 项。'
                            '_uses 登记同一产物，原义条款的 output_refs 指向其具体字段，并交给本方案实际运行的后续步骤承接。'
                            '作者尚未明确的篇幅、分工、比例口径或商业意图保留待定。')
+        if world_network_enabled:
+            prerequisites = {}
+            for source in sources:
+                ref = source['source']
+                if ref['id'] not in world_ready:
+                    continue
+                ready, _ = world_network_decision(ref['id'], ref['key'], rules[ref['id']]['valid_types'], products, context)
+                if ready is not None:
+                    prerequisites[ref['id']] = {**ready, 'static_source': context['world_network_bases'][ref['id']]}
+            payload['world_network_prerequisites'] = prerequisites
+            if prerequisites:
+                suffix += ('\nworld_network_prerequisites 只提供本项目已批准的公式、该变量定义和适用范围。'
+                           '每条适用原义要引用同一批准世界卡的规则和限制字段，并引用实际已选且适用的类型。'
+                           '将原计算式、对应变量定义及限制原样保留在此次采用的世界设计产物中。'
+                           '用_uses登记member:ID，output_refs指向实际/members/序号/body/rule或limits。'
+                           'consumer须为本方案实际运行的后续阶段。不得从本轮新稿反推作者已经采用的公式或另定系数。')
         if network_waiting:
             payload['network_waiting'] = network_waiting
             suffix += '\nnetwork_waiting 列出现有项缺少的前置。只采用实际有前置的资料，缺前置时按其他已符合条件的输入完成本步。'
@@ -1506,6 +1529,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.network_workflow import EARLY_POLICY, POLICY as NETWORK_POLICY, resolve_type_scope
     from nw.materials.network_followup import POLICY as FOLLOWUP_POLICY
     from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY
+    from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
     selected=selection_status(workspace)
     if selected:
         package={**package,'current_source_set':selected['sha256']}
@@ -1548,6 +1572,11 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
 
             context['type_network_policy'] = TYPE_NETWORK_POLICY
             context['type_network_bases'] = load_type_network_bases(desk, *network)
+        if package.get('world_network_policy') == WORLD_NETWORK_POLICY:
+            from nw.materials.type_network_catalog import load_world_network_bases
+
+            context['world_network_policy'] = WORLD_NETWORK_POLICY
+            context['world_network_bases'] = load_world_network_bases(desk, *network)
     if package.get('dynamic_reference_checks'):
         context['dynamic_reference_checks'] = True
     from nw.production_methods.handoff import inherited

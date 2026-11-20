@@ -1,4 +1,6 @@
-"""Verify the authored static source behind each type-adaptation derivation."""
+"""Verify the authored static source for a rule used before relationship design."""
+from collections.abc import Collection
+
 from nw.materials.network_workflow import DYNAMIC_PROFILES, STATIC_PROFILES
 from nw.materials.semantic_products import original
 from nw.materials.work_catalog import SourceDesk
@@ -24,17 +26,27 @@ def edge_proof(source: dict, basis: dict) -> dict | None:
             'edge': {key: static[key] for key in ('source', 'target', 'type', 'condition')}}
 
 
-def load_type_network_bases(desk: SourceDesk, authored: dict, rules: dict) -> dict[str, dict]:
-    from nw.materials.type_network import RULES
-
-    step = authored.get('type_adaptation', {})
+def load_network_bases(desk: SourceDesk, authored: dict, rules: dict, stage: str, allowed_keys: Collection[str]) -> dict[str, dict]:
+    step = authored.get(stage, {})
     result = {}
     for ident in step:
         rule = rules.get(ident)
-        if (not rule or not rule['derived'] or rule['key'] not in RULES or rule['static_id'] not in step
+        if (not rule or not rule['derived'] or rule['key'] not in allowed_keys or rule['static_id'] not in step
                 or desk.by_id[ident]['state'] != 'design_ready' or desk.by_id[rule['static_id']]['state'] != 'design_ready'):
             continue
         proof = edge_proof(desk.read(ident), desk.read(rule['static_id']))
         if proof:
             result[ident] = proof
     return result
+
+
+def load_type_network_bases(desk: SourceDesk, authored: dict, rules: dict) -> dict[str, dict]:
+    from nw.materials.type_network import RULES
+
+    return load_network_bases(desk, authored, rules, 'type_adaptation', RULES)
+
+
+def load_world_network_bases(desk: SourceDesk, authored: dict, rules: dict) -> dict[str, dict]:
+    from nw.materials.world_network import RULES
+
+    return load_network_bases(desk, authored, rules, 'world_design', RULES)

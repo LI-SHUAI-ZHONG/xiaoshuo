@@ -674,6 +674,11 @@ class StudioService:
                         'boundaries': ['单视角受限知情，禁止未铺垫的机械降神解谜'],
                     }
                 }
+                if stage in ('type_adaptation', 'world_design'):
+                    choice = mock_products['type_selection']
+                    choice['products']['selection'][0]['basis'] = '演练样例已选悬疑，用于核对本步资料前置'
+                    choice.update(stage='type_selection', task_id='studio-rehearsal:type_selection',
+                                  sha256=content_sha256(choice['products']))
             if stage not in ('type_selection', 'type_adaptation'):
                 mock_products['type_adaptation'] = {
                     'products': {
@@ -771,6 +776,12 @@ class StudioService:
 
                 network_context.update(type_network_policy=TYPE_NETWORK_POLICY, type_network_families=families,
                                        type_network_bases=load_type_network_bases(desk, authored, rules))
+            if stage == 'world_design':
+                from nw.materials.type_network_catalog import load_world_network_bases
+                from nw.materials.world_network import POLICY as WORLD_NETWORK_POLICY
+
+                network_context.update(world_network_policy=WORLD_NETWORK_POLICY,
+                                       world_network_bases=load_world_network_bases(desk, authored, rules))
             step_pool, prepared = step_sources(stage, authored, rules, mock_products, network_context, desk.by_id)
             network_context['prepared_static_sources'] = sorted(prepared)
             if stage == 'static_relations':
