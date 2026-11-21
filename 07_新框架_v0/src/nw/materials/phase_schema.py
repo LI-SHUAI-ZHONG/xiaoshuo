@@ -54,7 +54,7 @@ def card(kind: str, *, narration: bool | str = False) -> dict:
 
 def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | None=None,*,allow_requests: bool=True,
            contracts: list[dict] | None=None, type_network_inputs: bool=False, narration: bool | str=False,
-           chapter_progress: bool=False, cast_demand: bool=False) -> dict:
+           chapter_progress: bool=False, cast_demand: bool=False, cast_distribution: bool=False) -> dict:
     state={'type':'object','additionalProperties':ANY,'minProperties':1}
     use=obj({**strings('source_id','operation'),'output_refs':array(TEXT,1)})
     use['properties']['operation']={'type':'string','minLength':8,'maxLength':160}
@@ -190,6 +190,9 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
     if cast_demand and stage == 'scene_design':
         fields['cast_payoffs'] = array(obj({**strings('demand', 'scene', 'action'),
                                             'step_index': {'type': 'integer', 'minimum': 0}}))
+    if cast_distribution and stage == 'scene_design':
+        from nw.materials.cast_distribution_plan import schema as distribution_schema
+        fields['cast_distribution_plan'] = distribution_schema()
     if stage == 'plot_design' and chapter_progress:
         fields['continuations'] = array(obj(strings('ref', 'event', 'target_quote', 'reason')))
     if stage == 'scene_design' and chapter_progress:

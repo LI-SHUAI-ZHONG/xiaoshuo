@@ -1,5 +1,5 @@
 """Keep the original plan and the staged story checks on the same contract versions."""
-from nw.materials import cast_demands, chapter_progress, narration
+from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, narration
 from nw.materials.phase_routes import POLICY, STAGED_POLICIES
 
 
@@ -7,6 +7,7 @@ VERSIONS = {
     'narration_policy': narration.POLICIES,
     'chapter_progress_policy': chapter_progress.POLICIES,
     'cast_demand_policy': (cast_demands.POLICY,),
+    'cast_distribution_policy': (cast_distribution_plan.POLICY,),
 }
 
 
@@ -30,6 +31,14 @@ def verify_session(session: dict, plan: dict | None = None) -> None:
     if session['policy'] != POLICY and VERSIONS.keys() & context.keys():
         raise ValueError('MATERIAL_STAGE: 此制作校验版本需要支持人物和章场设计的阶段装配程序')
     verify(context, plan)
+    if plan is not None and context.get('cast_distribution_policy'):
+        for key in ('cast_sample_reference', 'cast_distribution_book_plan', 'cast_previous_appearances'):
+            if context.get(key) != plan.get(key):
+                raise ValueError('MATERIAL_STAGE: 阵容取舍的样本、章段依据或既有人物出场记录与原设计任务不同')
+        if context.get('cast_history_unverified_chapters', []) != plan.get('accepted_cast_history', {}).get('unverified_chapters', []):
+            raise ValueError('MATERIAL_STAGE: 既有章稿的出场待核记录与原设计任务不同')
+        if context.get('cast_verified_first_positions', {}) != plan.get('accepted_cast_history', {}).get('first_positions', {}):
+            raise ValueError('MATERIAL_STAGE: 既有章稿的已核出场位置与原设计任务不同')
 
 
 def verify_plan(plan: dict) -> None:

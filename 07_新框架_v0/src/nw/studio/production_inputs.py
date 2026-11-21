@@ -123,6 +123,8 @@ def governance(wizard: dict, *, library=None) -> dict:
         'genre_ids', 'tone_ids', 'style_ids', 'structure_ids', 'mechanism_ids')}
     if any(config.values()):
         result['type_selection']['project_config'] = config
+        if catalog.single_genre_path(config['genre_ids']):
+            result['type_selection']['single_genre_selection'] = list(config['genre_ids'])
     filtered = {stage: {key: value for key, value in content.items() if value}
                 for stage, content in result.items() if any(content.values())}
     if library is None:

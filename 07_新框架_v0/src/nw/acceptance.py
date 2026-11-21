@@ -52,7 +52,8 @@ def _require_decision(store: Store, ident: str, action: str, targets: dict) -> N
         raise ValueError('Author decision does not match these exact versions')
 
 
-def _checked_deltas(store: Store, requests: list[AcceptanceRequest], expected_head: StateHead) -> dict[str, StateDelta]:
+def _checked_deltas(store: Store, requests: list[AcceptanceRequest], expected_head: StateHead,
+                    cast_index: dict) -> dict[str, StateDelta]:
     deltas = {}
     for request in requests:
         if request.scene_id in deltas or request.branch_id != expected_head.branch_id:
@@ -70,7 +71,12 @@ def _checked_deltas(store: Store, requests: list[AcceptanceRequest], expected_he
                     if item.severity == 'hard']
         if blockers:
             raise ValueError('Unresolved state review: ' + '; '.join(blockers))
-        check_material_acceptance(store, draft, delta)
+        checks = check_material_acceptance(store, draft, delta)
+        from nw.materials.cast_appearances import ONSTAGE, PREFIX
+        for check in checks:
+            if check['id'].startswith(PREFIX):
+                cast_index[request.scene_id] = {'complete': True, 'onstage': sorted(
+                    p['actor'] for p in check['people'] if p['mode'] in ONSTAGE)}
         deltas[request.scene_id] = delta
     check_scope_acceptance(store, list(deltas.values()), expected_head)
     return deltas
@@ -139,12 +145,15 @@ def _check_settings_for_delta(store: Store, snapshot: dict, delta: StateDelta) -
 
 def _accept_in_transaction(store: Store, requests: list[AcceptanceRequest], head: StateHead,
                            commit_id: str, digest: str) -> tuple[StateHead, list[str]]:
-    deltas = _checked_deltas(store, requests, head)
+    cast_index = {}
+    deltas = _checked_deltas(store, requests, head, cast_index)
     before = revision_state(store, head)
     snapshot = {**before, 'slots': before['slots'].copy()}
     for scene_id, delta in deltas.items():
         _check_settings_for_delta(store, snapshot, delta)
         snapshot['slots'][scene_id] = {'draft_id': delta.draft_id, 'delta_id': delta.id}
+        if scene_id in cast_index:
+            snapshot['slots'][scene_id]['reviewed_cast'] = cast_index[scene_id]
     from nw.length_plan import approved_length_budgets, chapter_progress, draft_feedback
     budgets = approved_length_budgets(store, snapshot)
     for scene_id, delta in deltas.items():

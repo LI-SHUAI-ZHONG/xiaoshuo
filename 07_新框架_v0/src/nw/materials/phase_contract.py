@@ -107,7 +107,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
 
     require(isinstance(raw,dict) and set(raw)=={'stage','products'} and raw['stage']==stage,'wrong stage output')
     value=raw['products']
-    from nw.materials import cast_demands, chapter_progress
+    from nw.materials import cast_demands, cast_distribution_plan, chapter_progress
+    cast_distribution = context.get('cast_distribution_policy') == cast_distribution_plan.POLICY
     cast_enabled = context.get('cast_demand_policy') == cast_demands.POLICY
     progress_enabled = context.get('chapter_progress_policy') in chapter_progress.POLICIES
     require('<填写' not in canonical(value),'unfilled transport shape is not an actual project product')
@@ -122,6 +123,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             -({'adaptation_inputs'} if type_network_inputs else set())
             -({'cast_events'} if cast_enabled and stage == 'plot_design' else set())
             -({'cast_payoffs'} if cast_enabled and stage == 'scene_design' else set())
+            -({'cast_distribution_plan'} if cast_distribution and stage == 'scene_design' else set())
             -({'_network_design_uses'} if context.get('design_network_policy') else set()),'wrong stage product fields')
     if '_governance' in value:
         config=value['_governance']
@@ -231,6 +233,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
                      for r in products[stage_name]['products']['members']}
         all_members.update(scenes)
         _chapters(value['chapters'],context.get('scope','chapter'),all_members)
+        if cast_distribution:
+            cast_distribution_plan.validate(value, products, context)
         if context.get('narration_policy') in ACCESS_POLICIES:
             from nw.materials.cast_design import entry_bases
             from nw.materials.narration import EVIDENCE_POLICY

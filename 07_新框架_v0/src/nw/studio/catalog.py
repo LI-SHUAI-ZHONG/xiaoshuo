@@ -79,6 +79,32 @@ def type_map() -> dict[str, dict]:
     return {r['id']: r for p in _genres() for r in [p, *p['children']]}
 
 
+def single_genre_path(values: list[str]) -> bool:
+    """One main genre, optionally narrowed to one of its subgenres."""
+    if not isinstance(values, list) or len(values) not in (1, 2) or not all(isinstance(v, str) for v in values):
+        return False
+    mapping = type_map()
+    main = mapping.get(values[0])
+    if not main or main.get('parent_id'):
+        return False
+    return len(values) == 1 or mapping.get(values[1], {}).get('parent_id') == values[0]
+
+
+def matches_single_genre(config: dict, chosen: list[str]) -> bool:
+    if not isinstance(config, dict) or config.get('genre_ids') != chosen:
+        return False
+    for field, slot in (('mechanism_ids', 'hook'), ('structure_ids', 'structure'),
+                        ('style_ids', 'style'), ('tone_ids', 'tone')):
+        items = config.get(field)
+        if not isinstance(items, list):
+            return False
+        if items:
+            known = {r['id'] for r in option_map(slot).values() if r.get('selectable', True)}
+            if any(not isinstance(ident, str) or ident not in known for ident in items):
+                return False
+    return True
+
+
 def canonical_types(values: list[str]) -> list[str]:
     if not isinstance(values, list) or len(values) > 8 or any(not isinstance(v, str) for v in values):
         raise ValueError('类型必须是最多 8 个 ID 的列表')

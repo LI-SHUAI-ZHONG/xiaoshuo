@@ -1237,6 +1237,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         from nw.materials.author_references import author_stage_input
         if author_input := author_stage_input(package, stage):
             payload['author_input'] = author_input
+        if stage in ('character_design', 'plot_design', 'scene_design') and package.get('accepted_cast_history'):
+            history = package['accepted_cast_history']
+            payload['accepted_cast_history'] = {k: v for k, v in history.items() if k != 'first_positions'}
         if stage in ('world_design', 'character_design', 'plot_design', 'scene_design'):
             cast_sample = package.get('cast_sample_reference')
             if cast_sample:
@@ -1252,6 +1255,15 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        if context.get('cast_distribution_policy') and stage in ('world_design', 'character_design', 'plot_design', 'scene_design'):
+            from nw.materials import cast_distribution_plan
+            payload['cast_distribution_context'] = cast_distribution_plan.planning_context(context)
+            suffix += '\n按本章所处章段的同类型样本检查实际剧情职责和已有演员，选择引入、复用或推迟；参考中的人数只供比较。'
+            if stage == 'scene_design':
+                payload['cast_distribution_policy'] = context['cast_distribution_policy']
+                payload['output_schema'] += ('；cast_distribution_plan:[{chapter,band,reference_scope,appearing_range,'
+                                             'comparison,differences,reason,people:[{actor,scene,event,appearance,functions,basis_quote,reason}]}]')
+                suffix += '\n' + cast_distribution_plan.INSTRUCTION
         from nw.materials import chapter_progress
         if context.get('chapter_progress_policy') in chapter_progress.POLICIES:
             if stage == 'plot_design':
@@ -1584,6 +1596,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['governance']={'contract_fingerprint':governance['contract']['fingerprint'],
                 'configuration_required':stage=='type_selection',
                 'instruction':'类型选择用_governance.project_config逐一归入genre_ids/mechanism_ids/structure_ids/style_ids/tone_ids；只填本步selection的实际ID。规则检查会在本步、重开及采用前重跑，不能自行签署作者/独立评审。'}
+            if stage == 'type_selection' and (single_genre := context.get('governance_inputs', {}).get(stage, {}).get('single_genre_selection')):
+                payload['governance']['selected_genre_ids'] = single_genre
+                payload['governance']['instruction'] += '本次立项已选择单一类型路径，按 selected_genre_ids 原样保留主类和选定子类。'
         if payload['method_requirements']:
             payload['method_requirement_sources']=[stage_source(s,desk.semantic_contract(s),full_text=True)
                 for ident in sorted({r['source_id'] for r in payload['method_requirements']})
@@ -1853,6 +1868,13 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['narration_policy'] = package['narration_policy']
     if 'cast_previous_appearances' in package:
         context['cast_previous_appearances'] = package['cast_previous_appearances']
+    if 'accepted_cast_history' in package:
+        context['cast_history_unverified_chapters'] = package['accepted_cast_history']['unverified_chapters']
+        context['cast_verified_first_positions'] = package['accepted_cast_history']['first_positions']
+    if 'cast_distribution_policy' in package:
+        for key in ('cast_distribution_policy', 'cast_sample_reference', 'cast_distribution_book_plan'):
+            if key in package:
+                context[key] = package[key]
     if 'cast_demand_policy' in package:
         from nw.materials.cast_demands import PLOT_FIELDS
         context['cast_demand_policy'] = package['cast_demand_policy']

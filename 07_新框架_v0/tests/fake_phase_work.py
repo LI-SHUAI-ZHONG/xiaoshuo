@@ -250,7 +250,50 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
             'check': '[FAKE] 核对资料要求的目标、行动、应对及实际后果'} for row in actual_scenes] if used else []}
 
 
+def add_cast_distribution(data: dict, products: dict) -> None:
+    from nw.materials.cast_distribution_plan import chapter_band, comparison, differences, reference_for
+    from nw.materials.template_support import events as event_options
+    if not data.get('cast_distribution_policy'):
+        return
+    sample = data['cast_sample_reference']
+    params = data['cast_distribution_context']
+    previous = dict(params['previous_appearances'])
+    standings = {r['card_id']: r['body'].get('casting', {}).get('standing', 'unknown')
+                 for r in data['approved_cards'] if r['kind'] == 'character'}
+    standings.update((r['key'], r['body']['casting']['standing'])
+                     for r in _input(data['inputs'], 'character_design')['members'])
+    bodies = {r['key']: r['body'] for r in products['members']}
+    events = {r['scene']: r['event'] for r in products['selected_events']}
+    plans = []
+    for ch in sorted(products['chapters'], key=lambda row: row['index']):
+        index = ch['index']
+        band = chapter_band(index, params['chapter_count'])
+        partial = data['scope'] == 'scene' or ch['card'] is None
+        scope, reference = reference_for(sample, band, partial=partial)
+        people = {}
+        for placement in ch['scenes']:
+            scene = placement['card']
+            for actor, goal in bodies[scene]['character_goals'].items():
+                status = 'returning' if actor in previous and previous[actor][0] < index else 'first'
+                if status == 'first' and any(i < index for i in params['unverified_chapters']):
+                    status = 'unknown'
+                people[actor] = {'actor':actor, 'scene':scene, 'event':events[scene], 'appearance':status,
+                                 'functions':['driver'], 'basis_quote':goal, 'reason':f'[FAKE] {goal}使其亲自查封条'}
+        span = reference.get('appearing')
+        source_event = event_options(data['inputs'])[events[ch['scenes'][0]['card']]]
+        plan = {'chapter':index, 'band':band, 'reference_scope':scope, 'appearing_range':span,
+                'comparison':comparison(len(people), span), 'differences':sorted(differences(reference, people, standings)),
+                'reason':'[FAKE] 为了' + (source_event.get('goal') or source_event['event']) + '，人物因'
+                         + next(iter(people.values()))['basis_quote'] + '决定独自查证，无须他人交接',
+                'people':list(people.values())}
+        plans.append(plan)
+        for actor in people:
+            previous[actor] = min(previous.get(actor, [index, 0]), [index, 0])
+    products['cast_distribution_plan'] = plans
+
+
 def add_scene_progress(data: dict, products: dict) -> None:
+    add_cast_distribution(data, products)
     work = data.get('cast_work')
     if work is not None and data['stage'] == 'plot_design':
         products['cast_events'] = [{'demand': duty['id'], 'event': node['id']}

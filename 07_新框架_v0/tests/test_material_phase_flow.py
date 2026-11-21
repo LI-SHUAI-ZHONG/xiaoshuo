@@ -587,6 +587,12 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
             result = super().generate(messages,**params)
             if 'material_review' in payload and pressure_confirmed:
                 raw = json.loads(result.text)
+                for rule in payload['material_review']['checks']:
+                    if rule['profile'] == 'cast_presence_review':
+                        row = next(r for r in raw['material_checks'] if r['id'] == rule['id'])
+                        row['people'] = [{'actor':actor, 'mode':'action', 'span':0, 'cue':'用手试探封条下的铜丝',
+                                          'reason':'[FAKE] 手背受伤后改用木片，动作由这位在场者完成'}
+                                         for actor in rule['roster']]
                 [check] = [r for r in payload['material_review']['checks'] if r.get('pressure_review')]
                 reviewed = next(r for r in raw['material_checks'] if r['id'] == check['id'])
                 reviewed['reason'] += '\n【未决原文】' + outstanding
@@ -612,6 +618,8 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                         for entry in chapter['scenes']:
                             entry['story_order'] += 1
                     raw['products']['events'][0]['before_state'] = {'hand': '划伤'}
+                    from fake_phase_work import add_cast_distribution
+                    add_cast_distribution(payload, raw['products'])
                 result.text = json.dumps(raw, ensure_ascii=False)
             if payload.get('stage') == 'state_transition' and any(
                     row['before_state'] == {'hand': '划伤'} for row in payload['inputs']['scene_design']['products']['events']):
@@ -664,9 +672,18 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                 result.text = json.dumps(raw, ensure_ascii=False)
             return result
     template_catalog(tmp_path);provider=StateModel()
+    use_cast_sample = pressure_confirmed and not omit_change and not multi
+    governance = {}
+    if use_cast_sample:
+        from nw.studio.cast_samples import design_reference, genre_cast_samples
+        from nw.studio.library import LibraryService
+        from test_studio_cast_samples import add_reference
+        library = LibraryService(tmp_path)
+        add_reference(library, '渡口人物分布', ['GENRE_XUANYI'])
+        governance['world_design'] = {'cast_sample_reference':design_reference(genre_cast_samples(library, ['GENRE_XUANYI']))}
     with Store(tmp_path/'normal',create=True,test_mode=True) as store:
         store.init_project('模板正常路径');store.add_brief('调查封条与触碰铜丝后的变化');adopt_story(store,baseline(),{})
-        job=start_job(store,JobRequest('design',budget=Budget(32,90000,4000))).id
+        job=start_job(store,JobRequest('design',budget=Budget(32,90000,4000),governance_inputs=governance)).id
         assert resume_job(store,job,provider,config(store)).step=='plan:book:confirm'
         detail=resume_job(store,job,provider,config(store),choose)
         assert detail.step=='plan:chapter:confirm',detail.reason
@@ -714,9 +731,32 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                                                          (design.outputs['proposal_id'],)).fetchone()[0]
                     branch = fork_story(reopened, head, 'next-chapter').branch_id
                     proposal = propose_plan(reopened, 1, 'chapter', provider, config(reopened),
-                                            Budget(32, 90000, 4000), parent_id=parent, branch=branch)
+                                            Budget(32, 90000, 4000), parent_id=parent, branch=branch,
+                                            governance_inputs=governance)
                     _, following = plan_input(reopened, proposal.id)
                     session = following['material_work']
+                    if use_cast_sample:
+                        from nw.materials.cast_appearances import accepted_scene
+                        actor = performances[0]['actor']
+                        slot = revision_state(reopened, head)['slots'][scene]
+                        packet = next(json.loads(call[-1]['content']) for call in provider.calls if '只输出正文' in call[0]['content'])
+                        [visible] = [json.loads(i['text']) for i in packet['items'] if i['source'].startswith('material:work:cast-presence:')]
+                        assert json.loads(visible['observable']) == {'onstage':[actor]}
+                        assert 'roster' not in visible and 'other_named' not in visible
+                        assert slot['reviewed_cast'] == {'complete':True, 'onstage':[actor]}
+                        verified = accepted_scene(reopened, scene, slot)
+                        assert verified['complete'] and verified['people'][0]['actor'] == actor
+                        assert verified['people'][0]['cue'] in reopened.get('draft',slot['draft_id']).text
+                        for step in ('character_design','plot_design','scene_design'):
+                            packet = next(p for call in reversed(provider.calls)
+                                          if (p := json.loads(call[-1]['content'])).get('stage') == step)
+                            history = packet['accepted_cast_history']
+                            assert history['first'] == [actor] and not history['returning']
+                            assert history['scenes'][0]['people'][0]['appearance'] == 'first'
+                        [plan] = next(s['products']['cast_distribution_plan'] for s in session['stages']
+                                      if s['stage'] == 'scene_design')
+                        assert plan['chapter'] == 2 and plan['people'][0]['actor'] == actor
+                        assert plan['people'][0]['appearance'] == 'returning'
                     for stage in ('world_design', 'character_design'):
                         packet = next(p for call in reversed(provider.calls)
                                       if (p := json.loads(call[-1]['content'])).get('stage') == stage)

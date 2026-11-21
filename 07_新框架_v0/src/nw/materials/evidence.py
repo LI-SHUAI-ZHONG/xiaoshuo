@@ -154,6 +154,10 @@ def review_contract(store: Store, draft: Draft, manifest: dict) -> tuple[dict | 
     contract = {'draft': asdict(draft_ref(draft)), 'checks': checks}
     comparison = None
     head = StateHead(manifest['branch_id'], manifest['state_revision'])
+    for check in checks:
+        if check['profile'] == 'cast_presence_review':
+            from nw.materials.cast_appearances import other_named_characters
+            check['other_named'] = other_named_characters(store, head, draft, check['roster'])
     if any(check['profile'] == 'character_editor' for check in checks):
         versions = {row['card_id']: row['version'] for row in revision_state(store, head)['settings']}
         for check in checks:
@@ -203,6 +207,8 @@ def validate_review(rows: object, contract: dict, draft: Draft, comparison: Draf
             'source_contract' in required[row['id']]) else set()
         if isinstance(row, dict) and _text(row.get('id')) and row['id'] in required and 'layer_contract' in required[row['id']]:
             optional |= {'layer_check'}
+        if isinstance(row, dict) and _text(row.get('id')) and row['id'] in required and required[row['id']]['profile'] == 'cast_presence_review':
+            optional |= {'people'}
         if (not isinstance(row, dict) or set(row) != {'id', 'status', 'reason', 'evidence'} | optional
                 or not _text(row['id']) or row['id'] not in required
                 or row['status'] not in ('pass', 'failed', 'unverified') or not _text(row['reason'])
@@ -221,6 +227,9 @@ def validate_review(rows: object, contract: dict, draft: Draft, comparison: Draf
                     or any(layer['reason'].strip() == span['quote'].strip() for span in layer_spans)):
                 raise ValueError('MATERIAL_TRANSLATION_EVIDENCE: explain the actual effect with the required draft passages')
         spans = [_span(item, drafts, draft) for item in row['evidence']]
+        if 'people' in optional:
+            from nw.materials.cast_appearances import check_people
+            check_people(rule, row, draft)
         ids = {span['id'] for span in spans}
         if row['status'] == 'pass':
             if draft.id not in ids or (rule['profile'] == 'editor' and ids != drafts.keys()):

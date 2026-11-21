@@ -272,6 +272,12 @@ def _config(req: dict, inputs: dict, subject: dict) -> tuple:
         return _out("pass", "原政策版本已按冻结源编译；仅元数据")
     if field == "incompatible_pairs":
         return _out("not_applicable", "此版本未列相斥对；不推导所有组合兼容")
+    if (inputs.get("single_genre_selection") and subject.get("genre_ids") == inputs["single_genre_selection"]
+            and inputs.get("subjects", {}).get("combinations") == []
+            and field in {"auto_combination_forbidden", "requires_manual_review", "rule-0", "rule-1", "rule-2"}):
+        from nw.studio.catalog import single_genre_path
+        if single_genre_path(subject["genre_ids"]):
+            return _out("not_applicable", "本次沿用立项时明确选择的单一类型路径，没有混合类型、组合排列或相容性覆盖。", "genre_ids")
     if field in {"auto_combination_forbidden", "requires_manual_review"}:
         return _out("waiting", "与工作流自动设计/人工复核的适用对象及动作须作者明确裁定", field)
     return _semantic(req, inputs, subject, "project_config")

@@ -154,7 +154,7 @@ def test_existing_project_is_visible_and_manual_drafts_are_archived(app):
         app.studio.get_draft('existing', other['id'], draft['draft']['id'])
 
 
-def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_path):
+def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_path, monkeypatch):
     """Real coordinator + 7/14 source stages; the LLM is visibly fake in an isolated store."""
     from test_material_phase_flow import template_catalog, PhaseModel
     from test_material_stage_roundtrip import StageModel
@@ -172,11 +172,24 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
             return Store(self.workspace / project_name, projects_root=self.projects_root, create=create, test_mode=True)
     studio = IsolatedStudio(workspace, projects_root=books, config_path=tmp_path / 'absent.toml')
     library = LibraryService(workspace)
+    from test_material_governance_runtime import runtime
+    from test_studio_cast_samples import add_reference
+    monkeypatch.setattr('nw.materials.governance_runtime.load_governance', lambda _: runtime())
+    add_reference(library, '两章渡口参考', ['GENRE_XUANYI'])
     class ClientModel(PhaseModel, StageModel):
         def generate(self, messages, **params):
             result = super().generate(messages, **params)
+            payload = json.loads(messages[-1]['content'])
             if '[MATERIAL_STEP]' in messages[0]['content']:
-                payload = json.loads(messages[-1]['content'])
+                if payload['stage'] == 'type_selection':
+                    raw = json.loads(result.text)
+                    products = raw['products']
+                    [genre] = payload['governance']['selected_genre_ids']
+                    products['selection'][0]['id'] = genre
+                    products['concepts'][0]['type_refs'] = [genre]
+                    products['_governance'] = {'project_config': {
+                        'genre_ids': [genre], 'mechanism_ids': [], 'structure_ids': [], 'style_ids': [], 'tone_ids': []}}
+                    result.text = json.dumps(raw, ensure_ascii=False)
                 if context := payload.get('length_context'):
                     raw = json.loads(result.text)
                     products = raw['products']
@@ -190,6 +203,14 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
                             member['body']['word_budget'] = {'target_words': expected, 'min_words': 25,
                                                              'max_words': 48, 'reason': '[FAKE] 查清一项证据'}
                     result.text = json.dumps(raw, ensure_ascii=False)
+            if 'material_review' in payload:
+                raw = json.loads(result.text)
+                checks = {c['id']: c for c in payload['material_review']['checks']}
+                for row in raw['material_checks']:
+                    if roster := checks[row['id']].get('roster'):
+                        row['people'] = [{'actor': actor, 'mode': 'action', 'span': 0, 'cue': '借灯查看封条',
+                                          'reason': f'{name}亲自借灯检查印痕。'} for actor, name in roster.items()]
+                result.text = json.dumps(raw, ensure_ascii=False)
             if '{"operations"' in messages[0]['content']:
                 raw = json.loads(result.text)
                 for op in raw['operations']:
@@ -202,7 +223,7 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     novel = app.list()['novels'][0]
     ident = novel['id']
     with app.db.connect() as db:
-        wizard_values = {**novel['wizard'], 'auto_length': True}
+        wizard_values = {**novel['wizard'], 'auto_length': True, 'genre_ids': ['GENRE_XUANYI']}
         db.execute('UPDATE novels SET wizard_json=? WHERE id=?', (json.dumps(wizard_values), ident))
     def settled():
         app._workers[ident].join(timeout=40)
@@ -294,7 +315,13 @@ def test_isolated_source_backed_book_chapter_scene_acceptance_and_export(tmp_pat
     chapter_text, _ = app.export(ident, 'txt', 'chapter:1')
     assert (book_dir / '成品' / '第1章.txt').read_bytes() == chapter_text.encode('utf-8')
     assert app.detail(ident)['project']['data_directory'] == str(book_dir)
-    assert app.quality(ident)['review']['recommendation'] == 'pass'
+    quality = app.quality(ident)
+    assert quality['review']['recommendation'] == 'pass'
+    plan = quality['cast']['plan']
+    assert plan['chapter'] == 1 and [p['name'] for p in plan['people']] == ['沈砚']
+    actual = quality['cast']['accepted']
+    assert actual['complete'] and [(p['presence'], p['name']) for p in actual['people']] == [('onstage','沈砚')]
+    assert actual['people'][0]['cue'] in text
     # A frozen preference is not adoption. The passing review must accompany
     # an actual selected product (or explicitly checked option).
     from unittest.mock import patch

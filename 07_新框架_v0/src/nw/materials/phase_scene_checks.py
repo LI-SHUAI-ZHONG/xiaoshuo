@@ -26,6 +26,9 @@ def selected_checks(records: dict, scene: str, ids: dict | None = None, context:
     cast_enabled = (context or {}).get('cast_demand_policy') == cast_demands.POLICY
     if cast_enabled:
         result.extend(cast_fulfillment.scene_checks(records, scene, context))
+    if 'cast_distribution_plan' in scene_product:
+        from nw.materials.cast_appearances import review_check
+        result.append(review_check(records, scene, ids, context or {}))
     from nw.materials.chapter_progress import POLICIES as PROGRESS_POLICIES, scene_check
     if (context or {}).get('chapter_progress_policy') in PROGRESS_POLICIES:
         if check := scene_check(records, scene, context):

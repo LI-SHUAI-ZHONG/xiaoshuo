@@ -38,6 +38,8 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
                 visible = {'id': check['id'], 'status': status}
                 if status != 'pass' and check['id'].startswith(narration_review.PREFIX):
                     visible.update(narration_review.revision_feedback(check, draft))
+                if status != 'pass' and check['id'].startswith('work:cast-presence:'):
+                    visible['fix'] = '按本场批准的角色与任务写出他们实际在场的言语或动作。仅被谈起的人仍保留在转述中。'
                 visible_checks.append(visible)
             data['review'] = {
                 'recommendation': review.get('recommendation'),
@@ -54,6 +56,9 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
     if contract is not None:
         data['material_review'] = contract
         appended = ' ' + MATERIAL_REVIEW_PROMPT
+        if any(check.get('profile') == 'cast_presence_review' for check in contract['checks']):
+            from nw.materials.cast_appearances import PROMPT as CAST_REVIEW
+            appended += ' ' + CAST_REVIEW
         if any('action_order' in check for check in contract['checks']):
             appended += ' ' + ACTION_REVIEW_PROMPT
         if any(check['id'].startswith(narration_review.PREFIX) for check in contract['checks']):

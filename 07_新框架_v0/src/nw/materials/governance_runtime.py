@@ -88,7 +88,9 @@ def _source_objects(value: object):
 def stage_governance_inputs(stage: str,value: dict,products: dict,sources: list[dict],context: dict) -> dict:
     supplied=deepcopy(context.get('governance_inputs',{}).get(stage,{}))
     # Only the frozen request can provide review/registry authority, never model metadata.
-    supplied.pop('subjects',None);supplied.pop('project_config',None)
+    supplied.pop('subjects', None)
+    requested = supplied.pop('project_config', None)
+    single = supplied.pop('single_genre_selection', None)
     groups={kind:[] for kind in GROUPS.values()};bindings=[];versions=[]
     used={r['source_id'] for r in value.get('_uses',[])}
     for source in sources:
@@ -113,6 +115,11 @@ def stage_governance_inputs(stage: str,value: dict,products: dict,sources: list[
         stage_product_sha256=fingerprint({k:v for k,v in value.items() if k!='_governance'}))
     if stage=='type_selection':
         if isinstance(config,dict):supplied['project_config']=deepcopy(config)
+        if single is not None:
+            from nw.studio.catalog import single_genre_path
+            if not isinstance(requested, dict) or single != requested.get('genre_ids') or not single_genre_path(single):
+                raise ValueError('MATERIAL_GOVERNANCE: 单类型依据须来自立项所选主类型及其可选子类型')
+            supplied['single_genre_selection'] = single
     else:supplied['project_config']=[]  # Selection owns configuration; no guessed empty config.
     return supplied
 
@@ -163,6 +170,12 @@ def check_stage_governance(runtime: dict | None,stage: str,value: dict,products:
         if set(config)!=set(CONFIG) or set(configured)!=actual or len(set(configured))!=len(configured):
             result['checks'].append({'requirement_key':'configuration_binding','rule_id':'configuration_binding',
                 'status':'failed','findings':['配置必须逐一绑定本步实际选择的ID，不得漏项或重复分类']})
+            result['status']='failed'
+    if stage == 'type_selection' and 'single_genre_selection' in inputs:
+        from nw.studio.catalog import matches_single_genre
+        if not matches_single_genre(inputs.get('project_config'), inputs['single_genre_selection']):
+            result['checks'].append({'requirement_key':'single_genre_binding','rule_id':'single_genre_binding',
+                                     'status':'failed','findings':['本步须沿用立项的类型路径，其他选项须归入其实际所属的机制、结构、风格或语气。']})
             result['status']='failed'
     result['summary']=dict(Counter(r['status'] for r in result['checks']))
     return result

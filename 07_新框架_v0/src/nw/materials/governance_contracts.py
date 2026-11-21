@@ -135,4 +135,8 @@ def validate_compiled_governance(contract: dict) -> dict:
                 "reason": "编译缓存的字段/handler/依赖/指纹与冻结原件重新编译结果不一致"})
     if expected["issues"]:
         expected["status"] = "waiting"
+    # JSON persistence sorts object keys. Recover the original report order
+    # from the frozen array after rebuilding and checking each requirement.
+    order = {key: i for i, key in enumerate(saved)}
+    expected["requirements"].sort(key=lambda requirement: order.get(requirement["requirement_key"], len(order)))
     return expected

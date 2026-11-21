@@ -2,7 +2,7 @@
 from copy import deepcopy
 import json
 
-from nw.studio.cast_samples import genre_cast_samples
+from nw.studio.cast_samples import design_reference, genre_cast_samples
 from nw.studio.corpus_catalog import DOMAINS, FIELDS, OVERVIEW
 from nw.studio.corpus_cast import cast_distribution
 from nw.studio.corpus_index import empty_document
@@ -90,6 +90,97 @@ def test_unique_people_and_genre_ranges_survive_review_and_reopen(tmp_path):
     assert cast_distribution(draft)['chapters'][1]['appearing_count'] is None
     draft['schema_version']=4
     assert cast_distribution(draft) is None
+
+
+def test_pending_appearance_is_a_traced_lower_bound_before_and_after_reapproval(tmp_path):
+    library = LibraryService(tmp_path)
+    genre = ['GENRE_XUANYI']
+    book = add_reference(library, '待核的渡口', genre)
+    body = library.get_corpus(book)['body']
+    older_man = next(t for t in body['threads'] if t['id'] == 'rb')
+    older_man['status'] = 'uncertain'
+    def approve(version):
+        library.save_corpus(book, {'expected_version': version-1, 'body': body, 'reviewed_units':['c00001','c00002']})
+        library.review_corpus(book, {'version':version, 'decision':'approve', 'note':'核对两章观察状态',
+                                     'accept_limitations':True})
+    approve(2)
+    sample = genre_cast_samples(LibraryService(tmp_path), genre)
+    assert (sample['sample_count'], sample['complete_count'], sample['chapter_count']) == (1, 0, 1)
+    assert sample['book_range'] is None and sample['function_ranges'] == {}
+    assert sample['chapter_bands']['opening']['appearing'] is None
+    assert sample['chapter_bands']['ending']['returning'] == {'min':1, 'max':1}
+    first = library.get_corpus(book)['statistics']['cast_distribution']['chapters'][0]
+    assert (first['coverage'], first['pending_person_ids'], first['pending_observation_ids']) == ('pending', ['b'], ['rb'])
+    hint = design_reference(sample)
+    assert hint['uncertainty'] == {'source_count':1, 'chapter_count':1,
+        'band_chapter_counts':{'opening':1,'middle':0,'ending':0}, 'examples':[
+        {'book_id':book, 'version':2, 'chapter_index':1, 'coverage':'pending', 'band':'opening','confirmed_book_people':1,
+         'confirmed_appearing':1, 'pending_individual_count':1, 'pending_observation_count':1,
+         'unidentified_observation_count':0}]}
+    assert not any(name in json.dumps(hint,ensure_ascii=False) for name in ('渡口','阿霜','老许'))
+    older_man['status'] = 'resolved'
+    approve(3)
+    fixed = design_reference(genre_cast_samples(LibraryService(tmp_path), genre))
+    assert fixed['book_range'] == {'min':2,'max':2} and not fixed['uncertainty']['source_count']
+    assert fixed['source_set_sha256'] != hint['source_set_sha256']
+
+
+def test_uncertain_alias_in_earlier_chapter_prevents_false_first_and_returning_ranges(tmp_path):
+    library = LibraryService(tmp_path)
+    book = add_reference(library, '异名', ['GENRE_XUANYI'])
+    body = library.get_corpus(book)['body']
+    first = next(t for t in body['threads'] if t['id']=='ra')
+    first['status'] = 'uncertain'
+    extra = deepcopy(first)
+    extra.update(id='alias_at_first_encounter', characters=['x'])
+    body['threads'].append(extra)
+    library.save_corpus(book, {'expected_version':1, 'body':body, 'reviewed_units':['c00001','c00002']})
+    library.review_corpus(book, {'version':2, 'decision':'approve', 'note':'首章人物归属待核', 'accept_limitations':True})
+    first_chapter, later = library.get_corpus(book)['statistics']['cast_distribution']['chapters']
+    assert first_chapter['pending_person_ids'] == ['a'] and len(first_chapter['pending_observation_ids']) == 2
+    assert later['appearing_count'] == 1 and later['prior_appearance_unresolved_ids'] == ['a']
+    assert later['first_count'] is None and later['returning_count'] is None
+    sample = genre_cast_samples(library,['GENRE_XUANYI'])
+    assert sample['chapter_ranges'] == {'appearing':{'min':1,'max':1}, 'first':None, 'returning':None}
+    assert sample['chapter_bands']['ending']['first'] is None
+
+
+def test_only_pending_records_are_reported_without_a_zero_person_recommendation(tmp_path):
+    library = LibraryService(tmp_path)
+    genre = ['GENRE_XUANYI']
+    book = add_reference(library, '存疑出处', genre)
+    body = library.get_corpus(book)['body']
+    next(d for d in body['domains'] if d['domain']=='cast_roster')['status']='uncertain'
+    for t in body['threads']:
+        t['status']='uncertain'
+    library.save_corpus(book, {'expected_version':1, 'body':body, 'reviewed_units':['c00001','c00002']})
+    library.review_corpus(book, {'version':2, 'decision':'approve', 'note':'保留两章争议', 'accept_limitations':True})
+    hint = design_reference(genre_cast_samples(library,genre))
+    assert hint['sample_count'] == 1 and hint['chapter_count'] == 0
+    assert hint['chapter_ranges']['appearing'] is None and hint['book_range'] is None and hint['chapter_bands'] == {}
+    assert hint['uncertainty']['chapter_count'] == 2
+    assert hint['uncertainty']['examples'][0]['confirmed_book_people'] == 0
+    # A verified book in the same genre can still supply reliable ranges.
+    add_reference(library, '另书', genre)
+    mixed = genre_cast_samples(library, genre)
+    assert mixed['sample_count'] == 2 and mixed['complete_count'] == 1
+    assert mixed['book_range'] == {'min':2,'max':2} and mixed['uncertainty']['source_count'] == 1
+
+
+def test_unknown_standing_preserves_verified_headcount_without_zeroing_a_role(tmp_path):
+    library = LibraryService(tmp_path)
+    genre = ['GENRE_XUANYI']
+    book = add_reference(library, '地位待核', genre)
+    add_reference(library, '地位已核', genre)
+    body = library.get_corpus(book)['body']
+    next(t for t in body['threads'] if t['id']=='rb')['details'].update(standing='unknown', standing_evidence='')
+    library.save_corpus(book, {'expected_version':1,'body':body,'reviewed_units':['c00001','c00002']})
+    library.review_corpus(book, {'version':2,'decision':'approve','note':'已核实出场，地位未知','accept_limitations':True})
+    hint = design_reference(genre_cast_samples(library,genre))
+    assert hint['book_range'] == {'min':2,'max':2} and hint['complete_count'] == 2
+    assert hint['position_ranges']['supporting'] == {'min':1,'max':1}
+    assert hint['category_sample_counts'] == {'positions':1,'functions':2}
+    assert hint['chapter_bands']['opening']['category_sample_counts'] == {'positions':1,'functions':2}
 
 
 def test_real_design_calls_receive_only_the_anonymous_cast_reference(tmp_path):

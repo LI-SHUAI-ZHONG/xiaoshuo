@@ -16,23 +16,32 @@ export function analysisCatalogHtml(catalog,counts=null){
 export function castDistributionHtml(stats,record,catalog){
   if(!stats)return '<section class="card"><h3>人物数量、类型与逐章分布</h3><p>此份分析没有可核验的人物分布统计。</p></section>';
   const status=catalog.domain_statuses[stats.status]||'尚未核对';
-  if(stats.unique_count==null)return `<section class="card"><h3>人物数量、类型与逐章分布</h3><p>${esc(status)}。补齐人物与章内事件的原文依据后可查看人数。</p></section>`;
+  const gaps=stats.chapters.filter(c=>c.coverage && c.coverage!=='verified');
+  if(stats.unique_count==null && !gaps.some(c=>c.pending_observation_ids.length))return `<section class="card"><h3>人物数量、类型与逐章分布</h3><p>${esc(status)}。补齐人物与章内事件的原文依据后可查看人数。</p></section>`;
   const labels=catalog.cast_roster_options;
   function breakdown(groups,names){
     return Object.entries(groups).filter(([,n])=>n>0).map(([k,n])=>`${esc(names[k]||k)} ${esc(n)}`).join('、')||'未登记';
   }
   const people=new Map(record.body.characters.map(c=>[c.id,c.name]));
   const names=ids=>ids.map(id=>people.has(id)?`<button class="ghost" data-cast-person="${esc(id)}">${esc(people.get(id))}</button>`:esc(id)).join('、');
-  const countAndNames=(n,ids)=>`${esc(n)}${n?` · ${names(ids)}`:''}`;
+  const countAndNames=(n,ids)=>n==null?'待核':`${esc(n)}${n?` · ${names(ids)}`:''}`;
   const observations=new Map(record.body.threads.map(t=>[t.id,t.title]));
+  const links=ids=>ids.map(id=>`<button class="ghost" data-chapter-observation="${esc(id)}">${esc(observations.get(id)||id)}</button>`).join(' ');
+  function pending(c){
+    if(c.coverage==='unassessed')return '本章尚未核实';
+    if(c.coverage!=='pending')return '';
+    const people=c.pending_person_ids.length?` · 待核人物 ${names(c.pending_person_ids)}`:'';
+    return `<div>本章人数待核${people} · 待核观察 ${links(c.pending_observation_ids)||'无记录'}
+      ${c.uncovered_event_ids.length?` · 缺少观察的事件 ${c.uncovered_event_ids.map(esc).join('、')}`:''}</div>`;
+  }
   return `<section aria-label="人物数量与分布"><div class="section-head"><h3>人物数量、类型与逐章分布</h3></div>
-    <p>覆盖文本内去重出场 ${esc(stats.unique_count)} 人 · 仅被提及 ${esc(stats.mentioned_only_count)} 人。</p>
+    <p>${gaps.length?`已确认出场至少 ${esc(stats.unique_count??0)} 人，${esc(gaps.length)} 章待核，总人数上限未确定。`:`覆盖文本内去重出场 ${esc(stats.unique_count)} 人 · 仅被提及 ${esc(stats.mentioned_only_count)} 人。`}</p>
     <p>人物地位：${breakdown(stats.positions,labels.standing)}。剧情职责：${breakdown(stats.functions,labels.function_kind)}。</p>
     <p class="muted">首次与再次出场以本次已核对的文本为准。同一人可承担多种职责，各类人数可重叠。</p>
     <div class="table-wrap"><table class="data-table"><thead><tr><th>章节</th><th>出场人物</th><th>本次首次</th><th>再次出场</th><th>仅被提及</th><th>人物地位与本章职责</th><th>观察依据</th></tr></thead><tbody>
     ${stats.chapters.map(c=>`<tr><td>${esc(c.title)}</td>${c.observed?`<td>${countAndNames(c.appearing_count,c.appearing_ids)}</td><td>${countAndNames(c.first_count,c.first_ids)}</td>
-      <td>${esc(c.returning_count)}</td><td>${countAndNames(c.mentioned_only_count,c.mentioned_only_ids)}</td><td>${breakdown(c.positions,labels.standing)}<br>${breakdown(c.functions,labels.function_kind)}</td>
-      <td>${(c.observation_ids||[]).map(id=>`<button class="ghost" data-chapter-observation="${esc(id)}">${esc(observations.get(id)||id)}</button>`).join(' ')}</td>`:'<td colspan="6">本章尚无可用于计数的观察</td>'}</tr>`).join('')}</tbody></table></div></section>`;
+      <td>${c.returning_count==null?'待核':esc(c.returning_count)}</td><td>${countAndNames(c.mentioned_only_count,c.mentioned_only_ids)}</td><td>${breakdown(c.positions,labels.standing)}<br>${breakdown(c.functions,labels.function_kind)}</td>
+      <td>${links(c.observation_ids||[])}${pending(c)}${c.prior_appearance_unresolved_ids?.length?`<div>前章是否出场待核 · ${names(c.prior_appearance_unresolved_ids)}</div>`:''}</td>`:`<td colspan="6">本章尚无可用于计数的观察 ${pending(c)}</td>`}</tr>`).join('')}</tbody></table></div></section>`;
 }
 
 export function sourceDrawer(book,unit){

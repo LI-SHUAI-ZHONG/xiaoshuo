@@ -28,6 +28,16 @@ function chapterBands(data) {
       + roleTable(labels[key]+'每章的剧情作用', band.functions, data.function_labels, '每章人数')).join('')}</details>`;
 }
 
+function coverageNotes(source) {
+  if (!source.coverage_gaps?.length) return '';
+  return `<ul>${source.coverage_gaps.map(gap => {
+    const detail = gap.coverage === 'unassessed' ? '尚未核实本章'
+      : `待核人物 ${esc(gap.pending_individual_count)} 人，待核观察 ${esc(gap.pending_observation_count)} 条`;
+    const unknown = gap.unidentified_observation_count ? `，其中 ${esc(gap.unidentified_observation_count)} 条尚未确定个体归属` : '';
+    return `<li>第 ${esc(gap.chapter_index)} 章 · 已确认出场 ${esc(gap.confirmed_appearing)} 人 · ${detail}${unknown}</li>`;
+  }).join('')}</ul>`;
+}
+
 export function castSamplesHtml(data, {keepWizard = false} = {}) {
   const title = '<h3>同类型作品的人物阵容</h3>';
   if (!data.sample_count) {
@@ -37,20 +47,24 @@ export function castSamplesHtml(data, {keepWizard = false} = {}) {
   const chapter = data.chapter_ranges;
   const extents = {complete:'完整作品', excerpt:'节选', unknown:'完整范围待确认'};
   return `<section class="method-section" aria-label="同类型作品的人物阵容">${title}
-    <p>已观察 ${esc(data.sample_count)} 部作品、${esc(data.chapter_count)} 章，其中全书逐章核实 ${esc(data.complete_count)} 部。</p>
+    <p>匹配 ${esc(data.sample_count)} 部作品，${esc(data.chapter_count)} 章可比较人数，其中全书逐章核实 ${esc(data.complete_count)} 部。</p>
+    ${data.uncertainty?.chapter_count ? `<p>另有 ${esc(data.uncertainty.source_count)} 部作品共 ${esc(data.uncertainty.chapter_count)} 章待核。下方范围只计已核实的样本，来源详情列出待核章节。</p>` : ''}
     <dl class="selection-summary"><dt>单部作品出场人数（去重）</dt><dd>${people(data.book_range)}</dd>
       <dt>每章出场</dt><dd>${people(chapter.appearing)}</dd>
       <dt>每章在样本中初次出场</dt><dd>${people(chapter.first)}</dd>
       <dt>每章再次出场</dt><dd>${people(chapter.returning)}</dd></dl>
     ${roleTable('按人物在全书中的地位比较', data.position_ranges, data.position_labels)}
     ${roleTable('按人物承担的剧情作用比较', data.function_ranges, data.function_labels)}
+    ${data.category_sample_counts && (data.category_sample_counts.positions < data.complete_count || data.category_sample_counts.functions < data.complete_count)
+      ? `<p>部分作品有未定的人物地位或职责。可比较地位 ${esc(data.category_sample_counts.positions)} 部，可比较职责 ${esc(data.category_sample_counts.functions)} 部。</p>` : ''}
     ${chapterBands(data)}
     <p class="muted">${data.complete_count === 1 ? '仅一部可作全书比较，人数反映该部作品的做法。'
       : data.complete_count ? '这些范围来自已核实的出场记录。本书按剧情需要安排角色。'
-      : '当前样本仅支持章内统计。全书人数和角色类别范围需有完整且逐章核实的作品。'}</p>
+      : '全书人数和角色类别范围需有完整且逐章核实的作品。'}</p>
     <details class="details"><summary>查阅来源作品</summary><ul>${data.sources.map(source =>
       `<li><a class="text-link" href="#/staging/${enc(source.book_id)}?tab=distribution&amp;version=${enc(source.version)}" ${keepWizard ? 'target="_blank" rel="noopener"' : ''}>${esc(source.title)} · 修订 ${esc(source.version)}</a>
-        · ${esc(extents[source.extent] || source.extent)} · ${esc(source.chapter_count)} 章 · 已观察 ${esc(source.unique_count)} 人
-        · ${source.included_in_book_range ? '计入全书比较' : '仅计入章内比较'}</li>`).join('')}</ul></details>
+        · ${esc(extents[source.extent] || source.extent)} · ${esc(source.chapter_count)} 章可比较 · 已确认出场 ${esc(source.unique_count)} 人
+        · ${source.included_in_book_range ? '计入全书比较' : '全书上限未确定'}
+        ${coverageNotes(source)}</li>`).join('')}</ul></details>
     </section>`;
 }

@@ -149,14 +149,17 @@ def reader_aside(guide: dict, basis: dict) -> bool:
                 and secret in beat['basis_quote'] and secret in guide['observable'])
 
 
-def previous_appearances(store: Store, cards: list[dict]) -> dict:
-    """First scheduled on-page appearance in this branch, in disclosure order (not story time)."""
+def previous_appearances(store: Store, cards: list[dict], *, accepted: dict | None = None,
+                         occupied: set[str] | None = None) -> dict:
+    """Use the accepted draft in occupied slots, and schedule only unwritten scenes."""
+    first = dict(accepted or {})
     scenes = {(c['card_id'], c['version']): c['body'] for c in cards if c['kind'] == 'scene'}
     if not scenes:
-        return {}
+        return first
     chapters = {ch.id: ch.index for ch in store.list('chapter')}
-    first = {}
     for scene in store.list('scene'):
+        if occupied and scene.id in occupied:
+            continue
         ref = json.loads(scene.card_json).get('story', {}).get('scene_ref', {})
         body = scenes.get((ref.get('card_id'), ref.get('version')))
         if not body:
@@ -168,7 +171,8 @@ def previous_appearances(store: Store, cards: list[dict]) -> dict:
 
 
 def entry_bases(scene_product: dict, cards: list[tuple[str, str, dict]], prior: dict,
-                facts: Iterable[dict] = (), *, new_people: set[str] | None = None) -> dict:
+                facts: Iterable[dict] = (), *, new_people: set[str] | None = None,
+                unverified_chapters: Iterable[int] = ()) -> dict:
     characters = {key: body for key, kind, body in cards if kind == 'character'}
     cast = {key: body['casting'] for key, body in characters.items() if 'casting' in body}
     places = {s['card']: [c['index'], s['index']] for c in scene_product['chapters'] for s in c['scenes']}
@@ -183,7 +187,8 @@ def entry_bases(scene_product: dict, cards: list[tuple[str, str, dict]], prior: 
         people = {body['pov'], *body.get('characters', [])}
         for person in sorted(people & cast.keys()):
             profile = cast[person]
-            if first[person] == places[key]:
+            unknown_history = person not in (new_people or ()) and any(index < places[key][0] for index in unverified_chapters)
+            if first[person] == places[key] and not unknown_history:
                 source = None
                 if profile['entry'] == 'other':
                     require(profile['introducer'] in people - {person}, '首次出场缺少已设计的实际介绍者')

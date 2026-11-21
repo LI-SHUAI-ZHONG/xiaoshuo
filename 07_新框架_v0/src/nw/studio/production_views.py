@@ -268,7 +268,11 @@ class ProductionViews:
                 store.get('scene', scene)
                 runs = [run for run in store.list('run') if run.scene_id == scene]
                 drafts = store.drafts(scene)
-                draft_id = next(row['latest_draft_id'] for row in project['scenes'] if row['id'] == scene)
+                scene_row = next(row for row in project['scenes'] if row['id'] == scene)
+                from nw.studio.cast_view import scene_cast_view
+                if cast := scene_cast_view(store, design, scene_row):
+                    result['cast'] = cast
+                draft_id = scene_row['latest_draft_id']
                 review = self.review_for_draft(store, scene, draft_id) if draft_id else None
                 if review:
                     result['review'] = {**review['result'], 'draft_id': draft_id, 'run_id': review['run_id']}

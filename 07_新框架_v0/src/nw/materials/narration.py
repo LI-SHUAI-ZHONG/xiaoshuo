@@ -91,7 +91,8 @@ def scene_bases(products: dict, context: dict, scene: str | None = None) -> dict
     from nw.materials.cast_design import entry_bases
     cast = (entry_bases(scene_product, cards, context.get('cast_previous_appearances', {}),
                         context.get('narration_facts', context.get('accepted_state', [])),
-                        new_people=new_people if policy == EVIDENCE_POLICY else None)
+                        new_people=new_people if policy == EVIDENCE_POLICY else None,
+                        unverified_chapters=context.get('cast_history_unverified_chapters', ()))
             if access else {})
     by_scene = {}
     for row in scene_product['members']:

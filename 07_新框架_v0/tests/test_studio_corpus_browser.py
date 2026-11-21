@@ -61,6 +61,17 @@ def test_visible_catalog_legacy_bookmark_and_pinned_method(tmp_path,monkeypatch)
             for ident in chapter['observation_ids']:
                 assert f'data-chapter-observation="{ident}"' in distribution
 
+        from test_studio_cast_samples import add_reference
+        pending_book = add_reference(library,'渡口待核',['GENRE_XUANYI'])
+        document = library.get_corpus(pending_book)['body']
+        next(t for t in document['threads'] if t['id']=='rb')['status']='uncertain'
+        library.save_corpus(pending_book,{'expected_version':1,'body':document,'reviewed_units':['c00001','c00002']})
+        library.review_corpus(pending_book,{'version':2,'decision':'approve','note':'老许的出场待核','accept_limitations':True})
+        reference = render(f'staging/{pending_book}?tab=distribution')
+        assert '已确认出场至少 1 人，1 章待核' in reference and 'data-chapter-observation="rb"' in reference
+        atlas = render('atlas/GENRE_XUANYI?tab=cast')
+        assert '全书上限未确定' in atlas and '第 1 章 · 已确认出场 1 人 · 待核人物 1 人' in atlas
+
         body = method_body(library)
         first = library.save_method({'body': body, 'expected_version': 0})
         library.save_method({'body': {**body, 'title': '[FAKE] 后续草稿'}, 'expected_version': 1}, first['id'])

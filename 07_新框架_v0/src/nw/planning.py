@@ -221,12 +221,13 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         if existing:
             _, previous_package = read_input_manifest(store, manifest_id)
             package.pop('cast_sample_reference', None)
-            for key in ('cast_sample_reference', 'length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews', 'chapter_progress_policy',
+            for key in ('cast_sample_reference', 'cast_distribution_policy', 'cast_distribution_book_plan',
+                        'length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews', 'chapter_progress_policy',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
                         'multi_action_policy', 'narration_policy', 'cast_previous_appearances', 'cast_demand_policy',
-                        'cast_source_cards', 'cast_completed_direction', 'method_task_stages',
+                        'cast_source_cards', 'cast_completed_direction', 'method_task_stages', 'accepted_cast_history',
                         'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
                         'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy',
                         'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy',
@@ -265,11 +266,26 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 package['multi_action_policy'] = MULTI_ACTION_POLICY
                 package['action_state_policy'] = ACTION_STATE_POLICY
                 package.update(current_story_policies())
+                if package.get('cast_sample_reference'):
+                    from nw.materials.cast_distribution_plan import POLICY as CAST_DISTRIBUTION_POLICY
+                    from nw.length_plan import approved_book_plan
+                    package['cast_distribution_policy'] = CAST_DISTRIBUTION_POLICY
+                    if scope != 'book':
+                        package['cast_distribution_book_plan'] = approved_book_plan(store, {'settings': settings})
                 from nw.materials.cast_demands import completed_direction, source_card_ids
                 package['cast_source_cards'] = source_card_ids(parent, cards, package.get('chapter_handoff', {}), scope)
                 package['cast_completed_direction'] = completed_direction(parent, package.get('chapter_handoff', {}))
                 from nw.materials.cast_design import previous_appearances
-                package['cast_previous_appearances'] = previous_appearances(store, cards)
+                needs_cast_history = scope == 'chapter' or scope != 'book' and bool(package.get('cast_distribution_policy'))
+                if needs_cast_history and state and (state['slots'] or any(c['kind'] == 'scene' for c in cards)):
+                    from nw.materials.cast_appearances import planning_history
+                    history = planning_history(store, state, head=head)
+                    package['accepted_cast_history'] = history
+                    package['cast_previous_appearances'] = previous_appearances(
+                        store, cards, accepted=history['first_positions'],
+                        occupied=set(state['slots']) | set(state.get('stale_plan_scenes', ())))
+                else:
+                    package['cast_previous_appearances'] = previous_appearances(store, cards)
                 package['action_template_priority_enabled'] = True
                 package['stage_materials'] = {
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS

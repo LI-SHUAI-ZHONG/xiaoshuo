@@ -51,7 +51,7 @@ def _source_proof(draft: Draft, rule: dict, review: dict, source: dict) -> dict 
 
 
 def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, identity: bool,
-                          cast_work: list[dict] | None = None) -> tuple[list[dict], list[dict]]:
+                          cast_work: list[dict] | None = None, appearances: dict | None = None) -> tuple[list[dict], list[dict]]:
     """Read proof from the accepted delta without consulting today's design or catalog."""
     manifest, package = read_input_manifest(store, delta.manifest_id)
     run_id = package.get('material_review_run')
@@ -66,8 +66,13 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
     sources = {rule['id']: (rule, refs) for rule in contract['checks'] if identity and (refs := _identity_sources(rule))}
     progress = {rule['id']: rule for rule in contract['checks'] if rule['id'].startswith('work:progress:')}
     from nw.materials.cast_fulfillment import PREFIX
-    roles = {rule['id']: rule for rule in contract['checks'] if cast_work is not None and rule['id'].startswith(PREFIX)}
-    if not sources and not progress and not roles:
+    roles = {rule['id']: rule for rule in contract['checks'] if (cast_work is not None or appearances is not None)
+             and rule['id'].startswith(PREFIX)}
+    from nw.materials import cast_appearances
+    census = next((r for r in contract['checks'] if appearances is not None and r['id'].startswith(cast_appearances.PREFIX)), None)
+    beats = {r['id']: r for r in contract['checks'] if appearances is not None and not census
+             and r['id'].startswith('work:narration:')}
+    if not sources and not progress and not roles and not census and not beats:
         return [], []
     reviewed, context = read_input_manifest(store, snapshot['manifest_id'])
     ref = asdict(draft_ref(draft))
@@ -89,15 +94,25 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
     proofs = []
     advances = []
     for check in result['material_checks']:
+        if census and check['id'] == census['id']:
+            appearances.update(complete=True, review_run_id=run.id, people=cast_appearances.checked_people(census, check))
         if check['id'] in roles:
             from nw.materials.cast_fulfillment import performance
             design = performance(roles[check['id']], contract['checks'])
-            cast_work.append({'scene_id': draft.scene_id, 'draft_ref': ref, 'delta_id': delta.id,
+            role = {'scene_id': draft.scene_id, 'draft_ref': ref, 'delta_id': delta.id,
                 'review_run_id': run.id, 'disclosure_order': manifest['disclosure_order'],
                 'actor': design['actor'], 'demand': design['demand'], 'event': design['event'],
                 'action_ref': design['action_ref'], 'step_index': design['step_index'],
                 'designed_action': design['action'], 'designed_result': design['candidate_result'],
-                'review_reason': check['reason'], 'evidence': [s for s in check['evidence'] if s['id'] == draft.id]})
+                'review_reason': check['reason'], 'evidence': [s for s in check['evidence'] if s['id'] == draft.id]}
+            if cast_work is not None:
+                cast_work.append(role)
+            if appearances is not None and not census:
+                _attested_actor(appearances, draft, run.id, role['actor'], 'action', check)
+        if check['id'] in beats:
+            beat = json.loads(beats[check['id']]['binding']['observable'])
+            if beat.get('time') == 'current' and beat.get('mode') in ('speech','action','thought','perception','inference') and beat.get('owner'):
+                _attested_actor(appearances, draft, run.id, beat['owner'], beat['mode'], check)
         if check['id'] in progress:
             from nw.materials import chapter_progress
             rule = progress[check['id']]
@@ -120,6 +135,16 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
                 if proof := _source_proof(draft, rule, check, source):
                     proofs.append({'scene_id': draft.scene_id, 'draft_ref': ref, 'review_run_id': run.id, **proof})
     return proofs, advances
+
+
+def _attested_actor(result: dict, draft: Draft, run_id: str, actor: str, mode: str, check: dict) -> None:
+    if any(p['actor'] == actor for p in result['people']):
+        return
+    span = next((s for s in check['evidence'] if s['id'] == draft.id and len(''.join(s['quote'].split())) >= 8), None)
+    if span:
+        result['review_run_id'] = run_id
+        result['people'].append({'actor': actor, 'presence': 'onstage', 'mode': mode, 'reason': check['reason'],
+                                 **{k: span[k] for k in ('start','end','quote')}})
 
 
 def accepted_identity_checks(store: Store, draft: Draft, delta: StateDelta) -> list[dict]:
