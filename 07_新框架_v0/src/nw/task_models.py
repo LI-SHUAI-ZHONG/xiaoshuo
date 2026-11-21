@@ -154,11 +154,15 @@ def validate_task_output(kind: str, text: str) -> dict:
     data = json.loads(text, object_pairs_hook=_object)
     # Reject nonfinite values, overflowing exponents and unpaired surrogates.
     canonical(data).encode('utf-8')
+    if kind == 'material_work' and isinstance(data, dict) and set(data) in ({'judgments'}, {'cast_demands'}):
+        _records(next(iter(data.values())), 'casting records')
+        return data
     if kind=='material_work' and isinstance(data,dict) and 'stage' in data:
         if (not _text(data['stage']) or not (
                 set(data)=={'stage','products'} and isinstance(data['products'],dict)
                 or set(data)=={'stage','requests'} and isinstance(data['requests'],list)
-                or data['stage']=='world_design' and set(data)=={'stage','world_method_gap'} and isinstance(data['world_method_gap'],dict))):
+                or data['stage']=='world_design' and set(data)=={'stage','world_method_gap'} and isinstance(data['world_method_gap'],dict)
+                or data['stage']=='plot_design' and set(data)=={'stage','cast_gap'} and isinstance(data['cast_gap'],dict))):
             raise ValueError('Invalid method stage envelope')
         return data
     if not isinstance(data, dict) or set(data) != fields[kind]:

@@ -85,12 +85,15 @@ class ConsumptionModel(NetworkDesignModel):
         products = value['products']
         if stage == 'type_adaptation':
             products['adaptations'][0]['parameters']['investigation'] = NEED
-        elif stage == 'world_design' and data.get('production_methods'):
-            products['members'][0]['body'].update(title='旧港雾井', rule=RULE, limits=LIMIT)
-            for application in products['_method_applications']:
-                for output in application['outputs']:
-                    for place in output['placements']:
-                        place['value'] = deepcopy(at(products, place['path']))
+        elif stage == 'world_design':
+            for demand in products.get('cast_demands', []):
+                demand.update(event=GOAL, action='在井边施展回声术', result='只听清第一道刻痕')
+            if data.get('production_methods'):
+                products['members'][0]['body'].update(title='旧港雾井', rule=RULE, limits=LIMIT)
+                for application in products['_method_applications']:
+                    for output in application['outputs']:
+                        for place in output['placements']:
+                            place['value'] = deepcopy(at(products, place['path']))
         elif stage == 'character_design':
             for capability in products['capabilities']:
                 capability.update(abilities=[SPELL, '观察印痕'], limits=['回声术每息耗两格灵力。'])

@@ -58,6 +58,11 @@ def entity_ids(products: dict,context: dict) -> set[str]:
 
 def output_refs(stage: str,value: dict) -> set[str]:
     refs={f'member:{row["key"]}' for row in value.get('members',[])}
+    if stage == 'character_design':
+        refs.update(f'assignment:{row["demand"]}' for row in value.get('cast_assignments', []))
+    if stage == 'character_design' and 'cast_assignments' in value:
+        created = {m['key'] for m in value.get('members', ())}
+        refs.update('capability:' + r['entity'] for r in value.get('capabilities', ()) if r['entity'] not in created)
     refs|={f'scene:{row["scene"]}' for key in ('patches','transitions','beats','guidance') for row in value.get(key,[])}
     if stage=='scene_design':refs|={f'scene:{row["key"]}' for row in value['members']}
     refs|={f'direction:{index}' for index,_ in enumerate(value.get('directions',[]))}
@@ -102,7 +107,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
 
     require(isinstance(raw,dict) and set(raw)=={'stage','products'} and raw['stage']==stage,'wrong stage output')
     value=raw['products']
-    from nw.materials import chapter_progress
+    from nw.materials import cast_demands, chapter_progress
+    cast_enabled = context.get('cast_demand_policy') == cast_demands.POLICY
     progress_enabled = context.get('chapter_progress_policy') == chapter_progress.POLICY
     require('<填写' not in canonical(value),'unfilled transport shape is not an actual project product')
     type_network_inputs = stage == 'type_selection' and context.get('type_network_policy') == TYPE_NETWORK_POLICY
@@ -110,8 +116,12 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             and not value.keys()-FIELDS[stage]-{'_uses','_excluded','_requirements','_criteria'}
             -({'static_bindings'} if stage=='plot_design' else set())-{'_governance','_receipts'}
             -({'scene_progress'} if progress_enabled and stage == 'scene_design' else set())
+            -({'cast_demands'} if cast_enabled and stage == 'world_design' else set())
+            -({'cast_assignments'} if cast_enabled and stage == 'character_design' else set())
             -({'continuations'} if progress_enabled and stage == 'plot_design' and context.get('chapter_openings') else set())
             -({'adaptation_inputs'} if type_network_inputs else set())
+            -({'cast_events'} if cast_enabled and stage == 'plot_design' else set())
+            -({'cast_payoffs'} if cast_enabled and stage == 'scene_design' else set())
             -({'_network_design_uses'} if context.get('design_network_policy') else set()),'wrong stage product fields')
     if '_governance' in value:
         config=value['_governance']
@@ -127,6 +137,9 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             validate_adaptation_inputs(value, products, context)
     elif stage=='world_design':
         _members(value['members'],{'world'},entities)
+        if cast_enabled:
+            cast_demands.validate_demands(value.get('cast_demands'), cast_demands.source_options(context),
+                                          cast_demands.roster(context))
         require(all(isinstance(value[k],list) and all(_text(v) for v in value[k]) for k in ('limitations','unknowns')),'world limits required')
     elif stage=='character_design':
         new=_members(value['members'],{'character'},entities)
@@ -134,7 +147,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         from nw.materials.narration import ACCESS_POLICY
         if context.get('narration_policy') == ACCESS_POLICY:
             from nw.materials.cast_design import need_sources, validate_card, validate_introducer
-            needs = need_sources(context, products)
+            needs = cast_demands.source_options(context) if cast_enabled else need_sources(context, products)
             character_cards = {r['card_id']: r['body'] for r in context.get('approved_cards', []) if r['kind'] == 'character'}
             character_cards.update((r['key'], r['body']) for r in value['members'])
             for row in value['members']:
@@ -150,6 +163,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
                 require(any(row['body']['casting']['standing'] == 'protagonist' for row in value['members']),
                         '本书首次设计人物未说明谁承担主角')
         require(bool(people),'character stage did not create or identify any actual character')
+        if cast_enabled:
+            cast_demands.validate_assignments(value, products, context)
         require(isinstance(value['states'],list),'candidate initial states required')
         for row in value['states']:
             require(set(row)=={'entity','state','status'} and row['entity'] in people
@@ -353,6 +368,9 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         used.add(row['source_id'])
     require(used==allowed.keys(),'every delivered method needs an actual use or an explained exclusion')
     validate_extra(stage,value,products,sources,context)
+    if cast_enabled:
+        from nw.materials.cast_fulfillment import validate as validate_fulfillment
+        validate_fulfillment(stage, value, products, context)
     validate_template_uses(stage,value,products,sources,context)
     validate_requirements(stage,value,products,output_refs(stage,value))
     validate_selected_requirements(stage,value,products,context)

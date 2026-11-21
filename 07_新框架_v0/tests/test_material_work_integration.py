@@ -3,6 +3,7 @@ import json
 import pytest
 
 from nw.llm.base import GenResult
+from nw.materials.phase_routes import phase_order
 from nw.novel_flow import JobRequest,start_job,resume_job
 from nw.store import Store
 from nw.story_state import adopt_story
@@ -60,17 +61,36 @@ def design(store,provider,pin):
     return result.outputs['application']['chapters'][0]['scenes'][0]['scene_id']
 
 
+def _stage_calls(scope):
+    stages = phase_order(scope)
+    stages.insert(stages.index('character_design'), 'casting_editor')
+    return stages
+
+
+def _step(row):
+    if row['kind'] == 'plan':
+        return 'plan'
+    messages = json.loads(row['messages_json'])
+    if '[CASTING_EDITOR]' in messages[0]['content']:
+        return 'casting_editor'
+    return json.loads(messages[-1]['content'])['stage']
+
+
 def test_normal_workflow_saves_ordered_products_and_checks_prose_after_restart(tmp_path,monkeypatch):
     pin=pins_for(tmp_path,monkeypatch,'### 1.1_行动\n【定义】行动必须由目标推动，并承担实际后果。\n',['1.1_行动'])[0]
     path=tmp_path/'story';provider=Worker()
     with Store(path,create=True,test_mode=True) as store:
         setup(store);scene=design(store,provider,pin)
-        kinds=[row['kind'] for row in store.connection.execute('SELECT kind FROM task_calls ORDER BY rowid')]
-        assert kinds==['material_work']*7+['plan']+['material_work']*14+['plan']
-        application=json.loads(store.connection.execute('SELECT mapping_json FROM plan_applications ORDER BY rowid DESC LIMIT 1').fetchone()[0])
+        calls = store.connection.execute('SELECT kind,messages_json FROM task_calls ORDER BY rowid')
+        assert [_step(row) for row in calls] == [*_stage_calls('book'), 'plan', *_stage_calls('chapter'), 'plan']
+        book, application = [json.loads(row[0]) for row in store.connection.execute(
+            'SELECT mapping_json FROM plan_applications ORDER BY rowid')]
         character_stage=next(row for row in application['material_design']['work_session']['stages']
                              if row['stage']=='character_design')
-        assert character_stage['products']['members']
+        actor = book['material_design']['process_context']['ids']['yan']
+        assert not character_stage['products']['members']
+        assert {r['actor'] for r in character_stage['products']['cast_assignments']} == {actor}
+        assert {r['entity'] for r in character_stage['products']['capabilities']} == {actor}
     with Store(path,test_mode=True) as store:
         from nw.context.story import build_story_context,scene_scope
         package=build_story_context(store,scene,scene_scope(store,scene),90000).package
@@ -128,9 +148,13 @@ def test_explicit_retry_reopens_failed_study_with_original_frozen_input(tmp_path
             finish_reservation(store,hold,{},'FINISHED')
         second=resume_job(store,job,provider,config(store),retry_failed=True)
         assert second.step=='plan:book:confirm',second.reason
-        attempts=store.connection.execute("SELECT attempt,manifest_id FROM task_calls WHERE kind='material_work' ORDER BY rowid").fetchall()
-        assert [row['attempt'] for row in attempts]==[1,2,1,1,1,1,1,1]
+        attempts=store.connection.execute("SELECT kind,messages_json,attempt,manifest_id FROM task_calls "
+                                          "WHERE kind='material_work' ORDER BY rowid").fetchall()
+        stages = _stage_calls('book')
+        assert [_step(row) for row in attempts] == [stages[0], *stages]
+        assert [row['attempt'] for row in attempts] == [1, 2] + [1] * (len(stages) - 1)
         assert attempts[0]['manifest_id']==attempts[1]['manifest_id']
+        assert attempts[0]['messages_json'] == attempts[1]['messages_json']
 
 
 def test_default_design_cannot_generate_a_story_without_source_catalog(tmp_path):

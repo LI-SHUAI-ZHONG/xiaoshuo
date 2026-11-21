@@ -200,11 +200,13 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
                 assert bases[ref]['text'] == private_belief and orphan not in json.dumps(bases, ensure_ascii=False)
                 raw = json.loads(result.text)
                 entrances = [g for g in raw['products']['guidance'] if g['narration']['basis_ref'].startswith('cast:')]
+                [scene] = payload['inputs']['scene_design']['products']['members']
+                pov = scene['body']['pov']
                 line = guide('current', 'speech', 'informant', ref, private_belief, spoken)
-                line['narration']['witnesses'] = ['yan']
+                line['narration']['witnesses'] = [pov]
                 raw['products']['guidance'] = entrances + [
                     guide('past','summary',None,'card:archive:history','旧库因屋梁烧断封闭','[FAKE] 读者先得知封库始末'),
-                    line, guide('current', 'inference', 'yan', f'beat:{len(entrances) + 2}', spoken,
+                    line, guide('current', 'inference', pov, f'beat:{len(entrances) + 2}', spoken,
                                 '[FAKE] 听老许说完，他觉得新印值得比对，仍拿不准是否换过封条。')]
                 result.text = json.dumps(raw, ensure_ascii=False)
             return result

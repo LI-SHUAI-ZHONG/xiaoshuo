@@ -50,7 +50,8 @@ def _source_proof(draft: Draft, rule: dict, review: dict, source: dict) -> dict 
             'source_checks': clauses, 'evidence': spans, 'paragraph_evidence': _paragraphs(draft, spans)}
 
 
-def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, identity: bool) -> tuple[list[dict], list[dict]]:
+def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, identity: bool,
+                          cast_work: list[dict] | None = None) -> tuple[list[dict], list[dict]]:
     """Read proof from the accepted delta without consulting today's design or catalog."""
     manifest, package = read_input_manifest(store, delta.manifest_id)
     run_id = package.get('material_review_run')
@@ -64,7 +65,9 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
         return [], []
     sources = {rule['id']: (rule, refs) for rule in contract['checks'] if identity and (refs := _identity_sources(rule))}
     progress = {rule['id']: rule for rule in contract['checks'] if rule['id'].startswith('work:progress:')}
-    if not sources and not progress:
+    from nw.materials.cast_fulfillment import PREFIX
+    roles = {rule['id']: rule for rule in contract['checks'] if cast_work is not None and rule['id'].startswith(PREFIX)}
+    if not sources and not progress and not roles:
         return [], []
     reviewed, context = read_input_manifest(store, snapshot['manifest_id'])
     ref = asdict(draft_ref(draft))
@@ -86,6 +89,15 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
     proofs = []
     advances = []
     for check in result['material_checks']:
+        if check['id'] in roles:
+            from nw.materials.cast_fulfillment import performance
+            design = performance(roles[check['id']], contract['checks'])
+            cast_work.append({'scene_id': draft.scene_id, 'draft_ref': ref, 'delta_id': delta.id,
+                'review_run_id': run.id, 'disclosure_order': manifest['disclosure_order'],
+                'actor': design['actor'], 'demand': design['demand'], 'event': design['event'],
+                'action_ref': design['action_ref'], 'step_index': design['step_index'],
+                'designed_action': design['action'], 'designed_result': design['candidate_result'],
+                'review_reason': check['reason'], 'evidence': [s for s in check['evidence'] if s['id'] == draft.id]})
         if check['id'] in progress:
             design = progress[check['id']]['method_artifact']
             advances.append({'scene_id': draft.scene_id, 'draft_ref': ref, 'delta_id': delta.id, 'review_run_id': run.id,

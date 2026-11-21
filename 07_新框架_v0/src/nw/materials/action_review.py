@@ -3,6 +3,7 @@ import json
 
 from nw.materials import evidence
 from nw.materials import narration_review
+from nw.materials import cast_fulfillment
 from nw.materials.design_semantics import check_review_evidence
 from nw.models import Draft, Run
 from nw.store import Store
@@ -58,6 +59,7 @@ def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Dra
     if contract:
         rows = result['material_checks']
         narration_review.assess_beats(contract['checks'], rows, draft)
+        cast_fulfillment.assess(contract['checks'], rows, draft)
         if any(row['status'] != 'pass' for row in rows):
             result['recommendation'] = 'revise'
         for row, reason in _design_problems(contract['checks'], result['material_checks'], draft):
@@ -75,6 +77,7 @@ def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Dra
 def check_material_acceptance(store: Store, draft: Draft, delta: StateDelta) -> list[dict]:
     rows = evidence.check_material_acceptance(store, draft, delta)
     if (any(row['id'].startswith('work:design-network:') for row in rows)
+            or any(row['id'].startswith(cast_fulfillment.PREFIX) for row in rows)
             or any(row['id'].startswith(narration_review.PREFIX) for row in rows)
             or sum(row['id'].startswith(_ACTION_CHECK_PREFIX) for row in rows) >= 2):
         # The base check has matched this frozen review message to the current contract.
@@ -83,6 +86,9 @@ def check_material_acceptance(store: Store, draft: Draft, delta: StateDelta) -> 
         snapshot = json.loads(reviewed.input_snapshot_json)
         contract = json.loads(snapshot['messages'][-1]['content'])['material_review']
         narration_review.assess_beats(contract['checks'], rows, draft)
+        cast_fulfillment.assess(contract['checks'], rows, draft)
+        if any(row['status'] != 'pass' and row['id'].startswith(cast_fulfillment.PREFIX) for row in rows):
+            raise ValueError('MATERIAL_EVIDENCE: 人物职责须有本稿所选行动与后果的独立审稿依据')
         if any(row['status'] != 'pass' for row in rows):
             raise ValueError('MATERIAL_EVIDENCE: the approved narration requires a passing review of the current draft')
         reader_only = narration_review.reader_spans(contract['checks'], rows, draft)

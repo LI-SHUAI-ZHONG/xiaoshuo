@@ -73,6 +73,7 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
             payload.get('readable_source_ids',[]),payload.get('inputs'),allow_requests=payload.get('mode')!='execute',
             contracts=payload.get('source_contracts'), type_network_inputs=bool(payload.get('type_network_policy')),
             chapter_progress=bool(payload.get('chapter_progress_policy')),
+            cast_demand=bool(payload.get('cast_demand_policy')),
             narration=payload.get('narration_policy', False))
         if payload.get('network_design_candidates'):
             from nw.materials.design_network import add_schema
@@ -89,6 +90,9 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
             if ai_world:
                 from nw.production_methods.world_gap import schema as gap_schema
                 shape = {'anyOf': [*shape.get('anyOf', [shape]), gap_schema({'candidates': payload['production_methods']})]}
+        if 'cast_gap_format' in payload or 'cast_gap_limit_instruction' in payload:
+            from nw.materials.cast_gap import schema as cast_gap_schema
+            shape = {'anyOf': [*shape.get('anyOf', [shape]), cast_gap_schema()]}
         config=replace(config,params={**config.params,'format':shape})
     root=_ident(f'{version}:{request.id}:{index}')
     previous=store.connection.execute('SELECT id,attempt,status,validation,request_json FROM task_calls WHERE root_id=? ORDER BY attempt DESC LIMIT 1',(root,)).fetchone()

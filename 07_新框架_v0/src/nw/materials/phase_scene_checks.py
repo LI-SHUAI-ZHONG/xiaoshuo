@@ -22,6 +22,10 @@ def selected_checks(records: dict, scene: str, ids: dict | None = None, context:
     scene_product=product('scene_design')
     body=next((r['body'] for r in scene_product.get('members',[]) if r['key']==scene),{})
     result=[]
+    from nw.materials import cast_demands, cast_fulfillment
+    cast_enabled = (context or {}).get('cast_demand_policy') == cast_demands.POLICY
+    if cast_enabled:
+        result.extend(cast_fulfillment.scene_checks(records, scene, context))
     from nw.materials.chapter_progress import POLICY as PROGRESS_POLICY, scene_check
     if (context or {}).get('chapter_progress_policy') == PROGRESS_POLICY:
         if check := scene_check(records, scene, context):
@@ -54,9 +58,10 @@ def selected_checks(records: dict, scene: str, ids: dict | None = None, context:
             check += f' 这是本场第{index}项行动。引用本行动自己的正文片段，核对其与前后行动的实际顺序。'
         append('action', row, observable, check, action_order=index if multi else None)
         actor = actors.get(row['actor'], {})
-        if 'casting' in actor:
+        if 'casting' in actor or cast_enabled and actor:
             result[-1]['binding']['check'] += ' 从当场可见的措辞、反应或取舍核对这一步怎样体现该人物自己的目的。'
-            result[-1]['actor_design'] = {key: actor[key] for key in ('independent_goal', 'scene_function', 'behavior')}
+            fields = ('independent_goal', 'behavior', 'want') if cast_enabled else ('independent_goal', 'scene_function', 'behavior')
+            result[-1]['actor_design'] = {key: actor[key] for key in fields if key in actor}
             result[-1]['evidence_required'] += ' 以actor_design及实际场内目标核对行动的个人原因；他人视角不能直读其心声。'
     events={r['id']:r for r in product('event_design').get('candidates',[])}
     for selection in scene_product.get('selected_events',[]):

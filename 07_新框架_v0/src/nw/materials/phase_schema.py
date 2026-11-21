@@ -54,7 +54,7 @@ def card(kind: str, *, narration: bool | str = False) -> dict:
 
 def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | None=None,*,allow_requests: bool=True,
            contracts: list[dict] | None=None, type_network_inputs: bool=False, narration: bool | str=False,
-           chapter_progress: bool=False) -> dict:
+           chapter_progress: bool=False, cast_demand: bool=False) -> dict:
     state={'type':'object','additionalProperties':ANY,'minProperties':1}
     use=obj({**strings('source_id','operation'),'output_refs':array(TEXT,1)})
     use['properties']['operation']={'type':'string','minLength':8,'maxLength':160}
@@ -185,6 +185,11 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
         shapes['patches']['maxItems']=len({e['scene'] for e in events})
         use['properties']['output_refs']=array({'enum':['scene:'+scene for scene in sorted({e['scene'] for e in events})]},1)
     fields={key:shapes[key] for key in sorted(FIELDS[stage])};fields.update(common)
+    if cast_demand and stage == 'plot_design':
+        fields['cast_events'] = array(obj(strings('demand', 'event')))
+    if cast_demand and stage == 'scene_design':
+        fields['cast_payoffs'] = array(obj({**strings('demand', 'scene', 'action'),
+                                            'step_index': {'type': 'integer', 'minimum': 0}}))
     if stage == 'plot_design' and chapter_progress:
         fields['continuations'] = array(obj(strings('ref', 'event', 'target_quote', 'reason')))
     if stage == 'scene_design' and chapter_progress:
@@ -193,6 +198,9 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
             'change': {'enum': list(CHANGES)}, 'origin': {'enum': list(ORIGINS)},
             'connection': {'enum': list(CONNECTIONS)}, 'next_pressure': {'type': ['string', 'null']}}), 1)
     if stage!='type_selection':fields.pop('_governance')
+    if cast_demand:
+        from nw.materials.cast_demands import add_schema
+        add_schema(stage, fields)
     if stage=='plot_design':fields['static_bindings']=shapes['static_bindings']
     if stage == 'type_selection' and type_network_inputs:
         from nw.materials.type_network import INPUT_FIELDS

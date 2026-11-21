@@ -22,6 +22,7 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
     identity_disclosures = []
     character_changes = []
     reviewed_progress = []
+    reviewed_cast_work = []
     identity_anchor_checks = []
     pending = []
     missing_deltas = []
@@ -42,7 +43,8 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
         if delta is None:
             missing_deltas.append(scene.id)
             continue
-        anchors, progress = accepted_scene_checks(store, draft, delta, identity=include_anchor_checks)
+        anchors, progress = accepted_scene_checks(store, draft, delta, identity=include_anchor_checks,
+                                                 cast_work=reviewed_cast_work)
         identity_anchor_checks.extend(anchors)
         reviewed_progress.extend(progress)
         for operation in sorted(delta.operations, key=lambda op: (op['disclosure_order'], op['story_order'])):
@@ -74,6 +76,7 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
             'affected_characters': affected_characters, 'changes': changes,
             **({'character_changes': character_changes} if character_changes else {}),
             **({'reviewed_progress': reviewed_progress} if reviewed_progress else {}),
+            **({'reviewed_cast_work': reviewed_cast_work} if reviewed_cast_work else {}),
             **({'identity_disclosures': identity_disclosures} if identity_disclosures else {}),
             **({'identity_anchor_checks': identity_anchor_checks} if identity_anchor_checks else {})}
 

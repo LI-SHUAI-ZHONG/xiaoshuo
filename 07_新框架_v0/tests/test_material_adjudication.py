@@ -236,6 +236,13 @@ def test_adjudicated_original_contract_reaches_normal_design_review_and_acceptan
         from nw.call_budget import raise_context_limits
         raise_context_limits(store, write, context_char_limit=64000, output_limit=3000)
         result = resume_job(store, write, provider, config(store), author())
+        review = next(json.loads(messages[-1]['content']) for messages in provider.calls
+                      if 'material_review' in json.loads(messages[-1]['content']))
+        duty = next(row for row in review['material_review']['checks'] if row['id'].startswith('work:cast-result:'))
+        from nw.materials.cast_fulfillment import performance
+        role = performance(duty, review['material_review']['checks'])
+        assert role['actor'] and role['action'] == '[FAKE] 将木片伸到纸角下方'
+        assert role['candidate_result'] == '[FAKE] 露出旧印的半枚字形' and duty['evidence_required']
         if omit:
             assert result.status == 'BLOCKED' and 'every original source obligation' in result.reason
             assert not store.list('accepted')

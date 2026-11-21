@@ -13,8 +13,8 @@ from nw.task_models import InputManifest,canonical,content_sha256
 from nw.tasks import freeze_manifest,read_input_manifest
 
 
-def method_step(scope: str, stage: str) -> str:
-    return f'plan:{scope}:methods:{stage}'
+def method_step(scope: str, stage: str, *, cast_revision: bool = False) -> str:
+    return f'plan:{scope}:methods:{stage}' + (':cast-repair' if cast_revision else '')
 
 
 def preflight(store: object,package: dict,request_id: str) -> None:
@@ -110,14 +110,15 @@ def validate_choice(reader: MethodReader, target: dict, choice: dict) -> None:
         raise ValueError('METHOD_DESIGN_REQUIRED: 所选方法没有覆盖当前必须完成的制作任务')
 
 
-def prepare(store: object,request: object,package: dict,stage: str,products: dict,choose: object = None) -> dict | None:
+def prepare(store: object,request: object,package: dict,stage: str,products: dict,choose: object = None,
+            *, cast_revision: bool = False) -> dict | None:
     policy=package.get('production_method_policy')
     if not policy:return None
     ai = uses_world_selection(package, stage)
     scope = package['scope']
-    key = method_step(scope, stage)
+    key = method_step(scope, stage, cast_revision=cast_revision)
     reader = MethodReader(store.directory.parent)
-    ident = f'project-methods:{request.id}:{stage}'
+    ident = f'project-methods:{request.id}:{stage}' + (':cast-repair' if cast_revision else '')
     saved_gate = store.connection.execute('''SELECT attempt,input_json FROM novel_steps WHERE job_id=? AND step_key=?
         ORDER BY attempt DESC LIMIT 1''', (request.budget_id, key)).fetchone()
     saved = store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (ident,)).fetchone()
@@ -131,6 +132,8 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
         raise ValueError('STALE_PROJECT_METHOD: 本步最初的选材记录缺失')
     else:
         target = build_target(reader, package, stage, products)
+        if cast_revision:
+            target['cast_revision'] = True
         if ai:
             target['manifest_id'] = ident
         missing = target['missing_tasks']
@@ -154,6 +157,14 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
     ready={c['method']['id']:c for c in target['candidates'] if not c['missing']}
     if not ready and not target['required_tasks'] and not saved_gate:return {'target':target,'selected':[],'decision':None}
     if choose is None:raise ValueError('METHOD_AUTHOR_APPROVAL_REQUIRED: 请在制作台核对方法及其前置后确认')
+    if cast_revision:
+        # A refreshed selection must see the effective versions (including merged static-network work).
+        # A job can now legitimately contain two successful character/relations calls for this scope.
+        from nw.materials.phase_routes import product_ref
+        upstream = {k: {**product_ref(row), 'products': row['products']} for k, row in products.items()}
+        original,_ = read_input_manifest(store, ident)
+        freeze_manifest(store, replace(InputManifest(**original), id=ident+':inputs',
+                                       context_sha256=content_sha256(upstream)), upstream)
     decision=choose(stage,target,lambda choice: validate_choice(reader, target, choice))
     if decision['choice']['action']=='reject':raise ValueError('METHOD_DESIGN_REQUIRED: 作者退回方法或前置，须补设计后重建任务')
     selected=[ready[key] for key in decision['choice']['method_ids']]

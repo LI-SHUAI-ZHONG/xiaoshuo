@@ -49,10 +49,11 @@ class PhaseModel(Model):
         products=project_products(stage,Planner(fixture_scope).output['candidate_cards'],
                                   payload['inputs'],sources,payload['scope'],native=True,
                                   narration=payload.get('narration_policy', False), narration_bases=payload.get('narration_bases'),
-                                  cast_needs=payload.get('cast_needs'))
+                                  cast_needs=payload.get('cast_needs'), phase_payload=payload)
         add_scene_progress(payload, products)
         if stage=='state_transition':
-            assert payload['inputs']['character_design']['products']['members']
+            assert (payload['inputs']['character_design']['products']['members']
+                    or payload['inputs']['character_design']['products']['cast_assignments'])
             assert payload['inputs']['scene_design']['products']['events']
         from nw.materials.phase_contract import output_refs
         refs=sorted(output_refs(stage,products))
@@ -220,7 +221,7 @@ def test_dynamic_filter_uses_actual_type_and_scene_inputs(tmp_path, monkeypatch)
         _, frozen = drive_plan(store, request, {**package, 'scope': 'chapter'}, provider, config(store))
         stage_material = frozen['material_work']
         packets = {raw['study_input']['stage']: raw['study_input'] for receipt in stage_material['calls']
-                   for _, raw in [read_input_manifest(store, receipt['manifest_id'])]}
+                   for _, raw in [read_input_manifest(store, receipt['manifest_id'])] if 'stage' in raw['study_input']}
         assert 'type_adaptation' in packets['state_propagation']['inputs']
         assert packets['state_propagation']['inputs']['type_selection']['products']['selection']
         assert packets['state_propagation']['inputs']['scene_design']['products']['selected_actions']
@@ -301,10 +302,12 @@ def test_normal_plan_propose_assembles_only_real_step_products(tmp_path):
     template_catalog(tmp_path)
     with Store(tmp_path/'story',create=True,test_mode=True) as store:
         store.init_project('方向');store.add_brief('封条调查');adopt_story(store,baseline(),{})
-        proposal=propose_plan(store,1,'book',PhaseModel(),config(store),Budget(32,90000,4000))
+        provider = PhaseModel()
+        proposal=propose_plan(store,1,'book',provider,config(store),Budget(32,90000,4000))
         assert len(proposal.candidate_cards)==2
         rows=store.connection.execute("SELECT kind FROM task_calls ORDER BY rowid").fetchall()
-        assert [r[0] for r in rows]==['material_work']*7+['plan']
+        assert [r[0] for r in rows]==['material_work']*8+['plan']
+        assert sum('[CASTING_EDITOR]' in messages[0]['content'] for messages in provider.calls) == 1
 
 
 def test_type_selection_reads_hierarchy_with_its_exact_source(tmp_path):
@@ -447,7 +450,7 @@ def test_plain_plan_retry_resumes_failed_step_without_repeating_paid_upstream_ca
         assert proposal.candidate_cards
         assert sum(json.loads(m[-1]['content']).get('stage')=='type_selection' for m in provider.calls)==1
         attempts=store.connection.execute("SELECT attempt FROM task_calls WHERE kind='material_work' ORDER BY rowid").fetchall()
-        assert [r[0] for r in attempts]==[1,1,1,2,1,1,1,1]
+        assert [r[0] for r in attempts]==[1,1,1,2,1,1,1,1,1]
 
 
 def test_current_step_can_request_full_original_without_loading_other_steps(tmp_path):
@@ -470,7 +473,7 @@ def test_current_step_can_request_full_original_without_loading_other_steps(tmp_
         provider=Reader();budget=create_budget(store,'read',Budget(32,90000,4000))
         request,package=prepare_plan_task(store,1,'book',provider,config(store),budget,'read-test')
         _,frozen=drive_plan(store,request,{**package,'scope':'chapter'},provider,config(store))
-        assert len(frozen['material_work']['calls'])==15
+        assert len(frozen['material_work']['calls'])==16
         assert sum(json.loads(m[-1]['content']).get('stage')=='state_transition' for m in provider.calls)==2
 
 
@@ -553,6 +556,8 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
     second = '[FAKE] 用木片托起纸角查看旧印'
     first_sentence = '[FAKE] 沈砚举灯辨认封条下的铜丝，手背碰到铜丝被划伤。'
     second_sentence = '他收回手，压低木片托住纸角，看清了旧印。'
+    next_duty = '[FAKE] 将前日印痕的拓片和印坊日簿对照'
+    next_result = '[FAKE] 找到换印当日值班人的签名'
     class StateModel(PhaseModel):
         reviews = 0
 
@@ -578,6 +583,18 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                         facts[key]=t['new_value']
                 return GenResult(json.dumps({'operations':operations},ensure_ascii=False),'complete',{},'test',{})
             result = super().generate(messages,**params)
+            if payload.get('stage') == 'world_design' and payload.get('reviewed_cast_work'):
+                raw = json.loads(result.text)
+                duty = raw['products']['cast_demands'][0]
+                ref, quote = next((k, v) for k, v in payload['cast_plot_sources'].items()
+                                  if v == '换印的日期仍待调查')
+                duty.update(action=next_duty, result=next_result, need_ref=ref, need_quote=quote)
+                result.text = json.dumps(raw, ensure_ascii=False)
+            if payload.get('stage') == 'action_design' and any(
+                    row['action'] == next_duty for row in payload.get('cast_work', [])):
+                raw = json.loads(result.text)
+                raw['products']['candidates'][0]['steps'][0].update(action=next_duty, result=next_result)
+                result.text = json.dumps(raw, ensure_ascii=False)
             if payload.get('stage') == 'scene_design' and payload.get('chapter_progress_policy'):
                 raw = json.loads(result.text)
                 raw['products']['scene_progress'][0]['next_pressure'] = '换印的日期仍待调查'
@@ -663,6 +680,9 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
             with Store(store.directory, test_mode=True) as reopened:
                 handoff = continuation_chapter_state(reopened, head, revision_state(reopened, head))
                 [advance] = handoff['reviewed_progress']
+                performances = handoff['reviewed_cast_work']
+                assert performances and all(r['scene_id'] == scene and r['actor'] and
+                    r['draft_ref'] == advance['draft_ref'] and r['evidence'] for r in performances)
                 assert advance['change'] == 'knowledge' and advance['scene_id'] == scene
                 assert advance['evidence'] and advance['possible_next_pressure'] == '换印的日期仍待调查'
                 if not multi:
@@ -674,7 +694,16 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                                                         budget, 'next-chapter', parent_id=parent)
                     _, following = drive_plan(reopened, request, inputs, provider, config(reopened))
                     session = following['material_work']
+                    for stage in ('world_design', 'character_design'):
+                        packet = next(p for call in reversed(provider.calls)
+                                      if (p := json.loads(call[-1]['content'])).get('stage') == stage)
+                        assert packet['reviewed_cast_work'] == performances
                     steps = {s['stage']: s['products'] for s in session['stages']}
+                    [reassigned] = steps['world_design']['cast_demands']
+                    assert reassigned['reuse_actor'] == performances[0]['actor']
+                    assert reassigned['action'] == next_duty != performances[0]['designed_action']
+                    assert not steps['character_design']['members']
+                    assert steps['action_design']['candidates'][0]['steps'][0]['result'] == next_result
                     assert steps['scene_design']['chapters'][0]['index'] == 2
                     [continuation] = steps['plot_design']['continuations']
                     progress = next(r for r in method_checks(session, 'scene') if r['id'].startswith('work:progress:'))

@@ -1216,6 +1216,20 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if context.get('length_context'):
             from nw.length_plan import model_approved_cards
             payload['approved_cards'] = model_approved_cards(payload['approved_cards'])
+        if context.get('cast_demand_policy') and stage in ('plot_design', 'character_design', 'static_relations'):
+            from nw.materials import cast_gap
+            if context.get('plot_cast_gap'):
+                payload['plot_cast_gap'] = context['plot_cast_gap']
+                if stage == 'character_design':
+                    payload['previous_cast'] = context['previous_cast']
+                    payload['cast_revision_instruction'] = ('沿用原职责位置须保持同一人物编号。保留其称呼、身份、经历、个人目标、'
+                        '知情边界及本轮核对已有演员时引用的原字段，按最新职责调整本次具体行动与分派。')
+                elif stage == 'plot_design':
+                    payload['cast_gap_limit_instruction'] = ('本轮回补已完成。根据新分派完成节点；仍有明确无法解决的职责时，'
+                        '通过 cast_gap 报告阻碍和所需行动，流程将停在本步。')
+            elif stage == 'plot_design':
+                payload['plot_gap_sources'] = cast_gap.origins(products, context)
+                payload['cast_gap_format'] = cast_gap.INSTRUCTION
         if (continuity_ledger := build_continuity_ledger(stage, products, deps, stage_context)) is not None:
             payload['continuity_ledger'] = continuity_ledger
         if (joint_plan := build_joint_material_plan(stage, sources)) is not None:
@@ -1252,7 +1266,35 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     payload['chapter_changes'] = context['chapter_changes']
                 payload['output_schema'] += '；scene_progress:[{scene,basis_ref,basis_quote,origin,connection,stimulus,change,next_pressure}]'
                 suffix += '\n' + chapter_progress.SCENE_INSTRUCTION
-        from nw.materials import narration
+        from nw.materials import cast_demands, cast_fulfillment, narration
+        cast_enabled = context.get('cast_demand_policy') == cast_demands.POLICY
+        if cast_enabled and stage in ('character_design', 'expression_design', 'bind_scope') and 'world_design' in inputs:
+            # The casting desk receives its effective list separately. Later expression and
+            # binding desks have the selected event and action, not the original casting debate.
+            world = inputs['world_design']
+            payload['inputs'] = {**inputs, 'world_design': {**world, 'products': {
+                key: value for key, value in world['products'].items() if key != 'cast_demands'}}}
+        if cast_enabled and stage in cast_fulfillment.INSTRUCTIONS:
+            payload['cast_work'] = cast_fulfillment.cast_work(products, context)
+            suffix += '\n' + cast_fulfillment.INSTRUCTIONS[stage]
+            if stage in cast_fulfillment.SCHEMAS:
+                payload['output_schema'] += '；' + cast_fulfillment.SCHEMAS[stage]
+        if cast_enabled and stage in ('world_design', 'character_design'):
+            prior_work = package.get('chapter_handoff', {}).get('reviewed_cast_work', [])
+            if prior_work:
+                payload['reviewed_cast_work'] = prior_work
+                suffix += ('\nreviewed_cast_work 来自上一已接受章稿：依据该人物曾怎样行动及其后果，'
+                           '判断他能否承担本次事件的新职责。旧职责不自动续用，角色知情及世界状态仍按已接受事实。')
+        if cast_enabled and stage in ('world_design', 'character_design', 'plot_design', 'scene_design'):
+            payload['cast_demand_policy'] = cast_demands.POLICY
+            if stage == 'world_design':
+                payload['cast_plot_sources'] = cast_demands.source_options(context)
+                payload['output_schema'] += '；cast_demands:[{id,slot,need_ref,need_quote,event,obstacle,action,result,reuse_actor,reason,assessments}]'
+                suffix += '\n' + cast_demands.WORLD_INSTRUCTION
+            elif stage == 'character_design':
+                payload['frozen_cast_demands'] = cast_demands.effective_demands(products, context)
+                payload['output_schema'] += '；cast_assignments:[{demand,actor}]'
+                suffix += '\n资料直接影响本轮选人或兼任分派时，_uses.output_refs 可登记 assignment:实际需求id。'
         narration_policy = context.get('narration_policy')
         if narration_policy in narration.POLICIES:
             if stage in ('expression_design', 'bind_scope'):
@@ -1265,11 +1307,14 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             elif stage == 'character_design' and narration_policy == narration.ACCESS_POLICY:
                 from nw.materials.cast_design import CHARACTER_INSTRUCTION, need_sources
                 payload['narration_policy'] = narration_policy
-                payload['cast_needs'] = need_sources(context, products)
+                payload['cast_needs'] = cast_demands.source_options(context) if cast_enabled else need_sources(context, products)
                 suffix += '\n' + CHARACTER_INSTRUCTION
+                if cast_enabled:
+                    suffix += '\n' + cast_demands.CHARACTER_INSTRUCTION
             elif stage in ('plot_design', 'event_design', 'action_design') and narration_policy == narration.ACCESS_POLICY:
-                suffix += ('\n根据具备casting的人物在场理由、scene_function和independent_goal安排交集。'
-                           '用当事人有理由采取的行动、拒绝、透露或交接实现事件；配角与主角分开后可以继续追求自己的目的。'
+                suffix += ('\n按 cast_work 的本次分派和人物自己的目的安排交集。' if cast_enabled else
+                           '\n根据具备casting的人物在场理由、scene_function和independent_goal安排交集。')
+                suffix += ('用当事人有理由采取的行动、拒绝、透露或交接实现事件；配角与主角分开后可以继续追求自己的目的。'
                            '只把当场可见的表现交给正文，幕后动机留在该人物自己的视角或后续有据揭示处。')
             elif stage == 'scene_design':
                 suffix += '\n' + narration.SCENE_INSTRUCTION
@@ -1551,6 +1596,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '对应的项目依据。核对同一产物中的纪年、时期、地理与制度条件。')
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
+            if cast_enabled and stage in cast_fulfillment.SCHEMAS:
+                field = 'cast_events' if stage == 'plot_design' else 'cast_payoffs'
+                payload['output_contract']['products'][field] = []
             if design_candidates:
                 payload['output_contract']['products']['_network_design_uses'] = []
             if method_plan is not None and package.get('production_method_policy', {}).get('world_selection') == 'ai':
@@ -1578,6 +1626,13 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['binding_contract']=material_prompt(package.get('materials',[]),book=package['scope']=='book',
                                                         deferrals=package.get('material_deferrals'))
             payload['binding_sources']=[model_material(r,book=package['scope']=='book') for r in package.get('materials',[])]
+            if (cast_enabled and package['scope'] == 'book'
+                    and any(r.get('profile') == 'preflight_process' for r in package.get('materials', []))):
+                from nw.materials.phase_projection import member_stages
+                stages = member_stages('book', bool(package.get('production_method_policy')), cast_demands.POLICY)
+                payload['book_creation_targets'] = [r['key'] for s in stages for r in products[s]['products']['members']
+                                                   if r['kind'] in ('world', 'character')]
+                suffix += '\n本轮全书实际建卡范围为 book_creation_targets。创建前检查逐人、逐世界卡覆盖这些目标。'
             payload['writing_source_ids']=sorted(writing_sources(products,[]))
             if scoped_sources and package['scope'] != 'book':
                 required, flexible = scene_source_placements(products)
@@ -1589,7 +1644,15 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            'scene_independent_sources可按实际写作用途落场。'
                            '本步才采用的资料也要让_uses、适用条款与method_guidance指向实际应用场景。')
         def validate(value: dict) -> None:
-            if 'world_method_gap' in value:
+            if 'cast_gap' in value:
+                from nw.materials import cast_gap
+                if stage == 'plot_design' and context.get('plot_cast_gap'):
+                    rows = (value['cast_gap'] or {}).get('cast_demands', [])
+                    blocked = '、'.join(str(r.get('action', '')) for r in rows if isinstance(r, dict))
+                    raise ValueError('MATERIAL_WAITING_INPUTS: 剧情回补后仍缺角色，请补设计。待承担行动：' + blocked)
+                require(stage == 'plot_design', '人物缺口只能由剧情步骤交回')
+                cast_gap.validate(value, products, context)
+            elif 'world_method_gap' in value:
                 from nw.production_methods.world_gap import validate_gap
                 require(bool(world_candidates), '当前步骤没有待判定的世界方法候选')
                 validate_gap(value, {**method_plan['target'], 'candidates': payload['production_methods']})
@@ -1602,6 +1665,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 clean,_=project_methods.split(value)
                 if method_plan is None and clean!=value:raise ValueError('PROJECT_METHOD: 未请求的方法执行记录')
                 validate_phase(clean,stage,products,sources,stage_context)
+                if stage == 'character_design' and context.get('plot_cast_gap'):
+                    from nw.materials.cast_gap import stable_cast
+                    stable_cast(products, clean['products'], context['previous_cast'], context['plot_cast_gap'])
                 design_network.validate(stage, clean['products'], design_candidates, products, stage_context)
                 applied_plan = finalize(method_plan, value['products']) if ai_world else method_plan
                 if world_candidates:
@@ -1629,12 +1695,16 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     'production_method_parents':context.get('production_method_parents',[])})
         call_index = turn if world_candidates else index*max_rounds+turn
         call_version = 'world-method-pages-v1' if world_candidates else 'source-step-v4'
+        if context.get('plot_cast_gap') and stage in ('character_design', 'static_relations', 'plot_design'):
+            call_version = 'source-step-cast-repair-v1'
         raw,receipt=_study_call(store,request,stage_config,stage_provider,call_index,payload,sources,
             desk,retry_failed,verify_method_call,prompt=prompt,validator=validate,
             version=call_version,read_only_sources=[source for source,_ in readings.values()],
             step_material=material,prompt_suffix=suffix+(project_methods.prompt(method_plan, payload.get('method_handoffs', [])) if method_plan is not None else ''))
         verify_method_call()
         calls.append(receipt)
+        if 'cast_gap' in raw:
+            return {'cast_gap': raw['cast_gap'], 'receipt': receipt}, sources, calls
         if 'world_method_gap' in raw:
             from nw.production_methods.world_gap import validate_gap
             reason = validate_gap(raw, {**method_plan['target'], 'candidates': payload['production_methods']})
@@ -1737,6 +1807,10 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         session=package['material_work']
         require(session.get('policy')==POLICY,'legacy global study must be redesigned through actual creation steps')
         verify_chain(session);desk.verify(session['sources'])
+        from nw.materials.casting_editor import verify_calls
+        verify_calls(store, session)
+        from nw.materials.cast_gap import verify_archive
+        verify_archive(session, store)
         verify_session_bindings(session,workspace,test_mode=store.test_mode)
         verify_session_governance(session,workspace)
         from nw.production_methods.selection import verify_sources
@@ -1769,6 +1843,14 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['narration_policy'] = package['narration_policy']
     if 'cast_previous_appearances' in package:
         context['cast_previous_appearances'] = package['cast_previous_appearances']
+    if 'cast_demand_policy' in package:
+        from nw.materials.cast_demands import PLOT_FIELDS
+        context['cast_demand_policy'] = package['cast_demand_policy']
+        context['cast_prior_work'] = package.get('chapter_handoff', {}).get('reviewed_cast_work', [])
+        context['cast_source_cards'] = package.get('cast_source_cards', [])
+        parent = (package.get('parent') or {}).get('body', {})
+        fields = ('ending_direction', 'central_question') if package.get('cast_completed_direction') else PLOT_FIELDS
+        context['cast_parent'] = {k: parent[k] for k in fields if k in parent}
     network = None
     if selected and package.get('network_prerequisite_policy') == NETWORK_POLICY:
         context['network_prerequisite_policy'] = NETWORK_POLICY
@@ -1829,12 +1911,49 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             context['verified_dynamic_rules'] = proof
     from nw.materials.binding_assembly import freeze_required_sources
     freeze_required_sources(desk,package.get('materials',[]),context)
-    for index,stage in enumerate(phase_order(package['scope'])):
+    from nw.materials import cast_gap
+    order = phase_order(package['scope'])
+    index = 0
+    checkpoint = None
+    repair = None
+    while index < len(order):
+        stage = order[index]
+        if stage == 'character_design' and context.get('cast_demand_policy') and repair is None:
+            checkpoint = (products.copy(), sources.copy(), {**context, 'binding_reviews': context['binding_reviews'].copy(),
+                          'material_source_snapshots': context['material_source_snapshots'].copy()})
+        stage_inputs = context
+        if repair and stage == 'character_design':
+            original = repair['superseded'][stage]['products']
+            stage_inputs = {**context, 'previous_cast': {k: original[k] for k in ('members', 'cast_assignments')}}
         from nw.production_methods.selection import prepare as prepare_project_methods
-        method_plan=prepare_project_methods(store,request,package,stage,products,method_decision)
-        record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,context,
+        method_plan=prepare_project_methods(store,request,package,stage,products,method_decision,
+                                            **({'cast_revision': True} if repair else {}))
+        record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,stage_inputs,
                                           retry_failed,verify,max_rounds,index,studied_sources=list(sources.values()),governance=governance,
                                           method_plan=method_plan,network=network)
+        if 'cast_gap' in record:
+            require(stage == 'plot_design' and checkpoint is not None and repair is None, '剧情回补超过本轮次数')
+            gap = record['cast_gap']
+            initial_inputs = cast_gap.editor_inputs(products, context, gap)
+            repair = {'gap_sha256': content_sha256(gap), 'superseded': cast_gap.basis(products), 'receipt': record['receipt']}
+            calls.extend(receipts)
+            products, sources, context = checkpoint
+            context['plot_cast_gap'] = gap
+            context['cast_gap_inputs'] = initial_inputs
+            from nw.materials.casting_editor import require_approved, review_demands
+            review, receipt = review_demands(store, request, provider, config, desk, context, gap['cast_demands'],
+                                             retry_failed=retry_failed, verify=verify)
+            calls.append(receipt)
+            require_approved(review, context, gap['cast_demands'], calls)
+            repair['editor_review'] = review
+            index = order.index('character_design')
+            continue
+        if stage == 'world_design' and context.get('cast_demand_policy'):
+            from nw.materials.casting_editor import edit_world_demands, world_conditions
+
+            context['cast_world_conditions'] = world_conditions(record['products'], context)
+            record = edit_world_demands(store, request, provider, config, desk, context, record, receipts,
+                                        retry_failed=retry_failed, verify=verify)
         if network is not None and stage == 'static_relations' and context.get('same_stage_network_policy') == FOLLOWUP_POLICY:
             from nw.materials.static_followup_call import run_followup
             record, read, receipts = run_followup(store, request, package, provider, config, desk, products, context,
@@ -1850,14 +1969,20 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             context['prepared_static_sources'] = record['prepared_static_sources']
         if 'early_network_policy' in context and stage == 'static_relations':
             context['early_static_sources'] = record['prepared_static_sources']
+        index += 1
     session={'policy':POLICY,'id':'stages:'+request.id,'scope':package['scope'],'context':context,
              'stages':list(products.values()),'sources':list(sources.values()),'calls':calls}
+    if repair:
+        session['cast_repair'] = repair
+        cast_gap.verify_archive(session, store)
     if package.get('production_method_policy'):
         session.update(production_method_policy=package['production_method_policy'],production_method_parents=parents)
     if governance:session['governance']=governance
     session['semantic_contracts']=list({c['source_id']:c for row in products.values()
         for c in row['semantic_contracts']}.values())
     verify_chain(session);desk.verify(session['sources'])
+    from nw.materials.casting_editor import verify_calls
+    verify_calls(store, session)
     session['candidates']=compile_candidates(session)
     package={**package,'material_work':session,'material_mode':'source_driven_staged'}
     output={'scope':package['scope'],'candidate_cards':[{'kind':'plot','body':{'assembly_ref':content_sha256(row)}}

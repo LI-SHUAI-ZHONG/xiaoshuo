@@ -573,13 +573,14 @@ def test_legacy_character_check_uses_the_frozen_character_card_in_first_scene(tm
             payload = json.loads(messages[-1]['content'])
             if '只输出正文' in prompt:
                 assert all('character_editor' not in item['text'] for item in payload['items'])
-                return Model.generate(self, messages, **params)
+                output = Model.generate(self, messages, **params)
+                output.text = '[FAKE] 沈砚没有伸手掀封条，他先把木片探进纸角，托出了旧印的半枚字形。'
+                return output
             output = super().generate(messages, **params)
             if 'candidate_cards' in prompt and payload['scope'] != 'book':
                 proposed = json.loads(output.text)
                 for candidate in proposed['candidate_cards']:
                     if ident not in candidate['material_bindings']['scene']:continue
-                    binding = candidate['material_bindings']['scene'][ident]
                     candidate['material_bindings']['scene'][ident] = {
                         'function': '检查调查动机', 'parameter': '沈砚查封条',
                         'observable': '发现物件后主动调查', 'check': '行为符合目标', 'character': 'yan',
@@ -591,6 +592,9 @@ def test_legacy_character_check_uses_the_frozen_character_card_in_first_scene(tm
                 card = contract['checks'][0]['character_card']
                 assert card['ref']['kind'] == 'card' and card['ref']['version'] == 1
                 assert card['body']['name'] == '沈砚'
+                scene = next(json.loads(item['text']) for item in payload['context']['items']
+                             if item['source'].startswith('scene:'))
+                assert card['ref']['id'] == scene['pov']
             return output
 
     with Store(tmp_path / 'demo', create=True, test_mode=True) as store:

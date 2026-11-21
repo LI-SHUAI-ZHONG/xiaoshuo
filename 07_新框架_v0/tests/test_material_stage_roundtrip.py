@@ -25,7 +25,7 @@ class StageModel(Model):
 
     def generate(self,messages,**params):
         prompt=messages[0]['content']; data=json.loads(messages[-1]['content'])
-        if any(marker in prompt for marker in ('[MATERIAL_WORK]','[MATERIAL_STEP]','[MATERIAL_ASSEMBLY]')):
+        if any(marker in prompt for marker in ('[MATERIAL_WORK]','[MATERIAL_STEP]','[MATERIAL_ASSEMBLY]','[CASTING_EDITOR]')):
             return super().generate(messages,**params)
         if 'candidate_cards' in prompt:
             generated=super().generate(messages,**params); raw=json.loads(generated.text)

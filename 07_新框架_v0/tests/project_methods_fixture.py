@@ -40,7 +40,7 @@ class ProjectModel(PhaseModel):
     def generate(self,messages,**params):
         payload=json.loads(messages[-1]['content'])
         if self.on_payload:self.on_payload(payload)
-        if not any(marker in messages[0]['content'] for marker in ('[MATERIAL_STEP]','[MATERIAL_ASSEMBLY]')):
+        if not any(marker in messages[0]['content'] for marker in ('[MATERIAL_STEP]', '[MATERIAL_ASSEMBLY]', '[CASTING_EDITOR]')):
             self.calls.append(messages)
             generated=self.writer.generate(messages,**params)
             if '{"operations"' in messages[0]['content']:

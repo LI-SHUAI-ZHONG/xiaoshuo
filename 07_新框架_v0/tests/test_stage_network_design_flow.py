@@ -136,19 +136,36 @@ class NetworkDesignModel(reference.WorldModel):
                     for place in output['placements']:
                         place['value'] = deepcopy(at(products, place['path']))
         elif stage == 'character_design':
-            person = products['members'][0]
-            person['body'].update(role=ROLE, strength=ABILITY, ability_cost='二次验签要耗用仅存的朱砂')
-            for cap in products['capabilities']:
-                if cap['entity'] == person['key']:
+            person = next((m for m in products['members'] if m['body']['name'] == '沈砚'), None)
+            if person is not None:
+                person['body'].update(role=ROLE, strength=ABILITY, ability_cost='二次验签要耗用仅存的朱砂')
+                actor = person['key']
+            else:
+                approved = next(c for c in packet['approved_cards'] if c['kind'] == 'character' and c['body']['name'] == '沈砚')
+                actor = approved['card_id']
+                assert approved['body']['role'] == ROLE and approved['body']['strength'] == ABILITY
+            for index, cap in enumerate(products['capabilities']):
+                if cap['entity'] == actor:
                     cap.update(abilities=[ABILITY, '观察印痕'],
                                basis='[FAKE] 沈砚通过渡吏任职验核，受权用辨印验签比对封蜡和岸亭回执。',
                                limits=['[FAKE] 没有岸亭回执时不得单独签放，须扣船复验。'])
+                    for use in products['_uses']:
+                        use['output_refs'] = [('member:' if person is not None else 'capability:') + actor]
+                    for criterion in products['_criteria']:
+                        for clause in criterion['clauses']:
+                            if clause['applicability'] == 'applies':
+                                clause['output_refs'] = [f'/capabilities/{index}/basis']
         elif stage == 'state_transition':
             for transition in products['transitions']:
                 if transition['before_state'].get('hand') == '划伤':
                     transition.update(after_state={'hand': '包扎'}, action='[FAKE] 复查伤口并包扎之后再查封蜡',
                                       continuity='[FAKE] 此后手背保持包扎状态直到拆下布条')
         elif stage in ('plot_design', 'action_design', 'scene_design'):
+            if stage == 'plot_design' and packet['scope'] == 'book' and self.defect == 'wrong_actor':
+                boatman = next(d for d in packet['cast_work'] if d['actor'] == 'boatman')
+                duty_event = products['event_nodes'][0]
+                duty_event['actors'].append(boatman['actor'])
+                products['cast_events'].append({'demand': boatman['id'], 'event': duty_event['id']})
             if stage == 'scene_design' and len(products['events']) == 2:
                 first, second = products['events']
                 if second['entity'] == first['entity']:
@@ -223,10 +240,17 @@ def test_network_design_from_empty_cards_through_book_chapter_and_replay(tmp_pat
         assert candidates[AUTHORITY.dynamic_key]['member'] == 'seal'
         assert candidates[PROFESSION.dynamic_key]['member'] == 'yan'
         scene_call = packets(model, 'scene_design')[0]
+        applied_actor = book.outputs['application']['material_design']['process_context']['ids']['yan']
+        role_stage = stages(session)['character_design']['products']
+        assert not role_stage['members']
+        assert any('capability:' + applied_actor in use['output_refs'] for use in role_stage['_uses'])
+        chapter_ability, = [r for r in packets(model, 'plot_design')[1]['network_design_candidates']
+                            if r['key'] == PROFESSION.dynamic_key]
+        assert chapter_ability['member'] == applied_actor and chapter_ability['required']
         required = {r['key'] for r in scene_call['network_design_candidates'] if r['required']}
         assert required == set(pairs)
         for line in scene_call['network_design_candidates']:
-            assert line['member'] == candidates[line['key']]['member']
+            assert line['member'] == (applied_actor if line['key'] == PROFESSION.dynamic_key else candidates[line['key']]['member'])
             assert line['origin']['task_id'] != candidates[line['key']]['origin']['task_id']
         scene_rows = application['chapters'][0]['scenes']
         assert len(scene_rows) == 2

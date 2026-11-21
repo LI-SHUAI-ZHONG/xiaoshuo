@@ -106,7 +106,8 @@ def run_followup(store: Store, request: TaskRequest, package: dict, provider: LL
     suffix = LAYER_INSTRUCTION if any(row.get('network_layer_fields') for row in model_contracts) else ''
     delta, receipt = _study_call(store, request, stage_config, stage_provider, index, payload, sources, desk,
         retry_failed, verify, prompt=PROMPT, prompt_suffix=suffix, validator=validate,
-        version='static-network-followup-v1', read_only_sources=basis_sources)
+        version=('static-network-cast-repair-v1' if context.get('plot_cast_gap') else 'static-network-followup-v1'),
+        read_only_sources=basis_sources)
     delta = delta['products']
     merged = merge_followup(basis, delta, sources, products, ctx)
     used = {row['source_id'] for row in merged['_uses']}

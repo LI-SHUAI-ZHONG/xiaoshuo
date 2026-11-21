@@ -172,7 +172,11 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 'selected_direction':{k:v for k,v in parent_card['body'].items() if k not in ('members','unknowns')}}
             if session.get('context', {}).get('design_network_policy'):
                 from nw.materials.design_network import inherited as parent_design_uses
-                package['parent_design_network'] = parent_design_uses(package['parent_material_work'], parent.get('members', {}), cards)
+                approved = {a['card_id']: {'card_id': a['card_id'], 'version': a['version']} for a in parent['approvals']}
+                member_refs = {key: approved[ident] for key, ident in inherited.get('process_context', {}).get('ids', {}).items()
+                               if ident in approved}
+                package['parent_design_network'] = parent_design_uses(package['parent_material_work'],
+                    {**parent.get('members', {}), **member_refs}, cards)
         if production_method_policy:
             from nw.production_methods.policy import normalize
             package['production_method_policy']=normalize(production_method_policy)
@@ -213,10 +217,12 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
-                        'multi_action_policy', 'narration_policy', 'cast_previous_appearances',
+                        'multi_action_policy', 'narration_policy', 'cast_previous_appearances', 'cast_demand_policy',
+                        'cast_source_cards', 'cast_completed_direction',
                         'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
                         'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy',
-                        'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy'):
+                        'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy',
+                        'parent_design_network'):
                 if key in previous_package:
                     package[key] = previous_package[key]
         else:
@@ -247,6 +253,10 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 package['multi_action_policy'] = MULTI_ACTION_POLICY
                 package['action_state_policy'] = ACTION_STATE_POLICY
                 package['narration_policy'] = NARRATION_POLICY
+                from nw.materials.cast_demands import POLICY as CAST_DEMAND_POLICY, completed_direction, source_card_ids
+                package['cast_demand_policy'] = CAST_DEMAND_POLICY
+                package['cast_source_cards'] = source_card_ids(parent, cards, package.get('chapter_handoff', {}), scope)
+                package['cast_completed_direction'] = completed_direction(parent, package.get('chapter_handoff', {}))
                 from nw.materials.cast_design import previous_appearances
                 package['cast_previous_appearances'] = previous_appearances(store, cards)
                 package['action_template_priority_enabled'] = True

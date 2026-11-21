@@ -15,6 +15,8 @@ def verify_chain(session: dict) -> None:
     require(session.get('policy') in STAGED_POLICIES,'unknown stage binding policy')
     records=session.get('stages',[]);order=phase_order(session['scope'])
     require([row['stage'] for row in records]==order,'missing, repeated or out-of-order creation stages')
+    from nw.materials.cast_gap import verify_archive
+    verify_archive(session)
     sources={row['source']['id']:row for row in session['sources']};products={}
     screening=session['context'].get('dynamic_screening')
     for row in records:
@@ -58,6 +60,10 @@ def verify_chain(session: dict) -> None:
                 selection.get('control_review_sha256')==session['context'].get('retrieval_control',{}).get('review',{}).get('sha256'),
                 'pre-step source selection trace changed or was omitted')
         from nw.production_methods import runtime as project_methods
+        if row['stage'] == 'world_design' and context.get('cast_demand_policy'):
+            from nw.materials.casting_editor import verify_world
+
+            verify_world(row, {**session['context'], 'plot_cast_gap': None}, session.get('calls', []))
         raw={'stage':row['stage'],'products':row['products']};clean,_=project_methods.split(raw)
         step_products = verify_followup(row, products, sources, context, session.get('calls', []))
         if BASIS_STAGE in step_products:
@@ -91,6 +97,15 @@ def verify_chain(session: dict) -> None:
         products[row['stage']]=row
 
 
+def member_stages(scope: str, project_methods: bool, cast_policy: str | None) -> tuple:
+    from nw.materials.cast_demands import POLICY as CAST_POLICY
+    if scope != 'book':
+        return ('world_design', 'character_design', 'plot_design', 'scene_design')
+    if project_methods:
+        return ('world_design', 'character_design', 'plot_design')
+    return ('character_design',) if cast_policy == CAST_POLICY else ()
+
+
 def compile_candidates(session: dict) -> list[dict]:
     products={row['stage']:row['products'] for row in session['stages']}
     binder=products['bind_scope'];scope=session['scope']
@@ -98,9 +113,9 @@ def compile_candidates(session: dict) -> list[dict]:
     directions=products['plot_design']['directions'];result=[]
     for body in directions:
         members=[];chapters=[]
-        if scope!='book' or session.get('production_method_policy'):
-            for stage in ('world_design','character_design','plot_design',*(['scene_design'] if scope!='book' else [])):
-                members.extend(deepcopy(products[stage]['members']))
+        for stage in member_stages(scope, bool(session.get('production_method_policy')),
+                                   session.get('context', {}).get('cast_demand_policy')):
+            members.extend(deepcopy(products[stage]['members']))
         if scope!='book':
             scenes={row['key']:row for row in members if row['kind']=='scene'}
             actions={row['id']:row for row in products['action_design']['candidates']}

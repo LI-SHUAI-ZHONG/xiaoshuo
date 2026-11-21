@@ -56,7 +56,8 @@ def refresh_pending(store: object, job_id: str, token: str) -> tuple[dict, bool]
             raise ValueError('选材节点已变化，请打开当前待确认步骤')
 
         scope, stage = gate['scope'], gate['stage']
-        key = method_step(scope, stage)
+        revised = bool(gate.get('cast_revision'))
+        key = method_step(scope, stage, cast_revision=revised)
         journal = Journal(store, job_id)
         row = journal.latest(key)
         before = gate_target(gate)
@@ -73,9 +74,14 @@ def refresh_pending(store: object, job_id: str, token: str) -> tuple[dict, bool]
             raise ValueError('待确认节点与已保存的制作范围不一致')
         journal.head = StateHead(**package['branch_head'])
         journal.check_active(key)
-        products = _prior_products(store, job_id, manifest_id, scope, stage)
+        if revised:
+            _, products = read_input_manifest(store, f'project-methods:{task}:{stage}:cast-repair:inputs')
+        else:
+            products = _prior_products(store, job_id, manifest_id, scope, stage)
         check_bindings(before, registry(package, products))
         updated = build_target(MethodReader(store.directory.parent), package, stage, products)
+        if revised:
+            updated['cast_revision'] = True
         if canonical(updated) == canonical({k: v for k, v in before.items() if k != 'candidate_revision'}):
             return gate, False
 

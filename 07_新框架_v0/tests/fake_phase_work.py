@@ -15,9 +15,9 @@ def _input(inputs: dict, stage: str) -> dict:
     return inputs.get(stage, {}).get('products', {})
 
 
-def _process_bindings(candidate: dict, inputs: dict, scope: str) -> dict:
+def _process_bindings(candidate: dict, inputs: dict, scope: str, book_targets: list | None = None) -> dict:
     bindings = deepcopy(candidate.get('process_bindings', {}))
-    if scope == 'book' or not any('checks' in artifact for artifact in bindings.values()):
+    if (scope == 'book' and book_targets is None) or not any('checks' in artifact for artifact in bindings.values()):
         return bindings
     actual = {row['key']: deepcopy(row) for stage in
         ('world_design', 'character_design', 'plot_design', 'scene_design')
@@ -29,7 +29,7 @@ def _process_bindings(candidate: dict, inputs: dict, scope: str) -> dict:
         body['planned_result'] = patch['planned_result']
     checks = [{'kind': 'character_creation' if row['kind'] == 'character' else 'world_creation',
         'target': key, 'artifact': row['body']} for key, row in actual.items()
-        if row['kind'] in ('character', 'world')]
+        if row['kind'] in ('character', 'world') and (scope != 'book' or key in book_targets)]
     checks += [{'kind': 'opening', 'target': row['card'], 'artifact': actual[row['card']]['body']}
         for chapter in _input(inputs, 'scene_design').get('chapters', []) if chapter['index'] == 1
         for row in chapter['scenes'] if row['index'] == 1]
@@ -43,12 +43,30 @@ def _process_bindings(candidate: dict, inputs: dict, scope: str) -> dict:
 
 def project_products(stage: str, candidates: list[dict], inputs: dict, sources: list[dict],
                      scope: str, *, native: bool = False, narration: bool | str = False,
-                     narration_bases: dict | None = None, cast_needs: dict | None = None) -> dict:
+                     narration_bases: dict | None = None, cast_needs: dict | None = None,
+                     phase_payload: dict | None = None) -> dict:
     """Explicit isolated-test designs, each linked to actual preceding products."""
     candidate = deepcopy(candidates[0]); members = candidate['members']
+    data = phase_payload or {}
+    existing = {r['card_id']: r['body'] for r in data.get('approved_cards', []) if r['kind'] == 'character'}
+    if data.get('cast_demand_policy') or 'cast_work' in data or 'cast_assignments' in _input(inputs, 'character_design'):
+        aliases = {r['key']: ident for r in members if r['kind'] == 'character'
+                   for ident, body in existing.items() if r['body']['name'] == body['name']}
+        if aliases:
+            def replace(value):
+                if isinstance(value, dict):
+                    return {aliases.get(k, k): replace(v) for k, v in value.items()}
+                if isinstance(value, list):
+                    return [replace(v) for v in value]
+                return aliases.get(value, value)
+            candidate = replace(candidate)
+            members = candidate['members']
     scenes = [row for row in members if row['kind'] == 'scene']
     ids = [row['source']['id'] for row in sources]
     people = _input(inputs, 'character_design').get('members', [])
+    people = people + [{'key': ident, 'kind': 'character', 'body': existing[ident]}
+                       for ident in dict.fromkeys(a['actor'] for a in _input(inputs, 'character_design').get('cast_assignments', ()))
+                       if ident in existing]
     nodes = _input(inputs, 'plot_design').get('event_nodes', [])
     if stage == 'type_selection':
         return {'selection': [{'id': 'investigation', 'label': '[FAKE] 制度谜团调查',
@@ -66,12 +84,31 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
                 for row in selected['concepts'][:1]], 'boundaries': []}
     if stage == 'world_design':
         worlds = [row for row in members if row['kind'] == 'world']
+        extra = {}
+        if data.get('cast_demand_policy'):
+            ref, quote = next(iter(data['cast_plot_sources'].items()))
+            demands = []
+            for index, member in enumerate(m for m in members if m['kind'] == 'character'):
+                actor = member['key'] if member['key'] in existing else None
+                choices = [actor] if actor else list(existing)
+                demands.append({'id': f'duty_{index}', 'slot': f'player_{index}', 'need_ref': ref, 'need_quote': quote,
+                    'event': '[FAKE] 查明封条是否被替换', 'obstacle': '[FAKE] 铜丝藏在纸角下',
+                    'action': '[FAKE] 将木片伸到纸角下方', 'result': '[FAKE] 露出旧印的半枚字形',
+                    'reuse_actor': actor, 'reason': '[FAKE] 需要亲自验印者接近纸角辨认旧印',
+                    'assessments': [{'actor': who, 'field': 'want', 'quote': existing[who]['want'],
+                        'reason': '[FAKE] 根据本人原先的调查目标安排可接触的印记'} for who in choices]})
+            extra['cast_demands'] = demands
         return {'members': worlds or [{'key': 'seal', 'kind': 'world', 'body': {
             'title': '[FAKE] 药铺封条', 'rule': '[FAKE] 封条下藏有可划伤手背的铜丝',
             'limits': '[FAKE] 木片折断后不能继续抬起纸角', 'visibility': 'public'}}],
-            'limitations': [], 'unknowns': candidate['open_world_rules']}
+            'limitations': [], 'unknowns': candidate['open_world_rules'], **extra}
     if stage == 'character_design':
         characters = [row for row in members if row['kind'] == 'character']
+        extra = {}
+        if data.get('cast_demand_policy'):
+            demands = data['frozen_cast_demands']
+            extra['cast_assignments'] = [{'demand': d['id'], 'actor': d['reuse_actor'] or r['key']}
+                for d, r in zip(demands, characters, strict=True)]
         if narration == 'scene-narration-v2':
             for index, row in enumerate(characters):
                 ref, quote = next(iter(cast_needs.items()))
@@ -80,7 +117,11 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
                     voice='[FAKE] 追问编号', boundaries='[FAKE] 只确认亲自查过的印', casting={'need_ref': ref, 'need_quote': quote,
                         'standing': 'protagonist' if not index else 'ordinary',
                         'entry': 'opening' if not index else 'self', 'public_identity': row['body']['name']})
-        return {'members': characters, 'states': [], 'capabilities': [{'entity': row['key'],
+                if data.get('cast_demand_policy'):
+                    duty = demands[index]
+                    row['body']['scene_function'] = duty['action']
+                    row['body']['casting'].update(need_ref=duty['need_ref'], need_quote=duty['need_quote'])
+        return {'members': [r for r in characters if r['key'] not in existing], **extra, 'states': [], 'capabilities': [{'entity': row['key'],
             'can_act': True, 'abilities': ['观察印痕', '移动木片'],
             'basis': '[FAKE] 当前项目能力提案：因调查目标能借灯观察并用木片检查纸角',
             'limits': ['[FAKE] 不会拆除铜丝机关']} for row in characters]}
@@ -203,13 +244,22 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
     used = sorted(writing_sources(inputs, []) | set(ids))
     actual_scenes = _input(inputs, 'scene_design').get('members', [])
     return {'material_bindings': candidate.get('material_bindings', {}),
-        'process_bindings': _process_bindings(candidate, inputs, scope),
+        'process_bindings': _process_bindings(candidate, inputs, scope, data.get('book_creation_targets')),
         'method_guidance': [{'scene': row['key'], 'source_ids': used,
             'observable': '[FAKE] 沈砚借灯观察封条边角后采取行动',
             'check': '[FAKE] 核对资料要求的目标、行动、应对及实际后果'} for row in actual_scenes] if used else []}
 
 
 def add_scene_progress(data: dict, products: dict) -> None:
+    work = data.get('cast_work')
+    if work is not None and data['stage'] == 'plot_design':
+        products['cast_events'] = [{'demand': duty['id'], 'event': node['id']}
+            for duty in work for node in products['event_nodes'] if duty['actor'] in node['actors']]
+    if work is not None and data['stage'] == 'scene_design':
+        actions = {row['id']: row for row in _input(data['inputs'], 'action_design')['candidates']}
+        products['cast_payoffs'] = [{'demand': duty['id'], **selected, 'step_index': 0}
+            for selected in products['selected_actions'] for duty in work
+            if actions[selected['action']]['actor'] == duty['actor']]
     if data['stage'] == 'plot_design' and data.get('chapter_openings'):
         node = products['event_nodes'][0]
         products['continuations'] = [{'ref': data['chapter_openings'][0], 'event': node['id'],
@@ -244,7 +294,7 @@ def phase_output(provider: Any, messages: list[dict]) -> GenResult:
     provider.calls.append(messages)
     candidates=json.loads(fixture.text)['candidate_cards']
     products=project_products(stage,candidates,data['inputs'],data['sources'],scope,narration=data.get('narration_policy', False),
-                              narration_bases=data.get('narration_bases'), cast_needs=data.get('cast_needs'))
+                              narration_bases=data.get('narration_bases'), cast_needs=data.get('cast_needs'), phase_payload=data)
     if stage == 'bind_scope' and (required := data.get('required_scene_sources')):
         independent = set(data['scene_independent_sources'])
         guides = products['method_guidance']

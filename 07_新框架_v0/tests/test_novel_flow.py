@@ -23,6 +23,12 @@ class Model(FakeProvider):
         self.core = core
 
     def generate(self, messages, **params):
+        if '[CASTING_EDITOR]' in messages[0]['content']:
+            self.calls.append(messages)
+            data = json.loads(messages[-1]['content'])
+            judgments = [{'id': row['id'], 'verdict': 'accept', 'reason': '[FAKE] 隔离用例中的行动会造成已设计的结果'}
+                         for row in data['demands']]
+            return GenResult(json.dumps({'judgments': judgments}, ensure_ascii=False), 'complete', {}, 'test', {})
         if '[MATERIAL_STEP]' in messages[0]['content']:
             from fake_phase_work import phase_output
             return phase_output(self,messages)

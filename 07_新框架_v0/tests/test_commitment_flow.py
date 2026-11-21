@@ -51,9 +51,10 @@ class PromiseModel(reference.WorldModel):
             return result
         value = data['products']
         if stage == 'character_design':
-            value['members'][0]['body'].update(
-                relationship='[FAKE] 沈砚答应祖母在冬至前送回旧船。', want='[FAKE] 他准备把旧船归还给祖母。',
-                behavior='[FAKE] 一见到旧船上的祖母刻印，就回港检查船况。')
+            for person in value['members']:
+                person['body'].update(
+                    relationship='[FAKE] 沈砚答应祖母在冬至前送回旧船。', want='[FAKE] 他准备把旧船归还给祖母。',
+                    behavior='[FAKE] 一见到旧船上的祖母刻印，就回港检查船况。')
         if stage in ('plot_design', 'scene_design'):
             [row] = [r for r in packet['network_design_candidates'] if r['key'] == 'C00655']
             text = {'breach': BREAK, 'split_breach': CHOICE}.get(self.case, KEEP)
