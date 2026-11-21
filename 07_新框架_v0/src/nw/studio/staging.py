@@ -181,6 +181,10 @@ class StagingMixin:
         validated = [self._validate_item(row, item, text) for item in items]
         now = timestamp()
         with self.connect() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            if (conn.execute('SELECT 1 FROM corpus_structures WHERE book_id=?',(ident,)).fetchone()
+                    or conn.execute("SELECT 1 FROM corpus_jobs WHERE book_id=? AND status IN ('pending','running','paused','failed')",(ident,)).fetchone()):
+                raise ValueError('该作品已进入多层结构拆解，历史局部条目不能更改制作状态')
             current = conn.execute('SELECT status FROM staging_books WHERE id=?', (ident,)).fetchone()[0]
             if current not in ('queued', 'decomposing', 'pending_verify'):
                 raise ValueError('书籍状态已变化，拆解结果未入库')
@@ -197,8 +201,10 @@ class StagingMixin:
     def decompose_book(self, ident: str, body: dict) -> dict:
         if 'items' in body:
             return self._insert_items(ident, body['items'])
-        from nw.studio.staging_model import start_decomposition
-        return start_decomposition(self, ident)
+        if body not in ({}, {'mode': 'model'}):
+            raise ValueError('自动拆解请使用多层结构任务；人工原文批注须提交 items')
+        return self.start_corpus_job(ident, {'kind': 'structure',
+            'options': {'note': self.get_corpus(ident)['body']['source_extent']['note'] or '参考作品完整性尚未确认'}})
 
     def verify_book(self, ident: str, body: dict) -> dict:
         row = self._staging_row(ident)
@@ -220,11 +226,15 @@ class StagingMixin:
             if item_id not in current or current[item_id]['status'] != 'draft':
                 raise ValueError('只能修改本书待复核条目')
             edited[item_id] = self._validate_item(row, {**self._item(current[item_id]), **edit}, text)
+        if not (approve or discard or edited):
+            raise ValueError('没有可复核的历史局部条目；结构审核请打开多层拆解')
         if any(k not in current or current[k]['status'] != 'draft' for k in approve + discard):
             raise ValueError('只能复核本书尚未决定的条目')
         now = timestamp()
         with self.connect() as conn:
             conn.execute('BEGIN IMMEDIATE')
+            if conn.execute('SELECT 1 FROM corpus_structures WHERE book_id=?',(ident,)).fetchone():
+                raise ValueError('该作品已有多层结构，请在结构页复核，历史局部条目不能更改结构状态')
             if conn.execute('SELECT status FROM staging_books WHERE id=?', (ident,)).fetchone()[0] != 'pending_verify':
                 raise ValueError('书籍状态已变化')
             for item_id in set(approve + discard) | set(edited):

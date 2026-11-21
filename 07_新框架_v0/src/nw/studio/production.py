@@ -155,7 +155,7 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                          design_scope=str(scope) if mode == 'design' else 'chapter',
                          parent_id=book_id if mode == 'design' and scope != 'book' else None,
                          scene_ids=selected, budget=budget,
-                         governance_inputs=governance(novel['wizard']) if mode == 'design' else {},
+                         governance_inputs=governance(novel['wizard'], library=self.library) if mode == 'design' else {},
                          production_method_policy=novel['wizard'].get('production_methods',{}) if mode=='design' else {})
         job = start_job(store, req)
         self.db.update(novel['id'], job_id=job.id, status='designing' if mode == 'design' else 'writing')

@@ -3,6 +3,7 @@ import json
 from uuid import uuid4
 
 from nw.studio.catalog import canonical_types
+from nw.studio.corpus_catalog import require_current_schema
 from nw.studio.library_util import encode, timestamp
 from nw.studio.method_contract import draft
 from nw.studio.method_catalog import TASKS
@@ -41,13 +42,18 @@ def check_story_method(service: object, structure: dict, body: dict, basis: dict
             raise ValueError('章场方法的生产任务与所选章场推进或人物出场观察不符')
         selection={**thread,'node_ids':[node for node in thread['node_ids'] if node in events],
                    'evidence_ids':list(evidence.keys() & set(thread['evidence_ids']))}
+        if domain=='cast_roster':
+            detail=thread['details']
+            if (not selection['node_ids'] or detail['appearance_evidence'] not in selection['evidence_ids']
+                    or (detail['standing_evidence'] and detail['standing_evidence'] not in selection['evidence_ids'])):
+                raise ValueError('阵容方法须引用本人物的原事件、实际出场或提及依据及所采用的地位凭据')
         issue=story_observation_issue(selection,events,links,units,evidence,characters)
         if issue:
             raise ValueError(issue)
         stages={stage for task in target_tasks for stage in TASKS[task]['stages']}
         targets={'members','event_nodes','reader_plan','promise_plan','candidates','events','chapters',
                  'guidance','patches','transitions'}
-        targets.update({'cast_assignments','cast_events','cast_payoffs'} if domain=='cast_entry'
+        targets.update({'cast_assignments','cast_events','cast_payoffs'} if domain in ('cast_entry','cast_roster')
                        else {'continuations','scene_progress'})
         if not any(o['stage'] in stages and o['field'] in targets and
                    (o['field']!='members' or o['artifact_kind']!='stage_product') for o in body['outputs']):
@@ -123,12 +129,14 @@ def check_world_method(service: object, structure: dict, body: dict, basis: dict
         raise ValueError('世界方法须明确所需的本项目立项、类型、上层设计或已接受状态前置')
 
 
-def origin_status(service: object, method_id: str, version: int, body: dict, conn: object) -> tuple[dict | None,list[dict]]:
+def origin_status(service: object, method_id: str, version: int, body: dict, conn: object) -> tuple[dict | None,list[dict],int | None]:
     row=conn.execute('SELECT * FROM corpus_method_origins WHERE method_id=? AND method_version=?',(method_id,version)).fetchone()
-    if not row:return None,[]
+    if not row:return None,[],None
     origin=dict(row);origin['basis']=json.loads(origin.pop('basis_json'));issues=[]
+    source_schema=None
     try:
         structure=service._corpus_row(origin['book_id'],origin['structure_version'],conn)
+        source_schema=structure['body'].get('schema_version',1)
         if structure['approved_version']!=origin['structure_version'] or not structure['available']:
             raise ValueError('参考结构已更新、未批准或来源失效；此方法须依据当前结构重新提炼')
         expected={(e['start'],e['end'],e['quote']) for e in structure['body']['evidence']}
@@ -147,7 +155,7 @@ def origin_status(service: object, method_id: str, version: int, body: dict, con
         origin['source_extent']=structure['body']['source_extent']
     except (OSError,ValueError,KeyError) as exc:
         issues=[{'field':'origin','message':str(exc)}]
-    return origin,issues
+    return origin,issues,source_schema
 
 
 def inherit_origin(conn: object, method_id: str, previous: int, version: int) -> None:
@@ -219,6 +227,7 @@ def publish_methods(service: object, conn: object, book_id: str, version: int, c
 def manual_method(service: object, book_id: str, request: dict) -> dict:
     version=request.get('version');thread_ids=request.get('thread_ids',[])
     structure=service.get_corpus(book_id,version)
+    require_current_schema(structure['body'].get('schema_version', 1))
     threads=[t for t in structure['body']['threads'] if t['id'] in thread_ids]
     if not threads or len(threads)!=len(set(thread_ids)):raise ValueError('请选择实际线索/弧光作为手工提炼依据')
     evidence_ids=set().union(*(set(t['evidence_ids']) for t in threads))

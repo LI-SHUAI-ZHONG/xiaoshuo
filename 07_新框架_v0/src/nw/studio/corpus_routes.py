@@ -5,7 +5,9 @@ from nw.studio.corpus_methods import manual_method
 
 
 def get(library: Any,segs: list[str],query: dict) -> dict | None:
-    if segs==['corpus','catalog']:return library.corpus_catalog()
+    if segs==['corpus','catalog']:
+        version=query.get('version',[''])[0]
+        return library.corpus_catalog(int(version)) if version else library.corpus_catalog()
     if len(segs)<3 or segs[0]!='staging' or segs[2]!='corpus':return None
     book=segs[1]
     if len(segs)==3:

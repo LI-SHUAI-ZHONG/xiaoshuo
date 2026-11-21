@@ -7,6 +7,7 @@ import sqlite3
 from typing import Iterator
 
 from nw.production_methods.matching import TYPE_PRIORITY, type_match
+from nw.studio import corpus_catalog
 from nw.studio.corpus_store import CorpusMixin
 from nw.studio.method_store import MethodMixin
 from nw.studio.staging import StagingMixin
@@ -46,11 +47,21 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
         try:yield db
         finally:db.close()
 
-    def approved(self) -> list[dict]:
+    def approved(self, *, current_only: bool = False) -> list[dict]:
         with self.connect() as conn:
             tables={r[0] for r in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
             if 'production_methods' not in tables:return []
-            heads=conn.execute('SELECT * FROM production_methods WHERE approved_version IS NOT NULL ORDER BY id').fetchall()
+            if current_only:
+                if not {'corpus_method_origins','corpus_structures','corpus_structure_versions'} <= tables:
+                    return []
+                heads=conn.execute("""SELECT m.* FROM production_methods m
+                    JOIN corpus_method_origins o ON o.method_id=m.id AND o.method_version=m.approved_version
+                    JOIN corpus_structures s ON s.book_id=o.book_id AND s.approved_version=o.structure_version
+                    JOIN corpus_structure_versions v ON v.book_id=s.book_id AND v.version=s.approved_version
+                    WHERE json_extract(v.body_json,'$.schema_version')=? ORDER BY m.id""",
+                    (corpus_catalog.SCHEMA_VERSION,)).fetchall()
+            else:
+                heads=conn.execute('SELECT * FROM production_methods WHERE approved_version IS NOT NULL ORDER BY id').fetchall()
             books = {}
             return [self._method_row(dict(row),row['approved_version'],conn,books) for row in heads]
 
@@ -69,6 +80,9 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
             instance['source_context']=story_context(body, instance, row['body']['evidence'])
         result['instance']=instance;result['snapshot_sha256']=content_sha256(result)
         return result
+
+    def current_methods(self) -> list[dict]:
+        return [row for row in self.approved(current_only=True) if row['current_for_production']]
 
     def world_source(self, row: dict, types: list[str]) -> tuple[dict, dict] | None:
         """Only a corresponding novel and an evidenced rule affecting a real event qualify."""
@@ -115,11 +129,10 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
 
 def matching_methods(reader: MethodReader, types: list[str]) -> list[tuple[dict, dict]]:
     methods = []
-    for row in reader.approved():
-        if row['available'] and row['structure_origin']:
-            match = type_match(types, row['body']['type_tags'])
-            if match:
-                methods.append((row, match))
+    for row in reader.current_methods():
+        match = type_match(types, row['body']['type_tags'])
+        if match:
+            methods.append((row, match))
     methods.sort(key=lambda item: item[0]['review']['created_at'], reverse=True)
     methods.sort(key=lambda item: TYPE_PRIORITY[item[1]['level']])
     return methods

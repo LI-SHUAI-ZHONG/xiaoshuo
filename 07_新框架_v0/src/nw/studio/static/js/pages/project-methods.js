@@ -101,7 +101,7 @@ export async function showProjectMethods(novelId){
         <details class="details"><summary>${esc(method.title)} · v${method.version} · ${esc(matchLabel(method.type_match))}</summary>
           ${methodEvidence(method)}
         </details>`).join('')}</section>` : ''}
-      <section class="method-section"><h3>资料库已批准且有结构来源的方法：${data.available_methods.length}</h3>${data.available_methods.map(m=>`<p><a href="#/kb/items?method=${enc(m.id)}" data-project-method-source>${esc(m.title)} · v${m.version}</a></p>`).join('')||'<p>尚无完整方法。可在<a href="#/staging" data-project-method-source>预存库</a>导入对应类型作品，拆解世界规则并审核证据。</p>'}</section>
+      <section class="method-section"><h3>符合本项目类型的已批准制作方法：${data.available_methods.length}</h3>${data.available_methods.map(m=>`<p><a href="#/kb/items?method=${enc(m.id)}&version=${m.version}" data-project-method-source>${esc(m.title)} · v${m.version}</a></p>`).join('')||'<p>暂无适用方法。可在<a href="#/staging" data-project-method-source>预存库</a>导入对应类型作品，批准结构拆解并提炼制作方法。</p>'}</section>
       <section class="method-section" id="actualProjectMethodUses"><h3>本项目实际执行与下游回执</h3>${data.uses.length?usageRows(data.uses):'<p>尚无执行记录；开启配置不等于已经使用。</p>'}</section>
       <section class="method-section"><h3>正文独立审稿证据</h3>${data.review_checks.length?readable(data.review_checks):'<p>尚无正文方法核验证据。</p>'}</section>`;
     $$('[data-project-method-source]').forEach(link=>link.onclick=()=>$('#drawer').close());

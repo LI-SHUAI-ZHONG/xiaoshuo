@@ -7,7 +7,7 @@ from uuid import uuid4
 from nw.call_control import execution_lock
 from nw.config import ConfigRequired, load_config, make_provider, resolve_stage_runtime
 from nw.studio.corpus_calls import artifact
-from nw.studio.corpus_catalog import DOMAINS, domains_for
+from nw.studio.corpus_catalog import SCHEMA_VERSION, domains_for, require_current_schema
 from nw.studio.corpus_checks import graph_issues
 from nw.studio.corpus_index import empty_document, source_spans
 from nw.studio.library_util import encode, timestamp
@@ -18,6 +18,12 @@ ACTIVE=('pending','running','paused','failed')
 def runtime_profile(config: object, version: int) -> dict:
     return {'provider':config.provider,'model':config.model,'base_url':config.base_url,
             'params':config.params,'timeout':config.timeout,'pipeline_version':f'corpus-v{version}'}
+
+
+def minimum_structure_calls(spans: list[dict], version: int) -> int:
+    domains=domains_for(version)
+    roster_windows=len({s['unit_id'] for s in spans}) if 'cast_roster' in domains else 0
+    return 2*len(spans)+1+len(domains)+max(0,roster_windows-1)
 
 
 def options_for(raw: dict, *, extent: dict, minimum: int) -> dict:
@@ -44,7 +50,7 @@ class CorpusJobsMixin:
         raw=dict(request);raw.setdefault('note',current['body']['source_extent']['note'] or '等待作者确认完整性')
         options=options_for(raw,extent=current['body']['source_extent'],minimum=0)
         spans=source_spans(current['body']['units'],options['chunk_chars'])
-        minimum=2*len(spans)+1+len(DOMAINS)
+        minimum=minimum_structure_calls(spans,SCHEMA_VERSION)
         return {'book_id':book_id,'characters':len(content),'chapter_units':len({s['unit_id'] for s in spans}),
             'source_spans':len(spans),'minimum_structure_calls':minimum,
             'note':'最低次数不含长文本额外整合批次或重试；每次发送前仍受调用/字符预算限制。',
@@ -98,13 +104,14 @@ class CorpusJobsMixin:
         unit_errors=[i['message'] for i in graph_issues(body,len(content)) if i['field']=='units' and i['severity']=='error']
         if unit_errors:raise ValueError('请先修正章节目录：'+'；'.join(unit_errors[:8]))
         spans=source_spans(body['units'],options['chunk_chars'])
-        base=current['latest_version'];minimum=2*len(spans)+1+len(domains_for(body['schema_version']))
+        base=current['latest_version'];minimum=minimum_structure_calls(spans,body['schema_version'])
         state={'document':body,'spans':spans,'coverage':{'survey_ranges':[],'detail_ranges':[],'reviewed_units':[]},
                'survey_cursor':0,'overview_cursor':0,'detail_cursor':0,'domain_index':0,'relation_cursor':0,'method_cursor':0,'candidates':[]}
         if kind=='methods':
             base=current['approved_version']
             if base is None:raise ValueError('请先审核全书结构，再提炼方法')
             approved=self.get_corpus(book_id,base)
+            require_current_schema(approved['body'].get('schema_version', 1))
             if not approved['available']:raise ValueError('当前批准结构来源或完整性检查未通过')
             ids={t['id'] for t in approved['body']['threads']}
             selected=options['thread_ids']

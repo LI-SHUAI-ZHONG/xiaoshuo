@@ -1237,6 +1237,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         from nw.materials.author_references import author_stage_input
         if author_input := author_stage_input(package, stage):
             payload['author_input'] = author_input
+        if stage in ('world_design', 'character_design', 'plot_design', 'scene_design'):
+            cast_sample = package.get('cast_sample_reference')
+            if cast_sample:
+                payload['cast_sample_reference'] = cast_sample
         payload.update(project_methods.packet(method_plan,method_handoffs))
         if world_candidates:
             payload['production_methods'] = world_candidates[page * page_size : (page + 1) * page_size]
@@ -1786,7 +1790,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     verify_plan(package)
     workspace=store.directory.parent
     if not (workspace/'materials/catalog.db').is_file():
-        if (config.source_driven or package.get('governance_inputs') or package.get('production_method_policy')
+        if (config.source_driven or package.get('governance_inputs') or package.get('production_method_policy') or package.get('cast_sample_reference')
                 or VERSIONS.keys() & package.keys() or package.get('material_mode') == 'source_driven_staged'):
             raise ValueError('MATERIAL_WORK: MATERIAL_CATALOG_REQUIRED: index source materials before novel design')
         return request,package

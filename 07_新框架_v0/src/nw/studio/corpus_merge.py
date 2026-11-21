@@ -76,7 +76,7 @@ def resolve_fragment(raw: dict, document: dict, content: str, *, span: dict | No
             if phase=='detail' and not set(event['parent_event_ids'])<=coarse:
                 raise ValueError('细节事件必须对应本章实际提供的总览节点')
         for thread in patch.get('threads',[]):
-            if (thread['domain']=='narration' or thread['domain'] in STORY_DETAILS) and phase=='detail':
+            if (thread['domain'] in ('narration','cast_roster') or thread['domain'] in STORY_DETAILS) and phase=='detail':
                 local_nodes={e['id'] for e in patch.get('events',[])}
                 if not (thread['id'].startswith(prefix+'_') and set(thread['evidence_ids'])<=current_evidence
                         and set(thread['node_ids'])<=local_nodes):
@@ -98,7 +98,7 @@ def merge_fragment(document: dict, patch: dict) -> dict:
             if prior and prior!=incoming:
                 if section=='threads':
                     if prior['domain']!=incoming['domain']:raise ValueError('不能偷换同一线索的职责')
-                    if (prior['domain']=='narration' or prior['domain'] in STORY_DETAILS) and prior['details']!=incoming['details']:
+                    if (prior['domain'] in ('narration','cast_roster') or prior['domain'] in STORY_DETAILS) and prior['details']!=incoming['details']:
                         raise ValueError('既有观察的具体事实与判断须保留，新观察请另建标识')
                     incoming=deepcopy(incoming)
                     for field in ('node_ids','characters','evidence_ids'):

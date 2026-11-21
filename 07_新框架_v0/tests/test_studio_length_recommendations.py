@@ -25,7 +25,8 @@ def reference(library, text, title, types, extent='complete', *, approve=True):
     event.update(id='opening', unit_id='c00001', granularity='overview', story_order=1,
                  summary='核对开头', result='读到开头', characters=[], parent_event_ids=[], evidence_ids=['e1'])
     body['events'] = [event]
-    body['domains'] = [{'domain': domain, 'status': 'not_observed', 'explanation': '正文没有该结构',
+    body['domains'] = [{'domain': domain, 'status': 'uncertain' if domain == 'cast_roster' else 'not_observed',
+                        'explanation': '仅核对篇幅，缺少逐章人物证据' if domain == 'cast_roster' else '正文没有该结构',
                         'evidence_ids': ['e1']} for domain in DOMAINS]
     saved = library.save_corpus(ident, {'expected_version': 0, 'body': body, 'reviewed_units': ['c00001']})
     if approve:
@@ -86,6 +87,26 @@ def test_five_tiers_only_vote_for_matching_reviewed_complete_sources(tmp_path):
     source_path.write_text('壬' * 400000, encoding='utf-8')
     lib.review_book(pending, {'decision': 'reject'})
     assert lib.recommend_length([child])['status'] == 'tied'
+
+
+def test_reviewed_historical_structure_is_readable_without_voting_in_current_genre(tmp_path):
+    from nw.studio.corpus_store import body_hash
+    from nw.studio.library_util import encode
+
+    library = LibraryService(tmp_path)
+    types = ['GENRE_XUANHUAN']
+    book = reference(library, '甲' * 300000, '可计数的历史来源', types)
+    assert library.recommend_length(types)['recommended_tier'] == 300000
+    # Simulate a structure already approved by an earlier installation.
+    body = library.get_corpus(book)['body']
+    body['schema_version'] = 3
+    body['domains'] = [row for row in body['domains'] if row['domain'] not in {'chapter_progress', 'cast_entry'}]
+    with library.connect() as conn:
+        conn.execute('UPDATE corpus_structure_versions SET body_json=?,body_sha256=? WHERE book_id=?',
+                     (encode(body), body_hash(body), book))
+    assert library.get_corpus(book)['body']['schema_version'] == 3
+    assert library.recommend_length(types)['sample_count'] == 0
+    assert not library.genres()['approved_books']
 
 
 def test_import_preserves_literal_offsets_and_reads_historical_windows_encoding(tmp_path):

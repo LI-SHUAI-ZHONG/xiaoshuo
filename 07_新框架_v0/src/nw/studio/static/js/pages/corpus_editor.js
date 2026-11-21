@@ -5,7 +5,7 @@ const optionList=(rows,value='',multiple=false)=>Object.entries(rows).map(([key,
 const field=(label,control)=>`<label class="field"><span>${esc(label)}</span>${control}</label>`;
 const blankId=section=>`${section[0].toUpperCase()}_${Date.now()}`;
 
-export function openCorpusEditor({book,catalog,record,section,row=null,reload}){
+export function openCorpusEditor({book,catalog,record,section,row=null,initialDomain='',reload}){
   const document=record.body,existing=row;
   const names=rows=>Object.fromEntries(rows.map(r=>[r.id,`${r.id} · ${r.title||r.name||r.summary||r.quote||''}`.slice(0,140)]));
   const refOptions={evidence_ids:names(document.evidence),characters:names(document.characters),node_ids:names(document.events),
@@ -29,6 +29,7 @@ export function openCorpusEditor({book,catalog,record,section,row=null,reload}){
     if(section==='links')value.certainty='inferred';
     if(section==='threads')value.status='open';
     if(section==='domains')value.status='uncertain';
+    if('domain' in value&&Object.hasOwn(catalog.domains,initialDomain))value.domain=initialDomain;
   }
   function control(key,label,current){
     if(key==='details')return '<div id="corpusDomainDetails" class="stack"></div>';
@@ -56,10 +57,35 @@ export function openCorpusEditor({book,catalog,record,section,row=null,reload}){
   function domainFields(){
     const domain=$('#corpusRecordForm [name=domain]')?.value;
     if(!$('#corpusDomainDetails')||!domain)return;
-    $('#corpusDomainDetails').innerHTML=Object.entries(catalog.domain_details[domain]).map(([key,label])=>
-      field(label,key==='claim_status'
-        ? `<select name="detail_claim_status">${optionList(catalog.narration_claims,value.details?.[key]||'unknown',false)}</select>`
-        : `<textarea name="detail_${key}" rows="3">${esc(value.details?.[key]||'')}</textarea>`)).join('');
+    const form=$('#corpusRecordForm'),roster=domain==='cast_roster';
+    for(const key of ['characters','node_ids']){
+      const input=$(`[name=${key}]`,form);
+      const selected=Array.from(input.selectedOptions,o=>o.value).filter(Boolean);
+      input.multiple=!roster;input.size=roster?1:5;
+      const choices=key==='node_ids'&&roster?names(document.events.filter(e=>e.granularity==='detail')):refOptions[key];
+      input.innerHTML=roster?optionList({'':'请选择一项',...choices},selected[0]||''):optionList(choices,selected,true);
+    }
+    const citedEvent=$('[name=node_ids]',form),detail=value.details||{};
+    $('#corpusDomainDetails').innerHTML=Object.entries(catalog.domain_details[domain]).map(([key,label])=>{
+      const choices=key==='claim_status'?catalog.narration_claims:roster?catalog.cast_roster_options[key]:null;
+      if(choices)return field(label,`<select name="detail_${key}">${optionList(choices,detail[key]||'unknown')}</select>`);
+      if(roster&&['appearance_evidence','standing_evidence'].includes(key)){
+        const choices=key==='standing_evidence'?refOptions.evidence_ids:{};
+        return field(label,`<select name="detail_${key}">${optionList({'':'待核实',...choices},detail[key]||'')}</select>`);
+      }
+      return field(label,`<textarea name="detail_${key}" rows="3">${esc(detail[key]||'')}</textarea>`);
+    }).join('');
+    citedEvent.onchange=null;
+    if(roster){
+      const appearance=$('[name=detail_appearance_evidence]',form);
+      const lookup=(selected='')=>{
+        const ids=document.events.find(e=>e.id===citedEvent.value)?.evidence_ids||[];
+        const evidence=names(document.evidence.filter(e=>ids.includes(e.id)));
+        appearance.innerHTML=optionList({'':'选择此事件的原作证据',...evidence},selected);
+      };
+      lookup(detail.appearance_evidence);
+      citedEvent.onchange=()=>lookup(appearance.value);
+    }
   }
   if($('#corpusDomainDetails')){domainFields();$('#corpusRecordForm [name=domain]').onchange=domainFields;}
   if(section==='evidence')$('#locateCorpusQuote').onclick=e=>busy(e.currentTarget,async()=>{
@@ -83,6 +109,11 @@ export function openCorpusEditor({book,catalog,record,section,row=null,reload}){
           else if(['parent_id','canonical_id','thread_id'].includes(key)&&raw==='')raw=null;
           result[key]=raw;
         }
+      }
+      if(section==='threads'&&result.domain==='cast_roster'){
+        result.characters=result.characters.filter(Boolean);result.node_ids=result.node_ids.filter(Boolean);
+        const cited=[result.details.appearance_evidence,result.details.standing_evidence].filter(Boolean);
+        result.evidence_ids=[...new Set([...result.evidence_ids,...cited])];
       }
       const payload=section==='uncertainties'?String(result.text).split('\n').map(s=>s.trim()).filter(Boolean):result;
       await api.post(`/staging/${enc(book.id)}/corpus/record`,{expected_version:record.latest_version,section,row:payload});

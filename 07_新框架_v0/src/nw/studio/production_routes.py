@@ -23,10 +23,16 @@ class ProductionRoutes:
             return True
         if segs == ['genres']:
             data = lib.genres()
+        elif segs == ['kb', 'review-queue']:
+            from nw.studio.review_queue import review_queue
+            data = review_queue(lib)
         elif segs == ['recommend']:
             data = lib.recommend(first(query, 'slot', 'genre'), first(query, 'types').split(',') if first(query, 'types') else [])
         elif segs == ['recommendations', 'length']:
             data = lib.recommend_length(first(query, 'types').split(',') if first(query, 'types') else [])
+        elif segs == ['recommendations', 'cast']:
+            from nw.studio.cast_samples import genre_cast_samples
+            data = genre_cast_samples(lib, first(query, 'types').split(',') if first(query, 'types') else [])
         elif segs == ['options']:
             data = lib.options(first(query, 'slot', 'tone'), first(query, 'parent'))
         elif segs == ['novel-cache']:
@@ -121,13 +127,15 @@ class ProductionRoutes:
         elif segs == ['staging']:
             data, status = lib.import_book(body), 201
         elif len(segs) == 3 and segs[0] == 'staging':
-            actions = {'review': lib.review_book, 'decompose': lib.decompose_book, 'verify': lib.verify_book}
+            if segs[2]=='verify' or (segs[2]=='decompose' and 'items' in body):
+                raise ValueError('历史局部条目只读。新分析和复核请打开本书的多层结构拆解。')
+            actions = {'review': lib.review_book, 'decompose': lib.decompose_book}
             if segs[2] in actions:
                 data = actions[segs[2]](segs[1], body)
         elif len(segs) == 3 and segs[:2] == ['kb', 'types']:
             data = lib.save_type(segs[2], body)
         elif len(segs) == 3 and segs[:2] == ['kb', 'upgrades']:
-            data = lib.review_upgrade(segs[2], body)
+            raise ValueError('历史升级记录只读。新方法请从本书已批准的现行结构提炼并审核。')
         if data is None:
             return False
         handler._send_json(status, data)

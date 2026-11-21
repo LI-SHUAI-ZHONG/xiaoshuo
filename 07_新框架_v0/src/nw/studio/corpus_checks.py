@@ -1,6 +1,7 @@
 """Graph/coverage integrity checks; author review decides literary interpretations."""
 from nw.studio.corpus_catalog import DETAILS, OVERVIEW, domains_for
 from nw.studio.corpus_index import range_coverage
+from nw.studio.corpus_roster import coverage_issue, roster_issue, subject_evidence
 from nw.studio.corpus_story_observations import REQUIRED_DETAILS, event_chapter, story_observation_issue
 
 
@@ -82,11 +83,14 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
                 sa=min((evidence[k]['start'] for k in a['evidence_ids'] if k in evidence),default=0)
                 sb=min((evidence[k]['start'] for k in b['evidence_ids'] if k in evidence),default=0)
                 check(sa<=sb,'links','信息/埋收关系与文本出现顺序相反：'+link['id'])
+    personal=subject_evidence(people,events) if any(t['domain']=='cast_roster' for t in threads.values()) else {}
     for thread in threads.values():
         check(bool(thread['node_ids']) and set(thread['node_ids'])<=events.keys(),'threads','线索/弧光没有完整实际事件链：'+thread['id'])
         check(set(thread['characters'])<=people.keys(),'threads','线索/弧光引用未知人物')
         check(bool(thread['title']) and bool(thread['explanation']),'threads','线索/弧光缺少名称与解释')
         for key,label in DETAILS[thread['domain']].items():
+            if thread['domain']=='cast_roster':
+                continue  # Unknown standing or function has no invented supporting detail.
             if thread['domain'] in REQUIRED_DETAILS and key not in REQUIRED_DETAILS[thread['domain']]:
                 continue  # A local excerpt need not disclose a motive, later use or identity.
             if thread['domain']=='narration' and key in ('causal_basis','character_response','reader_effect'):
@@ -102,6 +106,9 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
                       and bool(detail['reader_effect'] or detail['character_response']),
                       'threads','叙述观察须说明时序、讲述方式、视角权限及实际作用；依据不足可标存疑')
         if thread['domain']=='character_arc':check(bool(thread['characters']),'threads','人物弧光必须指定人物')
+        if thread['domain']=='cast_roster':
+            issue=roster_issue(thread,events,units,people,evidence,personal)
+            check(not issue,'threads',issue+'：'+thread['id'])
         if thread['domain'] in REQUIRED_DETAILS:
             issue=story_observation_issue(thread,events,thread_links.get(thread['id'],()),units,evidence,people)
             check(not issue,'threads',issue+'：'+thread['id'])
@@ -139,6 +146,13 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
                 check(any(t['domain']==domain and t['status']!='uncertain' and
                           set(t['evidence_ids']).intersection(row['evidence_ids']) for t in threads.values()),
                       'domains','已观察的'+label+'须引用同一条有根据的观察')
+            if domain=='cast_roster' and coverage is not None:
+                roster=[t for t in threads.values() if t['domain']==domain]
+                issue=coverage_issue(roster,events,people,units,row['status'])
+                check(not issue,'coverage',issue)
+                if row['status']=='observed':
+                    check(any(t['status']!='uncertain' and t['details']['appearance_evidence'] in row['evidence_ids'] for t in roster),
+                          'domains','已核对阵容须举出至少一条有明确依据的出场或提及')
     check(bool(events),'events','尚无有证据的事件节点')
     if coverage is not None:
         if dispositions.get('chapter_progress',{}).get('status')=='observed':

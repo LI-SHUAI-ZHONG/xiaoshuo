@@ -67,13 +67,22 @@ def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION) -> lis
                             '参与者按人写清哪句话到了谁耳中、怎样改变行动。交谈或新念也能独立推进；'
                             '剧情地位与本次功能分开。cast_entry.claim_status按narration_claims标记此刻可知的身份性质，'
                             '后文确认不能倒填为出场时已知。未知动机和未发生的结果留空。')
-        elif phase == 'relations' and payload.get('domain') in STORY_TASKS:
+        elif phase == 'relations' and payload.get('domain') in ('chapter_progress','cast_entry'):
             instruction += ('只用细拆事件，逐一保留原句。将各章本地观察与后续原文对照；未见后续用法或身份揭晓，'
                             '对应later_use或later_reveal留空，不能用预期补全。观察到跨章实际承接，'
                             '以observed的causes/enables/changes_character连前后两章；观察到身份揭晓，'
                             '以observed的reveals/pays_off连接同一人的出场和揭晓两处原句。cast_entry的characters'
                             '记录所研究的出场人物，事件人物包括被揭示身份的对象；转述者和听者在细节指明。'
                             '扩展新判断另建观察，引用两端事件。原文未见的领域可记未观察。')
+    if version>=5 and (phase=='detail' or payload.get('domain')=='cast_roster'):
+        instruction += ('逐个核对本段全部参与人物和能辨认的被提及者。每人每个细拆事件用单独cast_roster线索：'
+            'characters正好一人，node_ids正好一个本章detail事件，appearance_evidence是两者共享的当场原句编号。'
+            '人物被别人提起但没有在场行动时用mentioned，短引须含可区分的名字、别称或有可追溯的人物证据指向同一原句；'
+            '代词归属不明时标存疑。模糊人群用group，不能算作多个个人。'
+            '按cast_roster_options判定全书地位和具体章节职责；普通人也能推动关键事件，传话人未必是配角。'
+            '地位有凭据时standing_evidence填写原句编号并收入evidence_ids；无法判断填unknown，不能猜测名额。'
+            '同人别名要有依据才用canonical_id归并；没有名字但可区分的具体个人可用原文称呼。'
+            '关系窗口逐个补查漏记的实际参与者。漏掉章或不能分辨实际在场时注明范围，不能把局部样本报作全书总人数。')
     return [{'role':'system','content':instruction},
             {'role':'user','content':encode({'phase':phase,**payload})}]
 

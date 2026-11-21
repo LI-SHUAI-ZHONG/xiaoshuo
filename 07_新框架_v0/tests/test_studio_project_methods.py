@@ -119,6 +119,17 @@ def test_wizard_and_stage_share_approved_type_matches_and_save_evidence(client, 
     cross = add_method('[FAKE] 跨类型方法', [])
     rec_path = '/api/kb/method-recommendations?slot=hook&types=GENRE_XUANYI'
     child_path = rec_path + ',SUB_XUANYI_02'
+    status, genres = request('GET','/api/genres')
+    assert status == 200
+    genre = next(row for row in genres['genres'] if row['id']=='GENRE_XUANYI')
+    assert genre['book_count'] == 1 and genre['coverage_total'] == len(genres['analysis_domains'])
+    assert 'hook' in genres['approved_books'][0]['observed_domains']
+    assert genres['approved_books'][0]['version']==generic['structure_origin']['structure_version']
+    status, groups = request('GET',child_path.replace('slot=hook','slot=all'))
+    assert status == 200
+    from_atlas = next(group['recommendations'] for group in groups['slots'] if group['slot']=='hook')
+    from_wizard = request('GET',child_path)[1]['recommendations']
+    assert from_atlas == [{key:row[key] for key in from_atlas[0]} for row in from_wizard]
     assert [row['id'] for row in request('GET', child_path)[1]['recommendations']] == [generic['id']]
     for method in (exact, sibling, cross):
         status, result = request('POST', f"/api/kb/methods/{method['id']}/review",

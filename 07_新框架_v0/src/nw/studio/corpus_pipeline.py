@@ -71,6 +71,15 @@ def do_windows(service: object, job: dict, state: dict, config: object, provider
                                    event_allowlist=allowed_events,evidence_allowlist=allowed_evidence)
             if phase=='relations' and last and not any(d.get('domain')==domain for d in patch.get('domains',[])):
                 raise ValueError('该职责已遍历全部事件，必须说明已观察/未观察/存疑及依据')
+            if domain=='cast_roster':
+                from nw.studio.corpus_roster import canonical_person
+                people={p['id']:p for p in doc['characters']}
+                required={(e['id'],canonical_person(p,people)) for e in selected
+                          if e['granularity']=='detail' for p in e['characters']}
+                seen={(t['node_ids'][0],canonical_person(t['characters'][0],people))
+                      for t in [*doc['threads'],*patch.get('threads',[])] if t['domain']=='cast_roster'}
+                if required-seen:
+                    raise ValueError('本章阵容窗口仍有未核对的实际事件人物；须逐人登记，依据不足可标存疑')
             if phase=='overview' and last:
                 integrated=merge_fragment(doc,patch)
                 if not all(integrated['overview'].values()) or not integrated['threads']:

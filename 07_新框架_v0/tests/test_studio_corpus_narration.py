@@ -128,9 +128,6 @@ def test_version_two_analysis_keeps_eight_domains_and_its_paused_job_budget(tmp_
     body=library.get_corpus(book)['body']
     assert set(d['domain'] for d in body['domains'])==set(corpus_catalog(2)['domains'])
     assert body['schema_version']==2 and 'narration' not in corpus_catalog(2)['domains']
-    assert library.review_corpus(book,{'version':1,'decision':'approve','note':'[FAKE] 原版职责完整'})['available']
-    task=library.start_corpus_job(book,{'kind':'methods','options':{'thread_ids':['T_hook']}})
-    job=wait_job(library,book,task['id'])
-    assert job['status']=='completed',job['error']
-    receipt=library.corpus_call_record(book,job['id'],1)['input']
-    assert '叙述时序、视角与呈现' not in receipt['messages'][0]['content']
+    with pytest.raises(ValueError, match='历史拆解规格'):
+        library.review_corpus(book,{'version':1,'decision':'approve','note':'[FAKE] 原版职责完整'})
+    assert library.get_corpus(book)['approved_version'] is None

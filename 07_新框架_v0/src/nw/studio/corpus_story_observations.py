@@ -31,6 +31,7 @@ REQUIRED_DETAILS = {
 STORY_TASKS = {
     'chapter_progress': ('chapter_outline', 'event_chain', 'scene_composition', 'information', 'state_change'),
     'cast_entry': ('character_arc', 'subplot', 'information', 'foreshadow', 'scene_composition'),
+    'cast_roster': ('character_arc', 'relationships', 'chapter_outline', 'scene_composition'),
 }
 
 

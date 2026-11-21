@@ -34,19 +34,31 @@ def uses(body: dict, slot: str, origin: dict | None = None) -> list[dict]:
 
 
 def recommendations(reader: MethodReader, slot: str, types: list[str], selected: list[str]) -> dict:
-    if slot not in SLOT_TASKS:
+    if slot not in SLOT_TASKS and slot != 'all':
         raise ValueError('未知的立项方法推荐板块')
     if len(selected) > 24:
         raise ValueError('立项最多查询 24 条已选方法')
     matches = matching_methods(reader, types) if types else []
+    if slot == 'all':
+        groups = []
+        for board in SLOT_TASKS:
+            rows = _ranked(reader, board, types, matches)
+            groups.append({'slot': board, 'recommendations': [
+                {key: row[key] for key in ('id', 'version', 'title', 'type_match', 'applicability')} for row in rows]})
+        return {'slots': groups}
+    current_versions = {row['id']: row['version'] for row, _ in matches if row['id'] in selected}
+    return {'slot': slot, 'recommendations': _ranked(reader, slot, types, matches),
+            'current_versions': current_versions}
+
+
+def _ranked(reader: MethodReader, slot: str, types: list[str], matches: list) -> list[dict]:
     if slot == 'narration':
-        matches.sort(key=lambda item: (TYPE_PRIORITY[item[1]['level']],
+        matches = sorted(matches, key=lambda item: (TYPE_PRIORITY[item[1]['level']],
                                        'narration' not in item[0]['body']['tasks']))
     if slot in SLOT_OBSERVATION:
         domain=SLOT_OBSERVATION[slot]
-        matches.sort(key=lambda item:(TYPE_PRIORITY[item[1]['level']],
+        matches = sorted(matches, key=lambda item:(TYPE_PRIORITY[item[1]['level']],
             domain not in (item[0].get('structure_origin') or {}).get('observation_domains',[])))
-    current_versions = {row['id']: row['version'] for row, _ in matches if row['id'] in selected}
     result = []
     for row, match in matches:
         body = row['body']
@@ -60,7 +72,7 @@ def recommendations(reader: MethodReader, slot: str, types: list[str], selected:
                        'structure_origin': row['structure_origin']})
         if len(result) == 3:
             break
-    return {'slot': slot, 'recommendations': result, 'current_versions': current_versions}
+    return result
 
 
 def freeze_preferences(reader: MethodReader, requested: object, types: list[str]) -> list[dict]:

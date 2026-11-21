@@ -13,6 +13,7 @@ class RecommendationMixin:
     def recommend_length(self, types: list[str]) -> dict:
         """Each complete, approved source casts one vote in the selected genre."""
         from nw.length_settings import WORD_TIERS, book_word_range, nearest_word_tier
+        from nw.studio.corpus_catalog import SCHEMA_VERSION
 
         selected = catalog.canonical_types(types)
         required = set(selected)
@@ -26,11 +27,12 @@ class RecommendationMixin:
                     JOIN corpus_structure_versions v ON v.book_id=h.book_id AND v.version=h.approved_version
                     JOIN corpus_structure_reviews r ON r.book_id=v.book_id AND r.version=v.version
                     LEFT JOIN corpus_jobs j ON j.id=v.job_id
-                    WHERE b.status='archived' AND r.decision='approve' AND v.source_sha256=b.sha256
+                    WHERE b.status!='rejected' AND r.decision='approve' AND v.source_sha256=b.sha256
+                    AND json_extract(v.body_json,'$.schema_version')=?
                     AND json_extract(v.body_json,'$.source_extent.status')='complete'
                     AND coalesce(json_extract(j.runtime_json,'$.provider'),'') NOT IN ('fake','test-only')
                     AND trim(b.title) NOT LIKE '[FAKE]%' AND trim(b.filename) NOT LIKE '[FAKE]%'
-                """)
+                """, (SCHEMA_VERSION,))
                 for row in rows:
                     tags = json.loads(row['confirmed_types_json'])
                     if not required.issubset(tags):
@@ -136,7 +138,8 @@ class RecommendationMixin:
             if len(recommendations) == 3:
                 break
         recommendations.extend([None] * (3 - len(recommendations)))
-        return {'slot': slot, 'types': selected, 'recommendations': recommendations}
+        return {'slot': slot, 'types': selected, 'recommendations': recommendations,
+                'source': 'legacy_decomp_items', 'eligible_for_new_design': False}
 
     def freeze_references(self, choices: list[dict], types: list[str]) -> list[dict]:
         """Freeze only selected, approved, same-type uses, never entire chapters."""
@@ -202,4 +205,5 @@ class RecommendationMixin:
     def items(self, slot: str = '', types: list[str] | None = None) -> dict:
         selected = set(catalog.canonical_types(types or []))
         rows = [r for r in self._approved_items(slot) if selected.issubset(r['type_tags'])]
-        return {'items': rows, 'stats': self._aggregate(rows, 'exact'), 'slots': list(catalog.SLOTS)}
+        return {'items': rows, 'stats': self._aggregate(rows, 'exact'), 'slots': list(catalog.SLOTS),
+                'source': 'legacy_decomp_items', 'eligible_for_new_design': False}

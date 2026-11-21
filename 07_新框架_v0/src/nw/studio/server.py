@@ -37,6 +37,10 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
     from nw.studio.repository import RepositorySync
     repository = RepositorySync(service)
     running = runtime.identity(repository.project, service, repository.loaded_source)
+    assets = {p.relative_to(STATIC_DIR).as_posix(): p.read_bytes() for p in STATIC_DIR.rglob('*')
+              if p.is_file() and p.resolve().is_relative_to(STATIC_DIR)}
+    assets['index.html'] = assets['index.html'].replace(
+        b'__STUDIO_SOURCE_SHA256__', repository.loaded_source.encode('ascii'))
 
     class StudioHandler(BaseHTTPRequestHandler):
         server_version = 'NovelWorkflowStudio/3.0'
@@ -70,13 +74,12 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
 
         def _serve_static(self, rel_path: str) -> None:
             name = 'index.html' if rel_path in ('', '/') else unquote(rel_path).lstrip('/')
-            target = (STATIC_DIR / name).resolve()
-            if not (target.is_relative_to(STATIC_DIR) and target.is_file()):
+            if name not in assets:
                 self._send_json(HTTPStatus.NOT_FOUND, {'error': f'未找到静态资源: {name}'})
                 return
-            data = target.read_bytes()
+            data = assets[name]
             self.send_response(HTTPStatus.OK)
-            self.send_header('Content-Type', _MIME_TYPES.get(target.suffix.lower(), 'application/octet-stream'))
+            self.send_header('Content-Type', _MIME_TYPES.get(Path(name).suffix.lower(), 'application/octet-stream'))
             self.send_header('Cache-Control', 'no-store')
             self.send_header('Content-Length', str(len(data)))
             self.end_headers()
@@ -105,7 +108,7 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                     return self._send_json(200, {**running, 'restart_required': repository.check_running_source()})
                 if segs == ['repository']:
                     repository.check_running_source()
-                    return self._send_json(200, repository.status())
+                    return self._send_json(200, {**repository.status(), 'running_source_sha256': repository.loaded_source})
                 if routes.get(self, segs, query):
                     return
                 if segs == ['status']:
@@ -203,6 +206,9 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                         return self._send_json(403, {'error': '只接受本地客户端的同源操作'})
                 if self.headers.get('Content-Type', '').split(';', 1)[0].strip().lower() != 'application/json':
                     return self._send_json(415, {'error': '请使用 application/json 请求体'})
+                page_source = self.headers.get('X-Studio-Source')
+                if page_source and page_source != repository.loaded_source:
+                    return self._send_json(409, {'error': '页面来自旧版客户端，请重新载入页面后再提交。'})
                 segs = [unquote(s) for s in path.strip('/').split('/')][1:]
                 body = self._read_json(24 if segs == ['staging'] else 8)
                 if segs == ['runtime', 'reload']:

@@ -5,6 +5,7 @@ from typing import Any
 from uuid import uuid4
 
 from nw.studio.catalog import canonical_types
+from nw.studio import corpus_catalog
 from nw.studio.library_util import encode, timestamp
 from nw.studio.method_catalog import SCOPES, TASKS, method_catalog
 from nw.studio.method_contract import completeness, draft, text
@@ -41,21 +42,24 @@ class MethodMixin:
         pins = json.loads(raw['evidence_json'])
         resolved, unavailable = resolve(self, body['evidence'], pins=pins, books=books)
         from nw.studio.corpus_methods import origin_status
-        origin, origin_issues = origin_status(self, head['id'], version, body, conn)
+        origin, origin_issues, schema = origin_status(self, head['id'], version, body, conn)
         unavailable += origin_issues
         issues = completeness(body)
         state = {'approve': 'approved', 'reject': 'rejected'}.get(review['decision'], 'draft') if review else 'draft'
+        available = state == 'approved' and not issues and not unavailable
+        current = available and schema == corpus_catalog.SCHEMA_VERSION and version == head['approved_version']
         return {'id': head['id'], 'version': version, 'latest_version': head['latest_version'],
             'approved_version': head['approved_version'], 'body': body, 'body_sha256': raw['body_sha256'],
             'status': 'source_unavailable' if state == 'approved' and unavailable else state,
             'review_state': state, 'review': dict(review) if review else None,
-            'available': state == 'approved' and not issues and not unavailable,
+            'available': available, 'current_for_production': current, 'structure_schema_version': schema,
             'issues': issues, 'source_issues': unavailable, 'evidence_locations': resolved,
             'origin_item_id': head['origin_item_id'], 'legacy': json.loads(raw['legacy_json']),
             'structure_origin': origin,
             'created_at': raw['created_at'], 'updated_at': head['updated_at'],
             'authority': 'reference_method', 'missing_input_policy': 'return_design',
-            'runtime_integration': 'project_design_and_review' if origin else 'requires_approved_structure'}
+            'runtime_integration': ('requires_approved_structure' if not origin else
+                'requires_current_structure' if schema != corpus_catalog.SCHEMA_VERSION else 'project_design_and_review')}
 
     def get_method(self, ident: str, version: int | None = None) -> dict:
         with self.connect() as conn:
@@ -123,6 +127,8 @@ class MethodMixin:
             if current['review']:
                 raise ValueError('该方法版本已审核；修订须保存新版本')
             if decision == 'approve':
+                if current['structure_origin']:
+                    corpus_catalog.require_current_schema(current['structure_schema_version'])
                 issues = current['issues'] + current['source_issues']
                 if issues:
                     raise ValueError('方法尚不能批准：' + '；'.join(row['message'] for row in issues))

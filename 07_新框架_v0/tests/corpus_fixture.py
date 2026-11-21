@@ -76,6 +76,24 @@ class CorpusModel:
                 'result':'[FAKE] 取得回应','information_before':'[FAKE] 未确认','information_after':'[FAKE] 已确认',
                 'emotion_before':'[FAKE] 存疑','emotion_after':'[FAKE] 明确','evidence_ids':[prefix+'_E1']}
             raw={'evidence':[evidence],'characters':character,'events':[event],'units':scenes}
+        elif phase=='relations' and payload['domain']=='cast_roster':
+            rows=[]
+            for event in payload['events']:
+                if event['granularity']!='detail':
+                    continue
+                for person in event['characters']:
+                    quote=event['evidence_ids'][0]
+                    row=thread('cast_roster',[event],person,[quote])
+                    row.update(id=f"{prefix}_cast_{len(rows)}",details={
+                        'presence':'onstage','subject_kind':'individual','standing':'protagonist',
+                        'function_kind':'driver','chapter_function':'[FAKE] 此人在当章现场核对线索。',
+                        'appearance_evidence':quote,'standing_evidence':quote})
+                    rows.append(row)
+            raw={'threads':rows}
+            if payload['last_window']:
+                refs=list(dict.fromkeys(e for event in payload['events'] for e in event['evidence_ids']))
+                raw['domains']=[{'domain':'cast_roster','status':'observed' if rows else 'uncertain',
+                    'explanation':'[FAKE] 在当前范围逐章核对实际出场。','evidence_ids':refs}]
         elif phase in ('overview','relations'):
             events=payload['events'];domain=payload.get('domain') or 'main_plot'
             refs=list(dict.fromkeys(eid for e in events for eid in e['evidence_ids']))

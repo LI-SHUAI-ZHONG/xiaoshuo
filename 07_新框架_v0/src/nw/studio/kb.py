@@ -104,7 +104,7 @@ class KnowledgeMixin:
             item['evidence'] = json.loads(item.pop('evidence_json'))
             item['available'] = item['book_status'] == 'archived'
             result.append(item)
-        return {'upgrades': result, 'scope': 'new_books_only'}
+        return {'upgrades': result, 'scope': 'legacy_decomp_items'}
 
     def review_upgrade(self, ident: str, body: dict) -> dict:
         decision = body.get('decision')
@@ -159,7 +159,7 @@ class KnowledgeMixin:
                                    'evidence': {**evidence, 'quote': quote, 'end': evidence['start'] + len(quote)}})
             if len(selected_items) >= 64:
                 break
-        return {'version': version, 'items': selected_items, 'scope': 'new_books_only',
+        return {'version': version, 'items': selected_items, 'scope': 'legacy_decomp_items',
                 'index': [{'id': item['id'], 'version': item['version'], 'slot': item['slot'],
                            'option_key': item['option_key'], 'type_tags': item['type_tags']} for item in all_items],
                 'available_count': len(all_items), 'applicable_count': len(items),

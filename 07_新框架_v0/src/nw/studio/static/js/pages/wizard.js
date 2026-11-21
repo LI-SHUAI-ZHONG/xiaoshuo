@@ -1,10 +1,10 @@
 import {api, query, enc} from '../api.js';
 import {$, $$, esc, icon, modal, drawer, loading, fail, toast, busy, readable} from '../ui.js';
 import {STEPS, stepsBar, WizardStep, OptionCard, slotName} from '../components/WizardStep.js';
-import {RecCard} from '../components/RecCard.js';
 import {wizardMethods} from './project-methods.js';
 import {methodChoices, methodRecommendations} from './wizard-methods.js';
 import {lengthFields, lengthSummary, readLengthFields, readTierRecommendation} from '../components/LengthPlan.js';
+import {readCastSamples, castSamplesHtml} from '../components/CastSamples.js';
 
 const fields = {tone:'tone_ids', style:'style_ids', narration:'narration_ids', world:'world_ids',
   character:'character_ids', structure:'structure_ids', hook:'mechanism_ids'};
@@ -13,12 +13,13 @@ let session = 0;
 export async function openWizard(prefill) {
   const token = ++session;
   const dialog = modal('新建小说', loading(), '', true);
-  const known = new Map(), recMeta = new Map(), selectedMethods = new Map();
+  const known = new Map(), selectedMethods = new Map();
   const chosen = {};
   let step = prefill ? 1 : 0, revision = 0, selectedMain = '', selectedSub = '';
-  let secondary = [], genres = [], combinations = [], rec = [], options = [], methods = [], currentVersions = {};
+  let secondary = [], genres = [], combinations = [], options = [], methods = [], currentVersions = {};
   let title = '', idea = '', constraints = '', lengthPlan = {length_mode:'tiered'}, useMethods = false;
   let tierRecommendation = null;
+  let castSamples = null;
 
   const alive = () => token === session && dialog.open;
   const types = () => [selectedMain, selectedSub, ...secondary].filter(Boolean);
@@ -35,15 +36,9 @@ export async function openWizard(prefill) {
     }
   }
 
-  function toggle(slot, key, recommendation) {
+  function toggle(slot, key) {
     const items = selections(slot);
     chosen[slot] = items.includes(key) ? items.filter(item => item !== key) : [...items, key];
-    if (!chosen[slot].includes(key)) recMeta.delete(key);
-    else if (recommendation) rememberRecommendation(key, recommendation);
-  }
-
-  function rememberRecommendation(key, recommendation) {
-    recMeta.set(key, {recommended:true, rec_rank:rec.indexOf(recommendation) + 1, rec_level:recommendation.level});
   }
 
   function footer(pending = false) {
@@ -93,19 +88,19 @@ export async function openWizard(prefill) {
     $('#modalBody').scrollTop = 0;
     footer(true);
     try {
-      const [library, legacy, optionResult, tierData] = await Promise.all([
+      const [library, optionResult, tierData, castData] = await Promise.all([
         slot !== 'confirm' || selectedMethods.size ? api.get(`/kb/method-recommendations?${query({
           slot:slot === 'confirm' ? 'genre' : slot, types:types(), selected:[...selectedMethods.keys()]})}`) : {},
-        slot !== 'confirm' ? api.get(`/recommend?${query({slot, types:types()})}`) : {},
         slot !== 'confirm' && slot !== 'genre' ? api.get(`/options?${query({slot})}`) : {},
         slot === 'structure' ? readTierRecommendation(types()) : null,
+        slot === 'character' ? readCastSamples(types()) : null,
       ]);
       if (!alive() || current !== revision) return;
       methods = library.recommendations || [];
       currentVersions = library.current_versions || {};
-      rec = legacy.recommendations || [];
       options = optionResult.options || [];
       if (tierData) tierRecommendation = tierData;
+      castSamples = castData;
       rememberOptions(options);
       render();
     } catch (error) {
@@ -146,11 +141,9 @@ export async function openWizard(prefill) {
 
   function paintGenres() {
     const current = genres.find(genre => genre.id === selectedMain);
-    const legacy = rec.filter(Boolean);
     $('#modalBody').innerHTML = stepsBar(0) + `
       <div class="row spread"><h2>为故事选择类型</h2><input id="genreSearch" placeholder="搜索类型…" aria-label="搜索类型"></div>
       ${libraryPanel()}
-      ${legacy.length ? `<details class="details"><summary>类型选项用法参考</summary><div class="rec-grid">${legacy.map((row, index) => RecCard(row, index, types().map(id => 'genre.' + id))).join('')}</div></details>` : ''}
       <div class="genre-layout">
         <div class="genre-list" id="genreList">${genres.map(genre => `<button data-main="${esc(genre.id)}" class="${genre.id === selectedMain ? 'active' : ''}">${esc(genre.name)} <small class="faint">${genre.children.length}</small></button>`).join('')}</div>
         <div><div class="row spread" style="margin-bottom:16px"><h3>${esc(current?.name || '选择主类型')}</h3>
@@ -193,7 +186,6 @@ export async function openWizard(prefill) {
       repainted();
     });
     $$('[data-genre-info]').forEach(button => button.onclick = () => showGenre(button.dataset.genreInfo));
-    bindLegacy('genre');
   }
 
   function compatibilityText() {
@@ -217,28 +209,12 @@ export async function openWizard(prefill) {
     }
   }
 
-  function bindLegacy(slot) {
-    $$('#modalBody [data-rec]').forEach(button => button.onclick = () => {
-      const key = button.dataset.rec;
-      const row = rec.find(item => item?.option_key === key);
-      if (slot !== 'genre') { capture(); toggle(slot, key, row); render(); return; }
-      const genre = flatGenres().find(item => item.id === key.replace(/^genre\./, ''));
-      if (!genre) return;
-      selectedMain = genre.parent_id || genre.id;
-      selectedSub = genre.parent_id ? genre.id : '';
-      secondary = secondary.filter(id => id !== selectedMain && id !== selectedSub);
-      rememberRecommendation(key, row);
-      repainted();
-    });
-  }
-
   function paintOptions() {
     const {slot, name} = STEPS[step];
     $('#modalBody').innerHTML = stepsBar(step) + WizardStep({name, description:`基于 ${names()}`,
       lengthPlan:slot === 'structure' ? `<section aria-label="篇幅计划"><h3>篇幅计划</h3>
         ${lengthFields(lengthPlan, tierRecommendation)}</section>` : '',
-      methods:libraryPanel(), recommendations:rec, options, selected:selections(slot)});
-    bindLegacy(slot);
+      methods:(castSamples ? castSamplesHtml(castSamples, {keepWizard:true}) : '') + libraryPanel(), options, selected:selections(slot)});
     $$('#modalBody [data-option]').forEach(button => button.onclick = () => {
       capture();
       const option = known.get(button.dataset.option);
@@ -252,14 +228,12 @@ export async function openWizard(prefill) {
     const parents = [];
     function show() {
       const children = current.children || [];
-      const related = rec.filter(row => row && children.some(child => (child.key || child.id) === row.option_key));
       const key = current.key || current.id;
       drawer(`${slotName(slot)} · ${current.name}`, `<div class="row spread"><p class="muted">${esc(current.description || '')}</p>
         ${parents.length ? '<button class="ghost" id="optionBack">返回上一级</button>' : ''}</div>
-        ${related.length ? `<div class="rec-grid" style="grid-template-columns:1fr">${related.map((row, index) => RecCard(row, index, selections(slot))).join('')}</div>` : ''}
         <div class="option-grid" style="grid-template-columns:1fr">${children.map(child => OptionCard(child, selections(slot))).join('')}</div>
         <div class="divider"></div><button class="secondary" id="pickParent" ${current.selectable === false ? 'hidden disabled' : ''}>${selections(slot).includes(key) ? '取消选择' : '选择'}「${esc(current.name)}」</button>`);
-      const pick = (id, row) => { toggle(slot, id, row); render(); show(); };
+      const pick = id => { toggle(slot, id); render(); show(); };
       $('#optionBack')?.addEventListener('click', () => { current = parents.pop(); show(); });
       $('#pickParent').onclick = () => pick(key);
       $$('#drawerBody [data-option]').forEach(button => button.onclick = () => {
@@ -267,7 +241,6 @@ export async function openWizard(prefill) {
         if (child.children?.length) { parents.push(current); current = child; show(); }
         else pick(button.dataset.option);
       });
-      $$('#drawerBody [data-rec]').forEach(button => button.onclick = () => pick(button.dataset.rec, rec.find(row => row?.option_key === button.dataset.rec)));
     }
     show();
   }
@@ -294,13 +267,13 @@ export async function openWizard(prefill) {
       title:title || '未命名小说', idea, constraints, genre_ids:types(),
       production_methods:useMethods ? {world_selection:'ai'} : {world_selection:'ai', tasks:['world_rules']},
       method_preferences:[...selectedMethods.values()].map(({id, version, slot}) => ({id, version, slot})),
-      choices:types().map(id => ({slot:'genre', option_key:'genre.' + id, ...recMeta.get('genre.' + id)})),
+      choices:types().map(id => ({slot:'genre', option_key:'genre.' + id})),
       auto_length:true,
       ...Object.fromEntries(Object.entries(lengthPlan).filter(([,value]) => value != null)),
     };
     for (const [slot, field] of Object.entries(fields)) {
       payload[field] = selections(slot);
-      payload.choices.push(...selections(slot).map(option_key => ({slot, option_key, ...recMeta.get(option_key)})));
+      payload.choices.push(...selections(slot).map(option_key => ({slot, option_key})));
     }
     busy($('#wizardNext'), async () => {
       const result = await api.post('/novels', payload);

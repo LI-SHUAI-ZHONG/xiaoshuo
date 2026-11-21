@@ -2,7 +2,7 @@
 import json
 
 from nw.production_methods.policy import DEFAULT_TASKS,normalize
-from nw.production_methods.sources import MethodReader
+from nw.production_methods.sources import MethodReader, matching_methods
 from nw.store import now
 from nw.task_models import canonical
 
@@ -66,10 +66,11 @@ class ProductionMethodMixin:
                 except (ValueError,TypeError):continue
                 for check in value.get('material_checks',[]):
                     if str(check.get('id','')).startswith('method:'):reviews.append({'review_run_id':row['id'],**check})
+        types=novel['wizard'].get('genre_ids',[])
         try:
             available=[{'id':r['id'],'version':r['version'],'title':r['body']['title'],'tasks':r['body']['tasks'],
                         'scopes':r['body']['scopes'],'type_tags':r['body']['type_tags']}
-                       for r in MethodReader(self.studio.workspace).approved() if r['available'] and r['structure_origin']]
+                       for r,_ in matching_methods(MethodReader(self.studio.workspace),types)] if types else []
         except ValueError:available=[]
         return {'policy':novel['wizard'].get('production_methods',{}),'current_job_policy':current,
             'project_type_ids':novel['wizard'].get('genre_ids',[]),

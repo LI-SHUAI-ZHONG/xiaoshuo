@@ -95,17 +95,31 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
             conn.close()
 
     def genres(self) -> dict:
+        from nw.studio.corpus_catalog import DOMAINS, SCHEMA_VERSION
+
         rows = catalog.genres()
+        books = []
         with self.connect() as conn:
-            approved = conn.execute("SELECT d.type_tags_json,d.slot,d.book_id FROM decomp_items d "
-                                    "JOIN staging_books b ON b.id=d.book_id "
-                                    "WHERE d.status='approved' AND b.status='archived'").fetchall()
+            versions = conn.execute("""
+                SELECT b.id, b.title, b.words, b.confirmed_types_json, v.version
+                FROM corpus_structures h JOIN staging_books b ON b.id=h.book_id
+                JOIN corpus_structure_versions v ON v.book_id=h.book_id AND v.version=h.approved_version
+                WHERE b.status!='rejected' AND json_extract(v.body_json,'$.schema_version')=?
+                ORDER BY b.title,b.id""", (SCHEMA_VERSION,))
+            for book in versions:
+                structure = self._corpus_row(book['id'], book['version'], conn)
+                if structure['available']:
+                    books.append({'id': book['id'], 'title': book['title'], 'words': book['words'],
+                                  'version': book['version'], 'types': json.loads(book['confirmed_types_json']),
+                                  'observed_domains': [d['domain'] for d in structure['body']['domains'] if d['status']=='observed'],
+                                  'item_count': len(structure['body']['threads'])})
         for parent in rows:
             for row in [parent, *parent['children']]:
-                related = [r for r in approved if row['id'] in json.loads(r['type_tags_json'])]
-                row.update(book_count=len({r['book_id'] for r in related}), item_count=len(related),
-                           coverage=len({r['slot'] for r in related}), coverage_total=len(catalog.SLOTS))
+                related = [book for book in books if row['id'] in book['types']]
+                row.update(book_count=len(related), item_count=sum(book['item_count'] for book in related),
+                           coverage=len({d for book in related for d in book['observed_domains']}), coverage_total=len(DOMAINS))
         return {'genres': rows, 'combinations': catalog.combinations(),
+                'approved_books': books, 'analysis_schema': SCHEMA_VERSION, 'analysis_domains': DOMAINS,
                 'counts': {'main': len(rows), 'sub': sum(len(r['children']) for r in rows)},
                 'slots': list(catalog.SLOTS),
                 'notes': ['当前原表有 35 个主类型、33 个子类型分表，共 425 个子类型；层级以原 ID 为准。',

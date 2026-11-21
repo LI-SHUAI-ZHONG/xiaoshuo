@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.client import HTTPConnection
 import json
 import os
 from pathlib import Path
@@ -13,6 +14,33 @@ from nw.studio import runtime
 from nw.studio.api import StudioService
 from nw.studio.repository import RepositorySync
 from nw.studio.server import create_studio_server
+
+
+def test_open_page_assets_and_writes_match_its_backend(tmp_path, monkeypatch):
+    static = tmp_path / 'static'
+    static.mkdir()
+    (static / 'index.html').write_text('version=__STUDIO_SOURCE_SHA256__', encoding='ascii')
+    script = static / 'client.js'
+    script.write_text('first page', encoding='ascii')
+    monkeypatch.setattr('nw.studio.server.STATIC_DIR', static)
+    server = create_studio_server(StudioService(tmp_path / 'workspace'), port=0)
+    thread = Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    conn = HTTPConnection('127.0.0.1', server.server_port, timeout=5)
+    try:
+        script.write_text('changed on disk', encoding='ascii')
+        conn.request('GET', '/')
+        assert conn.getresponse().read().decode() == 'version=' + server.repository.loaded_source
+        conn.request('GET', '/client.js')
+        assert conn.getresponse().read() == b'first page'
+        conn.request('POST', '/api/kb/methods', '{}', {'Content-Type':'application/json','X-Studio-Source':'old-page'})
+        response = conn.getresponse()
+        assert response.status == 409 and '重新载入页面' in json.loads(response.read())['error']
+    finally:
+        conn.close()
+        server.shutdown()
+        server.server_close()
+        thread.join(5)
 
 
 @pytest.mark.skipif(os.name != 'nt', reason='Windows desktop shortcut')

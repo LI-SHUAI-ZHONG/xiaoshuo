@@ -30,7 +30,7 @@ def derive(library, book, thread):
 def test_verified_rule_requires_an_effect_and_can_be_absent(analysis):
     library, book, provider=analysis
     saved=library.get_corpus(book)
-    assert saved['body']['schema_version']==4
+    assert saved['body']['schema_version']==5
     assert saved['statistics']['thread_counts']['world_rules']==1
     assert [x['domain'] for x in provider.calls if x['phase']=='relations'].count('world_rules')==1
     body=deepcopy(saved['body'])
@@ -79,7 +79,10 @@ def test_world_evidence_and_design_handoff_survive_method_revisions(analysis):
         library.review_method(manual['id'],{'version':3,'decision':'approve','note':'[FAKE] 缺少原文依据。'})
 
 
-def test_legacy_structure_keeps_approved_method_active_until_a_new_structure_is_approved(tmp_path,monkeypatch):
+def test_legacy_method_replays_but_new_work_requires_a_current_review(tmp_path,monkeypatch):
+    from nw.production_methods.sources import MethodReader, matching_methods
+    from nw.studio import corpus_catalog as catalog
+
     library=LibraryService(tmp_path)
     current=corpus_jobs.empty_document
     with monkeypatch.context() as initial:
@@ -90,26 +93,63 @@ def test_legacy_structure_keeps_approved_method_active_until_a_new_structure_is_
     monkeypatch.setattr(library,'_corpus_runtime',lambda:(runtime(),provider))
     row=library.get_corpus(book)
     frozen=row['body_sha256']
-    old=approve(library,book,row['version'])
-    assert old['available'] and len(old['statistics']['thread_counts'])==7
-    task=derive(library,book,'T_hook')
-    assert task['status']=='completed' and task['runtime']['pipeline_version']=='corpus-v1'
-    approved_method=library.review_method(library.list_methods()['methods'][0]['id'],
-        {'version':1,'decision':'approve','note':'[FAKE] 七职责版本的原方法。'})
-    assert approved_method['available']
+    # Seed decisions and a frozen reference from when the seven-domain edition was current.
+    reader=MethodReader(tmp_path)
+    with monkeypatch.context() as earlier:
+        earlier.setattr(catalog,'SCHEMA_VERSION',1)
+        earlier.setattr(corpus_jobs,'empty_document',lambda *args:{**current(*args),'schema_version':1})
+        old=approve(library,book,row['version'])
+        assert old['available'] and len(old['statistics']['thread_counts'])==7
+        task=derive(library,book,'T_hook')
+        assert task['status']=='completed' and task['runtime']['pipeline_version']=='corpus-v1'
+        approved_method=library.review_method(library.list_methods()['methods'][0]['id'],
+            {'version':1,'decision':'approve','note':'[FAKE] 七职责版本的原方法。'})
+        pin=reader.snapshot(approved_method)
+    reader.verify(pin)
+    assert library.get_method(approved_method['id'])['structure_schema_version']==1
+    assert not library.get_method(approved_method['id'])['current_for_production']
+    assert not matching_methods(reader,['GENRE_XUANYI'])
+    with pytest.raises(ValueError,match='历史拆解规格'):
+        derive(library,book,'T_hook')
+    with pytest.raises(ValueError,match='历史拆解规格'):
+        manual_method(library,book,{'version':row['version'],'thread_ids':['T_hook']})
     assert 'world_rules' not in corpus_catalog(1)['domains']
     manual=library.edit_corpus_record(book,{'expected_version':row['version'],'section':'overview',
                                            'row':row['body']['overview']})
-    assert manual['body']['schema_version']==4 and manual['approved_version']==row['version']
+    assert manual['body']['schema_version']==5 and manual['approved_version']==row['version']
+    assert manual['coverage'].get('detail_ranges',[]) == [] and not manual['coverage']['reviewed_units']
+    assert library.get_corpus(book,row['version'])['statistics']['detail']['complete_imported_text']
     with pytest.raises(ValueError,match='结构尚不能批准'):
         approve(library,book,manual['version'])
     assert library.get_method(approved_method['id'])['available']
     rerun=library.start_corpus_job(book,{'options':{'extent':'complete','note':'[FAKE] 从原文重新分析。'}})
     fresh=wait_job(library,book,rerun['id'])
-    assert fresh['status']=='completed' and fresh['runtime']['pipeline_version']=='corpus-v4'
-    assert library.get_corpus(book)['body']['schema_version']==4
+    assert fresh['status']=='completed' and fresh['runtime']['pipeline_version']=='corpus-v5'
+    assert library.get_corpus(book)['body']['schema_version']==5
     assert library.get_corpus(book,row['version'])['body_sha256']==frozen
     assert library.get_method(approved_method['id'])['available']
+    approve(library,book,library.get_corpus(book)['version'])
+    job=derive(library,book,'T_hook')
+    assert job['status']=='completed',job['error']
+    new_method=job['progress']['published_methods'][0]['id']
+    library.review_method(new_method,{'version':1,'decision':'approve','note':'[FAKE] 已核对现行结构。'})
+    assert [m['id'] for m,_ in matching_methods(reader,['GENRE_XUANYI'])]==[new_method]
+
+
+@pytest.mark.parametrize('request_body', [{}, {'mode':'model'}])
+def test_automatic_decompose_entry_runs_current_full_structure(tmp_path,monkeypatch,request_body):
+    from corpus_fixture import make_book
+
+    library=LibraryService(tmp_path)
+    book=make_book(library)['id']
+    model=CorpusModel()
+    monkeypatch.setattr(library,'_corpus_runtime',lambda:(runtime(),model))
+    job=library.decompose_book(book,request_body)
+    completed=wait_job(library,book,job['id'])
+    assert completed['status']=='completed',completed['error']
+    assert completed['structure_schema_version']==5
+    assert {c['domain'] for c in model.calls if c['phase']=='relations'}==set(corpus_catalog()['domains'])
+    assert library.get_staging(book)['items']==[]
 
 
 def test_resume_keeps_legacy_schema_and_its_original_call_budget(tmp_path,monkeypatch):

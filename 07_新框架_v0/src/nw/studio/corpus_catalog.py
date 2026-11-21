@@ -2,11 +2,18 @@
 from copy import deepcopy
 from nw.studio.corpus_story_observations import STORY_DETAILS
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 DOMAINS = {'main_plot': '全书主线', 'subplot': '支线与交汇', 'character_arc': '人物弧光',
            'hook': '钩子与回应', 'foreshadow': '伏笔与回收', 'information': '信息披露', 'pacing': '节奏与情绪',
            'world_rules': '世界规则、制度与资源约束', 'narration': '叙述时序、视角与呈现',
-           'chapter_progress': '章场进展与跨章承接', 'cast_entry': '人物出场、剧情职责与身份披露'}
+           'chapter_progress': '章场进展与跨章承接', 'cast_entry': '人物出场、剧情职责与身份披露',
+           'cast_roster': '角色数量、种类与章节分布'}
+CAST_ROSTER_OPTIONS = {
+    'presence': {'onstage':'在本章事件中出场', 'mentioned':'本章仅提及', 'unknown':'无法判断是否出场'},
+    'subject_kind': {'individual':'可区分的个人', 'group':'未拆分的群体', 'unknown':'个体归属不明'},
+    'standing': {'protagonist':'主角','antagonist':'反派','major':'重要角色','supporting':'配角','ordinary':'普通角色','unknown':'全书地位未明'},
+    'function_kind': {'driver':'推动事件','opponent':'构成阻力','ally':'协助行动','informant':'提供信息','handoff':'接洽交接','witness':'见证','other':'其他具体职责','unknown':'本章职责未明'},
+}
 NARRATION_CLAIMS = {'stated': '叙述明确交代的事实', 'attributed': '人物说法、记忆或信念',
                     'inferred': '分析者依据文字推断', 'unknown': '当前原文无法确定'}
 LEVELS = {'book': '全书', 'volume': '卷', 'chapter': '章', 'scene': '场景'}
@@ -38,6 +45,9 @@ DETAILS = {
                   'character_response': '人物注意到什么、如何理解、怎样表达，回应带来了什么',
                   'reader_effect': '读者由哪些话明白什么、还在等待什么'},
     **STORY_DETAILS,
+    'cast_roster': {'presence':'在场或仅提及', 'subject_kind':'个人、群体或归属未明',
+                    'standing':'全书角色地位', 'function_kind':'本事件的剧情职责', 'chapter_function':'本章具体怎样发挥作用',
+                    'appearance_evidence':'本次在场或提及的本章证据编号', 'standing_evidence':'判定全书地位的证据编号（未明留空）'},
 }
 FIELDS = {
     'units': {'id': '标识', 'level': '层级', 'title': '标题', 'parent_id': '上级', 'start': '字符起点',
@@ -65,13 +75,19 @@ OVERVIEW = {'central_question': '全书总问题', 'mainline': '主线因果与�
 def domains_for(version: int) -> dict:
     if type(version) is not int or not 1 <= version <= SCHEMA_VERSION:
         raise ValueError('不支持的拆解结构版本')
-    added = {'world_rules': 2, 'narration': 3, **dict.fromkeys(STORY_DETAILS, 4)}
+    added = {'world_rules': 2, 'narration': 3, **dict.fromkeys(STORY_DETAILS, 4), 'cast_roster':5}
     return {key: value for key, value in DOMAINS.items() if added.get(key, 1) <= version}
+
+
+def require_current_schema(version: int | None) -> None:
+    if version != SCHEMA_VERSION:
+        raise ValueError(f'来源采用历史拆解规格 v{version or 1}，请先按现行 v{SCHEMA_VERSION} 补齐并批准结构后再用于新制作')
 
 
 def corpus_catalog(version: int = SCHEMA_VERSION) -> dict:
     domains = domains_for(version)
     return {'schema_version': version, 'domains': domains, 'levels': LEVELS, 'link_kinds': LINKS,
+        **({'cast_roster_options':deepcopy(CAST_ROSTER_OPTIONS)} if version >= 5 else {}),
         **({'narration_claims': NARRATION_CLAIMS.copy()} if version >= 3 else {}),
         'overview_fields': OVERVIEW, 'row_fields': deepcopy(FIELDS), 'domain_details': {k: deepcopy(DETAILS[k]) for k in domains},
         'source_extents': {'complete': '作者确认完整作品', 'excerpt': '摘录 / 不完整文本', 'unknown': '完整性未确认'},

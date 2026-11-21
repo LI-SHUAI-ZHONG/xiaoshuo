@@ -2,7 +2,7 @@
 from copy import deepcopy
 import re
 
-from nw.studio.corpus_catalog import DETAILS, DOMAINS, FIELDS, LEVELS, LINKS, NARRATION_CLAIMS, OVERVIEW, domains_for
+from nw.studio.corpus_catalog import CAST_ROSTER_OPTIONS, DETAILS, DOMAINS, FIELDS, LEVELS, LINKS, NARRATION_CLAIMS, OVERVIEW, domains_for
 from nw.studio.library_util import encode
 
 ID = re.compile(r'^[A-Za-z][A-Za-z0-9_]{0,95}$')
@@ -62,6 +62,8 @@ def normalize_document(raw: dict, content: str) -> dict:
                     if row.get('domain') not in DETAILS or not isinstance(value,dict) or set(value)!=set(DETAILS[row['domain']]):
                         raise ValueError('请按具体制作职责填写分析字段')
                     clean[key]={k:string(v,DETAILS[row['domain']][k]) for k,v in value.items()}
+                    if row['domain']=='cast_roster' and any(clean[key][k] not in opts for k,opts in CAST_ROSTER_OPTIONS.items()):
+                        raise ValueError('角色阵容须使用目录中的出场性质、主体、全书地位及本章职责')
                     if row['domain']=='narration' and clean[key]['claim_status'] not in NARRATION_CLAIMS:
                         raise ValueError('叙述观察须区分已叙事实、人物说法、推断或未知')
                     if row['domain']=='cast_entry' and clean[key]['claim_status'] not in NARRATION_CLAIMS:

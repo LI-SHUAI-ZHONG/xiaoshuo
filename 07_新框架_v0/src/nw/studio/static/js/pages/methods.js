@@ -8,6 +8,13 @@ const area=(name,value='',rows=3)=>`<textarea name="${name}" rows="${rows}">${es
 const options=(rows,selected='')=>Object.entries(rows).map(([id,label])=>`<option value="${esc(id)}" ${id===selected?'selected':''}>${esc(label)}</option>`).join('');
 const bullets=rows=>rows.length?`<ul>${rows.map(row=>`<li>${esc(row)}</li>`).join('')}</ul>`:'<p class="muted">待补充</p>';
 
+function productionStatus(row){
+  if(row.current_for_production)return '已批准，可供新制作按需选用';
+  if(row.status==='approved')return '历史已批准，本版本不参与新制作选材';
+  if(row.status==='draft'&&row.origin_item_id)return '历史标注草稿 · 待补齐或审核';
+  return statuses[row.status];
+}
+
 export async function renderMethods(ctx){
   const [catalog,genres]=await Promise.all([api.get('/kb/method-catalog',ctx.signal),api.get('/genres',ctx.signal)]);
   if(!ctx.alive())return;
@@ -29,30 +36,35 @@ export async function renderMethods(ctx){
     $('#methodResults').innerHTML=loading();
     const data=await api.get(`/kb/methods?${query({...filters,limit:20,offset})}`,ctx.signal);
     if(!ctx.alive()||seq!==serial)return;
-    $('#methodResults').innerHTML=`<div class="row spread wrap"><p class="muted">匹配 ${data.total} 条方法 · ${data.legacy_pending_count} 条旧拆解待结构化 / 审核</p><a class="text-link" href="#/kb/legacy">查看旧拆解及统计 →</a></div>`+
-      (data.methods.length?`<div class="stack">${data.methods.map(row=>`<article class="card"><div class="row spread wrap"><h3>${esc(row.body.title||'未命名方法')}</h3><span class="tag">${statuses[row.status]}</span></div>
+    $('#methodResults').innerHTML=`<div class="row spread wrap"><p class="muted">匹配 ${data.total} 条制作方法</p><a class="text-link" href="#/kb/decomposition">查看现行拆解条目 →</a></div>
+      ${data.legacy_pending_count?`<p><a class="text-link" href="#/kb/legacy">历史局部标注 · ${data.legacy_pending_count} 条待补齐</a></p>`:''}`+
+      (data.methods.length?`<div class="stack">${data.methods.map(row=>`<article class="card"><div class="row spread wrap"><h3>${esc(row.body.title||'未命名方法')}</h3><span class="tag">${esc(productionStatus(row))}</span></div>
       <p class="muted">${row.body.tasks.map(id=>esc(taskNames[id])).join(' · ')||'待确定生产任务'} ｜ ${row.body.scopes.map(id=>esc(catalog.scopes[id])).join(' / ')||'待确定层级'}</p>
       <p>${esc(row.body.applicability[0]||'适用条件待补充')}</p><div class="row spread wrap"><small class="muted">版本 ${row.version}${row.approved_version?` · 已批准版本 ${row.approved_version}`:''} · ${row.body.evidence.length} 处原作证据 · ${row.issues.length+row.source_issues.length} 项待核对</small><button class="secondary" data-method="${esc(row.id)}" data-version="${row.version}">查看 / 编辑</button></div></article>`).join('')}</div>`:
-      empty('还没有匹配的完整方法','可先导入参考作品，再建立有证据的方法；旧拆解短文需要补齐八类要求并单独审核。','<a class="secondary" href="#/staging">导入参考作品</a>','layers'))+
+      empty('还没有匹配的制作方法','从预存库导入参考作品并批准多层结构后，即可按生产步骤提炼方法。','<a class="secondary" href="#/staging">导入参考作品</a>','layers'))+
       (data.total>20?`<div class="row method-filters"><button class="secondary" id="methodPrev" ${!offset?'disabled':''}>上一页</button><span>${offset+1}–${Math.min(offset+20,data.total)} / ${data.total}</span><button class="secondary" id="methodNext" ${offset+20>=data.total?'disabled':''}>下一页</button></div>`:'');
     $$('[data-method]').forEach(button=>button.onclick=()=>showMethod(button.dataset.method,Number(button.dataset.version)).catch(fail));
     if($('#methodPrev'))$('#methodPrev').onclick=()=>{offset-=20;load().catch(fail);};
     if($('#methodNext'))$('#methodNext').onclick=()=>{offset+=20;load().catch(fail);};
   }
   async function showMethod(id,version){
-    const row=await api.get(`/kb/methods/${enc(id)}?version=${version}`,ctx.signal);
+    if(version!=null&&(!/^[1-9]\d*$/.test(String(version))||!Number.isSafeInteger(Number(version))))throw new Error('方法版本须为正整数');
+    const row=await api.get(`/kb/methods/${enc(id)}${version==null?'':'?version='+enc(version)}`,ctx.signal);
     if(!ctx.alive())return;
     const body=row.body, issues=[...row.issues,...row.source_issues];
-    drawer(body.title||'方法详情',`<div class="row spread wrap"><span class="tag">${statuses[row.status]} · 版本 ${row.version}</span><button class="secondary" id="editMethod">编辑并保存新版本</button></div>
+    drawer(body.title||'方法详情',`<div class="row spread wrap"><span class="tag">${esc(productionStatus(row))} · 版本 ${row.version}</span><button class="secondary" id="editMethod">编辑最新版本</button></div>
       <p class="muted">${body.tasks.map(t=>esc(taskNames[t])).join(' · ')||'待分类'} ｜ ${body.scopes.map(s=>esc(catalog.scopes[s])).join(' / ')||'层级待定'}</p>
       ${row.approved_version&&row.version!==row.approved_version?`<p class="notice">已批准版本 ${row.approved_version} 保留；当前版本单独审核。</p>`:''}
       ${issues.length?`<div class="notice"><strong>待补齐或核对</strong>${bullets(issues.map(i=>i.message))}</div>`:''}
       ${row.origin_item_id?'<p class="muted">来自旧拆解条目；原始短文与审核记录保留。</p>':''}
-      ${row.structure_origin?`<p class="notice">依据已批准结构版本 ${row.structure_origin.structure_version}；方法不等于本项目事实。<a class="text-link" href="#/staging/${enc(row.structure_origin.book_id)}?view=structure&version=${row.structure_origin.structure_version}" data-method-source>查看结构与多处原文证据 →</a></p>`:''}
+      ${row.structure_origin?`<p class="notice">依据原作分析规格 v${esc(row.structure_schema_version)}、结构修订 ${row.structure_origin.structure_version}。<a class="text-link" href="#/staging/${enc(row.structure_origin.book_id)}?view=structure&version=${row.structure_origin.structure_version}" data-method-source>查看结构与多处原文证据 →</a></p>`:''}
       <section class="method-section"><h3>适用条件</h3>${bullets(body.applicability)}</section>
       <section class="method-section"><h3>所需前置</h3>${bullets(body.prerequisites.map(p=>`${catalog.input_kinds[p.input_kind]} / ${p.artifact}：${p.requirement}`))}</section>
       <section class="method-section"><h3>具体操作</h3>${bullets(body.operations.map(o=>o.instruction))}</section>
-      <section class="method-section"><h3>预期产物</h3>${bullets(body.outputs.map(o=>`${catalog.artifact_kinds[o.artifact_kind]}：${o.description}`))}</section>
+      <section class="method-section"><h3>预期产物</h3>${bullets(body.outputs.map(o=>{
+        const stage=catalog.stages.find(s=>s.id===o.stage);
+        return `${stage?.name||o.stage} · ${catalog.output_labels[o.field]||o.field} · ${catalog.artifact_kinds[o.artifact_kind]}：${o.description}`;
+      }))}</section>
       <section class="method-section"><h3>下游用途</h3>${bullets(body.downstream.map(d=>`${catalog.consumers[d.consumer]}：${d.usage}`))}</section>
       <section class="method-section"><h3>验收方法</h3>${bullets(body.acceptance.map(a=>`${a.check}；所需证据：${a.evidence_required}`))}</section>
       <section class="method-section"><h3>原作证据</h3>${body.evidence.map(e=>`<blockquote class="evidence">${esc(e.quote)}</blockquote><p>${esc(e.explanation)}</p><a class="text-link" href="#/staging/${enc(e.book_id)}" data-method-source>${esc(row.evidence_locations.find(p=>p.book_id===e.book_id)?.book_title||'查看来源作品')} · 字符 ${e.start}–${e.end} →</a>`).join('')||'<p class="muted">待补充</p>'}</section>
@@ -159,7 +171,9 @@ export async function renderMethods(ctx){
   $$('#methodFilters select').forEach(select=>select.onchange=()=>{offset=0;load().catch(fail);});
   $('#newMethod').onclick=()=>editMethod().catch(fail);
   await load();
-  if(ctx.params.get('method')&&ctx.alive()){try{const item=await api.get(`/kb/methods/${enc(ctx.params.get('method'))}`,ctx.signal);await showMethod(item.id,item.version);}catch(error){fail(error);}}
+  if(ctx.params.get('method')&&ctx.alive()){
+    try{await showMethod(ctx.params.get('method'),ctx.params.get('version'));}catch(error){fail(error);}
+  }
 }
 
 function* rowFields(root){for(const el of $$('input[name],select[name],textarea[name]',root))yield [el.name,el.value];}

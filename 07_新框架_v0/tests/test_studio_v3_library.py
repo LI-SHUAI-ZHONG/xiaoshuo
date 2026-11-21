@@ -55,6 +55,29 @@ def test_no_corpus_has_three_blanks_even_with_original_materials(library: Librar
         assert library.recommend(slot, ['SUB_XUANHUAN_01'])['recommendations'] == [None, None, None]
 
 
+def test_historical_short_note_is_searchable_but_cannot_enter_a_new_design(library: LibraryService) -> None:
+    from nw.studio.production_inputs import freeze_wizard, governance
+
+    archived(library, '旧资料', ['tone.TONE_COLD'])
+    candidate = library.upgrades()['upgrades'][0]
+    library.review_upgrade(candidate['id'], {'decision': 'approve'})
+    legacy = library.recommend('tone', ['SUB_XUANHUAN_01'])
+    assert legacy['recommendations'][0] and not legacy['eligible_for_new_design']
+    assert not library.genres()['approved_books']
+    form = {'title':'测试', 'idea':'核对书信', 'genre_ids':['GENRE_XUANHUAN', 'SUB_XUANHUAN_01'],
+            'tone_ids':['TONE_COLD'], 'choices':[{'slot':'tone','option_key':'tone.TONE_COLD'}]}
+    current = freeze_wizard(form, library)
+    assert current['tone_ids'] == ['TONE_COLD'] and not current['author_references']
+    assert current['upgrade_snapshot']['items'] == []
+    form['choices'][0]['recommended'] = True
+    with pytest.raises(ValueError, match='历史短文推荐'):
+        freeze_wizard(form, library)
+    old = {**current, 'author_references':library.freeze_references(current['choices'], current['genre_ids']),
+           'upgrade_snapshot':library.approved_upgrades(current['genre_ids'])}
+    assert old['author_references'] and old['upgrade_snapshot']['items']
+    assert governance(old) == governance(current)
+
+
 def test_duplicate_book_content_cannot_inflate_counts(library: LibraryService) -> None:
     one = library.import_book({'title': '一', 'filename': 'a.txt', 'text': '重复内容'})
     duplicate = library.import_book({'title': '二', 'filename': 'b.md', 'text': '重复内容'})
@@ -287,7 +310,7 @@ def test_model_failure_can_retry_with_new_audit_files(library: LibraryService, m
     provider = TestProvider()
     monkeypatch.setattr(staging_model, 'load_config', lambda path: config)
     monkeypatch.setattr(staging_model, 'make_provider', lambda cfg: provider)
-    first = library.decompose_book(book['id'], {})
+    first = staging_model.start_decomposition(library, book['id'])
     assert first['status'] == 'decomposing' and first['progress'] == 0
     assert started.wait(timeout=5)
     worker = library._tasks[book['id']]
@@ -297,7 +320,7 @@ def test_model_failure_can_retry_with_new_audit_files(library: LibraryService, m
     provider.complete = True
     started.clear()
     release.clear()
-    library.decompose_book(book['id'], {})
+    staging_model.start_decomposition(library, book['id'])
     assert started.wait(timeout=5)
     worker = library._tasks[book['id']]
     release.set()

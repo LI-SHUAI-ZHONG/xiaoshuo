@@ -192,6 +192,13 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     or not all(isinstance(value, dict) for value in governance_inputs.values())):
                 raise ValueError('MATERIAL_GOVERNANCE: expected inputs keyed by current planning stage')
             material_governance = dict(governance_inputs)
+            world_inputs = dict(material_governance.get('world_design', {}))
+            if 'cast_sample_reference' in world_inputs:
+                package['cast_sample_reference'] = world_inputs.pop('cast_sample_reference')
+                if world_inputs:
+                    material_governance['world_design'] = world_inputs
+                else:
+                    del material_governance['world_design']
             if 'plot_design' in material_governance:
                 project_inputs = dict(material_governance['plot_design'])
                 project_inputs.pop('length_policy', None)
@@ -213,7 +220,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         existing = store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest_id,)).fetchone()
         if existing:
             _, previous_package = read_input_manifest(store, manifest_id)
-            for key in ('length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews', 'chapter_progress_policy',
+            package.pop('cast_sample_reference', None)
+            for key in ('cast_sample_reference', 'length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews', 'chapter_progress_policy',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',

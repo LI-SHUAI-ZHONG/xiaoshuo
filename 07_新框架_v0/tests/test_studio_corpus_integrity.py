@@ -99,7 +99,7 @@ def test_git_snapshot_restores_structures_methods_reviews_and_full_call_files(li
     call=restored.corpus_call_record(book['id'],ident,1)
     assert call['input']==original_call['input'] and call['output']==original_call['output']
     with restored.connect() as conn:
-        assert conn.execute('SELECT COUNT(*) FROM corpus_calls').fetchone()[0]==16
+        assert conn.execute('SELECT COUNT(*) FROM corpus_calls').fetchone()[0]==18
 
 
 def test_resume_cannot_change_frozen_chunking_or_source_extent(library,monkeypatch):

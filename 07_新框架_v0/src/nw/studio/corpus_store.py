@@ -3,7 +3,7 @@ from copy import deepcopy
 import hashlib
 import json
 
-from nw.studio.corpus_catalog import FIELDS, SCHEMA_VERSION, corpus_catalog
+from nw.studio.corpus_catalog import FIELDS, SCHEMA_VERSION, corpus_catalog, require_current_schema
 from nw.studio.corpus_checks import graph_issues
 from nw.studio.corpus_contract import normalize_document
 from nw.studio.corpus_index import empty_document, range_coverage
@@ -15,8 +15,8 @@ def body_hash(body: dict) -> str:
 
 
 class CorpusMixin:
-    def corpus_catalog(self) -> dict:
-        return corpus_catalog()
+    def corpus_catalog(self, version: int = SCHEMA_VERSION) -> dict:
+        return corpus_catalog(version)
 
     def _corpus_row(self, book_id: str, version: int, conn: object) -> dict:
         head=conn.execute('SELECT * FROM corpus_structures WHERE book_id=?',(book_id,)).fetchone()
@@ -76,6 +76,9 @@ class CorpusMixin:
         else:conn.execute('INSERT INTO corpus_structures VALUES(?,?,NULL,?,?)',(book_id,version,now,now))
         conn.execute('INSERT INTO corpus_structure_versions VALUES(?,?,?,?,?,?,?,?)',
             (book_id,version,book['sha256'],encode(body),body_hash(body),encode(coverage),job_id,now))
+        if not head or head['approved_version'] is None:
+            conn.execute("UPDATE staging_books SET status='pending_verify',progress=1,error='',updated_at=? "
+                         "WHERE id=? AND status NOT IN ('pending_review','rejected')",(now,book_id))
         return version
 
     def save_corpus(self, book_id: str, request: dict) -> dict:
@@ -94,8 +97,10 @@ class CorpusMixin:
             conn.execute('BEGIN IMMEDIATE')
             active=conn.execute("SELECT id FROM corpus_jobs WHERE book_id=? AND status IN ('pending','running')",(book_id,)).fetchone()
             if active:raise ValueError('拆解任务正在运行，请先暂停再编辑结构')
-            prior=conn.execute('SELECT coverage_json FROM corpus_structure_versions WHERE book_id=? AND version=?',(book_id,expected)).fetchone()
-            coverage=json.loads(prior[0]) if prior else {}
+            prior=conn.execute("SELECT coverage_json, json_extract(body_json,'$.schema_version') FROM corpus_structure_versions "
+                               "WHERE book_id=? AND version=?",(book_id,expected)).fetchone()
+            # The old version keeps its full reading record. Its detail pass did not examine the new domains.
+            coverage=json.loads(prior[0]) if prior and prior[1] == SCHEMA_VERSION else {}
             coverage.update(reviewed_units=reviewed,manual_revision=True)
             self._store_corpus(conn,book_id,body,expected,coverage)
         return self.get_corpus(book_id)
@@ -127,8 +132,9 @@ class CorpusMixin:
                 else:body[section][found]=row
             else:raise ValueError('记录必须有明确标识')
         else:raise ValueError('未知结构板块')
+        reviewed=current.get('coverage',{}).get('reviewed_units',[]) if current['body'].get('schema_version')==SCHEMA_VERSION else []
         return self.save_corpus(book_id,{'body':body,'expected_version':current['latest_version'],
-            'reviewed_units':request.get('reviewed_units',current.get('coverage',{}).get('reviewed_units',[]))})
+            'reviewed_units':request.get('reviewed_units',reviewed)})
 
     def review_corpus(self, book_id: str, request: dict) -> dict:
         version=request.get('version');decision=request.get('decision');note=request.get('note','')
@@ -139,6 +145,7 @@ class CorpusMixin:
             if version!=row['latest_version']:raise ValueError('只能审核当前最新结构版本')
             if row['review']:raise ValueError('该版本已审核；修订必须新增版本')
             if decision=='approve':
+                require_current_schema(row['body'].get('schema_version', 1))
                 errors=[r['message'] for r in row['issues'] if r['severity']=='error']
                 if errors:raise ValueError('结构尚不能批准：'+'；'.join(errors[:12]))
                 limited=row['body']['source_extent']['status']!='complete' or row['body']['uncertainties'] or row['issues']
@@ -147,6 +154,5 @@ class CorpusMixin:
             conn.execute('INSERT INTO corpus_structure_reviews VALUES(?,?,?,?,?)',(book_id,version,decision,note.strip(),timestamp()))
             if decision=='approve':
                 conn.execute('UPDATE corpus_structures SET approved_version=?,updated_at=? WHERE book_id=?',(version,timestamp(),book_id))
-                drafts=conn.execute("SELECT COUNT(*) FROM decomp_items WHERE book_id=? AND status='draft'",(book_id,)).fetchone()[0]
-                if not drafts:conn.execute("UPDATE staging_books SET status='archived',updated_at=? WHERE id=? AND status!='rejected'",(timestamp(),book_id))
+                conn.execute("UPDATE staging_books SET status='archived',updated_at=? WHERE id=? AND status!='rejected'",(timestamp(),book_id))
         return self.get_corpus(book_id)

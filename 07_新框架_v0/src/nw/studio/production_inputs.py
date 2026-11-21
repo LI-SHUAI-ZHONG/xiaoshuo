@@ -24,7 +24,7 @@ def freeze_wizard(body: dict, library: Any) -> dict:
         if not isinstance(values, list) or len(values) > 30 or any(not isinstance(x, str) or len(x) > 200 for x in values):
             raise ValueError(f'无效的向导选项: {field}')
         wizard[field] = list(dict.fromkeys(values))
-    genres = library.genres()['genres']
+    genres = catalog.genres()
     known = {item['id'] for main in genres for item in [main, *main.get('children', [])]}
     if not wizard['genre_ids'] or set(wizard['genre_ids']) - known or len(wizard['genre_ids']) > 4:
         raise ValueError('请选择有效的主类型、子类型与最多两个副类型')
@@ -67,19 +67,15 @@ def freeze_wizard(body: dict, library: Any) -> dict:
         copy = {key: choice.get(key) for key in ('step', 'slot', 'option_key', 'recommended', 'rec_rank', 'rec_level')}
         copy['recommended'] = bool(copy['recommended'])
         if copy['recommended']:
-            ranked = library.recommend(copy['slot'], wizard['genre_ids'])['recommendations']
-            matched = next(((i, rec) for i, rec in enumerate(ranked, 1) if rec and rec['option_key'] == copy['option_key']), None)
-            if not matched:
-                raise ValueError('推荐数据已变化，请重新选择或作为普通偏好提交')
-            copy.update(rec_rank=matched[0], rec_level=matched[1].get('level', matched[1].get('rec_level')),
-                        recommendation_snapshot=matched[1])
+            raise ValueError('此选项来自历史短文推荐。请刷新立项向导，选择当前制作方法或作为普通偏好提交')
+        copy['rec_rank'] = copy['rec_level'] = None
         wizard['choices'].append(copy)
     recorded = {(row['slot'], row['option_key']) for row in wizard['choices']}
     for slot, keys in chosen_keys.items():
         wizard['choices'].extend({'slot': slot, 'option_key': key, 'recommended': False}
                                  for key in sorted(keys) if (slot, key) not in recorded)
-    wizard['author_references'] = library.freeze_references(wizard['choices'], wizard['genre_ids'])
-    wizard['upgrade_snapshot'] = library.approved_upgrades(wizard['genre_ids'])
+    wizard['author_references'] = []
+    wizard['upgrade_snapshot'] = {'version': 0, 'items': []}
     method_choices = raw.get('method_preferences', [])
     references = []
     if 'method_preferences' in raw:
@@ -102,6 +98,9 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     wizard.update(length_fields(parse_length_changes(raw)))
     if wizard.get('length_mode') == 'tiered' and not wizard.get('target_words'):
         freeze_length_recommendation(wizard, library)
+    from nw.studio.cast_samples import design_reference, genre_cast_samples
+    if cast := design_reference(genre_cast_samples(library, selected_types)):
+        wizard['cast_sample_reference'] = cast
     return wizard
 
 
@@ -114,7 +113,7 @@ def freeze_length_recommendation(wizard: dict, library) -> None:
 
 
 
-def governance(wizard: dict) -> dict:
+def governance(wizard: dict, *, library=None) -> dict:
     result = {stage: {'author_preferences': {}} for stage in ORDER}
     for slot, field in SLOTS.items():
         for stage in STAGES[slot]:
@@ -124,14 +123,15 @@ def governance(wizard: dict) -> dict:
         'genre_ids', 'tone_ids', 'style_ids', 'structure_ids', 'mechanism_ids')}
     if any(config.values()):
         result['type_selection']['project_config'] = config
-    for name, rows in (('author_references', wizard.get('author_references',[])),
-                       ('upgrade_references', wizard.get('upgrade_snapshot',{}).get('items', []))):
-        for row in rows:
-            for stage in row.get('stages', row.get('stage', [])):
-                if stage in result:
-                    result[stage].setdefault(name, []).append(row)
     filtered = {stage: {key: value for key, value in content.items() if value}
                 for stage, content in result.items() if any(content.values())}
+    if library is None:
+        cast = wizard.get('cast_sample_reference')
+    else:
+        from nw.studio.cast_samples import design_reference, genre_cast_samples
+        cast = design_reference(genre_cast_samples(library, wizard.get('genre_ids', [])))
+    if cast:
+        filtered.setdefault('world_design', {})['cast_sample_reference'] = cast
     length = length_fields(wizard)
     if wizard.get('auto_length') or wizard.get('length_mode') == 'tiered':
         filtered.setdefault('plot_design', {})['length_auto'] = True
