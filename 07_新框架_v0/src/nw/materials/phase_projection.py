@@ -149,6 +149,30 @@ def validate_candidate(candidate: dict,session: dict) -> None:
             'candidate no longer matches the actual staged products')
 
 
+def _share_product_refs(checks: list[dict]) -> None:
+    """Send one copy of each repeated, identical upstream receipt in this review."""
+    uses = {}
+    for check in checks:
+        if not check['id'].startswith('work:semantic:'):
+            continue
+        proof = check['method_artifact']
+        for application in proof.get('applications', [proof]):
+            ref = application.get('product_ref')
+            if isinstance(ref, dict):
+                uses.setdefault(canonical(ref), []).append(application)
+    lookup = {}
+    for applications in uses.values():
+        if len(applications) < 2:
+            continue
+        key = f'@{len(lookup) + 1}'
+        lookup[key] = applications[0]['product_ref']
+        for application in applications:
+            application['product_ref'] = key
+    if lookup:
+        first = next(check for check in checks if check['id'].startswith('work:semantic:'))
+        first['stage_product_refs'] = lookup
+
+
 def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
     records={row['stage']:row for row in session['stages']};sources={row['source']['id']:row for row in session['sources']}
     context=session.get('context',{})
@@ -188,10 +212,13 @@ def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
                 from nw.materials.narration import register_beat, scene_bases, scene_check
                 narration_order += 1
                 if narration_order == 1:
-                    pov = next(r['body']['pov'] for r in records['scene_design']['products']['members'] if r['key']==scene)
+                    body = next(r['body'] for r in records['scene_design']['products']['members'] if r['key']==scene)
+                    pov = body['pov']
                     narration_bases = scene_bases(records, context, scene)[scene]
+                    from nw.materials.cast_design import review_checks as cast_review_checks
+                    result.extend(cast_review_checks(scene, pov, narration_bases, records[stage]['products'][field]))
                 basis = narration_bases[guide['narration']['basis_ref']]
-                result.append(scene_check(guide, index, narration_order, pov, ids or {}, basis))
+                result.append(scene_check(guide, index, narration_order, pov, ids or {}, basis, body.get('narrative_person')))
                 register_beat(narration_bases, narration_order, guide)
                 continue
             observable=guide['observable']
@@ -222,6 +249,9 @@ def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
                 'check':canonical({key:transition[key] for key in ('cost','failure','continuity')}),'state':state},
             'method_artifact':transition,
             'evidence_required':'候选变化必须在本稿有行动、后果和独立证据，再交给状态提取核对；候选前状态不得冒充已接受事实。'})
+    from nw.materials.narration import ACCESS_POLICY
+    if context.get('narration_policy') == ACCESS_POLICY:
+        _share_product_refs(result)
     return result
 
 

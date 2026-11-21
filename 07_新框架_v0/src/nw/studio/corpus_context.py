@@ -1,5 +1,6 @@
 """Bounded windows retain global basis, unresolved threads and endpoint evidence."""
 from nw.studio.corpus_prompts import messages
+from nw.studio.corpus_story_observations import STORY_DETAILS
 
 
 def event_position(event: dict, evidence: dict) -> int:
@@ -28,7 +29,7 @@ def window_payload(document: dict, selected: list[dict], *, domain: str | None, 
     evidence_ids={eid for event in [*selected,*endpoint_events] for eid in event['evidence_ids']}
     evidence_ids.update(eid for thread in open_threads for eid in thread['evidence_ids'])
     observations=[]
-    if domain=='narration':
+    if domain=='narration' or domain in STORY_DETAILS:
         window={event['id'] for event in selected}
         observations=[t for t in threads if t['status']=='resolved' and window.intersection(t['node_ids'])]
         evidence_ids.update(eid for t in observations for eid in t['evidence_ids'])
@@ -37,6 +38,7 @@ def window_payload(document: dict, selected: list[dict], *, domain: str | None, 
         'overview':global_basis['overview'] if global_basis else document['overview'],
         'open_threads':open_threads,
         **({'narration_observations':observations} if domain=='narration' else {}),
+        **({'local_observations':observations} if domain in STORY_DETAILS else {}),
         'closed_thread_index':[{'id':t['id'],'title':t['title'],'domain':t['domain'],'status':t['status'],'node_ids':t['node_ids']}
                                for t in threads if t['status']=='resolved'],
         'events':selected,'frontier_events':endpoint_events,

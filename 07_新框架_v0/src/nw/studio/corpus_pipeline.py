@@ -10,6 +10,7 @@ from nw.studio.corpus_merge import merge_fragment, resolve_fragment
 from nw.studio.corpus_methods import prepare_method, publish_methods
 from nw.studio.corpus_prompts import messages, method_messages
 from nw.studio.corpus_store import body_hash
+from nw.studio.corpus_story_observations import STORY_TASKS
 from nw.studio.library_util import encode, timestamp
 
 
@@ -94,6 +95,9 @@ def derive_methods(service: object, job: dict, state: dict, config: object, prov
             'source_extent':doc['source_extent'],'overview':doc['overview'],'thread':thread,'events':events,'links':links,
             'evidence':[{'book_id':job['book_id'],**e} for e in doc['evidence'] if e['id'] in eids],
             'confirmed_types':json.loads(service._staging_row(job['book_id'])['confirmed_types_json'])}
+        if thread['domain'] in STORY_TASKS:
+            people=set(thread['characters'])|{who for event in events for who in event['characters']}
+            payload['participants']=[{'id':p['id'],'name':p['name']} for p in doc['characters'] if p['id'] in people]
         def validator(raw: dict) -> list:
             if not isinstance(raw,dict) or set(raw)!={'methods'} or not isinstance(raw['methods'],list) or len(raw['methods'])>3:
                 raise ValueError('每条线索每次只能返回0–3个有明确依据的方法')

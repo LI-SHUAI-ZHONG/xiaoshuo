@@ -16,7 +16,7 @@ from nw.task_models import Budget
 from hashlib import sha256
 from story_fixture import baseline
 from test_novel_flow import config,Model
-from fake_phase_work import project_products
+from fake_phase_work import add_scene_progress, project_products
 
 
 def template_catalog(tmp_path):
@@ -48,7 +48,9 @@ class PhaseModel(Model):
         fixture_scope='book' if stage=='plot_design' and payload['scope']=='book' else 'chapter'
         products=project_products(stage,Planner(fixture_scope).output['candidate_cards'],
                                   payload['inputs'],sources,payload['scope'],native=True,
-                                  narration=bool(payload.get('narration_policy')))
+                                  narration=payload.get('narration_policy', False), narration_bases=payload.get('narration_bases'),
+                                  cast_needs=payload.get('cast_needs'))
+        add_scene_progress(payload, products)
         if stage=='state_transition':
             assert payload['inputs']['character_design']['products']['members']
             assert payload['inputs']['scene_design']['products']['events']
@@ -576,6 +578,15 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                         facts[key]=t['new_value']
                 return GenResult(json.dumps({'operations':operations},ensure_ascii=False),'complete',{},'test',{})
             result = super().generate(messages,**params)
+            if payload.get('stage') == 'scene_design' and payload.get('chapter_progress_policy'):
+                raw = json.loads(result.text)
+                raw['products']['scene_progress'][0]['next_pressure'] = '换印的日期仍待调查'
+                if payload.get('chapter_changes'):
+                    for chapter in raw['products']['chapters']:
+                        chapter['index'] = 2
+                        for entry in chapter['scenes']:
+                            entry['story_order'] += 1
+                result.text = json.dumps(raw, ensure_ascii=False)
             if not multi:
                 return result
             stage = payload.get('stage')
@@ -648,6 +659,27 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
             assert result.status=='DONE',result.reason
             head=current_head(store);facts=replay(baseline_for(store,'main'),selected_operations(store,revision_state(store,head)))
             assert any(f.predicate=='hand' and f.value=='划伤' for f in facts)
+            from nw.chapter_state import continuation_chapter_state
+            with Store(store.directory, test_mode=True) as reopened:
+                handoff = continuation_chapter_state(reopened, head, revision_state(reopened, head))
+                [advance] = handoff['reviewed_progress']
+                assert advance['change'] == 'knowledge' and advance['scene_id'] == scene
+                assert advance['evidence'] and advance['possible_next_pressure'] == '换印的日期仍待调查'
+                if not multi:
+                    from nw.materials.phase_projection import method_checks
+                    parent = reopened.connection.execute('SELECT proposal_id FROM plan_applications WHERE proposal_id != ?',
+                                                         (design.outputs['proposal_id'],)).fetchone()[0]
+                    budget = create_budget(reopened, 'next-progress', Budget(32, 90000, 4000))
+                    request, inputs = prepare_plan_task(reopened, 1, 'chapter', provider, config(reopened),
+                                                        budget, 'next-chapter', parent_id=parent)
+                    _, following = drive_plan(reopened, request, inputs, provider, config(reopened))
+                    session = following['material_work']
+                    steps = {s['stage']: s['products'] for s in session['stages']}
+                    assert steps['scene_design']['chapters'][0]['index'] == 2
+                    [continuation] = steps['plot_design']['continuations']
+                    progress = next(r for r in method_checks(session, 'scene') if r['id'].startswith('work:progress:'))
+                    assert progress['continuations'][0]['ref'] == continuation['ref']
+                    assert progress['continuations'][0]['prior']['draft_ref'] == advance['draft_ref']
             if multi:
                 assert provider.reviews == 2
                 [accepted] = store.list('accepted')

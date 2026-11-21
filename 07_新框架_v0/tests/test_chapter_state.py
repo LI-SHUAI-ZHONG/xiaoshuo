@@ -70,6 +70,8 @@ def test_completed_chapter_facts_are_frozen_for_continuation(tmp_path: Path) -> 
         assert paid_change['evidence'] == change['evidence']
         assert paid_change['story_order'] == 1
         assert paid_change['disclosure_order'] == [1, 1, 0]
+        [intention] = handoff['character_changes']
+        assert (intention['holder'], intention['claim'], intention['evidence']) == ('yan', 'plan', plan['evidence'])
 
     with Store(tmp_path / 'story') as store:
         from nw.chapter_state import chapter_state
@@ -96,7 +98,9 @@ def test_plot_step_receives_chapter_facts_without_sending_them_to_type_selection
         first_draft = draft_for(store, first, '沈砚为通行花掉六枚铜钱。')
         second_draft = draft_for(store, second, '沈砚在井口等候。')
         change = operation(first_draft, predicate='coins', entity='purse', old=10, new=4)
-        requests = [proposal(store, head, first_draft, [change]), proposal(store, head, second_draft, [])]
+        belief = operation(second_draft, time=2, order=(1, 2, 0), holder='yan', claim='suspicion',
+                           predicate='entry', entity='well', new='怀疑井下还有通路')
+        requests = [proposal(store, head, first_draft, [change]), proposal(store, head, second_draft, [belief])]
         head = accept_batch(store, requests, head, 'accept-chapter')
         review = chapter_summary(store, head, 1)
         recap = chapter_summary(store, head, 1, {'input_sha256': review['input_sha256'],
@@ -116,6 +120,10 @@ def test_plot_step_receives_chapter_facts_without_sending_them_to_type_selection
                    if '[MATERIAL_STEP]' in messages[0]['content']
                    for payload in [json.loads(messages[-1]['content'])] if 'chapter_handoff' in payload]
         assert offered == [('plot_design', package['chapter_handoff'])]
+        assert offered[0][1]['character_changes'][0]['claim'] == 'suspicion'
+        [scene] = [data for messages in model.calls if (data := json.loads(messages[-1]['content'])).get('stage') == 'scene_design']
+        assert any(change['holder'] == 'yan' and change['text'] == '怀疑井下还有通路'
+                   for change in scene['chapter_changes'].values())
         summaries = [(payload['stage'], payload['chapter_summary']['id']) for messages in model.calls
                      for payload in [json.loads(messages[-1]['content'])] if 'chapter_summary' in payload]
         assert summaries == [('plot_design', recap['id'])]

@@ -55,7 +55,7 @@ def guides(rows: object,scenes: set[str],*,required: bool=False, from_beats: boo
     require(not required or bool(rows),'面向写作/审稿的方法须交给实际场景，不能仅登记已用')
 
 
-def narration_handoff(products: dict, stage: str, output: dict) -> None:
+def narration_handoff(products: dict, stage: str, output: dict, *, require_narration: bool = True) -> None:
     scenes = set()
     beats = {}
     for place in output['placements']:
@@ -64,7 +64,7 @@ def narration_handoff(products: dict, stage: str, output: dict) -> None:
         field = path[0]
         item = products[field][path[1]]
         if stage == 'expression_design':
-            require(field == 'guidance' and isinstance(item.get('narration'), dict) and
+            require(field == 'guidance' and (not require_narration or isinstance(item.get('narration'), dict)) and
                     (len(path) == 2 or path[2] in ('observable', 'check', 'narration')),
                     '叙述方法须落在本项目节拍的讲述安排、具体呈现或检验上')
             scenes.add(item['scene'])
@@ -104,6 +104,8 @@ def validate(products: dict,stage: str,plan: dict | None,incoming: list[dict],sc
             fields.add('design_basis')
         require(isinstance(app,dict) and set(app)==fields and isinstance(app['method_id'],str) and app['method_id'] in selected,'方法执行标识无效或重复')
         spec=selected.pop(app['method_id']);body=spec['method']['body']
+        story=bool((spec['method'].get('structure_origin') or {}).get('observation_domains'))
+        narrative='narration' in body['tasks']
         if ai_world:
             from nw.production_methods.world_design import check_basis
             check_basis(app['design_basis'], {**plan['target'], 'adaptation_indices': spec['adaptation_indices']})
@@ -118,14 +120,17 @@ def validate(products: dict,stage: str,plan: dict | None,incoming: list[dict],sc
         for output in app['outputs']:
             require(isinstance(output,dict) and set(output)=={'key','placements','scene_guidance'} and isinstance(output['key'],str) and output['key'] in expected,'产物缺失或重复')
             definition=expected.pop(output['key']);placements(output['placements'],products,stage,definition=definition)
+            if story and definition['field']=='members':
+                require(all(len(p['path'])==2 or len(p['path'])>2 and p['path'][2]=='body' for p in output['placements']),
+                        '章场方法须落到本书的卡片设计内容')
             if ai_world and definition['artifact_kind'] == 'world':
                 from nw.production_methods.world_design import check_world_output
                 world_members.update(check_world_output(output['placements'], products, spec['method']))
             visible=any(d['output_key']==output['key'] and d['consumer'] in ('writer','review','acceptance') for d in body['downstream'])
             guides(output['scene_guidance'],scenes,required=bool(scenes) and visible,
-                   from_beats='narration' in body['tasks'] and stage == 'expression_design')
-            if 'narration' in body['tasks'] and stage in ('expression_design', 'scene_design'):
-                narration_handoff(products, stage, output)
+                   from_beats=(narrative or story) and stage == 'expression_design')
+            if (narrative or story) and stage in ('expression_design', 'scene_design'):
+                narration_handoff(products, stage, output, require_narration=narrative)
         require(not expected,'方法预期产物未全部落实')
     if ai_world:
         expected_world = {i for i, member in enumerate(products['members']) if member['kind'] == 'world'}
@@ -137,11 +142,12 @@ def validate(products: dict,stage: str,plan: dict | None,incoming: list[dict],sc
         delivery=expected.pop(receipt['id']);require(explanation(receipt['operation']),'下游须解释怎样承接已有设计')
         placements(receipt['placements'],products,stage)
         narrative = 'narration' in delivery.get('method', {}).get('body', {}).get('tasks', ())
+        story=bool((delivery.get('method', {}).get('structure_origin') or {}).get('observation_domains'))
         guides(receipt['scene_guidance'],scenes,required=stage=='scene_design',
-               from_beats=narrative and stage=='expression_design')
-        if narrative:
+               from_beats=(narrative or story) and stage=='expression_design')
+        if narrative or story:
             if stage in ('scene_design', 'expression_design'):
-                narration_handoff(products, stage, receipt)
+                narration_handoff(products, stage, receipt, require_narration=narrative)
             if not delivery.get('approved_parent') and delivery['output']['scene_guidance']:
                 originating = {row['scene'] for row in delivery['output']['scene_guidance']}
                 require(all(row['scene'] in originating for row in receipt['scene_guidance']),

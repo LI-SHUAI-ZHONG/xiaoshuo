@@ -42,7 +42,8 @@ def _process_bindings(candidate: dict, inputs: dict, scope: str) -> dict:
 
 
 def project_products(stage: str, candidates: list[dict], inputs: dict, sources: list[dict],
-                     scope: str, *, native: bool = False, narration: bool = False) -> dict:
+                     scope: str, *, native: bool = False, narration: bool | str = False,
+                     narration_bases: dict | None = None, cast_needs: dict | None = None) -> dict:
     """Explicit isolated-test designs, each linked to actual preceding products."""
     candidate = deepcopy(candidates[0]); members = candidate['members']
     scenes = [row for row in members if row['kind'] == 'scene']
@@ -71,6 +72,14 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
             'limitations': [], 'unknowns': candidate['open_world_rules']}
     if stage == 'character_design':
         characters = [row for row in members if row['kind'] == 'character']
+        if narration == 'scene-narration-v2':
+            for index, row in enumerate(characters):
+                ref, quote = next(iter(cast_needs.items()))
+                row['body'].update(creation_reason='[FAKE] 为核实两代印痕进入档案室', scene_function='[FAKE] 核查封条',
+                    independent_goal='[FAKE] 追查误判原因', background='[FAKE] 曾误读旧印', behavior='[FAKE] 先验印再判断',
+                    voice='[FAKE] 追问编号', boundaries='[FAKE] 只确认亲自查过的印', casting={'need_ref': ref, 'need_quote': quote,
+                        'standing': 'protagonist' if not index else 'ordinary',
+                        'entry': 'opening' if not index else 'self', 'public_identity': row['body']['name']})
         return {'members': characters, 'states': [], 'capabilities': [{'entity': row['key'],
             'can_act': True, 'abilities': ['观察印痕', '移动木片'],
             'basis': '[FAKE] 当前项目能力提案：因调查目标能借灯观察并用木片检查纸角',
@@ -122,6 +131,8 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
         actions = _input(inputs, 'action_design')['candidates']; selected = []
         selected_events = []
         for index, scene in enumerate(scenes):
+            if narration == 'scene-narration-v2':
+                scene['body']['narrative_person'] = 'third_limited'
             action = next((row for row in actions[index:] if row['actor'] == scene['body']['pov']), actions[0])
             scene['body']['choice'] = action['action']
             selected.append({'scene': scene['key'], 'action': action['id']})
@@ -166,12 +177,26 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
     if stage == 'expression_design':
         guidance = []
         for row in _input(inputs, 'scene_design')['members']:
+            for ref, basis in (narration_bases or {}).get(row['key'], {}).items():
+                if basis['kind'] != 'cast_entry':
+                    continue
+                pov = row['body']['pov']
+                own = basis['speaker']
+                speech = basis['entry'] != 'opening'
+                intro = '[FAKE] ' + basis['text'] + ('自报身份，令他停下核验。' if speech else '来到档案室，为核对两代印痕举起灯。')
+                guidance.append({'scene': row['key'], 'observable': intro, 'check': '[FAKE] 由当场行动和来意辨认角色',
+                    'narration': {'time': 'current', 'mode': 'speech' if speech else 'action',
+                        'owner': own, 'basis_ref': ref, 'basis_quote': basis['text'],
+                        'witnesses': [pov] if own != pov else [],
+                        'effect': '[FAKE] 读者认出到场查印的人'}})
             guide = {'scene': row['key'], 'observable': '[FAKE] 借灯观察封条后才伸手',
                      'check': '[FAKE] 动作遵循观察和应对的先后'}
             if narration:
                 guide['narration'] = {'time': 'current', 'mode': 'action', 'owner': row['body']['pov'],
                     'basis_ref': f'scene:{row["key"]}:goal', 'basis_quote': row['body']['goal'],
                     'effect': '[FAKE] 读者看清为何要检查纸角'}
+                if narration == 'scene-narration-v2':
+                    guide['narration']['witnesses'] = []
             guidance.append(guide)
         return {'guidance': guidance}
     from nw.materials.phase_lifecycle import writing_sources
@@ -182,6 +207,24 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
         'method_guidance': [{'scene': row['key'], 'source_ids': used,
             'observable': '[FAKE] 沈砚借灯观察封条边角后采取行动',
             'check': '[FAKE] 核对资料要求的目标、行动、应对及实际后果'} for row in actual_scenes] if used else []}
+
+
+def add_scene_progress(data: dict, products: dict) -> None:
+    if data['stage'] == 'plot_design' and data.get('chapter_openings'):
+        node = products['event_nodes'][0]
+        products['continuations'] = [{'ref': data['chapter_openings'][0], 'event': node['id'],
+            'reason': '[FAKE] 本章从待核事项安排继续调查', 'target_quote': node['goal']}]
+    if data['stage'] != 'scene_design' or not data.get('chapter_progress_policy'):
+        return
+    from nw.materials.template_support import events
+    options = events(data['inputs'])
+    products['scene_progress'] = []
+    for selected in products['selected_events']:
+        event = options[selected['event']]
+        products['scene_progress'].append({'scene': selected['scene'], 'origin': 'discovery',
+            'basis_ref': 'event:' + selected['event'], 'basis_quote': event.get('setting') or event['event'],
+            'connection': 'causal', 'stimulus': '[FAKE] 发现旧印，决定去查印坊的出货单。',
+            'change': 'knowledge', 'next_pressure': None})
 
 
 def phase_output(provider: Any, messages: list[dict]) -> GenResult:
@@ -200,7 +243,8 @@ def phase_output(provider: Any, messages: list[dict]) -> GenResult:
     provider.calls[:]=before
     provider.calls.append(messages)
     candidates=json.loads(fixture.text)['candidate_cards']
-    products=project_products(stage,candidates,data['inputs'],data['sources'],scope,narration=bool(data.get('narration_policy')))
+    products=project_products(stage,candidates,data['inputs'],data['sources'],scope,narration=data.get('narration_policy', False),
+                              narration_bases=data.get('narration_bases'), cast_needs=data.get('cast_needs'))
     if stage == 'bind_scope' and (required := data.get('required_scene_sources')):
         independent = set(data['scene_independent_sources'])
         guides = products['method_guidance']
@@ -208,6 +252,7 @@ def phase_output(provider: Any, messages: list[dict]) -> GenResult:
             guide['source_ids'] = [ident for ident in guide['source_ids']
                                    if ident in independent or ident not in required or guide['scene'] in required[ident]]
         products['method_guidance'] = [guide for guide in guides if guide['source_ids']]
+    add_scene_progress(data, products)
     refs=sorted(output_refs(stage,products))
     products['_uses']=[{'source_id':s['source']['id'],'operation':'[FAKE] 根据原义执行当前测试步骤并形成实际场景产物',
                        'output_refs':([next(ref for ref in refs if ref.startswith('focus:'))]

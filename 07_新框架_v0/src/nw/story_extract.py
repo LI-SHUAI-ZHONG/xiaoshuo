@@ -136,10 +136,18 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
     material_note = (' material_hypotheses 是待核对的设计目标。仅提取正文确实支持的变化，'
                      '用目标中的实体 ID、predicate、holder 和前后值定位，缺乏支持时省略。'
                      if package.get('material_hypotheses') else '')
+    if any('cast_subject' in span for span in package.get('reader_only_spans', [])):
+        material_note += (' 身份揭晓有独立凭据且本稿予以证实时，用 cast_subject 作 entity_id，'
+                          'identity_status:加本书身份范围作 predicate，各获知者的值为 {"identity":"已确证的身份"}。'
+                          '仅听见自报或介绍时保留说法或信念；即使公开了真实身份，也无需另造 WORLD 身份变化。')
     messages = [{'role': 'system', 'content': (
         '只输出 JSON {"operations":[]}。逐项提供 op、entity_id、predicate、holder、claim、story_order、'
         'disclosure_order、expected_old、new_value、evidence。证据用正文 Unicode 半开区间。'
-        '未发生的计划、人物说辞和误信不得写成 WORLD 事实。' + material_note + material_prompt)},
+        '未发生的计划、人物说辞和误信不得写成 WORLD 事实。' +
+        ('按 reader_only_spans 给定的受众核对正文原句。听见某人的说法只证明听到了这句话。'
+         '私人判断、听者所信与已经证实的事实分别记录。'
+         if any('holders' in span for span in package.get('reader_only_spans', [])) else '') +
+        material_note + material_prompt)},
         {'role': 'user', 'content': canonical(frozen_input)}]
     extraction_id = f'delta-extract:{manifest_id}'
     extract_cfg, extract_prov = resolve_stage_runtime(config, provider, 'state_extract')

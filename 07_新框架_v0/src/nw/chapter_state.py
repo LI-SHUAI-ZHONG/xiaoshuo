@@ -2,7 +2,7 @@
 from dataclasses import asdict
 
 from nw.cards import read_card
-from nw.materials.identity_evidence import accepted_identity_checks
+from nw.materials.identity_evidence import accepted_scene_checks
 from nw.models import Chapter
 from nw.store import Store
 from nw.story_delta import draft_ref, paragraph_evidence, read_delta
@@ -20,6 +20,8 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
     drafts = []
     changes = []
     identity_disclosures = []
+    character_changes = []
+    reviewed_progress = []
     identity_anchor_checks = []
     pending = []
     missing_deltas = []
@@ -40,8 +42,9 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
         if delta is None:
             missing_deltas.append(scene.id)
             continue
-        if include_anchor_checks:
-            identity_anchor_checks.extend(accepted_identity_checks(store, draft, delta))
+        anchors, progress = accepted_scene_checks(store, draft, delta, identity=include_anchor_checks)
+        identity_anchor_checks.extend(anchors)
+        reviewed_progress.extend(progress)
         for operation in sorted(delta.operations, key=lambda op: (op['disclosure_order'], op['story_order'])):
             if canonical(operation['expected_old']) == canonical(operation['new_value']):
                 continue
@@ -53,6 +56,8 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
                 changes.append(change)
             elif identity_status and operation['claim'] in ('fact', 'belief', 'suspicion'):
                 identity_disclosures.append(change)
+            elif operation['holder'] not in ('WORLD', 'READER'):
+                character_changes.append(change)
     affected_ids = {change['entity_id'] for change in changes}
     affected_characters = []
     for setting in snapshot['settings']:
@@ -67,6 +72,8 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
     return {'head': asdict(head), 'chapter': asdict(chapter), 'scope_complete': scope_complete,
             'drafts': drafts, 'pending_scene_ids': pending, 'missing_delta_scene_ids': missing_deltas,
             'affected_characters': affected_characters, 'changes': changes,
+            **({'character_changes': character_changes} if character_changes else {}),
+            **({'reviewed_progress': reviewed_progress} if reviewed_progress else {}),
             **({'identity_disclosures': identity_disclosures} if identity_disclosures else {}),
             **({'identity_anchor_checks': identity_anchor_checks} if identity_anchor_checks else {})}
 

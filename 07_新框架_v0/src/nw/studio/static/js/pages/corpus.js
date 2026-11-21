@@ -41,7 +41,7 @@ export async function renderCorpus(ctx,book){
       <span class="muted">${record.body.events.length} 个实际事件 · ${record.body.threads.length} 条线索/弧光 · ${record.body.links.length} 条关系</span>
       ${record.history.length?`<select id="corpusVersion" aria-label="拆解版本">${record.history.map(v=>`<option value="${v.version}" ${v.version===record.version?'selected':''}>版本 ${v.version} · ${v.decision==='approve'?'已批准':v.decision==='reject'?'已退回':'待审核'}</option>`).join('')}</select>`:''}</div>
       <p class="notice">请按原文位置核对规则、事件因果和适用边界。方法单独审核后，项目可按前置需求和已选类型生成设计卡。</p>
-      ${record.body.schema_version<latestCatalog.schema_version?'<p class="notice">此版本按原有制作职责展示。重新运行多层自动拆解可按当前职责补查原文中的叙述时序、视角与披露，结果另存新版本。</p>':''}
+      ${record.body.schema_version<latestCatalog.schema_version?'<p class="notice">此版本保留原有分析。重新运行多层自动拆解可补查人物出场、身份披露和章场推进等，结果另存新版本。</p>':''}
       <div class="row wrap corpus-toolbar">${!record.initialized?'<button class="secondary" id="initializeCorpus">人工建立目录</button>':''}<button class="button" id="startCorpus" ${active()?'disabled':''}>多层自动拆解</button>
       ${canEdit?'<button class="secondary" id="editCorpusExtent">核对文本完整性</button>':''}
       ${canEdit&&!record.review?'<button class="secondary" id="reviewCorpus">审核当前结构</button>':''}
@@ -49,7 +49,7 @@ export async function renderCorpus(ctx,book){
       ${!latest?'<p class="notice">正在查看历史版本。切换最新版本后编辑；提炼使用当前批准版本。</p>':''}
       <div id="corpusJobPanel"></div>
       ${record.initialized?`<details class="details" ${errors.length?'open':''}><summary>结构核对：${errors.length} 项阻断 · ${warnings.length} 项待核</summary>${record.issues.map(i=>`<p class="${i.severity==='error'?'error':'muted'}">${esc(i.message)}</p>`).join('')||'<p class="muted">结构与引用检查没有发现阻断；这不是文学质量评分。</p>'}</details>`:''}
-      <div class="tabs corpus-tabs">${[['overview','全书总览'],['distribution','钩子 / 伏笔 / 节奏分布'],...Object.entries(sectionNames)].map(([id,name])=>`<button data-corpus-tab="${id}" class="${tab===id?'active':''}">${name}</button>`).join('')}</div>
+      <div class="tabs corpus-tabs">${[['overview','全书总览'],['distribution','逐章进展与线索分布'],...Object.entries(sectionNames)].map(([id,name])=>`<button data-corpus-tab="${id}" class="${tab===id?'active':''}">${name}</button>`).join('')}</div>
       <div id="corpusSection"></div></div>`;
     $$('[data-corpus-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.corpusTab;page=0;search='';unitFilter='';domainFilter='';paintSection(canEdit);$$('[data-corpus-tab]').forEach(t=>t.classList.toggle('active',t===b));});
     $('#startCorpus').onclick=()=>openCorpusRun({book,record,catalog,reload:load});
@@ -75,8 +75,15 @@ export async function renderCorpus(ctx,book){
   function paintSection(canEdit){
     if(tab==='distribution'){
       const stats=record.statistics;
+      const threads=new Map(record.body.threads.map(t=>[t.id,t]));
+      const showProgress=record.body.schema_version>=4;
+      const observations=ids=>(ids||[]).map(id=>{
+        const t=threads.get(id);
+        return `<button class="ghost" data-chapter-observation="${esc(id)}">${esc(t.title)}${t.status==='uncertain'?'（存疑）':''}</button>`;
+      }).join('<br>')||'未登记';
       $('#corpusSection').innerHTML=`<p class="notice">${esc(stats.counting_basis)}机器通读 ${stats.survey.characters}/${stats.survey.total} 字符，细拆 ${stats.detail.characters}/${stats.detail.total}；人工确认 ${stats.manual_reviewed_units.length} 个章节范围。</p>
-        <div class="table-wrap"><table class="data-table"><thead><tr><th>当前目录范围</th><th>细节事件</th><th>钩子引入 / 回应</th><th>伏笔埋设 / 提示 / 回收</th><th>情绪前后</th></tr></thead><tbody>${stats.chapter_ranges.map(r=>`<tr><td>${esc(r.title)}</td><td>${r.detail_events.length}</td><td>${r.hook_opens.length} / ${r.hook_responses.length}</td><td>${r.foreshadow_plants.length} / ${r.foreshadow_hints.length} / ${r.foreshadow_payoffs.length}</td><td>${r.emotional_transitions.map(e=>`${esc(e.before||'未明确')} → ${esc(e.after||'未明确')}`).join('<br>')||'未登记'}</td></tr>`).join('')}</tbody></table></div><p class="muted">尚未闭合或存疑的线索：${stats.open_thread_ids.map(esc).join('、')||'没有登记；仍需作者核对是否找全。'}</p>`;
+        <div class="table-wrap"><table class="data-table"><thead><tr><th>当前目录范围</th><th>细节事件</th>${showProgress?'<th>剧情进展</th><th>人物出场与交集</th>':''}<th>钩子引入 / 回应</th><th>伏笔埋设 / 提示 / 回收</th><th>情绪前后</th></tr></thead><tbody>${stats.chapter_ranges.map(r=>`<tr><td>${esc(r.title)}</td><td>${r.detail_events.length}</td>${showProgress?`<td>${observations(r.chapter_progress)}</td><td>${observations(r.cast_entry)}</td>`:''}<td>${r.hook_opens.length} / ${r.hook_responses.length}</td><td>${r.foreshadow_plants.length} / ${r.foreshadow_hints.length} / ${r.foreshadow_payoffs.length}</td><td>${r.emotional_transitions.map(e=>`${esc(e.before||'未明确')} → ${esc(e.after||'未明确')}`).join('<br>')||'未登记'}</td></tr>`).join('')}</tbody></table></div><p class="muted">尚未闭合或存疑的线索：${stats.open_thread_ids.map(esc).join('、')||'没有登记；仍需作者核对是否找全。'}</p>`;
+      $$('[data-chapter-observation]').forEach(b=>b.onclick=()=>recordDrawer('threads',threads.get(b.dataset.chapterObservation),record,catalog));
       return;
     }
     if(tab==='overview'){

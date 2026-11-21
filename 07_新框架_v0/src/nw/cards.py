@@ -39,7 +39,7 @@ _OPTIONAL = {
     'plot': ('choice', 'resistance', 'ending_direction', 'central_question', 'payoff_window',
              'reader_promise', 'protagonist_want', 'cost'),
     'scene': ('function', 'location', 'story_time', 'entering_state', 'conflict', 'choice',
-              'planned_result', 'allowed_disclosure', 'length_flexibility'),
+              'planned_result', 'allowed_disclosure', 'length_flexibility', 'narrative_person'),
     'promise': ('due', 'introduced_at', 'misdirection', 'partial_payoff', 'invalidation_reason'),
     'rule': ('number',),
     'volume': ('ending_direction',),
@@ -67,15 +67,19 @@ def _body(kind: str, value: object) -> dict:
     maps = set(_MAPS.get(kind, ()))
     structured = {'plot': {'length_plan'}, 'chapter': {'word_budget'}, 'volume': {'word_budget'},
                   'scene': {'word_budget', 'chapter_word_budget', 'length_policy'}}.get(kind, set())
+    extra = {'character': {'casting'}, 'plot': {'members'}}.get(kind, set())
     if (not isinstance(value, dict) or
             not required <= value.keys() or
-            value.keys() - required - optional - lists - maps - structured - {'visibility'} - ({'members'} if kind == 'plot' else set()) or
+            value.keys() - required - optional - lists - maps - structured - extra - {'visibility'} or
             any(not _text(value[key]) for key in required) or
             any(value[key] is not None and not _text(value[key]) for key in optional & value.keys()) or
             any(not _list_of_text(value[key]) for key in lists & value.keys()) or
             any(not isinstance(value[key], dict) or
                 any(not _text(k) or not _text(v) for k, v in value[key].items()) for key in maps & value.keys())):
         raise ValueError(f'Invalid {kind} card body')
+    if kind == 'character' and 'casting' in value:
+        from nw.materials.cast_design import validate_card
+        validate_card(value)
     if included := structured & value.keys():
         from nw.length_plan import check_book, check_budget
         for key in included:
@@ -89,6 +93,10 @@ def _body(kind: str, value: object) -> dict:
                 check_book(value[key])
             else:
                 check_budget(value[key])
+    if kind == 'scene' and 'narrative_person' in value:
+        from nw.materials.narration import PERSONS
+        if value['narrative_person'] not in PERSONS:
+            raise ValueError('场景叙述人称不在可用形式中')
     if 'members' in value and (not isinstance(value['members'], list) or
             any(not _ref(ref) or set(ref) != {'kind', 'id', 'version', 'sha256'} or ref['kind'] != 'card'
                 for ref in value['members'])):

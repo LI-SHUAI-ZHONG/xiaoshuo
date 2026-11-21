@@ -22,6 +22,10 @@ def selected_checks(records: dict, scene: str, ids: dict | None = None, context:
     scene_product=product('scene_design')
     body=next((r['body'] for r in scene_product.get('members',[]) if r['key']==scene),{})
     result=[]
+    from nw.materials.chapter_progress import POLICY as PROGRESS_POLICY, scene_check
+    if (context or {}).get('chapter_progress_policy') == PROGRESS_POLICY:
+        if check := scene_check(records, scene, context):
+            result.append(check)
 
     def append(kind: str,row: dict,observable: dict,check: str, *, action_order: int | None = None) -> None:
         for key in ('actor','source_entity','target_entity'):
@@ -36,6 +40,11 @@ def selected_checks(records: dict, scene: str, ids: dict | None = None, context:
     actions={r['id']:r for r in product('action_design').get('candidates',[])}
     selected = selected_action_ids(scene_product).get(scene, [])
     multi = (context or {}).get('multi_action_policy') == MULTI_ACTION_POLICY and len(selected) > 1
+    from nw.materials.narration import ACCESS_POLICY
+    actors = {}
+    if (context or {}).get('narration_policy') == ACCESS_POLICY:
+        actors.update((r['card_id'], r['body']) for r in context.get('approved_cards', []) if r['kind'] == 'character')
+        actors.update((r['key'], r['body']) for r in product('character_design').get('members', []))
     for index, ident in enumerate(selected, 1):
         row = actions[ident]
         observable = {k:row[k] for k in ('actor','action','steps','requires','cost','limits')}
@@ -44,6 +53,11 @@ def selected_checks(records: dict, scene: str, ids: dict | None = None, context:
             observable.update(action_ref=ident, action_order=index)
             check += f' 这是本场第{index}项行动。引用本行动自己的正文片段，核对其与前后行动的实际顺序。'
         append('action', row, observable, check, action_order=index if multi else None)
+        actor = actors.get(row['actor'], {})
+        if 'casting' in actor:
+            result[-1]['binding']['check'] += ' 从当场可见的措辞、反应或取舍核对这一步怎样体现该人物自己的目的。'
+            result[-1]['actor_design'] = {key: actor[key] for key in ('independent_goal', 'scene_function', 'behavior')}
+            result[-1]['evidence_required'] += ' 以actor_design及实际场内目标核对行动的个人原因；他人视角不能直读其心声。'
     events={r['id']:r for r in product('event_design').get('candidates',[])}
     for selection in scene_product.get('selected_events',[]):
         if selection['scene']!=scene or selection['event'] not in events:continue

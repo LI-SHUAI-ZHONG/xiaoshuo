@@ -165,11 +165,13 @@ def test_approved_narration_reaches_write_review_revision_and_reopened_draft(tmp
             elif '{"operations"' in messages[0]['content']:
                 raw = json.loads(result.text)
                 audience = data['context']['reader_only_spans']
-                assert audience == [{'start': 0, 'end': data['draft']['text'].index('\n'), 'time': 'past'}]
+                private = [span for span in audience if 'holders' not in span]
+                assert private == [{'start': 0, 'end': data['draft']['text'].index('\n'), 'time': 'past'}]
+                assert any(span.get('mode') == 'action' and span['holders'] for span in audience)
                 with pytest.raises(ValueError, match='仅向读者讲述'):
-                    check_state_audience([{'holder': 'yan', 'evidence': audience}], audience)
+                    check_state_audience([{'holder': 'yan', 'evidence': private}], audience)
                 with pytest.raises(ValueError, match='世界变化'):
-                    check_state_audience([{'holder': 'WORLD', 'evidence': audience}], audience)
+                    check_state_audience([{'holder': 'WORLD', 'evidence': private}], audience)
                 check_state_audience([{'holder': 'READER', 'evidence': audience}], audience)
                 for operation in raw['operations']:
                     operation.setdefault('expected_old', None)

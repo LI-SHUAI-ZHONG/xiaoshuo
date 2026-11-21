@@ -71,6 +71,8 @@ def _members(rows: object, existing: dict[str, str]) -> dict[str, dict]:
             raise ValueError('Unknown mandatory card in plan')
         if not _ids(body.get('holders', []), people):
             raise ValueError('Unknown visibility holder in plan')
+        if 'introducer' in body.get('casting', {}) and body['casting']['introducer'] not in people - {key}:
+            raise ValueError('身份介绍者必须是本项目中的另一位人物')
         if row['kind'] == 'scene':
             if 'length_policy' in body:
                 raise ValueError('项目篇幅配置由已批准方案绑定，场景不得重写')

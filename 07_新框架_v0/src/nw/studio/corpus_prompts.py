@@ -2,6 +2,7 @@
 from nw.studio.corpus_catalog import SCHEMA_VERSION, corpus_catalog
 from nw.studio.library_util import encode
 from nw.studio.method_catalog import method_catalog
+from nw.studio.corpus_story_observations import STORY_TASKS
 
 BASE=(
     '你是小说原作结构分析员，分析的是参考作品，不是本项目小说。仅输出JSON对象。'
@@ -56,6 +57,23 @@ def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION) -> lis
         instruction += WORLD_READ[phase]
     if version >= 3 and (phase != 'relations' or payload.get('domain') == 'narration'):
         instruction += NARRATION_READ[phase]
+    if version >= 4:
+        if phase == 'survey':
+            instruction += '给改变本章局面的原句和引入新人物的实际交集留证，不凭出场就推断真身份或终身作用。'
+        elif phase == 'overview':
+            instruction += '章场推进与出场观察要依据细拆事件，此时保留全书背景，等detail再建chapter_progress和cast_entry。'
+        elif phase == 'detail':
+            instruction += ('有证据时按章场留下chapter_progress或cast_entry观察。人物自报、他人转述与原作证实分别记，'
+                            '参与者按人写清哪句话到了谁耳中、怎样改变行动。交谈或新念也能独立推进；'
+                            '剧情地位与本次功能分开。cast_entry.claim_status按narration_claims标记此刻可知的身份性质，'
+                            '后文确认不能倒填为出场时已知。未知动机和未发生的结果留空。')
+        elif phase == 'relations' and payload.get('domain') in STORY_TASKS:
+            instruction += ('只用细拆事件，逐一保留原句。将各章本地观察与后续原文对照；未见后续用法或身份揭晓，'
+                            '对应later_use或later_reveal留空，不能用预期补全。观察到跨章实际承接，'
+                            '以observed的causes/enables/changes_character连前后两章；观察到身份揭晓，'
+                            '以observed的reveals/pays_off连接同一人的出场和揭晓两处原句。cast_entry的characters'
+                            '记录所研究的出场人物，事件人物包括被揭示身份的对象；转述者和听者在细节指明。'
+                            '扩展新判断另建观察，引用两端事件。原文未见的领域可记未观察。')
     return [{'role':'system','content':instruction},
             {'role':'user','content':encode({'phase':phase,**payload})}]
 
@@ -87,4 +105,10 @@ def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dic
                         '依据本项目立项需求、已选类型或类型适配，将原作机制转成设计操作，原作设定仅作来源。'
                         '输出含world_design.members的world世界卡，明确规则、条件及已知限制或未知，写明哪一步'
                         '用它限制人物选择、剧情或场景，并给出核验依据。无法提炼时返回空列表。')
+    if payload['thread']['domain'] in STORY_TASKS:
+        tasks=STORY_TASKS[payload['thread']['domain']]
+        instruction += ('此观察对应现有生产任务'+ '、'.join(tasks)+'。按本项目已批准的输入和实际任务落在'
+                        '人物卡、章纲、剧情节点、信息披露安排、事件、场景或状态变化。写清下游怎样用及核对何处。'
+                        '逐个所选细拆事件引用原句；利用跨章收获或身份揭晓时须包含已观察关系及两端不同的原句。'
+                        '仅有预告不能归纳已发生的后果，局部摘录不能断定某人是全书初次出场。')
     return [{'role':'system','content':instruction},{'role':'user','content':encode({'phase':'methods',**payload})}]

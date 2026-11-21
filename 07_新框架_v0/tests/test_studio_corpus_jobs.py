@@ -39,7 +39,7 @@ def test_unknown_call_requires_explicit_retry_and_keeps_completed_work(library,m
     library.control_corpus_job(book['id'],job['id'],{'action':'resume','retry_failed':True})
     finished=wait_job(library,book['id'],job['id'])
     assert finished['status']=='completed',finished['error']
-    assert len(provider.calls)==15 and len(finished['calls'])==15
+    assert len(provider.calls)==17 and len(finished['calls'])==17
     assert finished['calls'][1]['status']=='unknown' and finished['calls'][2]['call_key']=='survey:1'
     assert artifact(library,first['record']['input_path']).read_bytes()==first_bytes
 
@@ -178,4 +178,4 @@ def test_long_global_and_relation_windows_keep_context_and_cover_every_range(lib
     structure=library.get_corpus(book['id'])
     assert structure['statistics']['survey']['complete_imported_text']
     assert structure['statistics']['detail']['complete_imported_text']
-    assert len(structure['body']['domains'])==9
+    assert len(structure['body']['domains'])==11

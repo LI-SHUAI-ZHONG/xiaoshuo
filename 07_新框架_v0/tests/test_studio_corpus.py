@@ -35,12 +35,12 @@ def test_complete_staged_pipeline_uses_global_basis_before_detail_and_does_not_a
     book,job,provider=start_analysis(library,monkeypatch)
     assert job['status']=='completed',job['error']
     phases=[c['phase'] for c in provider.calls]
-    assert phases==['survey','survey','overview','detail','detail']+['relations']*9
+    assert phases==['survey','survey','overview','detail','detail']+['relations']*11
     details=[p for p in provider.calls if p['phase']=='detail']
     assert all(p['global_overview']['mainline'] and p['global_basis_sha256'] and p['overview_events'] for p in details)
     row=library.get_corpus(book['id'])
     assert row['status']=='draft' and not row['available'] and row['issues']==[]
-    assert len(row['body']['threads'])==9 and len(row['body']['domains'])==9
+    assert len(row['body']['threads'])==11 and len(row['body']['domains'])==11
     assert {e['granularity'] for e in row['body']['events']}=={'overview','detail'}
     assert range_coverage(row['coverage']['survey_ranges'],len(SOURCE))['complete_imported_text']
     assert range_coverage(row['coverage']['detail_ranges'],len(SOURCE))['complete_imported_text']

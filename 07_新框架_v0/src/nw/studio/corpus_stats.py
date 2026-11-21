@@ -1,6 +1,7 @@
 """Counts refer to registered observations, never universal genre targets."""
 from nw.studio.corpus_catalog import domains_for
 from nw.studio.corpus_index import range_coverage
+from nw.studio.corpus_story_observations import STORY_DETAILS
 
 
 def corpus_statistics(document: dict,coverage: dict) -> dict:
@@ -20,6 +21,11 @@ def corpus_statistics(document: dict,coverage: dict) -> dict:
             if event['granularity']=='detail' and (event['emotion_before'] or event['emotion_after']):
                 rows[cid]['emotional_transitions'].append({'event_id':event['id'],'before':event['emotion_before'],'after':event['emotion_after']})
     for thread in document['threads']:
+        if thread['domain'] in STORY_DETAILS:
+            for cid in {chapter(node) for node in thread['node_ids']}:
+                if cid in rows:
+                    rows[cid].setdefault(thread['domain'],[]).append(thread['id'])
+            continue
         if thread['domain'] not in ('hook','foreshadow') or not thread['node_ids']:continue
         ordered=sorted((events[k] for k in thread['node_ids'] if k in events),
             key=lambda e:min((evidence[k]['start'] for k in e['evidence_ids'] if k in evidence),default=0))

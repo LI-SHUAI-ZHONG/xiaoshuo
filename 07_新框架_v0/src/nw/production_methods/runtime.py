@@ -24,13 +24,20 @@ def prompt(plan: dict | None, incoming: tuple | list = ()) -> str:
         return PROMPT + ('\n本章/卷沿用production_method_selection.approved_world_members中的项目世界卡。'
                          '逐张保留其key、rule和limits，_method_applications为空。根据这些已批准规则推进后续剧情与场景。')
     if not plan or plan['target'].get('selection_mode') != 'ai':
-        if plan and any('narration' in item['method']['body']['tasks'] for item in [*plan['selected'], *incoming]):
-            return PROMPT + ('\n采用叙述方法时，使用拆解实例中有引文支持的叙述次序、说话或观察者及读者获得的信息，'
+        active=[*plan['selected'], *incoming] if plan else []
+        instruction=PROMPT
+        if any((item['method'].get('structure_origin') or {}).get('observation_domains') for item in active):
+            instruction+=('\n采用人物出场或章场进展方法时，从本书当前问题与已知事实出发，把角色承担的工作、'
+                          '自身理由、获知身份的途径或章场实际改变落实到本书相应卡的body及具体事件。'
+                          '参考书中的姓名与结局只作实例。场景或表达步骤将采用处定位到具体场次或节拍；'
+                          'scene_guidance须来自所选场次，表达交接复用该场同一行的observable和check。')
+        if any('narration' in item['method']['body']['tasks'] for item in active):
+            instruction += ('\n采用叙述方法时，使用拆解实例中有引文支持的叙述次序、说话或观察者及读者获得的信息，'
                              '根据本项目人物、事件与披露许可重新设计。表达步骤的 placements 指向 guidance 的具体行'
                              '或该行的 narration、observable、check。场景设计的落点定位到具体场卡、场次、事件或选定行动；'
                              '每项用 scene_guidance 交给这些落点所属的实际场景。表达步骤每场取所用节拍中一行的'
                              'observable 和 check 原样填写该场的交接；各拍仍按实际设计顺序提交。')
-        return PROMPT
+        return instruction
     return PROMPT.replace(
         'production_methods是作者已选并已确认前置版本的参考制作方法，不是原作情节可直接变成本项目事实的许可。',
         'production_methods是已核实原作证据及前置版本的候选。参照production_method_selection.demand，按'

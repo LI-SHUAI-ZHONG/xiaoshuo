@@ -1,10 +1,16 @@
 """Keep each disclosure tied to the scene, its audience and the known story."""
+from dataclasses import asdict
 import re
 
-from nw.task_models import canonical
+from nw.story_models import Fact
+from nw.materials.phase_context import new_character_keys
+from nw.task_models import canonical, content_sha256
 
 
 POLICY = 'scene-narration-v1'
+ACCESS_POLICY = 'scene-narration-v2'
+POLICIES = (POLICY, ACCESS_POLICY)
+PERSONS = ('first', 'second', 'third_limited', 'third_omniscient')
 MODES = ('action', 'speech', 'perception', 'thought', 'inference', 'summary', 'reenactment')
 FIELDS = {'time', 'mode', 'owner', 'basis_ref', 'basis_quote', 'effect'}
 ENDINGS = '。！？.!?\n'
@@ -70,6 +76,13 @@ def scene_bases(products: dict, context: dict, scene: str | None = None) -> dict
     for stage in ('character_design', 'world_design'):
         cards.extend((r['key'], r['kind'], r['body']) for r in
                      products.get(stage, {}).get('products', {}).get('members', []))
+    new_people = new_character_keys(products, context)
+    access = context.get('narration_policy') == ACCESS_POLICY
+    claims = ('fact', 'belief', 'suspicion', 'utterance', 'plan') if access else ('fact', 'belief', 'suspicion')
+    from nw.materials.cast_design import entry_bases
+    cast = (entry_bases(scene_product, cards, context.get('cast_previous_appearances', {}),
+                        context.get('narration_facts', context.get('accepted_state', [])))
+            if context.get('narration_policy') == ACCESS_POLICY else {})
     by_scene = {}
     for row in scene_product['members']:
         key, body = row['key'], row['body']
@@ -77,11 +90,16 @@ def scene_bases(products: dict, context: dict, scene: str | None = None) -> dict
             continue
         pov = body['pov']
         bases = _present(key, body)
-        bases.update(_card_bases(pov, {pov, *body.get('characters', [])}, cards))
+        people = {pov, *body.get('characters', [])}
+        bases.update(_card_bases(pov, people, cards))
         order, disclosure = places[key]
         for index, fact in enumerate(context.get('narration_facts', context.get('accepted_state', []))):
             audience, claim = fact.get('holder'), fact.get('claim')
-            if audience not in (pov, 'READER') or claim not in ('fact', 'belief', 'suspicion'):
+            if access and (audience in new_people or fact.get('entity_id') in new_people):
+                # Local planning keys will acquire fresh card IDs on approval.
+                continue
+            speaker_source = access and audience in people and audience != pov
+            if (audience not in (pov, 'READER') and not speaker_source) or claim not in claims:
                 continue
             if audience == 'READER' and claim != 'fact':
                 continue
@@ -91,6 +109,16 @@ def scene_bases(products: dict, context: dict, scene: str | None = None) -> dict
             value = fact['value']
             bases[f'fact:{index}'] = {'text': value if isinstance(value, str) else canonical(value),
                                       'kind': 'state', 'audience': audience, 'claim': claim}
+            if access:
+                from nw.materials.cast_design import confirmed_identity
+                bases[f'fact:{index}']['subject'] = fact.get('entity_id')
+                if Fact.__dataclass_fields__.keys() <= fact.keys():
+                    bases[f'fact:{index}']['state_sha256'] = content_sha256(fact)
+                if name := confirmed_identity(fact):
+                    bases[f'fact:{index}']['confirmed_identity'] = name
+            if speaker_source:
+                bases[f'fact:{index}']['speaker_private'] = True
+        bases.update(cast.get(key, {}))
         by_scene[key] = bases
     return by_scene
 
@@ -100,6 +128,13 @@ def register_beat(bases: dict, order: int, guide: dict) -> None:
     shared_here = beat['time'] == 'current' and beat['mode'] in ('speech', 'action')
     bases[f'beat:{order}'] = {'text': guide['observable'], 'kind': 'beat', 'owner': beat['owner'],
                               'shared': shared_here, 'claim': beat['mode']}
+    if 'witnesses' in beat:
+        bases[f'beat:{order}']['witnesses'] = beat['witnesses']
+
+
+def verify_scene_facts(required: set[str], current: list[Fact]) -> None:
+    if required - {content_sha256(asdict(fact)) for fact in current}:
+        raise ValueError('MATERIAL_PRECONDITION: 表达所依的角色所知、读者获知或原稿证据已经变化，需按当前分支重设')
 
 
 def _source_sentence(source: str, quote: str) -> tuple[str, int]:
@@ -109,14 +144,25 @@ def _source_sentence(source: str, quote: str) -> tuple[str, int]:
     return source[left:right.end() if right else len(source)], start - left
 
 
-def validate_beat(beat: dict, body: dict, bases: dict) -> None:
+def validate_beat(beat: dict, body: dict, bases: dict, *, access: bool = False) -> None:
     def require(condition: bool, reason: str) -> None:
         if not condition:
             raise ValueError('MATERIAL_STAGE: 叙述节拍' + reason)
 
-    require(isinstance(beat, dict) and set(beat) == FIELDS, '缺少归属、时序、前置引文或实际作用')
+    require(isinstance(beat, dict) and FIELDS <= set(beat) and
+            not set(beat) - FIELDS - ({'witnesses'} if access else set()), '缺少归属、时序、前置引文或实际作用')
     time, mode, owner = beat['time'], beat['mode'], beat['owner']
     pov = body['pov']
+    if access:
+        present = {pov, *body.get('characters', [])}
+        if time == 'current' and mode in ('action', 'speech'):
+            witnesses = beat.get('witnesses')
+            require(isinstance(witnesses, list) and all(isinstance(key, str) and key in present and key != owner
+                    for key in witnesses) and len(set(witnesses)) == len(witnesses),
+                    '须列出确实看见行动或听见话的在场者，排除行动者本人')
+            require(owner == pov or pov in witnesses, '视角人物没有看见或听见另一人的这拍言行；应改从实际见证者的视角叙述')
+        else:
+            require(beat.get('witnesses', []) == [], '私人想法、回忆和旁白没有现场见证者')
     require(time in ('current', 'past') and mode in MODES, '使用了未知时序或手法')
     require(isinstance(beat['effect'], str) and bool(beat['effect'].strip()), '缺少披露或行动效果')
     if mode in ('perception', 'thought', 'inference'):
@@ -130,6 +176,8 @@ def validate_beat(beat: dict, body: dict, bases: dict) -> None:
     require(isinstance(ref, str) and ref in bases, '没有本场可用的前置依据')
     basis = bases[ref]
     require(isinstance(quote, str) and bool(quote.strip()) and quote in basis['text'], '前置引文与所指事实不符')
+    if access and basis['kind'] == 'scene' and ref.endswith(':planned_result'):
+        require(mode not in ('perception', 'inference', 'thought'), '预定场尾结果不能单独作为人物已经察觉或知晓的依据')
     if time == 'past':
         require(basis['kind'] in ('history', 'state'), '回顾需要已发生的前史；不能把一般规则、计划或人物性格当成已发生的事件')
         if quote != basis['text']:
@@ -138,9 +186,14 @@ def validate_beat(beat: dict, body: dict, bases: dict) -> None:
             require(factual_history_claim(sentence, start, start + len(quote)), '前史引文丢失了原句中的否定、传言或未决条件')
     if basis['kind'] == 'state':
         require(basis['audience'] == ('READER' if owner is None else owner), '将读者或人物私有事实交给了其他人')
-        if basis['claim'] != 'fact':
-            require(owner == pov and time == 'current' and mode in ('thought','inference'),
-                    '误信或怀疑只能作为视角人物当下的想法或推断，不能写成事实')
+        if basis.get('speaker_private'):
+            require(time == 'current' and mode in ('speech', 'action'), '他人先前所知只可支持此人自己的现场发言或可见行动')
+        elif basis['claim'] != 'fact':
+            allowed = ('thought', 'inference', 'speech', 'action') if access else ('thought','inference')
+            require(owner == pov and time == 'current' and mode in allowed,
+                    '说法、打算与猜测只可解释本人当下的判断或言行，不能写成事实')
+        if access and basis['claim'] != 'fact':
+            require(quote == basis['text'], '须保留人物说法、意图或猜测的完整依据与归属')
     if basis['kind'] == 'voice':
         require(mode == 'speech' and owner == basis['subject'], '声线依据必须落到对应人物自己的台词')
     if basis['kind'] == 'character':
@@ -151,14 +204,19 @@ def validate_beat(beat: dict, body: dict, bases: dict) -> None:
         require(basis['public'] or owner == pov, '持有人专属设定不能交给其他人')
         if basis['public'] and basis['subject'] is None and owner is not None:
             require(mode in ('action','speech'), '不能只凭公共世界设定替人物补出亲历、判断或已知；须有本人的记忆、所见或所闻')
+            require(not (access and basis['kind'] == 'history' and mode == 'speech'),
+                    '公共前史不能单独证明发言人知道此事，请从其已知事实或实际获知途径交代')
     if basis['kind'] == 'beat' and owner is not None and not basis['shared']:
         require(owner == basis['owner'], '不能把只讲给读者或只属另一人的内容当成人物此刻的所知')
+    if basis['kind'] == 'beat' and 'witnesses' in basis and owner is not None:
+        require(owner == basis['owner'] or owner in basis['witnesses'], '后续反应者没有见证所引的前拍')
     if basis['kind'] == 'beat' and basis['claim'] in ('thought','inference','speech','perception'):
         require(quote == basis['text'], '须完整保留前拍话语、感知或推测的归属，不能摘成事实')
         require(mode not in ('summary','reenactment'), '人物的感知、推断或发言不能作为证实其内容的叙述依据')
 
 
-def scene_check(guide: dict, index: int, order: int, pov: str, ids: dict, basis: dict) -> dict:
+def scene_check(guide: dict, index: int, order: int, pov: str, ids: dict, basis: dict,
+                person: str | None = None) -> dict:
     beat = guide['narration']
     owner = beat['owner']
     observable = {'pov': ids.get(pov, pov), 'time': beat['time'], 'mode': beat['mode'],
@@ -167,7 +225,21 @@ def scene_check(guide: dict, index: int, order: int, pov: str, ids: dict, basis:
                   'observable': guide['observable'], 'effect': beat['effect']}
     if beat['time'] == 'past' and beat['basis_quote'] != basis['text']:
         observable['basis_sentence'] = _source_sentence(basis['text'], beat['basis_quote'])[0]
+    if person:
+        observable['narrative_person'] = person
+        observable['witnesses'] = [ids.get(key, key) for key in beat.get('witnesses', [])]
+    if basis['kind'] in ('cast_entry', 'cast_reveal'):
+        observable['cast_subject'] = ids.get(basis['subject'], basis['subject'])
+    from nw.materials.cast_design import reader_aside
+    if reader_aside(guide, basis):
+        observable['reader_identity'] = basis['confirmed_identity']
+        observable['cast_subject'] = ids.get(basis['subject'], basis['subject'])
+    if basis.get('speaker_private'):
+        # The expression designer and reviewer retain the confidential source.
+        # The writer only needs the portion the actor actually says or does.
+        observable.pop('basis_quote')
     return {'id': f'work:narration:{guide["scene"]}:{index}', 'profile': 'method_work',
             'binding': {'observable': canonical(observable), 'check': guide['check']},
-            'method_artifact': guide, 'narration_order': order,
+            'method_artifact': guide, 'narration_order': order, **({'narrative_person': person} if person else {}),
+            **({'narration_state_sha256': basis['state_sha256']} if 'state_sha256' in basis else {}),
             'evidence_required': '引用本场实际文字核对讲述次序、信息归属、前因与读者所得。'}

@@ -170,26 +170,42 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
     from nw.context.story import build_story_context, scene_scope
     from nw.novel_flow import JobRequest, resume_job, start_job
     from nw.store import Store
-    from nw.story_state import adopt_story
+    from nw.story_state import adopt_story, current_head, state_at
     from nw.task_models import Budget
     from story_fixture import baseline
     from test_material_phase_flow import PhaseModel, template_catalog
     from test_material_workflow import choose
     from test_novel_flow import config
 
+    private_belief = '我怀疑封条被换，只有交班簿的柜号戊九能查证。'
+    spoken = '[FAKE] 老许说：“我怀疑封条换过，得比一比旧印。”'
+    orphan = '只有同名旧人记得的封条暗号'
+
     class Model(PhaseModel):
         def generate(self, messages, **params):
             result = super().generate(messages, **params)
             payload = json.loads(messages[-1]['content'])
-            if payload.get('stage') == 'expression_design':
+            if payload.get('stage') == 'scene_design':
+                raw = json.loads(result.text)
+                body = raw['products']['members'][0]['body']
+                body['characters'].append('informant')
+                body['character_goals']['informant'] = '让查印的人先核对旧印，保住交班簿的柜号'
+                body['entering_state'] = '沈砚举灯走近封条，老许正站在井口翻交班簿。'
+                result.text = json.dumps(raw, ensure_ascii=False)
+            elif payload.get('stage') == 'expression_design':
                 bases = payload['narration_bases']['scene']
                 assert bases['card:archive:history']['public']
-                ref = next(k for k,v in bases.items() if v.get('claim') == 'belief')
-                assert '不会有人以为这是事实' not in json.dumps(bases, ensure_ascii=False)
+                [ref] = [k for k, v in bases.items() if v.get('claim') == 'belief']
+                assert bases[ref]['audience'] == 'informant' and bases[ref]['speaker_private']
+                assert bases[ref]['text'] == private_belief and orphan not in json.dumps(bases, ensure_ascii=False)
                 raw = json.loads(result.text)
-                raw['products']['guidance'] = [
+                entrances = [g for g in raw['products']['guidance'] if g['narration']['basis_ref'].startswith('cast:')]
+                line = guide('current', 'speech', 'informant', ref, private_belief, spoken)
+                line['narration']['witnesses'] = ['yan']
+                raw['products']['guidance'] = entrances + [
                     guide('past','summary',None,'card:archive:history','旧库因屋梁烧断封闭','[FAKE] 读者先得知封库始末'),
-                    guide('current','inference','yan',ref,'封条被换','[FAKE] 看到印痕才生出疑心')]
+                    line, guide('current', 'inference', 'yan', f'beat:{len(entrances) + 2}', spoken,
+                                '[FAKE] 听老许说完，他觉得新印值得比对，仍拿不准是否换过封条。')]
                 result.text = json.dumps(raw, ensure_ascii=False)
             return result
 
@@ -201,10 +217,14 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
         ref = save_card(store, {'card_id':'archive','kind':'world','origin':'author',
             'body':{'title':'库史','rule':'涨潮方可开库门','history':'两年前旧库因屋梁烧断封闭','limits':'以县志为准','visibility':'public'}}, None)
         approved = decide_card(store, ref, 'approved', '批准库史')
-        belief = {'entity_id':'archive','predicate':'cause','holder':'yan','value':'封条被换','claim':'belief',
+        person = save_card(store, {'card_id': 'informant', 'kind': 'character', 'origin': 'author',
+            'body': {'name': '老许', 'role': '井口守簿人', 'want': '当面查清可疑封条', 'visibility': 'public'}}, None)
+        approval = decide_card(store, person, 'approved', '核对既有守簿人的身份')
+        belief = {'entity_id':'archive','predicate':'cause','holder':'informant','value':private_belief,'claim':'belief',
                   'story_order':0,'disclosure_order':[0,0,0]}
-        adopt_story(store, baseline(card_refs=[{**asdict(ref),'decision_id':approved.id}],
-            facts=[belief, {**belief,'holder':'lin','value':'不会有人以为这是事实'}]), {})
+        adopt_story(store, baseline(card_refs=[{**asdict(ref),'decision_id':approved.id},
+                    {**asdict(person), 'decision_id': approval.id}],
+                    facts=[belief, {**belief, 'holder': 'yan', 'value': orphan}]), {})
         provider = Model()
         job = start_job(store, JobRequest('design', budget=Budget(32, 90000, 4000))).id
         assert resume_job(store, job, provider, config(store)).step == 'plan:book:confirm'
@@ -216,5 +236,16 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
         items = build_story_context(store, scene, scene_scope(store, scene), 90000).package['items']
         beats = [json.loads(json.loads(item['text'])['observable']) for item in items
                  if item['source'].startswith('material:work:narration:')]
-        assert [(b['time'], b['audience'], b['basis_claim']) for b in beats] == [
-            ('past','reader_only','history'), ('current','scene_pov','belief')]
+        history, statement, response = [b for b in beats if b['basis_claim'] != 'cast_entry']
+        assert (history['time'], history['audience'], history['basis_claim']) == ('past', 'reader_only', 'history')
+        pov = response['owner']
+        assert pov != 'yan' and (statement['owner'], statement['witnesses']) == ('informant', [pov])
+        assert statement['basis_claim'] == 'belief' and 'basis_quote' not in statement
+        assert (response['mode'], response['basis_claim'], response['basis_quote']) == ('inference', 'speech', spoken)
+        package = json.dumps(items, ensure_ascii=False)
+        assert private_belief not in package and orphan not in package and '戊九' not in package
+        head = current_head(store)
+        def beliefs(holder):
+            view = state_at(store, head.branch_id, head.revision, 1, holder, (1, 1, 0), before_scene=scene)
+            return [f.value for f in view.facts if f.claim == 'belief']
+        assert beliefs('informant') == [private_belief] and beliefs(pov) == []

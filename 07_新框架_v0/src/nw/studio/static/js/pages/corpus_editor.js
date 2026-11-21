@@ -57,7 +57,7 @@ export function openCorpusEditor({book,catalog,record,section,row=null,reload}){
     const domain=$('#corpusRecordForm [name=domain]')?.value;
     if(!$('#corpusDomainDetails')||!domain)return;
     $('#corpusDomainDetails').innerHTML=Object.entries(catalog.domain_details[domain]).map(([key,label])=>
-      field(label,key==='claim_status' && domain==='narration'
+      field(label,key==='claim_status'
         ? `<select name="detail_claim_status">${optionList(catalog.narration_claims,value.details?.[key]||'unknown',false)}</select>`
         : `<textarea name="detail_${key}" rows="3">${esc(value.details?.[key]||'')}</textarea>`)).join('');
   }

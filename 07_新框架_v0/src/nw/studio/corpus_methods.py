@@ -5,12 +5,50 @@ from uuid import uuid4
 from nw.studio.catalog import canonical_types
 from nw.studio.library_util import encode, timestamp
 from nw.studio.method_contract import draft
+from nw.studio.method_catalog import TASKS
 from nw.studio.method_evidence import resolve
 from nw.studio.method_store import digest
+from nw.studio.corpus_story_observations import STORY_TASKS, story_observation_issue
 
 TASK_FOR_DOMAIN={'main_plot':'main_plot','subplot':'subplot','character_arc':'character_arc',
     'hook':'hook','foreshadow':'foreshadow','information':'information','pacing':'pacing','world_rules':'world_rules',
-    'narration':'narration'}
+    'narration':'narration', **{domain:tasks[0] for domain,tasks in STORY_TASKS.items()}}
+
+
+def check_story_method(service: object, structure: dict, body: dict, basis: dict) -> None:
+    document=structure['body']
+    threads=[t for t in document['threads'] if t['id'] in basis['thread_ids'] and t['domain'] in STORY_TASKS]
+    if not threads:
+        return
+    check_source_types(service,structure,body)
+    quotes={(e['start'],e['end'],e['quote']) for e in body['evidence'] if e['book_id']==structure['book_id']}
+    evidence={e['id']:e for e in document['evidence'] if (e['start'],e['end'],e['quote']) in quotes}
+    events={e['id']:e for e in document['events'] if e['id'] in basis['event_ids']}
+    links=[l for l in document['links'] if l['id'] in basis['link_ids']]
+    units={u['id']:u for u in document['units']}
+    characters={p['id']:p for p in document['characters']}
+    observed={d['domain'] for d in document['domains'] if d['status']=='observed'}
+    source_ids={key for t in document['threads'] if t['id'] in basis['thread_ids'] for key in t['evidence_ids']}
+    source_ids.update(key for row in [*events.values(),*links] for key in row['evidence_ids'])
+    if not evidence.keys() <= source_ids:
+        raise ValueError('章场方法引文不属于所选观察、事件或关系')
+    for thread in threads:
+        domain=thread['domain']
+        if thread['status']=='uncertain' or domain not in observed:
+            raise ValueError('章场方法不能来自未核实的观察')
+        target_tasks=set(body['tasks']).intersection(STORY_TASKS[domain])
+        if not target_tasks:
+            raise ValueError('章场方法的生产任务与所选章场推进或人物出场观察不符')
+        selection={**thread,'node_ids':[node for node in thread['node_ids'] if node in events],
+                   'evidence_ids':list(evidence.keys() & set(thread['evidence_ids']))}
+        issue=story_observation_issue(selection,events,links,units,evidence,characters)
+        if issue:
+            raise ValueError(issue)
+        stages={stage for task in target_tasks for stage in TASKS[task]['stages']}
+        if not any(o['stage'] in stages and o['field'] in ('members','event_nodes','reader_plan','promise_plan',
+                   'candidates','events','chapters','guidance','patches','transitions') and
+                   (o['field']!='members' or o['artifact_kind']!='stage_product') for o in body['outputs']):
+            raise ValueError('章场方法须落到可交接的本项目设计卡、事件、信息或状态产物')
 
 
 def check_source_types(service: object, structure: dict, body: dict) -> None:
@@ -98,6 +136,11 @@ def origin_status(service: object, method_id: str, version: int, body: dict, con
         if structure['body'].get('schema_version',1)>=2 and 'world_rules' in body['tasks']:
             check_world_method(service,structure,body,origin['basis'])
         check_narration_method(service,structure,body,origin['basis'])
+        check_story_method(service,structure,body,origin['basis'])
+        story_domains=sorted({t['domain'] for t in structure['body']['threads']
+                              if t['id'] in origin['basis']['thread_ids'] and t['domain'] in STORY_TASKS})
+        if story_domains:
+            origin['observation_domains']=story_domains
         origin['source_extent']=structure['body']['source_extent']
     except (OSError,ValueError,KeyError) as exc:
         issues=[{'field':'origin','message':str(exc)}]
@@ -142,6 +185,7 @@ def prepare_method(service: object, structure: dict, candidate: dict, *, complet
         check_world_method(service,structure,body,basis)
     if complete:
         check_narration_method(service,structure,body,basis)
+        check_story_method(service,structure,body,basis)
     if len(encode(body).encode('utf-8'))>96*1024:raise ValueError('提炼方法超过96KiB，请分用途提炼')
     pins,errors=resolve(service,body['evidence'])
     if errors:raise ValueError('；'.join(i['message'] for i in errors))

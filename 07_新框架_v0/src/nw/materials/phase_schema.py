@@ -20,19 +20,41 @@ def strings(*keys: str) -> dict:
     return {key:TEXT for key in keys}
 
 
-def card(kind: str, *, narration: bool = False) -> dict:
+def card(kind: str, *, narration: bool | str = False) -> dict:
     fields={**strings(*_REQUIRED[kind]),**{k:{'type':['string','null']} for k in _OPTIONAL[kind]},
             **{k:array(TEXT) for k in (*_LISTS.get(kind,()),'holders','tags','unknowns')},
             **{k:{'type':'object','additionalProperties':TEXT} for k in _MAPS.get(kind,())},
             'visibility':{'enum':['public','holders','author_only']}}
     if kind == 'world' and not narration:
         fields.pop('history')
-    body=obj(fields,tuple(set(fields)-set(_REQUIRED[kind])-{'visibility'}))
+    from nw.materials.narration import ACCESS_POLICY, PERSONS
+    required = {*_REQUIRED[kind], 'visibility'}
+    if kind == 'character' and narration == ACCESS_POLICY:
+        from nw.materials.cast_design import STANDINGS, ENTRIES, PERSON_FIELDS
+        base = {'standing': {'enum': list(STANDINGS)}, **strings('public_identity', 'need_ref', 'need_quote')}
+        alternatives = []
+        for entry in ENTRIES:
+            extra = ('clue', 'secret', 'trigger') if entry == 'withheld' else (
+                ('introducer', 'introducer_basis') if entry == 'other' else ())
+            alternatives.append(obj({**base, 'entry': {'const': entry}, **strings(*extra)}))
+            if entry == 'other':
+                alternatives[-1]['properties']['introducer_source'] = {'enum': ['prior', 'on_scene']}
+                alternatives[-1]['required'].append('introducer_source')
+        fields.update(**strings(*PERSON_FIELDS), casting={'anyOf': alternatives})
+        required.update((*PERSON_FIELDS, 'casting'))
+    if kind == 'scene':
+        if narration == ACCESS_POLICY:
+            fields['narrative_person'] = {'enum': list(PERSONS)}
+            required.add('narrative_person')
+        else:
+            fields.pop('narrative_person')
+    body=obj(fields,tuple(set(fields)-required))
     return obj({'key':TEXT,'kind':{'const':kind},'body':body})
 
 
 def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | None=None,*,allow_requests: bool=True,
-           contracts: list[dict] | None=None, type_network_inputs: bool=False, narration: bool=False) -> dict:
+           contracts: list[dict] | None=None, type_network_inputs: bool=False, narration: bool | str=False,
+           chapter_progress: bool=False) -> dict:
     state={'type':'object','additionalProperties':ANY,'minProperties':1}
     use=obj({**strings('source_id','operation'),'output_refs':array(TEXT,1)})
     use['properties']['operation']={'type':'string','minLength':8,'maxLength':160}
@@ -121,9 +143,12 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
       'method_guidance':array(obj({**strings('scene','observable','check'),'source_ids':array(TEXT,1)})),
     }
     if stage == 'expression_design' and narration:
-        from nw.materials.narration import MODES
+        from nw.materials.narration import ACCESS_POLICY, MODES
         beat = obj({**strings('basis_ref','basis_quote','effect'), 'time': {'enum': ['current', 'past']},
                     'mode': {'enum': list(MODES)}, 'owner': {'type': ['string', 'null']}})
+        if narration == ACCESS_POLICY:
+            beat['properties']['witnesses'] = array(TEXT)
+            beat['required'].append('witnesses')
         shapes['guidance'] = array(obj({**strings('scene','observable','check'), 'narration': beat}), 1)
     if stage=='event_design':
         shapes['candidates']=array(obj({**strings('id','predecessor','event','completion_gate'),
@@ -160,6 +185,13 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
         shapes['patches']['maxItems']=len({e['scene'] for e in events})
         use['properties']['output_refs']=array({'enum':['scene:'+scene for scene in sorted({e['scene'] for e in events})]},1)
     fields={key:shapes[key] for key in sorted(FIELDS[stage])};fields.update(common)
+    if stage == 'plot_design' and chapter_progress:
+        fields['continuations'] = array(obj(strings('ref', 'event', 'target_quote', 'reason')))
+    if stage == 'scene_design' and chapter_progress:
+        from nw.materials.chapter_progress import CHANGES, CONNECTIONS, ORIGINS
+        fields['scene_progress'] = array(obj({**strings('scene','basis_ref','basis_quote','stimulus'),
+            'change': {'enum': list(CHANGES)}, 'origin': {'enum': list(ORIGINS)},
+            'connection': {'enum': list(CONNECTIONS)}, 'next_pressure': {'type': ['string', 'null']}}), 1)
     if stage!='type_selection':fields.pop('_governance')
     if stage=='plot_design':fields['static_bindings']=shapes['static_bindings']
     if stage == 'type_selection' and type_network_inputs:

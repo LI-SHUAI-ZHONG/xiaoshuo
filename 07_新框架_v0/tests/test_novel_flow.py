@@ -56,9 +56,11 @@ class Model(FakeProvider):
                                             'evidence':[span]}
                     result['material_checks'].append(row)
         elif '{"operations"' in prompt:
-            if payload['disclosure_order'][:2] == [1, 1]:
+            if payload['disclosure_order'][:2] == [1, 1] and '取得小钥匙' in payload['draft']['text']:
+                actor = next(card['card_id'] for card in payload['context']['settings']
+                             if card['kind'] == 'character' and card['body']['name'] == '沈砚')
                 result = {'operations': [{'op': 'set', 'entity_id': 'key', 'predicate': 'owner',
-                    'holder': 'yan', 'claim': 'fact', 'story_order': 1, 'disclosure_order': [1, 1, 0],
+                    'holder': actor, 'claim': 'fact', 'story_order': 1, 'disclosure_order': [1, 1, 0],
                     'expected_old': None, 'new_value': '小钥匙', 'evidence': [payload['evidence_format']]}]}
             else:
                 result = {'operations': []}

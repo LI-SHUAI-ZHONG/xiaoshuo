@@ -30,7 +30,7 @@ def derive(library, book, thread):
 def test_verified_rule_requires_an_effect_and_can_be_absent(analysis):
     library, book, provider=analysis
     saved=library.get_corpus(book)
-    assert saved['body']['schema_version']==3
+    assert saved['body']['schema_version']==4
     assert saved['statistics']['thread_counts']['world_rules']==1
     assert [x['domain'] for x in provider.calls if x['phase']=='relations'].count('world_rules')==1
     body=deepcopy(saved['body'])
@@ -85,7 +85,8 @@ def test_legacy_structure_keeps_approved_method_active_until_a_new_structure_is_
     body['schema_version']=1
     body['threads']=[t for t in body['threads'] if t['domain'] in corpus_catalog(1)['domains']]
     body['domains']=[r for r in body['domains'] if r['domain'] in corpus_catalog(1)['domains']]
-    body['links']=[link for link in body['links'] if link['thread_id'] not in ('T_world_rules','T_narration')]
+    kept={t['id'] for t in body['threads']}
+    body['links']=[link for link in body['links'] if link['thread_id'] is None or link['thread_id'] in kept]
     row=library.save_corpus(book,{'expected_version':1,'body':body})
     frozen=row['body_sha256']
     old=approve(library,book,row['version'])
@@ -98,8 +99,8 @@ def test_legacy_structure_keeps_approved_method_active_until_a_new_structure_is_
     assert 'world_rules' not in corpus_catalog(1)['domains']
     rerun=library.start_corpus_job(book,{'options':{'extent':'complete','note':'[FAKE] 从原文重新分析。'}})
     fresh=wait_job(library,book,rerun['id'])
-    assert fresh['status']=='completed' and fresh['runtime']['pipeline_version']=='corpus-v3'
-    assert library.get_corpus(book)['body']['schema_version']==3
+    assert fresh['status']=='completed' and fresh['runtime']['pipeline_version']=='corpus-v4'
+    assert library.get_corpus(book)['body']['schema_version']==4
     assert library.get_corpus(book,row['version'])['body_sha256']==frozen
     assert library.get_method(approved_method['id'])['available']
 

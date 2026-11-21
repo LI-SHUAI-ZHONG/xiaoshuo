@@ -64,6 +64,8 @@ def normalize_document(raw: dict, content: str) -> dict:
                     clean[key]={k:string(v,DETAILS[row['domain']][k]) for k,v in value.items()}
                     if row['domain']=='narration' and clean[key]['claim_status'] not in NARRATION_CLAIMS:
                         raise ValueError('叙述观察须区分已叙事实、人物说法、推断或未知')
+                    if row['domain']=='cast_entry' and clean[key]['claim_status'] not in NARRATION_CLAIMS:
+                        raise ValueError('出场时的身份须注明原文确证、人物说法、推断或未知')
                 else: clean[key]=string(value,fields[key],1500 if key=='quote' else 4000,strip=key!='quote')
             if section=='units':
                 if clean['level'] not in LEVELS or clean['boundary_basis'] not in ('source_file','source_heading','analyst_inference','author_confirmed'):

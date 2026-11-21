@@ -1234,23 +1234,66 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        from nw.materials import chapter_progress
+        if context.get('chapter_progress_policy') == chapter_progress.POLICY:
+            if stage == 'plot_design':
+                suffix += '\n' + chapter_progress.PLOT_INSTRUCTION
+                if context.get('chapter_openings'):
+                    payload['chapter_progress_policy'] = chapter_progress.POLICY
+                    payload['chapter_openings'] = list(context['chapter_openings'])
+                    payload['output_schema'] += '；continuations:[{ref,event,target_quote,reason}]'
+                    suffix += ('\nchapter_openings 中 open:N 对应 chapter_handoff.reviewed_progress 的第N项（从0起）。'
+                               '按本章需求在 continuations 选择仍值得推进的问题。event 引用本步实际事件id，'
+                               'target_quote 取其goal/obstacle/completion_condition完整原文，reason说明为何承接。'
+                               '前章拟议后续不视为已经发生，本章暂不承接可空数组。')
+            if stage == 'scene_design':
+                payload['chapter_progress_policy'] = chapter_progress.POLICY
+                if context.get('chapter_changes'):
+                    payload['chapter_changes'] = context['chapter_changes']
+                payload['output_schema'] += '；scene_progress:[{scene,basis_ref,basis_quote,origin,connection,stimulus,change,next_pressure}]'
+                suffix += '\n' + chapter_progress.SCENE_INSTRUCTION
         from nw.materials import narration
-        if context.get('narration_policy') == narration.POLICY:
+        narration_policy = context.get('narration_policy')
+        if narration_policy in narration.POLICIES:
             if stage in ('expression_design', 'bind_scope'):
                 # Each upstream receipt is already attached to inputs[stage].ref.
                 # Keep the complete selection on disk and transmit each receipt once.
                 payload['source_selection'] = {k: v for k, v in selection.items() if k != 'upstream'}
             if stage == 'world_design':
-                payload['narration_policy'] = narration.POLICY
+                payload['narration_policy'] = narration_policy
                 suffix += '\n' + narration.WORLD_INSTRUCTION
+            elif stage == 'character_design' and narration_policy == narration.ACCESS_POLICY:
+                from nw.materials.cast_design import CHARACTER_INSTRUCTION, need_sources
+                payload['narration_policy'] = narration_policy
+                payload['cast_needs'] = need_sources(context, products)
+                suffix += '\n' + CHARACTER_INSTRUCTION
+            elif stage in ('plot_design', 'event_design', 'action_design') and narration_policy == narration.ACCESS_POLICY:
+                suffix += ('\n根据具备casting的人物在场理由、scene_function和independent_goal安排交集。'
+                           '用当事人有理由采取的行动、拒绝、透露或交接实现事件；配角与主角分开后可以继续追求自己的目的。'
+                           '只把当场可见的表现交给正文，幕后动机留在该人物自己的视角或后续有据揭示处。')
             elif stage == 'scene_design':
                 suffix += '\n' + narration.SCENE_INSTRUCTION
+                if narration_policy == narration.ACCESS_POLICY:
+                    payload['cast_previous_appearances'] = context.get('cast_previous_appearances', {})
+                    suffix += ' 按读者首次见到人物的章场安排入场。other方式的指定介绍者要同场，暗身份只留公开线索。'
+                    payload['narration_policy'] = narration_policy
+                    suffix += (' 按本书已定人称和本场视角填写场卡 narrative_person：第一人称 first，第二人称 second，'
+                               '贴身第三人称 third_limited，全知叙述 third_omniscient。未指定时依据前文和本场需要选择。'
+                               '人物按自己可接触的信息反应，叙述者可用已批准向读者透露的内容。')
             elif stage == 'expression_design':
                 stage_context['narration_facts'] = context.get('accepted_state', [])
                 payload['narration_bases'] = narration.scene_bases(products, stage_context)
-                payload['narration_policy'] = narration.POLICY
+                payload['narration_policy'] = narration_policy
                 payload['output_schema'] += '；guidance每项另含narration:{time,mode,owner,basis_ref,basis_quote,effect}'
                 suffix += '\n' + narration.EXPRESSION_INSTRUCTION
+                if narration_policy == narration.ACCESS_POLICY:
+                    from nw.materials.cast_design import EXPRESSION_INSTRUCTION as CAST_INSTRUCTION
+                    suffix += '\n' + CAST_INSTRUCTION
+                    payload['output_schema'] += '；当下言行的narration另含witnesses:[其他真正听见或看见者的key]'
+                    suffix += (' 本场当下每一拍言行列 witnesses，只列实际听见或看见的其他人，独处填空数组。'
+                               '配角私有的state依据限本人当下发言或行动，observable和check只写当场可交付的部分。'
+                               '后来者不能据未曾目击的举动改判。按需写为何这个人物先注意此事，'
+                               '他的记忆或目的如何影响判断、情绪和做法，以及对方能察觉什么变化。')
         if context.get('length_context') and stage in ('plot_design', 'scene_design'):
             from nw.length_plan import instructions, model_length_context
             payload['length_context'] = model_length_context(context['length_context'])
@@ -1713,12 +1756,19 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['scene_source_binding_policy'] = package['scene_source_binding_policy']
     if 'multi_action_policy' in package:
         context['multi_action_policy'] = package['multi_action_policy']
+    if 'chapter_progress_policy' in package:
+        from nw.materials.chapter_progress import chapter_changes, chapter_openings
+        context['chapter_progress_policy'] = package['chapter_progress_policy']
+        context['chapter_changes'] = chapter_changes(package.get('chapter_handoff', {}))
+        context['chapter_openings'] = chapter_openings(package.get('chapter_handoff', {}))
     if 'network_layer_policy' in package:
         context['network_layer_policy'] = package['network_layer_policy']
     if 'action_state_policy' in package:
         context['action_state_policy'] = package['action_state_policy']
     if 'narration_policy' in package:
         context['narration_policy'] = package['narration_policy']
+    if 'cast_previous_appearances' in package:
+        context['cast_previous_appearances'] = package['cast_previous_appearances']
     network = None
     if selected and package.get('network_prerequisite_policy') == NETWORK_POLICY:
         context['network_prerequisite_policy'] = NETWORK_POLICY

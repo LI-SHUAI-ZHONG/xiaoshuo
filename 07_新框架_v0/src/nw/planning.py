@@ -209,11 +209,12 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         existing = store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest_id,)).fetchone()
         if existing:
             _, previous_package = read_input_manifest(store, manifest_id)
-            for key in ('length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews',
+            for key in ('length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews', 'chapter_progress_policy',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
-                        'multi_action_policy', 'narration_policy', 'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
+                        'multi_action_policy', 'narration_policy', 'cast_previous_appearances',
+                        'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
                         'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy',
                         'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy'):
                 if key in previous_package:
@@ -232,7 +233,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         package['chapter_reviews'] = reviews
             if (store.directory.parent / 'materials/catalog.db').is_file():
                 from nw.materials.phase_context import ACTION_STATE_POLICY
-                from nw.materials.narration import POLICY as NARRATION_POLICY
+                from nw.materials.narration import ACCESS_POLICY as NARRATION_POLICY
                 from nw.materials.phase_flow import STAGE_MATERIALS
                 from nw.materials.phase_routes import phase_order
                 from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY
@@ -246,7 +247,11 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 package['multi_action_policy'] = MULTI_ACTION_POLICY
                 package['action_state_policy'] = ACTION_STATE_POLICY
                 package['narration_policy'] = NARRATION_POLICY
+                from nw.materials.cast_design import previous_appearances
+                package['cast_previous_appearances'] = previous_appearances(store, cards)
                 package['action_template_priority_enabled'] = True
+                from nw.materials.chapter_progress import POLICY as CHAPTER_PROGRESS_POLICY
+                package['chapter_progress_policy'] = CHAPTER_PROGRESS_POLICY
                 package['stage_materials'] = {
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
                 }
@@ -372,6 +377,8 @@ def _translate(body: dict, refs: dict[str, CardRef]) -> dict:
         resolved['pov'] = ident(body['pov'])
     if 'character_goals' in body:
         resolved['character_goals'] = {ident(key): goal for key, goal in body['character_goals'].items()}
+    if 'introducer' in body.get('casting', {}):
+        resolved['casting'] = {**body['casting'], 'introducer': ident(body['casting']['introducer'])}
     return resolved
 
 

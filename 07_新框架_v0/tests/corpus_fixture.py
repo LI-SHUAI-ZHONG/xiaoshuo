@@ -83,9 +83,14 @@ class CorpusModel:
             row=thread(domain,events,person,refs,'resolved' if payload['last_window'] else 'open')
             if domain=='narration':
                 row['details']['claim_status']='stated'
+            if domain=='chapter_progress':
+                row['details']['later_use']=''
+            if domain=='cast_entry':
+                row['details']['later_reveal']=''
+                row['details']['claim_status']='unknown'
             kind={'main_plot':'causes','subplot':'crosses','character_arc':'changes_character','hook':'responds',
                 'foreshadow':'pays_off','information':'reveals','pacing':'emotional_shift','world_rules':'enables',
-                'narration':'reveals'}[domain]
+                'narration':'reveals','chapter_progress':'enables','cast_entry':'crosses'}[domain]
             available={e['id']:e for e in [*payload['frontier_events'],*events]}
             first=events[0];last=events[-1];links=[]
             prior=next((t for t in payload['open_threads'] if t['domain']==domain),None)

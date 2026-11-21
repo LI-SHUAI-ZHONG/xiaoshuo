@@ -3,6 +3,7 @@ from nw.materials.phase_routes import phase_order
 from nw.production_methods.matching import TYPE_PRIORITY
 from nw.production_methods.sources import MethodReader, matching_methods, stage_tasks
 from nw.studio.method_catalog import SCOPES, STAGES, TASKS
+from nw.studio.corpus_story_observations import STORY_TASKS
 
 
 SLOT_TASKS = {
@@ -18,11 +19,18 @@ SLOT_TASKS = {
 }
 
 
-def uses(body: dict, slot: str) -> list[dict]:
+SLOT_OBSERVATION={'character':'cast_entry','structure':'chapter_progress'}
+
+
+def uses(body: dict, slot: str, origin: dict | None = None) -> list[dict]:
+    allowed=SLOT_TASKS[slot]
+    domain=SLOT_OBSERVATION.get(slot)
+    if domain in (origin or {}).get('observation_domains',[]):
+        allowed=allowed.union(STORY_TASKS[domain])
     return [{'scope': scope, 'scope_name': SCOPES[scope], 'stage': stage, 'stage_name': STAGES[stage],
              'tasks': [TASKS[task]['name'] for task in sorted(tasks)]}
             for scope in body['scopes'] for stage in phase_order(scope)
-            if (tasks := stage_tasks(body, stage, scope) & SLOT_TASKS[slot])]
+            if (tasks := stage_tasks(body, stage, scope) & allowed)]
 
 
 def recommendations(reader: MethodReader, slot: str, types: list[str], selected: list[str]) -> dict:
@@ -34,11 +42,15 @@ def recommendations(reader: MethodReader, slot: str, types: list[str], selected:
     if slot == 'narration':
         matches.sort(key=lambda item: (TYPE_PRIORITY[item[1]['level']],
                                        'narration' not in item[0]['body']['tasks']))
+    if slot in SLOT_OBSERVATION:
+        domain=SLOT_OBSERVATION[slot]
+        matches.sort(key=lambda item:(TYPE_PRIORITY[item[1]['level']],
+            domain not in (item[0].get('structure_origin') or {}).get('observation_domains',[])))
     current_versions = {row['id']: row['version'] for row, _ in matches if row['id'] in selected}
     result = []
     for row, match in matches:
         body = row['body']
-        placements = uses(body, slot)
+        placements = uses(body, slot, row['structure_origin'])
         if not placements or (slot == 'world' and (match['level'] == 'cross_type' or reader.world_source(row, types) is None)):
             continue
         result.append({'id': row['id'], 'version': row['version'], 'title': body['title'], 'type_match': match,
@@ -66,7 +78,7 @@ def freeze_preferences(reader: MethodReader, requested: object, types: list[str]
             raise ValueError('无效或重复的立项方法选择')
         slot, ident, version = item['slot'], item['id'], item['version']
         method = methods.get(ident)
-        if method is None or method[0]['version'] != version or not uses(method[0]['body'], slot):
+        if method is None or method[0]['version'] != version or not uses(method[0]['body'], slot, method[0]['structure_origin']):
             raise ValueError('所选方法的批准版本或适用类型已变化，请刷新方法推荐后重新选择')
         row, match = method
         if slot == 'world' and (match['level'] == 'cross_type' or reader.world_source(row, types) is None):

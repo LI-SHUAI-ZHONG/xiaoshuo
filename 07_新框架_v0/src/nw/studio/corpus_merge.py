@@ -4,6 +4,7 @@ from copy import deepcopy
 from nw.studio.corpus_catalog import FIELDS
 from nw.studio.corpus_checks import graph_issues
 from nw.studio.corpus_contract import normalize_document
+from nw.studio.corpus_story_observations import STORY_DETAILS
 
 
 def resolve_fragment(raw: dict, document: dict, content: str, *, span: dict | None,
@@ -75,11 +76,11 @@ def resolve_fragment(raw: dict, document: dict, content: str, *, span: dict | No
             if phase=='detail' and not set(event['parent_event_ids'])<=coarse:
                 raise ValueError('细节事件必须对应本章实际提供的总览节点')
         for thread in patch.get('threads',[]):
-            if thread['domain']=='narration' and phase=='detail':
+            if (thread['domain']=='narration' or thread['domain'] in STORY_DETAILS) and phase=='detail':
                 local_nodes={e['id'] for e in patch.get('events',[])}
                 if not (thread['id'].startswith(prefix+'_') and set(thread['evidence_ids'])<=current_evidence
                         and set(thread['node_ids'])<=local_nodes):
-                    raise ValueError('章场叙述观察须用本片段标识、事件和引文；跨段对照留给关系核对')
+                    raise ValueError('章场观察须用本片段标识、事件和引文；跨段对照留给关系核对')
     checks=graph_issues(normalized,len(content))
     errors=[r['message'] for r in checks if r['severity']=='error' and r['field'] not in ('overview','domains','source_extent','coverage')
             and r['message']!='尚无有证据的事件节点']
@@ -97,8 +98,8 @@ def merge_fragment(document: dict, patch: dict) -> dict:
             if prior and prior!=incoming:
                 if section=='threads':
                     if prior['domain']!=incoming['domain']:raise ValueError('不能偷换同一线索的职责')
-                    if prior['domain']=='narration' and prior['details']!=incoming['details']:
-                        raise ValueError('既有叙述观察的时序、视角与判断须保留，新观察请另建标识')
+                    if (prior['domain']=='narration' or prior['domain'] in STORY_DETAILS) and prior['details']!=incoming['details']:
+                        raise ValueError('既有观察的具体事实与判断须保留，新观察请另建标识')
                     incoming=deepcopy(incoming)
                     for field in ('node_ids','characters','evidence_ids'):
                         incoming[field]=list(dict.fromkeys([*prior[field],*incoming[field]]))

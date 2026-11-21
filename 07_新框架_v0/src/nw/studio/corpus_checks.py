@@ -1,6 +1,7 @@
 """Graph/coverage integrity checks; author review decides literary interpretations."""
 from nw.studio.corpus_catalog import DETAILS, OVERVIEW, domains_for
 from nw.studio.corpus_index import range_coverage
+from nw.studio.corpus_story_observations import REQUIRED_DETAILS, story_observation_issue
 
 
 def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[dict]:
@@ -59,7 +60,9 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
         if unit:
             check(all(unit['start']<=evidence[k]['start']<evidence[k]['end']<=unit['end'] for k in event['evidence_ids'] if k in evidence),
                   'events','事件证据超出所属卷章场：'+event['id'])
+    thread_links={}
     for link in links.values():
+        thread_links.setdefault(link['thread_id'],[]).append(link)
         a,b=events.get(link['source']),events.get(link['target'])
         check(bool(a) and bool(b) and a['id']!=b['id'],'links','关系端点无效：'+link['id'])
         check(link['thread_id'] is None or link['thread_id'] in threads,'links','关系引用未知线索/弧光')
@@ -84,6 +87,8 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
         check(set(thread['characters'])<=people.keys(),'threads','线索/弧光引用未知人物')
         check(bool(thread['title']) and bool(thread['explanation']),'threads','线索/弧光缺少名称与解释')
         for key,label in DETAILS[thread['domain']].items():
+            if thread['domain'] in REQUIRED_DETAILS and key not in REQUIRED_DETAILS[thread['domain']]:
+                continue  # A local excerpt need not disclose a motive, later use or identity.
             if thread['domain']=='narration' and key in ('causal_basis','character_response','reader_effect'):
                 continue  # A passage can disclose a fact without showing a cause or a character responding.
             check(bool(thread['details'][key]),'threads','具体分析待填写：'+label,'warning')
@@ -97,9 +102,12 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
                       and bool(detail['reader_effect'] or detail['character_response']),
                       'threads','叙述观察须说明时序、讲述方式、视角权限及实际作用；依据不足可标存疑')
         if thread['domain']=='character_arc':check(bool(thread['characters']),'threads','人物弧光必须指定人物')
+        if thread['domain'] in REQUIRED_DETAILS:
+            issue=story_observation_issue(thread,events,thread_links.get(thread['id'],()),units,evidence,people)
+            check(not issue,'threads',issue+'：'+thread['id'])
         if thread['status']=='resolved' and thread['domain'] in ('hook','foreshadow'):
             kind='responds' if thread['domain']=='hook' else 'pays_off'
-            matching=[l for l in links.values() if l['thread_id']==thread['id'] and l['kind']==kind
+            matching=[l for l in thread_links.get(thread['id'],()) if l['kind']==kind
                       and l['source'] in thread['node_ids'] and l['target'] in thread['node_ids']]
             check(bool(matching),'threads','声称已回应/回收但缺少前后事件及证据关系：'+thread['id'])
     causal={key:[] for key in events};indegree={key:0 for key in events}
@@ -127,12 +135,28 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
                 grounded=any(t['domain']==domain and t['status']!='uncertain' and all(t['details'].values())
                              and any(events.get(i,{}).get('result') for i in t['node_ids']) for t in threads.values())
                 check(grounded,'domains','标为已观察的世界规则须有适用条件、边界说明及受影响事件的实际后果')
-            if domain=='narration' and row['status']=='observed':
+            if (domain=='narration' or domain in REQUIRED_DETAILS) and row['status']=='observed':
                 check(any(t['domain']==domain and t['status']!='uncertain' and
                           set(t['evidence_ids']).intersection(row['evidence_ids']) for t in threads.values()),
-                      'domains','已观察的叙述手法须引用同一条有根据的叙述观察')
+                      'domains','已观察的'+label+'须引用同一条有根据的观察')
     check(bool(events),'events','尚无有证据的事件节点')
     if coverage is not None:
+        if dispositions.get('chapter_progress',{}).get('status')=='observed':
+            accounted={node for t in threads.values() if t['domain']=='chapter_progress' and t['status']!='uncertain'
+                       for node in t['node_ids']}
+            detailed=set()
+            supported=set()
+            for event in events.values():
+                unit=units.get(event['unit_id'],{})
+                if event['granularity']=='detail' and unit:
+                    chapter=unit['parent_id'] if unit['level']=='scene' else unit['id']
+                    detailed.add(chapter)
+                    if event['id'] in accounted:
+                        supported.add(chapter)
+            missing=sorted(detailed-supported)
+            if missing:
+                check(False,'coverage','有细拆事件但仍未登记可证进展的章节：'+'、'.join(missing[:15])
+                      +f'（共{len(missing)}章，可逐章核对）','warning')
         reviewed=set(coverage.get('reviewed_units',[]))
         manual=bool(chapters) and {u['id'] for u in chapters}<=reviewed
         read=range_coverage(coverage.get('survey_ranges',[]),length)['complete_imported_text']

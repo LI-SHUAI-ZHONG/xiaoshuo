@@ -1,4 +1,4 @@
-"""Relate an accepted draft's identity anchors to its frozen review and paragraphs."""
+"""Recover accepted identity and chapter progress checks from the frozen draft review."""
 from dataclasses import asdict
 import json
 import re
@@ -50,21 +50,22 @@ def _source_proof(draft: Draft, rule: dict, review: dict, source: dict) -> dict 
             'source_checks': clauses, 'evidence': spans, 'paragraph_evidence': _paragraphs(draft, spans)}
 
 
-def accepted_identity_checks(store: Store, draft: Draft, delta: StateDelta) -> list[dict]:
+def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, identity: bool) -> tuple[list[dict], list[dict]]:
     """Read proof from the accepted delta without consulting today's design or catalog."""
     manifest, package = read_input_manifest(store, delta.manifest_id)
     run_id = package.get('material_review_run')
     if not run_id:
-        return []
+        return [], []
     run = store.get('run', run_id)
     snapshot = json.loads(run.input_snapshot_json)
     payload = json.loads(snapshot['messages'][-1]['content'])
     contract = payload.get('material_review')
     if not contract:
-        return []
-    sources = {rule['id']: (rule, refs) for rule in contract['checks'] if (refs := _identity_sources(rule))}
-    if not sources:
-        return []
+        return [], []
+    sources = {rule['id']: (rule, refs) for rule in contract['checks'] if identity and (refs := _identity_sources(rule))}
+    progress = {rule['id']: rule for rule in contract['checks'] if rule['id'].startswith('work:progress:')}
+    if not sources and not progress:
+        return [], []
     reviewed, context = read_input_manifest(store, snapshot['manifest_id'])
     ref = asdict(draft_ref(draft))
     scope = ('branch_id', 'state_revision', 'story_order', 'disclosure_order', 'candidate_delta_refs', 'novel_job_id')
@@ -73,7 +74,7 @@ def accepted_identity_checks(store: Store, draft: Draft, delta: StateDelta) -> l
             or contract['draft'] != ref or ref not in reviewed['dependency_refs']
             or any(reviewed[key] != manifest[key] for key in scope)
             or payload['draft'] != asdict(draft) or payload['context'] != context):
-        raise ValueError('MATERIAL_EVIDENCE: identity check does not match the accepted draft and frozen review input')
+        raise ValueError('MATERIAL_EVIDENCE: scene check does not match the accepted draft and frozen review input')
     comparison = None
     if prior := contract.get('comparison'):
         comparison = store.get('draft', prior['ref']['id'])
@@ -81,12 +82,24 @@ def accepted_identity_checks(store: Store, draft: Draft, delta: StateDelta) -> l
             raise ValueError('MATERIAL_EVIDENCE: identity review comparison draft has changed')
     result = review_result(run, contract, draft, comparison)
     if result['recommendation'] != 'pass':
-        raise ValueError('MATERIAL_EVIDENCE: identity check does not come from a passing review')
+        raise ValueError('MATERIAL_EVIDENCE: scene check does not come from a passing review')
     proofs = []
+    advances = []
     for check in result['material_checks']:
+        if check['id'] in progress:
+            design = progress[check['id']]['method_artifact']
+            advances.append({'scene_id': draft.scene_id, 'draft_ref': ref, 'delta_id': delta.id, 'review_run_id': run.id,
+                'disclosure_order': manifest['disclosure_order'],
+                'change': design['change'], 'review_reason': check['reason'],
+                'evidence': [span for span in check['evidence'] if span['id'] == draft.id],
+                'possible_next_pressure': design['next_pressure']})
         if check['id'] in sources:
             rule, refs = sources[check['id']]
             for source in refs:
                 if proof := _source_proof(draft, rule, check, source):
                     proofs.append({'scene_id': draft.scene_id, 'draft_ref': ref, 'review_run_id': run.id, **proof})
-    return proofs
+    return proofs, advances
+
+
+def accepted_identity_checks(store: Store, draft: Draft, delta: StateDelta) -> list[dict]:
+    return accepted_scene_checks(store, draft, delta, identity=True)[0]

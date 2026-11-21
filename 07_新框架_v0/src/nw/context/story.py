@@ -93,12 +93,19 @@ class StoryProvider:
         from nw.length_plan import model_approved_cards
         for card in model_approved_cards(project['settings']):
             body = card['body']
-            if card['kind'] == 'character' and card['card_id'] != pov and body.get('visibility') == 'public':
+            if card['kind'] == 'character' and 'casting' in body:
+                from nw.materials.cast_design import writer_card
+                body = writer_card(body, own=card['card_id'] == pov)
+            elif card['kind'] == 'character' and card['card_id'] != pov and (
+                    body.get('visibility') == 'public' or scene_body.get('narrative_person') and body.get('visibility') == 'holders'):
                 # Public casting cards often mix a speaking voice with author-side wounds
                 # and motives. Private facts the POV has learned come through its state.
                 body = {key: body[key] for key in ('name', 'role', 'voice') if key in body}
             elif card['kind'] == 'scene':
                 body = _pov_goals(body, pov)
+            elif card['kind'] == 'world' and scene_body.get('narrative_person') and 'history' in body:
+                # Only a chosen disclosure beat may bring this history into today's scene.
+                body = {key: value for key, value in body.items() if key != 'history'}
             items.append(ContextItem('card:' + card['card_id'], canonical(body), '本场确认设定'))
         items.append(ContextItem('pov:' + project['holder'], canonical(project['facts']), '此时POV所知与误信'))
         if project.get('previous'):
@@ -225,6 +232,9 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     if visible_brief and 'length_policy' in card['body']:
         from nw.length_settings import effective_brief_text
         visible_brief['text'] = effective_brief_text(visible_brief['text'], card['body']['length_policy'])
+    if visible_brief and card['body'].get('narrative_person'):
+        from nw.materials.cast_design import writer_brief
+        visible_brief = writer_brief(visible_brief, view.settings)
     inputs = {'brief': visible_brief, 'settings': settings, 'holder': view.holder, 'facts': facts}
     if 'chapter_word_budget' in card['body'] and 'word_budget' in card['body']:
         from nw.length_plan import approved_length_budgets, chapter_progress
@@ -244,9 +254,17 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         legacy_preconditions=any(check['profile'] in ('static_binding', 'dynamic_binding', 'static_relation', 'dynamic_relation',
                                    'anchor', 'character_editor') or check['profile']!='method_work' and check['binding'].get('state') for check in checks)
         native_preconditions=any(check['profile']=='method_work' and check['binding'].get('state') for check in checks)
-        if legacy_preconditions or native_preconditions:
+        progress_preconditions = any(check.get('chapter_progress_prior') or check.get('continuations') for check in checks)
+        narration_states = {c['narration_state_sha256'] for c in checks if 'narration_state_sha256' in c}
+        if legacy_preconditions or native_preconditions or progress_preconditions or narration_states:
             author = state_at(store, scope.branch_id, scope.revision, scope.story_order, 'AUTHOR',
                               disclosure, before_scene=scene_id, snapshot=snapshot)
+            if narration_states:
+                from nw.materials.narration import verify_scene_facts
+                verify_scene_facts(narration_states, author.facts)
+            if progress_preconditions:
+                from nw.materials.chapter_progress import verify_current
+                verify_current(checks, author.facts, snapshot['slots'])
             if legacy_preconditions:
                 legacy_design={key:value for key,value in design.items() if key!='work_session'}
                 verify_preconditions(legacy_design, author.facts, {item['card_id'] for item in snapshot['settings']})
@@ -359,6 +377,9 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     # Keep audit data outside the model-visible package so omissions cannot leak context.
     refs = tuple(dict.fromkeys(card_input_ref(item) for item in cards))
     check_inputs_current(store, list(refs))
+    if any('casting' in row['body'] for row in view.settings):
+        from nw.materials.cast_design import guard_writer_package
+        guard_writer_package(view.settings, facts, inputs.get('material_checks', []), assembled)
     return StoryWork(scope, disclosure, assembled,
                      legacy_ref('brief', store.project().id, brief) if brief else None,
                      tuple({'card_id': ref.id, 'version': ref.version} for ref in refs),

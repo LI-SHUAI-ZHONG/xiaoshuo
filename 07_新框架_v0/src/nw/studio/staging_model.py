@@ -88,6 +88,8 @@ def _run(service: object, ident: str, text: str, config: object, provider: objec
             '拆解叙述用法时，区分事件实际发生的先后与读者读到的先后。用usage_text具体交代哪件往事被概述或展开、'
             '谁在回忆、观察或推断，哪些话别人听得到，读者由此新明白什么，眼前的反应或交流如何继续推动故事。'
             '依摘录选取有依据的方面；人物相信的解释保留为其看法，未写出的原因或后续选择留待核实。'
+            '拆结构或人物用法时，找出这次交流、发现或交接怎样改变具体的人，以及变化的前因；'
+            '分清某人自称的身份、当场职责和在场人已获知的事实。局部摘录不证明全书初次登场或跨章收获已被用上。'
             '若无可靠条目则返回空 items。slot 只能是 ' + ','.join(catalog.SLOTS) + '。'
             'stages 从 type_selection,type_adaptation,world_design,character_design,static_relations,plot_design,'
             'event_design,action_design,scene_design,state_transition,state_propagation,anchor_design,'

@@ -72,7 +72,8 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
         shape=schema(payload['stage'],sources,
             payload.get('readable_source_ids',[]),payload.get('inputs'),allow_requests=payload.get('mode')!='execute',
             contracts=payload.get('source_contracts'), type_network_inputs=bool(payload.get('type_network_policy')),
-            narration=bool(payload.get('narration_policy')))
+            chapter_progress=bool(payload.get('chapter_progress_policy')),
+            narration=payload.get('narration_policy', False))
         if payload.get('network_design_candidates'):
             from nw.materials.design_network import add_schema
             add_schema(shape, payload['network_design_candidates'])
