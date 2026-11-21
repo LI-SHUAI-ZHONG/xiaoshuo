@@ -64,6 +64,9 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         if any(check['id'].startswith(narration_review.PREFIX) for check in contract['checks']):
             current = any('narrative_person' in check for check in contract['checks'])
             appended += ' ' + (narration_review.PROMPT if current else narration_review.LEGACY_PROMPT)
+        from nw.materials.passage_review import review_prompt as passage_prompt
+        if passage := passage_prompt(contract['checks']):
+            appended += ' ' + passage
         if any(check.get('layer_contract', {}).get('policy') == NETWORK_LAYER_POLICY for check in contract['checks']):
             appended += ' ' + NETWORK_LAYER_REVIEW
     from nw.chapter_break import REVIEW as BREAK_REVIEW, WRITING as BREAK_WRITING, chapter_end

@@ -101,6 +101,9 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     from nw.studio.cast_samples import design_reference, genre_cast_samples
     if cast := design_reference(genre_cast_samples(library, selected_types)):
         wizard['cast_sample_reference'] = cast
+    from nw.production_methods.passage_sources import recommendations
+    if passages := recommendations(library, selected_types):
+        wizard['passage_references'] = passages
     return wizard
 
 
@@ -129,11 +132,16 @@ def governance(wizard: dict, *, library=None) -> dict:
                 for stage, content in result.items() if any(content.values())}
     if library is None:
         cast = wizard.get('cast_sample_reference')
+        passages = wizard.get('passage_references')
     else:
         from nw.studio.cast_samples import design_reference, genre_cast_samples
         cast = design_reference(genre_cast_samples(library, wizard.get('genre_ids', [])))
+        from nw.production_methods.passage_sources import recommendations
+        passages = recommendations(library, wizard.get('genre_ids', []))
     if cast:
         filtered.setdefault('world_design', {})['cast_sample_reference'] = cast
+    if passages:
+        filtered.setdefault('world_design', {})['passage_references'] = passages
     length = length_fields(wizard)
     if wizard.get('auto_length') or wizard.get('length_mode') == 'tiered':
         filtered.setdefault('plot_design', {})['length_auto'] = True

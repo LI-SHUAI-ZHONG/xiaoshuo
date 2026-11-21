@@ -27,7 +27,11 @@ def _reviewed_paragraphs(draft: Draft, beats: dict, review: dict, contract: dict
                 or json.loads(check['binding']['observable']) != observable
                 or row['status'] != 'pass' or issue(row) != 'as_designed'):
             raise ValueError('Prior reader-only beat has no verified disclosure')
-        spans = [s for s in row['evidence'] if s['id'] == draft.id]
+        if 'passage_step' in check:
+            from nw.materials.passage_review import primary_spans
+            spans = primary_spans(row, draft.id)
+        else:
+            spans = [s for s in row['evidence'] if s['id'] == draft.id]
         if not spans:
             raise ValueError('Prior reader-only beat has no draft locations')
         for span in spans:

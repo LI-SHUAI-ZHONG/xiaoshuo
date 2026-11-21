@@ -1358,6 +1358,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                                '他的记忆或目的如何影响判断、情绪和做法，以及对方能察觉什么变化。')
                     if narration_policy == narration.EVIDENCE_POLICY:
                         suffix += ' 配角可据自身经历、独立目的行动或发言；介绍身份须有听者。'
+        from nw.materials import passage_sequence
+        if passage_instruction := passage_sequence.prompt(stage, payload, products, context):
+            suffix += '\n' + passage_instruction
         if context.get('length_context') and stage in ('plot_design', 'scene_design'):
             from nw.length_plan import instructions, model_length_context
             payload['length_context'] = model_length_context(context['length_context'])
@@ -1618,6 +1621,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '对应的项目依据。核对同一产物中的纪年、时期、地理与制度条件。')
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
+            if payload.get('passage_policy') and stage == 'scene_design':
+                payload['output_contract']['products']['passage_choices'] = []
+            if stage == 'expression_design' and any(row['kind'] in passage_sequence.ROLES for row in payload.get('passage_choices', [])):
+                payload['output_contract']['products']['passage_sequences'] = []
             if cast_enabled and stage in cast_fulfillment.SCHEMAS:
                 field = 'cast_events' if stage == 'plot_design' else 'cast_payoffs'
                 payload['output_contract']['products'][field] = []
@@ -1735,6 +1742,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             page += 1
             continue
         if 'products' in raw:
+            if stage == 'scene_design' and context.get('passage_policy'):
+                choices = raw['products'].get('passage_choices', [])
+                if any(row['source_ref'] for row in choices):
+                    from nw.production_methods.passage_sources import verify_choices
+                    verify_choices(desk.workspace, context.get('passage_references', []), choices)
             from nw.materials.governance_runtime import check_stage_governance,freeze_report
             selection['offered']=[s['source'] for s in sources]
             used={u['source_id'] for u in raw['products']['_uses']}
@@ -1866,6 +1878,9 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['action_state_policy'] = package['action_state_policy']
     if 'narration_policy' in package:
         context['narration_policy'] = package['narration_policy']
+    if 'passage_policy' in package:
+        context['passage_policy'] = package['passage_policy']
+        context['passage_references'] = package.get('passage_references', [])
     if 'cast_previous_appearances' in package:
         context['cast_previous_appearances'] = package['cast_previous_appearances']
     if 'accepted_cast_history' in package:

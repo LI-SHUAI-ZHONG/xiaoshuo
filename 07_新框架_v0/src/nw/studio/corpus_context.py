@@ -66,7 +66,7 @@ def window_payload(document: dict, selected: list[dict], *, domain: str | None, 
 
 
 def choose_window(document: dict, events: list[dict], cursor: int, *, phase: str, domain: str | None,
-                  prefix: str, maximum: int, global_basis: dict | None = None) -> tuple[list[str],int]:
+                  prefix: str, maximum: int, global_basis: dict | None = None, passages: bool = True) -> tuple[list[str],int]:
     selected=[];next_cursor=cursor
     units={u['id']:u for u in document['units']} if domain=='cast_roster' else {}
     for event in events[cursor:]:
@@ -74,7 +74,7 @@ def choose_window(document: dict, events: list[dict], cursor: int, *, phase: str
             break
         proposed=[*selected,event]
         payload=window_payload(document,proposed,domain=domain,prefix=prefix,last=cursor+len(proposed)==len(events),global_basis=global_basis)
-        size=sum(len(m['content']) for m in messages(phase,payload,version=document['schema_version']))
+        size=sum(len(m['content']) for m in messages(phase,payload,version=document['schema_version'],passages=passages))
         if size>maximum and selected:break
         selected=proposed;next_cursor+=1
         if size>maximum:break  # model_call records and rejects; never truncate the mandatory context.

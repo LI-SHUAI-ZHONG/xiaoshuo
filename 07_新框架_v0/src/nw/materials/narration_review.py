@@ -2,6 +2,7 @@
 import json
 
 from nw.models import Draft
+from nw.materials import passage_review
 
 
 PREFIX = 'work:narration:'
@@ -37,7 +38,7 @@ def issue(row: dict) -> str:
     """Keep the durable review in its established four-field format."""
     reason = row['reason'].strip()
     code, separator, explanation = reason.partition(']')
-    if separator and code.startswith('[') and code[1:] in FIXES:
+    if separator and code.startswith('[') and (code[1:] in FIXES or code[1:] in passage_review.FIXES):
         return code[1:]
     if separator and code == '[as_designed]':
         reason = explanation.strip()
@@ -62,12 +63,17 @@ def assess_beats(checks: list[dict], rows: list[dict], draft: Draft) -> None:
         if row['narration_issue'] != 'as_designed':
             row['status'] = 'failed'
             continue
+        if 'passage_step' in beat:
+            # Passage review checks the anchored focus, including a very short cue.
+            # A supporting quotation can legitimately precede the preceding beat.
+            continue
         starts = [span['start'] for span in row['evidence'] if span['id'] == draft.id
                   and span['start'] >= start and len(''.join(span['quote'].split())) >= 8]
         if not starts:
             row.update(status='failed', narration_issue='order', reason=FIXES['order'])
             continue
         start = min(starts)
+    passage_review.assess(beats, by_id, draft.id)
     from nw.materials.cast_design import assess_hidden
     assess_hidden(checks, rows, draft)
 
@@ -76,7 +82,8 @@ def revision_feedback(check: dict, draft: Draft) -> dict:
     """Only forward an enumerated correction and positions from the reviser's own draft."""
     locations = [{'start': span['start'], 'end': span['end']} for span in check['evidence']
                  if span['id'] == draft.id and span['version'] == draft.version]
-    return {'fix': FIXES[check['narration_issue']], 'draft_locations': locations}
+    code = check['narration_issue']
+    return {'fix': passage_review.FIXES.get(code) or FIXES[code], 'draft_locations': locations}
 
 
 def reader_spans(checks: list[dict], rows: list[dict], draft: Draft) -> list[dict]:
@@ -95,11 +102,16 @@ def reader_spans(checks: list[dict], rows: list[dict], draft: Draft) -> list[dic
                     'holders': [observable['owner'], *observable['witnesses']]}
         if 'reported_only' in check and check['id'] in limits:
             limits[check['id']]['reported_only'] = check['reported_only']
+        if check.get('passage_step', {}).get('status') in ('inference', 'pending') and check['id'] in limits:
+            limits[check['id']].update(reported_only=True, passage_status=check['passage_step']['status'])
         if 'cast_subject' in observable and check['id'] in limits:
             limits[check['id']].update(cast_subject=observable['cast_subject'], cast_basis=observable['basis_claim'],
                                        mode=beat['mode'])
+    selected = {check['id'] for check in checks if 'passage_step' in check}
     return [{'start': s['start'], 'end': s['end'], **limits[row['id']]} for row in rows
-            if row['id'] in limits and row['status'] == 'pass' for s in row['evidence'] if s['id'] == draft.id]
+            if row['id'] in limits and row['status'] == 'pass'
+            for s in (passage_review.primary_spans(row, draft.id) if row['id'] in selected else row['evidence'])
+            if s['id'] == draft.id]
 
 
 def check_state_audience(operations: list[dict], reader_only: list[dict]) -> None:

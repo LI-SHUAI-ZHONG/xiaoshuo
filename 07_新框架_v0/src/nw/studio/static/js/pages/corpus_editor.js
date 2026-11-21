@@ -1,5 +1,6 @@
 import {api,enc} from '../api.js';
 import {$,$$,esc,modal,busy,toast} from '../ui.js';
+import {passageEditor} from './corpus_passage_editor.js';
 
 const optionList=(rows,value='',multiple=false)=>Object.entries(rows).map(([key,label])=>`<option value="${esc(key)}" ${(multiple?value.includes(key):value===key)?'selected':''}>${esc(label)}</option>`).join('');
 const field=(label,control)=>`<label class="field"><span>${esc(label)}</span>${control}</label>`;
@@ -54,6 +55,7 @@ export function openCorpusEditor({book,catalog,record,section,row=null,initialDo
     ${fields.map(([key,label])=>control(key,label,value[key])).join('')}
     ${section==='evidence'?'<button class="secondary" type="button" id="locateCorpusQuote">按原作定位摘录</button>':''}
     <button class="button" type="submit">保存新版本</button></form>`,'',true);
+  let readPassage=null;
   function domainFields(){
     const domain=$('#corpusRecordForm [name=domain]')?.value;
     if(!$('#corpusDomainDetails')||!domain)return;
@@ -75,6 +77,8 @@ export function openCorpusEditor({book,catalog,record,section,row=null,initialDo
       }
       return field(label,`<textarea name="detail_${key}" rows="3">${esc(detail[key]||'')}</textarea>`);
     }).join('');
+    readPassage=domain==='narration'&&catalog.passage_sequences
+      ?passageEditor($('#corpusDomainDetails'),catalog,document,detail.passage_sequence):null;
     citedEvent.onchange=null;
     if(roster){
       const appearance=$('[name=detail_appearance_evidence]',form);
@@ -102,6 +106,8 @@ export function openCorpusEditor({book,catalog,record,section,row=null,initialDo
         if(key==='details'){
           const domain=$('[name=domain]',form).value;
           result.details=Object.fromEntries(Object.keys(catalog.domain_details[domain]).map(k=>[k,$(`[name=detail_${k}]`,form).value]));
+          const sequence=readPassage?.();
+          if(sequence)result.details.passage_sequence=sequence;
         }else if(multikeys.includes(key))result[key]=Array.from($(`[name=${key}]`,form).selectedOptions).map(o=>o.value);
         else{
           const input=$(`[name=${key}]`,form);let raw=input.value;
@@ -114,6 +120,11 @@ export function openCorpusEditor({book,catalog,record,section,row=null,initialDo
         result.characters=result.characters.filter(Boolean);result.node_ids=result.node_ids.filter(Boolean);
         const cited=[result.details.appearance_evidence,result.details.standing_evidence].filter(Boolean);
         result.evidence_ids=[...new Set([...result.evidence_ids,...cited])];
+      }
+      if(result.details?.passage_sequence){
+        const beats=result.details.passage_sequence.beats;
+        result.node_ids=[...new Set([...result.node_ids,...beats.map(b=>b.event_id)])];
+        result.evidence_ids=[...new Set([...result.evidence_ids,...beats.map(b=>b.evidence_id)])];
       }
       const payload=section==='uncertainties'?String(result.text).split('\n').map(s=>s.trim()).filter(Boolean):result;
       await api.post(`/staging/${enc(book.id)}/corpus/record`,{expected_version:record.latest_version,section,row:payload});

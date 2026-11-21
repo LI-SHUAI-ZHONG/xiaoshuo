@@ -40,6 +40,10 @@ def test_visible_catalog_legacy_bookmark_and_pinned_method(tmp_path,monkeypatch)
         for domain, fields in catalog['domain_details'].items():
             assert f'data-analysis-domain="{domain}"' in board
             assert all(label in board for label in fields.values())
+        for technique in catalog['passage_sequences'].values():
+            assert technique['label'] in board
+            assert ' → '.join(technique['roles'][r]+('' if r in technique['required_roles'] else '（原文出现时）')
+                              for r in technique['role_order']) in board
         atlas=render('atlas/GENRE_XUANYI?tab=cast')
         assert '已确认的阵容样本为 0 部' in atlas
         assert 'type="number"' not in atlas

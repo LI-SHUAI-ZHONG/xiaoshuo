@@ -141,7 +141,7 @@ def test_legacy_requests_cannot_replace_an_active_job_or_archive_its_unreviewed_
 
 def test_new_modules_are_served_by_the_existing_client(client):
     request,_=client
-    for module in ('corpus','corpus_editor','corpus_jobs','corpus_view'):
+    for module in ('corpus','corpus_editor','corpus_passage_editor','corpus_jobs','corpus_view'):
         status,code=request('GET',f'/js/pages/{module}.js')
         assert status==200 and 'export ' in code
     status,code=request('GET','/js/pages/staging.js')

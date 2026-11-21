@@ -8,6 +8,7 @@ export function analysisCatalogHtml(catalog,counts=null){
   return `<section aria-label="现行拆解条目"><div class="section-head"><h2>现行拆解条目</h2><span class="muted">规格 v${esc(catalog.schema_version)} · ${domains.length} 项</span></div>
     ${domains.map(([id,name])=>`<details class="details" data-analysis-domain="${esc(id)}"><summary>${esc(name)}</summary>
       <ul>${Object.values(catalog.domain_details[id]).map(label=>`<li>${esc(label)}</li>`).join('')}</ul>
+      ${id==='narration'&&catalog.passage_sequences?`<p>可按连续原句分析段落承接：</p><ul>${Object.values(catalog.passage_sequences).map(k=>`<li>${esc(k.label)} · ${k.role_order.map(r=>esc(k.roles[r])+(k.required_roles.includes(r)?'':'（原文出现时）')).join(' → ')}</li>`).join('')}</ul>`:''}
       ${id==='cast_roster'?`<p>全书地位：${Object.values(catalog.cast_roster_options.standing).map(esc).join('、')}。</p>
         <p>本章职责：${Object.values(catalog.cast_roster_options.function_kind).map(esc).join('、')}。</p>`:''}
       ${counts?(Object.hasOwn(counts,id)?`<button class="ghost" data-domain-observations="${esc(id)}">查看本书观察（${esc(counts[id])}）</button>`:'<p class="muted">本份旧分析未包含此项。</p>'):''}</details>`).join('')}</section>`;
@@ -68,6 +69,14 @@ export function recordDrawer(section,row,record,catalog){
       <div class="section-head"><h3>对应实际事件序列</h3></div>${row.node_ids.map(id=>{const e=doc.events.find(x=>x.id===id);return e?`<section class="card"><h3>${esc(e.summary)}</h3><p class="muted">${esc(e.id)} · ${catalog.granularity[e.granularity]}</p>${['goal','conflict','choice','cost','result','information_before','information_after','emotion_before','emotion_after'].map(key=>`<p><strong>${esc(catalog.row_fields.events[key])}：</strong>${esc(e[key]||'原作未明确 / 待核')}</p>`).join('')}</section>`:`<p class="error">引用缺失：${esc(id)}</p>`;}).join('')}`;
   }
   const fields=catalog.row_fields[section];
+  const sequence=row.details?.passage_sequence;
+  if(sequence){
+    const kind=catalog.passage_sequences[sequence.kind];
+    extra+=`<section><h3>${esc(kind.label)}</h3><p>适用条件：${esc(sequence.condition)}</p><p>不适用边界：${esc(sequence.boundary)}</p>
+      <ol>${sequence.beats.map(b=>{const e=evidence.find(item=>item.id===b.evidence_id);return `<li><strong>${esc(kind.roles[b.role])}</strong> · ${esc(eventName(b.event_id))}
+        <p>${esc(b.bridge)}</p><blockquote>${esc(e?.quote||'原文缺失')}</blockquote><small>${esc(b.evidence_id)} · 字符 ${e?.start??'？'}–${e?.end??'？'} · ${esc(catalog.narration_claims[b.claim_status])}</small>
+        ${b.story_change?`<p>发生的变化：${esc(b.story_change)}</p>`:''}${b.reader_change?`<p>读者所得：${esc(b.reader_change)}</p>`:''}</li>`}).join('')}</ol></section>`;
+  }
   drawer(row.title||row.name||row.summary||sectionNames[section],`<div class="stack">${Object.entries(fields).filter(([key])=>key!=='details'&&key!=='evidence_ids').map(([key,label])=>{
     let value=row[key];if(section==='links'&&['source','target'].includes(key))value=eventName(value);
     if(Array.isArray(value))value=value.join('、');

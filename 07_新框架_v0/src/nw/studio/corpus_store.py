@@ -33,7 +33,7 @@ class CorpusMixin:
         except (OSError,ValueError) as exc:
             source_issues=[{'field':'source','message':str(exc),'severity':'error'}]
             content=''
-        issues=graph_issues(body,len(content) if content else max((u['end'] for u in body['units']),default=0),coverage)
+        issues=graph_issues(body,len(content) if content else max((u['end'] for u in body['units']),default=0),coverage,content=content or None)
         review=conn.execute('SELECT * FROM corpus_structure_reviews WHERE book_id=? AND version=?',(book_id,version)).fetchone()
         state={'approve':'approved','reject':'rejected'}.get(review['decision'],'draft') if review else 'draft'
         return {'book_id':book_id,'version':version,'latest_version':head['latest_version'],'approved_version':head['approved_version'],

@@ -1,5 +1,5 @@
 """Keep the original plan and the staged story checks on the same contract versions."""
-from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, narration
+from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, narration, passage_sequence
 from nw.materials.phase_routes import POLICY, STAGED_POLICIES
 
 
@@ -8,12 +8,13 @@ VERSIONS = {
     'chapter_progress_policy': chapter_progress.POLICIES,
     'cast_demand_policy': (cast_demands.POLICY,),
     'cast_distribution_policy': (cast_distribution_plan.POLICY,),
+    'passage_policy': (passage_sequence.POLICY,),
 }
 
 
 def current() -> dict[str, str]:
     return {'narration_policy': narration.EVIDENCE_POLICY, 'chapter_progress_policy': chapter_progress.POLICY,
-            'cast_demand_policy': cast_demands.POLICY}
+            'cast_demand_policy': cast_demands.POLICY, 'passage_policy': passage_sequence.POLICY}
 
 
 def verify(context: dict, plan: dict | None = None) -> None:
@@ -31,6 +32,11 @@ def verify_session(session: dict, plan: dict | None = None) -> None:
     if session['policy'] != POLICY and VERSIONS.keys() & context.keys():
         raise ValueError('MATERIAL_STAGE: 此制作校验版本需要支持人物和章场设计的阶段装配程序')
     verify(context, plan)
+    if context.get('passage_policy'):
+        if context.get('narration_policy') != narration.EVIDENCE_POLICY:
+            raise ValueError('MATERIAL_STAGE: 连续段落需要原设计任务的带证据叙述节拍')
+        if plan is not None and context.get('passage_references', []) != plan.get('passage_references', []):
+            raise ValueError('MATERIAL_STAGE: 分步制作与原设计任务冻结的段落方法引用不同')
     if plan is not None and context.get('cast_distribution_policy'):
         for key in ('cast_sample_reference', 'cast_distribution_book_plan', 'cast_previous_appearances'):
             if context.get(key) != plan.get(key):

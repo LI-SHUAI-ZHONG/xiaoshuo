@@ -173,6 +173,13 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
 
 def verify_sources(store: object,session: dict) -> None:
     reader=MethodReader(store.directory.parent)
+    context = session.get('context', {})
+    if context.get('passage_policy'):
+        from nw.production_methods.passage_sources import verify_choices
+        for stage in session.get('stages', []):
+            if stage.get('stage') == 'scene_design':
+                verify_choices(reader.workspace, context.get('passage_references', []),
+                               stage['products'].get('passage_choices', []))
     for entry in session.get('production_method_parents',[]):reader.verify(entry['method'], require_current=False)
     for record in session.get('stages',[]):
         plan=record.get('production_methods')

@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from nw.studio.catalog import canonical_types
 from nw.studio.corpus_catalog import require_current_schema
+from nw.studio.corpus_passages import method_sequence
 from nw.studio.library_util import encode, timestamp
 from nw.studio.method_contract import draft
 from nw.studio.method_catalog import TASKS
@@ -88,6 +89,14 @@ def check_narration_method(service: object, structure: dict, body: dict, basis: 
         if thread['status']=='uncertain' or not nodes or any(
                 not cited.intersection(events[node],thread['evidence_ids']) for node in nodes):
             raise ValueError('叙述方法须引用所选叙述观察及各实际事件的原文短引')
+        sequence=thread['details'].get('passage_sequence')
+        if sequence:
+            beats=sequence['beats']
+            if any(b['event_id'] not in nodes or b['evidence_id'] not in cited for b in beats):
+                raise ValueError('连续段落方法须引用每个落点的细拆事件及该处原句，不能跳过中间的承接')
+            grounded={b['role'] for b in beats if b['claim_status'] in ('stated','attributed')}
+            if any(b['role']!='handoff' and b['role'] not in grounded for b in beats):
+                raise ValueError('手法的关键承接只凭推测或未知，须补原文叙述或可归属的言行后再提炼')
 
 
 def check_world_method(service: object, structure: dict, body: dict, basis: dict) -> None:
@@ -152,6 +161,10 @@ def origin_status(service: object, method_id: str, version: int, body: dict, con
                               if t['id'] in origin['basis']['thread_ids'] and t['domain'] in STORY_TASKS})
         if story_domains:
             origin['observation_domains']=story_domains
+        passages=[method_sequence(t) for t in structure['body']['threads'] if t['id'] in origin['basis']['thread_ids']
+                  and t['domain']=='narration' and 'passage_sequence' in t['details']]
+        if passages:
+            origin['passage_sequences']=passages
         origin['source_extent']=structure['body']['source_extent']
     except (OSError,ValueError,KeyError) as exc:
         issues=[{'field':'origin','message':str(exc)}]

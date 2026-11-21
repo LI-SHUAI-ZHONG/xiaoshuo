@@ -107,7 +107,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
 
     require(isinstance(raw,dict) and set(raw)=={'stage','products'} and raw['stage']==stage,'wrong stage output')
     value=raw['products']
-    from nw.materials import cast_demands, cast_distribution_plan, chapter_progress
+    from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, passage_sequence
+    passage_enabled = context.get('passage_policy') == passage_sequence.POLICY
     cast_distribution = context.get('cast_distribution_policy') == cast_distribution_plan.POLICY
     cast_enabled = context.get('cast_demand_policy') == cast_demands.POLICY
     progress_enabled = context.get('chapter_progress_policy') in chapter_progress.POLICIES
@@ -124,6 +125,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             -({'cast_events'} if cast_enabled and stage == 'plot_design' else set())
             -({'cast_payoffs'} if cast_enabled and stage == 'scene_design' else set())
             -({'cast_distribution_plan'} if cast_distribution and stage == 'scene_design' else set())
+            -({'passage_choices'} if passage_enabled and stage == 'scene_design' else set())
+            -({'passage_sequences'} if passage_enabled and stage == 'expression_design' else set())
             -({'_network_design_uses'} if context.get('design_network_policy') else set()),'wrong stage product fields')
     if '_governance' in value:
         config=value['_governance']
@@ -235,6 +238,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         _chapters(value['chapters'],context.get('scope','chapter'),all_members)
         if cast_distribution:
             cast_distribution_plan.validate(value, products, context)
+        if passage_enabled:
+            passage_sequence.validate_choices(value, products, context.get('passage_references', []))
         if context.get('narration_policy') in ACCESS_POLICIES:
             from nw.materials.cast_design import entry_bases
             from nw.materials.narration import EVIDENCE_POLICY
@@ -323,6 +328,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             from nw.materials.cast_design import validate_expression
             validate_expression(rows, scenes, bases, witnessed_entries=context.get('narration_policy') == narration.EVIDENCE_POLICY)
         require({row['scene'] for row in rows}==scenes.keys(),'a scene has no actual anchor or expression products')
+        if passage_enabled and stage == 'expression_design':
+            passage_sequence.validate_sequences(value, products['scene_design']['products'], context.get('passage_references', []))
     elif stage=='bind_scope':
         require(isinstance(value['material_bindings'],dict) and isinstance(value['process_bindings'],dict)
                 and isinstance(value['method_guidance'],list),'scope binding products required')

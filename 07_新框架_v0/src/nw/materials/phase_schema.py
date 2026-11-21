@@ -54,7 +54,7 @@ def card(kind: str, *, narration: bool | str = False) -> dict:
 
 def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | None=None,*,allow_requests: bool=True,
            contracts: list[dict] | None=None, type_network_inputs: bool=False, narration: bool | str=False,
-           chapter_progress: bool=False, cast_demand: bool=False, cast_distribution: bool=False) -> dict:
+           chapter_progress: bool=False, cast_demand: bool=False, cast_distribution: bool=False, passage: bool=False) -> dict:
     state={'type':'object','additionalProperties':ANY,'minProperties':1}
     use=obj({**strings('source_id','operation'),'output_refs':array(TEXT,1)})
     use['properties']['operation']={'type':'string','minLength':8,'maxLength':160}
@@ -185,6 +185,23 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
         shapes['patches']['maxItems']=len({e['scene'] for e in events})
         use['properties']['output_refs']=array({'enum':['scene:'+scene for scene in sorted({e['scene'] for e in events})]},1)
     fields={key:shapes[key] for key in sorted(FIELDS[stage])};fields.update(common)
+    if passage and stage in ('scene_design', 'expression_design'):
+        from nw.materials.passage_sequence import ROLES, STATUS, DETAIL
+        optional_text = {'type': ['string', 'null']}
+        if stage == 'scene_design':
+            fields['passage_choices'] = array(obj({**strings('scene', 'event', 'need_quote', 'reason'),
+                'kind': {'enum': [*ROLES, 'other']}, 'source_ref': optional_text,
+                'fit': obj(strings('condition', 'boundary', 'prior_quote', 'boundary_check'))}, ('fit',)))
+        else:
+            step = obj({'beat': {'type': 'integer', 'minimum': 1}, 'focus_quote': TEXT,
+                        'bridge_quote': optional_text, 'connection': optional_text,
+                        'role': {'enum': sorted(set().union(*ROLES.values()))},
+                        'detail': {'enum': list(DETAIL)}, 'status': {'enum': list(STATUS)}})
+            number = {'type': 'integer', 'minimum': 1}
+            comparison = obj({**strings('gate_quote', 'example_actor', 'example_choice', 'branch_actor', 'branch_choice'),
+                              'example_beat': number, 'branch_beat': number})
+            fields['passage_sequences'] = array(obj({'scene': TEXT, 'steps': array(step, 2), 'source_operation': TEXT,
+                'source_beat': number, 'comparison': comparison}, ('source_operation', 'source_beat', 'comparison')))
     if cast_demand and stage == 'plot_design':
         fields['cast_events'] = array(obj(strings('demand', 'event')))
     if cast_demand and stage == 'scene_design':
@@ -211,7 +228,7 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
         names = tuple(sorted(INPUT_FIELDS))
         fields['adaptation_inputs'] = obj({name: obj(strings('ref', 'quote')) for name in names}, names)
     final=obj({'stage':{'const':stage},'products':obj(fields,('_excluded','_requirements','static_bindings','_governance',
-                                                            '_receipts','adaptation_inputs'))})
+                                                            '_receipts','adaptation_inputs','passage_choices','passage_sequences'))})
     if not allow_requests:return final
     actions=[obj({'action':{'const':'search'},'query':TEXT,'cursor':{'type':'integer','minimum':0}},('cursor',))]
     if readable:actions.append(obj({'action':{'const':'read'},'id':{'enum':list(readable)}}))

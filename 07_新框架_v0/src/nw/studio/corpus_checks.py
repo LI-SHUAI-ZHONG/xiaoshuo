@@ -1,11 +1,12 @@
 """Graph/coverage integrity checks; author review decides literary interpretations."""
 from nw.studio.corpus_catalog import DETAILS, OVERVIEW, domains_for
 from nw.studio.corpus_index import range_coverage
+from nw.studio.corpus_passages import sequence_issue
 from nw.studio.corpus_roster import coverage_issue, roster_issue, subject_evidence
 from nw.studio.corpus_story_observations import REQUIRED_DETAILS, event_chapter, story_observation_issue
 
 
-def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[dict]:
+def graph_issues(body: dict, length: int, coverage: dict | None = None, *, content: str | None = None) -> list[dict]:
     issues=[]
 
     def check(ok: bool, field: str, message: str, severity: str = 'error') -> None:
@@ -97,6 +98,8 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
                 continue  # A passage can disclose a fact without showing a cause or a character responding.
             check(bool(thread['details'][key]),'threads','具体分析待填写：'+label,'warning')
         if thread['domain']=='narration':
+            issue=sequence_issue(thread,events,evidence,units,content)
+            check(not issue,'threads',issue+'：'+thread['id'])
             seen=set(thread['evidence_ids'])
             check(all(seen.intersection(events[node]['evidence_ids']) for node in thread['node_ids'] if node in events),
                   'threads','叙述观察须保留每个所引事件对应的原文短引：'+thread['id'])

@@ -38,7 +38,7 @@ def do_read(service: object, job: dict, state: dict, config: object, provider: o
         def validator(raw: dict) -> dict:
             return resolve_fragment(raw,doc,content,span=span,prefix=prefix,phase=phase)
         patch,seq=model_call(service,job['id'],config,provider,key=f'{phase}:{index}',phase=phase,
-                             messages=messages(phase,payload,version=doc['schema_version']),validator=validator)
+                             messages=messages(phase,payload,version=doc['schema_version'],passages=state.get('passage_observations',False)),validator=validator)
         state['document']=merge_fragment(doc,patch)
         state['coverage']['survey_ranges' if phase=='survey' else 'detail_ranges'].append({**span,'call_seq':seq})
         state[cursor_key]+=1;save_state(service,job['id'],state,phase)
@@ -58,7 +58,7 @@ def do_windows(service: object, job: dict, state: dict, config: object, provider
         if pending:ids,next_cursor=pending['ids'],pending['next_cursor']
         else:
             ids,next_cursor=choose_window(doc,events,cursor,phase=phase,domain=domain,prefix=prefix,
-                maximum=job['options']['max_input_chars'],global_basis=state.get('global_basis'))
+                maximum=job['options']['max_input_chars'],global_basis=state.get('global_basis'),passages=state.get('passage_observations',False))
             state['pending_window']={'key':key,'ids':ids,'next_cursor':next_cursor}
             save_state(service,job['id'],state,phase)
         selected=[e for e in events if e['id'] in ids]
@@ -86,7 +86,7 @@ def do_windows(service: object, job: dict, state: dict, config: object, provider
                     raise ValueError('必须先形成有来源节点的全局结构和覆盖限制，再进入章场细拆')
             return patch
         patch,_=model_call(service,job['id'],config,provider,key=key,phase=phase,
-                           messages=messages(phase,payload,version=doc['schema_version']),validator=validator)
+                           messages=messages(phase,payload,version=doc['schema_version'],passages=state.get('passage_observations',False)),validator=validator)
         state['document']=merge_fragment(doc,patch);state[cursor_key]=next_cursor;state.pop('pending_window',None)
         save_state(service,job['id'],state,phase)
 

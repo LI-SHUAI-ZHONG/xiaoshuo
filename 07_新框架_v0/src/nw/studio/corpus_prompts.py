@@ -49,10 +49,11 @@ NARRATION_READ = {
 }
 
 
-def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION) -> list[dict]:
+def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION, passages: bool = True) -> list[dict]:
     closed = ('钩子或伏笔标resolved须有实际回应或回收。叙述手法观察可依原句闭合，故事里尚未发生的结果继续未决。'
               if version >= 3 else '线程状态resolved必须有实际回应/回收关系。')
-    instruction = BASE+closed+'输入目录：'+encode(corpus_catalog(version))+'\n本步：'+INSTRUCTIONS[phase]
+    passage_read=version>=5 and passages and (phase=='detail' or phase=='relations' and payload.get('domain')=='narration')
+    instruction = BASE+closed+'输入目录：'+encode(corpus_catalog(version,passages=passage_read))+'\n本步：'+INSTRUCTIONS[phase]
     if version >= 2:
         instruction += WORLD_READ[phase]
     if version >= 3 and (phase != 'relations' or payload.get('domain') == 'narration'):
@@ -83,6 +84,21 @@ def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION) -> lis
             '地位有凭据时standing_evidence填写原句编号并收入evidence_ids；无法判断填unknown，不能猜测名额。'
             '同人别名要有依据才用canonical_id归并；没有名字但可区分的具体个人可用原文称呼。'
             '关系窗口逐个补查漏记的实际参与者。漏掉章或不能分辨实际在场时注明范围，不能把局部样本报作全书总人数。')
+    if passage_read:
+        instruction += ('原文若确实展示目录passage_sequences中某种连续写法，可另建narration观察，details增设可选'
+            'passage_sequence={kind,condition,boundary,beats:[{event_id,evidence_id,role,bridge,story_change,reader_change,claim_status}]}。'
+            '按实际文本先后，从所在空间、人物公务或行动目的入场。procedure_branch观察先例如何完整办理、时间如何略过重复、'
+            '下一人哪句选择造成分叉、实际交出的凭证或下步问题；focus_relay观察空间定位或感官细节、人物动作或视线如何引导注意、'
+            '何人何物成为焦点、末处特写留下什么可见信息或未决问题。按role_order安排，required_roles为核心，'
+            '只见示范接不同选择而没有跳时或交接，可省略compression和handoff；止于聚焦可省略handoff。'
+            '只按原文有意义的承接划分，同一role可连续展开数拍。章名归入目录，面向读者的招呼记在原文说明，'
+            '两者不作故事现场、人物发言或推进事件。已有地点上出现的课业、物件、设施或反常缺席，'
+            '写清哪项具体细节更新了读者原先的认识。人物凭气息估计能力、盼望日后获得帮助，都保留判断者与未知结果。'
+            '每拍须有同章细拆事件及连续段内该事件定位短引。首拍bridge写进入依据，后拍写与上一拍的具体动作、物件、'
+            '空间、视线、话语或时间承接。story_change只填叙述已证实的变化；归属他人的说法、可能性、推测和未决事项只写在'
+            'reader_change，标attributed/inferred/unknown。condition适用需求及boundary不适用边界各不超过240字，'
+            '用可复用的通用条件表达，不写原作人名、地名或剧情。'
+            '覆盖不足、只见单段技巧或中间隔了举证不了的完整段落，保留普通观察；不可拼凑远处分散原句。')
     return [{'role':'system','content':instruction},
             {'role':'user','content':encode({'phase':phase,**payload})}]
 
@@ -108,6 +124,10 @@ def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dic
                         '把原作呈现方式换成本项目已有世界事实、人物经历或场景目标。至少生成expression_design.guidance表达指导，'
                         '分别交给writer和review，按具体段落核对谁有理由知道、发生了什么变化。需要时另给scene_design.members场景卡。'
                         '摘录没写的判断或后果继续未决，只迁移可核的写法。没证据可返回空列表。')
+        if payload['thread'].get('details',{}).get('passage_sequence'):
+            instruction += ('按passage_sequence的condition和boundary说明适用与不适用需求，操作按原句顺序迁移各拍作用、'
+                            '段间承接和读者所得。basis及body.evidence须覆盖每拍关联的事件和精确引文。'
+                            '把原书主体、地名、物件和经历替换为本项目场景前置，保留人物说法、推测与既成事实的区别。')
     if payload['thread']['domain']=='world_rules':
         instruction += ('本次从world_rules原作观察提炼；证据须定位约束及其改变实际选择或后果的事件。'
                         '单场足以证明时引用该事件，否则引用能解释前后因果的关系及两端原文。不能只转述通用世界观模板。'

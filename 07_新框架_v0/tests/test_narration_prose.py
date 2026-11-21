@@ -166,7 +166,8 @@ def test_approved_narration_reaches_write_review_revision_and_reopened_draft(tmp
                 raw = json.loads(result.text)
                 audience = data['context']['reader_only_spans']
                 private = [span for span in audience if 'holders' not in span]
-                assert private == [{'start': 0, 'end': data['draft']['text'].index('\n'), 'time': 'past'}]
+                assert private == [{'start': 0, 'end': data['draft']['text'].index('\n'),
+                                    'time': 'past', 'reported_only': False}]
                 assert any(span.get('mode') == 'action' and span['holders'] for span in audience)
                 with pytest.raises(ValueError, match='仅向读者讲述'):
                     check_state_audience([{'holder': 'yan', 'evidence': private}], audience)

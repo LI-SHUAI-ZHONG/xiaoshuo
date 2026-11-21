@@ -81,7 +81,7 @@ def resolve_fragment(raw: dict, document: dict, content: str, *, span: dict | No
                 if not (thread['id'].startswith(prefix+'_') and set(thread['evidence_ids'])<=current_evidence
                         and set(thread['node_ids'])<=local_nodes):
                     raise ValueError('章场观察须用本片段标识、事件和引文；跨段对照留给关系核对')
-    checks=graph_issues(normalized,len(content))
+    checks=graph_issues(normalized,len(content),content=content)
     errors=[r['message'] for r in checks if r['severity']=='error' and r['field'] not in ('overview','domains','source_extent','coverage')
             and r['message']!='尚无有证据的事件节点']
     if errors:raise ValueError('；'.join(errors[:8]))

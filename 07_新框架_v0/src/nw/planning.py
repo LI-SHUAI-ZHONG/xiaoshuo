@@ -193,8 +193,14 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 raise ValueError('MATERIAL_GOVERNANCE: expected inputs keyed by current planning stage')
             material_governance = dict(governance_inputs)
             world_inputs = dict(material_governance.get('world_design', {}))
-            if 'cast_sample_reference' in world_inputs:
-                package['cast_sample_reference'] = world_inputs.pop('cast_sample_reference')
+            if world_inputs.keys() & {'cast_sample_reference','passage_references'}:
+                if 'cast_sample_reference' in world_inputs:
+                    package['cast_sample_reference'] = world_inputs.pop('cast_sample_reference')
+                if 'passage_references' in world_inputs:
+                    method_scope = 'chapter' if scope == 'replan' else scope
+                    passages = [ref for ref in world_inputs.pop('passage_references') if method_scope in ref['scopes']]
+                    if passages:
+                        package['passage_references'] = passages
                 if world_inputs:
                     material_governance['world_design'] = world_inputs
                 else:
@@ -221,7 +227,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         if existing:
             _, previous_package = read_input_manifest(store, manifest_id)
             package.pop('cast_sample_reference', None)
-            for key in ('cast_sample_reference', 'cast_distribution_policy', 'cast_distribution_book_plan',
+            package.pop('passage_references', None)
+            for key in ('passage_policy', 'passage_references', 'cast_sample_reference', 'cast_distribution_policy', 'cast_distribution_book_plan',
                         'length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews', 'chapter_progress_policy',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',

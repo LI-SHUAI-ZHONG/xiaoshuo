@@ -142,6 +142,8 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
                           '仅听见自报或介绍时保留说法或信念；即使公开了真实身份，也无需另造 WORLD 身份变化。')
     if any(span.get('reported_only') for span in package.get('reader_only_spans', [])):
         material_note += ' reported_only 只证明有人说过、想过或作过判断。确证其内容须另引该获知者可接触的独立证据。'
+    if any(span.get('passage_status') for span in package.get('reader_only_spans', [])):
+        material_note += ' passage_status 为 pending 的原句只提出选项或后续安排，inference 是尚待证实的推断。要登记其结果已经兑现，另引实际发生的原句。'
     messages = [{'role': 'system', 'content': (
         '只输出 JSON {"operations":[]}。逐项提供 op、entity_id、predicate、holder、claim、story_order、'
         'disclosure_order、expected_old、new_value、evidence。证据用正文 Unicode 半开区间。'
