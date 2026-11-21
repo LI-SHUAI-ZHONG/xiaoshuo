@@ -43,15 +43,50 @@ def placements(rows: object,products: dict,stage: str,*,definition: dict | None=
     return rows
 
 
-def guides(rows: object,scenes: set[str],*,required: bool=False) -> None:
+def guides(rows: object,scenes: set[str],*,required: bool=False, from_beats: bool=False) -> None:
     require(isinstance(rows,list),'场景交接须为列表')
     seen=set()
     for row in rows:
         require(isinstance(row,dict) and set(row)=={'scene','observable','check'} and isinstance(row['scene'],str) and row['scene'] in scenes and row['scene'] not in seen,
                 '交接只能指向本方案的实际场景')
-        require(explanation(row['observable']) and explanation(row['check']),'场景交接须写明可见呈现及实际验收方法')
+        if not from_beats:
+            require(explanation(row['observable']) and explanation(row['check']),'场景交接须写明可见呈现及实际验收方法')
         seen.add(row['scene'])
     require(not required or bool(rows),'面向写作/审稿的方法须交给实际场景，不能仅登记已用')
+
+
+def narration_handoff(products: dict, stage: str, output: dict) -> None:
+    scenes = set()
+    beats = {}
+    for place in output['placements']:
+        path = place['path']
+        require(len(path) >= 2 and type(path[1]) is int, '叙述方法须定位到实际场景或该场独立的节拍')
+        field = path[0]
+        item = products[field][path[1]]
+        if stage == 'expression_design':
+            require(field == 'guidance' and isinstance(item.get('narration'), dict) and
+                    (len(path) == 2 or path[2] in ('observable', 'check', 'narration')),
+                    '叙述方法须落在本项目节拍的讲述安排、具体呈现或检验上')
+            scenes.add(item['scene'])
+            beats.setdefault(item['scene'], set()).add((item['observable'], item['check']))
+        elif field == 'members':
+            require(len(path) == 2 or path[2] == 'body', '叙述方法须落实到实际场景卡的设计内容')
+            scenes.add(item['key'])
+        elif field == 'chapters':
+            require(len(path) >= 4 and path[2] == 'scenes' and type(path[3]) is int,
+                    '章内的叙述安排须指向具体场次')
+            scenes.add(item['scenes'][path[3]]['card'])
+        else:
+            require(field in ('events', 'selected_events', 'selected_actions') and
+                    (len(path) == 2 or path[2] != 'scene'), '叙述方法须落到本场事件或行动的具体内容')
+            scenes.add(item['scene'])
+    require(scenes == {row['scene'] for row in output['scene_guidance']},
+            '叙述方法交给写审的场景与实际采用的节拍不一致')
+    if stage == 'expression_design':
+        for row in output['scene_guidance']:
+            require(all(isinstance(row[k], str) for k in ('observable', 'check')) and
+                    (row['observable'], row['check']) in beats[row['scene']],
+                    '写审交接的表现与验收须来自该场同一已设计的叙述节拍')
 
 
 def validate(products: dict,stage: str,plan: dict | None,incoming: list[dict],scenes: set[str]) -> None:
@@ -87,7 +122,10 @@ def validate(products: dict,stage: str,plan: dict | None,incoming: list[dict],sc
                 from nw.production_methods.world_design import check_world_output
                 world_members.update(check_world_output(output['placements'], products, spec['method']))
             visible=any(d['output_key']==output['key'] and d['consumer'] in ('writer','review','acceptance') for d in body['downstream'])
-            guides(output['scene_guidance'],scenes,required=bool(scenes) and visible)
+            guides(output['scene_guidance'],scenes,required=bool(scenes) and visible,
+                   from_beats='narration' in body['tasks'] and stage == 'expression_design')
+            if 'narration' in body['tasks'] and stage in ('expression_design', 'scene_design'):
+                narration_handoff(products, stage, output)
         require(not expected,'方法预期产物未全部落实')
     if ai_world:
         expected_world = {i for i, member in enumerate(products['members']) if member['kind'] == 'world'}
@@ -98,7 +136,16 @@ def validate(products: dict,stage: str,plan: dict | None,incoming: list[dict],sc
                 '下游回执引用不存在或重复')
         delivery=expected.pop(receipt['id']);require(explanation(receipt['operation']),'下游须解释怎样承接已有设计')
         placements(receipt['placements'],products,stage)
-        guides(receipt['scene_guidance'],scenes,required=stage=='scene_design')
+        narrative = 'narration' in delivery.get('method', {}).get('body', {}).get('tasks', ())
+        guides(receipt['scene_guidance'],scenes,required=stage=='scene_design',
+               from_beats=narrative and stage=='expression_design')
+        if narrative:
+            if stage in ('scene_design', 'expression_design'):
+                narration_handoff(products, stage, receipt)
+            if not delivery.get('approved_parent') and delivery['output']['scene_guidance']:
+                originating = {row['scene'] for row in delivery['output']['scene_guidance']}
+                require(all(row['scene'] in originating for row in receipt['scene_guidance']),
+                        '叙述方法的下游回执把本场采用的写法转交给了另一场')
         if delivery.get('world_design_basis'):
             from nw.production_methods.world_design import check_receipt
             check_receipt(receipt, products, stage)

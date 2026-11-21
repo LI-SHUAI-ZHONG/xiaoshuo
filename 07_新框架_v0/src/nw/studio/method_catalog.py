@@ -72,6 +72,8 @@ _ROWS = (
      'plot_design scene_design anchor_design expression_design', 'book volume chapter scene', 'plot_design parent_outline'),
     ('expression', '叙事、对话与文风', '按场景功能、声线、知情边界和已选结果确定具体呈现。',
      'expression_design', 'volume chapter scene', 'character_design scene_design anchor_design'),
+    ('narration', '叙述时序、视角与呈现', '将有原作证据的讲述次序迁移到本场。区分已发生的事、此时谁知道什么、人物怎样理解，以及读者从哪句话看出变化。',
+     'expression_design scene_design', 'chapter scene', 'parent_outline world_design character_design plot_design event_design scene_design accepted_state'),
     ('method_binding', '方法交接与核验', '确定方法产物的消费者、执行任务及可回查的检查证据。',
      'bind_scope', 'book volume chapter scene', 'parent_outline accepted_state'),
 )

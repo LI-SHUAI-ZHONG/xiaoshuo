@@ -19,11 +19,17 @@ method_handoffs是上游/已批准父纲的具体产物。另含_method_receipts
 '''
 
 
-def prompt(plan: dict | None) -> str:
+def prompt(plan: dict | None, incoming: tuple | list = ()) -> str:
     if plan and plan['target'].get('selection_mode') == 'inherit_world':
         return PROMPT + ('\n本章/卷沿用production_method_selection.approved_world_members中的项目世界卡。'
                          '逐张保留其key、rule和limits，_method_applications为空。根据这些已批准规则推进后续剧情与场景。')
     if not plan or plan['target'].get('selection_mode') != 'ai':
+        if plan and any('narration' in item['method']['body']['tasks'] for item in [*plan['selected'], *incoming]):
+            return PROMPT + ('\n采用叙述方法时，使用拆解实例中有引文支持的叙述次序、说话或观察者及读者获得的信息，'
+                             '根据本项目人物、事件与披露许可重新设计。表达步骤的 placements 指向 guidance 的具体行'
+                             '或该行的 narration、observable、check。场景设计的落点定位到具体场卡、场次、事件或选定行动；'
+                             '每项用 scene_guidance 交给这些落点所属的实际场景。表达步骤每场取所用节拍中一行的'
+                             'observable 和 check 原样填写该场的交接；各拍仍按实际设计顺序提交。')
         return PROMPT
     return PROMPT.replace(
         'production_methods是作者已选并已确认前置版本的参考制作方法，不是原作情节可直接变成本项目事实的许可。',

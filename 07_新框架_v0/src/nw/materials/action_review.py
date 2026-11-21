@@ -2,6 +2,7 @@
 import json
 
 from nw.materials import evidence
+from nw.materials import narration_review
 from nw.materials.design_semantics import check_review_evidence
 from nw.models import Draft, Run
 from nw.store import Store
@@ -55,6 +56,10 @@ def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Dra
         if not break_is_natural(result['chapter_break'], draft):
             result['recommendation'] = 'revise'
     if contract:
+        rows = result['material_checks']
+        narration_review.assess_beats(contract['checks'], rows, draft)
+        if any(row['status'] != 'pass' for row in rows):
+            result['recommendation'] = 'revise'
         for row, reason in _design_problems(contract['checks'], result['material_checks'], draft):
             row.update(status='failed', reason=reason)
             result['recommendation'] = 'revise'
@@ -70,12 +75,19 @@ def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Dra
 def check_material_acceptance(store: Store, draft: Draft, delta: StateDelta) -> list[dict]:
     rows = evidence.check_material_acceptance(store, draft, delta)
     if (any(row['id'].startswith('work:design-network:') for row in rows)
+            or any(row['id'].startswith(narration_review.PREFIX) for row in rows)
             or sum(row['id'].startswith(_ACTION_CHECK_PREFIX) for row in rows) >= 2):
         # The base check has matched this frozen review message to the current contract.
         _, package = read_input_manifest(store, delta.manifest_id)
         reviewed = store.get('run', package['material_review_run'])
         snapshot = json.loads(reviewed.input_snapshot_json)
         contract = json.loads(snapshot['messages'][-1]['content'])['material_review']
+        narration_review.assess_beats(contract['checks'], rows, draft)
+        if any(row['status'] != 'pass' for row in rows):
+            raise ValueError('MATERIAL_EVIDENCE: the approved narration requires a passing review of the current draft')
+        reader_only = narration_review.reader_spans(contract['checks'], rows, draft)
+        if reader_only:
+            narration_review.check_state_audience(delta.operations, reader_only)
         for _, reason in _design_problems(contract['checks'], rows, draft):
             raise ValueError(reason)
         actions = _actions(contract['checks'])

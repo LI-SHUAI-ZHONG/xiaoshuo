@@ -40,7 +40,7 @@ def client(tmp_path):
 
 def test_method_endpoints_preserve_complete_versions_and_require_real_evidence(client):
     status, catalog = client('GET', '/api/kb/method-catalog')
-    assert status == 200 and len(catalog['tasks']) == 21
+    assert status == 200 and any(task['id'] == 'narration' for task in catalog['tasks'])
     status, empty = client('GET', '/api/kb/methods')
     assert status == 200 and empty['methods'] == []
     status, book = client('POST', '/api/staging', {'title': '[FAKE] HTTP证据', 'filename': 'http.md', 'text': SOURCE})

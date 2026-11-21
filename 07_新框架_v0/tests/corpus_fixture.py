@@ -79,10 +79,13 @@ class CorpusModel:
         elif phase in ('overview','relations'):
             events=payload['events'];domain=payload.get('domain') or 'main_plot'
             refs=list(dict.fromkeys(eid for e in events for eid in e['evidence_ids']))
-            person=events[0]['characters'][0]
+            person=next((who for event in events for who in event['characters']),None)
             row=thread(domain,events,person,refs,'resolved' if payload['last_window'] else 'open')
+            if domain=='narration':
+                row['details']['claim_status']='stated'
             kind={'main_plot':'causes','subplot':'crosses','character_arc':'changes_character','hook':'responds',
-                'foreshadow':'pays_off','information':'reveals','pacing':'emotional_shift','world_rules':'enables'}[domain]
+                'foreshadow':'pays_off','information':'reveals','pacing':'emotional_shift','world_rules':'enables',
+                'narration':'reveals'}[domain]
             available={e['id']:e for e in [*payload['frontier_events'],*events]}
             first=events[0];last=events[-1];links=[]
             prior=next((t for t in payload['open_threads'] if t['domain']==domain),None)

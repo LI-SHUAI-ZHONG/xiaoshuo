@@ -57,7 +57,9 @@ def approve(library, row):
 
 def test_task_catalog_uses_real_stages_products_and_one_legacy_mapping(library):
     result = library.method_catalog()
-    assert len(result['tasks']) == 21
+    assert len(result['tasks']) == 22
+    narration = next(task for task in result['tasks'] if task['id'] == 'narration')
+    assert set(narration['stages']) == {'expression_design', 'scene_design'}
     assert set().union(*(set(t['stages']) for t in result['tasks'])) == set(ORDER)
     assert set(result['scopes']) == {'book', 'volume', 'chapter', 'scene'}
     for stage in result['stages']:

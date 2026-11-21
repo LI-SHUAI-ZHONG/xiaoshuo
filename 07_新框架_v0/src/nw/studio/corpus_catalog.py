@@ -1,10 +1,12 @@
 """Analytical fields describe observations and inferences, never universal quotas."""
 from copy import deepcopy
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 DOMAINS = {'main_plot': '全书主线', 'subplot': '支线与交汇', 'character_arc': '人物弧光',
            'hook': '钩子与回应', 'foreshadow': '伏笔与回收', 'information': '信息披露', 'pacing': '节奏与情绪',
-           'world_rules': '世界规则、制度与资源约束'}
+           'world_rules': '世界规则、制度与资源约束', 'narration': '叙述时序、视角与呈现'}
+NARRATION_CLAIMS = {'stated': '叙述明确交代的事实', 'attributed': '人物说法、记忆或信念',
+                    'inferred': '分析者依据文字推断', 'unknown': '当前原文无法确定'}
 LEVELS = {'book': '全书', 'volume': '卷', 'chapter': '章', 'scene': '场景'}
 LINKS = {'causes': '导致', 'enables': '提供条件', 'opposes': '形成阻力', 'responds': '回应问题',
          'escalates': '升级问题', 'foreshadows': '埋设 / 暗示', 'hints': '再次提示',
@@ -27,6 +29,12 @@ DETAILS = {
                     'scope': '约束谁、需要哪些条件、由谁或何物执行',
                     'boundary': '适用边界、例外或原文尚未说明的部分',
                     'decision_effect': '受约束的事件、选择及其实际后果'},
+    'narration': {'time_order': '事件何时发生、读者何时得知；回到当下的落点',
+                  'presentation': '这一段怎样讲述（如概述事实、重演过程、人物交流、内心或观察）',
+                  'voice_access': '谁在讲、看、说或想；谁听得见、只能推测或还不知道',
+                  'claim_status': '所述内容的证据性质', 'causal_basis': '前因与后果、原文怎样支持，或联系仍待证',
+                  'character_response': '人物注意到什么、如何理解、怎样表达，回应带来了什么',
+                  'reader_effect': '读者由哪些话明白什么、还在等待什么'},
 }
 FIELDS = {
     'units': {'id': '标识', 'level': '层级', 'title': '标题', 'parent_id': '上级', 'start': '字符起点',
@@ -52,14 +60,16 @@ OVERVIEW = {'central_question': '全书总问题', 'mainline': '主线因果与�
 
 
 def domains_for(version: int) -> dict:
-    if type(version) is not int or version not in (1, SCHEMA_VERSION):
+    if type(version) is not int or version not in (1, 2, SCHEMA_VERSION):
         raise ValueError('不支持的拆解结构版本')
-    return {key: value for key, value in DOMAINS.items() if version >= 2 or key != 'world_rules'}
+    added = {'world_rules': 2, 'narration': 3}
+    return {key: value for key, value in DOMAINS.items() if added.get(key, 1) <= version}
 
 
 def corpus_catalog(version: int = SCHEMA_VERSION) -> dict:
     domains = domains_for(version)
     return {'schema_version': version, 'domains': domains, 'levels': LEVELS, 'link_kinds': LINKS,
+        **({'narration_claims': NARRATION_CLAIMS.copy()} if version >= 3 else {}),
         'overview_fields': OVERVIEW, 'row_fields': deepcopy(FIELDS), 'domain_details': {k: deepcopy(DETAILS[k]) for k in domains},
         'source_extents': {'complete': '作者确认完整作品', 'excerpt': '摘录 / 不完整文本', 'unknown': '完整性未确认'},
         'thread_statuses': {'open': '未决', 'resolved': '已兑现 / 已结束', 'uncertain': '存疑'},

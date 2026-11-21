@@ -33,11 +33,11 @@ def test_http_pipeline_review_methods_and_immutable_input_output(client,monkeypa
     monkeypatch.setattr(library,'_corpus_runtime',lambda:(runtime(),provider))
     book=make_book(library);root=f'/api/staging/{book["id"]}/corpus'
     status,catalog=request('GET','/api/corpus/catalog')
-    assert status==200 and len(catalog['domains'])==8
+    assert status==200 and len(catalog['domains'])==9
     status,empty=request('GET',root)
     assert status==200 and not empty['initialized']
     status,estimate=request('POST',root+'/estimate',{'chunk_chars':6000})
-    assert status==200 and estimate['minimum_structure_calls']==13
+    assert status==200 and estimate['minimum_structure_calls']==14
     status,job=request('POST',root+'/jobs',{'options':{'extent':'complete','note':'[FAKE] HTTP完整性声明'}})
     assert status==200
     completed=wait_job(library,book['id'],job['id'])
@@ -45,7 +45,7 @@ def test_http_pipeline_review_methods_and_immutable_input_output(client,monkeypa
     assert request('GET',root+'/jobs')[1]['jobs'][0]['id']==job['id']
     status,call=request('GET',root+f'/jobs/{job["id"]}/calls/1')
     assert status==200 and call['input']['messages'] and call['output']['text']
-    assert request('GET',root+f'/jobs/{job["id"]}')[1]['calls_used']==13
+    assert request('GET',root+f'/jobs/{job["id"]}')[1]['calls_used']==14
     assert request('POST',root+'/review',{'version':1,'decision':'approve','note':'[FAKE] 逐项核对'})[1]['available']
     status,method=request('POST',root+'/methods',{'version':1,'thread_ids':['T_hook']})
     assert status==200 and method['status']=='draft' and method['issues']

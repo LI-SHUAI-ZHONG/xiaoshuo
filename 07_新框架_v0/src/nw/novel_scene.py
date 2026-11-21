@@ -10,6 +10,7 @@ from nw.context.story import WRITE_PROMPT, StoryScope, build_story_context, scen
 from nw.materials.action_review import check_material_acceptance, review_result
 from nw.materials.binding import verify_materials
 from nw.materials.evidence import review_contract, scene_materials, state_hypotheses
+from nw.materials.narration_review import reader_spans
 from nw.materials.steps.review import MATERIAL as REVIEW_MATERIAL
 from nw.materials.steps.writing import MATERIAL as WRITING_MATERIAL
 from nw.length_plan import scene_length_feedback
@@ -118,7 +119,7 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
 
 
 def _extract(calls: JobCalls, scene: str, draft: Draft, frozen: dict,
-             material_review_run: str | None, hypotheses: list[dict]) -> StateDelta:
+             material_review_run: str | None, hypotheses: list[dict], reader_only: list[dict]) -> StateDelta:
     j = calls.journal
     key = f'scene:{scene}:delta'
     row = j.latest(key)
@@ -138,7 +139,7 @@ def _extract(calls: JobCalls, scene: str, draft: Draft, frozen: dict,
     if not j.store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (ident,)).fetchone():
         settings = _settings(extract_calls, 'state-extract-v1', [])
         freeze_delta_input(j.store, draft.id, scope, settings, material_review_run=material_review_run,
-                           material_hypotheses=hypotheses)
+                           material_hypotheses=hypotheses, reader_only_spans=reader_only)
 
     def invoke(kind: str, request: TaskRequest, validate: Callable[[dict], None]) -> TaskResult:
         task_key = f'{key}:{kind}'
@@ -213,7 +214,8 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
             break
         round_no += 1
     hypotheses = state_hypotheses(scene_materials(j.store, scene), review.get('material_checks', []), draft.id)
-    delta = _extract(calls, scene, draft, frozen, review_run.id if contract or ending else None, hypotheses)
+    reader_only = reader_spans(contract['checks'], review['material_checks'], draft) if contract else []
+    delta = _extract(calls, scene, draft, frozen, review_run.id if contract or ending else None, hypotheses, reader_only)
     key = f'{prefix}:check'
     j.check_active(key)
     findings = check_delta(j.store, delta)

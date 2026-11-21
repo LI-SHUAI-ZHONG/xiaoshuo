@@ -7,6 +7,7 @@ import json
 from nw.call_budget import BudgetExceeded
 from nw.cards import card_input_ref, read_card, read_links
 from nw.context.base import ContextItem, ContextPackage, package
+from nw.context.prior_prose import prior_prose
 from nw.materials.binding import verify_materials
 from nw.materials.evidence import comparison_draft, scene_checks, scene_materials, verify_preconditions, writer_checks
 from nw.materials.stage_input import check_source_keys, step_material_prompt
@@ -20,7 +21,8 @@ from nw.story_models import CardRef, Fact, SourceRef, StateHead
 from nw.story_state import baseline_for, current_head, position, revision_state, state_at
 from nw.task_models import Ref, canonical, content_sha256
 
-WRITE_PROMPT = ('按作者约束和本场任务写正文。仅用POV可知的信息。人物的belief可能有误，'
+WRITE_PROMPT = ('按作者约束和本场任务写正文。人物只凭当前视角可知的信息判断，人物的belief可能有误。'
+                '仅在本场明确安排面向读者的叙述节拍时，叙述者可交代该拍获准的事实，保留人物原来的知情范围。'
                 '按场景卡的披露边界写作，计划结果仍是候选。方法卡只在适用条件有依据时使用。只输出正文。')
 
 # These scoped sources also have direct uses written into the prose step.
@@ -59,6 +61,15 @@ class StoryWork:
     omitted_optional_groups: tuple[str, ...] = ()
 
 
+def _pov_goals(body: dict, pov: str) -> dict:
+    if 'character_goals' not in body:
+        return body
+    # Other participants' author-side intentions remain in the design. Their
+    # observable behaviour is delivered separately through the scene beats.
+    return {**body, 'character_goals': {
+        actor: goal for actor, goal in body['character_goals'].items() if actor == pov}}
+
+
 class StoryProvider:
     name = 'story'
 
@@ -66,7 +77,8 @@ class StoryProvider:
         items = []
         if project['brief'] is not None:
             items.append(ContextItem('brief', canonical(project['brief']), '作者需求与硬约束'))
-        scene_body = scene['body']
+        pov = project['holder']
+        scene_body = _pov_goals(scene['body'], pov)
         if 'chapter_word_budget' in scene_body or 'length_policy' in scene_body:
             # The chapter rationale can describe a later reveal outside this scene's POV.
             scene_body = {key: value for key, value in scene_body.items() if key not in ('chapter_word_budget', 'length_policy')}
@@ -80,7 +92,14 @@ class StoryProvider:
             items.append(ContextItem('chapter:length', canonical(progress), '按已接受稿与其余场景分配的本场可写字数'))
         from nw.length_plan import model_approved_cards
         for card in model_approved_cards(project['settings']):
-            items.append(ContextItem('card:' + card['card_id'], canonical(card['body']), '本场确认设定'))
+            body = card['body']
+            if card['kind'] == 'character' and card['card_id'] != pov and body.get('visibility') == 'public':
+                # Public casting cards often mix a speaking voice with author-side wounds
+                # and motives. Private facts the POV has learned come through its state.
+                body = {key: body[key] for key in ('name', 'role', 'voice') if key in body}
+            elif card['kind'] == 'scene':
+                body = _pov_goals(body, pov)
+            items.append(ContextItem('card:' + card['card_id'], canonical(body), '本场确认设定'))
         items.append(ContextItem('pov:' + project['holder'], canonical(project['facts']), '此时POV所知与误信'))
         if project.get('previous'):
             prev = project['previous']
@@ -263,16 +282,21 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     fits(assembled, mandatory=True)
     predecessors, other_evidence = _previous_refs(store, snapshot, view.facts, disclosure)
     earlier = {ref.id for ref in predecessors}
-    draft_texts: dict[str, str] = {}
+    prior_slots_by_draft = {slot['draft_id']: slot for slot in snapshot['slots'].values()}
+    prior_texts: dict[str, tuple[str, list[tuple[int, int]]]] = {}
+
+    def excerpt_source(ident: str) -> tuple[str, list[tuple[int, int]]]:
+        if ident not in prior_texts:
+            prior_texts[ident] = prior_prose(store, store.get('draft', ident), prior_slots_by_draft[ident], view.holder)
+        return prior_texts[ident]
 
     def _enrich_span(span: dict) -> dict:
         did = span.get('draft_id')
         start, end = span.get('start'), span.get('end')
         if isinstance(did, str) and did in earlier and type(start) is int and type(end) is int and 0 <= start < end:
-            if did not in draft_texts:
-                draft_texts[did] = store.get('draft', did).text
-            snippet = draft_texts[did][start:end]
-            if snippet and len(snippet) <= 240:
+            text, hidden = excerpt_source(did)
+            snippet = text[start:end]
+            if snippet and len(snippet) <= 240 and not any(start < b and a < end for a, b in hidden):
                 return {**span, 'quote': snippet}
         return span
 
@@ -285,18 +309,13 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         cand_scene = store.get('scene', cand_scene_id)
         cand_order = (store.get('chapter', cand_scene.chapter_id).index, cand_scene.index)
         if cand_order < disclosure[:2]:
-            prior_slots.append((cand_order, cand_scene_id, cand_scene, slot['draft_id']))
+            prior_slots.append((cand_order, cand_scene_id, slot['draft_id']))
     if prior_slots:
-        _, prev_scene_id, prev_scene, prev_draft_id = max(prior_slots, key=lambda row: row[0])
-        prev_binding = json.loads(prev_scene.card_json).get('story')
-        prev_pov = None
-        if isinstance(prev_binding, dict) and isinstance(prev_binding.get('scene_ref'), dict):
-            prev_pov = read_card(store, _ref(prev_binding['scene_ref']))['body'].get('pov')
-        if prev_pov in (None, card['body']['pov']):
-            prev_text = draft_texts.setdefault(prev_draft_id, store.get('draft', prev_draft_id).text)
-            if prev_text.strip():
-                adjacent_previous = {'scene_id': prev_scene_id, 'draft_id': prev_draft_id,
-                                     'tail_text': prev_text[-1200:]}
+        _, prev_scene_id, prev_draft_id = max(prior_slots, key=lambda row: row[0])
+        prev_text, hidden = excerpt_source(prev_draft_id)
+        safe_tail = prev_text[max((b for _, b in hidden), default=0):][-1200:]
+        if safe_tail.strip():
+            adjacent_previous = {'scene_id': prev_scene_id, 'draft_id': prev_draft_id, 'tail_text': safe_tail}
     shared = []
     if disclosure > position(baseline_for(store, scope.branch_id)['disclosure_order']):
         reader = state_at(store, scope.branch_id, scope.revision, scope.story_order, 'READER', disclosure,

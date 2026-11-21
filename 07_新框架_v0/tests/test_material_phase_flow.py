@@ -47,7 +47,8 @@ class PhaseModel(Model):
         from test_planning import Planner
         fixture_scope='book' if stage=='plot_design' and payload['scope']=='book' else 'chapter'
         products=project_products(stage,Planner(fixture_scope).output['candidate_cards'],
-                                  payload['inputs'],sources,payload['scope'],native=True)
+                                  payload['inputs'],sources,payload['scope'],native=True,
+                                  narration=bool(payload.get('narration_policy')))
         if stage=='state_transition':
             assert payload['inputs']['character_design']['products']['members']
             assert payload['inputs']['scene_design']['products']['events']

@@ -1,6 +1,8 @@
 """The selected full version is the only operational source, not an item cap."""
 import json
+from pathlib import Path
 import sqlite3
+import tomllib
 
 import pytest
 
@@ -11,6 +13,15 @@ from nw.task_models import content_sha256
 from test_material_catalog import _manifest
 
 FAMILIES=('library','types','type_links','static','dynamic','anchors')
+
+
+def test_client_can_open_its_shipped_material_ledger_after_a_workflow_change():
+    from nw.materials.adjudication import _code_hash
+
+    project = Path(__file__).resolve().parents[1]
+    settings = tomllib.loads((project / 'studio.repository.toml').read_text(encoding='utf-8'))
+    manifest = project / settings['data']['materials_baseline'] / 'manifest.json'
+    assert json.loads(manifest.read_text(encoding='utf-8'))['protected_core_sha256'] == _code_hash()
 
 
 def catalog(tmp_path, *, extra_library=''):

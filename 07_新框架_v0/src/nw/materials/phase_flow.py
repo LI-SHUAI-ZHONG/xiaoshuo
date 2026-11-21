@@ -1234,6 +1234,23 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
+        from nw.materials import narration
+        if context.get('narration_policy') == narration.POLICY:
+            if stage in ('expression_design', 'bind_scope'):
+                # Each upstream receipt is already attached to inputs[stage].ref.
+                # Keep the complete selection on disk and transmit each receipt once.
+                payload['source_selection'] = {k: v for k, v in selection.items() if k != 'upstream'}
+            if stage == 'world_design':
+                payload['narration_policy'] = narration.POLICY
+                suffix += '\n' + narration.WORLD_INSTRUCTION
+            elif stage == 'scene_design':
+                suffix += '\n' + narration.SCENE_INSTRUCTION
+            elif stage == 'expression_design':
+                stage_context['narration_facts'] = context.get('accepted_state', [])
+                payload['narration_bases'] = narration.scene_bases(products, stage_context)
+                payload['narration_policy'] = narration.POLICY
+                payload['output_schema'] += '；guidance每项另含narration:{time,mode,owner,basis_ref,basis_quote,effect}'
+                suffix += '\n' + narration.EXPRESSION_INSTRUCTION
         if context.get('length_context') and stage in ('plot_design', 'scene_design'):
             from nw.length_plan import instructions, model_length_context
             payload['length_context'] = model_length_context(context['length_context'])
@@ -1572,7 +1589,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         raw,receipt=_study_call(store,request,stage_config,stage_provider,call_index,payload,sources,
             desk,retry_failed,verify_method_call,prompt=prompt,validator=validate,
             version=call_version,read_only_sources=[source for source,_ in readings.values()],
-            step_material=material,prompt_suffix=suffix+(project_methods.prompt(method_plan) if method_plan is not None else ''))
+            step_material=material,prompt_suffix=suffix+(project_methods.prompt(method_plan, payload.get('method_handoffs', [])) if method_plan is not None else ''))
         verify_method_call()
         calls.append(receipt)
         if 'world_method_gap' in raw:
@@ -1700,6 +1717,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['network_layer_policy'] = package['network_layer_policy']
     if 'action_state_policy' in package:
         context['action_state_policy'] = package['action_state_policy']
+    if 'narration_policy' in package:
+        context['narration_policy'] = package['narration_policy']
     network = None
     if selected and package.get('network_prerequisite_policy') == NETWORK_POLICY:
         context['network_prerequisite_policy'] = NETWORK_POLICY

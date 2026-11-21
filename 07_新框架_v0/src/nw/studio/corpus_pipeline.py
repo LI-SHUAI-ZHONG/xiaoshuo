@@ -104,7 +104,7 @@ def derive_methods(service: object, job: dict, state: dict, config: object, prov
                 prepare_method(service,structure,candidate)
             return raw['methods']
         candidates,_=model_call(service,job['id'],config,provider,key=f'methods:{index}',phase='methods',
-                                messages=method_messages(payload),validator=validator)
+                                messages=method_messages(payload,version=doc['schema_version']),validator=validator)
         state['candidates'].extend(candidates);state['method_cursor']+=1
         save_state(service,job['id'],state,'methods')
 

@@ -41,7 +41,7 @@ export async function renderCorpus(ctx,book){
       <span class="muted">${record.body.events.length} 个实际事件 · ${record.body.threads.length} 条线索/弧光 · ${record.body.links.length} 条关系</span>
       ${record.history.length?`<select id="corpusVersion" aria-label="拆解版本">${record.history.map(v=>`<option value="${v.version}" ${v.version===record.version?'selected':''}>版本 ${v.version} · ${v.decision==='approve'?'已批准':v.decision==='reject'?'已退回':'待审核'}</option>`).join('')}</select>`:''}</div>
       <p class="notice">请按原文位置核对规则、事件因果和适用边界。方法单独审核后，项目可按前置需求和已选类型生成设计卡。</p>
-      ${record.body.schema_version<latestCatalog.schema_version?'<p class="notice">此版本按原有制作职责展示。重新运行多层自动拆解可从原文补查世界规则，结果保存为新版本。</p>':''}
+      ${record.body.schema_version<latestCatalog.schema_version?'<p class="notice">此版本按原有制作职责展示。重新运行多层自动拆解可按当前职责补查原文中的叙述时序、视角与披露，结果另存新版本。</p>':''}
       <div class="row wrap corpus-toolbar">${!record.initialized?'<button class="secondary" id="initializeCorpus">人工建立目录</button>':''}<button class="button" id="startCorpus" ${active()?'disabled':''}>多层自动拆解</button>
       ${canEdit?'<button class="secondary" id="editCorpusExtent">核对文本完整性</button>':''}
       ${canEdit&&!record.review?'<button class="secondary" id="reviewCorpus">审核当前结构</button>':''}

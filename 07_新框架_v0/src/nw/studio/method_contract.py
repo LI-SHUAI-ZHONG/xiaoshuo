@@ -137,6 +137,17 @@ def completeness(body: dict) -> list[dict]:
         output = outputs.get(row['output_key'])
         if output and row['consumer'] in ORDER:
             require(ORDER.index(row['consumer']) > ORDER.index(output['stage']), 'downstream', '下游必须在产物步骤之后')
+    if 'narration' in body['tasks']:
+        beats = {key for key, row in outputs.items()
+                 if row['stage'] == 'expression_design' and row['field'] == 'guidance'}
+        require(bool(beats), 'outputs', '叙述方法须把讲述安排落在表达设计的具体场景节拍')
+        for key in beats:
+            consumers = {row['consumer'] for row in body['downstream'] if row['output_key'] == key}
+            require({'writer', 'review'} <= consumers, 'downstream', '叙述节拍须交给正文写作和独立审稿')
+        for key, output in outputs.items():
+            if output['stage'] == 'scene_design':
+                require(any(d['output_key'] == key and d['consumer'] == 'expression_design' for d in body['downstream']),
+                        'downstream', '叙述方法的场景安排须交给表达设计，才能从本场实际节拍写审')
     for row in body['evidence']:
         require(row['end'] > row['start'], 'evidence', '原作证据位置范围无效')
     return issues

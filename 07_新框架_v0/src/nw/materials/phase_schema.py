@@ -20,17 +20,19 @@ def strings(*keys: str) -> dict:
     return {key:TEXT for key in keys}
 
 
-def card(kind: str) -> dict:
+def card(kind: str, *, narration: bool = False) -> dict:
     fields={**strings(*_REQUIRED[kind]),**{k:{'type':['string','null']} for k in _OPTIONAL[kind]},
             **{k:array(TEXT) for k in (*_LISTS.get(kind,()),'holders','tags','unknowns')},
             **{k:{'type':'object','additionalProperties':TEXT} for k in _MAPS.get(kind,())},
             'visibility':{'enum':['public','holders','author_only']}}
+    if kind == 'world' and not narration:
+        fields.pop('history')
     body=obj(fields,tuple(set(fields)-set(_REQUIRED[kind])-{'visibility'}))
     return obj({'key':TEXT,'kind':{'const':kind},'body':body})
 
 
 def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | None=None,*,allow_requests: bool=True,
-           contracts: list[dict] | None=None, type_network_inputs: bool=False) -> dict:
+           contracts: list[dict] | None=None, type_network_inputs: bool=False, narration: bool=False) -> dict:
     state={'type':'object','additionalProperties':ANY,'minProperties':1}
     use=obj({**strings('source_id','operation'),'output_refs':array(TEXT,1)})
     use['properties']['operation']={'type':'string','minLength':8,'maxLength':160}
@@ -118,6 +120,11 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
       'material_bindings':{'type':'object'},'process_bindings':{'type':'object'},
       'method_guidance':array(obj({**strings('scene','observable','check'),'source_ids':array(TEXT,1)})),
     }
+    if stage == 'expression_design' and narration:
+        from nw.materials.narration import MODES
+        beat = obj({**strings('basis_ref','basis_quote','effect'), 'time': {'enum': ['current', 'past']},
+                    'mode': {'enum': list(MODES)}, 'owner': {'type': ['string', 'null']}})
+        shapes['guidance'] = array(obj({**strings('scene','observable','check'), 'narration': beat}), 1)
     if stage=='event_design':
         shapes['candidates']=array(obj({**strings('id','predecessor','event','completion_gate'),
             'source_ids':array(TEXT),'actors':array(TEXT,1),'status':{'const':'conditional_candidate'}}))
@@ -132,7 +139,7 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
             'gates':{'const':{'require_root_confirmation':True,'require_external_action_selection':True,
                               'require_continuity_validation':True}},
             'proposed_effect':state,'scene':{'type':['string','null']},'status':{'const':'conditional_candidate'}}))
-    if stage in member_kinds:shapes['members']=array({'anyOf':[card(k) for k in member_kinds[stage]]})
+    if stage in member_kinds:shapes['members']=array({'anyOf':[card(k,narration=narration) for k in member_kinds[stage]]})
     events=(inputs or {}).get('scene_design',{}).get('products',{}).get('events',[])
     if stage=='state_transition' and events:
         short={'type':'string','minLength':1,'maxLength':160}

@@ -106,16 +106,29 @@ def scene_checks(session: dict,scene: str) -> list[dict]:
         by_id={r['id']:r for r in available}
         for receipt in record['products'].get('_method_receipts',[]):
             source=by_id[receipt['id']]
+            if _narration_design_only(source, record['stage']):
+                continue
             for guide in receipt['scene_guidance']:
                 if guide['scene']!=scene:continue
                 ident='method:'+receipt['id']+':'+record['stage']+':'+scene
                 if ident in seen:continue
                 seen.add(ident);result.append(check(ident,source,guide,receipt))
         for source in outputs([record]):
+            if _narration_design_only(source, record['stage']):
+                continue
             for guide in source['output']['scene_guidance']:
                 if guide['scene']==scene:result.append(check('method:'+source['id']+':'+scene,source,guide,source['output']))
         previous[record['stage']]=record
     return result
+
+
+def _narration_design_only(source: dict, stage: str) -> bool:
+    # For a narration method the scene card feeds expression design. Only the
+    # checked beat there is reader-facing; a designer's intermediate note can
+    # contain another person's motivation or wording for a different passage.
+    return ('narration' in source['method']['body'].get('tasks', ())
+            and source['definition']['stage'] in ('scene_design', 'expression_design')
+            and stage != 'expression_design')
 
 
 def check(ident: str,source: dict,guide: dict,artifact: dict) -> dict:

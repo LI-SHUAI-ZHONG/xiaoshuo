@@ -14,7 +14,7 @@ export function recordDrawer(section,row,record,catalog){
   const evidence=doc.evidence.filter(e=>(row.evidence_ids||[]).includes(e.id));
   let extra='';
   if(section==='threads'){
-    extra=`<div class="stack">${Object.entries(catalog.domain_details[row.domain]).map(([key,label])=>`<section class="design-card"><h3>${esc(label)}</h3><p>${esc(row.details[key]||'原作未明确 / 待核实')}</p></section>`).join('')}</div>
+    extra=`<div class="stack">${Object.entries(catalog.domain_details[row.domain]).map(([key,label])=>`<section class="design-card"><h3>${esc(label)}</h3><p>${esc((key==='claim_status'?catalog.narration_claims?.[row.details[key]]:row.details[key])||'原作未明确 / 待核实')}</p></section>`).join('')}</div>
       <div class="section-head"><h3>对应实际事件序列</h3></div>${row.node_ids.map(id=>{const e=doc.events.find(x=>x.id===id);return e?`<section class="card"><h3>${esc(e.summary)}</h3><p class="muted">${esc(e.id)} · ${catalog.granularity[e.granularity]}</p>${['goal','conflict','choice','cost','result','information_before','information_after','emotion_before','emotion_after'].map(key=>`<p><strong>${esc(catalog.row_fields.events[key])}：</strong>${esc(e[key]||'原作未明确 / 待核')}</p>`).join('')}</section>`:`<p class="error">引用缺失：${esc(id)}</p>`;}).join('')}`;
   }
   const fields=catalog.row_fields[section];

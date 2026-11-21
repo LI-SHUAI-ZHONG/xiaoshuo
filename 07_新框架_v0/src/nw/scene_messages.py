@@ -5,6 +5,7 @@ from dataclasses import asdict
 from nw.materials.action_review import ACTION_ORDER_REASON, ACTION_REVIEW_PROMPT
 from nw.materials.evidence import PROMPT as MATERIAL_REVIEW_PROMPT
 from nw.materials.network_layers import POLICY as NETWORK_LAYER_POLICY, REVIEW_INSTRUCTION as NETWORK_LAYER_REVIEW
+from nw.materials import narration_review
 from nw.materials.stage_input import check_source_keys, step_material_prompt
 from nw.models import Draft
 from nw.task_models import canonical
@@ -17,6 +18,7 @@ REVIEW_PROMPT = (
 )
 REVISE_PROMPT = (
     '根据冻结的工作包、旧稿和审稿意见修订本场。保持作者已确认的设定与披露边界，只输出完整修订正文。'
+    '叙述节拍需要修订时，对照同号工作包和旧稿定位调整知情者、讲述次序或实际效果。'
 )
 
 
@@ -33,7 +35,10 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
                 status = check['status']
                 if status == 'pass' and check['id'].startswith('work:layer:'):
                     status = check['layer_check']['status']
-                visible_checks.append({'id': check['id'], 'status': status})
+                visible = {'id': check['id'], 'status': status}
+                if status != 'pass' and check['id'].startswith(narration_review.PREFIX):
+                    visible.update(narration_review.revision_feedback(check, draft))
+                visible_checks.append(visible)
             data['review'] = {
                 'recommendation': review.get('recommendation'),
                 'notes': (ACTION_ORDER_REASON if ordered_actions_failed else
@@ -51,6 +56,8 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         appended = ' ' + MATERIAL_REVIEW_PROMPT
         if any('action_order' in check for check in contract['checks']):
             appended += ' ' + ACTION_REVIEW_PROMPT
+        if any(check['id'].startswith(narration_review.PREFIX) for check in contract['checks']):
+            appended += ' ' + narration_review.PROMPT
         if any(check.get('layer_contract', {}).get('policy') == NETWORK_LAYER_POLICY for check in contract['checks']):
             appended += ' ' + NETWORK_LAYER_REVIEW
     from nw.chapter_break import REVIEW as BREAK_REVIEW, WRITING as BREAK_WRITING, chapter_end

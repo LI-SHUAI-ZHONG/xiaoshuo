@@ -213,7 +213,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
-                        'multi_action_policy', 'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
+                        'multi_action_policy', 'narration_policy', 'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
                         'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy',
                         'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy'):
                 if key in previous_package:
@@ -232,6 +232,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         package['chapter_reviews'] = reviews
             if (store.directory.parent / 'materials/catalog.db').is_file():
                 from nw.materials.phase_context import ACTION_STATE_POLICY
+                from nw.materials.narration import POLICY as NARRATION_POLICY
                 from nw.materials.phase_flow import STAGE_MATERIALS
                 from nw.materials.phase_routes import phase_order
                 from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY
@@ -244,6 +245,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 package['scene_source_binding_policy'] = SCENE_SOURCE_BINDING_POLICY
                 package['multi_action_policy'] = MULTI_ACTION_POLICY
                 package['action_state_policy'] = ACTION_STATE_POLICY
+                package['narration_policy'] = NARRATION_POLICY
                 package['action_template_priority_enabled'] = True
                 package['stage_materials'] = {
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS

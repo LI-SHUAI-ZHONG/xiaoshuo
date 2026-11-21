@@ -9,7 +9,38 @@ from nw.studio.method_evidence import resolve
 from nw.studio.method_store import digest
 
 TASK_FOR_DOMAIN={'main_plot':'main_plot','subplot':'subplot','character_arc':'character_arc',
-    'hook':'hook','foreshadow':'foreshadow','information':'information','pacing':'pacing','world_rules':'world_rules'}
+    'hook':'hook','foreshadow':'foreshadow','information':'information','pacing':'pacing','world_rules':'world_rules',
+    'narration':'narration'}
+
+
+def check_source_types(service: object, structure: dict, body: dict) -> None:
+    confirmed=json.loads(service._staging_row(structure['book_id'])['confirmed_types_json'])
+    tags={tag for value in confirmed for tag in canonical_types([value])}
+    if not set(body['type_tags'])<=tags:
+        raise ValueError('方法的适用类型超出参考作品已确认类型')
+
+
+def check_narration_method(service: object, structure: dict, body: dict, basis: dict) -> None:
+    document=structure['body']
+    threads=[t for t in document['threads'] if t['id'] in basis['thread_ids'] and t['domain']=='narration']
+    if not threads and 'narration' not in body['tasks']:
+        return
+    if not threads or 'narration' not in body['tasks'] or not any(
+            d['domain']=='narration' and d['status']=='observed' for d in document['domains']):
+        raise ValueError('叙述方法须使用已核实的叙述观察和叙述制作任务')
+    check_source_types(service,structure,body)
+    quoted={(e['start'],e['end'],e['quote']) for e in body['evidence'] if e['book_id']==structure['book_id']}
+    cited={e['id'] for e in document['evidence'] if (e['start'],e['end'],e['quote']) in quoted}
+    events={e['id']:set(e['evidence_ids']) for e in document['events'] if e['id'] in basis['event_ids']}
+    related={eid for field,section in [('thread_ids','threads'),('event_ids','events'),('link_ids','links')]
+             for row in document[section] if row['id'] in basis[field] for eid in row['evidence_ids']}
+    if not quoted<={(e['start'],e['end'],e['quote']) for e in document['evidence'] if e['id'] in related}:
+        raise ValueError('叙述方法不可借用所选叙述观察、事件与关系以外的引文')
+    for thread in threads:
+        nodes=events.keys() & set(thread['node_ids'])
+        if thread['status']=='uncertain' or not nodes or any(
+                not cited.intersection(events[node],thread['evidence_ids']) for node in nodes):
+            raise ValueError('叙述方法须引用所选叙述观察及各实际事件的原文短引')
 
 
 def check_world_method(service: object, structure: dict, body: dict, basis: dict) -> None:
@@ -17,10 +48,7 @@ def check_world_method(service: object, structure: dict, body: dict, basis: dict
     threads=[t for t in document['threads'] if t['id'] in basis['thread_ids'] and t['domain']=='world_rules']
     if not threads:
         raise ValueError('世界方法须来自已核实的世界规则线索，请先从原作拆解规则和受影响的事件')
-    confirmed=json.loads(service._staging_row(structure['book_id'])['confirmed_types_json'])
-    tags={tag for value in confirmed for tag in canonical_types([value])}
-    if not set(body['type_tags'])<=tags:
-        raise ValueError('世界方法的适用类型超出参考作品已确认类型')
+    check_source_types(service,structure,body)
     quotes={(e['start'],e['end'],e['quote']) for e in body['evidence'] if e['book_id']==structure['book_id']}
     cited={e['id'] for e in document['evidence'] if (e['start'],e['end'],e['quote']) in quotes}
     events={e['id']:e for e in document['events'] if e['id'] in basis['event_ids']}
@@ -69,6 +97,7 @@ def origin_status(service: object, method_id: str, version: int, body: dict, con
             raise ValueError('不完整或未确认完整性的文本，不能支撑全书/整卷方法结论')
         if structure['body'].get('schema_version',1)>=2 and 'world_rules' in body['tasks']:
             check_world_method(service,structure,body,origin['basis'])
+        check_narration_method(service,structure,body,origin['basis'])
         origin['source_extent']=structure['body']['source_extent']
     except (OSError,ValueError,KeyError) as exc:
         issues=[{'field':'origin','message':str(exc)}]
@@ -111,6 +140,8 @@ def prepare_method(service: object, structure: dict, candidate: dict, *, complet
         raise ValueError('摘录或完整性未知时不能提炼全书/整卷方法')
     if complete and 'world_rules' in body['tasks']:
         check_world_method(service,structure,body,basis)
+    if complete:
+        check_narration_method(service,structure,body,basis)
     if len(encode(body).encode('utf-8'))>96*1024:raise ValueError('提炼方法超过96KiB，请分用途提炼')
     pins,errors=resolve(service,body['evidence'])
     if errors:raise ValueError('；'.join(i['message'] for i in errors))

@@ -11,8 +11,8 @@ def normalize(raw: object, *, types: list[str] = ()) -> dict:
     if not isinstance(raw,dict) or set(raw)-{'tasks','type_ids','max_methods','policy','preferred_methods','world_selection'}:
         raise ValueError('制作方法配置须包含实际生产任务和类型')
     tasks=raw.get('tasks',DEFAULT_TASKS)
-    if not isinstance(tasks,list) or not tasks or len(tasks)>21 or any(not isinstance(t,str) or t not in TASKS for t in tasks) or len(set(tasks))!=len(tasks):
-        raise ValueError('请选择1–21项真实制作任务')
+    if not isinstance(tasks,list) or not tasks or len(tasks)>len(TASKS) or any(not isinstance(t,str) or t not in TASKS for t in tasks) or len(set(tasks))!=len(tasks):
+        raise ValueError(f'请选择1–{len(TASKS)}项真实制作任务')
     mode = raw.get('world_selection')
     if 'world_selection' in raw and mode != 'ai':
         raise ValueError('未知的世界方法选择方式')

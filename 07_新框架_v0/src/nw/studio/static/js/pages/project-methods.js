@@ -2,7 +2,7 @@ import {api,enc} from '../api.js';
 import {$,$$,esc,drawer,loading,readable,busy,toast,fail} from '../ui.js';
 import {matchLabel, methodEvidence} from '../components/MethodEvidence.js';
 
-const names={type_selection:'类型选择',type_adaptation:'类型适配',world_design:'世界设计',character_design:'人物设计',static_relations:'人物关系',plot_design:'剧情设计',event_design:'事件设计',action_design:'行动设计',scene_design:'场景设计',state_transition:'状态变化',state_propagation:'后果传播',anchor_design:'表现锚点',expression_design:'表达设计',bind_scope:'交接汇总',brief:'立项需求',parent_outline:'上层大纲',accepted_state:'已接受状态',world_rules:'世界规则与限制',hook:'钩子与问题接力',foreshadow:'伏笔与兑现',pacing:'节奏与情绪',main_plot:'主线与结局',character_arc:'人物弧光'};
+const names={type_selection:'类型选择',type_adaptation:'类型适配',world_design:'世界设计',character_design:'人物设计',static_relations:'人物关系',plot_design:'剧情设计',event_design:'事件设计',action_design:'行动设计',scene_design:'场景设计',state_transition:'状态变化',state_propagation:'后果传播',anchor_design:'表现锚点',expression_design:'表达设计',bind_scope:'交接汇总',brief:'立项需求',parent_outline:'上层大纲',accepted_state:'已接受状态',world_rules:'世界规则与限制',narration:'叙述时序、视角与呈现',hook:'钩子与问题接力',foreshadow:'伏笔与兑现',pacing:'节奏与情绪',main_plot:'主线与结局',character_arc:'人物弧光'};
 const words=value=>typeof value==='string'?[value]:Array.isArray(value)?value.flatMap(words):value&&typeof value==='object'?Object.entries(value).filter(([key])=>!key.startsWith('_')&&!['ref','source_ids','input_refs','output_refs'].includes(key)).flatMap(([,v])=>words(v)):[];
 const paragraphs=value=>words(value).filter((v,i,a)=>v&&a.indexOf(v)===i).map(v=>`<p class="corpus-text">${esc(v)}</p>`).join('');
 function methodDetails(item){

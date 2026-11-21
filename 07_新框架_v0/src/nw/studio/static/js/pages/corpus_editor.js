@@ -57,7 +57,9 @@ export function openCorpusEditor({book,catalog,record,section,row=null,reload}){
     const domain=$('#corpusRecordForm [name=domain]')?.value;
     if(!$('#corpusDomainDetails')||!domain)return;
     $('#corpusDomainDetails').innerHTML=Object.entries(catalog.domain_details[domain]).map(([key,label])=>
-      field(label,`<textarea name="detail_${key}" rows="3">${esc(value.details?.[key]||'')}</textarea>`)).join('');
+      field(label,key==='claim_status' && domain==='narration'
+        ? `<select name="detail_claim_status">${optionList(catalog.narration_claims,value.details?.[key]||'unknown',false)}</select>`
+        : `<textarea name="detail_${key}" rows="3">${esc(value.details?.[key]||'')}</textarea>`)).join('');
   }
   if($('#corpusDomainDetails')){domainFields();$('#corpusRecordForm [name=domain]').onchange=domainFields;}
   if(section==='evidence')$('#locateCorpusQuote').onclick=e=>busy(e.currentTarget,async()=>{

@@ -27,10 +27,16 @@ def window_payload(document: dict, selected: list[dict], *, domain: str | None, 
     endpoint_events=[all_events[k] for k in sorted(frontier) if k in all_events]
     evidence_ids={eid for event in [*selected,*endpoint_events] for eid in event['evidence_ids']}
     evidence_ids.update(eid for thread in open_threads for eid in thread['evidence_ids'])
+    observations=[]
+    if domain=='narration':
+        window={event['id'] for event in selected}
+        observations=[t for t in threads if t['status']=='resolved' and window.intersection(t['node_ids'])]
+        evidence_ids.update(eid for t in observations for eid in t['evidence_ids'])
     people_ids={p for e in [*selected,*endpoint_events] for p in e['characters']}
     return {'prefix':prefix,'source_extent':document['source_extent'],'domain':domain,'last_window':last,
         'overview':global_basis['overview'] if global_basis else document['overview'],
         'open_threads':open_threads,
+        **({'narration_observations':observations} if domain=='narration' else {}),
         'closed_thread_index':[{'id':t['id'],'title':t['title'],'domain':t['domain'],'status':t['status'],'node_ids':t['node_ids']}
                                for t in threads if t['status']=='resolved'],
         'events':selected,'frontier_events':endpoint_events,

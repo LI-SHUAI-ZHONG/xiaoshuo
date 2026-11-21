@@ -3,7 +3,7 @@ from dataclasses import asdict
 import json
 import re
 
-from nw.materials.evidence import review_result
+from nw.materials.action_review import review_result
 from nw.models import Draft
 from nw.store import Store
 from nw.story_delta import draft_ref, paragraph_evidence

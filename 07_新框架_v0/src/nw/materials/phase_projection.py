@@ -33,6 +33,8 @@ def verify_chain(session: dict) -> None:
                  'legacy_replay':session['policy']=='artifact-stage-binding-v3',
                  'allowed_input_stages':dependencies,
                  'accepted_state':visible_facts(row['stage'],products,session['context'])}
+        if row['stage'] == 'expression_design' and session['context'].get('narration_policy'):
+            context['narration_facts'] = session['context'].get('accepted_state', [])
         if session['policy']==POLICY:
             context.update(require_semantics=True,semantic_contracts=session.get('semantic_contracts',[]))
         if context.get('network_prerequisite_policy') and row['stage']=='plot_design':
@@ -179,8 +181,19 @@ def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
     # These are actual model products even when no source is applicable at a
     # step. They must not disappear between design, drafting and review.
     for stage,field in (('anchor_design','beats'),('expression_design','guidance')):
+        narration_order = 0
         for index,guide in enumerate(records.get(stage,{}).get('products',{}).get(field,[])):
             if guide['scene']!=scene:continue
+            if stage == 'expression_design' and 'narration' in guide:
+                from nw.materials.narration import register_beat, scene_bases, scene_check
+                narration_order += 1
+                if narration_order == 1:
+                    pov = next(r['body']['pov'] for r in records['scene_design']['products']['members'] if r['key']==scene)
+                    narration_bases = scene_bases(records, context, scene)[scene]
+                basis = narration_bases[guide['narration']['basis_ref']]
+                result.append(scene_check(guide, index, narration_order, pov, ids or {}, basis))
+                register_beat(narration_bases, narration_order, guide)
+                continue
             observable=guide['observable']
             if stage=='anchor_design' and multi_actions:
                 observable=anchor_beat_observable(guide,records,scene,ids)

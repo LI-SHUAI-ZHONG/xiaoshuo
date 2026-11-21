@@ -42,7 +42,7 @@ def _process_bindings(candidate: dict, inputs: dict, scope: str) -> dict:
 
 
 def project_products(stage: str, candidates: list[dict], inputs: dict, sources: list[dict],
-                     scope: str, *, native: bool = False) -> dict:
+                     scope: str, *, native: bool = False, narration: bool = False) -> dict:
     """Explicit isolated-test designs, each linked to actual preceding products."""
     candidate = deepcopy(candidates[0]); members = candidate['members']
     scenes = [row for row in members if row['kind'] == 'scene']
@@ -164,8 +164,16 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
               'trigger_basis':'[FAKE] 本场人物借灯观察纸角与可见铜丝后才伸入木片'}
             for row in actual_scenes], 'selected_propagations': []}
     if stage == 'expression_design':
-        return {'guidance': [{'scene': row['key'], 'observable': '[FAKE] 借灯观察封条后才伸手',
-            'check': '[FAKE] 动作遵循观察和应对的先后'} for row in _input(inputs, 'scene_design')['members']]}
+        guidance = []
+        for row in _input(inputs, 'scene_design')['members']:
+            guide = {'scene': row['key'], 'observable': '[FAKE] 借灯观察封条后才伸手',
+                     'check': '[FAKE] 动作遵循观察和应对的先后'}
+            if narration:
+                guide['narration'] = {'time': 'current', 'mode': 'action', 'owner': row['body']['pov'],
+                    'basis_ref': f'scene:{row["key"]}:goal', 'basis_quote': row['body']['goal'],
+                    'effect': '[FAKE] 读者看清为何要检查纸角'}
+            guidance.append(guide)
+        return {'guidance': guidance}
     from nw.materials.phase_lifecycle import writing_sources
     used = sorted(writing_sources(inputs, []) | set(ids))
     actual_scenes = _input(inputs, 'scene_design').get('members', [])
@@ -192,7 +200,7 @@ def phase_output(provider: Any, messages: list[dict]) -> GenResult:
     provider.calls[:]=before
     provider.calls.append(messages)
     candidates=json.loads(fixture.text)['candidate_cards']
-    products=project_products(stage,candidates,data['inputs'],data['sources'],scope)
+    products=project_products(stage,candidates,data['inputs'],data['sources'],scope,narration=bool(data.get('narration_policy')))
     if stage == 'bind_scope' and (required := data.get('required_scene_sources')):
         independent = set(data['scene_independent_sources'])
         guides = products['method_guidance']

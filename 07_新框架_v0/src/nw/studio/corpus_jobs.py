@@ -7,7 +7,7 @@ from uuid import uuid4
 from nw.call_control import execution_lock
 from nw.config import ConfigRequired, load_config, make_provider, resolve_stage_runtime
 from nw.studio.corpus_calls import artifact
-from nw.studio.corpus_catalog import DOMAINS
+from nw.studio.corpus_catalog import DOMAINS, domains_for
 from nw.studio.corpus_checks import graph_issues
 from nw.studio.corpus_index import empty_document, source_spans
 from nw.studio.library_util import encode, timestamp
@@ -98,7 +98,7 @@ class CorpusJobsMixin:
         unit_errors=[i['message'] for i in graph_issues(body,len(content)) if i['field']=='units' and i['severity']=='error']
         if unit_errors:raise ValueError('请先修正章节目录：'+'；'.join(unit_errors[:8]))
         spans=source_spans(body['units'],options['chunk_chars'])
-        base=current['latest_version'];minimum=2*len(spans)+1+len(DOMAINS)
+        base=current['latest_version'];minimum=2*len(spans)+1+len(domains_for(body['schema_version']))
         state={'document':body,'spans':spans,'coverage':{'survey_ranges':[],'detail_ranges':[],'reviewed_units':[]},
                'survey_cursor':0,'overview_cursor':0,'detail_cursor':0,'domain_index':0,'relation_cursor':0,'method_cursor':0,'candidates':[]}
         if kind=='methods':

@@ -243,12 +243,20 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         scenes={r['key']:r for r in products['scene_design']['products']['members']}
         rows=value['beats' if stage=='anchor_design' else 'guidance']
         require(isinstance(rows,list) and bool(rows),'actual visible scene work required')
+        from nw.materials import narration
+        narrated = stage == 'expression_design' and context.get('narration_policy') == narration.POLICY
+        bases = narration.scene_bases(products, context) if narrated else {}
+        beat_counts = dict.fromkeys(scenes, 0)
         for row in rows:
             required={'scene','observable','check'}|({'observer','object','action'} if stage=='anchor_design' else set())
             require(required<=set(row) and not set(row)-required-({'action_ref','step_index','timing','trigger_basis'}
-                    if stage=='anchor_design' else set()) and row['scene'] in scenes
+                    if stage=='anchor_design' else {'narration'} if narrated else set()) and row['scene'] in scenes
                     and all(_text(row[k]) for k in required),'invalid scene expression product')
             if stage=='anchor_design':require(row['observer']==scenes[row['scene']]['body']['pov'],'anchor observer differs from actual viewpoint')
+            if narrated:
+                narration.validate_beat(row.get('narration'), scenes[row['scene']]['body'], bases[row['scene']])
+                beat_counts[row['scene']] += 1
+                narration.register_beat(bases[row['scene']], beat_counts[row['scene']], row)
         require({row['scene'] for row in rows}==scenes.keys(),'a scene has no actual anchor or expression products')
     elif stage=='bind_scope':
         require(isinstance(value['material_bindings'],dict) and isinstance(value['process_bindings'],dict)

@@ -84,7 +84,18 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
         check(set(thread['characters'])<=people.keys(),'threads','线索/弧光引用未知人物')
         check(bool(thread['title']) and bool(thread['explanation']),'threads','线索/弧光缺少名称与解释')
         for key,label in DETAILS[thread['domain']].items():
+            if thread['domain']=='narration' and key in ('causal_basis','character_response','reader_effect'):
+                continue  # A passage can disclose a fact without showing a cause or a character responding.
             check(bool(thread['details'][key]),'threads','具体分析待填写：'+label,'warning')
+        if thread['domain']=='narration':
+            seen=set(thread['evidence_ids'])
+            check(all(seen.intersection(events[node]['evidence_ids']) for node in thread['node_ids'] if node in events),
+                  'threads','叙述观察须保留每个所引事件对应的原文短引：'+thread['id'])
+            if thread['status']!='uncertain':
+                detail=thread['details']
+                check(all(detail[key] for key in ('time_order','presentation','voice_access'))
+                      and bool(detail['reader_effect'] or detail['character_response']),
+                      'threads','叙述观察须说明时序、讲述方式、视角权限及实际作用；依据不足可标存疑')
         if thread['domain']=='character_arc':check(bool(thread['characters']),'threads','人物弧光必须指定人物')
         if thread['status']=='resolved' and thread['domain'] in ('hook','foreshadow'):
             kind='responds' if thread['domain']=='hook' else 'pays_off'
@@ -116,6 +127,10 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
                 grounded=any(t['domain']==domain and t['status']!='uncertain' and all(t['details'].values())
                              and any(events.get(i,{}).get('result') for i in t['node_ids']) for t in threads.values())
                 check(grounded,'domains','标为已观察的世界规则须有适用条件、边界说明及受影响事件的实际后果')
+            if domain=='narration' and row['status']=='observed':
+                check(any(t['domain']==domain and t['status']!='uncertain' and
+                          set(t['evidence_ids']).intersection(row['evidence_ids']) for t in threads.values()),
+                      'domains','已观察的叙述手法须引用同一条有根据的叙述观察')
     check(bool(events),'events','尚无有证据的事件节点')
     if coverage is not None:
         reviewed=set(coverage.get('reviewed_units',[]))

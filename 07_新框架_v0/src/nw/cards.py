@@ -30,7 +30,7 @@ _REQUIRED = {
 }
 _OPTIONAL = {
     'brief': ('pov', 'reader_promise', 'author_words', 'interpretation', 'completion', 'acceptance'),
-    'world': ('cost',),
+    'world': ('cost', 'history'),
     'character': ('need', 'wound', 'strength', 'flaw', 'voice', 'relationship', 'scene_function',
                   'background', 'core_conflict', 'behavior', 'boundaries', 'change_conditions',
                   'ability_cost', 'independent_goal'),

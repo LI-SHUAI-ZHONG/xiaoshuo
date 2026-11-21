@@ -143,7 +143,9 @@ def _options(slot: str) -> list[dict]:
         result.append(_group(slot, 'types', label, _typed(slot, filename)))
     section_sources = {
         'narration': [('expression_design_narrator.py', '叙述声音与距离', None),
-                      ('scene_design_narrator.py', '视角与信息边界', None)],
+                      ('scene_design_narrator.py', '视角与信息边界', None),
+                      ('expression_design_timeline.py', '叙述时序、速度与回忆', None),
+                      ('expression_design_disclosure.py', '信息如何透露', None)],
         'world': [('world_design_setting.py', '世界设定', None), ('world_design.py', '力量与资源规则', {'9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19'})],
         'character': [('character_design.py', '人物与动机', {'1', '2', '3', '4'}),
                       ('character_design_supporting.py', '配角配置', None)],

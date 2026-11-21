@@ -1,5 +1,6 @@
 """Recommend and freeze the methods the author selected during project setup."""
 from nw.materials.phase_routes import phase_order
+from nw.production_methods.matching import TYPE_PRIORITY
 from nw.production_methods.sources import MethodReader, matching_methods, stage_tasks
 from nw.studio.method_catalog import SCOPES, STAGES, TASKS
 
@@ -8,7 +9,7 @@ SLOT_TASKS = {
     'genre': {'type_choice', 'type_adaptation'},
     'tone': {'expression', 'pacing', 'anchors'},
     'style': {'expression', 'anchors'},
-    'narration': {'expression', 'scene_composition', 'information'},
+    'narration': {'narration', 'expression', 'scene_composition', 'information'},
     'world': {'world_rules'},
     'character': {'character_arc', 'relationships', 'state_change', 'state_propagation'},
     'structure': {'main_plot', 'subplot', 'volume_outline', 'chapter_outline', 'event_chain',
@@ -30,6 +31,9 @@ def recommendations(reader: MethodReader, slot: str, types: list[str], selected:
     if len(selected) > 24:
         raise ValueError('立项最多查询 24 条已选方法')
     matches = matching_methods(reader, types) if types else []
+    if slot == 'narration':
+        matches.sort(key=lambda item: (TYPE_PRIORITY[item[1]['level']],
+                                       'narration' not in item[0]['body']['tasks']))
     current_versions = {row['id']: row['version'] for row, _ in matches if row['id'] in selected}
     result = []
     for row, match in matches:

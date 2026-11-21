@@ -7,6 +7,7 @@ from nw.call_control import model_settings
 from nw.config import Config, resolve_stage_runtime
 from nw.llm.base import LLMProvider
 from nw.materials.steps.state_extract import MATERIAL as STATE_EXTRACT_MATERIAL
+from nw.materials.narration_review import check_state_audience
 
 from nw.store import Store
 from nw.story_delta import (_findings, _manifest, _operations, candidate_projection_digest, candidate_snapshot,
@@ -19,7 +20,7 @@ from nw.tasks import freeze_manifest, read_input_manifest, run_task
 
 def freeze_delta_input(store: Store, draft_id: str, scope: dict, settings: dict, *,
                        material_review_run: str | None = None,
-                       material_hypotheses: list[dict] | None = None) -> str:
+                       material_hypotheses: list[dict] | None = None, reader_only_spans: list[dict] | None = None) -> str:
     required = {'id', 'branch_id', 'base_revision', 'story_order'}
     if not isinstance(scope, dict) or not required <= scope.keys() or scope.keys() - required - {
             'candidate_delta_refs', 'predecessor_drafts', 'brief_ref', 'dependency_refs'}:
@@ -90,6 +91,8 @@ def freeze_delta_input(store: Store, draft_id: str, scope: dict, settings: dict,
         package['material_review_run'] = material_review_run
     if material_hypotheses:
         package['material_hypotheses'] = material_hypotheses
+    if reader_only_spans:
+        package['reader_only_spans'] = reader_only_spans
     return freeze_manifest(store, InputManifest(
         scope['id'], 'state_extract', settings, content_sha256(package),
         brief_ref=brief_ref,
@@ -149,12 +152,16 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
             return run_task(store, request, fact_prov, fact_cfg, validate=validate)
         return run_task(store, request, extract_prov, extract_cfg, validate=validate)
 
+    def checked_operations(output: dict) -> list[dict]:
+        operations = _operations(output['operations'], draft, manifest)
+        check_state_audience(operations, package.get('reader_only_spans', []))
+        return operations
+
     result = dispatch('extract', TaskRequest(extraction_id, project_id, 'state_extract', manifest_id,
-                                            {'messages': messages}, budget_id),
-                      lambda output: _operations(output['operations'], draft, manifest))
+                                            {'messages': messages}, budget_id), checked_operations)
     if result.validation != 'VALID':
         raise ValueError(f'State extraction {result.status}/{result.validation}: {result.id}')
-    operations = _operations(result.parsed['operations'], draft, manifest)
+    operations = checked_operations(result.parsed)
     review_package = {**frozen_input, 'candidate_operations': operations, 'extraction_task_id': result.id}
     review_messages = [{'role': 'system', 'content': (
         '独立核对正文与候选变更。只输出 JSON {"findings":[]}。问题需含 code、severity（hard/soft/info）、'
