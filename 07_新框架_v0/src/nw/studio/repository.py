@@ -14,6 +14,7 @@ from uuid import uuid4
 from nw.studio import repository_data as data
 from nw.studio.project_migration import migrate_legacy_projects
 from nw.studio.repository_git import GitRepository, SyncError
+from nw.studio.runtime import source_digest
 
 PROJECT = Path(__file__).resolve().parents[3]
 
@@ -22,6 +23,8 @@ class RepositorySync:
     def __init__(self, service: Any, *, project: Path = PROJECT,
                  git: GitRepository | None = None) -> None:
         self.service, self.project = service, project.resolve()
+        self.loaded_source = source_digest(self.project)
+        self._draining = False
         self.workspace = service.workspace.resolve()
         self.projects_root = service.projects_root
         self.folder = self.project / 'studio_data/runtime'
@@ -154,10 +157,33 @@ class RepositorySync:
                     return False
         return True
 
+    def check_running_source(self) -> bool:
+        current = source_digest(self.project)
+        with self._lock:
+            if current != self.loaded_source:
+                self._state.update(restart_required=True, message='仓库程序已更新，请从桌面快捷方式重新打开客户端')
+            return self._state['restart_required']
+
+    def release_for_reload(self, body: dict) -> None:
+        if not self._cycle.acquire(blocking=False):
+            raise SyncError('BUSY', 'GitHub 正在同步，请在同步完成后重新打开客户端。')
+        try:
+            with self.data_lock:
+                if not self._idle():
+                    raise SyncError('BUSY', '制作或拆解正在运行，请在任务完成后重新打开客户端。')
+                if (not self.check_running_source() or body.get('loaded') != self.loaded_source
+                        or body.get('target') != source_digest(self.project)):
+                    raise SyncError('VERSION', '请求的后台版本与本仓库不一致，请重新打开快捷方式。')
+                self._draining = True
+                self._stop.set()
+                self._wake.set()
+        finally:
+            self._cycle.release()
+
     @contextmanager
     def mutation(self) -> Iterator[None]:
         with self.data_lock:
-            if self.enabled and (self.restore_required or self._state['restart_required']):
+            if self._draining or self.check_running_source() or (self.enabled and self.restore_required):
                 raise SyncError('RESTART', '仓库资料尚未就绪或程序已更新，请查看 GitHub 同步状态并重启客户端')
             try:
                 yield
@@ -181,10 +207,9 @@ class RepositorySync:
         if not self.enabled or self.git is None or not self._cycle.acquire(blocking=False):
             return self.status()
         try:
+            if self._draining or self.check_running_source():
+                return self.status()
             with self.git.exclusive(self.workspace):
-                if self._state['restart_required']:
-                    self._set('pending', '仓库程序已更新，请重新启动客户端后继续同步和制作')
-                    return self.status()
                 if self.restore_required:
                     self.prepare()
                     if self.restore_required:
@@ -198,6 +223,8 @@ class RepositorySync:
                 self._set('syncing', '正在检查 GitHub 更新')
                 remote = self.git.fetch()
                 with self.data_lock:
+                    if self.check_running_source():
+                        return self.status()
                     if not self._idle():
                         self._set('pending', '正在制作或拆解，完成后自动同步')
                         return self.status()
@@ -206,9 +233,10 @@ class RepositorySync:
                     changed = self.git.integrate(remote)
                     if changed:
                         self.restore_required = True
-                        code = self.project.relative_to(self.git.root).as_posix() + '/src/'
-                        if any(path.startswith(code) or path.endswith('/pyproject.toml') for path in changed):
-                            self._state['restart_required'] = True
+                        if self.check_running_source():
+                            self._set('pending', '已取得 GitHub 新版，请重新打开客户端以加载程序和配套资料',
+                                      local_commit=remote, remote_commit=remote)
+                            return self.status()
                         self._materials()
                         stored = data.restore(self.folder, self.workspace, self.projects_root)
                         if stored:

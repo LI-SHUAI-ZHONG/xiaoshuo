@@ -221,9 +221,15 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     view = state_at(store, scope.branch_id, scope.revision, scope.story_order, card['body']['pov'],
                     disclosure, before_scene=scene_id, snapshot=snapshot)
     visible_ids = {c['card_id'] for c in view.settings}
-    if any(ref['card_id'] not in visible_ids and read_card(store, CardRef(ref['card_id'], ref['version']))['kind'] == 'taboo'
-           for ref in snapshot['settings']):
-        raise ValueError('MISSING_MANDATORY_INPUT: an approved taboo is unavailable to this POV')
+    cast_guards = [row for row in view.settings if 'casting' in row['body']]
+    for ref in snapshot['settings']:
+        if ref['card_id'] in visible_ids:
+            continue
+        hidden_card = read_card(store, CardRef(ref['card_id'], ref['version']))
+        if hidden_card['kind'] == 'taboo':
+            raise ValueError('MISSING_MANDATORY_INPUT: an approved taboo is unavailable to this POV')
+        if card['body'].get('narrative_person') and hidden_card['body'].get('casting', {}).get('entry') == 'withheld':
+            cast_guards.append(hidden_card)
     settings = _settings(store, card, scene_ref, view.settings)
     briefs = store.briefs()
     brief = briefs[-1] if briefs else None
@@ -234,7 +240,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         visible_brief['text'] = effective_brief_text(visible_brief['text'], card['body']['length_policy'])
     if visible_brief and card['body'].get('narrative_person'):
         from nw.materials.cast_design import writer_brief
-        visible_brief = writer_brief(visible_brief, view.settings)
+        visible_brief = writer_brief(visible_brief, cast_guards)
     inputs = {'brief': visible_brief, 'settings': settings, 'holder': view.holder, 'facts': facts}
     if 'chapter_word_budget' in card['body'] and 'word_budget' in card['body']:
         from nw.length_plan import approved_length_budgets, chapter_progress
@@ -254,8 +260,10 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         legacy_preconditions=any(check['profile'] in ('static_binding', 'dynamic_binding', 'static_relation', 'dynamic_relation',
                                    'anchor', 'character_editor') or check['profile']!='method_work' and check['binding'].get('state') for check in checks)
         native_preconditions=any(check['profile']=='method_work' and check['binding'].get('state') for check in checks)
-        progress_preconditions = any(check.get('chapter_progress_prior') or check.get('continuations') for check in checks)
+        from nw.materials.chapter_progress import verify_current, writing_preconditions
+        progress_preconditions = writing_preconditions(checks, design.get('work_session', {}), design['material_key'])
         narration_states = {c['narration_state_sha256'] for c in checks if 'narration_state_sha256' in c}
+        narration_states.update(sha for check in checks for sha in check.get('narration_state_refs', ()))
         if legacy_preconditions or native_preconditions or progress_preconditions or narration_states:
             author = state_at(store, scope.branch_id, scope.revision, scope.story_order, 'AUTHOR',
                               disclosure, before_scene=scene_id, snapshot=snapshot)
@@ -263,8 +271,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
                 from nw.materials.narration import verify_scene_facts
                 verify_scene_facts(narration_states, author.facts)
             if progress_preconditions:
-                from nw.materials.chapter_progress import verify_current
-                verify_current(checks, author.facts, snapshot['slots'])
+                verify_current(progress_preconditions, author.facts, snapshot['slots'], disclosure)
             if legacy_preconditions:
                 legacy_design={key:value for key,value in design.items() if key!='work_session'}
                 verify_preconditions(legacy_design, author.facts, {item['card_id'] for item in snapshot['settings']})
@@ -377,9 +384,9 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     # Keep audit data outside the model-visible package so omissions cannot leak context.
     refs = tuple(dict.fromkeys(card_input_ref(item) for item in cards))
     check_inputs_current(store, list(refs))
-    if any('casting' in row['body'] for row in view.settings):
+    if cast_guards:
         from nw.materials.cast_design import guard_writer_package
-        guard_writer_package(view.settings, facts, inputs.get('material_checks', []), assembled)
+        guard_writer_package(cast_guards, facts, inputs.get('material_checks', []), assembled)
     return StoryWork(scope, disclosure, assembled,
                      legacy_ref('brief', store.project().id, brief) if brief else None,
                      tuple({'card_id': ref.id, 'version': ref.version} for ref in refs),

@@ -29,9 +29,9 @@ def preflight(store: object,package: dict,request_id: str) -> None:
         return
     reader=MethodReader(store.directory.parent)
     for stage in stages:
-        required=needed(policy,stage,scope)
+        required=needed(policy,stage,scope,package.get('method_task_stages'))
         if not required or is_ai_world(policy, stage):continue
-        rows=relevant(reader,policy,stage,scope,policy['type_ids'])
+        rows=relevant(reader,policy,stage,scope,policy['type_ids'],package=package)
         covered={t for row in rows for t in stage_tasks(row['body'], stage, scope)}
         if not set(required)<=covered:
             raise ValueError('METHOD_DESIGN_REQUIRED: '+stage+' 缺少对应类型、层级的已批准拆解方法：'+','.join(sorted(set(required)-covered))+'；尚未请求制作模型，请先补方法资料')
@@ -51,12 +51,12 @@ def build_target(reader: MethodReader, package: dict, stage: str, products: dict
         return build_world_target(reader, package, products)
     scope = package['scope']
     inputs = registry(package, products)
-    required = needed(policy, stage, scope)
+    required = needed(policy, stage, scope, package.get('method_task_stages'))
     config = products.get('type_selection', {}).get('products', {}).get('_governance', {}).get('project_config', {})
     types = config.get('genre_ids') or policy['type_ids']
     preferred = policy.get('preferred_methods', {})
     candidates = []
-    for method in relevant(reader, policy, stage, scope, types):
+    for method in relevant(reader, policy, stage, scope, types, package=package):
         candidate = binding(method, stage, inputs)
         candidate['type_match'] = type_match(types, method['body']['type_tags'])
         candidate['preferred'] = preferred.get(method['id']) == method['version']

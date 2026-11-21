@@ -79,7 +79,7 @@ def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION) -> lis
 
 
 def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dict]:
-    catalog=method_catalog()
+    catalog=method_catalog(include_story_outputs=version>=4)
     if version < 3:
         catalog['tasks']=[task for task in catalog['tasks'] if task['id']!='narration']
     instruction=(
@@ -108,7 +108,9 @@ def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dic
     if payload['thread']['domain'] in STORY_TASKS:
         tasks=STORY_TASKS[payload['thread']['domain']]
         instruction += ('此观察对应现有生产任务'+ '、'.join(tasks)+'。按本项目已批准的输入和实际任务落在'
-                        '人物卡、章纲、剧情节点、信息披露安排、事件、场景或状态变化。写清下游怎样用及核对何处。'
+                        '人物卡、章纲、剧情节点、信息披露安排、事件、场景或状态变化。'
+                        '人物出场也可落到cast_assignments、cast_events、cast_payoffs，复用受派角色并落实其剧情职责；'
+                        '章场进展可落到scene_progress，已有前章审稿遗留时可用continuations。写清下游怎样用及核对何处。'
                         '逐个所选细拆事件引用原句；利用跨章收获或身份揭晓时须包含已观察关系及两端不同的原句。'
                         '仅有预告不能归纳已发生的后果，局部摘录不能断定某人是全书初次出场。')
     return [{'role':'system','content':instruction},{'role':'user','content':encode({'phase':'methods',**payload})}]

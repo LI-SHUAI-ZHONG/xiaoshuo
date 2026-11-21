@@ -42,6 +42,8 @@ def test_new_cast_member_cannot_take_over_a_previous_holders_progress_by_reusing
 
 def test_review_and_writer_only_receive_the_current_scenes_approved_progress():
     plan, records, context = designs()
+    records['plot_design']['products']['members'] = [{'key': 'chapter_2', 'body':
+        {'goal': '弄清警锣为何没有响', 'consequence': '留下错过撤离时限的人'}}]
     plan['scene_progress'][0].update(basis_ref='prior:0', basis_quote='起疑昨夜开过闸', origin='reflection')
     progress.validate(plan, records, context)
     records['state_transition'] = {'products': {'patches': [
@@ -53,6 +55,10 @@ def test_review_and_writer_only_receive_the_current_scenes_approved_progress():
     assert body['personal_basis']['claim'] == 'suspicion' and body['connection'] == 'unresolved'
     assert '章首问题' in first['binding']['check'] and '章末解决' not in first['binding']['check']
     assert '章末解决' in last['binding']['check'] and '章首问题' not in last['binding']['check']
+    assert first['chapter_task'] == {'goal': '弄清警锣为何没有响'}
+    assert last['chapter_task'] == {'consequence': '留下错过撤离时限的人'}
+    legacy = progress.scene_check(records, 'river', {**context, 'chapter_progress_policy': progress.LEGACY_POLICY})
+    assert 'chapter_task' not in legacy and 'pressure_review' not in legacy
     assert '起疑昨夜' not in last['binding']['observable']
     assert '后续计划仍有待查证' not in str(first['binding'])
     assert not selected_checks(records, 'river', context={})
@@ -77,8 +83,11 @@ def test_an_open_question_can_be_selected_for_a_specific_event_with_its_prior_re
     plan, records, context = designs()
     review = {'draft_ref': {'id': 'accepted'}, 'delta_id': 'approved-delta', 'review_run_id': 'accepted-review',
               'disclosure_order': [1, 1, 0], 'possible_next_pressure': '仍须查清水尺是谁动过',
-              'evidence': [{'quote': '木头还在滴水。'}]}
-    options = progress.chapter_openings({'reviewed_progress': [dict(review, evidence=[]), review]})
+              'evidence': [{'quote': '木头还在滴水。'}], 'pressure_evidence': [{'quote': '谁挪过这根水尺？'}]}
+    legacy = {k: v for k, v in review.items() if k != 'pressure_evidence'}
+    history = {'reviewed_progress': [legacy, review]}
+    assert list(progress.chapter_openings(history, progress.LEGACY_POLICY)) == ['open:0', 'open:1']
+    options = progress.chapter_openings(history)
     assert list(options) == ['open:1']
     link = {'ref': 'open:1', 'event': 'patrol', 'reason': '水尺异常使村民误判水情',
             'target_quote': '查验水情'}
@@ -87,7 +96,7 @@ def test_an_open_question_can_be_selected_for_a_specific_event_with_its_prior_re
     plot['continuations'] = [link]
     progress.validate_continuations(plot, options)
     [proof] = progress.scene_check(records, 'river', context)['continuations']
-    assert proof['prior']['evidence'] == review['evidence']
+    assert proof['prior']['evidence'] == review['pressure_evidence']
     assert '仍须查清' not in str(progress.scene_check(records, 'river', context)['binding'])
     assert 'continuations' not in progress.scene_check(records, 'bank', context)
     checks = [progress.scene_check(records, 'river', context)]
@@ -112,6 +121,49 @@ def test_an_open_question_can_be_selected_for_a_specific_event_with_its_prior_re
         progress.validate_continuations(plot, options)
     plot['continuations'] = []
     progress.validate_continuations(plot, options)
+
+
+def test_only_an_independently_identified_passage_can_be_carried_as_an_open_question():
+    passage = '水尺挪了半尺。是谁换的？沈砚把名字栏留空。'
+    span = {'id': 'a', 'quote': passage, 'start': 20, 'end': 20 + len(passage)}
+    def proof(reason, spans=None):
+        return progress.pressure_evidence({'reason': reason, 'evidence': [span] if spans is None else spans}, 'a')
+    assert not proof('核实了水尺已经移动。')
+    assert not proof('有待核实。\n【未决原文】捺印的日子是谁改的？')
+    assert not proof('有待核实。\n【未决原文】是谁换的？', [dict(span, id='earlier')])
+    [pin] = proof('有待核实。\n【未决原文】是谁换的？')
+    assert pin['quote'] == '是谁换的？'
+    assert (pin['start'], pin['end']) == (20 + passage.index('是谁'), 20 + passage.index('沈砚'))
+
+
+@pytest.mark.parametrize('origin', ['open:0:pressure', 'prior-cast:0:span:0', 'prior:0:change'])
+@pytest.mark.parametrize('gap', [False, True])
+def test_a_cast_duty_using_prior_prose_stays_bound_even_when_plot_uses_a_new_event(origin, gap):
+    plan, records, context = designs()
+    pin = {'draft_ref': {'id': 'original'}, 'delta_id': 'delta', 'disclosure_order': [1, 1, 0]}
+    context.update(chapter_openings={'open:0': pin}, cast_prior_work=[pin])
+    records['world_design'] = {'products': {'cast_demands': [{'id': 'witness', 'need_ref': origin}]}}
+    plan['cast_payoffs'] = [{'scene': 'river', 'demand': 'witness'}]
+    if gap:
+        context['plot_cast_gap'] = {'turns': [{'id': 'turn', 'source_ref': 'initial-demand:witness:result'}],
+            'cast_demands': [{'id': 'witness', 'need_ref': 'plot-gap:turn:obstacle'}]}
+    session = {'context': context, 'stages': [{'stage': k, **v} for k, v in records.items()]}
+    checks = progress.cast_preconditions(session, 'river')
+    assert checks and not progress.cast_preconditions(session, 'bank')
+    historical = {**session, 'context': {**context, 'chapter_progress_policy': progress.LEGACY_POLICY}}
+    if origin == 'open:0:pressure':
+        with pytest.raises(ValueError, match='旧版未单独核实'):
+            progress.writing_preconditions([], historical, 'river')
+    else:
+        assert progress.writing_preconditions([], historical, 'river') == checks
+    assert not progress.writing_preconditions([], historical, 'bank')
+    slots = {'prev': {'draft_id': 'original', 'delta_id': 'delta'}}
+    facts = [Fact('gate', 'time', '起疑昨夜开过闸', 'yan', 'suspicion', 2, (1, 1, 0), ())]
+    progress.verify_current(checks, facts, slots, (2, 1, 0))
+    with pytest.raises(ValueError, match='MATERIAL_PRECONDITION'):
+        progress.verify_current(checks, [], {}, (2, 1, 0))
+    with pytest.raises(ValueError, match='尚未披露'):
+        progress.verify_current(checks, facts, slots, (1, 1, 0))
 
 
 def test_accepted_current_state_and_evidence_must_still_match_at_writing_time():

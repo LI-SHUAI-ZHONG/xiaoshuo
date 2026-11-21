@@ -66,6 +66,14 @@ export async function renderMethods(ctx){
     if($('#methodReview'))$('#methodReview').onsubmit=e=>{e.preventDefault();review('approve',e.target.querySelector('[type=submit]'));};
     if($('#rejectMethod'))$('#rejectMethod').onclick=()=>review('reject',$('#rejectMethod'));
   }
+  function outputChoicesForStage(stage) {
+    const definition=catalog.stages.find(s=>s.id===stage);
+    return Object.fromEntries(definition.output_fields.map(field=>{
+      const label=catalog.output_labels[field]||field;
+      const when=definition.conditional_output_fields?.[field];
+      return [field,when?`${label}（${when}）`:label];
+    }));
+  }
   async function editMethod(row=null){
     const {books}=await api.get('/staging',ctx.signal);
     if(!ctx.alive())return;
@@ -103,7 +111,7 @@ export async function renderMethods(ctx){
       let html='';
       if(section==='prerequisites')html=field('前置来自',select('input_kind',catalog.input_kinds,value.input_kind||'brief'))+field('需要的具体资料 / 设计',`<input name="artifact" value="${esc(value.artifact||'')}">`)+field('必须满足什么要求',area('requirement',value.requirement));
       if(section==='outputs'){
-        const stage=value.stage||'plot_design',fields=Object.fromEntries(catalog.stages.find(s=>s.id===stage).output_fields.map(f=>[f,catalog.output_labels[f]||f]));
+        const stage=value.stage||'plot_design',fields=outputChoicesForStage(stage);
         const outputField=value.field||Object.keys(fields)[0],kinds=Object.fromEntries(catalog.output_artifact_kinds[stage][outputField].map(k=>[k,catalog.artifact_kinds[k]]));
         html=field('产出步骤',select('stage',stageNames,stage))+field('对应现有产物字段',select('field',fields,outputField))+field('产物种类',select('artifact_kind',kinds,value.artifact_kind||'stage_product'))+field('应设计出的具体内容',area('description',value.description));
       }
@@ -116,7 +124,7 @@ export async function renderMethods(ctx){
       $('[data-remove-method-row]',r).onclick=()=>{r.remove();refs();};
       if(section==='outputs'){
         const refreshKinds=()=>{const current=$('[name=artifact_kind]',r).value,kinds=catalog.output_artifact_kinds[$('[name=stage]',r).value][$('[name=field]',r).value];$('[name=artifact_kind]',r).innerHTML=options(Object.fromEntries(kinds.map(k=>[k,catalog.artifact_kinds[k]])),current);};
-        $('[name=stage]',r).onchange=e=>{$('[name=field]',r).innerHTML=options(Object.fromEntries(catalog.stages.find(s=>s.id===e.target.value).output_fields.map(f=>[f,catalog.output_labels[f]||f])));refreshKinds();};
+        $('[name=stage]',r).onchange=e=>{$('[name=field]',r).innerHTML=options(outputChoicesForStage(e.target.value));refreshKinds();};
         $('[name=field]',r).onchange=refreshKinds;
       }
       if(section==='prerequisites'||section==='outputs')r.addEventListener('change',refs);

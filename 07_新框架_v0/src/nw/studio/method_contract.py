@@ -2,10 +2,9 @@
 from copy import deepcopy
 import re
 
-from nw.materials.phase_contract import FIELDS
 from nw.materials.phase_routes import ORDER, phase_order
 from nw.studio.catalog import canonical_types
-from nw.studio.method_catalog import ARTIFACTS, CONSUMERS, INPUTS, SCOPES, TASKS, output_artifacts
+from nw.studio.method_catalog import ARTIFACTS, CONSUMERS, INPUTS, METHOD_FIELDS, SCOPES, TASKS, output_artifacts
 
 SECTIONS = ('applicability', 'prerequisites', 'operations', 'outputs', 'downstream',
             'acceptance', 'evidence', 'non_applicability')
@@ -82,7 +81,7 @@ def normalize(body: dict) -> dict:
                                   ('consumer', CONSUMERS), ('artifact_kind', ARTIFACTS)):
                 if key in clean and clean[key] not in allowed:
                     raise ValueError(f'{section}含未知{key}')
-            if section == 'outputs' and clean['field'] not in FIELDS[clean['stage']]:
+            if section == 'outputs' and clean['field'] not in METHOD_FIELDS[clean['stage']]:
                 raise ValueError('预期产物字段不属于真实设计步骤')
             if section == 'outputs' and clean['artifact_kind'] not in output_artifacts(clean['stage'], clean['field']):
                 raise ValueError('产物种类与真实步骤字段不符，设计卡须对应本步具体设计卡字段')

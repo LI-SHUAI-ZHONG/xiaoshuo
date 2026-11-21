@@ -28,7 +28,11 @@ def prompt(plan: dict | None, incoming: tuple | list = ()) -> str:
         instruction=PROMPT
         if any((item['method'].get('structure_origin') or {}).get('observation_domains') for item in active):
             instruction+=('\n采用人物出场或章场进展方法时，从本书当前问题与已知事实出发，把角色承担的工作、'
-                          '自身理由、获知身份的途径或章场实际改变落实到本书相应卡的body及具体事件。'
+                          '自身理由、获知身份的途径或章场实际改变落实到本书所选产物。'
+                          '复用已有角色时可按冻结需求引用cast_assignments完整行，剧情与本场职责用cast_events或'
+                          'cast_payoffs完整行；章场进展用scene_progress，前章问题接续用continuations。'
+                          '只填写本步已声明和启用的产物。本轮职责的回执须定位到相同demand的cast_events或cast_payoffs。'
+                          '拆解实例source_context提供原作人物、章节、引文位置的对应关系。'
                           '参考书中的姓名与结局只作实例。场景或表达步骤将采用处定位到具体场次或节拍；'
                           'scene_guidance须来自所选场次，表达交接复用该场同一行的observable和check。')
         if any('narration' in item['method']['body']['tasks'] for item in active):

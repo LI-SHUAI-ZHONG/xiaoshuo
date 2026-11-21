@@ -109,7 +109,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     value=raw['products']
     from nw.materials import cast_demands, chapter_progress
     cast_enabled = context.get('cast_demand_policy') == cast_demands.POLICY
-    progress_enabled = context.get('chapter_progress_policy') == chapter_progress.POLICY
+    progress_enabled = context.get('chapter_progress_policy') in chapter_progress.POLICIES
     require('<填写' not in canonical(value),'unfilled transport shape is not an actual project product')
     type_network_inputs = stage == 'type_selection' and context.get('type_network_policy') == TYPE_NETWORK_POLICY
     require(isinstance(value,dict) and FIELDS[stage]|{'_uses'}<=value.keys()
@@ -144,8 +144,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     elif stage=='character_design':
         new=_members(value['members'],{'character'},entities)
         people=new|{r['card_id'] for r in context.get('approved_cards',[]) if r['kind']=='character'}
-        from nw.materials.narration import ACCESS_POLICY
-        if context.get('narration_policy') == ACCESS_POLICY:
+        from nw.materials.narration import ACCESS_POLICIES, EVIDENCE_POLICY
+        if context.get('narration_policy') in ACCESS_POLICIES:
             from nw.materials.cast_design import need_sources, validate_card, validate_introducer
             needs = cast_demands.source_options(context) if cast_enabled else need_sources(context, products)
             character_cards = {r['card_id']: r['body'] for r in context.get('approved_cards', []) if r['kind'] == 'character'}
@@ -158,7 +158,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
                 if card['entry'] == 'other':
                     require(card['introducer'] in people - {row['key']}, '身份介绍者必须是另一位实际人物')
                     if card['introducer_source'] == 'prior':
-                        validate_introducer(card, character_cards[card['introducer']], row['key'], context.get('accepted_state', []))
+                        prior = () if context.get('narration_policy') == EVIDENCE_POLICY else context.get('accepted_state', [])
+                        validate_introducer(card, character_cards[card['introducer']], row['key'], prior)
             if context.get('scope') == 'book' and people == new:
                 require(any(row['body']['casting']['standing'] == 'protagonist' for row in value['members']),
                         '本书首次设计人物未说明谁承担主角')
@@ -212,8 +213,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         people_bodies.update({r['card_id']:r['body'] for r in context.get('approved_cards',[]) if r['kind']=='character'})
         for row in scenes.values():
             body=row['body'];require(body['pov'] in people and set(body['characters'])<=people,'scene has no existing viewpoint/characters')
-            from nw.materials.narration import ACCESS_POLICY, PERSONS
-            if context.get('narration_policy') == ACCESS_POLICY:
+            from nw.materials.narration import ACCESS_POLICIES, PERSONS
+            if context.get('narration_policy') in ACCESS_POLICIES:
                 require(body.get('narrative_person') in PERSONS, '本场缺少已选的叙述人称')
             from nw.plan_contract import _SCENE_TEXT
             require(all(_text(body.get(key)) for key in _SCENE_TEXT)
@@ -230,10 +231,13 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
                      for r in products[stage_name]['products']['members']}
         all_members.update(scenes)
         _chapters(value['chapters'],context.get('scope','chapter'),all_members)
-        if context.get('narration_policy') == ACCESS_POLICY:
+        if context.get('narration_policy') in ACCESS_POLICIES:
             from nw.materials.cast_design import entry_bases
+            from nw.materials.narration import EVIDENCE_POLICY
+            from nw.materials.phase_context import new_character_keys
             entry_bases(value, [(k, 'character', v) for k, v in people_bodies.items()],
-                        context.get('cast_previous_appearances', {}), context.get('accepted_state', []))
+                        context.get('cast_previous_appearances', {}), context.get('accepted_state', []),
+                        new_people=new_character_keys(products, context) if context.get('narration_policy') == EVIDENCE_POLICY else None)
         if progress_enabled:
             chapter_progress.validate(value, products, context)
         if length := context.get('length_context'):
@@ -308,12 +312,12 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             if stage=='anchor_design':require(row['observer']==scenes[row['scene']]['body']['pov'],'anchor observer differs from actual viewpoint')
             if narrated:
                 narration.validate_beat(row.get('narration'), scenes[row['scene']]['body'], bases[row['scene']],
-                                        access=context.get('narration_policy') == narration.ACCESS_POLICY)
+                                        access=context.get('narration_policy') in narration.ACCESS_POLICIES)
                 beat_counts[row['scene']] += 1
                 narration.register_beat(bases[row['scene']], beat_counts[row['scene']], row)
-        if narrated and context.get('narration_policy') == narration.ACCESS_POLICY:
+        if narrated and context.get('narration_policy') in narration.ACCESS_POLICIES:
             from nw.materials.cast_design import validate_expression
-            validate_expression(rows, scenes, bases)
+            validate_expression(rows, scenes, bases, witnessed_entries=context.get('narration_policy') == narration.EVIDENCE_POLICY)
         require({row['scene'] for row in rows}==scenes.keys(),'a scene has no actual anchor or expression products')
     elif stage=='bind_scope':
         require(isinstance(value['material_bindings'],dict) and isinstance(value['process_bindings'],dict)

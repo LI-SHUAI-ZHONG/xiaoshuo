@@ -26,8 +26,8 @@ def selected_checks(records: dict, scene: str, ids: dict | None = None, context:
     cast_enabled = (context or {}).get('cast_demand_policy') == cast_demands.POLICY
     if cast_enabled:
         result.extend(cast_fulfillment.scene_checks(records, scene, context))
-    from nw.materials.chapter_progress import POLICY as PROGRESS_POLICY, scene_check
-    if (context or {}).get('chapter_progress_policy') == PROGRESS_POLICY:
+    from nw.materials.chapter_progress import POLICIES as PROGRESS_POLICIES, scene_check
+    if (context or {}).get('chapter_progress_policy') in PROGRESS_POLICIES:
         if check := scene_check(records, scene, context):
             result.append(check)
 
@@ -44,9 +44,9 @@ def selected_checks(records: dict, scene: str, ids: dict | None = None, context:
     actions={r['id']:r for r in product('action_design').get('candidates',[])}
     selected = selected_action_ids(scene_product).get(scene, [])
     multi = (context or {}).get('multi_action_policy') == MULTI_ACTION_POLICY and len(selected) > 1
-    from nw.materials.narration import ACCESS_POLICY
+    from nw.materials.narration import ACCESS_POLICIES
     actors = {}
-    if (context or {}).get('narration_policy') == ACCESS_POLICY:
+    if (context or {}).get('narration_policy') in ACCESS_POLICIES:
         actors.update((r['card_id'], r['body']) for r in context.get('approved_cards', []) if r['kind'] == 'character')
         actors.update((r['key'], r['body']) for r in product('character_design').get('members', []))
     for index, ident in enumerate(selected, 1):

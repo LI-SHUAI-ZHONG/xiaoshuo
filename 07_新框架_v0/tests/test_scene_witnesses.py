@@ -78,14 +78,69 @@ def test_witness_relay_changes_who_can_react_and_requires_a_real_information_cha
                                      basis_quote=body['planned_result'], effect='因此猜想'),body,bases,access=True)
 
 
+@pytest.mark.parametrize('source', ['background', 'independent_goal'])
+def test_private_character_card_drives_only_owners_actual_public_beat(source):
+    session, records, body, context, spoken = exchange()
+    card = next(c['body'] for c in context['approved_cards'] if c['card_id'] == 'lin')
+    card[source] = '要追回藏在四号柜的原信'
+    ref = 'card:lin:' + source
+    assert ref not in narration.scene_bases(records, context)['scene']
+    context['narration_policy'] = narration.EVIDENCE_POLICY
+    spoken['narration'].update(basis_ref=ref, basis_quote=card[source], effect='担心四号柜里的原信不保')
+    spoken['check'] = '四号柜这段经历让林的措辞有所保留'
+    product = records['expression_design']['products']
+    validate_phase({'stage':'expression_design','products':product}, 'expression_design', records, [], context)
+    check = next(c for c in method_checks(session, 'scene') if c['id'].startswith(narration_review.PREFIX))
+    assert '四号柜' not in json.dumps(check['binding'], ensure_ascii=False)
+    assert spoken['observable'] in check['binding']['observable']
+    assert '四号柜' in check['method_artifact']['narration']['basis_quote']
+    bases = narration.scene_bases(records, context)['scene']
+    for override in ({'owner':'yan','witnesses':['lin']}, {'time':'past'}, {'mode':'thought'}):
+        with pytest.raises(ValueError, match='叙述节拍'):
+            narration.validate_beat({**spoken['narration'], **override}, body, bases, access=True)
+
+
+def test_rumor_cannot_become_world_reader_or_listener_fact_without_accessible_corroboration(draft):
+    session, records, _, context, _ = exchange()
+    split = draft.text.index('。') + 1
+    heard, thought = span(draft, 0, split), span(draft, split, len(draft.text))
+    for policy in (narration.ACCESS_POLICY, narration.EVIDENCE_POLICY):
+        context['narration_policy'] = policy
+        checks = [c for c in method_checks(session, 'scene') if c['id'].startswith(narration_review.PREFIX)]
+        rows = [dict(id=c['id'], status='pass', evidence=[s]) for c, s in zip(checks, [heard, thought])]
+        ranges = narration_review.reader_spans(checks, rows, draft)
+        if policy == narration.ACCESS_POLICY:
+            assert all('reported_only' not in r for r in ranges)
+            continue
+        assert all(r['reported_only'] for r in ranges)
+        for holder in ('WORLD', 'READER', 'yan', 'lin'):
+            op = {'holder':holder, 'claim':'fact', 'evidence':[heard]}
+            with pytest.raises(ValueError, match='独立凭据'):
+                narration_review.check_state_audience([op], ranges)
+            narration_review.check_state_audience([{**op, 'claim':'utterance'}], ranges)
+        testimony = {'holder':'yan','claim':'fact','evidence':[heard, thought]}
+        observation = {**ranges[1], 'mode':'perception', 'holders':['xu']}
+        observation.pop('reported_only')
+        with pytest.raises(ValueError, match='独立凭据'):
+            narration_review.check_state_audience([testimony], [ranges[0], observation])
+        narration_review.check_state_audience([testimony], [ranges[0], {**observation, 'holders':['yan']}])
+        identity = {**testimony, 'entity_id':'lin', 'predicate':'identity_status:渡口'}
+        other_person = {**ranges[0], 'reported_only':False, 'mode':'perception', 'cast_subject':'xu',
+                        'cast_basis':'cast_reveal'}
+        unseen = {**observation, 'reported_only':False, 'cast_subject':'lin', 'cast_basis':'cast_reveal'}
+        with pytest.raises(ValueError, match='独立凭据'):
+            narration_review.check_state_audience([identity], [other_person, unseen])
+        narration_review.check_state_audience([identity], [other_person, {**unseen, 'holders':['yan']}])
+
+
 def test_current_transport_requires_scene_person_and_legacy_schema_does_not():
     for policy in narration.POLICIES:
         props = schema('scene_design', [], allow_requests=False, narration=policy)['properties']['products']['properties']
         card = props['members']['items']['anyOf'][0]['properties']['body']
-        assert ('narrative_person' in card['required']) == (policy == narration.ACCESS_POLICY)
+        assert ('narrative_person' in card['required']) == (policy in narration.ACCESS_POLICIES)
         shape = schema('expression_design', [], allow_requests=False, narration=policy)
         beat = shape['properties']['products']['properties']['guidance']['items']['properties']['narration']
-        assert ('witnesses' in beat['properties']) == (policy == narration.ACCESS_POLICY)
+        assert ('witnesses' in beat['properties']) == (policy in narration.ACCESS_POLICIES)
 
 
 @pytest.mark.parametrize('problem', ['person', 'witness'])

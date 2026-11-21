@@ -1,5 +1,5 @@
 """Method operations must land in real fields, never in an adjacent usage label."""
-from nw.materials.phase_contract import FIELDS
+from nw.studio.method_catalog import METHOD_FIELDS
 from nw.task_models import canonical,content_sha256
 
 
@@ -26,7 +26,13 @@ def placements(rows: object,products: dict,stage: str,*,definition: dict | None=
     seen=set()
     for row in rows:
         require(isinstance(row,dict) and set(row)=={'path','value'},'落点须含path及实际value')
-        path=row['path'];require(isinstance(path,list) and path and isinstance(path[0],str) and path[0] in FIELDS[stage],'不能落到方法标签或虚构字段')
+        path=row['path'];require(isinstance(path,list) and path and isinstance(path[0],str) and path[0] in METHOD_FIELDS[stage],'不能落到方法标签或虚构字段')
+        if path[0] in ('cast_assignments','cast_events','cast_payoffs'):
+            require(len(path)==2 and type(path[1]) is int,'职责方法须落实到完整的一项剧情职责及其实际分派或履行')
+        if path[0] in ('scene_progress','continuations'):
+            details=('stimulus','next_pressure') if path[0]=='scene_progress' else ('target_quote','reason')
+            require(len(path)>=2 and type(path[1]) is int and (len(path)==2 or len(path)==3 and path[2] in details),
+                    '进展方法须定位到一项完整承接或具体的触发、后续压力及衔接依据')
         key=canonical(path);require(key not in seen,'方法落点重复');seen.add(key)
         value=at(products,path)
         require(canonical(value)==canonical(row['value']) and value not in (None,'',[],{}),'方法值与本项目实际产物不一致或为空')
@@ -69,6 +75,8 @@ def narration_handoff(products: dict, stage: str, output: dict, *, require_narra
                     '叙述方法须落在本项目节拍的讲述安排、具体呈现或检验上')
             scenes.add(item['scene'])
             beats.setdefault(item['scene'], set()).add((item['observable'], item['check']))
+        elif not require_narration and field in ('scene_progress','cast_payoffs'):
+            scenes.add(item['scene'])
         elif field == 'members':
             require(len(path) == 2 or path[2] == 'body', '叙述方法须落实到实际场景卡的设计内容')
             scenes.add(item['key'])
@@ -141,6 +149,13 @@ def validate(products: dict,stage: str,plan: dict | None,incoming: list[dict],sc
                 '下游回执引用不存在或重复')
         delivery=expected.pop(receipt['id']);require(explanation(receipt['operation']),'下游须解释怎样承接已有设计')
         placements(receipt['placements'],products,stage)
+        cast_field={'plot_design':'cast_events','scene_design':'cast_payoffs'}.get(stage)
+        if cast_field and not delivery.get('approved_parent'):
+            duties={p['value']['demand'] for p in delivery['output'].get('placements',())
+                    if p['path'][0] in ('cast_assignments','cast_events')}
+            if duties:
+                received={p['value']['demand'] for p in receipt['placements'] if p['path'][0]==cast_field}
+                require(received==duties,'下游须落实同一批已分派的人物职责，不能漏掉或转交其他职责')
         narrative = 'narration' in delivery.get('method', {}).get('body', {}).get('tasks', ())
         story=bool((delivery.get('method', {}).get('structure_origin') or {}).get('observation_domains'))
         guides(receipt['scene_guidance'],scenes,required=stage=='scene_design',

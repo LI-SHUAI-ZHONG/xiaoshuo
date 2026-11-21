@@ -16,7 +16,7 @@ export async function mountRepositorySettings(ctx){
         <div class="row spread"><h3 style="margin:0">GitHub 仓库与资料</h3><span id="repositorySyncState" class="tag ${colour}">${esc(labels[value.state]||value.state)}</span></div>
         <p class="muted" style="margin:16px 0">${esc(value.message)}</p>
         ${value.error?`<div class="notice error" id="repositorySyncError">${esc(value.error)}</div>`:''}
-        ${value.restart_required?'<div class="notice">GitHub 中的客户端程序已更新。请结束客户端启动窗口后重新双击桌面快捷方式，再继续制作。</div>':''}
+        ${value.restart_required?'<div class="notice">仓库中的工作流已更新。当前制作、拆解或同步结束后，双击桌面快捷方式加载新版。</div>':''}
         <div class="form-grid">
           <div class="field full"><span>实际连接的仓库</span><p style="overflow-wrap:anywhere">${value.github_url?`<a href="${esc(value.github_url)}" target="_blank" rel="noreferrer">${esc(value.github_url)}</a> · ${esc(value.branch)}`:'此启动配置未连接 GitHub'}</p></div>
           <div class="field"><span>自动同步</span><p>${value.enabled?`启动后、保存后及每 ${value.interval_seconds} 秒检查；制作结束后同步`:'此隔离工作区未启用'}</p></div>

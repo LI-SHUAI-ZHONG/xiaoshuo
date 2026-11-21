@@ -377,7 +377,9 @@
     $("simStageTitle").textContent = `${stepMeta.zh_title} (${stepMeta.stage})`;
     $("simStageMetaBox").innerHTML = `
       <div><strong>前置步骤 (REQUIRES)：</strong>${stepMeta.requires.length ? stepMeta.requires.map(r => `<code>${esc(r)}</code>`).join(" → ") : "无"}</div>
-      <div><strong>法定产物字段：</strong>${stepMeta.output_fields.map(f => `<code>${esc(f)}</code>`).join(", ")}</div>
+      <div><strong>固定产物字段</strong> ${stepMeta.output_fields.map(f => `<code>${esc(f)}</code>`).join(", ")}</div>
+      ${Object.entries(stepMeta.conditional_output_fields || {}).map(([field, condition]) =>
+        `<div>${esc(condition)}使用 <code>${esc(field)}</code></div>`).join("")}
       <div><strong>防遗忘守卫：</strong>${stepMeta.anti_forgetting_guards.map(g => `<div>• ${esc(g)}</div>`).join("")}</div>
     `;
     $("simStatsBadge").textContent = "计算中…";

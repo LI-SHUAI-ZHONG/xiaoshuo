@@ -20,6 +20,7 @@ from nw.project_paths import project_directory, projects_root_for
 from nw.config import ConfigRequired, ROOT, configured_workspace, load_config, model_window
 from nw.context.story import StoryScope, WRITE_PROMPT, build_story_context, scene_scope
 from nw.materials.phase_contract import FIELDS
+from nw.studio.method_catalog import conditional_outputs
 from nw.materials.phase_flow import (
     FUNCTION_QUERIES,
     SCHEMAS,
@@ -626,6 +627,7 @@ class StudioService:
                 'owner_hint': meta['owner_hint'],
                 'requires': list(REQUIRES[stage]),
                 'output_fields': sorted(FIELDS[stage]),
+                'conditional_output_fields': conditional_outputs(stage),
                 'function_queries': list(FUNCTION_QUERIES.get(stage, ())),
                 'anti_forgetting_guards': _anti_forgetting_notes(stage),
                 'stage_instruction': STAGE_INSTRUCTIONS.get(stage, ''),

@@ -79,15 +79,16 @@ def test_world_evidence_and_design_handoff_survive_method_revisions(analysis):
         library.review_method(manual['id'],{'version':3,'decision':'approve','note':'[FAKE] 缺少原文依据。'})
 
 
-def test_legacy_structure_keeps_approved_method_active_until_a_new_structure_is_approved(analysis):
-    library, book, _=analysis
-    body=deepcopy(library.get_corpus(book)['body'])
-    body['schema_version']=1
-    body['threads']=[t for t in body['threads'] if t['domain'] in corpus_catalog(1)['domains']]
-    body['domains']=[r for r in body['domains'] if r['domain'] in corpus_catalog(1)['domains']]
-    kept={t['id'] for t in body['threads']}
-    body['links']=[link for link in body['links'] if link['thread_id'] is None or link['thread_id'] in kept]
-    row=library.save_corpus(book,{'expected_version':1,'body':body})
+def test_legacy_structure_keeps_approved_method_active_until_a_new_structure_is_approved(tmp_path,monkeypatch):
+    library=LibraryService(tmp_path)
+    current=corpus_jobs.empty_document
+    with monkeypatch.context() as initial:
+        initial.setattr(corpus_jobs,'empty_document',lambda *args:{**current(*args),'schema_version':1})
+        book,job,provider=start_analysis(library,initial)
+    assert job['status']=='completed',job['error']
+    book=book['id']
+    monkeypatch.setattr(library,'_corpus_runtime',lambda:(runtime(),provider))
+    row=library.get_corpus(book)
     frozen=row['body_sha256']
     old=approve(library,book,row['version'])
     assert old['available'] and len(old['statistics']['thread_counts'])==7
@@ -97,6 +98,12 @@ def test_legacy_structure_keeps_approved_method_active_until_a_new_structure_is_
         {'version':1,'decision':'approve','note':'[FAKE] 七职责版本的原方法。'})
     assert approved_method['available']
     assert 'world_rules' not in corpus_catalog(1)['domains']
+    manual=library.edit_corpus_record(book,{'expected_version':row['version'],'section':'overview',
+                                           'row':row['body']['overview']})
+    assert manual['body']['schema_version']==4 and manual['approved_version']==row['version']
+    with pytest.raises(ValueError,match='结构尚不能批准'):
+        approve(library,book,manual['version'])
+    assert library.get_method(approved_method['id'])['available']
     rerun=library.start_corpus_job(book,{'options':{'extent':'complete','note':'[FAKE] 从原文重新分析。'}})
     fresh=wait_job(library,book,rerun['id'])
     assert fresh['status']=='completed' and fresh['runtime']['pipeline_version']=='corpus-v4'

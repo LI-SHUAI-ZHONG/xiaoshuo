@@ -63,7 +63,9 @@ def test_task_catalog_uses_real_stages_products_and_one_legacy_mapping(library):
     assert set().union(*(set(t['stages']) for t in result['tasks'])) == set(ORDER)
     assert set(result['scopes']) == {'book', 'volume', 'chapter', 'scene'}
     for stage in result['stages']:
-        assert set(stage['output_fields']) == set(FIELDS[stage['id']])
+        extra = {'character_design': {'cast_assignments'}, 'plot_design': {'cast_events','continuations'},
+                 'scene_design': {'cast_payoffs','scene_progress'}}
+        assert set(stage['output_fields']) == set(FIELDS[stage['id']]) | extra.get(stage['id'],set())
         assert set(stage['output_fields']) <= result['output_labels'].keys()
     assert STAGES is catalog.SLOT_STAGES
     assert STAGES['structure'] == ['plot_design', 'scene_design']

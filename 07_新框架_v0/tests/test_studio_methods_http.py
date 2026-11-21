@@ -41,6 +41,14 @@ def client(tmp_path):
 def test_method_endpoints_preserve_complete_versions_and_require_real_evidence(client):
     status, catalog = client('GET', '/api/kb/method-catalog')
     assert status == 200 and any(task['id'] == 'narration' for task in catalog['tasks'])
+    status, blueprint = client('GET', '/api/pipeline/blueprint?scope=chapter')
+    assert status == 200
+    stages={s['id']:s for s in catalog['stages']}
+    for step in blueprint['design_steps']:
+        options=stages[step['stage']]
+        assert step['conditional_output_fields']==options['conditional_output_fields']
+        assert set(step['output_fields']) | options['conditional_output_fields'].keys()==set(options['output_fields'])
+    assert set(stages['scene_design']['conditional_output_fields'])=={'cast_payoffs','scene_progress'}
     status, empty = client('GET', '/api/kb/methods')
     assert status == 200 and empty['methods'] == []
     status, book = client('POST', '/api/staging', {'title': '[FAKE] HTTP证据', 'filename': 'http.md', 'text': SOURCE})

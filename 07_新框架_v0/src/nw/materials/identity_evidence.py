@@ -99,12 +99,21 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
                 'designed_action': design['action'], 'designed_result': design['candidate_result'],
                 'review_reason': check['reason'], 'evidence': [s for s in check['evidence'] if s['id'] == draft.id]})
         if check['id'] in progress:
-            design = progress[check['id']]['method_artifact']
+            from nw.materials import chapter_progress
+            rule = progress[check['id']]
+            design = rule['method_artifact']
+            pressure = design['next_pressure']
+            support = {}
+            if rule.get('pressure_review') == chapter_progress.POLICY:
+                spans = chapter_progress.pressure_evidence(check, draft.id)
+                support['pressure_evidence'] = spans
+                if not spans:
+                    pressure = None
             advances.append({'scene_id': draft.scene_id, 'draft_ref': ref, 'delta_id': delta.id, 'review_run_id': run.id,
                 'disclosure_order': manifest['disclosure_order'],
                 'change': design['change'], 'review_reason': check['reason'],
                 'evidence': [span for span in check['evidence'] if span['id'] == draft.id],
-                'possible_next_pressure': design['next_pressure']})
+                'possible_next_pressure': pressure, **support})
         if check['id'] in sources:
             rule, refs = sources[check['id']]
             for source in refs:

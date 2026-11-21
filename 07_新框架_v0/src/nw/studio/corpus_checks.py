@@ -1,7 +1,7 @@
 """Graph/coverage integrity checks; author review decides literary interpretations."""
 from nw.studio.corpus_catalog import DETAILS, OVERVIEW, domains_for
 from nw.studio.corpus_index import range_coverage
-from nw.studio.corpus_story_observations import REQUIRED_DETAILS, story_observation_issue
+from nw.studio.corpus_story_observations import REQUIRED_DETAILS, event_chapter, story_observation_issue
 
 
 def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[dict]:
@@ -147,9 +147,8 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None) -> list[
             detailed=set()
             supported=set()
             for event in events.values():
-                unit=units.get(event['unit_id'],{})
-                if event['granularity']=='detail' and unit:
-                    chapter=unit['parent_id'] if unit['level']=='scene' else unit['id']
+                chapter=event_chapter(event,units)
+                if event['granularity']=='detail' and chapter:
                     detailed.add(chapter)
                     if event['id'] in accounted:
                         supported.add(chapter)

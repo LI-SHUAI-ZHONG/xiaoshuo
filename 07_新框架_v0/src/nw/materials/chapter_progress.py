@@ -5,7 +5,10 @@ from nw.story_models import Fact
 from nw.task_models import canonical, content_sha256
 
 
-POLICY = 'chapter-progress-v1'
+POLICY = 'chapter-progress-v2'
+LEGACY_POLICY = 'chapter-progress-v1'
+POLICIES = (LEGACY_POLICY, POLICY)
+PRESSURE_MARK = '【未决原文】'
 ORIGINS = ('conversation', 'reflection', 'discovery', 'incident', 'continuation')
 CONNECTIONS = ('causal', 'coincident', 'unresolved')
 CHANGES = ('knowledge', 'decision', 'relationship', 'ability', 'resource', 'situation', 'emotion', 'reader', 'setup')
@@ -44,13 +47,31 @@ def chapter_changes(handoff: dict) -> dict:
     return result
 
 
-def chapter_openings(handoff: dict) -> dict:
+def chapter_openings(handoff: dict, policy: str = POLICY) -> dict:
+    evidence_key = 'evidence' if policy == LEGACY_POLICY else 'pressure_evidence'
     return {f'open:{index}': {'draft_ref': row['draft_ref'], 'delta_id': row['delta_id'],
-            'review_run_id': row['review_run_id'], 'evidence': row['evidence'],
+            'review_run_id': row['review_run_id'], 'evidence': row[evidence_key],
             'disclosure_order': row['disclosure_order'],
             'possible_next_pressure': row['possible_next_pressure']}
             for index, row in enumerate(handoff.get('reviewed_progress', ()))
-            if row.get('possible_next_pressure') and row.get('evidence')}
+            if row.get('possible_next_pressure') and row.get(evidence_key)}
+
+
+def pressure_evidence(review: dict, draft_id: str) -> list[dict]:
+    """Extract only the passage the independent reviewer designates as an open thread."""
+    lines = review['reason'].strip().splitlines()
+    if (not lines or not lines[-1].strip().startswith(PRESSURE_MARK)
+            or any(line.strip().startswith(PRESSURE_MARK) for line in lines[:-1])):
+        return []
+    quote = lines[-1].strip()[len(PRESSURE_MARK):].strip()
+    if sum(ch.isalnum() for ch in quote) < 4:
+        return []
+    for span in review['evidence']:
+        if span['id'] != draft_id or span['quote'].count(quote) != 1:
+            continue
+        start = span['start'] + span['quote'].index(quote)
+        return [{**span, 'start': start, 'end': start + len(quote), 'quote': quote}]
+    return []
 
 
 def validate_continuations(value: dict, options: dict) -> None:
@@ -157,22 +178,84 @@ def scene_check(records: dict, scene: str, context: dict) -> dict | None:
     continuations = _continuations(records, selected)
     if continuations:
         check += ' 核对本场是否实际回应前章留下的问题，区分人物尝试和已经实现的结果。'
+    evidence_required = '引用当前稿中能辨认前因和结果的段落，说明本场推进是否成立。'
+    chapter_task = {}
+    if chapter['card'] is not None and context.get('chapter_progress_policy') == POLICY:
+        card = next((r['body'] for r in product(records, 'plot_design').get('members', ())
+                     if r['key'] == chapter['card']), {})
+        if positions[0]['card'] == scene and card.get('goal'):
+            chapter_task['goal'] = card['goal']
+        if positions[-1]['card'] == scene and card.get('consequence'):
+            chapter_task['consequence'] = card['consequence']
+        if chapter_task:
+            evidence_required += ' 对照 chapter_task 的章纲目标或预期后果，说明本场实际贡献；安静收束允许承接前场已发生的改变。'
+    pressure_review = bool(row['next_pressure']) and context.get('chapter_progress_policy') == POLICY
+    if pressure_review:
+        evidence_required += (' 单独判断本稿是否确实留下 method_artifact.next_pressure。只有成立时，'
+            '在 reason 末尾另起一行写“【未决原文】”并逐字摘录本项 evidence 中能表明该问题仍未解决的具体原文。'
+            '未呈现、已经解决或另有进展时省略该行，仍可通过本场进展。')
     return {'id': f'work:progress:{scene}', 'profile': 'method_work',
             'binding': {'observable': canonical(observable), 'check': check}, 'method_artifact': row,
+            **({'chapter_task': chapter_task} if chapter_task else {}),
+            **({'pressure_review': POLICY} if pressure_review else {}),
             **({'chapter_progress_prior': source} if source else {}),
             **({'continuations': [{**link, 'prior': context['chapter_openings'][link['ref']]} for link in continuations]}
                if continuations else {}),
-            'evidence_required': '引用当前稿中能辨认前因和结果的段落，说明本场推进是否成立。'}
+            'evidence_required': evidence_required}
 
 
-def verify_current(checks: list[dict], facts: list[Fact], slots: dict) -> None:
+def cast_preconditions(session: dict, scene: str) -> list[dict]:
+    """Follow only the selected cast duties, including a plot-requested replacement."""
+    records = {r['stage']: r for r in session.get('stages', ())}
+    links = [r for r in product(records, 'scene_design').get('cast_payoffs', ()) if r['scene'] == scene]
+    if not links:
+        return []
+    context = session['context']
+    initial = {r['id']: r['need_ref'] for r in product(records, 'world_design')['cast_demands']}
+    gap = context.get('plot_cast_gap') or {}
+    demands = {**initial, **{r['id']: r['need_ref'] for r in gap.get('cast_demands', ())}}
+    turns = {r['id']: r['source_ref'] for r in gap.get('turns', ())}
+    checks = []
+    for link in links:
+        ref = demands[link['demand']]
+        if ref.startswith('plot-gap:'):
+            ref = turns[ref[len('plot-gap:'):].rsplit(':', 1)[0]]
+        if ref.startswith('initial-demand:'):
+            ref = initial[ref[len('initial-demand:'):].rsplit(':', 1)[0]]
+        if ref.startswith('prior:'):
+            checks.append({'chapter_progress_prior': context['chapter_changes'][ref.rsplit(':', 1)[0]]})
+        elif ref.startswith('open:'):
+            prior = context['chapter_openings'][ref.rsplit(':', 1)[0]]
+            checks.append({'continuations': [{'prior': prior}]})
+        elif ref.startswith('prior-cast:'):
+            prior = context['cast_prior_work'][int(ref.split(':')[1])]
+            checks.append({'cast_performance': prior})
+    return checks
+
+
+def writing_preconditions(checks: list[dict], session: dict, scene: str) -> list[dict]:
+    selected = [check for check in checks if check.get('chapter_progress_prior') or check.get('continuations')]
+    selected.extend(cast_preconditions(session, scene))
+    if (session.get('context', {}).get('chapter_progress_policy') == LEGACY_POLICY
+            and any(check.get('continuations') for check in selected)):
+        raise ValueError('MATERIAL_PRECONDITION: 本场依赖旧版未单独核实的遗留问题，请按前章实际证据重新设计')
+    return selected
+
+
+def verify_current(checks: list[dict], facts: list[Fact], slots: dict, disclosure: tuple | None = None) -> None:
     accepted = {(slot['draft_id'], slot.get('delta_id')) for slot in slots.values()}
     for check in checks:
-        if any((link['prior']['draft_ref']['id'], link['prior']['delta_id']) not in accepted
-               for link in check.get('continuations', ())):
-            raise ValueError('MATERIAL_PRECONDITION: 章末接续问题引用的已接受稿已经改变，请按当前分支重新设计')
+        receipts = [link['prior'] for link in check.get('continuations', ())]
+        if performance := check.get('cast_performance'):
+            receipts.append(performance)
+        for prior in receipts:
+            if ((prior['draft_ref']['id'], prior['delta_id']) not in accepted
+                    or disclosure is not None and tuple(prior['disclosure_order']) >= disclosure):
+                raise ValueError('MATERIAL_PRECONDITION: 章场引用的已接受稿已经改变或尚未披露，请按当前分支重新设计')
         if not (prior := check.get('chapter_progress_prior')):
             continue
+        if disclosure is not None and tuple(prior['disclosure_order']) >= disclosure:
+            raise ValueError('MATERIAL_PRECONDITION: 本场所依前章变化尚未披露，请按当前场次重新设计')
         for fact in facts:
             if not all(getattr(fact, field) == prior[field] for field in ('entity_id', 'predicate', 'holder', 'claim')):
                 continue

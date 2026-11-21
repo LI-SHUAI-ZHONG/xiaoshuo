@@ -2,11 +2,11 @@
 from collections.abc import Iterable
 import json
 import re
-import re
 
 from nw.models import Draft
+from nw.story_models import Fact
 from nw.store import Store
-from nw.task_models import _text, canonical
+from nw.task_models import _text, canonical, content_sha256
 from nw.story_state import IDENTITY_STATUS_PREFIX
 
 
@@ -168,7 +168,7 @@ def previous_appearances(store: Store, cards: list[dict]) -> dict:
 
 
 def entry_bases(scene_product: dict, cards: list[tuple[str, str, dict]], prior: dict,
-                facts: Iterable[dict] = ()) -> dict:
+                facts: Iterable[dict] = (), *, new_people: set[str] | None = None) -> dict:
     characters = {key: body for key, kind, body in cards if kind == 'character'}
     cast = {key: body['casting'] for key, body in characters.items() if 'casting' in body}
     places = {s['card']: [c['index'], s['index']] for c in scene_product['chapters'] for s in c['scenes']}
@@ -184,35 +184,40 @@ def entry_bases(scene_product: dict, cards: list[tuple[str, str, dict]], prior: 
         for person in sorted(people & cast.keys()):
             profile = cast[person]
             if first[person] == places[key]:
+                source = None
                 if profile['entry'] == 'other':
                     require(profile['introducer'] in people - {person}, '首次出场缺少已设计的实际介绍者')
                     previous = [f for f in facts if f.get('story_order', times[key]+1) <= times[key] and
                                 tuple(f.get('disclosure_order', ())) < (*places[key], 0)]
                     if profile['introducer_source'] == 'prior':
-                        validate_introducer(profile, characters[profile['introducer']], person, previous)
+                        if new_people and ({person, profile['introducer']} & new_people):
+                            previous = []
+                        source = validate_introducer(profile, characters[profile['introducer']], person, previous)
                 result[key][f'cast:{person}:entry'] = {
                     'kind': 'cast_entry', 'subject': person, 'entry': profile['entry'],
                     'text': profile.get('clue', profile['public_identity']), 'speaker': profile.get('introducer', person)}
                 if profile.get('introducer_source') == 'on_scene':
                     result[key][f'cast:{person}:entry']['recognition_cue'] = profile['introducer_basis']
+                if new_people is not None and source and Fact.__dataclass_fields__.keys() <= source.keys():
+                    result[key][f'cast:{person}:entry']['state_sha256'] = content_sha256(source)
             if profile['entry'] == 'withheld':
                 result[key][f'cast:{person}:reveal'] = {
                     'kind': 'cast_reveal', 'subject': person, 'text': profile['secret'], 'trigger': profile['trigger']}
     return result
 
 
-def validate_introducer(profile: dict, speaker: dict, subject: str, facts: Iterable[dict]) -> None:
-    evidence = [speaker.get(field) or '' for field in ('background', 'relationship')]
+def validate_introducer(profile: dict, speaker: dict, subject: str, facts: Iterable[dict]) -> dict | None:
+    if any(profile['introducer_basis'] in (speaker.get(field) or '') for field in ('background', 'relationship')):
+        return None
     for fact in facts:
         if fact.get('holder') == profile['introducer'] and fact.get('entity_id') == subject and fact.get('claim') == 'fact':
             value = confirmed_identity(fact) or fact.get('value')
-            if _text(value):
-                evidence.append(value)
-    require(any(profile['introducer_basis'] in text for text in evidence),
-            '他人介绍身份须有该介绍人已定的经历或关系依据')
+            if _text(value) and profile['introducer_basis'] in value:
+                return fact
+    raise ValueError('MATERIAL_STAGE: 他人介绍身份须有该介绍人已定的经历或关系依据')
 
 
-def validate_expression(rows: list[dict], scenes: dict, bases: dict) -> None:
+def validate_expression(rows: list[dict], scenes: dict, bases: dict, *, witnessed_entries: bool = False) -> None:
     for scene, scene_bases in bases.items():
         entries = {key for key, b in scene_bases.items() if b['kind'] == 'cast_entry'}
         secrets = {(b['subject'], b['text']) for b in scene_bases.values() if b['kind'] == 'cast_reveal'}
@@ -235,6 +240,8 @@ def validate_expression(rows: list[dict], scenes: dict, bases: dict) -> None:
                 entry = basis['entry']
                 if entry in ('self', 'other'):
                     require(mode == 'speech' and owner == basis['speaker'], '身份介绍须由实际自述人或事先有依据的介绍者说出')
+                    if witnessed_entries:
+                        require(bool(beat['witnesses']), '身份介绍须有至少一名实际听见的在场者')
                     if cue := basis.get('recognition_cue'):
                         require(any(owner in witnesses and _seen_trigger(text, cue) for text, witnesses in observed),
                                 '介绍人须先当场见证辨认对方的依据')
@@ -261,26 +268,50 @@ def validate_expression(rows: list[dict], scenes: dict, bases: dict) -> None:
 
 
 def _seen_trigger(text: str, trigger: str) -> bool:
+    return _trigger_end(text, trigger) is not None
+
+
+def _trigger_end(text: str, trigger: str) -> int | None:
     from nw.materials.world_history import factual_history_claim
-    for sentence in re.findall(r'[^。！？!?\n]+[。！？!?]?', text):
+    for segment in re.finditer(r'[^。！？!?\n]+[。！？!?]?', text):
+        sentence = segment.group()
         for match in re.finditer(re.escape(trigger), sentence):
             prefix = re.split(r'[，,；;]', sentence[:match.start()])[-1]
             if not re.search(r'(?:不|没|未|无法|难以|不曾)(?:能|敢|曾|能再)?(?:确认|证明|看见|见到|证实|看到)?\s*$', prefix
                              ) and factual_history_claim(sentence, match.start(), match.end()):
-                return True
-    return False
+                return segment.start() + match.end()
+    return None
 
 
-def review_checks(scene: str, pov: str, bases: dict, guides: list[dict]) -> list[dict]:
+def review_checks(scene: str, pov: str, bases: dict, guides: list[dict], *, trace_trigger: bool = False) -> list[dict]:
     """The reviewer may see the secret; the writer and reviser receive only approved beats."""
     result = []
     for ref, item in bases.items():
         if item['kind'] != 'cast_reveal':
             continue
-        previously_known = any(b.get('confirmed_identity') == item['text'] and b.get('subject') == item['subject']
-                               and b.get('audience') == pov for b in bases.values())
-        reveal = next((f'work:narration:{scene}:{i}' for i, guide in enumerate(guides) if guide['scene'] == scene
-                       and guide['narration']['basis_ref'] == ref), None)
+        known = next((b for b in bases.values() if b.get('confirmed_identity') == item['text']
+                      and b.get('subject') == item['subject'] and b.get('audience') == pov), None)
+        reveal_index = next((i for i, guide in enumerate(guides) if guide['scene'] == scene
+                             and guide['narration']['basis_ref'] == ref), None)
+        reveal = f'work:narration:{scene}:{reveal_index}' if reveal_index is not None else None
+        trigger_checks = {}
+        prerequisites = set()
+        if trace_trigger and known and 'state_sha256' in known:
+            prerequisites.add(known['state_sha256'])
+        if trace_trigger and reveal_index is not None:
+            prior = next((b for b in bases.values() if b.get('kind') == 'state' and b.get('claim') == 'fact'
+                          and b.get('subject') == item['subject'] and b.get('audience') == pov
+                          and b['text'] == item['trigger']), None)
+            witnessed = []
+            for index, guide in enumerate(guides[:reveal_index]):
+                beat = guide['narration']
+                if (guide['scene'] == scene and beat['time'] == 'current' and beat['mode'] in ('action','perception')
+                        and pov in (beat['owner'], *beat.get('witnesses', ())) and _seen_trigger(guide['observable'], item['trigger'])):
+                    witnessed.append(f'work:narration:{scene}:{index}')
+            if witnessed or prior is None:
+                trigger_checks['trigger_checks'] = witnessed
+            elif 'state_sha256' in prior:
+                prerequisites.add(prior['state_sha256'])
         asides = []
         for index, guide in enumerate(guides):
             beat = guide['narration']
@@ -290,10 +321,11 @@ def review_checks(scene: str, pov: str, bases: dict, guides: list[dict]) -> list
             if reader_aside(guide, source) and source['subject'] == item['subject'] and source['confirmed_identity'] == item['text']:
                 asides.append(f'work:narration:{scene}:{index}')
         result.append({'id': f'work:cast-identity:{scene}:{item["subject"]}', 'profile': 'prose_review',
+            **({'narration_state_refs': sorted(prerequisites)} if prerequisites else {}),
             'binding': {'observable': '核对本稿里谁见到哪项线索，是否已到揭晓位置',
                         'check': '尚未揭晓时找出暗示的正文并检查有无同义泄露。揭晓时引证凭据、身份与获知途径。'},
             'method_artifact': {'secret': item['text'], 'trigger': item['trigger'], 'reveal': reveal,
-                                'previously_known': previously_known, 'reader_asides': asides}})
+                                'previously_known': known is not None, 'reader_asides': asides, **trigger_checks}})
     return result
 
 
@@ -306,8 +338,26 @@ def assess_hidden(checks: list[dict], rows: list[dict], draft: Draft) -> None:
         if item['previously_known']:
             continue
         reveal = by_id.get(item['reveal'])
-        allowed = [(e['start'], len(draft.text)) for e in (reveal['evidence'] if reveal and reveal['status'] == 'pass' else [])
-                   if e['id'] == draft.id]
+        spans = [e for e in (reveal['evidence'] if reveal and reveal['status'] == 'pass' else []) if e['id'] == draft.id]
+        allowed = [(e['start'], len(draft.text)) for e in spans]
+        if 'trigger_checks' in item and spans:
+            confirmed = []
+            for key in item['trigger_checks']:
+                proof = by_id.get(key)
+                if proof and proof['status'] == 'pass':
+                    for citation in proof['evidence']:
+                        if citation['id'] != draft.id:
+                            continue
+                        cue = _trigger_end(citation['quote'], item['trigger'])
+                        if cue is not None:
+                            confirmed.append(citation['start'] + cue)
+                        elif item['trigger'] not in citation['quote']:
+                            confirmed.append(citation['end'])
+            first_confirmation = min(confirmed, default=len(draft.text))
+            allowed = [(max(e['start'], first_confirmation), len(draft.text)) for e in spans
+                       if first_confirmation < e['end']]
+            if not allowed:
+                by_id[check['id']].update(status='failed', reason='本稿未能引证视角人物在揭晓之前实际见证的触发凭据。')
         allowed.extend((e['start'], e['end']) for key in item['reader_asides'] if by_id[key]['status'] == 'pass'
                        for e in by_id[key]['evidence'] if e['id'] == draft.id)
         for match in re.finditer(re.escape(item['secret']), draft.text):

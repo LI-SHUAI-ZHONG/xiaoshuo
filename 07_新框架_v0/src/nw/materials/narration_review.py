@@ -93,6 +93,8 @@ def reader_spans(checks: list[dict], rows: list[dict], draft: Draft) -> list[dic
             if 'witnesses' in observable:
                 limits[check['id']] = {'time': beat['time'], 'mode': beat['mode'],
                     'holders': [observable['owner'], *observable['witnesses']]}
+        if 'reported_only' in check and check['id'] in limits:
+            limits[check['id']]['reported_only'] = check['reported_only']
         if 'cast_subject' in observable and check['id'] in limits:
             limits[check['id']].update(cast_subject=observable['cast_subject'], cast_basis=observable['basis_claim'],
                                        mode=beat['mode'])
@@ -105,7 +107,9 @@ def check_state_audience(operations: list[dict], reader_only: list[dict]) -> Non
         return
     for op in operations:
         holder = op['holder']
+        reported = [r for r in reader_only if r.get('reported_only')] if op.get('claim') == 'fact' else []
         identity_fact = op.get('claim') == 'fact' and op.get('predicate', '').startswith('identity_status:')
+        introductions = []
         if identity_fact:
             introductions = [r for r in reader_only if 'cast_subject' in r and (
                 r['cast_subject'] != op['entity_id'] or r['mode'] == 'speech' and r['cast_basis'] == 'cast_entry')]
@@ -113,12 +117,18 @@ def check_state_audience(operations: list[dict], reader_only: list[dict]) -> Non
                                          for e in op['evidence']):
                 raise ValueError('MATERIAL_EVIDENCE: 他人的身份披露、自报或转述，不能单独证实此人的真实身份')
         if holder == 'READER':
-            continue
-        if holder == 'WORLD':
+            restricted = []
+        elif holder == 'WORLD':
             restricted = [r for r in reader_only if r['time'] == 'past' or
                           r.get('mode') in ('perception', 'thought', 'inference')]
         else:
             restricted = [r for r in reader_only if holder not in r.get('holders', ())]
+        # The same piece of evidence must both be available to this holder and establish the fact.
+        # Two unsupported citations (hearsay and someone else's private discovery) cannot vouch for each other.
+        if op.get('claim') == 'fact' and any('reported_only' in r for r in reader_only) and not any(
+                all(e['end'] <= r['start'] or e['start'] >= r['end'] for r in (*reported, *restricted, *introductions))
+                for e in op['evidence']):
+            raise ValueError('MATERIAL_EVIDENCE: 确认事实须引用该获知者可接触的独立凭据，身份依据须属于同一人；言辞和推测只支持相应的说法或信念')
         if restricted and not any(all(e['end'] <= r['start'] or e['start'] >= r['end'] for r in restricted)
                                   for e in op['evidence']):
             raise ValueError('MATERIAL_EVIDENCE: 仅向读者讲述或本人未见证的段落不能单独证明人物获知；人物心声与回述往事也不能单独证明当下世界变化')

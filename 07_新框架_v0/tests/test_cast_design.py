@@ -137,6 +137,73 @@ def test_intro_is_placed_once_in_disclosure_order_and_requires_actual_speaker_an
     assert all('cast:lin:entry' not in s for s in narration.scene_bases(records, context).values())
 
 
+def test_introducer_cannot_declare_identity_without_a_listener_in_new_design():
+    _, records, context = staged('other')
+    line = beat('speech', 'yan', 'cast:lin:entry', '渡口抄录员', '我念出了渡口抄录员的名字。', [])
+    validate(records, context, line)
+    context['narration_policy'] = narration.EVIDENCE_POLICY
+    with pytest.raises(ValueError, match='实际听见'):
+        validate(records, context, line)
+    line['narration']['witnesses'] = ['lin']
+    validate(records, context, line)
+
+
+@pytest.mark.parametrize('new_person', ['yan','lin', None])
+def test_introducer_cannot_inherit_another_persons_proof_and_pins_actual_known_fact(new_person):
+    from dataclasses import asdict
+    from nw.story_models import Fact
+
+    session, records, context = staged('other')
+    characters = records['character_design']['products']['members']
+    next(c for c in characters if c['key'] == 'yan')['body']['background'] = '昨夜赶到渡口'
+    context['approved_cards'].extend({'card_id': row['key'], 'kind':'character', 'body': row['body']}
+                                     for row in characters if row['key'] != new_person)
+    records['character_design']['products']['members'] = [c for c in characters if c['key'] == new_person]
+    records['character_design']['sha256'] = content_sha256(records['character_design']['products'])
+    fact = Fact('lin','相识经历','验过渡口值勤名册','yan','fact',0,(0,0,0),())
+    context['accepted_state'].append(asdict(fact))
+    context['narration_policy'] = narration.EVIDENCE_POLICY
+    intro = beat('speech','yan','cast:lin:entry','渡口抄录员','我向她介绍了这位渡口抄录员。',['lin'])
+    if new_person:
+        with pytest.raises(ValueError, match='关系依据'):
+            validate(records, context, intro)
+        return
+    validate(records, context, intro)
+    check = next(c for c in method_checks(session,'scene') if c['id'].startswith('work:narration:'))
+    assert check['narration_state_sha256'] == content_sha256(asdict(fact))
+
+
+@pytest.mark.parametrize('scene_goal, leak', [('追查旧册去向',False), ('追问北汛密使的下落', True)])
+def test_offscene_author_only_identity_is_protected_in_brief_and_writer_package(tmp_path, scene_goal, leak):
+    from dataclasses import asdict
+    from nw.context.story import StoryScope, build_story_context
+    from nw.story_state import adopt_story
+    from story_fixture import baseline, seed_book
+    from test_selection import add_card
+
+    with Store(tmp_path, create=True, test_mode=True) as store:
+        [scene] = seed_book(store, 1)
+        store.add_brief('去渡口交接。她其实是北汛密使。两枚潮印吻合才能揭晓。')
+        refs = []
+        for key, kind, body in [
+            ('yan', 'character', {'name':'沈砚', 'role':'主角', 'want':'查册', 'visibility':'public'}),
+            ('hidden', 'character', {**actor(), 'visibility':'author_only'}),
+            ('sc', 'scene', {'title':'旧册', 'goal': scene_goal, 'pov':'yan', 'characters':['yan'],
+                             'story_time':'1', 'visibility':'public', 'narrative_person':'first'}),
+        ]:
+            ref = add_card(store, key, kind, body)
+            decision = decide_card(store, ref, 'approved', '确认')
+            refs.append({**asdict(ref), 'decision_id':decision.id})
+        adopt_story(store, baseline(card_refs=refs), {})
+        scope = StoryScope('main', 0, 1, {'card_id':'sc', 'version':1})
+        if leak:
+            with pytest.raises(ValueError, match='写作包'):
+                build_story_context(store, scene.id, scope, 12000)
+        else:
+            package = canonical(build_story_context(store, scene.id, scope, 12000).package)
+            assert '去渡口交接' in package and '北汛密使' not in package and '两枚潮印吻合' not in package
+
+
 def test_hidden_entrance_reveal_and_guard_work_on_writer_and_reviewer_projections():
     session, records, context = staged()
     intro = beat('perception', 'yan', 'cast:lin:entry', '袖里露出半枚潮印', '我看见她袖里露出半枚潮印。')
@@ -172,6 +239,55 @@ def test_hidden_entrance_reveal_and_guard_work_on_writer_and_reviewer_projection
     cast_design.guard_writer_package([{'card_id':'lin','body': actor()}], [],
         [dict(id=c['id'], **c['binding']) for c in final if c['profile'] != 'prose_review'], {'visible': '北汛密使'})
     assert next(c for c in final if c['id'].startswith('work:cast-identity:'))['method_artifact']['reveal'].endswith(':2')
+
+
+@pytest.mark.parametrize('prose,proof_text,status', [
+    ('她自称北汛密使。我这才发现两枚潮印吻合。她点了点头。','两枚潮印吻合','failed'),
+    ('我这才发现两枚潮印吻合，她点头承认自己是北汛密使。','两枚潮印吻合，她点头承认自己是北汛密使','pass'),
+    ('两枚残印合得严丝合缝。她承认自己是北汛密使。','两枚残印合得严丝合缝','pass'),
+    ('我还不能确认两枚潮印吻合。她却先自称北汛密使。','我还不能确认两枚潮印吻合','failed'),
+])
+def test_even_a_passing_overbroad_reveal_quote_must_follow_its_independent_cue(prose, proof_text, status):
+    session, records, context = staged()
+    context['narration_policy'] = narration.EVIDENCE_POLICY
+    goal = records['scene_design']['products']['members'][0]['body']['goal']
+    intro = beat('perception','yan','cast:lin:entry','袖里露出半枚潮印','她袖里露出半枚潮印。')
+    cue = beat('action','yan','scene:scene:goal',goal,'我按住两块缺角铜片，两枚潮印吻合。',['lin'])
+    reveal = beat('speech','lin','cast:lin:reveal','北汛密使','她收起铜片，承认自己是北汛密使。',['yan'])
+    validate(records, context, intro, cue, reveal)
+    hidden = next(c for c in method_checks(session, 'scene') if c['id'].startswith('work:cast-identity:'))
+    [proof_id] = hidden['method_artifact']['trigger_checks']
+    draft = SimpleNamespace(id='d',text=prose)
+    def citation(quote):
+        start = prose.index(quote)
+        return {'id':'d','start':start,'end':start+len(quote),'quote':quote}
+    rows = [{'id':hidden['id'], 'status':'pass', 'evidence':[]},
+            {'id':proof_id,'status':'pass', 'evidence':[citation(proof_text)]},
+            {'id':hidden['method_artifact']['reveal'], 'status':'pass', 'evidence':[citation(prose)]}]
+    cast_design.assess_hidden([hidden], rows, draft)
+    assert rows[0]['status'] == status
+
+
+@pytest.mark.parametrize('known_identity', [False,True])
+def test_indirect_prior_proof_used_to_disclose_identity_is_pinned_for_writing(tmp_path, known_identity):
+    from dataclasses import asdict, replace
+    from nw.story_models import Fact
+
+    session, records, context = staged_with_approved(tmp_path, 'yan', 'lin')
+    context['narration_policy'] = narration.EVIDENCE_POLICY
+    fact = Fact('lin', 'identity_status:渡口' if known_identity else '印记',
+                {'identity':'北汛密使'} if known_identity else '两枚潮印吻合', 'yan', 'fact', 0, (0,0,0), ())
+    context['accepted_state'].append(asdict(fact))
+    intro = beat('perception','yan','cast:lin:entry','袖里露出半枚潮印','她袖里露出半枚潮印。')
+    reveal = beat('speech','lin','cast:lin:reveal','北汛密使','她随即承认自己是北汛密使。',['yan'])
+    validate(records, context, *([intro] if known_identity else [intro, reveal]))
+    hidden = next(c for c in method_checks(session, 'scene') if c['id'].startswith('work:cast-identity:'))
+    required = set(hidden['narration_state_refs'])
+    assert required == {content_sha256(asdict(fact))}
+    narration.verify_scene_facts(required, [fact])
+    for changed in ([], [replace(fact, holder='lin')], [replace(fact, claim='belief')]):
+        with pytest.raises(ValueError, match='MATERIAL_PRECONDITION'):
+            narration.verify_scene_facts(required, changed)
 
 
 @pytest.mark.parametrize('actor_key,holder,claim,predicate,revealed', [

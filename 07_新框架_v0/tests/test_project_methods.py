@@ -51,6 +51,22 @@ def test_real_method_reader_is_read_only_and_pins_approved_structure(project):
     with pytest.raises(ValueError,match='快照已被改写'):reader.verify(forged)
 
 
+def test_approved_method_can_fulfil_its_task_at_a_later_design_stage(project):
+    store,library,method,model=project
+    body=deepcopy(method['body'])
+    body['tasks']=['character_arc']
+    updated=library.save_method({'body':body,'expected_version':method['version']},method['id'])
+    library.review_method(method['id'],{'version':updated['version'],'decision':'approve','note':'[FAKE] 人物选择落在剧情方向'})
+    policy=normalize({'tasks':['character_arc']},types=['GENRE_XUANYI'])
+    job,waiting=start(store,model,policy=policy)
+    gate=waiting.outputs['gate']
+    assert waiting.status=='WAITING' and gate['stage']=='plot_design',waiting.reason
+    assert gate['required_tasks']==['character_arc']
+    assert gate['candidates'][0]['method']['version']==updated['version']
+    finished=approve_direction(store,job,model,waiting)
+    assert finished.status=='DONE',finished.reason
+
+
 def test_book_methods_wait_for_author_input_approval_and_keep_concrete_cards(project):
     store,library,method,model=project;job,result=start(store,model)
     assert result.status=='WAITING' and result.outputs['gate']['kind']=='production_method_selection',result.reason

@@ -544,8 +544,9 @@ def test_stage_reads_exact_unreviewed_original_and_can_continue_its_own_lookup(t
         assert any(any(s['source']['id'] == plot['id'] for s in call['frozen_sources']) for call in manifests)
 
 
-@pytest.mark.parametrize(('omit_change','multi'),[(False,False),(True,False),(False,True)])
-def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp_path,omit_change,multi):
+@pytest.mark.parametrize(('omit_change','multi','pressure_confirmed'),
+                         [(False,False,True),(True,False,True),(False,True,True),(False,False,False)])
+def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp_path,omit_change,multi,pressure_confirmed):
     from nw.novel_flow import start_job,resume_job,JobRequest
     from test_material_workflow import choose
     from test_novel_flow import author
@@ -558,6 +559,7 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
     second_sentence = '他收回手，压低木片托住纸角，看清了旧印。'
     next_duty = '[FAKE] 将前日印痕的拓片和印坊日簿对照'
     next_result = '[FAKE] 找到换印当日值班人的签名'
+    outstanding = '换印是哪一天，他还得查日簿。' if pressure_confirmed else ''
     class StateModel(PhaseModel):
         reviews = 0
 
@@ -566,9 +568,9 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
             if '只输出正文' in prompt or multi and '修订本场' in prompt:
                 self.calls.append(messages)
                 if multi:
-                    return GenResult(first_sentence + second_sentence + ('他记下印痕。' if self.reviews else ''),
+                    return GenResult(first_sentence + second_sentence + outstanding + ('他记下印痕。' if self.reviews else ''),
                                      'complete',{},'test',{})
-                return GenResult('[FAKE] 沈砚用手试探封条下的铜丝，手背被划伤。他收回手，改用木片托住封条，看清了旧印。',
+                return GenResult('[FAKE] 沈砚用手试探封条下的铜丝，手背被划伤。他收回手，改用木片托住封条，看清了旧印。' + outstanding,
                                  'complete',{},'test',{})
             if '{"operations"' in prompt:
                 self.calls.append(messages)
@@ -583,6 +585,12 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                         facts[key]=t['new_value']
                 return GenResult(json.dumps({'operations':operations},ensure_ascii=False),'complete',{},'test',{})
             result = super().generate(messages,**params)
+            if 'material_review' in payload and pressure_confirmed:
+                raw = json.loads(result.text)
+                [check] = [r for r in payload['material_review']['checks'] if r.get('pressure_review')]
+                reviewed = next(r for r in raw['material_checks'] if r['id'] == check['id'])
+                reviewed['reason'] += '\n【未决原文】' + outstanding
+                result.text = json.dumps(raw, ensure_ascii=False)
             if payload.get('stage') == 'world_design' and payload.get('reviewed_cast_work'):
                 raw = json.loads(result.text)
                 duty = raw['products']['cast_demands'][0]
@@ -603,6 +611,12 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                         chapter['index'] = 2
                         for entry in chapter['scenes']:
                             entry['story_order'] += 1
+                    raw['products']['events'][0]['before_state'] = {'hand': '划伤'}
+                result.text = json.dumps(raw, ensure_ascii=False)
+            if payload.get('stage') == 'state_transition' and any(
+                    row['before_state'] == {'hand': '划伤'} for row in payload['inputs']['scene_design']['products']['events']):
+                raw = json.loads(result.text)
+                raw['products']['transitions'][0].update(action='对照日簿时给手背重新包扎', after_state={'hand': '已包扎'})
                 result.text = json.dumps(raw, ensure_ascii=False)
             if not multi:
                 return result
@@ -684,15 +698,24 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                 assert performances and all(r['scene_id'] == scene and r['actor'] and
                     r['draft_ref'] == advance['draft_ref'] and r['evidence'] for r in performances)
                 assert advance['change'] == 'knowledge' and advance['scene_id'] == scene
-                assert advance['evidence'] and advance['possible_next_pressure'] == '换印的日期仍待调查'
+                assert advance['evidence']
+                if not pressure_confirmed:
+                    assert advance['possible_next_pressure'] is None and not advance['pressure_evidence']
+                    return
+                assert advance['possible_next_pressure'] == '换印的日期仍待调查'
+                assert [p['quote'] for p in advance['pressure_evidence']] == [outstanding]
                 if not multi:
                     from nw.materials.phase_projection import method_checks
+                    from nw.context.story import build_story_context, scene_scope
+                    from nw.planning import plan_input
+                    from nw.story_state import fork_story
+                    from test_planning import apply
                     parent = reopened.connection.execute('SELECT proposal_id FROM plan_applications WHERE proposal_id != ?',
                                                          (design.outputs['proposal_id'],)).fetchone()[0]
-                    budget = create_budget(reopened, 'next-progress', Budget(32, 90000, 4000))
-                    request, inputs = prepare_plan_task(reopened, 1, 'chapter', provider, config(reopened),
-                                                        budget, 'next-chapter', parent_id=parent)
-                    _, following = drive_plan(reopened, request, inputs, provider, config(reopened))
+                    branch = fork_story(reopened, head, 'next-chapter').branch_id
+                    proposal = propose_plan(reopened, 1, 'chapter', provider, config(reopened),
+                                            Budget(32, 90000, 4000), parent_id=parent, branch=branch)
+                    _, following = plan_input(reopened, proposal.id)
                     session = following['material_work']
                     for stage in ('world_design', 'character_design'):
                         packet = next(p for call in reversed(provider.calls)
@@ -709,6 +732,12 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                     progress = next(r for r in method_checks(session, 'scene') if r['id'].startswith('work:progress:'))
                     assert progress['continuations'][0]['ref'] == continuation['ref']
                     assert progress['continuations'][0]['prior']['draft_ref'] == advance['draft_ref']
+                    assert progress['chapter_task'] == {'goal': '入井', 'consequence': '受阻'}
+                    apply(reopened, proposal)
+                    next_scene = next(s.id for s in reopened.list('scene') if s.id != scene)
+                    package = build_story_context(reopened, next_scene, scene_scope(reopened, next_scene, branch), 90000).package
+                    items = [r['text'] for r in package['items'] if r['source'].startswith('material:work:')]
+                    assert any(next_duty in text and next_result in text for text in items)
             if multi:
                 assert provider.reviews == 2
                 [accepted] = store.list('accepted')

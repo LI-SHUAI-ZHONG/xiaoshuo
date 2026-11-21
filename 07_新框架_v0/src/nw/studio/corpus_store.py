@@ -3,7 +3,7 @@ from copy import deepcopy
 import hashlib
 import json
 
-from nw.studio.corpus_catalog import FIELDS, corpus_catalog
+from nw.studio.corpus_catalog import FIELDS, SCHEMA_VERSION, corpus_catalog
 from nw.studio.corpus_checks import graph_issues
 from nw.studio.corpus_contract import normalize_document
 from nw.studio.corpus_index import empty_document, range_coverage
@@ -82,7 +82,10 @@ class CorpusMixin:
         if not isinstance(request,dict) or set(request)-{'expected_version','body','reviewed_units'}:raise ValueError('拆解保存请求无效')
         expected=request.get('expected_version')
         if type(expected) is not int or expected<0:raise ValueError('请提供当前拆解版本，新结构为0')
-        book=self._staging_row(book_id);body=normalize_document(request.get('body'),self._book_text(book))
+        raw=request.get('body')
+        if not isinstance(raw,dict) or raw.get('schema_version')!=SCHEMA_VERSION:
+            raise ValueError('新建或修订须使用当前拆解结构版本，请刷新目录再保存')
+        book=self._staging_row(book_id);body=normalize_document(raw,self._book_text(book))
         reviewed=request.get('reviewed_units',[])
         chapters={u['id'] for u in body['units'] if u['level']=='chapter'}
         if not isinstance(reviewed,list) or any(v not in chapters for v in reviewed) or len(reviewed)!=len(set(reviewed)):
@@ -108,6 +111,7 @@ class CorpusMixin:
         current=self.get_corpus(book_id);section=request.get('section')
         if request.get('expected_version')!=current['latest_version']:raise ValueError('拆解已更新，请刷新后再修改')
         body=deepcopy(current['body'])
+        body['schema_version']=SCHEMA_VERSION
         if section=='read_confirmation':
             return self.save_corpus(book_id,{'body':body,'expected_version':current['latest_version'],'reviewed_units':request.get('row')})
         if section in ('overview','source_extent','uncertainties'):body[section]=request.get('row')

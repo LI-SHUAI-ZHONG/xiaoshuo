@@ -104,6 +104,8 @@ def validate_saved_work(store: Store,proposal_id: str,design: dict,root: dict) -
     row=store.connection.execute('SELECT manifest_id,result_json FROM task_calls WHERE id=?',(proposal_id,)).fetchone()
     _require(row is not None,'missing original method design task')
     _,frozen=read_input_manifest(store,row['manifest_id'])
+    from nw.materials.story_policies import verify_plan
+    verify_plan(frozen)
     if not frozen.get('material_work'):
         _require(not any(design.get(key) for key in ('work_session','work_application','work_context')),
                  'method work was not in the frozen design');return

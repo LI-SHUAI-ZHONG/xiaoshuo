@@ -51,6 +51,11 @@ def test_http_pipeline_review_methods_and_immutable_input_output(client,monkeypa
     assert status==200 and method['status']=='draft' and method['issues']
     assert method['structure_origin']['basis']['thread_ids']==['T_hook']
     old=request('GET',root+'?version=1')[1]
+    obsolete=deepcopy(old['body'])
+    obsolete['schema_version']=1
+    status,problem=request('POST',root+'/save',{'expected_version':1,'body':obsolete})
+    assert status==400 and '当前拆解结构版本' in str(problem)
+    assert request('GET',root)[1]['latest_version']==1
     overview=deepcopy(old['body']['overview']);overview['mainline']+='[FAKE] HTTP修订'
     revised=request('POST',root+'/record',{'expected_version':1,'section':'overview','row':overview})
     assert revised[0]==200 and revised[1]['version']==2

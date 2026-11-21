@@ -23,4 +23,5 @@ src/nw/materials/recall.py text eol=lf
 src/nw/materials/phase_routes.py text eol=lf
 studio.config.toml text eol=lf
 studio.repository.toml text eol=lf
+*.bat text eol=crlf
 studio_data/** -text

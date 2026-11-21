@@ -34,9 +34,11 @@ STORY_TASKS = {
 }
 
 
-def _chapter(event: dict, units: dict) -> str | None:
+def event_chapter(event: dict, units: dict) -> str | None:
     unit = units.get(event['unit_id'], {})
-    return unit.get('parent_id') if unit.get('level') == 'scene' else unit.get('id')
+    if unit.get('level') == 'scene':
+        unit = units.get(unit.get('parent_id'), {})
+    return unit.get('id') if unit.get('level') == 'chapter' else None
 
 
 def _people(ids: list, characters: dict) -> set[str]:
@@ -61,6 +63,8 @@ def story_observation_issue(thread: dict, events: dict, links: Iterable[dict], u
     quotes = set(thread['evidence_ids'])
     if not nodes or any(event['granularity'] != 'detail' or not quotes.intersection(event['evidence_ids']) for event in nodes):
         return '章场观察须逐个对应细拆事件及其原作短引'
+    if any(not event_chapter(event, units) for event in nodes):
+        return '章场观察的细拆事件须定位到原作的具体章节或章内场景'
     if domain == 'cast_entry':
         people = _people([who for event in nodes for who in event['characters']],characters)
         subjects = _people(thread['characters'],characters)
@@ -78,7 +82,7 @@ def story_observation_issue(thread: dict, events: dict, links: Iterable[dict], u
                 or not {link['source'], link['target']} <= node_ids):
             continue
         before, after = events[link['source']], events[link['target']]
-        if domain == 'chapter_progress' and _chapter(before,units) == _chapter(after,units):
+        if domain == 'chapter_progress' and event_chapter(before,units) == event_chapter(after,units):
             continue
         if domain == 'cast_entry' and not subjects <= (_people(before['characters'],characters) & _people(after['characters'],characters)):
             continue

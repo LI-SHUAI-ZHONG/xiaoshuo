@@ -4,6 +4,21 @@ from copy import deepcopy
 from nw.materials.phase_contract import FIELDS
 from nw.materials.phase_routes import EXTERNAL_REQUIRES, ORDER, REQUIRES, phase_order
 
+CAST_OUTPUTS = {'character_design': {'cast_assignments'}, 'plot_design': {'cast_events'},
+                'scene_design': {'cast_payoffs'}}
+PROGRESS_OUTPUTS = {'plot_design': {'continuations'}, 'scene_design': {'scene_progress'}}
+METHOD_FIELDS = {stage: fields | CAST_OUTPUTS.get(stage, set()) | PROGRESS_OUTPUTS.get(stage, set())
+                 for stage, fields in FIELDS.items()}
+
+def conditional_outputs(stage: str) -> dict[str, str]:
+    conditions = {field: '启用剧情职责分派时' for field in CAST_OUTPUTS.get(stage, ())}
+    if stage == 'scene_design':
+        conditions['scene_progress'] = '启用章场进展设计时'
+    if stage == 'plot_design':
+        conditions['continuations'] = '启用章场进展，且有前章审稿核实的遗留事项时'
+    return conditions
+
+
 SCOPES = {'book': '全书', 'volume': '卷', 'chapter': '章', 'scene': '场景'}
 STAGES = dict(zip(ORDER, ('类型选择', '类型适配', '世界设计', '人物设计', '静态关系',
     '剧情设计', '事件设计', '行动设计', '场景设计', '状态变化', '状态传播', '锚点设计', '表达设计', '绑定汇总')))
@@ -22,7 +37,9 @@ OUTPUT_LABELS = {'selection': '实际类型选择', 'concepts': '类型概念', 
     'selected_actions': '选定行动', 'patches': '状态变更单', 'transitions': '变化依据',
     'beats': '可观察的呈现节拍', 'selected_propagations': '选定传播', 'guidance': '表达指导',
     'material_bindings': '资料到产物的绑定', 'process_bindings': '制作过程绑定',
-    'method_guidance': '方法执行要求'}
+    'method_guidance': '方法执行要求', 'cast_assignments': '已冻结剧情职责与受派人物',
+    'cast_events': '受派职责与具体剧情节点', 'cast_payoffs': '角色职责落实的场景与行动步骤',
+    'scene_progress': '本场进展的前因、触发与结果', 'continuations': '前章遗留事项与本章事件'}
 MEMBER_KINDS = {'world_design': ('world',), 'character_design': ('character',),
     'plot_design': ('plot', 'promise', 'volume', 'chapter'), 'scene_design': ('scene',)}
 
@@ -82,22 +99,25 @@ TASKS = {ident: {'id': ident, 'name': name, 'purpose': purpose, 'stages': stages
     'scopes': scopes.split(), 'input_kinds': inputs.split()} for ident, name, purpose, stages, scopes, inputs in _ROWS}
 
 
-def method_catalog() -> dict:
+def method_catalog(*, include_story_outputs: bool = True) -> dict:
+    fields = METHOD_FIELDS if include_story_outputs else FIELDS
+    labels = set.union(*fields.values())
     stages = [{'id': stage, 'name': STAGES[stage], 'required_stages': list(REQUIRES[stage]),
         'scopes': [scope for scope in SCOPES if stage in phase_order(scope)],
-        'output_fields': sorted(FIELDS[stage]),
+        'output_fields': sorted(fields[stage]),
+        **({'conditional_output_fields': conditional_outputs(stage)} if include_story_outputs else {}),
         'consumers': [consumer for consumer in ORDER if stage in REQUIRES[consumer]],
         'note': '绑定读取本范围实际前步；命名交接可追加输入。'} for stage in ORDER]
     tasks = []
     for row in TASKS.values():
         outputs = [{'stage': stage, 'field': field, 'artifact_kinds': output_artifacts(stage, field),
                     'scopes': [scope for scope in row['scopes'] if stage in phase_order(scope)]}
-                   for stage in row['stages'] for field in sorted(FIELDS[stage])]
+                   for stage in row['stages'] for field in sorted(fields[stage])]
         tasks.append({**deepcopy(row), 'allowed_outputs': outputs})
     return {'schema_version': 1, 'tasks': tasks, 'scopes': SCOPES, 'stages': stages,
         'input_kinds': INPUTS, 'consumers': CONSUMERS, 'artifact_kinds': ARTIFACTS,
-        'output_labels': OUTPUT_LABELS,
-        'output_artifact_kinds': {stage: {field: output_artifacts(stage, field) for field in FIELDS[stage]}
+        'output_labels': {field: label for field, label in OUTPUT_LABELS.items() if field in labels},
+        'output_artifact_kinds': {stage: {field: output_artifacts(stage, field) for field in fields[stage]}
                                   for stage in ORDER},
         'external_requires': {key: list(value) for key, value in EXTERNAL_REQUIRES.items()},
         'required_sections': {'applicability': '适用条件', 'prerequisites': '所需前置',

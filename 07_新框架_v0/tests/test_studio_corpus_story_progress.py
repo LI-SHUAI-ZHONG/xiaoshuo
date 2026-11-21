@@ -8,7 +8,10 @@ from corpus_fixture import CorpusModel, make_book, runtime, wait_job
 from nw.production_methods.contracts import validate
 from nw.production_methods.inputs import binding
 from nw.production_methods.runtime import prompt
-from nw.production_methods.sources import MethodReader
+from nw.production_methods.sources import MethodReader, enabled_outputs, task_routes
+from nw.production_methods.selection import build_target
+from nw.materials import cast_demands, chapter_progress
+from nw.task_models import content_sha256
 from nw.studio import corpus_jobs
 from nw.studio.corpus_checks import graph_issues
 from nw.studio.corpus_methods import prepare_method
@@ -75,6 +78,22 @@ def test_encounter_and_progress_become_distinct_evidenced_design_methods(tmp_pat
     assert finished['status']=='completed',finished['error']
     structure=library.review_corpus(book,{'version':1,'decision':'approve','note':'[FAKE] 仅核对该片段',
                                           'accept_limitations':True})
+    stripped=deepcopy(structure['body'])
+    for key in ('threads','domains'):
+        stripped[key]=[r for r in stripped[key] if r['domain'] not in ('chapter_progress','cast_entry')]
+    for version in (3,None):
+        if version is None:
+            stripped.pop('schema_version')
+        else:
+            stripped['schema_version']=version
+        with pytest.raises(ValueError,match='当前拆解结构版本'):
+            library.save_corpus(book,{'expected_version':1,'body':stripped})
+    assert library.get_corpus(book)['latest_version']==1
+    unlocated=deepcopy(structure['body'])
+    progress=next(t for t in unlocated['threads'] if t['domain']=='chapter_progress')
+    detail=next(e for e in unlocated['events'] if e['id']==progress['node_ids'][-1])
+    detail['unit_id']=next(u['id'] for u in unlocated['units'] if u['level']=='book')
+    assert any('具体章节或章内场景' in i['message'] for i in graph_issues(unlocated,len(SOURCE)))
     assert all(ch['chapter_progress']==['T_chapter_progress'] and ch['cast_entry']==['T_cast_entry']
                for ch in structure['statistics']['chapter_ranges'])
     partial=deepcopy(structure['body'])
@@ -116,6 +135,16 @@ def test_encounter_and_progress_become_distinct_evidenced_design_methods(tmp_pat
         assert [m['id'] for m in result]==[method['id']]
         pin=reader.snapshot(reader.get_method(method['id']))
         reader.verify(pin)
+        context=pin['instance']['source_context']
+        assert {p['name'] for p in context['participants']}=={'我','沈禾'}
+        chapter_ids={u['id'] for u in context['units'] if u['level']=='chapter'}
+        assert len(chapter_ids)==2
+        assert {SOURCE[e['start']:e['end']] for e in context['evidence']}=={FIRST,SECOND}
+        legacy_pin=deepcopy(pin)
+        del legacy_pin['instance']['source_context']
+        legacy_pin.pop('snapshot_sha256')
+        legacy_pin['snapshot_sha256']=content_sha256(legacy_pin)
+        reader.verify(legacy_pin)
         if not chapter:
             assert pin['instance']['threads'][0]['details']['claim_status']=='attributed'
         kind=body['prerequisites'][0]['input_kind']
@@ -165,6 +194,77 @@ def test_encounter_and_progress_become_distinct_evidenced_design_methods(tmp_pat
         receipt['scene_guidance'][0]['scene']='inn'
         with pytest.raises(ValueError,match='实际采用'):
             validate(delivered,'scene_design',{'target':{},'selected':[]},incoming,{'dock','inn'})
+
+
+        verify_workflow_output(library,reader,method,chapter)
+
+
+def verify_workflow_output(library,reader,method,chapter):
+    updated=deepcopy(method['body'])
+    stage='scene_design' if chapter else 'character_design'
+    field='scene_progress' if chapter else 'cast_assignments'
+    updated['outputs'][0].update(stage=stage,field=field,artifact_kind='stage_product')
+    updated['downstream'][0]['consumer']='writer' if chapter else 'plot_design'
+    version=library.get_method(method['id'])['latest_version']
+    saved=library.save_method({'body':updated,'expected_version':version},method['id'])
+    library.review_method(method['id'],{'version':saved['version'],'decision':'approve','note':'[FAKE] 核验制作落点'})
+    package={'scope':'chapter','brief':{'project_id':'project','version':1},'parent':{'card_id':'outline','version':1},
+             'production_method_policy':{'tasks':updated['tasks'],'type_ids':['GENRE_XUANYI'],'max_methods':2,
+                                         'preferred_methods':{method['id']:saved['version']}}}
+    world={'members':[]}
+    products={'world_design':{'stage':'world_design','task_id':'world','products':world,'sha256':content_sha256(world)}}
+    assert not build_target(reader,package,stage,products)['candidates']
+    package.update(cast_demand_policy=cast_demands.POLICY,chapter_progress_policy=chapter_progress.POLICY)
+    package['method_task_stages']=task_routes(reader,package)
+    target=build_target(reader,package,stage,products)
+    assert target['required_tasks']==updated['tasks'] and not target['missing_tasks']
+    if chapter:
+        assert not build_target(reader,package,'plot_design',products)['required_tasks']
+    candidate=target['candidates'][0]
+    assert candidate['preferred'] and not candidate['missing']
+    row=({'scene':'dock','basis_ref':'event:e1','basis_quote':'送出凭据','origin':'conversation',
+          'connection':'causal','stimulus':'渡工出示了凭据','change':'decision','next_pressure':'领班要求核验'}
+         if chapter else {'demand':'d1','actor':'approved_ferryman'})
+    guide=([{'scene':'dock','observable':'[FAKE] 渡工把领班签过名的凭据交给账房',
+             'check':'[FAKE] 能从领班的回应读出他接受了这张凭据'}] if chapter else [])
+    place={'path':[field,0],'value':row}
+    output={'key':'o1','placements':[place],'scene_guidance':guide}
+    applied={'method_id':method['id'],'operations':[{'key':'p1','explanation':'[FAKE] 让旧人物接下送归凭据的任务并由领班核验'}],
+             'outputs':[output]}
+    book={field:[row],'members':[],'_method_applications':[applied]}
+    plan={'target':target,'selected':[candidate]}
+    scenes={'dock','inn'} if chapter else set()
+    validate(book,stage,plan,[],scenes)
+    if chapter:
+        guide[0]['scene']='inn'
+        with pytest.raises(ValueError,match='实际采用'):
+            validate(book,stage,plan,[],scenes)
+        guide[0]['scene']='dock'
+    else:
+        incoming=[{'id':'assignment','method':candidate['method'],'output':output}]
+        events=[{'demand':'d1','event':'dock'},{'demand':'d2','event':'ledger'}]
+        receipt={'id':'assignment','placements':[{'path':['cast_events',0],'value':events[0]}],
+                 'scene_guidance':[],'operation':'[FAKE] 交给原来承接此职责的人在对应事件履行'}
+        plot={'cast_events':events,'_method_receipts':[receipt]}
+        validate(plot,'plot_design',{'target':{},'selected':[]},incoming,set())
+        receipt['placements']=[{'path':['cast_events',1],'value':events[1]}]
+        with pytest.raises(ValueError,match='同一批'):
+            validate(plot,'plot_design',{'target':{},'selected':[]},incoming,set())
+    column='scene' if chapter else 'actor'
+    output['placements']=[{'path':[field,0,column],'value':row[column]}]
+    with pytest.raises(ValueError,match='完整'):
+        validate(book,stage,plan,[],scenes)
+
+
+def test_continuation_method_uses_the_frozen_review_contract():
+    body={'outputs':[{'stage':'plot_design','field':'continuations'}]}
+    reviewed={'possible_next_pressure':'是谁收下了凭据','draft_ref':{'id':'d','version':1},
+              'delta_id':'delta','review_run_id':'review','disclosure_order':[1,1,0],'evidence':[{'id':'d'}]}
+    package={'chapter_progress_policy':chapter_progress.POLICY,'chapter_handoff':{'reviewed_progress':[reviewed]}}
+    assert not enabled_outputs(body,'plot_design',package)
+    assert enabled_outputs(body,'plot_design',{**package,'chapter_progress_policy':chapter_progress.LEGACY_POLICY})
+    reviewed['pressure_evidence']=[{'id':'d','quote':'收据上怎么是我的名字？'}]
+    assert enabled_outputs(body,'plot_design',package)
 
 
 def test_v3_job_keeps_its_original_domains_and_budget(tmp_path,monkeypatch):

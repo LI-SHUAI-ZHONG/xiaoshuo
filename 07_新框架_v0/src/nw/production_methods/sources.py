@@ -10,8 +10,29 @@ from nw.production_methods.matching import TYPE_PRIORITY, type_match
 from nw.studio.corpus_store import CorpusMixin
 from nw.studio.method_store import MethodMixin
 from nw.studio.staging import StagingMixin
-from nw.studio.method_catalog import TASKS
+from nw.studio.method_catalog import CAST_OUTPUTS, PROGRESS_OUTPUTS, TASKS
 from nw.task_models import canonical,content_sha256
+
+
+def story_context(document: dict, instance: dict, citations: list[dict]) -> dict:
+    """Resolve the IDs in the selected observation without copying the rest of the book."""
+    characters={p['id']:p for p in document['characters']}
+    people={person for row in instance['threads']+instance['events'] for person in row['characters']}
+    units={u['id']:u for u in document['units']}
+    locations={e['unit_id'] for e in instance['events']}
+    for selected, records, parent in ((people,characters,'canonical_id'),(locations,units,'parent_id')):
+        pending=list(selected)
+        while pending:
+            target=records.get(pending.pop(),{}).get(parent)
+            if target and target not in selected:
+                selected.add(target)
+                pending.append(target)
+    cited_ids={key for part in ('threads','events','links') for row in instance[part] for key in row['evidence_ids']}
+    quotes={(e['start'],e['end'],e['quote']) for e in citations if e['book_id']==instance['book_id']}
+    return {'participants':[{k:p[k] for k in ('id','name','canonical_id')} for p in characters.values() if p['id'] in people],
+            'units':[{k:u[k] for k in ('id','level','title','parent_id')} for u in units.values() if u['id'] in locations],
+            'evidence':[{k:e[k] for k in ('id','start','end')} for e in document['evidence']
+                        if e['id'] in cited_ids and (e['start'],e['end'],e['quote']) in quotes]}
 
 
 class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
@@ -44,6 +65,8 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
             **{section:[r for r in body[section] if r['id'] in basis[key]]
                for section,key in [('threads','thread_ids'),('events','event_ids'),('links','link_ids')]}}
         result={key:deepcopy(row[key]) for key in ('id','version','body_sha256','body','evidence_locations','structure_origin')}
+        if origin.get('observation_domains'):
+            instance['source_context']=story_context(body, instance, row['body']['evidence'])
         result['instance']=instance;result['snapshot_sha256']=content_sha256(result)
         return result
 
@@ -82,6 +105,11 @@ class MethodReader(MethodMixin,CorpusMixin,StagingMixin):
             if source is None or source[1] != source_type_match:
                 raise ValueError('STALE_PROJECT_METHOD: 原作类型、世界规则结构或原文证据已改变')
             actual = source[0]
+        if 'source_context' not in pin['instance'] and 'source_context' in actual['instance']:
+            # Frozen gates created before source IDs were expanded have a different exact digest.
+            del actual['instance']['source_context']
+            actual.pop('snapshot_sha256')
+            actual['snapshot_sha256']=content_sha256(actual)
         if canonical(actual)!=canonical(pin):raise ValueError('STALE_PROJECT_METHOD: 冻结的拆解实例或原文证据已改变')
 
 
@@ -104,7 +132,48 @@ def stage_tasks(body: dict, stage: str, scope: str) -> set[str]:
     return {task for task in body['tasks'] if scope in TASKS[task]['scopes'] and stage in TASKS[task]['stages']}
 
 
-def relevant(reader: MethodReader, policy: dict, stage: str, scope: str, types: list[str]) -> list[dict]:
+def enabled_outputs(body: dict, stage: str, package: dict) -> bool:
+    from nw.materials import cast_demands, chapter_progress
+    fields={o['field'] for o in body['outputs'] if o['stage']==stage}
+    if fields & CAST_OUTPUTS.get(stage,set()) and package.get('cast_demand_policy')!=cast_demands.POLICY:
+        return False
+    if fields & PROGRESS_OUTPUTS.get(stage,set()):
+        if package.get('chapter_progress_policy') not in chapter_progress.POLICIES:
+            return False
+        if 'continuations' in fields and not chapter_progress.chapter_openings(
+                package.get('chapter_handoff',{}), package['chapter_progress_policy']):
+            return False
+    return True
+
+
+def task_routes(reader: MethodReader, package: dict) -> dict:
+    """Pin the actual output stage for a task when the library serves it later in the workflow."""
+    from nw.materials.phase_routes import phase_order
+    policy=package['production_method_policy']
+    scope=package['scope']
+    tasks=set(policy['tasks'])
+    if policy.get('world_selection')=='ai':
+        tasks.discard('world_rules')
+    if not tasks or not reader.db_path.is_file():
+        return {}
+    available={}
+    preferred=policy.get('preferred_methods',{})
+    for row,_ in matching_methods(reader,policy['type_ids']):
+        body=row['body']
+        for stage in {o['stage'] for o in body['outputs']}:
+            covered=stage_tasks(body,stage,scope) & tasks
+            if covered and enabled_outputs(body,stage,package):
+                for task in covered:
+                    available.setdefault(task,{}).setdefault(stage,set()).add((row['id'],row['version']))
+    order=phase_order(scope)
+    routes={}
+    for task, stages in available.items():
+        preferred_stages={s for s,versions in stages.items() if any(preferred.get(k)==v for k,v in versions)}
+        routes[task]=next(s for s in order if s in (preferred_stages or stages))
+    return routes
+
+
+def relevant(reader: MethodReader, policy: dict, stage: str, scope: str, types: list[str], *, package: dict | None = None) -> list[dict]:
     tasks = set(policy['tasks'])
     production_scope = 'chapter' if scope == 'replan' else scope
     if not policy.get('preferred_methods') and not any(stage in TASKS[task]['stages'] and production_scope in TASKS[task]['scopes'] for task in tasks):
@@ -114,4 +183,5 @@ def relevant(reader: MethodReader, policy: dict, stage: str, scope: str, types: 
     preferred = policy.get('preferred_methods', {})
     return [reader.snapshot(row) for row, _ in matching_methods(reader, types)
             if (applicable := stage_tasks(row['body'], stage, scope))
+            and enabled_outputs(row['body'],stage,package or {})
             and (applicable & tasks or preferred.get(row['id']) == row['version'])]

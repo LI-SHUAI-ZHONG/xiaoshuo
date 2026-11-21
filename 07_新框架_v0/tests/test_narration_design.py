@@ -193,6 +193,9 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
                 body['entering_state'] = '沈砚举灯走近封条，老许正站在井口翻交班簿。'
                 result.text = json.dumps(raw, ensure_ascii=False)
             elif payload.get('stage') == 'expression_design':
+                from nw.materials.narration import EVIDENCE_POLICY
+                assert payload['narration_policy'] == EVIDENCE_POLICY
+                assert '人物可据自己的疑心发言或行动' in messages[0]['content']
                 bases = payload['narration_bases']['scene']
                 assert bases['card:archive:history']['public']
                 [ref] = [k for k, v in bases.items() if v.get('claim') == 'belief']
@@ -204,6 +207,8 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
                 pov = scene['body']['pov']
                 line = guide('current', 'speech', 'informant', ref, private_belief, spoken)
                 line['narration']['witnesses'] = [pov]
+                line['narration']['effect'] = '老许最担心的仍是戊九的柜号'
+                line['check'] = '因没有公开戊九的柜号，沈砚只能先去查印'
                 raw['products']['guidance'] = entrances + [
                     guide('past','summary',None,'card:archive:history','旧库因屋梁烧断封闭','[FAKE] 读者先得知封库始末'),
                     line, guide('current', 'inference', pov, f'beat:{len(entrances) + 2}', spoken,
@@ -242,7 +247,7 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
         assert (history['time'], history['audience'], history['basis_claim']) == ('past', 'reader_only', 'history')
         pov = response['owner']
         assert pov != 'yan' and (statement['owner'], statement['witnesses']) == ('informant', [pov])
-        assert statement['basis_claim'] == 'belief' and 'basis_quote' not in statement
+        assert statement['basis_claim'] == 'belief' and 'basis_quote' not in statement and 'effect' not in statement
         assert (response['mode'], response['basis_claim'], response['basis_quote']) == ('inference', 'speech', spoken)
         package = json.dumps(items, ensure_ascii=False)
         assert private_belief not in package and orphan not in package and '戊九' not in package

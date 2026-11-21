@@ -13,6 +13,8 @@ from nw.task_models import canonical,content_sha256
 
 def verify_chain(session: dict) -> None:
     require(session.get('policy') in STAGED_POLICIES,'unknown stage binding policy')
+    from nw.materials.story_policies import verify_session
+    verify_session(session)
     records=session.get('stages',[]);order=phase_order(session['scope'])
     require([row['stage'] for row in records]==order,'missing, repeated or out-of-order creation stages')
     from nw.materials.cast_gap import verify_archive
@@ -142,6 +144,8 @@ def compile_candidates(session: dict) -> list[dict]:
 
 
 def expand_output(raw: dict,package: dict) -> dict:
+    from nw.materials.story_policies import verify_plan
+    verify_plan(package)
     session=package.get('material_work')
     if not session or session.get('policy') not in STAGED_POLICIES:return raw
     verify_chain(session)
@@ -224,16 +228,18 @@ def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
         for index,guide in enumerate(records.get(stage,{}).get('products',{}).get(field,[])):
             if guide['scene']!=scene:continue
             if stage == 'expression_design' and 'narration' in guide:
-                from nw.materials.narration import register_beat, scene_bases, scene_check
+                from nw.materials.narration import EVIDENCE_POLICY, register_beat, scene_bases, scene_check
                 narration_order += 1
                 if narration_order == 1:
                     body = next(r['body'] for r in records['scene_design']['products']['members'] if r['key']==scene)
                     pov = body['pov']
                     narration_bases = scene_bases(records, context, scene)[scene]
                     from nw.materials.cast_design import review_checks as cast_review_checks
-                    result.extend(cast_review_checks(scene, pov, narration_bases, records[stage]['products'][field]))
+                    result.extend(cast_review_checks(scene, pov, narration_bases, records[stage]['products'][field],
+                        trace_trigger=context.get('narration_policy') == EVIDENCE_POLICY))
                 basis = narration_bases[guide['narration']['basis_ref']]
-                result.append(scene_check(guide, index, narration_order, pov, ids or {}, basis, body.get('narrative_person')))
+                result.append(scene_check(guide, index, narration_order, pov, ids or {}, basis, body.get('narrative_person'),
+                                          evidence_policy=context.get('narration_policy') == EVIDENCE_POLICY))
                 register_beat(narration_bases, narration_order, guide)
                 continue
             observable=guide['observable']
@@ -264,8 +270,8 @@ def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
                 'check':canonical({key:transition[key] for key in ('cost','failure','continuity')}),'state':state},
             'method_artifact':transition,
             'evidence_required':'候选变化必须在本稿有行动、后果和独立证据，再交给状态提取核对；候选前状态不得冒充已接受事实。'})
-    from nw.materials.narration import ACCESS_POLICY
-    if context.get('narration_policy') == ACCESS_POLICY:
+    from nw.materials.narration import ACCESS_POLICIES
+    if context.get('narration_policy') in ACCESS_POLICIES:
         _share_product_refs(result)
     return result
 

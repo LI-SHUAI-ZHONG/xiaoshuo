@@ -5,6 +5,7 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
+import socket
 import sqlite3
 import threading
 from typing import Any
@@ -12,6 +13,7 @@ from urllib.parse import parse_qs, unquote, urlsplit
 import webbrowser
 
 from nw.studio.api import StudioService
+from nw.studio import runtime
 
 STATIC_DIR = (Path(__file__).resolve().parent / 'static').resolve()
 _MIME_TYPES = {
@@ -34,12 +36,7 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
     from nw.studio.production_routes import ProductionRoutes
     from nw.studio.repository import RepositorySync
     repository = RepositorySync(service)
-    repository.prepare()
-    service.repository_sync = repository
-    library = LibraryService(service.workspace, config_path=service.config_path, ledger_path=service.ledger_path)
-    production = ProductionService(service, library)
-    routes = ProductionRoutes(production, library)
-    repository.attach(production, library)
+    running = runtime.identity(repository.project, service, repository.loaded_source)
 
     class StudioHandler(BaseHTTPRequestHandler):
         server_version = 'NovelWorkflowStudio/3.0'
@@ -104,7 +101,10 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 return
             try:
                 segs = [unquote(s) for s in path.strip('/').split('/')][1:]
+                if segs == ['runtime']:
+                    return self._send_json(200, {**running, 'restart_required': repository.check_running_source()})
                 if segs == ['repository']:
+                    repository.check_running_source()
                     return self._send_json(200, repository.status())
                 if routes.get(self, segs, query):
                     return
@@ -179,7 +179,7 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 self._send_json(500, {'error': f'内部错误: {exc}'})
 
         def do_POST(self) -> None:
-            if urlsplit(self.path).path == '/api/repository/sync':
+            if urlsplit(self.path).path in ('/api/repository/sync', '/api/runtime/reload'):
                 return self._post()
             try:
                 with repository.mutation():
@@ -205,6 +205,16 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                     return self._send_json(415, {'error': '请使用 application/json 请求体'})
                 segs = [unquote(s) for s in path.strip('/').split('/')][1:]
                 body = self._read_json(24 if segs == ['staging'] else 8)
+                if segs == ['runtime', 'reload']:
+                    if self.client_address[0] not in ('127.0.0.1', '::1'):
+                        return self._send_json(403, {'error': '请从本机桌面快捷方式重新打开客户端。'})
+                    try:
+                        repository.release_for_reload(body)
+                    except ValueError as exc:
+                        return self._send_json(409, {'error': str(exc)})
+                    self._send_json(200, {'closing': True})
+                    threading.Thread(target=self.server.shutdown, daemon=True).start()
+                    return
                 if segs == ['repository', 'sync']:
                     return self._send_json(202, repository.trigger())
                 if routes.post(self, segs, body):
@@ -287,6 +297,12 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
 
     class StudioServer(ThreadingHTTPServer):
         daemon_threads = True
+        allow_reuse_address = not hasattr(socket, 'SO_EXCLUSIVEADDRUSE')
+
+        def server_bind(self) -> None:
+            if hasattr(socket, 'SO_EXCLUSIVEADDRUSE'):
+                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+            super().server_bind()
 
         def shutdown(self) -> None:
             self.studio_shutdown.set()
@@ -297,18 +313,34 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
             repository.close()
             super().server_close()
 
-    server = StudioServer((host, int(port)), StudioHandler)
+    server = StudioServer((host, int(port)), StudioHandler, bind_and_activate=False)
     server.studio_shutdown = threading.Event()
-    server.production = production
-    server.library = library
-    server.repository = repository
-    repository.start()
+    try:
+        server.server_bind()
+        server.server_activate()
+        repository.prepare()
+        service.repository_sync = repository
+        library = LibraryService(service.workspace, config_path=service.config_path, ledger_path=service.ledger_path)
+        production = ProductionService(service, library)
+        routes = ProductionRoutes(production, library)
+        repository.attach(production, library)
+        server.production = production
+        server.library = library
+        server.repository = repository
+        repository.start()
+    except BaseException:
+        server.server_close()
+        raise
     return server
 
 
 def run_studio(workspace: Path | None = None, *, config_path: Path | None = None,
                host: str = '127.0.0.1', port: int = 8765, open_browser: bool = False) -> None:
     service = StudioService(workspace=workspace, config_path=config_path)
+    if open_browser and runtime.reuse_desktop(host, port, runtime.identity(
+            runtime.PROJECT, service, runtime.source_digest(runtime.PROJECT))):
+        webbrowser.open(f'http://{host}:{port}/')
+        return
     httpd = create_studio_server(service, host=host, port=port)
     actual_host, actual_port = httpd.server_address[:2]
     url = f'http://{actual_host}:{actual_port}/'

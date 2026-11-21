@@ -109,7 +109,7 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
             demands = data['frozen_cast_demands']
             extra['cast_assignments'] = [{'demand': d['id'], 'actor': d['reuse_actor'] or r['key']}
                 for d, r in zip(demands, characters, strict=True)]
-        if narration == 'scene-narration-v2':
+        if narration in ('scene-narration-v2', 'scene-narration-v3'):
             for index, row in enumerate(characters):
                 ref, quote = next(iter(cast_needs.items()))
                 row['body'].update(creation_reason='[FAKE] 为核实两代印痕进入档案室', scene_function='[FAKE] 核查封条',
@@ -172,7 +172,7 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
         actions = _input(inputs, 'action_design')['candidates']; selected = []
         selected_events = []
         for index, scene in enumerate(scenes):
-            if narration == 'scene-narration-v2':
+            if narration in ('scene-narration-v2', 'scene-narration-v3'):
                 scene['body']['narrative_person'] = 'third_limited'
             action = next((row for row in actions[index:] if row['actor'] == scene['body']['pov']), actions[0])
             scene['body']['choice'] = action['action']
@@ -236,7 +236,7 @@ def project_products(stage: str, candidates: list[dict], inputs: dict, sources: 
                 guide['narration'] = {'time': 'current', 'mode': 'action', 'owner': row['body']['pov'],
                     'basis_ref': f'scene:{row["key"]}:goal', 'basis_quote': row['body']['goal'],
                     'effect': '[FAKE] 读者看清为何要检查纸角'}
-                if narration == 'scene-narration-v2':
+                if narration in ('scene-narration-v2', 'scene-narration-v3'):
                     guide['narration']['witnesses'] = []
             guidance.append(guide)
         return {'guidance': guidance}

@@ -38,6 +38,7 @@ def normalize(raw: object, *, types: list[str] = ()) -> dict:
     return result
 
 
-def needed(policy: dict,stage: str,scope: str) -> list[str]:
+def needed(policy: dict,stage: str,scope: str, routes: dict | None = None) -> list[str]:
     scope='chapter' if scope=='replan' else scope
-    return [key for key in policy['tasks'] if scope in TASKS[key]['scopes'] and TASKS[key]['stages'][0]==stage]
+    return [key for key in policy['tasks'] if scope in TASKS[key]['scopes']
+            and (routes or {}).get(key,TASKS[key]['stages'][0])==stage]

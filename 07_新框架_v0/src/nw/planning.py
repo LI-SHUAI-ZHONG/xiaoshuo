@@ -218,7 +218,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
                         'multi_action_policy', 'narration_policy', 'cast_previous_appearances', 'cast_demand_policy',
-                        'cast_source_cards', 'cast_completed_direction',
+                        'cast_source_cards', 'cast_completed_direction', 'method_task_stages',
                         'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
                         'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy',
                         'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy',
@@ -229,6 +229,10 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             if scope == 'chapter' and head is not None:
                 handoff = continuation_chapter_state(store, head, state)
                 if handoff is not None:
+                    # A legacy review of general progress did not separately verify the planned open question.
+                    for advance in handoff.get('reviewed_progress', ()):
+                        if not advance.get('pressure_evidence'):
+                            advance['possible_next_pressure'] = None
                     package['chapter_handoff'] = handoff
                     from nw.chapter_records import continuation_reviews, continuation_summary
                     from nw.models import Chapter
@@ -239,7 +243,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         package['chapter_reviews'] = reviews
             if (store.directory.parent / 'materials/catalog.db').is_file():
                 from nw.materials.phase_context import ACTION_STATE_POLICY
-                from nw.materials.narration import ACCESS_POLICY as NARRATION_POLICY
+                from nw.materials.story_policies import current as current_story_policies
                 from nw.materials.phase_flow import STAGE_MATERIALS
                 from nw.materials.phase_routes import phase_order
                 from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY
@@ -252,16 +256,13 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 package['scene_source_binding_policy'] = SCENE_SOURCE_BINDING_POLICY
                 package['multi_action_policy'] = MULTI_ACTION_POLICY
                 package['action_state_policy'] = ACTION_STATE_POLICY
-                package['narration_policy'] = NARRATION_POLICY
-                from nw.materials.cast_demands import POLICY as CAST_DEMAND_POLICY, completed_direction, source_card_ids
-                package['cast_demand_policy'] = CAST_DEMAND_POLICY
+                package.update(current_story_policies())
+                from nw.materials.cast_demands import completed_direction, source_card_ids
                 package['cast_source_cards'] = source_card_ids(parent, cards, package.get('chapter_handoff', {}), scope)
                 package['cast_completed_direction'] = completed_direction(parent, package.get('chapter_handoff', {}))
                 from nw.materials.cast_design import previous_appearances
                 package['cast_previous_appearances'] = previous_appearances(store, cards)
                 package['action_template_priority_enabled'] = True
-                from nw.materials.chapter_progress import POLICY as CHAPTER_PROGRESS_POLICY
-                package['chapter_progress_policy'] = CHAPTER_PROGRESS_POLICY
                 package['stage_materials'] = {
                     stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
                 }
@@ -293,6 +294,11 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     package['network_layer_policy'] = NETWORK_LAYER_POLICY
         from nw.length_settings import effective_brief_text
         from nw.length_plan import design_context, instructions
+        if not existing and package.get('production_method_policy'):
+            from nw.production_methods.sources import MethodReader, task_routes
+            routes=task_routes(MethodReader(store.directory.parent), package)
+            if routes:
+                package['method_task_stages']=routes
         override = (governance_inputs or {}).get('plot_design', {}).get('length_policy')
         if existing:
             package['brief'] = previous_package['brief']

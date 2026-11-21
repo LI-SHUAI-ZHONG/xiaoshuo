@@ -45,8 +45,11 @@ def check_story_method(service: object, structure: dict, body: dict, basis: dict
         if issue:
             raise ValueError(issue)
         stages={stage for task in target_tasks for stage in TASKS[task]['stages']}
-        if not any(o['stage'] in stages and o['field'] in ('members','event_nodes','reader_plan','promise_plan',
-                   'candidates','events','chapters','guidance','patches','transitions') and
+        targets={'members','event_nodes','reader_plan','promise_plan','candidates','events','chapters',
+                 'guidance','patches','transitions'}
+        targets.update({'cast_assignments','cast_events','cast_payoffs'} if domain=='cast_entry'
+                       else {'continuations','scene_progress'})
+        if not any(o['stage'] in stages and o['field'] in targets and
                    (o['field']!='members' or o['artifact_kind']!='stage_product') for o in body['outputs']):
             raise ValueError('章场方法须落到可交接的本项目设计卡、事件、信息或状态产物')
 

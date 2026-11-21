@@ -1249,11 +1249,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['chapter_reviews'] = chapter_reviews
         suffix = handoff_instruction
         from nw.materials import chapter_progress
-        if context.get('chapter_progress_policy') == chapter_progress.POLICY:
+        if context.get('chapter_progress_policy') in chapter_progress.POLICIES:
             if stage == 'plot_design':
                 suffix += '\n' + chapter_progress.PLOT_INSTRUCTION
                 if context.get('chapter_openings'):
-                    payload['chapter_progress_policy'] = chapter_progress.POLICY
+                    payload['chapter_progress_policy'] = context['chapter_progress_policy']
                     payload['chapter_openings'] = list(context['chapter_openings'])
                     payload['output_schema'] += '；continuations:[{ref,event,target_quote,reason}]'
                     suffix += ('\nchapter_openings 中 open:N 对应 chapter_handoff.reviewed_progress 的第N项（从0起）。'
@@ -1261,7 +1261,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                                'target_quote 取其goal/obstacle/completion_condition完整原文，reason说明为何承接。'
                                '前章拟议后续不视为已经发生，本章暂不承接可空数组。')
             if stage == 'scene_design':
-                payload['chapter_progress_policy'] = chapter_progress.POLICY
+                payload['chapter_progress_policy'] = context['chapter_progress_policy']
                 if context.get('chapter_changes'):
                     payload['chapter_changes'] = context['chapter_changes']
                 payload['output_schema'] += '；scene_progress:[{scene,basis_ref,basis_quote,origin,connection,stimulus,change,next_pressure}]'
@@ -1304,21 +1304,21 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             if stage == 'world_design':
                 payload['narration_policy'] = narration_policy
                 suffix += '\n' + narration.WORLD_INSTRUCTION
-            elif stage == 'character_design' and narration_policy == narration.ACCESS_POLICY:
+            elif stage == 'character_design' and narration_policy in narration.ACCESS_POLICIES:
                 from nw.materials.cast_design import CHARACTER_INSTRUCTION, need_sources
                 payload['narration_policy'] = narration_policy
                 payload['cast_needs'] = cast_demands.source_options(context) if cast_enabled else need_sources(context, products)
                 suffix += '\n' + CHARACTER_INSTRUCTION
                 if cast_enabled:
                     suffix += '\n' + cast_demands.CHARACTER_INSTRUCTION
-            elif stage in ('plot_design', 'event_design', 'action_design') and narration_policy == narration.ACCESS_POLICY:
+            elif stage in ('plot_design', 'event_design', 'action_design') and narration_policy in narration.ACCESS_POLICIES:
                 suffix += ('\n按 cast_work 的本次分派和人物自己的目的安排交集。' if cast_enabled else
                            '\n根据具备casting的人物在场理由、scene_function和independent_goal安排交集。')
                 suffix += ('用当事人有理由采取的行动、拒绝、透露或交接实现事件；配角与主角分开后可以继续追求自己的目的。'
                            '只把当场可见的表现交给正文，幕后动机留在该人物自己的视角或后续有据揭示处。')
             elif stage == 'scene_design':
                 suffix += '\n' + narration.SCENE_INSTRUCTION
-                if narration_policy == narration.ACCESS_POLICY:
+                if narration_policy in narration.ACCESS_POLICIES:
                     payload['cast_previous_appearances'] = context.get('cast_previous_appearances', {})
                     suffix += ' 按读者首次见到人物的章场安排入场。other方式的指定介绍者要同场，暗身份只留公开线索。'
                     payload['narration_policy'] = narration_policy
@@ -1330,8 +1330,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 payload['narration_bases'] = narration.scene_bases(products, stage_context)
                 payload['narration_policy'] = narration_policy
                 payload['output_schema'] += '；guidance每项另含narration:{time,mode,owner,basis_ref,basis_quote,effect}'
-                suffix += '\n' + narration.EXPRESSION_INSTRUCTION
-                if narration_policy == narration.ACCESS_POLICY:
+                suffix += '\n' + (narration.EVIDENCE_INSTRUCTION if narration_policy == narration.EVIDENCE_POLICY
+                                   else narration.EXPRESSION_INSTRUCTION)
+                if narration_policy in narration.ACCESS_POLICIES:
                     from nw.materials.cast_design import EXPRESSION_INSTRUCTION as CAST_INSTRUCTION
                     suffix += '\n' + CAST_INSTRUCTION
                     payload['output_schema'] += '；当下言行的narration另含witnesses:[其他真正听见或看见者的key]'
@@ -1339,6 +1340,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                                '配角私有的state依据限本人当下发言或行动，observable和check只写当场可交付的部分。'
                                '后来者不能据未曾目击的举动改判。按需写为何这个人物先注意此事，'
                                '他的记忆或目的如何影响判断、情绪和做法，以及对方能察觉什么变化。')
+                    if narration_policy == narration.EVIDENCE_POLICY:
+                        suffix += ' 配角可据自身经历、独立目的行动或发言；介绍身份须有听者。'
         if context.get('length_context') and stage in ('plot_design', 'scene_design'):
             from nw.length_plan import instructions, model_length_context
             payload['length_context'] = model_length_context(context['length_context'])
@@ -1779,9 +1782,12 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
 
 def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMProvider,config: Config,*,
                  retry_failed: bool=False,verify: Callable | None=None,max_rounds: int=8,method_decision=None) -> tuple[TaskRequest,dict]:
+    from nw.materials.story_policies import VERSIONS, verify_plan
+    verify_plan(package)
     workspace=store.directory.parent
     if not (workspace/'materials/catalog.db').is_file():
-        if config.source_driven or package.get('governance_inputs') or package.get('production_method_policy'):
+        if (config.source_driven or package.get('governance_inputs') or package.get('production_method_policy')
+                or VERSIONS.keys() & package.keys() or package.get('material_mode') == 'source_driven_staged'):
             raise ValueError('MATERIAL_WORK: MATERIAL_CATALOG_REQUIRED: index source materials before novel design')
         return request,package
     desk=SourceDesk(workspace,test_mode=store.test_mode)
@@ -1834,7 +1840,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         from nw.materials.chapter_progress import chapter_changes, chapter_openings
         context['chapter_progress_policy'] = package['chapter_progress_policy']
         context['chapter_changes'] = chapter_changes(package.get('chapter_handoff', {}))
-        context['chapter_openings'] = chapter_openings(package.get('chapter_handoff', {}))
+        context['chapter_openings'] = chapter_openings(package.get('chapter_handoff', {}), package['chapter_progress_policy'])
     if 'network_layer_policy' in package:
         context['network_layer_policy'] = package['network_layer_policy']
     if 'action_state_policy' in package:

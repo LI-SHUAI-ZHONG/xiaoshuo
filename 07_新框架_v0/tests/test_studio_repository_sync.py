@@ -246,15 +246,22 @@ def test_pulled_program_update_requires_restart_before_new_production(tmp_path: 
     remote, root, writer = make_environment(tmp_path)
     assert writer.sync_once()['state'] == 'synced'
     project, reader = clone_client(remote, tmp_path / 'reader')
-    source = writer.project / 'src/update.py'; source.parent.mkdir(parents=True)
-    source.write_text('# [FAKE] isolated program update\n', encoding='utf-8')
+    add_note(writer, 'New instructions for the updated workflow')
+    assert writer.sync_once()['state'] == 'synced'
+    source = writer.project / 'src/steps.jsonl'; source.parent.mkdir(parents=True)
+    source.write_text('{"instructions":"isolated update"}\n', encoding='utf-8')
     git(root, 'add', '.'); git(root, 'commit', '-m', 'isolated program update')
     git(root, 'push', 'origin', 'master')
     result = reader.sync_once()
     assert result['restart_required'] is True, result
+    assert notes(reader) == ['[FAKE] Original author notes']
     with pytest.raises(SyncError, match='重启客户端'):
         with reader.mutation():
             raise AssertionError('Production must not run against newly pulled program code')
+    replacement = RepositorySync(reader.service, project=reader.project, git=reader.git)
+    replacement.prepare()
+    assert not replacement.restore_required, replacement.status()
+    assert notes(replacement)[-1] == '[FAKE] New instructions for the updated workflow'
 
 
 def test_edits_during_push_remain_pending_until_saved_next_cycle(tmp_path: Path, monkeypatch) -> None:

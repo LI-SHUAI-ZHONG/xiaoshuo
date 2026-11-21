@@ -27,9 +27,9 @@ def card(kind: str, *, narration: bool | str = False) -> dict:
             'visibility':{'enum':['public','holders','author_only']}}
     if kind == 'world' and not narration:
         fields.pop('history')
-    from nw.materials.narration import ACCESS_POLICY, PERSONS
+    from nw.materials.narration import ACCESS_POLICIES, PERSONS
     required = {*_REQUIRED[kind], 'visibility'}
-    if kind == 'character' and narration == ACCESS_POLICY:
+    if kind == 'character' and narration in ACCESS_POLICIES:
         from nw.materials.cast_design import STANDINGS, ENTRIES, PERSON_FIELDS
         base = {'standing': {'enum': list(STANDINGS)}, **strings('public_identity', 'need_ref', 'need_quote')}
         alternatives = []
@@ -43,7 +43,7 @@ def card(kind: str, *, narration: bool | str = False) -> dict:
         fields.update(**strings(*PERSON_FIELDS), casting={'anyOf': alternatives})
         required.update((*PERSON_FIELDS, 'casting'))
     if kind == 'scene':
-        if narration == ACCESS_POLICY:
+        if narration in ACCESS_POLICIES:
             fields['narrative_person'] = {'enum': list(PERSONS)}
             required.add('narrative_person')
         else:
@@ -143,10 +143,10 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
       'method_guidance':array(obj({**strings('scene','observable','check'),'source_ids':array(TEXT,1)})),
     }
     if stage == 'expression_design' and narration:
-        from nw.materials.narration import ACCESS_POLICY, MODES
+        from nw.materials.narration import ACCESS_POLICIES, MODES
         beat = obj({**strings('basis_ref','basis_quote','effect'), 'time': {'enum': ['current', 'past']},
                     'mode': {'enum': list(MODES)}, 'owner': {'type': ['string', 'null']}})
-        if narration == ACCESS_POLICY:
+        if narration in ACCESS_POLICIES:
             beat['properties']['witnesses'] = array(TEXT)
             beat['required'].append('witnesses')
         shapes['guidance'] = array(obj({**strings('scene','observable','check'), 'narration': beat}), 1)
