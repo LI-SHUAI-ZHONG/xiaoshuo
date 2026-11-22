@@ -1,7 +1,17 @@
 {
   "format_version": 1,
-  "content_sha256": "c47762a2f8d2bad4dd427131a99a65cd12544262a59f21f8c4bccef5ed900e08",
+  "content_sha256": "12490914bff02a5b6d3b33d046d20f66c7efeec2e8651c083d7b1a574fcde6bc",
   "entries": [
+    {
+      "path": "library/corpus_calls/0e9af6db4cb24c9b852301b149b3253e/00001.input.json",
+      "bytes": 13398,
+      "sha256": "e5ebc3f5f9f8e926a2be75a048c7faeeb8387d991af0032a3cbddd52258d1a8a"
+    },
+    {
+      "path": "library/corpus_calls/0e9af6db4cb24c9b852301b149b3253e/00001.output.json",
+      "bytes": 5012,
+      "sha256": "4404015d45fc1a72e4882e95543e6ee00b4627ae9d53332f632d3efc705a0161"
+    },
     {
       "path": "library/imports/3de88fc0652143078b4737f95b449201.txt",
       "bytes": 1864326,
@@ -9,8 +19,8 @@
     },
     {
       "path": "library/library.db",
-      "bytes": 286720,
-      "sha256": "4c6efc4513dfddd34070605737449c8eb2844002482d06de09059c26c412ddd7"
+      "bytes": 380928,
+      "sha256": "f5efb6a3c20943f615b241d29eb795bcd22859904ca04bbde49e2c55c0fa2795"
     },
     {
       "path": "novel-f14b9376bd85/nw.db",
@@ -18,12 +28,12 @@
       "sha256": "fbf86ff55ee7fabda68122d34a97e70bb0f2c8468ab071d723e5abf010f2ea69"
     }
   ],
-  "archive_sha256": "2d48616bfcc19d3e45286951a24de227001f443e91f9657a2afede6b7fdc4304",
+  "archive_sha256": "c751f86c2327a3fe5509086508a12033fdf96b305cb3c7addfddc385b28f6560",
   "parts": [
     {
       "path": "runtime.zip.part001",
-      "bytes": 2284319,
-      "sha256": "2d48616bfcc19d3e45286951a24de227001f443e91f9657a2afede6b7fdc4304"
+      "bytes": 2305596,
+      "sha256": "c751f86c2327a3fe5509086508a12033fdf96b305cb3c7addfddc385b28f6560"
     }
   ]
 }
