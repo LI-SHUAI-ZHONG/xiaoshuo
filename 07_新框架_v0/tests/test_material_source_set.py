@@ -24,6 +24,38 @@ def test_client_can_open_its_shipped_material_ledger_after_a_workflow_change():
     assert json.loads(manifest.read_text(encoding='utf-8'))['protected_core_sha256'] == _code_hash()
 
 
+def test_installed_materials_must_match_the_approved_backup_including_wal(tmp_path, monkeypatch):
+    from contextlib import closing
+    from tools import materials_baseline as baseline
+
+    monkeypatch.setattr(baseline, 'PROJECT', tmp_path)
+    workspace = tmp_path / 'work'
+    folder = workspace / 'materials'
+    folder.mkdir(parents=True)
+    db_path = folder / 'adjudication.db'
+    selection = folder / 'active_source_set.json'
+    selection.write_text('{}', encoding='utf-8')
+    with closing(sqlite3.connect(db_path)) as db:
+        db.execute('PRAGMA journal_mode=WAL')
+        db.execute('CREATE TABLE metadata(key TEXT PRIMARY KEY, value TEXT)')
+        db.execute('INSERT INTO metadata VALUES (?,?)', ('code_sha256', json.dumps('original')))
+        db.commit()
+        baseline.check_ledger(db, 'original')
+        with pytest.raises(ValueError, match='different core'):
+            baseline.check_ledger(db, 'changed')
+        frozen = tmp_path / 'frozen.db'
+        baseline.backup_database(db_path, frozen)
+        entries = [baseline.record(frozen, 'materials/adjudication.db'),
+                   baseline.record(selection, 'materials/active_source_set.json')]
+        assert baseline.matches_snapshot(workspace, {'entries':entries})
+        selection.write_text('{"changed":true}', encoding='utf-8')
+        assert not baseline.matches_snapshot(workspace, {'entries':entries})
+        selection.write_text('{}', encoding='utf-8')
+        db.execute('INSERT INTO metadata VALUES (?,?)', ('other', 'committed'))
+        db.commit()
+        assert not baseline.matches_snapshot(workspace, {'entries':entries})
+
+
 def catalog(tmp_path, *, extra_library=''):
     bodies={'library':('### 1.1_当前方法\n【定义】当前方法依据真实人物目标设计动作后果。\n'
                        '【指令】在决定前展示调查目标，决定后呈现人物选择的代价。\n' + extra_library),

@@ -52,7 +52,8 @@ def _offers(references: list[dict], products: dict) -> list[dict]:
     if not references:
         return []
     from nw.production_methods.passage_sources import scene_candidates
-    return scene_candidates(references, events(products), product(products, 'action_design').get('candidates', []))
+    return scene_candidates([r for r in references if r['kind'] in ROLES], events(products),
+                            product(products, 'action_design').get('candidates', []))
 
 
 def prompt(stage: str, payload: dict, products: dict, context: dict) -> str:
@@ -79,7 +80,7 @@ def prompt(stage: str, payload: dict, products: dict, context: dict) -> str:
 
 
 def validate_choices(value: dict, products: dict, references: list[dict]) -> None:
-    if 'passage_choices' not in value and not references:
+    if 'passage_choices' not in value and not any(r['kind'] in ROLES for r in references):
         return
     selected = {row['scene']: row['event'] for row in value['selected_events']}
     options = events(products)

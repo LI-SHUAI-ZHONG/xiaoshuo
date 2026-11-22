@@ -1,4 +1,5 @@
 """Explicit stage prompts for read-map, global integration, detail and derivation."""
+from nw.passage_catalog import OBSERVATIONS
 from nw.studio.corpus_catalog import SCHEMA_VERSION, corpus_catalog
 from nw.studio.library_util import encode
 from nw.studio.method_catalog import method_catalog
@@ -49,11 +50,29 @@ NARRATION_READ = {
 }
 
 
-def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION, passages: bool = True) -> list[dict]:
+def _craft_roles(kind: str) -> str:
+    title, roles = OBSERVATIONS[kind]
+    evidence = [role+'='+basis for role,basis in roles.items()]
+    order = '、'.join(evidence)+'，依原文先后均可' if kind=='place_function' else ' → '.join(evidence)
+    return kind+' '+title+'（'+order+'）'
+
+
+def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION, passages: bool = True,
+             craft: bool = True) -> list[dict]:
     closed = ('钩子或伏笔标resolved须有实际回应或回收。叙述手法观察可依原句闭合，故事里尚未发生的结果继续未决。'
               if version >= 3 else '线程状态resolved必须有实际回应/回收关系。')
     passage_read=version>=5 and passages and (phase=='detail' or phase=='relations' and payload.get('domain')=='narration')
-    instruction = BASE+closed+'输入目录：'+encode(corpus_catalog(version,passages=passage_read))+'\n本步：'+INSTRUCTIONS[phase]
+    instruction = BASE+closed+'输入目录：'+encode(corpus_catalog(version,passages=passage_read,craft=False))+'\n本步：'+INSTRUCTIONS[phase]
+    if craft and passages and version >= 5:
+        if phase in ('survey','detail'):
+            instruction += '题外的读者互动或章名可单独保留引文，evidence.text_role 填 reader_address 或 heading，人物和事件另取故事正文举证。'
+        if passage_read:
+            examples='；'.join(_craft_roles(k) for k in OBSERVATIONS)
+            instruction += ('普通场可独立采用下列单项写法，括号内是必需role及各自的举证要求。引文按原文位置顺序提交。沿用passage_sequence结构，'
+                            '一项观察只分析一种有具体依据的写法，可并列建立多项。reader_change写读者为何形成新判断，'
+                            'detail_value对照删去原句损失什么或何处无损。估计或解释他人动机时，观察及每拍的claim_status'
+                            '按原文填attributed、inferred或unknown，未点明主体就保留未知，story_change留空。'
+                            '若确有发言、行动或后来得到证实，另以对应事件和原句记录。'+examples)
     if version >= 2:
         instruction += WORLD_READ[phase]
     if version >= 3 and (phase != 'relations' or payload.get('domain') == 'narration'):
@@ -93,12 +112,22 @@ def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION, passag
             '只见示范接不同选择而没有跳时或交接，可省略compression和handoff；止于聚焦可省略handoff。'
             '只按原文有意义的承接划分，同一role可连续展开数拍。章名归入目录，面向读者的招呼记在原文说明，'
             '两者不作故事现场、人物发言或推进事件。已有地点上出现的课业、物件、设施或反常缺席，'
-            '写清哪项具体细节更新了读者原先的认识。人物凭气息估计能力、盼望日后获得帮助，都保留判断者与未知结果。'
-            '每拍须有同章细拆事件及连续段内该事件定位短引。首拍bridge写进入依据，后拍写与上一拍的具体动作、物件、'
+            '写清哪项具体细节更新了读者原先的认识。人物凭气息估计能力、盼望日后获得帮助，都保留判断者与未知结果。')
+        instruction += ('每拍须引用同章实际细拆事件及该事件的定位短引。' if craft
+                        else '每拍须有同章细拆事件及连续段内该事件定位短引。')
+        instruction += ('首拍bridge写进入依据，后拍写与上一拍的具体动作、物件、'
             '空间、视线、话语或时间承接。story_change只填叙述已证实的变化；归属他人的说法、可能性、推测和未决事项只写在'
             'reader_change，标attributed/inferred/unknown。condition适用需求及boundary不适用边界各不超过240字，'
-            '用可复用的通用条件表达，不写原作人名、地名或剧情。'
-            '覆盖不足、只见单段技巧或中间隔了举证不了的完整段落，保留普通观察；不可拼凑远处分散原句。')
+            '用可复用的通用条件表达，不写原作人名、地名或剧情。')
+        if craft:
+            instruction += ('示范分支或聚焦接力缺少核心作用时，放弃该连续手法。若原句仍能证明某项独立写法，'
+                            '另建带该kind的passage_sequence；只需一处证据的手法可以只存一拍。'
+                            '同一章段确有多种写法时，各留自己的观察、原句和承接依据。'
+                            'place_function可先写活动也可先写陈设，两者都须有据。'
+                            '独立单项在同一细拆事件内可以隔段举证；不同事件、自然段的停顿与衔接、两种连续写法则须补齐中间承接。'
+                            '没有足够证据的作用保留待核。')
+        else:
+            instruction += '覆盖不足、只见单段技巧或中间隔了举证不了的完整段落，保留普通观察；不可拼凑远处分散原句。'
     return [{'role':'system','content':instruction},
             {'role':'user','content':encode({'phase':phase,**payload})}]
 
@@ -124,10 +153,13 @@ def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dic
                         '把原作呈现方式换成本项目已有世界事实、人物经历或场景目标。至少生成expression_design.guidance表达指导，'
                         '分别交给writer和review，按具体段落核对谁有理由知道、发生了什么变化。需要时另给scene_design.members场景卡。'
                         '摘录没写的判断或后果继续未决，只迁移可核的写法。没证据可返回空列表。')
-        if payload['thread'].get('details',{}).get('passage_sequence'):
+        if sequence := payload['thread'].get('details',{}).get('passage_sequence'):
             instruction += ('按passage_sequence的condition和boundary说明适用与不适用需求，操作按原句顺序迁移各拍作用、'
                             '段间承接和读者所得。basis及body.evidence须覆盖每拍关联的事件和精确引文。'
                             '把原书主体、地名、物件和经历替换为本项目场景前置，保留人物说法、推测与既成事实的区别。')
+            if sequence['kind'] in OBSERVATIONS:
+                instruction += ('本项举证要求为'+_craft_roles(sequence['kind'])+'。操作只使用这条观察实际拿出的证据；'
+                                '一拍即可举证的写法可以独立提炼，验收时在本项目段落核对相同作用。')
     if payload['thread']['domain']=='world_rules':
         instruction += ('本次从world_rules原作观察提炼；证据须定位约束及其改变实际选择或后果的事件。'
                         '单场足以证明时引用该事件，否则引用能解释前后因果的关系及两端原文。不能只转述通用世界观模板。'

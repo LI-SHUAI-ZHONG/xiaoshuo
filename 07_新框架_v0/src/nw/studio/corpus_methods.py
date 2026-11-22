@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from nw.studio.catalog import canonical_types
 from nw.studio.corpus_catalog import require_current_schema
-from nw.studio.corpus_passages import method_sequence
+from nw.studio.corpus_passages import JUDGMENT_KINDS, judgment_issue, method_sequence
 from nw.studio.library_util import encode, timestamp
 from nw.studio.method_contract import draft
 from nw.studio.method_catalog import TASKS
@@ -76,6 +76,8 @@ def check_narration_method(service: object, structure: dict, body: dict, basis: 
     if not threads or 'narration' not in body['tasks'] or not any(
             d['domain']=='narration' and d['status']=='observed' for d in document['domains']):
         raise ValueError('叙述方法须使用已核实的叙述观察和叙述制作任务')
+    if any('passage_sequence' in t['details'] for t in threads) and len(basis['thread_ids']) != 1:
+        raise ValueError('段落写法的操作须分别归属一项原文观察，请逐条提炼后在同一场按需组合')
     check_source_types(service,structure,body)
     quoted={(e['start'],e['end'],e['quote']) for e in body['evidence'] if e['book_id']==structure['book_id']}
     cited={e['id'] for e in document['evidence'] if (e['start'],e['end'],e['quote']) in quoted}
@@ -95,7 +97,12 @@ def check_narration_method(service: object, structure: dict, body: dict, basis: 
             if any(b['event_id'] not in nodes or b['evidence_id'] not in cited for b in beats):
                 raise ValueError('连续段落方法须引用每个落点的细拆事件及该处原句，不能跳过中间的承接')
             grounded={b['role'] for b in beats if b['claim_status'] in ('stated','attributed')}
-            if any(b['role']!='handoff' and b['role'] not in grounded for b in beats):
+            # The evidence in these two techniques is how an uncertain interpretation
+            # is phrased. Its truth or an unnamed speaker need not be established.
+            if sequence['kind'] in JUDGMENT_KINDS:
+                if issue := judgment_issue(sequence, thread['details']['claim_status']):
+                    raise ValueError(issue)
+            elif any(b['role']!='handoff' and b['role'] not in grounded for b in beats):
                 raise ValueError('手法的关键承接只凭推测或未知，须补原文叙述或可归属的言行后再提炼')
 
 

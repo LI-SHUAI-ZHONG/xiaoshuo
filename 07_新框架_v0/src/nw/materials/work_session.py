@@ -76,6 +76,8 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
             cast_demand=bool(payload.get('cast_demand_policy')),
             cast_distribution=bool(payload.get('cast_distribution_policy')),
             passage=bool(payload.get('passage_policy')),
+            craft=bool(payload.get('passage_craft_policy')),
+            effect_kinds=[r['kind'] for r in payload.get('effect_needs',[])],
             narration=payload.get('narration_policy', False))
         if payload.get('network_design_candidates'):
             from nw.materials.design_network import add_schema

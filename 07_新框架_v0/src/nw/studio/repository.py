@@ -7,9 +7,9 @@ import importlib.util
 import json
 from pathlib import Path
 import threading
+from tempfile import TemporaryDirectory
 import tomllib
 from typing import Any, Iterator
-from uuid import uuid4
 
 from nw.studio import repository_data as data
 from nw.studio.project_migration import migrate_legacy_projects
@@ -98,9 +98,13 @@ class RepositorySync:
         existing = all((self.workspace / 'materials' / name).is_file()
                        for name in ('catalog.db', 'adjudication.db'))
         if not existing or (self.saved.get('materials_sha') and self.saved['materials_sha'] != signature):
-            stage = self.workspace / '_git_sync' / 'material-restore' / uuid4().hex
-            module.restore(baseline, stage)
-            data.apply_files(stage, self.workspace, manifest['entries'])
+            if not existing or not module.matches_snapshot(self.workspace, manifest):
+                scratch = self.workspace / '_git_sync' / 'material-restore'
+                scratch.mkdir(parents=True, exist_ok=True)
+                with TemporaryDirectory(dir=scratch) as folder:
+                    stage = Path(folder)
+                    module.restore(baseline, stage)
+                    data.apply_files(stage, self.workspace, manifest['entries'])
             self.service._desk = None
         else:
             from nw.materials.adjudication import adjudication_status

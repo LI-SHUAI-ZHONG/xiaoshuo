@@ -1361,6 +1361,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         from nw.materials import passage_sequence
         if passage_instruction := passage_sequence.prompt(stage, payload, products, context):
             suffix += '\n' + passage_instruction
+        from nw.materials import passage_craft
+        if context.get('passage_craft_policy') == passage_craft.POLICY and context.get('scope') != 'book':
+            if craft_instruction := passage_craft.prompt(stage,payload,products,context):
+                payload['passage_craft_policy'] = passage_craft.POLICY
+                suffix += '\n' + craft_instruction
         if context.get('length_context') and stage in ('plot_design', 'scene_design'):
             from nw.length_plan import instructions, model_length_context
             payload['length_context'] = model_length_context(context['length_context'])
@@ -1621,6 +1626,21 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '对应的项目依据。核对同一产物中的纪年、时期、地理与制度条件。')
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
+            if payload.get('passage_craft_policy'):
+                shape = payload['output_contract']['products']
+                if stage=='plot_design':
+                    shape['event_techniques'] = []
+                if stage=='scene_design':
+                    shape.update(situated_needs=[], people_needs=[], effect_needs=[])
+                    if payload.get('craft_candidates'):
+                        shape['craft_choices'] = []
+                    if payload.get('event_techniques'):
+                        shape['craft_deferrals'] = []
+                if stage=='expression_design':
+                    for source, field in (('situated_needs','situated_beats'),('people_needs','people_design'),
+                                          ('effect_needs','effects_plan'),('selected_craft_methods','craft_applications')):
+                        if payload.get(source):
+                            shape[field] = []
             if payload.get('passage_policy') and stage == 'scene_design':
                 payload['output_contract']['products']['passage_choices'] = []
             if stage == 'expression_design' and any(row['kind'] in passage_sequence.ROLES for row in payload.get('passage_choices', [])):
@@ -1743,7 +1763,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             continue
         if 'products' in raw:
             if stage == 'scene_design' and context.get('passage_policy'):
-                choices = raw['products'].get('passage_choices', [])
+                choices = raw['products'].get('passage_choices', []) + raw['products'].get('craft_choices', [])
                 if any(row['source_ref'] for row in choices):
                     from nw.production_methods.passage_sources import verify_choices
                     verify_choices(desk.workspace, context.get('passage_references', []), choices)
@@ -1881,6 +1901,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     if 'passage_policy' in package:
         context['passage_policy'] = package['passage_policy']
         context['passage_references'] = package.get('passage_references', [])
+    if 'passage_craft_policy' in package:
+        context['passage_craft_policy'] = package['passage_craft_policy']
     if 'cast_previous_appearances' in package:
         context['cast_previous_appearances'] = package['cast_previous_appearances']
     if 'accepted_cast_history' in package:

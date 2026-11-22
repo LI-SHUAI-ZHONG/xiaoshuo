@@ -21,14 +21,14 @@ GitHub 实际同步及重新检出自动恢复已验收：客户端自动推送�
 | 浏览器验收脚本与隔离服务器 | 本目录 `验收脚本/`；输出默认写入 `build/`，不写正式小说库 |
 | 九个原版资料文件 | 仓库根目录 `02_原版资料/`，已由 Git 跟踪，未修改原件 |
 | 当前六文件解析清单 | `../../fixtures/material_semantics/current_version_manifest.json` |
-| 当前运行资料完整基线 | `../../fixtures/materials_runtime_baseline/v3-20261119/` |
+| 当前运行资料完整基线 | `../../fixtures/materials_runtime_baseline/v4-20261122/` |
 | 校验、恢复与新建快照工具 | `../../tools/materials_baseline.py` |
 
 ## 当前资料运行基线
 
 归档包含 `catalog.db`、`adjudication.db`、`active_source_set.json`、F1/F2 台账、网络身份对账、来源登记、作者待确认清单等 16 个文件。SQLite 使用只读连接及在线备份冻结一致快照，没有改写正在使用的资料数据库。
 
-三个压缩分片合计 196,375,966 字节；每个分片不超过 64 MiB。`manifest.json` 保存各分片、解压文件、当前六份原件的大小和 SHA-256，以及 21 个核心裁定文件的联合指纹。
+三个压缩分片合计 196,375,971 字节，每个分片不超过 64 MiB。`manifest.json` 保存各分片、解压文件、当前六份原件的大小和 SHA-256，以及 21 个核心裁定文件的联合指纹。客户端与恢复工具均从 `studio.repository.toml` 读取当前版本，恢复时还会核对裁定数据库内记录的指纹。
 
 实际恢复核对见 `资料恢复核验.json`：六个当前来源、22,941 条运行资料，6,365 条 design_ready、9,315 条 blocked、7,261 条 reference，与当前工作区的 ID/状态/类型签名一致；裁定状态为 `current`。该结果证明运行资料可还原，不代表所有资料原义或文学效果已验收。
 

@@ -54,7 +54,8 @@ def card(kind: str, *, narration: bool | str = False) -> dict:
 
 def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | None=None,*,allow_requests: bool=True,
            contracts: list[dict] | None=None, type_network_inputs: bool=False, narration: bool | str=False,
-           chapter_progress: bool=False, cast_demand: bool=False, cast_distribution: bool=False, passage: bool=False) -> dict:
+           chapter_progress: bool=False, cast_demand: bool=False, cast_distribution: bool=False, passage: bool=False,
+           craft: bool=False, effect_kinds=None) -> dict:
     state={'type':'object','additionalProperties':ANY,'minProperties':1}
     use=obj({**strings('source_id','operation'),'output_refs':array(TEXT,1)})
     use['properties']['operation']={'type':'string','minLength':8,'maxLength':160}
@@ -185,6 +186,11 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
         shapes['patches']['maxItems']=len({e['scene'] for e in events})
         use['properties']['output_refs']=array({'enum':['scene:'+scene for scene in sorted({e['scene'] for e in events})]},1)
     fields={key:shapes[key] for key in sorted(FIELDS[stage])};fields.update(common)
+    craft_fields = {}
+    if craft:
+        from nw.materials.passage_craft import schema_fields
+        craft_fields = schema_fields(stage,effect_kinds)
+        fields.update(craft_fields)
     if passage and stage in ('scene_design', 'expression_design'):
         from nw.materials.passage_sequence import ROLES, STATUS, DETAIL
         optional_text = {'type': ['string', 'null']}
@@ -228,7 +234,7 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
         names = tuple(sorted(INPUT_FIELDS))
         fields['adaptation_inputs'] = obj({name: obj(strings('ref', 'quote')) for name in names}, names)
     final=obj({'stage':{'const':stage},'products':obj(fields,('_excluded','_requirements','static_bindings','_governance',
-                                                            '_receipts','adaptation_inputs','passage_choices','passage_sequences'))})
+                                                            '_receipts','adaptation_inputs','passage_choices','passage_sequences',*craft_fields))})
     if not allow_requests:return final
     actions=[obj({'action':{'const':'search'},'query':TEXT,'cursor':{'type':'integer','minimum':0}},('cursor',))]
     if readable:actions.append(obj({'action':{'const':'read'},'id':{'enum':list(readable)}}))

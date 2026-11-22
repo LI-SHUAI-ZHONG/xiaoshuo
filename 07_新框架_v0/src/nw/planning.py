@@ -228,7 +228,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             _, previous_package = read_input_manifest(store, manifest_id)
             package.pop('cast_sample_reference', None)
             package.pop('passage_references', None)
-            for key in ('passage_policy', 'passage_references', 'cast_sample_reference', 'cast_distribution_policy', 'cast_distribution_book_plan',
+            for key in ('passage_policy', 'passage_craft_policy', 'passage_references', 'cast_sample_reference', 'cast_distribution_policy', 'cast_distribution_book_plan',
                         'length_context', 'stage_materials', 'stage_source_policy', 'chapter_handoff', 'chapter_summary', 'chapter_reviews', 'chapter_progress_policy',
                         'type_hierarchy_enabled', 'type_source_scope_enabled', 'type_name_evidence_enabled',
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',

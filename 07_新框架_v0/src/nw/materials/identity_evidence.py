@@ -65,6 +65,7 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
         return [], []
     sources = {rule['id']: (rule, refs) for rule in contract['checks'] if identity and (refs := _identity_sources(rule))}
     progress = {rule['id']: rule for rule in contract['checks'] if rule['id'].startswith('work:progress:')}
+    effects = {rule['id']: rule for rule in contract['checks'] if rule.get('paragraph_effects')}
     from nw.materials.cast_fulfillment import PREFIX
     roles = {rule['id']: rule for rule in contract['checks'] if (cast_work is not None or appearances is not None)
              and rule['id'].startswith(PREFIX)}
@@ -72,7 +73,7 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
     census = next((r for r in contract['checks'] if appearances is not None and r['id'].startswith(cast_appearances.PREFIX)), None)
     beats = {r['id']: r for r in contract['checks'] if appearances is not None and not census
              and r['id'].startswith('work:narration:')}
-    if not sources and not progress and not roles and not census and not beats:
+    if not sources and not progress and not roles and not census and not beats and not effects:
         return [], []
     reviewed, context = read_input_manifest(store, snapshot['manifest_id'])
     ref = asdict(draft_ref(draft))
@@ -93,6 +94,7 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
         raise ValueError('MATERIAL_EVIDENCE: scene check does not come from a passing review')
     proofs = []
     advances = []
+    paragraph_outcomes = []
     for check in result['material_checks']:
         if census and check['id'] == census['id']:
             appearances.update(complete=True, review_run_id=run.id, people=cast_appearances.checked_people(census, check))
@@ -134,7 +136,13 @@ def accepted_scene_checks(store: Store, draft: Draft, delta: StateDelta, *, iden
             for source in refs:
                 if proof := _source_proof(draft, rule, check, source):
                     proofs.append({'scene_id': draft.scene_id, 'draft_ref': ref, 'review_run_id': run.id, **proof})
-    return proofs, advances
+        if check['id'] in effects:
+            from nw.materials.passage_effects import accepted_outcomes
+            for outcome in accepted_outcomes(effects[check['id']], check, draft.id):
+                paragraph_outcomes.append({'scene_id':draft.scene_id,'draft_ref':ref,'delta_id':delta.id,
+                    'review_run_id':run.id,'disclosure_order':manifest['disclosure_order'],
+                    'review_reason':check['reason'], **outcome})
+    return proofs, [*advances, *paragraph_outcomes]
 
 
 def _attested_actor(result: dict, draft: Draft, run_id: str, actor: str, mode: str, check: dict) -> None:

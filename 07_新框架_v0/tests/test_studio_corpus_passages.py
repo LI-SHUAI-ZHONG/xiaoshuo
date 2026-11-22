@@ -163,7 +163,8 @@ def test_no_narrated_handoff_or_time_skip_is_required(tmp_path,monkeypatch,kind,
     assert not any(b['role']=='handoff' for b in sequence['beats'])
 
 
-def test_pre_extension_v5_job_resumes_with_its_original_detail_request(tmp_path,monkeypatch):
+@pytest.mark.parametrize('had_passages',[False,True],ids=['original-v5','v5-before-single-techniques'])
+def test_pre_extension_v5_job_resumes_with_its_original_detail_request(tmp_path,monkeypatch,had_passages):
     service=LibraryService(tmp_path)
     model=CorpusModel()
     model.fail_at=3
@@ -171,7 +172,9 @@ def test_pre_extension_v5_job_resumes_with_its_original_detail_request(tmp_path,
     launch=service._launch_corpus
     def simulate_saved_v5_state(book,job,*args):
         with service.connect() as conn:
-            conn.execute("UPDATE corpus_jobs SET state_json=json_remove(state_json,'$.passage_observations') WHERE id=?",(job,))
+            conn.execute("UPDATE corpus_jobs SET state_json=json_remove(state_json,'$.craft_observations') WHERE id=?",(job,))
+            if not had_passages:
+                conn.execute("UPDATE corpus_jobs SET state_json=json_remove(state_json,'$.passage_observations') WHERE id=?",(job,))
         launch(book,job,*args)
     monkeypatch.setattr(service,'_launch_corpus',simulate_saved_v5_state)
     from corpus_fixture import make_book
@@ -180,10 +183,19 @@ def test_pre_extension_v5_job_resumes_with_its_original_detail_request(tmp_path,
     job=wait_job(service,book,task['id'])
     assert job['status']=='paused' and job['calls'][-1]['phase']=='detail'
     model.fail_at=None
-    monkeypatch.setattr(service,'_launch_corpus',launch)
+    service=LibraryService(tmp_path)
+    monkeypatch.setattr(service,'_corpus_runtime',lambda:(runtime(),model))
     service.control_corpus_job(book,task['id'],{'action':'resume','retry_failed':True})
     completed=wait_job(service,book,task['id'])
     assert completed['status']=='completed',completed['error']
     detail=[service.corpus_call_record(book,task['id'],c['seq'])['input']['messages']
             for c in completed['calls'] if c['phase']=='detail']
-    assert len(detail)==2 and detail[0]==detail[1] and 'passage_sequence' not in detail[0][0]['content']
+    assert len(detail)==2 and detail[0]==detail[1]
+    expected=messages('detail',json.loads(detail[0][-1]['content']),version=5,passages=had_passages,craft=False)
+    assert detail[0]==expected
+    system=detail[0][0]['content']
+    assert ('procedure_branch' in system and 'focus_relay' in system)==had_passages
+    assert ('passage_sequence' in system)==had_passages
+    for call in completed['calls']:
+        logged=service.corpus_call_record(book,task['id'],call['seq'])['input']['messages']
+        assert 'sensory_evidence' not in logged[0]['content'] and 'reader_address' not in logged[0]['content']

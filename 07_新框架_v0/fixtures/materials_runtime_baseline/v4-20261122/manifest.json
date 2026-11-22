@@ -1,0 +1,279 @@
+{
+  "format_version": 1,
+  "created_at": "2026-11-22T12:17:29.887055+00:00",
+  "scope": "current material runtime baseline; no API secrets or novel projects",
+  "protected_core_sha256": "90d01db361636b876d599291bc7807fed276a692d3832a5455d9320970d2b6b7",
+  "originals": [
+    {
+      "path": "02_原版资料/原始资料/动态网络.txt",
+      "bytes": 19196814,
+      "sha256": "d6093b82fe6e072bdff7300fadcf175112b988d319c6b836f5d5b881b5282cc6"
+    },
+    {
+      "path": "02_原版资料/原始资料/类型系统.txt",
+      "bytes": 18050349,
+      "sha256": "aa0ac0359d8fb51d35a95f76cc29a652bab7dbfdbdf283a3fcf7acedefb4e582"
+    },
+    {
+      "path": "02_原版资料/原始资料/类型连接.txt",
+      "bytes": 65826203,
+      "sha256": "e7b7f8f2d1bb7f1af3007ed24da1d3531f767a08c14db94e79346264eafed7b0"
+    },
+    {
+      "path": "02_原版资料/原始资料/资料库.txt",
+      "bytes": 10140562,
+      "sha256": "1e4c7720fbc745ab952cd749c6faad03cff26c9a8e3f9bce5c4c5a6da91a36ed"
+    },
+    {
+      "path": "02_原版资料/原始资料/锚点网络.txt",
+      "bytes": 10383833,
+      "sha256": "9b7ea71e53613a453fe71fa0a862411f65f22328a38ee7b97db7fd5bab7be759"
+    },
+    {
+      "path": "02_原版资料/原始资料/静态网络.txt",
+      "bytes": 19830111,
+      "sha256": "0a415d8d38642b352521abc15650f93e1fda10f1c3b4225f2c17cab70c89d197"
+    }
+  ],
+  "entries": [
+    {
+      "path": "materials/active_source_set.json",
+      "bytes": 1899,
+      "sha256": "989a77f8f09ca3e0de057f1862e588da8a11907243304baa45da6cabd9dc303d"
+    },
+    {
+      "path": "materials/adjudication.db",
+      "bytes": 277741568,
+      "sha256": "9cddbe5d821118e79c97db71ffef1f15b783ee2a3116276c818c13ef9a29df73"
+    },
+    {
+      "path": "materials/catalog.db",
+      "bytes": 745041920,
+      "sha256": "35f61c88e9da5e71fb88e6f1cb2ca60f8864c1059f878a026fb46d03d8b677aa"
+    },
+    {
+      "path": "materials/F1_结构对账.json",
+      "bytes": 1277730,
+      "sha256": "bd2541df56ccc3233804803898553e3230310b7f83604481f6088923e9be86b5"
+    },
+    {
+      "path": "materials/F1_统一问题台账.jsonl",
+      "bytes": 126584,
+      "sha256": "b955b97019dc76f3d13345d31696200e87df3ae4b2175c0557a98471fe052f2f"
+    },
+    {
+      "path": "materials/F2_triage_batch34.json",
+      "bytes": 126,
+      "sha256": "b02bf1a233e400b2bae379f6a61e2821b5c6eafade3e699916579ceb62cfe90f"
+    },
+    {
+      "path": "materials/F2_triage_can_close_programmatically.jsonl",
+      "bytes": 14043,
+      "sha256": "dde3f75f2336158651aca7c27c9e481de48085c2af5261d836a65b439bc6f7c0"
+    },
+    {
+      "path": "materials/F2_triage_needs_author_input.jsonl",
+      "bytes": 176799,
+      "sha256": "6d9ad91a8a43f1c8095ab27d9de3730307a8ce04abfaf34f1c3a421b57e24b30"
+    },
+    {
+      "path": "materials/F2_triage_needs_literary_model.jsonl",
+      "bytes": 2258511,
+      "sha256": "0a0d1bef049df3785f162dcc68b562a408f3ed9cf8aa049dd9c01bbb6acd47bf"
+    },
+    {
+      "path": "materials/F2_作者待确认清单_batch34.md",
+      "bytes": 27915,
+      "sha256": "34994297718536757bab36504ec1da9c26a835c35bb3943424812ee85baf0254"
+    },
+    {
+      "path": "materials/F2_用途对账.json",
+      "bytes": 41270,
+      "sha256": "ce9d09a593fbcf97b0575a2b460edf809172fd8b94de7e8d3d3f0ac2c92752fe"
+    },
+    {
+      "path": "materials/F2_统一问题台账.jsonl",
+      "bytes": 5511838,
+      "sha256": "e6acaef8f9e61abbefb3b1b386c4e70f9c6e9c463ed7ad5abd97908f8b4da9ff"
+    },
+    {
+      "path": "materials/F2_网络身份对账.json",
+      "bytes": 5322509,
+      "sha256": "10f7d158d7e84c92e1148fa7a14a3886968d98175a13544afba495eb08f6258e"
+    },
+    {
+      "path": "materials/资料来源与版本登记_F0.json",
+      "bytes": 1766432,
+      "sha256": "8b0d1023709dff9111fc574ff6ca181427c714959323512dff8a4f157e670faf"
+    },
+    {
+      "path": "materials/资料来源补充_F2.json",
+      "bytes": 75470,
+      "sha256": "84674dc8c4ee978d22c206b9bbc1c1f3a6204aafac8de629b2c9f53c3198b31e"
+    },
+    {
+      "path": "materials/首轮结构索引报告.json",
+      "bytes": 11173,
+      "sha256": "612e0b1c7838064e041538ee7380f98b2db91bcd03a8527b0f399e9b98513340"
+    }
+  ],
+  "archive": {
+    "path": "materials.zip",
+    "bytes": 196375971,
+    "sha256": "9d8d729bd545fcebe24e8bebdccd950f8cfc7aef9f7afe725b493a72c0fdf79d"
+  },
+  "parts": [
+    {
+      "path": "materials.zip.part001",
+      "bytes": 67108864,
+      "sha256": "fda599a95b0448c3215dd6ad839b14848ecb98353aa3fd37bd53468bdb4f57c2"
+    },
+    {
+      "path": "materials.zip.part002",
+      "bytes": 67108864,
+      "sha256": "b1d75cd4ff087db543d4e62490b41ce945553e617e35e943b6d94ffaf69c49a4"
+    },
+    {
+      "path": "materials.zip.part003",
+      "bytes": 62158243,
+      "sha256": "1de2e78dc776db102c34babeb4f33ca087ee14bad943fbf70e2f676c7dbb11a5"
+    }
+  ],
+  "excluded_caches": [
+    {
+      "path": "adjudication-17c530ae0b9f4517baaa82b360fd287a.tmp",
+      "bytes": 67182592,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "adjudication-17c530ae0b9f4517baaa82b360fd287a.tmp-journal",
+      "bytes": 17920,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "adjudication-5bf8d0eadf0a4f96b45818562d6fc11c.tmp",
+      "bytes": 36249600,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "adjudication-5bf8d0eadf0a4f96b45818562d6fc11c.tmp-journal",
+      "bytes": 17920,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "adjudication-8957a636d8584626bf064a22b7e5c975.tmp",
+      "bytes": 23912448,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "adjudication-8957a636d8584626bf064a22b7e5c975.tmp-journal",
+      "bytes": 17920,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "adjudication-9d7021aa87e14517a9d6d0d7b3314774.tmp",
+      "bytes": 143536128,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "adjudication-9d7021aa87e14517a9d6d0d7b3314774.tmp-journal",
+      "bytes": 26128,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "round19-semantic-full-details-1801e74200fe4dc0a738ba8ce2bf384d.json",
+      "bytes": 1008493492,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "round19-semantic-full-details-e25d4dd6d37744a087f053acb7d7e9bb.json",
+      "bytes": 1008770207,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "round19-semantic-full-details.json",
+      "bytes": 1008822095,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-24906dd8b05f324d-4001b9687f874f1e897da407321e204a.db",
+      "bytes": 1062653952,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-2b473643adcf0d2f-19fa7f812d6346f2a211e8ca58d9ffb1.db",
+      "bytes": 1025282048,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-3b29c78b0b09807d-981253a7a6214a09832e05cfe8026249.db",
+      "bytes": 1060077568,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-5ce946fa92dc520c-48581f1e4e414e3bb6cbf3d23ccc8a13.db",
+      "bytes": 1060077568,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-5d7a37a89efbfd8b-af4aad2b09994118949fba6ddf479bee.db",
+      "bytes": 1060081664,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-6edff5259256963c-1eb6903fae574e20ad532c260a467685.db",
+      "bytes": 1025363968,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-7f93ae9567072590-bd7c70cae5fe4189913af7ce3697b52a.db",
+      "bytes": 1060077568,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-82cc044f744d8894-d8d423eda942469b8941f292568ddca6.db",
+      "bytes": 1062653952,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-99fbd8f385dffc00-58d52830d9f246da9ff9b5e8a4bd939c.db",
+      "bytes": 1060077568,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-a05385f9d389c4a3-e12836a3365b4c9da6ddf540cfad8b7e.db",
+      "bytes": 20480,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-a878f40a1b59c6bf-c5eb291b1d104d9ca0a7d88c19a8e0fc.db",
+      "bytes": 1060077568,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-b72ca8e1c5a305cb-d46ba6fe2c654e60976db2caf6be3cd3.db",
+      "bytes": 1025368064,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-bf86c1ee7ea3199a-7e6c3fc7c75c43119d23257b17f33c34.db",
+      "bytes": 1060077568,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-c434506b6cecb4e2-d9b4c68ee642415ca1785cbd1acee6c7.db",
+      "bytes": 1062637568,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-d308f2892fdbc40f-ac490b48a90f469bb53091b9b21b255a.db",
+      "bytes": 1062637568,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    },
+    {
+      "path": "semantic-index-df4c5169242eda88-a0e9395737424fb18ea8a8da389d75b9.db",
+      "bytes": 1025368064,
+      "reason": "generated semantic cache, historical full audit, or interrupted temporary file"
+    }
+  ]
+}

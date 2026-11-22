@@ -264,6 +264,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         progress_preconditions = writing_preconditions(checks, design.get('work_session', {}), design['material_key'])
         narration_states = {c['narration_state_sha256'] for c in checks if 'narration_state_sha256' in c}
         narration_states.update(sha for check in checks for sha in check.get('narration_state_refs', ()))
+        narration_states.update(c['situated_known_sha256'] for c in checks if c.get('situated_known_sha256'))
         if legacy_preconditions or native_preconditions or progress_preconditions or narration_states:
             author = state_at(store, scope.branch_id, scope.revision, scope.story_order, 'AUTHOR',
                               disclosure, before_scene=scene_id, snapshot=snapshot)

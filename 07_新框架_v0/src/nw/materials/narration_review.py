@@ -2,7 +2,8 @@
 import json
 
 from nw.models import Draft
-from nw.materials import passage_review
+from nw.materials import passage_craft, passage_review
+from nw.materials import passage_people, passage_effects, situated_passage
 
 
 PREFIX = 'work:narration:'
@@ -38,7 +39,8 @@ def issue(row: dict) -> str:
     """Keep the durable review in its established four-field format."""
     reason = row['reason'].strip()
     code, separator, explanation = reason.partition(']')
-    if separator and code.startswith('[') and (code[1:] in FIXES or code[1:] in passage_review.FIXES):
+    if separator and code.startswith('[') and any(code[1:] in group for group in (
+            FIXES, passage_review.FIXES, passage_effects.FIXES, passage_people.FIXES, situated_passage.FIXES, passage_craft.FIXES)):
         return code[1:]
     if separator and code == '[as_designed]':
         reason = explanation.strip()
@@ -74,6 +76,10 @@ def assess_beats(checks: list[dict], rows: list[dict], draft: Draft) -> None:
             continue
         start = min(starts)
     passage_review.assess(beats, by_id, draft.id)
+    passage_effects.assess(beats, by_id, draft)
+    passage_people.assess(beats, by_id, draft)
+    situated_passage.assess(beats, by_id, draft)
+    passage_craft.assess_sources(beats,by_id,draft.id)
     from nw.materials.cast_design import assess_hidden
     assess_hidden(checks, rows, draft)
 
@@ -83,7 +89,26 @@ def revision_feedback(check: dict, draft: Draft) -> dict:
     locations = [{'start': span['start'], 'end': span['end']} for span in check['evidence']
                  if span['id'] == draft.id and span['version'] == draft.version]
     code = check['narration_issue']
-    return {'fix': passage_review.FIXES.get(code) or FIXES[code], 'draft_locations': locations}
+    fix = next(table[code] for table in (FIXES, passage_review.FIXES, passage_effects.FIXES,
+                                         passage_people.FIXES, situated_passage.FIXES, passage_craft.FIXES) if code in table)
+    return {'fix': fix, 'draft_locations': locations}
+
+
+def reviewed_spans(check: dict, row: dict, draft_id: str) -> tuple[list, list]:
+    """Locate what this beat actually showed, separately from supporting quotations."""
+    craft = [*passage_people.people_spans(check,row,draft_id),
+             *situated_passage.situated_spans(check,row,draft_id),
+             *passage_effects.effect_spans(check,row,draft_id)]
+    for n in range(1,len(check.get('craft_sources',()))+1):
+        if pin := passage_effects._span(row,f'来源{n}落点',draft_id):
+            craft.append(pin)
+    sequence = passage_review.primary_spans(row,draft_id,pinpoint=bool(craft)) if 'passage_step' in check else []
+    if craft:
+        unique = {(s['start'],s['end']):s for s in (*craft,*sequence)}
+        return [unique[key] for key in sorted(unique)], sequence
+    if 'passage_step' in check:
+        return sequence, sequence
+    return [s for s in row['evidence'] if s['id']==draft_id], sequence
 
 
 def reader_spans(checks: list[dict], rows: list[dict], draft: Draft) -> list[dict]:
@@ -102,21 +127,43 @@ def reader_spans(checks: list[dict], rows: list[dict], draft: Draft) -> list[dic
                     'holders': [observable['owner'], *observable['witnesses']]}
         if 'reported_only' in check and check['id'] in limits:
             limits[check['id']]['reported_only'] = check['reported_only']
-        if check.get('passage_step', {}).get('status') in ('inference', 'pending') and check['id'] in limits:
-            limits[check['id']].update(reported_only=True, passage_status=check['passage_step']['status'])
         if 'cast_subject' in observable and check['id'] in limits:
             limits[check['id']].update(cast_subject=observable['cast_subject'], cast_basis=observable['basis_claim'],
                                        mode=beat['mode'])
-    selected = {check['id'] for check in checks if 'passage_step' in check}
-    return [{'start': s['start'], 'end': s['end'], **limits[row['id']]} for row in rows
-            if row['id'] in limits and row['status'] == 'pass'
-            for s in (passage_review.primary_spans(row, draft.id) if row['id'] in selected else row['evidence'])
-            if s['id'] == draft.id]
+    by_id = {c['id']:c for c in checks}
+    result = []
+    for row in rows:
+        key = row['id']
+        if key not in limits or row['status'] != 'pass':
+            continue
+        check, limit = by_id[key], limits[key]
+        judgments = passage_people.judgment_spans(check,row,draft.id) if check.get('people_design') else []
+        pending = situated_passage.pending_spans(row,draft.id) if check.get('situated_pending') else []
+        if check.get('paragraph_pending'):
+            pending.extend(passage_effects.pending_spans(check,row,draft.id))
+        spans, sequence = reviewed_spans(check,row,draft.id)
+        status = check.get('passage_step',{}).get('status')
+        if not any(field in check for field in ('people_design','situated_checks','paragraph_effects','craft_sources')):
+            if status in ('inference','pending'):
+                limit = {**limit,'reported_only':True,'passage_status':status}
+            result.extend({'start':s['start'],'end':s['end'],**limit} for s in spans)
+            continue
+        located = {(s['start'],s['end']):{'start':s['start'],'end':s['end'],**limit} for s in spans}
+        if status in ('inference','pending'):
+            for s in sequence:
+                located[s['start'],s['end']].update(reported_only=True,passage_status=status)
+        for s in judgments:
+            passage_people.mark_audience(check,located[s['start'],s['end']])
+        for s in pending:
+            located[s['start'],s['end']].update(reported_only=True,passage_status='pending')
+        result.extend(located.values())
+    return result
 
 
 def check_state_audience(operations: list[dict], reader_only: list[dict]) -> None:
     if not reader_only:
         return
+    passage_people.validate_audience(operations,reader_only)
     for op in operations:
         holder = op['holder']
         reported = [r for r in reader_only if r.get('reported_only')] if op.get('claim') == 'fact' else []

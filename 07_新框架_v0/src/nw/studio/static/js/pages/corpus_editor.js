@@ -50,6 +50,11 @@ export function openCorpusEditor({book,catalog,record,section,row=null,initialDo
   }else if(section==='uncertainties'){
     value={text:(row||document.uncertainties).join('\n')};fields=[['text','待核实项（每行一条）']];
   }else fields=Object.entries(catalog.row_fields[section]);
+  if(section==='evidence' && catalog.evidence_roles){
+    selections.text_role=catalog.evidence_roles;
+    value.text_role??='narrative';
+    fields.push(['text_role','引文用途']);
+  }
   modal(existing?'修改记录 · 新增结构版本':'维护参考作品结构',`<form id="corpusRecordForm" class="stack">
     <p class="notice">保存会新增版本。引用必须来自本作品结构；未知保持待核，不凭字段完整宣称文学效果。</p>
     ${fields.map(([key,label])=>control(key,label,value[key])).join('')}
@@ -78,7 +83,7 @@ export function openCorpusEditor({book,catalog,record,section,row=null,initialDo
       return field(label,`<textarea name="detail_${key}" rows="3">${esc(detail[key]||'')}</textarea>`);
     }).join('');
     readPassage=domain==='narration'&&catalog.passage_sequences
-      ?passageEditor($('#corpusDomainDetails'),catalog,document,detail.passage_sequence):null;
+      ?passageEditor($('#corpusDomainDetails'),catalog,document,detail.passage_sequence,book.text):null;
     citedEvent.onchange=null;
     if(roster){
       const appearance=$('[name=detail_appearance_evidence]',form);

@@ -67,6 +67,9 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         from nw.materials.passage_review import review_prompt as passage_prompt
         if passage := passage_prompt(contract['checks']):
             appended += ' ' + passage
+        from nw.materials.passage_craft import review_prompt as craft_prompt
+        if craft := craft_prompt(contract['checks']):
+            appended += ' ' + craft
         if any(check.get('layer_contract', {}).get('policy') == NETWORK_LAYER_POLICY for check in contract['checks']):
             appended += ' ' + NETWORK_LAYER_REVIEW
     from nw.chapter_break import REVIEW as BREAK_REVIEW, WRITING as BREAK_WRITING, chapter_end

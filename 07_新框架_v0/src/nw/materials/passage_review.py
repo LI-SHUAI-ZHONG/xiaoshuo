@@ -61,8 +61,20 @@ def _anchors(reason: str) -> set[str]:
     return anchors
 
 
-def primary_spans(row: dict, draft_id: str) -> list[dict]:
+def primary_spans(row: dict, draft_id: str, *, pinpoint=False) -> list[dict]:
     """A separately pinpointed short turn takes precedence over its corroborating context."""
+    if pinpoint:
+        # On a shared beat, another technique may cite the same paragraph for a
+        # completed act. Locate the old sequence's quoted change separately.
+        focus = row['reason'].split('【',1)[0]
+        pins = {}
+        for quote in _QUOTED.findall(focus):
+            for span in row['evidence']:
+                if span['id']==draft_id and span['quote'].count(quote)==1:
+                    start = span['start']+span['quote'].index(quote)
+                    pins[start,start+len(quote)] = {**span,'start':start,'end':start+len(quote),'quote':quote}
+        if pins:
+            return [pins[k] for k in sorted(pins)]
     anchors = _anchors(row['reason'])
     spans = [s for s in row['evidence'] if s['id'] == draft_id and any(a in s['quote'] for a in anchors)]
     short = [s for s in spans if len(''.join(s['quote'].split())) < 8]

@@ -52,7 +52,8 @@ def chapter_openings(handoff: dict, policy: str = POLICY) -> dict:
     return {f'open:{index}': {'draft_ref': row['draft_ref'], 'delta_id': row['delta_id'],
             'review_run_id': row['review_run_id'], 'evidence': row[evidence_key],
             'disclosure_order': row['disclosure_order'],
-            'possible_next_pressure': row['possible_next_pressure']}
+            'possible_next_pressure': row['possible_next_pressure'],
+            **({'paragraph_outcome':row['paragraph_outcome']} if row.get('paragraph_outcome') else {})}
             for index, row in enumerate(handoff.get('reviewed_progress', ()))
             if row.get('possible_next_pressure') and row.get(evidence_key)}
 
@@ -92,6 +93,10 @@ def _continuations(products: dict, event: str) -> list[dict]:
     return [r for r in product(products, 'plot_design').get('continuations', ()) if r['event'] == node]
 
 
+def permits_unchanged_story(change: str, context: dict) -> bool:
+    return change == 'setup' or (change == 'reader' and context.get('passage_craft_policy') == 'scene-craft-v1')
+
+
 def validate(value: dict, products: dict, context: dict) -> None:
     places = {place['card']: (place['story_order'], (chapter['index'], place['index'], 0))
               for chapter in value['chapters'] for place in chapter['scenes']}
@@ -110,7 +115,7 @@ def validate(value: dict, products: dict, context: dict) -> None:
         require(row['origin'] in ORIGINS and row['connection'] in CONNECTIONS and row['change'] in CHANGES
                 and content(row['stimulus']) and (row['next_pressure'] is None or content(row['next_pressure'])),
                 '需具体说明本场的触发、前因关系、进展及确有的后续条件')
-        require(row['change'] == 'setup' or body['entering_state'].strip() != body['planned_result'].strip(),
+        require(permits_unchanged_story(row['change'],context) or body['entering_state'].strip() != body['planned_result'].strip(),
                 '本场起止状态完全相同，缺少实际推进')
         ref, quote = row['basis_ref'], row['basis_quote']
         require(isinstance(ref, str) and content(quote), '场景推进缺少可核对的前置')
@@ -168,6 +173,8 @@ def scene_check(records: dict, scene: str, context: dict) -> dict | None:
         observable['personal_basis'] = {key: source[key] for key in ('claim', 'predicate', 'text')}
     check = ('以本稿原句核对场面为后续建立的具体处境，不虚构人物改变。' if row['change'] == 'setup'
              else '以本稿原句核对这个视角遇到的触发、回应及实际变化；保留误信、意图、偶合或未决的原意。')
+    if row['change'] == 'reader' and context.get('passage_craft_policy') == 'scene-craft-v1':
+        check = '以本稿原句核对读者原先的理解和此时所得，场中人物可以始终知道或始终不知。'
     check += ' 只有正文兑现且状态审核接受的结果才成为后续事实。'
     if chapter['card'] is not None:
         if positions[0]['card'] == scene:

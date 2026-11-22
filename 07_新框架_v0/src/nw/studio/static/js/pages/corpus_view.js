@@ -5,10 +5,14 @@ export const stateNames={draft:'待审核',approved:'已批准',rejected:'已退
 
 export function analysisCatalogHtml(catalog,counts=null){
   const domains=Object.entries(catalog.domains);
+  function techniques(single,title){
+    const rows=Object.values(catalog.passage_sequences||{}).filter(k=>(k.required_roles.length===1)===single);
+    return rows.length?`<p>${esc(title)}</p><ul>${rows.map(k=>`<li>${esc(k.label)} · ${k.role_order.map(r=>esc(k.roles[r])+(k.required_roles.includes(r)?'':'（原文出现时）')).join(k.role_order_flexible?' 与 ':' → ')}${k.role_order_flexible?'（按原文先后）':''}</li>`).join('')}</ul>`:'';
+  }
   return `<section aria-label="现行拆解条目"><div class="section-head"><h2>现行拆解条目</h2><span class="muted">规格 v${esc(catalog.schema_version)} · ${domains.length} 项</span></div>
     ${domains.map(([id,name])=>`<details class="details" data-analysis-domain="${esc(id)}"><summary>${esc(name)}</summary>
       <ul>${Object.values(catalog.domain_details[id]).map(label=>`<li>${esc(label)}</li>`).join('')}</ul>
-      ${id==='narration'&&catalog.passage_sequences?`<p>可按连续原句分析段落承接：</p><ul>${Object.values(catalog.passage_sequences).map(k=>`<li>${esc(k.label)} · ${k.role_order.map(r=>esc(k.roles[r])+(k.required_roles.includes(r)?'':'（原文出现时）')).join(' → ')}</li>`).join('')}</ul>`:''}
+      ${id==='narration'?techniques(true,'一处原句可举证的写法')+techniques(false,'需要前后原句共同举证的写法'):''}
       ${id==='cast_roster'?`<p>全书地位：${Object.values(catalog.cast_roster_options.standing).map(esc).join('、')}。</p>
         <p>本章职责：${Object.values(catalog.cast_roster_options.function_kind).map(esc).join('、')}。</p>`:''}
       ${counts?(Object.hasOwn(counts,id)?`<button class="ghost" data-domain-observations="${esc(id)}">查看本书观察（${esc(counts[id])}）</button>`:'<p class="muted">本份旧分析未包含此项。</p>'):''}</details>`).join('')}</section>`;
@@ -55,6 +59,9 @@ export function recordDrawer(section,row,record,catalog){
   const eventName=id=>doc.events.find(e=>e.id===id)?.summary||id;
   const evidence=doc.evidence.filter(e=>(row.evidence_ids||[]).includes(e.id));
   let extra='';
+  if(section==='evidence'&&catalog.evidence_roles){
+    extra=`<p><strong>引文用途</strong> · ${esc(catalog.evidence_roles[row.text_role||'narrative'])}</p>`;
+  }
   if(section==='threads'){
     const detailValue=key=>{
       const val=row.details[key];

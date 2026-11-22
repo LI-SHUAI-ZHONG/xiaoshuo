@@ -275,6 +275,9 @@ def method_checks(session: dict,scene: str,ids: dict | None=None) -> list[dict]:
         _share_product_refs(result)
     from nw.materials.passage_review import attach_steps
     attach_steps(result, records, scene, session.get('context', {}).get('passage_references', []))
+    if context.get('passage_craft_policy'):
+        from nw.materials.passage_craft import attach
+        attach(result,records,scene,context)
     return result
 
 

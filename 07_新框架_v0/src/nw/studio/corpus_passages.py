@@ -1,5 +1,7 @@
 """Optional, source-ordered narration observations within the v5 corpus."""
 from nw.studio.corpus_story_observations import event_chapter
+from nw.passage_catalog import OBSERVATIONS
+from bisect import bisect_right
 
 
 KINDS = {
@@ -12,14 +14,54 @@ KINDS = {
                     'roles': {'orientation':'交代现场', 'attention':'转接注意', 'focus':'落到具体对象',
                               'handoff':'以新细节或问题接向下文'}},
 }
+CRAFT_KINDS = {key: {'label':label, 'required_roles':list(roles), 'roles':roles}
+               for key, (label, roles) in OBSERVATIONS.items()}
+CRAFT_KINDS['place_function']['role_order_flexible'] = True
+JUDGMENT_KINDS = {'qualified_claim', 'interpreted_motive'}
+
+
+def judgment_issue(sequence: dict, claim_status: str | None = None) -> str:
+    if sequence.get('kind') not in JUDGMENT_KINDS:
+        return ''
+    if claim_status == 'stated' or any(
+        beat['claim_status'] == 'stated' or beat['story_change'] or not beat['reader_change']
+        for beat in sequence['beats']
+    ):
+        return '估计或对他人动机的解释须保留为人物说法、推断或未知，只能记录读者所得；实际言行与后续证实另引事件'
+    return ''
+
+
+def paratext_evidence(evidence: dict) -> set[str]:
+    """Match offsets as well as IDs so a second citation cannot relabel the same words."""
+    spans = sorted((e['start'], e['end']) for e in evidence.values()
+                   if e.get('text_role') in ('heading','reader_address'))
+    if not spans:
+        return set()
+    merged = []
+    for start, end in spans:
+        if merged and start <= merged[-1][1]:
+            merged[-1][1] = max(end, merged[-1][1])
+        else:
+            merged.append([start, end])
+    ends = [end for _, end in merged]
+    result = set()
+    for key, row in evidence.items():
+        i = bisect_right(ends, row['start'])
+        if i < len(merged) and merged[i][0] < row['end']:
+            result.add(key)
+    return result
 
 
 def sequence_issue(thread: dict, events: dict, evidence: dict, units: dict, content: str | None = None) -> str:
     sequence=thread['details'].get('passage_sequence')
     if sequence is None:
         return ''
+    if issue := judgment_issue(sequence, thread['details'].get('claim_status')):
+        return issue
     chapter=None
     previous_end=None
+    previous_event=None
+    independent = sequence.get('kind') in CRAFT_KINDS and sequence['kind'] != 'paragraph_turn'
     for beat in sequence['beats']:
         event=events.get(beat['event_id'])
         quote=evidence.get(beat['evidence_id'])
@@ -38,12 +80,13 @@ def sequence_issue(thread: dict, events: dict, evidence: dict, units: dict, cont
         if previous_end is not None:
             if quote['start']<previous_end:
                 return '段落链须按原文实际位置递进，不能倒排或重用同一处引文'
-            if content is not None:
+            if content is not None and not (independent and previous_event == event['id']):
                 gap=content[previous_end-1:quote['start']+1].splitlines()
                 if any(line.strip() for line in gap[1:-1]):
                     return '段落链跨过了未举证的完整自然段，请补中间承接原句或缩小观察范围'
         chapter=current
         previous_end=quote['end']
+        previous_event=event['id']
     return ''
 
 

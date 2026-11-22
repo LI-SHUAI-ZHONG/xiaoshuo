@@ -5,7 +5,7 @@ import re
 
 from nw.studio.corpus_catalog import CAST_ROSTER_OPTIONS, DETAILS, DOMAINS, FIELDS, LEVELS, LINKS, NARRATION_CLAIMS, OVERVIEW, domains_for
 from nw.studio.library_util import encode
-from nw.studio.corpus_passages import KINDS
+from nw.studio.corpus_passages import CRAFT_KINDS, KINDS, judgment_issue
 
 ID = re.compile(r'^[A-Za-z][A-Za-z0-9_]{0,95}$')
 BEAT_FIELDS = {'event_id','evidence_id','role','bridge','story_change','reader_change','claim_status'}
@@ -32,17 +32,18 @@ def references(value: object) -> list[str]:
     return result
 
 
-def normalize_sequence(value: dict) -> dict:
+def normalize_sequence(value: dict, *, claim_status: str | None = None) -> dict:
     if not isinstance(value,dict) or set(value)!={'kind','condition','boundary','beats'}:
         raise ValueError('段落链须指定手法、适用条件、不适用边界和有序落点')
     kind=value['kind']
-    if not isinstance(kind,str) or kind not in KINDS:
+    if not isinstance(kind,str) or kind not in KINDS.keys() | CRAFT_KINDS.keys():
         raise ValueError('段落链手法不在目录内')
     condition=string(value['condition'],'通用适用条件',240)
     boundary=string(value['boundary'],'通用不适用边界',240)
     if not condition or not boundary:
         raise ValueError('段落链须说明何时适用以及何时不能迁移')
-    required=KINDS[kind]['required_roles']
+    technique = KINDS.get(kind) or CRAFT_KINDS[kind]
+    required=technique['required_roles']
     if not isinstance(value['beats'],list) or not len(required)<=len(value['beats'])<=24:
         raise ValueError('段落链须覆盖核心作用，最多24处有依据的落点')
     beats=[]
@@ -51,18 +52,22 @@ def normalize_sequence(value: dict) -> dict:
             raise ValueError('段落链每个落点须包含事件、原句、作用、承接、实际变化、读者所得和证据性质')
         beat={key:(identifier(item) if key in ('event_id','evidence_id') else string(item,'段落落点'))
               for key,item in raw.items()}
-        if beat['role'] not in KINDS[kind]['roles'] or beat['claim_status'] not in NARRATION_CLAIMS:
+        if beat['role'] not in technique['roles'] or beat['claim_status'] not in NARRATION_CLAIMS:
             raise ValueError('段落链落点的作用或证据性质不在目录内')
         if not beat['bridge'] or not (beat['story_change'] or beat['reader_change']):
             raise ValueError('段落链落点须说明开场依据或前后承接，以及实际变化或读者所得')
         if beat['claim_status']!='stated' and beat['story_change']:
             raise ValueError('人物说法、推断或未知只能登记在读者所得，已证实事件变化应另引原文')
         beats.append(beat)
-    ordered_roles=list(KINDS[kind]['roles'])
+    ordered_roles=list(technique['roles'])
     roles=[role for role,_ in groupby(b['role'] for b in beats)]
-    if not set(required)<=set(roles) or roles!=sorted(roles,key=ordered_roles.index):
+    if not set(required)<=set(roles) or (not technique.get('role_order_flexible')
+                                         and roles!=sorted(roles,key=ordered_roles.index)):
         raise ValueError('段落链须依次展示该手法所需的各类落点，可以连续展开同一作用')
-    return {'kind':kind,'condition':condition,'boundary':boundary,'beats':beats}
+    sequence = {'kind':kind,'condition':condition,'boundary':boundary,'beats':beats}
+    if issue := judgment_issue(sequence, claim_status):
+        raise ValueError(issue)
+    return sequence
 
 
 def normalize_document(raw: dict, content: str) -> dict:
@@ -82,10 +87,15 @@ def normalize_document(raw: dict, content: str) -> dict:
         if not isinstance(rows,list) or len(rows)>LIMITS[section]: raise ValueError('拆解记录数量超出范围：'+section)
         result[section]=[]
         for row in rows:
-            if not isinstance(row,dict) or set(row)!=set(fields): raise ValueError('记录字段不完整或包含未知字段：'+section)
+            optional = {'text_role'} if version >= 5 and section == 'evidence' else set()
+            if not isinstance(row,dict) or set(row)-optional!=set(fields): raise ValueError('记录字段不完整或包含未知字段：'+section)
             clean={}
             for key,value in row.items():
-                if key in REF_LISTS: clean[key]=references(value)
+                if key == 'text_role':
+                    if value not in ('narrative','reader_address','heading'):
+                        raise ValueError('须说明引文来自故事正文、题外互动或标题')
+                    clean[key] = value
+                elif key in REF_LISTS: clean[key]=references(value)
                 elif key in ('id','unit_id','source','target'): clean[key]=identifier(value)
                 elif key in ('parent_id','thread_id','canonical_id'): clean[key]=identifier(value,nullable=True)
                 elif key in ('start','end'):
@@ -106,7 +116,8 @@ def normalize_document(raw: dict, content: str) -> dict:
                         raise ValueError('请按具体制作职责填写分析字段')
                     clean[key]={k:string(value[k],label) for k,label in DETAILS[domain].items()}
                     if has_sequence:
-                        clean[key]['passage_sequence']=normalize_sequence(value['passage_sequence'])
+                        clean[key]['passage_sequence']=normalize_sequence(
+                            value['passage_sequence'], claim_status=clean[key]['claim_status'])
                     if row['domain']=='cast_roster' and any(clean[key][k] not in opts for k,opts in CAST_ROSTER_OPTIONS.items()):
                         raise ValueError('角色阵容须使用目录中的出场性质、主体、全书地位及本章职责')
                     if row['domain']=='narration' and clean[key]['claim_status'] not in NARRATION_CLAIMS:

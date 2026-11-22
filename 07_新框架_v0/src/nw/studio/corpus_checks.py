@@ -1,7 +1,7 @@
 """Graph/coverage integrity checks; author review decides literary interpretations."""
 from nw.studio.corpus_catalog import DETAILS, OVERVIEW, domains_for
 from nw.studio.corpus_index import range_coverage
-from nw.studio.corpus_passages import sequence_issue
+from nw.studio.corpus_passages import paratext_evidence, sequence_issue
 from nw.studio.corpus_roster import coverage_issue, roster_issue, subject_evidence
 from nw.studio.corpus_story_observations import REQUIRED_DETAILS, event_chapter, story_observation_issue
 
@@ -36,9 +36,12 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None, *, conte
     check(bool(chapters) and range_coverage(chapters,length)['complete_imported_text'],'units','章节目录没有覆盖全部已导入文本')
     check(bool(body['source_extent']['note']),'source_extent','请记录参考文本完整性判断依据')
     for key,label in OVERVIEW.items():check(bool(body['overview'][key]),'overview','全书总览待填写：'+label)
+    nonstory = paratext_evidence(evidence)
     for section in ('characters','events','threads','links','domains'):
         for row in body[section]:
             refs=row['evidence_ids']
+            if section != 'domains' and nonstory.intersection(refs):
+                check(False,section,'标题或面向读者的题外文字不能用来证明故事中的人物与事件：'+row['id'])
             check(bool(refs) and set(refs)<=evidence.keys(),section,'记录缺少可定位原作证据：'+str(row.get('id',row.get('domain'))))
     for person in people.values():
         check(bool(person['name']),'characters','人物名称为空')

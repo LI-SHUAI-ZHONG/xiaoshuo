@@ -109,6 +109,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     value=raw['products']
     from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, passage_sequence
     passage_enabled = context.get('passage_policy') == passage_sequence.POLICY
+    from nw.materials import passage_craft
+    craft_enabled = context.get('passage_craft_policy') == passage_craft.POLICY and context.get('scope') != 'book'
     cast_distribution = context.get('cast_distribution_policy') == cast_distribution_plan.POLICY
     cast_enabled = context.get('cast_demand_policy') == cast_demands.POLICY
     progress_enabled = context.get('chapter_progress_policy') in chapter_progress.POLICIES
@@ -127,6 +129,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             -({'cast_distribution_plan'} if cast_distribution and stage == 'scene_design' else set())
             -({'passage_choices'} if passage_enabled and stage == 'scene_design' else set())
             -({'passage_sequences'} if passage_enabled and stage == 'expression_design' else set())
+            -(passage_craft.schema_fields(stage).keys() if craft_enabled else set())
             -({'_network_design_uses'} if context.get('design_network_policy') else set()),'wrong stage product fields')
     if '_governance' in value:
         config=value['_governance']
@@ -275,7 +278,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             if progress_enabled:
                 body = next(row['body'] for row in scene_product['members'] if row['key'] == patch['scene'])
                 progress = next(row for row in scene_product['scene_progress'] if row['scene'] == patch['scene'])
-                require(progress['change'] == 'setup' or patch['planned_result'].strip() != body['entering_state'].strip(),
+                require(chapter_progress.permits_unchanged_story(progress['change'],context)
+                        or patch['planned_result'].strip() != body['entering_state'].strip(),
                         '状态补丁不能取消本场已经设计的实际推进')
         for transition in value['transitions']:
             require(set(transition)=={'scene','entity','event','before_state','action','after_state','cost','failure','continuity'}
@@ -383,6 +387,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         used.add(row['source_id'])
     require(used==allowed.keys(),'every delivered method needs an actual use or an explained exclusion')
     validate_extra(stage,value,products,sources,context)
+    if craft_enabled:
+        passage_craft.validate(stage,value,products,context)
     if cast_enabled:
         from nw.materials.cast_fulfillment import validate as validate_fulfillment
         validate_fulfillment(stage, value, products, context)

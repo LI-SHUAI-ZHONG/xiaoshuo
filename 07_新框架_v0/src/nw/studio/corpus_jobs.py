@@ -106,6 +106,7 @@ class CorpusJobsMixin:
         spans=source_spans(body['units'],options['chunk_chars'])
         base=current['latest_version'];minimum=minimum_structure_calls(spans,body['schema_version'])
         state={'document':body,'spans':spans,'passage_observations':body['schema_version']>=5,
+               'craft_observations':body['schema_version']>=5,
                'coverage':{'survey_ranges':[],'detail_ranges':[],'reviewed_units':[]},
                'survey_cursor':0,'overview_cursor':0,'detail_cursor':0,'domain_index':0,'relation_cursor':0,'method_cursor':0,'candidates':[]}
         if kind=='methods':

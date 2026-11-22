@@ -1,6 +1,6 @@
 """Analytical fields describe observations and inferences, never universal quotas."""
 from copy import deepcopy
-from nw.studio.corpus_passages import KINDS
+from nw.studio.corpus_passages import CRAFT_KINDS, KINDS
 from nw.studio.corpus_story_observations import STORY_DETAILS
 
 SCHEMA_VERSION = 5
@@ -85,11 +85,14 @@ def require_current_schema(version: int | None) -> None:
         raise ValueError(f'来源采用历史拆解规格 v{version or 1}，请先按现行 v{SCHEMA_VERSION} 补齐并批准结构后再用于新制作')
 
 
-def corpus_catalog(version: int = SCHEMA_VERSION, *, passages: bool = True) -> dict:
+def corpus_catalog(version: int = SCHEMA_VERSION, *, passages: bool = True, craft: bool = True) -> dict:
     domains = domains_for(version)
+    techniques = KINDS | CRAFT_KINDS if craft else KINDS
     return {'schema_version': version, 'domains': domains, 'levels': LEVELS, 'link_kinds': LINKS,
         **({'passage_sequences':{kind:{**deepcopy(item),'role_order':list(item['roles'])}
-                                 for kind,item in KINDS.items()}} if version>=5 and passages else {}),
+                                 for kind,item in techniques.items()}} if version>=5 and passages else {}),
+        **({'evidence_roles':{'narrative':'故事正文', 'reader_address':'面向读者的题外互动', 'heading':'章名与标题'}}
+           if version>=5 and craft else {}),
         **({'cast_roster_options':deepcopy(CAST_ROSTER_OPTIONS)} if version >= 5 else {}),
         **({'narration_claims': NARRATION_CLAIMS.copy()} if version >= 3 else {}),
         'overview_fields': OVERVIEW, 'row_fields': deepcopy(FIELDS), 'domain_details': {k: deepcopy(DETAILS[k]) for k in domains},

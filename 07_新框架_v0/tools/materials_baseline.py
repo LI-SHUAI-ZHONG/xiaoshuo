@@ -10,16 +10,18 @@ from contextlib import closing
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import sqlite3
 import sys
-from uuid import uuid4
+import tempfile
+import tomllib
 import zipfile
 
 PROJECT = Path(__file__).resolve().parents[1]
 REPOSITORY = PROJECT.parent
-DEFAULT_BASELINE = PROJECT / 'fixtures/materials_runtime_baseline/v3-20261119'
+DEFAULT_BASELINE = PROJECT / tomllib.loads((PROJECT / 'studio.repository.toml').read_text(encoding='utf-8'))['data']['materials_baseline']
 PART_BYTES = 64 * 1024 * 1024
 DATABASES = ('catalog.db', 'adjudication.db')
 
@@ -49,13 +51,6 @@ def core_hash() -> str:
     return _code_hash()
 
 
-def scratch(label: str) -> Path:
-    root = PROJECT / 'build' / 'materials-baseline'
-    target = contained(root, f'{label}-{uuid4().hex}')
-    target.mkdir(parents=True)
-    return target
-
-
 def snapshot(workspace: Path, output: Path) -> dict:
     output = output.resolve()
     if output.exists():
@@ -63,8 +58,46 @@ def snapshot(workspace: Path, output: Path) -> dict:
     folder = workspace.resolve() / 'materials'
     if any(not (folder / name).is_file() for name in DATABASES):
         raise FileNotFoundError('Both catalog.db and adjudication.db are required')
-    output.mkdir(parents=True)
-    build = scratch('snapshot')
+    with tempfile.TemporaryDirectory(prefix='snapshot-', dir=scratch_root()) as build:
+        return _snapshot(folder, output, Path(build))
+
+
+def scratch_root() -> Path:
+    root = PROJECT / 'build' / 'materials-baseline'
+    root.mkdir(parents=True, exist_ok=True)
+    return root
+
+
+def check_ledger(connection: sqlite3.Connection, expected: str) -> None:
+    fingerprint = connection.execute("SELECT value FROM metadata WHERE key='code_sha256'").fetchone()
+    if not fingerprint or json.loads(fingerprint[0]) != expected:
+        raise ValueError('Material ledger was built by a different core version')
+
+
+def backup_database(source: Path, destination: Path) -> None:
+    with closing(sqlite3.connect(source.resolve().as_uri() + '?mode=ro', uri=True)) as current, \
+         closing(sqlite3.connect(destination)) as saved:
+        current.backup(saved)
+
+
+def matches_snapshot(workspace: Path, manifest: dict) -> bool:
+    """Compare installed files to the approved online backups, including committed WAL contents."""
+    for entry in manifest['entries']:
+        source = contained(workspace, entry['path'])
+        if not source.is_file():
+            return False
+        if source.name in DATABASES:
+            with tempfile.TemporaryDirectory(prefix='compare-', dir=scratch_root()) as folder:
+                frozen = Path(folder) / source.name
+                backup_database(source, frozen)
+                if record(frozen, entry['path']) != entry:
+                    return False
+        elif record(source, entry['path']) != entry:
+            return False
+    return True
+
+
+def _snapshot(folder: Path, output: Path, build: Path) -> dict:
     source_manifest = PROJECT / 'fixtures/material_semantics/current_version_manifest.json'
     inputs = json.loads(source_manifest.read_text(encoding='utf-8'))['catalog_inputs']
     originals = []
@@ -80,11 +113,12 @@ def snapshot(workspace: Path, output: Path) -> dict:
             continue
         if file.name in DATABASES:
             target = build / file.name
-            with closing(sqlite3.connect(file.resolve().as_uri() + '?mode=ro', uri=True)) as source, \
-                 closing(sqlite3.connect(target)) as saved:
-                source.backup(saved)
+            backup_database(file, target)
+            with closing(sqlite3.connect(target.as_uri() + '?mode=ro', uri=True)) as saved:
                 if saved.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                     raise ValueError(f'Invalid SQLite snapshot: {file.name}')
+                if file.name == 'adjudication.db':
+                    check_ledger(saved, core_hash())
             selected.append((target, 'materials/' + file.name))
             print(f'Frozen SQLite snapshot: {file.name}', flush=True)
         elif file.suffix in ('.json', '.jsonl', '.md') and file.stat().st_size <= 16 * 1024 * 1024:
@@ -95,6 +129,7 @@ def snapshot(workspace: Path, output: Path) -> dict:
             excluded.append({'path': file.name, 'bytes': file.stat().st_size,
                              'reason': 'generated semantic cache, historical full audit, or interrupted temporary file'})
     archive = build / 'materials.zip'
+    output.mkdir(parents=True)
     entries = [record(file, relative) for file, relative in selected]
     with zipfile.ZipFile(archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=6, allowZip64=True) as zipped:
         for file, relative in selected:
@@ -151,7 +186,11 @@ def restore(baseline: Path, workspace: Path) -> dict:
         target = contained(workspace, entry['path'])
         if target.exists() and (not target.is_file() or digest(target) != entry['sha256']):
             raise FileExistsError(f'Existing runtime file differs; choose an empty workspace: {target}')
-    build = scratch('restore')
+    with tempfile.TemporaryDirectory(prefix='restore-', dir=scratch_root()) as build:
+        return _restore(data, baseline, workspace, Path(build))
+
+
+def _restore(data: dict, baseline: Path, workspace: Path, build: Path) -> dict:
     archive = build / 'materials.zip'
     with archive.open('wb') as target:
         for part in data['parts']:
@@ -173,11 +212,29 @@ def restore(baseline: Path, workspace: Path) -> dict:
                 with closing(sqlite3.connect(target.as_uri() + '?mode=ro', uri=True)) as db:
                     if db.execute('PRAGMA quick_check').fetchone()[0] != 'ok':
                         raise ValueError('SQLite snapshot failed integrity check')
+                    if target.name == 'adjudication.db':
+                        check_ledger(db, data['protected_core_sha256'])
     for entry in data['entries']:
         target = contained(workspace, entry['path'])
         if not target.exists():
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(contained(build, entry['path']), target)
+            source = contained(build, entry['path'])
+            # Installing a verified file on the same volume needs no second
+            # gigabyte of scratch space. The temporary link is released at exit.
+            try:
+                os.link(source, target)
+            except FileExistsError:
+                if digest(target) != entry['sha256']:
+                    raise
+            except OSError:
+                with target.open('xb') as dst:
+                    try:
+                        with source.open('rb') as src:
+                            shutil.copyfileobj(src, dst, 1024 * 1024)
+                    except BaseException:
+                        dst.close()
+                        target.unlink()
+                        raise
     return {'workspace': str(workspace), 'restored_files': len(data['entries']), 'verified': True}
 
 

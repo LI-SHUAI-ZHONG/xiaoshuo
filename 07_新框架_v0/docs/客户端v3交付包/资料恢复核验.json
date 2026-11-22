@@ -1,5 +1,11 @@
 {
-  "restored_workspace": "build/materials-restored-v3-20261119",
+  "verified_baseline": "fixtures/materials_runtime_baseline/v4-20261122",
+  "verified_on": "2026-11-22",
+  "restore_target": "empty temporary workspace",
+  "adjudication_rows_equal_to_live": {
+    "positions": {"rows": 155455, "sha256": "d0ed18f15c615ec83ada87bd037396b318c713a8aa3d91f2c5730c7dfe8e02c0"},
+    "contracts": {"rows": 23011, "sha256": "8dd4ca017693a09bd28942be5838715a67081a676c33f8ea9aec606961fff880"}
+  },
   "active_source_files": 6,
   "adjudication_status": "current",
   "materials": 22941,

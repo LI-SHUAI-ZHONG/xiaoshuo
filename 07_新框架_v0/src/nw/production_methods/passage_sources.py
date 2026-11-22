@@ -28,6 +28,7 @@ def _eligible(library, types: list[str], *, method_id: str | None = None) -> Ite
           AND json_extract(v.body_json,'$.schema_version')=?
           AND coalesce(json_extract(j.runtime_json,'$.provider'),'') NOT IN ('fake','test-only')
           AND EXISTS (SELECT 1 FROM json_each(mv.body_json,'$.tasks') WHERE value='narration')
+          AND json_array_length(o.basis_json,'$.thread_ids')=1
           AND EXISTS (SELECT 1 FROM json_each(v.body_json,'$.threads') t
                       WHERE json_type(t.value,'$.details.passage_sequence')='object'
                       AND json_extract(t.value,'$.id') IN (SELECT value FROM json_each(o.basis_json,'$.thread_ids')))

@@ -1,6 +1,7 @@
 """Keep the original plan and the staged story checks on the same contract versions."""
 from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, narration, passage_sequence
 from nw.materials.phase_routes import POLICY, STAGED_POLICIES
+from nw.materials.passage_craft import POLICY as CRAFT_POLICY
 
 
 VERSIONS = {
@@ -9,12 +10,14 @@ VERSIONS = {
     'cast_demand_policy': (cast_demands.POLICY,),
     'cast_distribution_policy': (cast_distribution_plan.POLICY,),
     'passage_policy': (passage_sequence.POLICY,),
+    'passage_craft_policy': (CRAFT_POLICY,),
 }
 
 
 def current() -> dict[str, str]:
     return {'narration_policy': narration.EVIDENCE_POLICY, 'chapter_progress_policy': chapter_progress.POLICY,
-            'cast_demand_policy': cast_demands.POLICY, 'passage_policy': passage_sequence.POLICY}
+            'cast_demand_policy': cast_demands.POLICY, 'passage_policy': passage_sequence.POLICY,
+            'passage_craft_policy': CRAFT_POLICY}
 
 
 def verify(context: dict, plan: dict | None = None) -> None:
@@ -32,6 +35,8 @@ def verify_session(session: dict, plan: dict | None = None) -> None:
     if session['policy'] != POLICY and VERSIONS.keys() & context.keys():
         raise ValueError('MATERIAL_STAGE: 此制作校验版本需要支持人物和章场设计的阶段装配程序')
     verify(context, plan)
+    if context.get('passage_craft_policy') and context.get('passage_policy') != passage_sequence.POLICY:
+        raise ValueError('MATERIAL_STAGE: 章场写法需要原任务冻结的叙述设计版本')
     if context.get('passage_policy'):
         if context.get('narration_policy') != narration.EVIDENCE_POLICY:
             raise ValueError('MATERIAL_STAGE: 连续段落需要原设计任务的带证据叙述节拍')
