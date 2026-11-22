@@ -1,19 +1,24 @@
 {
   "format_version": 1,
-  "content_sha256": "31db660804e33d748b38526a1b74a12565ea202980b02cb258945cdd83cd97bd",
+  "content_sha256": "3cf8838d3473e442d11f78ff40f03d0608bbab6de25be62770b71695dc511e66",
   "entries": [
     {
       "path": "library/library.db",
       "bytes": 221184,
-      "sha256": "25f5a6cbc6481a7d01824a4f44c954a0ccecc55e916b9d4ddd6ab072d8fe2373"
+      "sha256": "fb6f2ac04d82e72c9e25d0ca417be3def83160a6f6e0b81271d489e7237d3ff2"
+    },
+    {
+      "path": "novel-f14b9376bd85/nw.db",
+      "bytes": 372736,
+      "sha256": "076a27d6c6f18101399d0b3d6b7235c316feb850b0839da395a8e61771e6ec3c"
     }
   ],
-  "archive_sha256": "3867a598b88889f50cb3128ef0be72995dc5af1a1b00d52364cd2e1afb810280",
+  "archive_sha256": "3661eed6d1cf766c33348291bcfb42f7ab9e63353252720b9ffb4bb88a688a42",
   "parts": [
     {
       "path": "runtime.zip.part001",
-      "bytes": 6346,
-      "sha256": "3867a598b88889f50cb3128ef0be72995dc5af1a1b00d52364cd2e1afb810280"
+      "bytes": 18268,
+      "sha256": "3661eed6d1cf766c33348291bcfb42f7ab9e63353252720b9ffb4bb88a688a42"
     }
   ]
 }
