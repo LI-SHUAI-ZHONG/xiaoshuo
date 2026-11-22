@@ -1,6 +1,6 @@
 {
   "format_version": 1,
-  "content_sha256": "85679cb558b87111d4d60671c6b63e4cd318a9e6e9244349c9bd76569bfaf740",
+  "content_sha256": "d46d7f053bd7ce79362e222a11ec396b0e6b38a9401e43afc46e99b393066b70",
   "entries": [
     {
       "path": "library/corpus_calls/0e9af6db4cb24c9b852301b149b3253e/00001.input.json",
@@ -43,6 +43,26 @@
       "sha256": "a20c807310c7ac7457dc2fb12cc0e8bea7b253c1e89833e467d365e2bd180f51"
     },
     {
+      "path": "library/corpus_calls/0e9af6db4cb24c9b852301b149b3253e/00005.input.json",
+      "bytes": 13398,
+      "sha256": "1435fb96964702740461751e4fb95407351c37f426db7014504329191d5f4b67"
+    },
+    {
+      "path": "library/corpus_calls/0e9af6db4cb24c9b852301b149b3253e/00005.output.json",
+      "bytes": 4422,
+      "sha256": "acbbf4e69006b0e00aaed5ef20e7f0fd152d9bc132852df7f5aebe9424a154f9"
+    },
+    {
+      "path": "library/corpus_calls/0e9af6db4cb24c9b852301b149b3253e/00006.input.json",
+      "bytes": 13398,
+      "sha256": "63c32e271dbf506e72886e3940bcef162c9111b6c0c1816fe3eedadcae1ab7b4"
+    },
+    {
+      "path": "library/corpus_calls/0e9af6db4cb24c9b852301b149b3253e/00006.output.json",
+      "bytes": 3954,
+      "sha256": "4a8aa500247bd21359d086d54e7d76c0c2a000dbc77a2454a67f53baf4fc4dfa"
+    },
+    {
       "path": "library/imports/3de88fc0652143078b4737f95b449201.txt",
       "bytes": 1864326,
       "sha256": "1ea9e2d933f90be18bec8a98e0506da7dadd3e7cb60fec4d742734a7a7e36c4d"
@@ -50,7 +70,7 @@
     {
       "path": "library/library.db",
       "bytes": 380928,
-      "sha256": "6691d60ffd039d6a1b01fdd3b9e84bd093a84773a3f6cdf16c01188a9736433f"
+      "sha256": "0cc5e57603279f66c8db97e2e5444ecece002cfc859af881884865ce24030257"
     },
     {
       "path": "novel-f14b9376bd85/nw.db",
@@ -58,12 +78,12 @@
       "sha256": "fbf86ff55ee7fabda68122d34a97e70bb0f2c8468ab071d723e5abf010f2ea69"
     }
   ],
-  "archive_sha256": "749c245cea250ad367b0641636455a419eedb726f035ea95d7b89fb03a7d205e",
+  "archive_sha256": "fa786d689e1c0483a0e90745434266493b70ed52ebd1c52e9b5f97bba73b7143",
   "parts": [
     {
       "path": "runtime.zip.part001",
-      "bytes": 2330732,
-      "sha256": "749c245cea250ad367b0641636455a419eedb726f035ea95d7b89fb03a7d205e"
+      "bytes": 2346301,
+      "sha256": "fa786d689e1c0483a0e90745434266493b70ed52ebd1c52e9b5f97bba73b7143"
     }
   ]
 }
