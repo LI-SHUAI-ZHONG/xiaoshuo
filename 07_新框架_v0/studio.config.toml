@@ -1,7 +1,7 @@
 # 由 07_新框架_v0 小说工作流客户端生成（严禁在此文件写入 API Key 明文）
 [model]
 provider = "openai_compat"
-base_url = "https://api.shensuan-ai.com/"
+base_url = "https://api.shensuan-ai.com"
 model = "gpt-6.2-sol"
 api_key_env = "NW_API_KEY"
 timeout = 120
