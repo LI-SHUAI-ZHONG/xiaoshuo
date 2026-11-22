@@ -5,6 +5,7 @@ base_url = "https://api.shensuan-ai.com/v1"
 model = "gpt-6.2-sol"
 api_key_env = "NW_API_KEY"
 timeout = 120
+context_window_tokens = 128000
 
 [params]
 temperature = 0.7
