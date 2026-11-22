@@ -1,5 +1,6 @@
 """Interrupted calls, budget stops, source changes and cancellation are explicit."""
 from copy import deepcopy
+from dataclasses import replace
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -71,10 +72,52 @@ def test_invalid_model_result_is_never_published_or_automatically_retried(librar
     assert wait_job(library,book['id'],job['id'])['status']=='paused' and len(provider.calls)==1
 
 
+@pytest.mark.parametrize('existing',[False,True])
+def test_survey_only_offers_its_own_fields_and_existing_invalid_call_can_retry(library,monkeypatch,existing):
+    class FollowsOfferedFields(CorpusModel):
+        def generate(self,messages,**params):
+            result=super().generate(messages,**params)
+            payload=self.calls[-1]
+            if payload['phase']=='survey' and payload['prefix']=='M00002' and '"threads":' in messages[0]['content']:
+                raw={'units':[{'id':'guessed'}],'threads':[{'id':'premature'}],
+                     'domains':[{'domain':'narration'}],'uncertainties':['[FAKE] 待细拆']}
+                return replace(result,text=encode(raw))
+            return result
+
+    provider=FollowsOfferedFields()
+    if existing:
+        launch=library._launch_corpus
+
+        def before_update(book_id,job_id,*args):
+            with library.connect() as conn:
+                conn.execute("UPDATE corpus_jobs SET state_json=json_remove(state_json,'$.survey_contract_from') WHERE id=?",(job_id,))
+            launch(book_id,job_id,*args)
+
+        monkeypatch.setattr(library,'_launch_corpus',before_update)
+    book,job,_=start_analysis(library,monkeypatch,provider)
+    if existing:
+        assert job['status']=='failed' and job['progress']['survey_cursor']==1
+        old_call=library.corpus_call_record(book['id'],job['id'],2)
+        assert old_call['record']['status']=='invalid'
+        first=library.corpus_call_record(book['id'],job['id'],1)
+        library=LibraryService(library.workspace)
+        monkeypatch.setattr(library,'_corpus_runtime',lambda:(runtime(),provider))
+        library.control_corpus_job(book['id'],job['id'],{'action':'resume','retry_failed':True})
+        job=wait_job(library,book['id'],job['id'])
+        assert library.corpus_call_record(book['id'],job['id'],1)==first
+        assert library.corpus_call_record(book['id'],job['id'],2)==old_call
+    assert job['status']=='completed',job['error']
+    new_call=next(c for c in job['calls'] if c['call_key']=='survey:1' and c['status']=='completed')
+    system=library.corpus_call_record(book['id'],job['id'],new_call['seq'])['input']['messages'][0]['content']
+    assert all(f'"{key}":' in system for key in ('characters','events','evidence','uncertainties'))
+    assert all(f'"{key}":' not in system for key in ('units','threads','domains','links','overview','character_updates'))
+
+
 def test_input_budget_stops_before_http_and_can_be_increased(library,monkeypatch):
     provider=CorpusModel();monkeypatch.setattr(library,'_corpus_runtime',lambda:(runtime(),provider))
-    book=make_book(library,'# 第一章\n[FAKE] '+('仅为预算测试。'*950))
-    task=library.start_corpus_job(book['id'],{'options':{'extent':'excerpt','note':'[FAKE] 预算测试文本','max_input_chars':8000}})
+    book=make_book(library,'# 第一章\n[FAKE] '+('仅为预算测试。'*1400))
+    task=library.start_corpus_job(book['id'],{'options':{'extent':'excerpt','note':'[FAKE] 预算测试文本',
+                                                        'chunk_chars':12000,'max_input_chars':8000}})
     job=wait_job(library,book['id'],task['id'])
     assert job['status']=='paused' and 'CONTEXT_TOO_LARGE' in job['error']
     assert not provider.calls and not job['calls']

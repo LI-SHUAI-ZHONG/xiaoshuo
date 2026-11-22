@@ -1,7 +1,7 @@
 """Evidence-local fragments refine a shared graph, never a bag of method labels."""
 from copy import deepcopy
 
-from nw.studio.corpus_catalog import FIELDS
+from nw.studio.corpus_catalog import FIELDS, SURVEY_FIELDS
 from nw.studio.corpus_checks import graph_issues
 from nw.studio.corpus_contract import normalize_document
 from nw.studio.corpus_story_observations import STORY_DETAILS
@@ -32,8 +32,10 @@ def resolve_fragment(raw: dict, document: dict, content: str, *, span: dict | No
     if phase in ('overview','relations'):
         if any(patch.get(k) for k in ('units','events','characters','evidence')):
             raise ValueError('整合只能引用已有观察，不能重造原文、人物或事件')
-    if phase=='survey' and any(patch.get(k) for k in ('units','threads','links','domains','overview','character_updates')):
-        raise ValueError('通读阶段只收集有证据的人物与总览事件，不能直接提炼方法')
+    if phase=='survey':
+        extra = sorted(k for k in patch if k not in SURVEY_FIELDS and patch[k])
+        if extra:
+            raise ValueError('通读阶段只收集有证据的人物与总览事件，不能填后续阶段字段：'+', '.join(extra))
     if phase=='detail' and patch.get('overview'):raise ValueError('章场细拆不能覆盖冻结的全书总览')
     for section in ('units','characters','events','evidence'):
         old={r['id']:r for r in document[section]}

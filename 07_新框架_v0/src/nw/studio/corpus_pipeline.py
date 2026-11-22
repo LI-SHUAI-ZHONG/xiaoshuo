@@ -23,6 +23,16 @@ def save_state(service: object, job_id: str, state: dict, phase: str) -> None:
 
 def do_read(service: object, job: dict, state: dict, config: object, provider: object, content: str, phase: str) -> None:
     cursor_key='survey_cursor' if phase=='survey' else 'detail_cursor'
+    if (phase=='survey' and state.get('craft_observations') and 'survey_contract_from' not in state
+            and job['options']['retry_failed']):
+        # Only an invalid call opts into the new prompt on explicit retry.
+        # A completed or locally recovered response keeps its original fingerprint.
+        with service.connect() as db:
+            prior=db.execute('SELECT status FROM corpus_calls WHERE job_id=? AND call_key=? ORDER BY seq DESC LIMIT 1',
+                             (job['id'],f"survey:{state[cursor_key]}")).fetchone()
+        if prior and prior['status']=='invalid':
+            state['survey_contract_from']=state[cursor_key]
+            save_state(service,job['id'],state,phase)
     while state[cursor_key]<len(state['spans']):
         index=state[cursor_key];span=state['spans'][index];doc=state['document'];prefix=('M' if phase=='survey' else 'D')+f'{index+1:05}'
         unit=next(u for u in doc['units'] if u['id']==span['unit_id'])
@@ -37,9 +47,12 @@ def do_read(service: object, job: dict, state: dict, config: object, provider: o
                 overview_events=coarse,previous_scenes=[u for u in doc['units'] if u['level']=='scene' and u['parent_id']==unit['id']])
         def validator(raw: dict) -> dict:
             return resolve_fragment(raw,doc,content,span=span,prefix=prefix,phase=phase)
+        narrow_survey = (phase=='survey' and state.get('craft_observations',False)
+                         and index>=state.get('survey_contract_from',len(state['spans'])))
         patch,seq=model_call(service,job['id'],config,provider,key=f'{phase}:{index}',phase=phase,
                              messages=messages(phase,payload,version=doc['schema_version'],passages=state.get('passage_observations',False),
-                                               craft=state.get('craft_observations',False)),validator=validator)
+                                               craft=state.get('craft_observations',False),survey_contract=narrow_survey),
+                             validator=validator)
         state['document']=merge_fragment(doc,patch)
         state['coverage']['survey_ranges' if phase=='survey' else 'detail_ranges'].append({**span,'call_seq':seq})
         state[cursor_key]+=1;save_state(service,job['id'],state,phase)

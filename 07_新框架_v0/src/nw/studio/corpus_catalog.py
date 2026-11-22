@@ -69,6 +69,7 @@ FIELDS = {
     'domains': {'domain': '制作职责', 'status': '已观察 / 当前范围未见 / 存疑',
                 'explanation': '判断依据与限制', 'evidence_ids': '原作证据'},
 }
+SURVEY_FIELDS = ('characters','events','evidence','uncertainties')
 OVERVIEW = {'central_question': '全书总问题', 'mainline': '主线因果与结局', 'character_arcs': '主要人物变化',
             'information_payoffs': '信息与承诺兑现', 'structure': '卷章组织及转折', 'limitations': '未知与覆盖限制'}
 
