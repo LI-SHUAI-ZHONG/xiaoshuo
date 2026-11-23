@@ -96,6 +96,8 @@ def test_server_path_traversal_check(tmp_path, monkeypatch):
 
     static = tmp_path / 'static'
     (static / 'js').mkdir(parents=True)
+    (static / 'index.html').write_text(
+        '<meta name="studio-source" content="__STUDIO_SOURCE_SHA256__">', encoding='utf-8')
     (static / 'js' / 'app.js').write_text('export const safe = true;', encoding='utf-8')
     sibling = tmp_path / 'static-private'
     sibling.mkdir()

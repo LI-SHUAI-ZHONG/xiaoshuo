@@ -4,6 +4,7 @@ from typing import Any
 from nw.length_settings import length_fields, parse_length_changes, BRIEF_LENGTH
 from nw.materials.phase_routes import ORDER
 from nw.studio import catalog
+from nw.studio import creation_plan
 from nw.task_models import canonical
 
 SLOTS = {'genre': 'genre_ids', 'tone': 'tone_ids', 'style': 'style_ids', 'narration': 'narration_ids',
@@ -22,7 +23,10 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     title, idea = str(raw.get('title', '')).strip(), str(raw.get('idea', '')).strip()
     if len(title) > 120 or len(idea) > 12000 or not auto_recommendations and (not title or not idea):
         raise ValueError('请填写书名（120字内）和一句话故事构想（12000字内）')
-    wizard = {'title': title, 'idea': idea, 'constraints': str(raw.get('constraints', '')).strip()[:12000]}
+    constraints = str(raw.get('constraints', '')).strip()
+    if len(constraints) > 12000:
+        raise ValueError('作者硬约束最多 12000 字，请先缩短内容')
+    wizard = {'title': title, 'idea': idea, 'constraints': constraints}
     if 'design_mode' in raw:
         if mode not in ('manual', 'auto'):
             raise ValueError('请选择人工选择或 AI 自动')
@@ -52,11 +56,10 @@ def freeze_wizard(body: dict, library: Any) -> dict:
         secondary_at = 2
     if len(selected_types[secondary_at:]) > 2:
         raise ValueError('副类型最多选择两个')
-    recommended_slots = {}
+    candidate_titles: dict[str, str] = {}
     if auto_recommendations:
-        from nw.production_methods.sources import MethodReader
-        from nw.studio.method_recommendations import automatic_requirements
-        recommended_slots = automatic_requirements(MethodReader(library.workspace), selected_types)
+        if any(wizard[field] for slot, field in SLOTS.items() if slot != 'genre') or raw.get('method_preferences'):
+            raise ValueError('按类型自动推荐的入口使用已批准的方法，请在人工选择入口提交手动偏好')
         wizard['auto_recommendations'] = True
         wizard['title'] = title or f"未命名·{primary['name']}"
         if not idea:
@@ -120,11 +123,16 @@ def freeze_wizard(body: dict, library: Any) -> dict:
             if mode:
                 configuration.setdefault('tasks', ['world_rules'])
                 configuration.update(world_selection='ai', recommendation_mode=mode)
-            if recommended_slots:
-                configuration.update(tasks=['world_rules'], recommended_slots=recommended_slots)
         if configuration is None:
             raise ValueError('如需关闭制作方法，请先取消所选立项方法')
-        wizard['production_methods'] = normalize(configuration, types=selected_types)
+        if auto_recommendations and isinstance(configuration, dict):
+            from nw.production_methods.sources import MethodReader
+            from nw.studio.method_recommendations import freeze_automatic_policy
+
+            wizard['production_methods'] = freeze_automatic_policy(
+                MethodReader(library.workspace), selected_types, configuration, candidate_titles=candidate_titles)
+        else:
+            wizard['production_methods'] = normalize(configuration, types=selected_types)
     if 'auto_length' in raw:
         if type(raw['auto_length']) is not bool:
             raise ValueError('AI 篇幅设计选项必须为布尔值')
@@ -138,6 +146,7 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     from nw.production_methods.passage_sources import recommendations
     if passages := recommendations(library, selected_types):
         wizard['passage_references'] = passages
+    wizard['creation_plan'] = creation_plan.freeze(wizard, library, candidate_titles)
     return wizard
 
 
@@ -156,8 +165,19 @@ def governance(wizard: dict, *, library=None) -> dict:
         for stage in STAGES[slot]:
             if wizard.get(field):
                 result[stage]['author_preferences'][slot] = wizard[field]
+    plan = wizard.get('creation_plan')
+    if plan and plan.get('version') == 1:
+        for stage in result:
+            if packet := creation_plan.for_stage(plan, stage):
+                result[stage]['creation_plan'] = packet
     config = {field: wizard.get(field,[]) for field in (
         'genre_ids', 'tone_ids', 'style_ids', 'structure_ids', 'mechanism_ids')}
+    if plan and plan.get('version') == 1:
+        for slot in ('tone', 'style', 'structure', 'hook'):
+            # Section-based craft preferences belong to their design stage.
+            # The type governance registry accepts typed identifiers only.
+            config[SLOTS[slot]] = [r['id'] for r in plan['preferences'] if r['slot'] == slot
+                                    and 'original_line' in r['source_ref']]
     if any(config.values()):
         result['type_selection']['project_config'] = config
         if catalog.single_genre_path(config['genre_ids']):
@@ -187,6 +207,9 @@ def governance(wizard: dict, *, library=None) -> dict:
 
 
 def brief_text(wizard: dict) -> str:
+    if wizard.get('creation_plan', {}).get('version') == 1:
+        names = '、'.join(row['name'] for row in wizard['creation_plan']['types'])
+        return f"{wizard['idea']}\n\n立项所选类型：{names}" + BRIEF_LENGTH + canonical(length_fields(wizard))
     choices = '\n'.join(f'{slot}: {"、".join(wizard[field]) or "由设计步骤提出方案"}' for slot, field in SLOTS.items())
     return (f"{wizard['idea']}\n\n作者偏好（不代替设计步骤与冻结产物）：\n{choices}"
             + BRIEF_LENGTH + canonical(length_fields(wizard)))

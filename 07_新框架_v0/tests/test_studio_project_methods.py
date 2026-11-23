@@ -118,22 +118,40 @@ def test_type_only_auto_lists_each_missing_recommendation_before_creating(client
     assert not request('GET','/api/novels')[1]['novels']
 
 
+def automatic_method(source, task, scope, stage, field, *, ident=None, input_kind='brief', extra_tasks=()):
+    body = deepcopy(source['body'])
+    body.update(tasks=[task, *extra_tasks], scopes=[scope])
+    body['prerequisites'][0]['input_kind'] = input_kind
+    body['outputs'][0].update(stage=stage, field=field)
+    if field == 'members':
+        body['outputs'][0]['artifact_kind'] = {'world_design': 'world', 'character_design': 'character'}[stage]
+    if task == 'narration':
+        body['outputs'].append({**body['outputs'][0], 'key': 'o2', 'stage': 'expression_design', 'field': 'guidance'})
+        body['operations'][0]['output_keys'].append('o2')
+        body['downstream'] = [{'output_key': 'o1', 'consumer': 'expression_design', 'usage': '[FAKE] 交给实际场景节拍'},
+                              *({**row, 'output_key': 'o2'} for row in body['downstream'] if row['consumer'] in ('writer', 'review'))]
+        body['acceptance'].append({**body['acceptance'][0], 'output_key': 'o2'})
+    return {**source, 'id': ident or task, 'body': body}
+
+
+def seven_automatic_methods(source):
+    return [automatic_method(source, task, scope, stage, field) for task, scope, stage, field in (
+        ('pacing', 'book', 'plot_design', 'reader_plan'),
+        ('expression', 'chapter', 'expression_design', 'guidance'),
+        ('narration', 'chapter', 'scene_design', 'chapters'),
+        ('world_rules', 'book', 'world_design', 'members'),
+        ('character_arc', 'book', 'character_design', 'members'),
+        ('main_plot', 'book', 'plot_design', 'directions'),
+        ('hook', 'book', 'plot_design', 'promise_plan'),
+    )]
+
+
 def test_type_only_auto_records_seven_method_routes_and_dispatches_book_design(client, monkeypatch):
     from nw.production_methods.sources import MethodReader
     from nw.novel_store import show_job
 
     request,_,server,source=client
-    placements = {
-        'pacing': ('book', 'plot_design'),
-        'expression': ('chapter', 'expression_design'),
-        'narration': ('chapter', 'scene_design'),
-        'world_rules': ('book', 'world_design'),
-        'character_arc': ('book', 'character_design'),
-        'main_plot': ('book', 'plot_design'),
-        'hook': ('book', 'plot_design'),
-    }
-    rows = [{**source, 'id':task, 'body':{**source['body'], 'tasks':[task], 'scopes':[scope],
-              'outputs':[{'stage':stage}]}} for task,(scope,stage) in placements.items()]
+    rows = seven_automatic_methods(source)
     monkeypatch.setattr(MethodReader,'current_methods',lambda _: rows)
     monkeypatch.setattr(MethodReader,'world_source',lambda *_: (None, None))
     dispatched = []
@@ -150,11 +168,88 @@ def test_type_only_auto_records_seven_method_routes_and_dispatches_book_design(c
     routes=novel['wizard']['production_methods']['recommended_slots']
     assert len(routes)==7 and routes['style']['stage']=='expression_design'
     assert routes['style']['scope']=='chapter' and routes['hook']['versions']=={'hook':source['version']}
+    saved_plan = novel['wizard']['creation_plan']
+    assert saved_plan['mode'] == 'auto' and not saved_plan['preferences']
+    assert {row['slot']: (row['scope'], row['stage']) for row in saved_plan['recommendations']} == {
+        slot: (row['scope'], row['stage']) for slot, row in routes.items()}
+    assert all(candidate['title'] for row in saved_plan['recommendations'] for candidate in row['candidates'])
     with server.production.open_store(novel) as store:
         job=show_job(store,novel['job_id'])
         assert job.outputs['budget']['context_char_limit']==150000
         frozen=json.loads(store.connection.execute('SELECT request_json FROM novel_jobs WHERE id=?',(job.id,)).fetchone()[0])
         assert frozen['design_scope']=='book' and frozen['production_method_policy']['recommended_slots']==routes
+    status, result = request('POST', f"/api/novels/{novel['id']}/methods", {
+        'policy': {'recommendation_mode': 'auto', 'max_methods': 1}, 'reason': '核对新任务容量'})
+    assert status == 400 and 'AUTO_RECOMMENDATIONS_MISSING' in result['error']
+    assert server.production.db.get(novel['id'])['wizard']['production_methods']['max_methods'] == 3
+
+
+@pytest.mark.parametrize(('replacement', 'detail'), [
+    (('main_plot', 'book', 'plot_design', 'directions', 'scene_design'), '场景设计'),
+    (('chapter_outline', 'chapter', 'plot_design', 'continuations', 'parent_outline'), '前章'),
+    (('method_binding', 'book', 'bind_scope', 'method_guidance', 'brief'), '结构篇幅'),
+])
+def test_auto_preflight_rejects_structure_that_cannot_run_at_launch(client, monkeypatch, replacement, detail):
+    from nw.production_methods.sources import MethodReader
+
+    request, _, server, source = client
+    rows = [row for row in seven_automatic_methods(source) if row['id'] != 'main_plot']
+    rows.append(automatic_method(source, *replacement[:4], input_kind=replacement[4]))
+    monkeypatch.setattr(MethodReader, 'current_methods', lambda _: rows)
+    monkeypatch.setattr(MethodReader, 'world_source', lambda *_: (None, None))
+    model = server.production._runtime()[1]
+    status, result = request('POST', '/api/novels', {
+        'genre_ids': ['GENRE_XUANYI'], 'design_mode': 'auto', 'auto_recommendations': True})
+    assert status == 400 and result['error'].startswith('AUTO_RECOMMENDATIONS_MISSING:'), result
+    assert '结构篇幅' in result['error'] and detail in result['error']
+    assert not model.calls
+    assert not request('GET', '/api/novels')[1]['novels']
+
+
+@pytest.mark.parametrize('has_later_route', [True, False])
+def test_auto_preflight_enforces_method_capacity_across_boards(client, monkeypatch, has_later_route):
+    from nw.production_methods.sources import MethodReader
+    from nw.studio.method_recommendations import automatic_requirements
+
+    _, _, server, source = client
+    rows = [row for row in seven_automatic_methods(source) if row['id'] != 'character_arc']
+    rows.append(automatic_method(source, 'character_arc', 'book', 'plot_design', 'directions'))
+    if has_later_route:
+        # The first chapter already has the approved book plot even before its own plot step.
+        rows.append(automatic_method(source, 'chapter_outline', 'chapter', 'plot_design', 'directions',
+                                     input_kind='plot_design'))
+    monkeypatch.setattr(MethodReader, 'current_methods', lambda _: rows)
+    monkeypatch.setattr(MethodReader, 'world_source', lambda *_: (None, None))
+    reader = MethodReader(server.production.library.workspace)
+    if not has_later_route:
+        with pytest.raises(ValueError, match='AUTO_RECOMMENDATIONS_MISSING:.*每步.*3'):
+            automatic_requirements(reader, ['GENRE_XUANYI'])
+        return
+    plan = automatic_requirements(reader, ['GENRE_XUANYI'])
+    assert plan['structure'] == {'scope': 'chapter', 'stage': 'plot_design', 'versions': {'chapter_outline': source['version']}}
+    assert {method for route in plan.values() if (route['scope'], route['stage']) == ('book', 'plot_design')
+            for method in route['versions']} == {'pacing', 'character_arc', 'hook'}
+
+
+def test_auto_preflight_counts_a_method_covering_two_boards_once(client, monkeypatch):
+    from nw.production_methods.sources import MethodReader
+    from nw.studio.method_recommendations import automatic_requirements
+
+    _, _, server, source = client
+    rows = [row for row in seven_automatic_methods(source) if row['id'] not in {'main_plot', 'hook'}]
+    rows.append(automatic_method(source, 'main_plot', 'book', 'plot_design', 'directions', extra_tasks=('hook',)))
+    monkeypatch.setattr(MethodReader, 'current_methods', lambda _: rows)
+    monkeypatch.setattr(MethodReader, 'world_source', lambda *_: (None, None))
+    reader = MethodReader(server.production.library.workspace)
+    titles = {}
+    plan = automatic_requirements(reader, ['GENRE_XUANYI'], max_methods=2, candidate_titles=titles)
+    assert plan['structure'] == plan['hook'] == {
+        'scope': 'book', 'stage': 'plot_design', 'versions': {'main_plot': source['version']}}
+    assert titles == {row['id']: row['body']['title'] for row in rows}
+    titles = {}
+    with pytest.raises(ValueError, match='AUTO_RECOMMENDATIONS_MISSING:.*每步.*1'):
+        automatic_requirements(reader, ['GENRE_XUANYI'], max_methods=1, candidate_titles=titles)
+    assert not titles
 
 
 def test_unknown_type_selection_retry_reuses_its_checkpoint(client):
@@ -255,6 +350,7 @@ def test_wizard_and_stage_share_approved_type_matches_and_save_evidence(client, 
     assert status == 201, result
     ident = result['novel']['id']
     references = result['novel']['wizard']['method_references']
+    assert references[0]['uses'] == ranked[0]['uses']
     assert references[0]['evidence'] == ranked[0]['evidence']
     assert references[0]['evidence_locations'] == ranked[0]['evidence_locations']
     assert references[0]['snapshot_sha256'] and references[0]['structure_origin']['structure_version'] == 1

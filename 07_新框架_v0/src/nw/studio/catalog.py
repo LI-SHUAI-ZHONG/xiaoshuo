@@ -63,8 +63,11 @@ def _rows(filename: str) -> list[dict]:
         fields = [p.strip() for p in match[3].split('|')]
         name = fields[0] if len(fields) > 1 else fields[0].split('：', 1)[0]
         definition = fields[1] if len(fields) > 1 else fields[0]
-        result.append({'id': match[2], 'name': name, 'definition': definition,
-                       'source_ref': {'file': filename, 'original_line': int(match[1])}})
+        row = {'id': match[2], 'name': name, 'definition': definition,
+               'source_ref': {'file': filename, 'original_line': int(match[1])}}
+        if len(fields) > 2:
+            row['step_use'] = ' | '.join(fields[2:])
+        result.append(row)
     return result
 
 
@@ -152,10 +155,14 @@ def _sections(slot: str, filename: str, sections: set[str] | None = None) -> lis
         body = text[match.end():matches[i + 1].start() if i + 1 < len(matches) else len(text)].strip()
         definition = re.search(r'(?:【定义】|\*\*定义\*\*：)\s*([^\n]+)', body)
         desc = definition[1].replace('\\', '').strip() if definition else ''
-        result.append({'key': f'{slot}.{match[1]}', 'id': match[1], 'name': match[2].replace('_', '·'),
-                       'description': desc, 'definition': desc, 'children': [],
-                       'source_ref': {'file': filename, 'section': match[1]},
-                       'stages': SLOT_STAGES[slot], 'source_excerpt': body[:1800]})
+        row = {'key': f'{slot}.{match[1]}', 'id': match[1], 'name': match[2].replace('_', '·'),
+               'description': desc, 'definition': desc, 'children': [],
+               'source_ref': {'file': filename, 'section': match[1]},
+               'stages': SLOT_STAGES[slot], 'source_excerpt': body[:1800]}
+        use = re.search(r'【本步用法】\s*(.*?)(?=\n【|\Z)', body, re.S)
+        if use:
+            row['step_use'] = use[1].strip()
+        result.append(row)
     return result
 
 

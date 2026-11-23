@@ -99,11 +99,15 @@ def test_api_adapter_sends_json_and_propagates_errors():
     node_run(f'''
 import assert from 'node:assert/strict';
 const {{api, ApiError}} = await import('data:text/javascript;base64,{source}');
+const pageSource = 'a'.repeat(64);
+globalThis.document = {{querySelector: selector =>
+  selector === 'meta[name="studio-source"]' ? {{content:pageSource}} : null}};
 let seen;
 globalThis.fetch = async (url, options) => {{ seen = {{url, options}}; return {{ok:true, json:async()=>({{id:'saved'}})}}; }};
 assert.equal((await api.post('/novels', {{title:'甲'}})).id, 'saved');
 assert.equal(seen.url, '/api/novels');
 assert.equal(seen.options.headers['Content-Type'], 'application/json');
+assert.equal(seen.options.headers['X-Studio-Source'], pageSource);
 assert.deepEqual(JSON.parse(seen.options.body), {{title:'甲'}});
 globalThis.fetch = async () => ({{ok:false, status:400, json:async()=>({{error:'必须审核证据'}})}});
 await assert.rejects(api.post('/staging/x/verify', {{}}), e => e instanceof ApiError && e.status===400 && e.message==='必须审核证据');

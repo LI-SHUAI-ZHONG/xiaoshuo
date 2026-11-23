@@ -89,18 +89,19 @@ class ProductionMethodMixin:
             novel=self.db.get(ident)
             if novel['status']=='done':raise ValueError('已完稿项目不能修改制作配置')
             configuration = body['policy']
+            types = novel['wizard'].get('genre_ids', [])
             if isinstance(configuration, dict):
                 if 'recommended_slots' in configuration:
                     raise ValueError('推荐候选版本由类型资料库自动核定')
                 preferences = {row['id']: row['version'] for row in novel['wizard'].get('method_references', [])}
                 configuration = {**configuration, 'preferred_methods': preferences}
-                if novel['wizard'].get('auto_recommendations') and configuration.get('recommendation_mode') == 'auto':
-                    from nw.studio.method_recommendations import automatic_requirements
+            if (isinstance(configuration, dict) and novel['wizard'].get('auto_recommendations')
+                    and configuration.get('recommendation_mode') == 'auto'):
+                from nw.studio.method_recommendations import freeze_automatic_policy
 
-                    types = novel['wizard']['genre_ids']
-                    configuration.update(world_selection='ai', tasks=['world_rules'],
-                                         recommended_slots=automatic_requirements(MethodReader(self.studio.workspace), types))
-            policy=normalize(configuration,types=novel['wizard'].get('genre_ids',[]))
+                policy = freeze_automatic_policy(MethodReader(self.studio.workspace), types, configuration)
+            else:
+                policy = normalize(configuration, types=types)
             wizard={**novel['wizard'],'production_methods':policy}
             if policy and not wizard.get('genre_ids'):wizard['genre_ids']=policy['type_ids']
             with self.db.connect() as conn:

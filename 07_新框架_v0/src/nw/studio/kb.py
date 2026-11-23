@@ -1,12 +1,62 @@
 """Editable type knowledge and independently versioned, approved upgrades."""
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 import re
 from uuid import uuid4
 
 from nw.studio import catalog
 from nw.studio.library_util import encode, timestamp
+from nw.task_models import content_sha256
+
+
+def freeze_type_knowledge(library: KnowledgeMixin, types: list[str]) -> list[dict]:
+    """Copy the selected type records so later knowledge edits cannot change a project."""
+    originals = catalog.type_map()
+    rows = []
+    for ident in dict.fromkeys(types):
+        knowledge = deepcopy(library.get_type(ident))
+        original = originals[ident]
+        knowledge['origin'] = 'editorial' if knowledge['version'] else 'workflow'
+        if knowledge['origin'] == 'editorial':
+            # The file citation identifies the base definition. The local revision
+            # identifies the editorial wording saved in the snapshot.
+            knowledge['original_definition'] = original.get('definition', '')
+        if parent := original.get('parent_id'):
+            knowledge['parent_id'] = parent
+        knowledge['sha256'] = content_sha256(knowledge)
+        rows.append(knowledge)
+    return rows
+
+
+_PROMPT_ARRAY_LIMITS = {
+    'includes': (6, 250), 'excludes': (6, 250), 'features': (6, 250),
+    'examples': (2, 180), 'counterexamples': (2, 180),
+}
+
+
+def project_type_knowledge(rows: list[dict]) -> list[dict]:
+    """Send a bounded excerpt with a fingerprint of the complete stored record."""
+    projected = []
+    for row in rows:
+        packet = deepcopy(row)
+        limits = {}
+        if len(row['definition']) > 1600:
+            packet['definition'] = row['definition'][:1600]
+            limits['definition'] = {'chars_omitted': len(row['definition']) - 1600}
+        for field, (max_items, max_chars) in _PROMPT_ARRAY_LIMITS.items():
+            items = row[field]
+            visible = items[:max_items]
+            packet[field] = [item[:max_chars] for item in visible]
+            omitted = len(items) - len(visible)
+            shortened = sum(len(item) > max_chars for item in visible)
+            if omitted or shortened:
+                limits[field] = {'items_omitted': omitted, 'items_shortened': shortened}
+        if limits:
+            packet['excerpt_limits'] = limits
+        projected.append(packet)
+    return projected
 
 
 class KnowledgeMixin:

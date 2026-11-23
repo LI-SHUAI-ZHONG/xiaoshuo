@@ -130,7 +130,11 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             -({'passage_choices'} if passage_enabled and stage == 'scene_design' else set())
             -({'passage_sequences'} if passage_enabled and stage == 'expression_design' else set())
             -(passage_craft.schema_fields(stage).keys() if craft_enabled else set())
+            -{'preference_resolutions'}
             -({'_network_design_uses'} if context.get('design_network_policy') else set()),'wrong stage product fields')
+    from nw.materials.creation_preferences import validate_resolutions, validate_selected_types
+
+    validate_resolutions(stage, value, context)
     if '_governance' in value:
         config=value['_governance']
         require(stage=='type_selection' and isinstance(config,dict) and set(config)=={'project_config'}
@@ -141,6 +145,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     entities=entity_ids(products,context)
     if stage=='type_selection':
         require(isinstance(value['selection'],list) and isinstance(value['boundaries'],list),'type choice and boundaries required')
+        validate_selected_types(value, context)
         if type_network_inputs:
             validate_adaptation_inputs(value, products, context)
     elif stage=='world_design':

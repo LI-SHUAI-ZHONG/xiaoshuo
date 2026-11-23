@@ -1627,6 +1627,12 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                            '对应的项目依据。核对同一产物中的纪年、时期、地理与制度条件。')
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
+            from nw.materials.creation_preferences import resolution_keys
+
+            if keys := resolution_keys(payload.get('author_input', {}).get('creation_plan', {})):
+                payload['output_contract']['products']['preference_resolutions'] = [
+                    {'key': key, 'status': 'applied 或 deferred', 'reason': '<填写理由>',
+                     'output_ref': '<填写/guidance/序号/observable 或留空>'} for key in keys]
             if payload.get('passage_craft_policy'):
                 shape = payload['output_contract']['products']
                 if stage=='plot_design':
