@@ -164,7 +164,15 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
     validate=validator or (lambda value:validate_study(value,sources,payload['scope'],payload['demand']))
     result=run_task(store,task,provider,config,validate=validate,before_reserve=before)
     if result.validation!='VALID':
-        raise ValueError(f'MATERIAL_WORK: {result.status}/{result.validation}: {result.reason or "study_not_ready"}; task={ident}')
+        message = f'MATERIAL_WORK: {result.status}/{result.validation}: {result.reason or "study_not_ready"}; task={ident}'
+        if result.reason == 'PROVIDER_OUTCOME_UNKNOWN':
+            cause = (result.raw or {}).get('network_failure')
+            cause = cause if isinstance(cause, str) else None
+            description = {'timeout':'等待模型响应超时','dns':'模型接口地址解析失败','tls':'模型接口安全连接失败',
+                           'connection_refused':'模型接口拒绝连接','connection_lost':'模型接口连接中断',
+                           'proxy_tunnel':'连接模型的代理隧道失败'}.get(cause, '客户端未收到可核实的模型响应')
+            message += f'。{description}。服务端是否执行本次请求仍未知。'
+        raise ValueError(message)
     validate(result.parsed)
     return result.parsed,{'task_id':ident,'manifest_id':manifest_id}
 

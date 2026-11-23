@@ -102,3 +102,21 @@ def test_version_one_database_migrates_without_losing_data(tmp_path: Path) -> No
 def test_test_mode_cannot_target_projects(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match='production'):
         Store(tmp_path / 'projects' / 'book', create=True, test_mode=True)
+
+
+@pytest.mark.parametrize(('cause','category'), [
+    (TimeoutError('internal endpoint details'),'timeout'),
+    (OSError('Tunnel connection failed: 502 private proxy address'),'proxy_tunnel'),
+])
+def test_transport_classifies_wrapped_errors_without_storing_network_details(monkeypatch, cause, category):
+    from urllib.error import URLError
+    from nw.llm.transport import post
+
+    class Opener:
+        def open(self, *_args, **_kwargs):
+            raise URLError(cause)
+
+    monkeypatch.setattr('nw.llm.transport.build_opener', lambda *_: Opener())
+    raw, error = post('http://localhost', {}, 5)
+    assert error == 'transport_error'
+    assert raw == {'error_type': 'URLError', 'network_failure': category}

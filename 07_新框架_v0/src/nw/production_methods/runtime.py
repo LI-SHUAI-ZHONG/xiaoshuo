@@ -1,6 +1,8 @@
 """Attach executable corpus methods to existing design stages without bypassing them."""
 from nw.production_methods.contracts import schema,validate
 from nw.production_methods.handoff import deliveries
+from nw.studio.catalog import SLOT_LABELS
+from nw.studio.method_catalog import STAGES
 from nw.task_models import canonical
 
 PROMPT='''
@@ -19,6 +21,28 @@ method_handoffs是上游/已批准父纲的具体产物。另含_method_receipts
 '''
 
 
+def recommendation_slots(policy: dict, scope: str, stage: str) -> dict:
+    scope = 'chapter' if scope == 'replan' else scope
+    return {slot: rule['versions'] for slot, rule in policy.get('recommended_slots', {}).items()
+            if rule['scope'] == scope and rule['stage'] == stage}
+
+
+def covers_recommendation(item: dict, slot: str, versions: dict) -> bool:
+    pin = item['method']
+    return (slot in item.get('recommended_for', ()) and not item['missing']
+            and item['type_match']['level'] != 'cross_type' and versions.get(pin['id']) == pin['version'])
+
+
+def missing_recommendation_slots(slots: dict, candidates: list[dict]) -> list[str]:
+    return [slot for slot, versions in slots.items()
+            if not any(covers_recommendation(item, slot, versions) for item in candidates)]
+
+
+def recommendation_error(slots: list[str], stage: str, detail: str) -> ValueError:
+    labels = '、'.join(f'{SLOT_LABELS[slot]}（{slot}）' for slot in slots)
+    return ValueError(f'AUTO_RECOMMENDATIONS_MISSING: {STAGES.get(stage, stage)}缺少可用的同类型推荐方法：{labels}。{detail}')
+
+
 def prompt(plan: dict | None, incoming: tuple | list = ()) -> str:
     mode = plan['target'].get('selection_mode') if plan else None
     if mode == 'inherit_world':
@@ -34,6 +58,10 @@ def prompt(plan: dict | None, incoming: tuple | list = ()) -> str:
                 'production_methods是通过类型、步骤、层级和实际前置筛选的候选。按当前设计需求核对适用与不适用条件，'
                 '优先考虑匹配的作者偏好。选用不超过production_method_selection.max_methods项，并覆盖required_tasks。'
                 '可选方法均不适用时，_method_applications为空。原作情节只作参考实例。')
+            if plan['target'].get('required_recommended_slots'):
+                instruction = instruction.replace('可选方法均不适用时，_method_applications为空。',
+                    '按production_method_selection.required_recommended_slots逐项选择至少一种本项的冻结版本，'
+                    '将各项实际执行和产物落点写入_method_applications。')
         if any((item['method'].get('structure_origin') or {}).get('observation_domains') for item in active):
             instruction+=('\n采用人物出场或章场进展方法时，从本书当前问题与已知事实出发，把角色承担的工作、'
                           '自身理由、获知身份的途径或章场实际改变落实到本书所选产物。'
@@ -50,7 +78,7 @@ def prompt(plan: dict | None, incoming: tuple | list = ()) -> str:
                              '每项用 scene_guidance 交给这些落点所属的实际场景。表达步骤每场取所用节拍中一行的'
                              'observable 和 check 原样填写该场的交接；各拍仍按实际设计顺序提交。')
         return instruction
-    return PROMPT.replace(
+    instruction = PROMPT.replace(
         'production_methods是作者已选并已确认前置版本的参考制作方法，不是原作情节可直接变成本项目事实的许可。',
         'production_methods是已核实原作证据及前置版本的候选。参照production_method_selection.demand，按'
         '每个候选自己的adaptation_indices定位与该方法及原作类型相符的具体参数或限制，逐项核对'
@@ -63,6 +91,9 @@ def prompt(plan: dict | None, incoming: tuple | list = ()) -> str:
         'path:["adaptations",实际序号,"parameters",参数名]}]，或指向limits的实际限制条目。'
         '落点说明这条世界规则及限制怎样体现该前置。每个所选方法、其本步操作和产物都须出现；'
     )
+    if plan['target'].get('required_recommended_slots'):
+        instruction += '\n采用的世界方法须覆盖production_method_selection.required_recommended_slots中的冻结推荐。'
+    return instruction
 
 
 def split(value: dict) -> tuple[dict,dict]:
@@ -95,6 +126,8 @@ def validate_output(value: dict,stage: str,previous: dict,plan: dict | None,pare
 def packet(plan: dict | None,incoming: list[dict]) -> dict:
     if plan is None:return {}
     target = plan['target']
+    slots = target.get('required_recommended_slots')
+    required_slots = {'required_recommended_slots': slots} if slots else {}
     if target.get('selection_mode') == 'inherit_world':
         return {'production_methods': [], 'method_handoffs': incoming, 'production_method_decision': None,
                 'production_method_selection': {'mode': 'inherit_world',
@@ -104,12 +137,14 @@ def packet(plan: dict | None,incoming: list[dict]) -> dict:
                 'production_method_decision': None,
                 'production_method_selection': {'mode': 'ai', 'max_methods': target['max_methods'],
                     'demand': target['demand'], 'upstream_refs': target['upstream_refs'],
-                    'adaptation_indices': target['adaptation_indices']}}
+                    'adaptation_indices': target['adaptation_indices'],
+                    **required_slots}}
     if target.get('selection_mode') == 'recommendations':
         return {'production_methods': target['candidates'], 'method_handoffs': incoming,
                 'production_method_decision': None,
                 'production_method_selection': {'mode': 'recommendations', 'max_methods': target['max_methods'],
-                    'required_tasks': target['required_tasks']}}
+                    'required_tasks': target['required_tasks'],
+                    **required_slots}}
     return {'production_methods':plan['selected'],'method_handoffs':incoming,
             'production_method_decision':plan['decision']}
 

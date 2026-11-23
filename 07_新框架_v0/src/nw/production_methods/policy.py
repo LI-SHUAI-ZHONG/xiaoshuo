@@ -8,7 +8,8 @@ DEFAULT_TASKS=['character_arc','main_plot','hook','pacing']
 
 def normalize(raw: object, *, types: list[str] = ()) -> dict:
     if raw is None:return {}
-    if not isinstance(raw,dict) or set(raw)-{'tasks','type_ids','max_methods','policy','preferred_methods','world_selection','recommendation_mode'}:
+    if not isinstance(raw,dict) or set(raw)-{'tasks','type_ids','max_methods','policy','preferred_methods','world_selection',
+                                            'recommendation_mode','recommended_slots'}:
         raise ValueError('制作方法配置须包含实际生产任务和类型')
     tasks=raw.get('tasks',DEFAULT_TASKS)
     if not isinstance(tasks,list) or not tasks or len(tasks)>len(TASKS) or any(not isinstance(t,str) or t not in TASKS for t in tasks) or len(set(tasks))!=len(tasks):
@@ -37,6 +38,25 @@ def normalize(raw: object, *, types: list[str] = ()) -> dict:
         if raw['recommendation_mode'] not in ('manual', 'auto'):
             raise ValueError('未知的推荐方法选择方式')
         result['recommendation_mode'] = raw['recommendation_mode']
+    if 'recommended_slots' in raw:
+        from nw.materials.phase_routes import phase_order
+        from nw.studio.method_recommendations import AUTO_SLOT_TASKS
+
+        slots = raw['recommended_slots']
+        if (result.get('recommendation_mode') != 'auto' or mode != 'ai'
+                or not isinstance(slots, dict) or slots.keys() != AUTO_SLOT_TASKS.keys()):
+            raise ValueError('AI 自动须有各板块的制作方法与对应步骤')
+        for slot, route in slots.items():
+            if (not isinstance(route, dict) or set(route) != {'scope', 'stage', 'versions'}
+                    or route['scope'] not in ('book','chapter') or route['stage'] not in phase_order(route['scope'])
+                    or slot == 'world' and (route['scope'], route['stage']) != ('book', 'world_design')):
+                raise ValueError('无效的自动推荐制作步骤')
+            versions = route['versions']
+            if (not isinstance(versions, dict) or not 1 <= len(versions) <= 3
+                    or any(not isinstance(key, str) or not key or len(key) > 100 or type(v) is not int or v < 1
+                           for key, v in versions.items())):
+                raise ValueError('无效的自动推荐方法版本')
+        result['recommended_slots'] = slots
     if preferred:
         result['preferred_methods'] = preferred.copy()
     return result

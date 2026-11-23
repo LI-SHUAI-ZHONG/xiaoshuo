@@ -48,7 +48,7 @@ document.addEventListener('click',event=>{const target=event.target.closest('but
   if(target.matches('[data-close-drawer]'))$('#drawer').close();
   if(target.matches('[data-close-search]'))$('#searchOverlay').close();
   if(target.matches('[data-close-notifications]'))$('#notificationPanel').close();
-  if(target.matches('[data-new-novel]')){event.preventDefault();import('./pages/wizard.js').then(m=>m.openWizard()).catch(fail);}
+  if(target.matches('[data-new-novel]')){event.preventDefault();import('./pages/wizard.js').then(m=>m.openWizard({mode:target.dataset.newNovel})).catch(fail);}
   if(target.matches('[data-close-inspector]')){persist({inspector:false});$('#inspector').hidden=true;}
 });
 document.addEventListener('keydown',event=>{if(event.ctrlKey || event.metaKey){const key=event.key.toLowerCase();if(['k','j','b','1','2','3','4','5','6','7'].includes(key)){event.preventDefault();if(key==='k')openSearch();else if(key==='j')togglePanel();else if(key==='b')toggleSidebar();else location.hash=`#/${NAV[Number(key)-1][0]}`;}}});

@@ -6,8 +6,10 @@ from nw.production_methods.handoff import inherited
 from nw.production_methods.inputs import binding,registry
 from nw.production_methods.matching import TYPE_PRIORITY, type_match
 from nw.production_methods.policy import needed
+from nw.production_methods.runtime import (covers_recommendation, missing_recommendation_slots,
+                                           recommendation_error, recommendation_slots)
 from nw.production_methods.world_selection import build_world_target, finalize as finalize_world, is_ai_world, terms
-from nw.production_methods.sources import MethodReader,relevant,stage_tasks
+from nw.production_methods.sources import MethodReader, enabled_outputs, matching_methods, relevant, stage_tasks
 from nw.studio.catalog import canonical_types, type_map
 from nw.studio.method_catalog import TASKS
 from nw.task_models import InputManifest,canonical,content_sha256
@@ -29,6 +31,20 @@ def preflight(store: object,package: dict,request_id: str) -> None:
     if store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (first,)).fetchone():
         return
     reader=MethodReader(store.directory.parent)
+    if 'recommended_slots' in policy:
+        missing = []
+        for stage in stages:
+            slots = recommendation_slots(policy, scope, stage)
+            if not slots:
+                continue
+            rows = _recommended_methods(reader, package, stage, policy['type_ids'], slots)
+            eligible = {slot for row, _, applies in rows
+                        if stage != 'world_design' or reader.world_source(row, policy['type_ids']) is not None
+                        for slot in applies}
+            missing.extend(slot for slot in slots if slot not in eligible)
+        if missing:
+            raise recommendation_error(missing, '本轮制作', '所冻结的批准版本已不符合本范围，请补齐方法后新建任务。')
+        return
     for stage in stages:
         required=needed(policy,stage,scope,package.get('method_task_stages'))
         if not required or is_ai_world(policy, stage):continue
@@ -46,13 +62,38 @@ def uses_world_selection(package: dict, stage: str) -> bool:
             and any(r.get('approved_parent') and r.get('world_design_basis') for r in inherited(package)))
 
 
+def _recommended_methods(reader: MethodReader, package: dict, stage: str, types: list[str],
+                         slots: dict) -> list[tuple[dict, dict, list[str]]]:
+    if not slots or not reader.db_path.is_file():
+        return []
+    from nw.studio.method_recommendations import AUTO_SLOT_TASKS, same_reference_type
+
+    rows = []
+    source_types = {}
+    for row, match in matching_methods(reader, types):
+        body = row['body']
+        tasks = stage_tasks(body, stage, package['scope'])
+        applies = [slot for slot, versions in slots.items()
+                   if versions.get(row['id']) == row['version'] and tasks & AUTO_SLOT_TASKS[slot]]
+        if not applies or match['level'] == 'cross_type' or not enabled_outputs(body, stage, package):
+            continue
+        book = row['structure_origin']['book_id']
+        if book not in source_types:
+            source_types[book] = json.loads(reader._staging_row(book)['confirmed_types_json'])
+        if same_reference_type(types, body['type_tags'], source_types[book]):
+            rows.append((row, match, applies))
+    return rows
+
+
 def build_target(reader: MethodReader, package: dict, stage: str, products: dict) -> dict:
     policy = package['production_method_policy']
     if uses_world_selection(package, stage):
         return build_world_target(reader, package, products)
     scope = package['scope']
     inputs = registry(package, products)
-    required = needed(policy, stage, scope, package.get('method_task_stages'))
+    strict = 'recommended_slots' in policy
+    slots = recommendation_slots(policy, scope, stage)
+    required = [] if strict else needed(policy, stage, scope, package.get('method_task_stages'))
     selection = products.get('type_selection', {}).get('products', {})
     config = selection.get('_governance', {}).get('project_config', {})
     types = config.get('genre_ids') or policy['type_ids']
@@ -66,9 +107,17 @@ def build_target(reader: MethodReader, package: dict, stage: str, products: dict
             types = canonical_types(selected)
     required_tasks = set(required)
     candidates = []
-    for method in relevant(reader, policy, stage, scope, types, package=package):
+    if strict:
+        methods = [(reader.snapshot(row), match, applies)
+                   for row, match, applies in _recommended_methods(reader, package, stage, types, slots)]
+    else:
+        methods = [(pin, type_match(types, pin['body']['type_tags']), [])
+                   for pin in relevant(reader, policy, stage, scope, types, package=package)]
+    for method, match, applies in methods:
         candidate = binding(method, stage, inputs)
-        candidate['type_match'] = type_match(types, method['body']['type_tags'])
+        candidate['type_match'] = match
+        if applies:
+            candidate['recommended_for'] = applies
         candidate['preferred'] = preferred.get(method['id']) == method['version']
         candidates.append(candidate)
     if auto:
@@ -97,17 +146,23 @@ def build_target(reader: MethodReader, package: dict, stage: str, products: dict
     if auto:
         ready = [item for item in candidates if not item['missing']]
         prioritized = {}
+        for slot, versions in slots.items():
+            best = next((item for item in ready if covers_recommendation(item, slot, versions)), None)
+            if best:
+                prioritized[best['method']['id']] = best
         for task in required:
             best = next((item for item in ready if task in stage_tasks(item['method']['body'], stage, scope)), None)
             if best:
                 prioritized[best['method']['id']] = best
         for item in ready:
             prioritized.setdefault(item['method']['id'], item)
-        size = max(len(required), min(12, policy['max_methods'] * 2))
+        size = max(len(required), len(slots), min(12, policy['max_methods'] * 2))
         target.update(selection_mode='recommendations', candidates=list(prioritized.values())[:size],
                       candidate_total=len(ready),
                       instruction='按适用条件与冻结前置选用本步需要的方法，并说明实际设计落点。')
-        if target['missing_tasks']:
+        if slots:
+            target['required_recommended_slots'] = slots
+        if target['missing_tasks'] or slots:
             target['unavailable_inputs'] = [row for item in candidates for row in item['missing']]
     return target
 
@@ -121,7 +176,12 @@ def finalize(plan: dict | None, products: dict) -> dict | None:
                                                for row in applications):
         raise ValueError('PROJECT_METHOD: 请提交采用的推荐方法及实际执行记录')
     ids = [row['method_id'] for row in applications]
-    ready = {item['method']['id']: item for item in target['candidates']}
+    ready = {item['method']['id']: item for item in target['candidates'] if not item['missing']}
+    slots = target.get('required_recommended_slots')
+    if slots:
+        missing = missing_recommendation_slots(slots, [ready[ident] for ident in ids if ident in ready])
+        if missing:
+            raise recommendation_error(missing, target['stage'], 'AI 未在本步产物中采用这些板块的冻结方法。')
     if len(ids) != len(set(ids)) or len(ids) > target['max_methods'] or not set(ids) <= ready.keys():
         raise ValueError('PROJECT_METHOD: AI 只能采用本步送达的推荐方法，且不能重复或超过上限')
     selected = [ready[ident] for ident in ids]
@@ -194,6 +254,11 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
             target['cast_revision'] = True
         if ai or auto:
             target['manifest_id'] = ident
+        slots = target.get('required_recommended_slots')
+        if slots and (missing_slots := missing_recommendation_slots(slots, target['candidates'])):
+            unavailable = target.get('unavailable_inputs')
+            detail = '缺少本步前置：' + canonical(unavailable) if unavailable else '请核对所冻结的批准版本和适用范围。'
+            raise recommendation_error(missing_slots, stage, detail)
         missing = target['missing_tasks']
         if missing:
             if ai:

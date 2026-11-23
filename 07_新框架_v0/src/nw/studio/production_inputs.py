@@ -15,11 +15,14 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     raw = body.get('wizard', body)
     if not isinstance(raw, dict):
         raise ValueError('立项信息必须是对象')
+    mode = raw.get('design_mode')
+    auto_recommendations = raw.get('auto_recommendations', False)
+    if type(auto_recommendations) is not bool or auto_recommendations and mode != 'auto':
+        raise ValueError('只有 AI 自动入口可以启用自动推荐')
     title, idea = str(raw.get('title', '')).strip(), str(raw.get('idea', '')).strip()
-    if not title or len(title) > 120 or not idea or len(idea) > 12000:
+    if len(title) > 120 or len(idea) > 12000 or not auto_recommendations and (not title or not idea):
         raise ValueError('请填写书名（120字内）和一句话故事构想（12000字内）')
     wizard = {'title': title, 'idea': idea, 'constraints': str(raw.get('constraints', '')).strip()[:12000]}
-    mode = raw.get('design_mode')
     if 'design_mode' in raw:
         if mode not in ('manual', 'auto'):
             raise ValueError('请选择人工选择或 AI 自动')
@@ -49,6 +52,17 @@ def freeze_wizard(body: dict, library: Any) -> dict:
         secondary_at = 2
     if len(selected_types[secondary_at:]) > 2:
         raise ValueError('副类型最多选择两个')
+    recommended_slots = {}
+    if auto_recommendations:
+        from nw.production_methods.sources import MethodReader
+        from nw.studio.method_recommendations import automatic_requirements
+        recommended_slots = automatic_requirements(MethodReader(library.workspace), selected_types)
+        wizard['auto_recommendations'] = True
+        wizard['title'] = title or f"未命名·{primary['name']}"
+        if not idea:
+            wizard['idea'] = ('根据所选类型及当前步骤获准的参考小说制作方法，提出原创小说的人物、处境、'
+                              '目标、冲突和全书方向。将方法落实为本书具体设计。')
+            wizard['idea_origin'] = 'auto_brief'
     chosen_keys = {'genre': {f'genre.{value}' for value in selected_types}}
     for slot, field in SLOTS.items():
         if slot == 'genre':
@@ -101,9 +115,13 @@ def freeze_wizard(body: dict, library: Any) -> dict:
             configuration = {}
         if isinstance(configuration, dict):
             configuration = {**configuration, 'preferred_methods': {row['id']: row['version'] for row in references}}
+            if 'recommended_slots' in configuration:
+                raise ValueError('推荐候选版本由类型资料库自动核定')
             if mode:
                 configuration.setdefault('tasks', ['world_rules'])
                 configuration.update(world_selection='ai', recommendation_mode=mode)
+            if recommended_slots:
+                configuration.update(tasks=['world_rules'], recommended_slots=recommended_slots)
         if configuration is None:
             raise ValueError('如需关闭制作方法，请先取消所选立项方法')
         wizard['production_methods'] = normalize(configuration, types=selected_types)

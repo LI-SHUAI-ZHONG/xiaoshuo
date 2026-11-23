@@ -1,7 +1,10 @@
 """Recommend and freeze the methods the author selected during project setup."""
 from nw.materials.phase_routes import phase_order
-from nw.production_methods.matching import TYPE_PRIORITY
+import json
+
+from nw.production_methods.matching import TYPE_PRIORITY, type_match
 from nw.production_methods.sources import MethodReader, matching_methods, stage_tasks
+from nw.studio.catalog import SLOT_LABELS, type_map
 from nw.studio.method_catalog import SCOPES, STAGES, TASKS
 from nw.studio.corpus_story_observations import STORY_TASKS
 
@@ -20,6 +23,59 @@ SLOT_TASKS = {
 
 
 SLOT_OBSERVATION={'character':'cast_entry','structure':'chapter_progress'}
+
+AUTO_SLOT_TASKS = {
+    'tone': {'pacing'},
+    'style': {'expression'},
+    'narration': {'narration'},
+    'world': SLOT_TASKS['world'],
+    'character': SLOT_TASKS['character'].union(STORY_TASKS['cast_entry']),
+    'structure': SLOT_TASKS['structure'].union(STORY_TASKS['chapter_progress']) - {'pacing'},
+    'hook': {'hook', 'foreshadow'},
+}
+
+
+def same_reference_type(types: list[str], method_types: list[str], source_types: list[str]) -> bool:
+    return bool(method_types and source_types and any(
+        type_match([ident], method_types) and type_match([ident], source_types) for ident in types))
+
+
+def automatic_requirements(reader: MethodReader, types: list[str]) -> dict:
+    """Route each required recommendation to a step that can actually produce its output."""
+    sources: dict[str, list[str]] = {}
+    matches = []
+    if reader.db_path.is_file():
+        for row, match in matching_methods(reader, types):
+            if match['level'] == 'cross_type':
+                continue
+            book_id = row['structure_origin']['book_id']
+            if book_id not in sources:
+                sources[book_id] = json.loads(reader._staging_row(book_id)['confirmed_types_json'])
+            if same_reference_type(types, row['body']['type_tags'], sources[book_id]):
+                matches.append(row)
+
+    routes = [('book', stage) for stage in phase_order('book')]
+    routes.extend(('chapter', stage) for stage in phase_order('chapter'))
+    result = {}
+    for slot, tasks in AUTO_SLOT_TASKS.items():
+        eligible = matches
+        slot_routes = routes
+        if slot == 'world':
+            slot_routes = [('book', 'world_design')]
+            eligible = [row for row in matches if 'world_rules' in stage_tasks(row['body'], 'world_design', 'book')
+                        and reader.world_source(row, types) is not None]
+        for scope, stage in slot_routes:
+            offered = [row for row in eligible if stage_tasks(row['body'], stage, scope) & tasks][:3]
+            if offered:
+                result[slot] = {'scope': scope, 'stage': stage,
+                                'versions': {row['id']: row['version'] for row in offered}}
+                break
+    missing = [SLOT_LABELS[slot] for slot in AUTO_SLOT_TASKS if slot not in result]
+    if missing:
+        names = '、'.join(type_map()[key]['name'] for key in types)
+        raise ValueError(f'AUTO_RECOMMENDATIONS_MISSING: 「{names}」缺少已批准的同类型推荐：'
+                         f'{"、".join(missing)}。请在类型资料库补齐对应参考小说的拆解方法。')
+    return result
 
 
 def uses(body: dict, slot: str, origin: dict | None = None) -> list[dict]:

@@ -10,12 +10,23 @@ const fields = {tone:'tone_ids', style:'style_ids', narration:'narration_ids', w
   character:'character_ids', structure:'structure_ids', hook:'mechanism_ids'};
 let session = 0;
 
-export async function openWizard(prefill) {
+function chooseMode(prefill) {
+  modal('新建小说', '<p>选择创作方式</p>', `
+    <button class="secondary" data-wizard-mode="manual">人工选择</button>
+    <button class="button" data-wizard-mode="auto">AI 自动</button>`);
+  $$('#modalFooter [data-wizard-mode]').forEach(button => {
+    button.onclick = () => openWizard({mode:button.dataset.wizardMode, prefill});
+  });
+}
+
+export async function openWizard({mode, prefill} = {}) {
   const token = ++session;
-  const dialog = modal('新建小说', loading(), '', true);
+  if (!mode) { chooseMode(prefill); return; }
+  const auto = mode === 'auto';
+  const dialog = modal(auto ? '新建小说 · AI 自动' : '新建小说', loading(), '', true);
   const known = new Map(), selectedMethods = new Map();
   const chosen = {};
-  let step = prefill ? 1 : 0, revision = 0, selectedMain = '', selectedSub = '';
+  let step = prefill && !auto ? 1 : 0, revision = 0, selectedMain = '', selectedSub = '';
   let secondary = [], genres = [], combinations = [], options = [], methods = [], currentVersions = {};
   let title = '', idea = '', constraints = '', lengthPlan = {length_mode:'tiered'};
   let limits = {}, defaultBudget = {}, bookWorldAvailable = false, submitting = false;
@@ -52,8 +63,8 @@ export async function openWizard(prefill) {
     $('#modalFooter').innerHTML = `<div class="wizard-selection">${step === 0 ? '已选类型' : '创作偏好'} <strong>${esc(summary)}</strong></div>
       ${step ? '<button class="secondary" id="wizardPrev">上一步</button>' : '<button class="secondary" data-close-modal>取消</button>'}
       ${step > 0 && step < 8 ? '<button class="ghost" id="wizardSkip">跳过此步</button>' : ''}
-      ${last ? `<button class="secondary" id="wizardNext" ${unavailable}>人工选择</button>
-        <button class="button" id="wizardAuto" ${unavailable}>AI 自动</button>`
+      ${auto ? `<button class="button" id="wizardNext" ${unavailable}>开始创作 ${icon('arrow')}</button>`
+        : last ? `<button class="button" id="wizardNext" ${unavailable}>人工选择</button>`
         : `<button class="button" id="wizardNext" ${unavailable}>下一步：${STEPS[step + 1].name} ${icon('arrow')}</button>`}`;
     const move = delta => {
       if (submitting) return;
@@ -72,8 +83,8 @@ export async function openWizard(prefill) {
     };
     $('#wizardPrev')?.addEventListener('click', () => move(-1));
     $('#wizardSkip')?.addEventListener('click', () => move(1));
-    $('#wizardNext').onclick = last ? event => submit('manual', event.currentTarget) : () => move(1);
-    $('#wizardAuto')?.addEventListener('click', event => submit('auto', event.currentTarget));
+    $('#wizardNext').onclick = auto ? event => submitAuto(event.currentTarget)
+      : last ? event => submitManual(event.currentTarget) : () => move(1);
   }
 
   function capture() {
@@ -88,6 +99,7 @@ export async function openWizard(prefill) {
   }
 
   async function paint() {
+    if (auto) { render(); return; }
     const current = ++revision;
     const slot = STEPS[step].slot;
     $('#modalTitle').textContent = `新建小说 · ${STEPS[step].name}`;
@@ -154,12 +166,15 @@ export async function openWizard(prefill) {
     const current = genres.find(genre => genre.id === selectedMain);
     const atLimit = types().length >= limits.genre;
     const secondaryLimit = Math.min(2, limits.genre - 1 - Number(Boolean(selectedSub)));
-    $('#modalBody').innerHTML = stepsBar(0) + `
+    const intro = auto ? `<p class="wizard-description">AI 从已批准的同类型小说拆解推荐中为你选择风格、文笔、写法、世界观、人物、结构篇幅和卖点。缺少任一项推荐时，会提示缺失选项并停止立项。</p>
+      <p id="wizardAutoError" class="error" role="alert" tabindex="-1" hidden></p>` : stepsBar(0);
+    $('#modalBody').innerHTML = intro + `
+      <div id="wizardTypeSelection">
       <div class="row spread"><h2>为故事选择类型</h2><input id="genreSearch" placeholder="搜索类型…" aria-label="搜索类型"></div>
       <p class="muted">主类型选 1 项，主类型下的子类型最多选 1 项。主、子、副类型合计最多选 ${limits.genre} 项。</p>
-      ${libraryPanel()}
+      ${auto ? '' : libraryPanel()}
       <div class="genre-layout">
-        <div class="genre-list" id="genreList">${genres.map(genre => `<button data-main="${esc(genre.id)}" class="${genre.id === selectedMain ? 'active' : ''}">${esc(genre.name)} <small class="faint">${genre.children.length}</small></button>`).join('')}</div>
+        <div class="genre-list" id="genreList">${genres.map(genre => `<button data-main="${esc(genre.id)}" class="${genre.id === selectedMain ? 'active' : ''}" aria-pressed="${genre.id === selectedMain}">${esc(genre.name)} <small class="faint">${genre.children.length}</small></button>`).join('')}</div>
         <div><div class="row spread" style="margin-bottom:16px"><h3>${esc(current?.name || '选择主类型')}</h3>
           ${current ? `<button class="ghost" data-genre-info="${esc(current.id)}">${icon('info')} 类型定义</button>` : ''}</div>
           <div class="option-grid" id="subgenres">${(current?.children || []).map(genre => `
@@ -167,17 +182,17 @@ export async function openWizard(prefill) {
               <button class="rec-pick grow" data-sub="${esc(genre.id)}" aria-pressed="${selectedSub === genre.id}"
                 ${selectedSub !== genre.id && (selectedSub || atLimit) ? 'disabled' : ''}><h3>${esc(genre.name)}</h3><p>${esc(genre.definition || '定义待补充')}</p></button>
               <button class="icon-button" data-genre-info="${esc(genre.id)}" aria-label="查看${esc(genre.name)}详情">${icon('info')}</button>
-            </div>`).join('') || '<p class="muted">此主类型暂无细分类型，可以直接进入下一步。</p>'}</div>
+            </div>`).join('') || (current ? '<p class="muted">此主类型暂无细分类型。</p>' : '')}</div>
           </div>
       </div>
       <div class="divider"></div><div class="row wrap"><span class="muted">副类型（当前最多 ${secondaryLimit} 项）</span>
         ${secondary.map(id => `<span class="selection-chip">${esc(flatGenres().find(genre => genre.id === id)?.name || id)}<button data-remove-secondary="${esc(id)}" aria-label="移除副类型">×</button></span>`).join('')}
-        <select id="secondaryGenre" aria-label="添加副类型" ${secondary.length >= secondaryLimit ? 'disabled' : ''}><option value="">＋ 添加副类型</option>
+        <select id="secondaryGenre" aria-label="添加副类型" ${!selectedMain || secondary.length >= secondaryLimit ? 'disabled' : ''}><option value="">＋ 添加副类型</option>
           ${flatGenres().filter(genre => !types().includes(genre.id) && (!genre.parent_id || secondary.includes(genre.parent_id)))
             .map(genre => `<option value="${esc(genre.id)}">${esc(genre.name)}</option>`).join('')}
         </select></div>${selectionLimit(types().length, limits.genre)}
         ${selectedSub && !atLimit ? '<p class="muted">子类型已选满。再次点击已选子类型可取消。</p>' : ''}
-        <p class="wizard-description" id="compatibility">${compatibilityText()}</p>`;
+        <p class="wizard-description" id="compatibility">${compatibilityText()}</p></div>`;
     $('#genreSearch').oninput = event => {
       const term = event.target.value.trim();
       $$('[data-main]').forEach(button => {
@@ -283,19 +298,56 @@ export async function openWizard(prefill) {
         ${wizardMethods(bookWorldAvailable)}
         <div class="notice">
           <p><strong>人工选择</strong> 使用你勾选的偏好，需要采用所选拆解方法时由你核对确认。</p>
-          <p><strong>AI 自动</strong> 保留你的类型、已选偏好与硬约束，按每一步的前置和需求从已批准的推荐中选材。</p>
-          <p>两个入口都会保存立项并启动全书设计。你可以用「上一步」回改立项选项。书纲和章场方案确认后进入正文制作。</p>
+          <p>立项后启动全书设计。你可以用「上一步」回改立项选项。书纲和章场方案确认后进入正文制作。</p>
         </div>
       </div></div>`;
   }
 
-  async function submit(mode, button) {
+  async function createNovel(payload) {
+    const result = await api.post('/novels', payload);
+    const novel = result.novel || result;
+    if (!novel.id) throw new Error('项目创建结果没有返回作品标识');
+    const active = alive();
+    if (active) dialog.close();
+    document.dispatchEvent(new CustomEvent('studio:created', {bubbles:true}));
+    if (active) location.hash = `#/studio/${enc(novel.id)}`;
+    toast(result.run?.reason || '立项卡已保存');
+  }
+
+  async function submitAuto(button) {
+    if (submitting || !selectedMain) return;
+    const errorMessage = $('#wizardAutoError');
+    const typeSelection = $('#wizardTypeSelection');
+    errorMessage.hidden = true;
+    submitting = true;
+    typeSelection.inert = true;
+    try {
+      await busy(button, async () => {
+        try {
+          await createNovel({
+            design_mode:'auto', auto_recommendations:true, genre_ids:types(),
+            auto_length:true, length_mode:'tiered',
+          });
+        } catch (error) {
+          if (!alive()) return;
+          errorMessage.hidden = false;
+          errorMessage.textContent = error.message.replace(/^AUTO_RECOMMENDATIONS_MISSING[：:]\s*/, '');
+          errorMessage.focus();
+        }
+      });
+    } finally {
+      submitting = false;
+      typeSelection.inert = false;
+    }
+  }
+
+  async function submitManual(button) {
     if (submitting || staleMethods()) return;
     capture();
     if (!idea) { $('#wizardIdea').focus(); toast('请先填写一句话故事构想', true); return; }
     const payload = {
       title:title || '未命名小说', idea, constraints, genre_ids:types(),
-      design_mode:mode,
+      design_mode:'manual',
       method_preferences:[...selectedMethods.values()].map(({id, version, slot}) => ({id, version, slot})),
       choices:types().map(id => ({slot:'genre', option_key:'genre.' + id})),
       auto_length:true,
@@ -306,21 +358,10 @@ export async function openWizard(prefill) {
       payload.choices.push(...selections(slot).map(option_key => ({slot, option_key})));
     }
     submitting = true;
-    const other = mode === 'auto' ? $('#wizardNext') : $('#wizardAuto');
-    other.disabled = true;
     try {
-      await busy(button, async () => {
-        const result = await api.post('/novels', payload);
-        const novel = result.novel || result;
-        if (!novel.id) throw new Error('项目创建结果没有返回作品标识');
-        dialog.close();
-        document.dispatchEvent(new CustomEvent('studio:created', {bubbles:true}));
-        location.hash = `#/studio/${enc(novel.id)}`;
-        toast(result.run?.reason || '立项卡已保存，进入制作台');
-      });
+      await busy(button, () => createNovel(payload));
     } finally {
       submitting = false;
-      if (alive()) other.disabled = false;
     }
   }
 
@@ -332,7 +373,7 @@ export async function openWizard(prefill) {
     limits = data.selection_limits;
     defaultBudget = data.default_budget;
     const genre = flatGenres().find(row => row.id === prefill);
-    selectedMain = genre?.parent_id || genre?.id || genres[0]?.id || '';
+    selectedMain = genre?.parent_id || genre?.id || (auto ? '' : genres[0]?.id) || '';
     selectedSub = genre?.parent_id ? genre.id : '';
     repainted();
   } catch (error) {

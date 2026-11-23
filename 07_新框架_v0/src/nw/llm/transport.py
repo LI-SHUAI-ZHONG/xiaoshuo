@@ -1,5 +1,7 @@
 """Non-streaming JSON HTTP requests; no retry or fallback generation."""
 import json
+import socket
+from ssl import SSLError
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
@@ -23,6 +25,23 @@ def redact(value: Any, secret: str) -> Any:
     return value
 
 
+def network_failure(exc: BaseException) -> str:
+    cause = exc.reason if isinstance(exc, URLError) else exc
+    if isinstance(cause, TimeoutError):
+        return 'timeout'
+    if isinstance(cause, socket.gaierror):
+        return 'dns'
+    if isinstance(cause, SSLError):
+        return 'tls'
+    if isinstance(cause, ConnectionRefusedError):
+        return 'connection_refused'
+    if isinstance(cause, ConnectionError):
+        return 'connection_lost'
+    if isinstance(cause, (OSError, str)) and str(cause).startswith('Tunnel connection failed'):
+        return 'proxy_tunnel'
+    return 'transport'
+
+
 def post(url: str, payload: dict, timeout: float, key: str = '') -> tuple[dict, str | None]:
     headers = {'Content-Type': 'application/json'}
     if key:
@@ -35,7 +54,7 @@ def post(url: str, payload: dict, timeout: float, key: str = '') -> tuple[dict, 
         body = exc.read().decode('utf-8', errors='replace')
         return redact({'http_status': exc.code, 'body': body}, key), 'http_error'
     except (URLError, TimeoutError, OSError) as exc:
-        return {'error_type': type(exc).__name__}, 'transport_error'
+        return {'error_type': type(exc).__name__, 'network_failure': network_failure(exc)}, 'transport_error'
     try:
         raw = json.loads(body)
         json.dumps(raw, allow_nan=False)  # Reject NaN/Infinity and overflowing numeric exponents.

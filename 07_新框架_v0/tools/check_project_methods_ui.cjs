@@ -16,7 +16,7 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/project-method-br
     const oldMethod=await (await page.request.get(methodUrl)).json();
     const nextVersion=oldMethod.version+1;
     await page.goto(`${meta.base}/#/home`);
-    await page.locator('[data-new-novel]:visible').first().click();
+    await page.getByRole('button',{name:'人工选择',exact:true}).click();
     await page.locator('[data-main="GENRE_XUANYI"]').click();
     await page.locator('[data-sub="SUB_XUANYI_02"]').click();
     for (let step=0;step<7;step++) {
@@ -42,7 +42,7 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/project-method-br
     await page.getByRole('button',{name:'刷新所选方法的版本'}).click();
     await expect(page.getByRole('region',{name:'已选制作方法'})).toContainText(`已有 v${nextVersion}`);
     await expect(page.locator('#wizardNext')).toBeDisabled();
-    await expect(page.locator('#wizardAuto')).toBeDisabled();
+    await expect(page.getByRole('button',{name:'AI 自动',exact:true})).not.toBeVisible();
     await expect(page.locator('#wizardTitle')).toHaveValue('[FAKE] 立项方法版本校验');
     await page.locator('#wizardPrev').click();
     await expect(panel).toContainText(newBody.title);

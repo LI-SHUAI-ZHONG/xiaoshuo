@@ -104,6 +104,80 @@ def test_blocked_book_reports_the_actual_stage_and_reuses_its_job_with_the_new_b
     assert [json.loads(messages[-1]['content'])['stage'] for messages in model.calls]==['type_selection','type_adaptation']
 
 
+@pytest.mark.parametrize(('genre', 'has_hook'), [('GENRE_XUANYI', True), ('GENRE_XUANHUAN', False)])
+def test_type_only_auto_lists_each_missing_recommendation_before_creating(client, genre, has_hook):
+    request,_,server,_=client
+    model=server.production._runtime()[1]
+    status,result=request('POST','/api/novels',{
+        'genre_ids':[genre], 'design_mode':'auto', 'auto_recommendations':True})
+    assert status==400 and result['error'].startswith('AUTO_RECOMMENDATIONS_MISSING:'),result
+    for label in ('风格','文笔','写法','世界观','人物','结构篇幅'):
+        assert label in result['error']
+    assert ('卖点' in result['error']) is not has_hook
+    assert not model.calls
+    assert not request('GET','/api/novels')[1]['novels']
+
+
+def test_type_only_auto_records_seven_method_routes_and_dispatches_book_design(client, monkeypatch):
+    from nw.production_methods.sources import MethodReader
+    from nw.novel_store import show_job
+
+    request,_,server,source=client
+    placements = {
+        'pacing': ('book', 'plot_design'),
+        'expression': ('chapter', 'expression_design'),
+        'narration': ('chapter', 'scene_design'),
+        'world_rules': ('book', 'world_design'),
+        'character_arc': ('book', 'character_design'),
+        'main_plot': ('book', 'plot_design'),
+        'hook': ('book', 'plot_design'),
+    }
+    rows = [{**source, 'id':task, 'body':{**source['body'], 'tasks':[task], 'scopes':[scope],
+              'outputs':[{'stage':stage}]}} for task,(scope,stage) in placements.items()]
+    monkeypatch.setattr(MethodReader,'current_methods',lambda _: rows)
+    monkeypatch.setattr(MethodReader,'world_source',lambda *_: (None, None))
+    dispatched = []
+    def dispatch(ident, body):
+        dispatched.append((ident, body))
+        return {'status':'READY'}
+    monkeypatch.setattr(server.production,'run',dispatch)
+    status,result=request('POST','/api/novels',{
+        'genre_ids':['GENRE_XUANYI'], 'design_mode':'auto', 'auto_recommendations':True})
+    assert status==201,result
+    novel=result['novel']
+    assert dispatched==[(novel['id'],{})]
+    assert novel['wizard']['idea_origin']=='auto_brief'
+    routes=novel['wizard']['production_methods']['recommended_slots']
+    assert len(routes)==7 and routes['style']['stage']=='expression_design'
+    assert routes['style']['scope']=='chapter' and routes['hook']['versions']=={'hook':source['version']}
+    with server.production.open_store(novel) as store:
+        job=show_job(store,novel['job_id'])
+        assert job.outputs['budget']['context_char_limit']==150000
+        frozen=json.loads(store.connection.execute('SELECT request_json FROM novel_jobs WHERE id=?',(job.id,)).fetchone()[0])
+        assert frozen['design_scope']=='book' and frozen['production_method_policy']['recommended_slots']==routes
+
+
+def test_unknown_type_selection_retry_reuses_its_checkpoint(client):
+    from urllib.error import URLError
+    request,settled,server,_=client
+    model=server.production._runtime()[1]
+    def connection_failure(_payload):
+        raise URLError('isolated connection failure')
+    model.on_payload=connection_failure
+    ident=make(request,enabled=False)
+    blocked=settled(ident)
+    assert blocked['job']['outputs']['blocked_design']=={'scope':'book','stage':'type_selection'}
+    assert 'PROVIDER_OUTCOME_UNKNOWN' in blocked['reason'] and '服务端是否执行' in blocked['reason']
+    model.on_payload=None
+    assert request('POST',f'/api/novels/{ident}/retry',{})[0]==200
+    resumed=settled(ident)
+    assert resumed['job']['id']==blocked['job']['id'] and resumed['status']=='WAITING',resumed['reason']
+    with server.production.open_store(server.production.db.get(ident)) as store:
+        first,second=store.connection.execute('SELECT id,retry_of,manifest_id,status FROM task_calls ORDER BY rowid LIMIT 2').fetchall()
+        assert first['status']=='UNKNOWN' and second['status']=='FINISHED'
+        assert second['retry_of']==first['id'] and second['manifest_id']==first['manifest_id']
+
+
 def test_configuration_changes_only_new_jobs_and_requires_a_reason(client):
     request,settled,server,_=client;ident=make(request,enabled=False);settled(ident);root=f'/api/novels/{ident}/methods'
     assert request('POST',root,{'policy':{'tasks':['hook']},'reason':''})[0]==400
@@ -128,7 +202,8 @@ def test_http_rejects_wrong_method_selection_and_untrusted_mutation(client):
 
 def test_ui_modules_expose_method_gates_wizard_and_usage_panel(client):
     request,_,_,_=client
-    for name,needle in [('project-methods','methodGate'),('studio-decisions','bindMethodGate'),('wizard','design_mode:mode'),('studio','openProjectMethods')]:
+    for name,needle in [('project-methods','methodGate'),('studio-decisions','bindMethodGate'),
+                        ('wizard','auto_recommendations:true'),('studio','openProjectMethods')]:
         status,code=request('GET',f'/js/pages/{name}.js');assert status==200 and needle in code
 
 

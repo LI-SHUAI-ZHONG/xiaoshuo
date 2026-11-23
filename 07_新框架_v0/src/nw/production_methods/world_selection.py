@@ -6,6 +6,7 @@ import re
 from nw.production_methods.handoff import inherited
 from nw.production_methods.inputs import binding, registry
 from nw.production_methods.matching import TYPE_PRIORITY, type_match
+from nw.production_methods.runtime import missing_recommendation_slots, recommendation_error, recommendation_slots
 from nw.production_methods.sources import matching_methods, stage_tasks
 from nw.studio.catalog import canonical_types, type_map
 from nw.task_models import canonical
@@ -93,11 +94,17 @@ def parent_design(context: dict, parents: list) -> dict:
 
 
 def build_world_target(reader: object, package: dict, products: dict) -> dict:
-    context = actual_demand(package, products)
-    types, demand, indices = (context[k] for k in ('type_ids', 'demand', 'adaptation_indices'))
-    adaptations = demand['type_adaptation']['adaptations']
     scope = package['scope']
     policy = package['production_method_policy']
+    slots = recommendation_slots(policy, 'book', 'world_design')
+    try:
+        context = actual_demand(package, products)
+    except ValueError as exc:
+        if slots and str(exc).startswith('METHOD_DESIGN_REQUIRED: '):
+            raise recommendation_error(list(slots), 'world_design', str(exc).removeprefix('METHOD_DESIGN_REQUIRED: ')) from exc
+        raise
+    types, demand, indices = (context[k] for k in ('type_ids', 'demand', 'adaptation_indices'))
+    adaptations = demand['type_adaptation']['adaptations']
     base = {'kind': 'production_method_selection', 'stage': 'world_design', 'scope': scope,
             'max_methods': policy['max_methods'], **context}
     parent = parent_design(context, inherited(package)) if scope != 'book' else {}
@@ -111,8 +118,10 @@ def build_world_target(reader: object, package: dict, products: dict) -> dict:
     ready = []
     missing = []
     approved = matching_methods(reader, types) if reader.db_path.is_file() else []
+    pins = {pair for versions in slots.values() for pair in versions.items()}
     for row, method_match in approved:
-        if (method_match['level'] == 'cross_type'
+        if (slots and (row['id'], row['version']) not in pins
+                or method_match['level'] == 'cross_type'
                 or 'world_rules' not in stage_tasks(row['body'], 'world_design', scope)):
             continue
         source = reader.world_source(row, types)
@@ -132,6 +141,8 @@ def build_world_target(reader: object, package: dict, products: dict) -> dict:
         candidate.update(status='eligible_for_ai_selection', type_match=method_match, source_type_match=source_match,
                          adaptation_indices=matching_indices,
                          preferred=policy.get('preferred_methods', {}).get(row['id']) == row['version'])
+        if slots:
+            candidate['recommended_for'] = ['world']
         body = row['body']
         features = terms([body['title'], body['applicability'], body['prerequisites'],
                           candidate['operations'], candidate['outputs']])
@@ -154,6 +165,7 @@ def build_world_target(reader: object, package: dict, products: dict) -> dict:
     return {**base, 'selection_mode': 'ai', 'required_tasks': ['world_rules'],
             'missing_tasks': [] if candidates else ['world_rules'], 'unavailable_inputs': sorted(set(missing)),
             'candidates': candidates, 'candidate_total': len(ready), 'page_size': page_size,
+            **({'required_recommended_slots': slots} if slots else {}),
             'instruction': '先根据类型适配中的具体参数和限制，逐项判断原作方法的适用与不适用条件；把适用方法落实到本项目世界规则和边界。'}
 
 
@@ -177,7 +189,9 @@ def verify_context(plan: dict | None, session: dict, previous: dict) -> None:
         raise ValueError('STALE_PROJECT_METHOD: 世界方法与本次实际前置需求不一致')
     parent = parent_design(context, parents) if session['scope'] != 'book' else {}
     expected_mode = 'inherit_world' if parent else 'ai'
+    expected_slots = {} if parent else recommendation_slots(policy, 'book', 'world_design')
     if (target.get('selection_mode') != expected_mode or inherit_only and not parent
+            or target.get('required_recommended_slots', {}) != expected_slots
             or any(canonical(target.get(k)) != canonical(v) for k, v in parent.items())):
         raise ValueError('STALE_PROJECT_METHOD: 世界卡或方法来源与已批准父纲不一致')
 
@@ -196,9 +210,14 @@ def finalize(plan: dict | None, products: dict) -> dict | None:
         return plan
     target = plan['target']
     applications = products.get('_method_applications')
+    offered = {c['method']['id']: c for c in target['candidates'] if not c['missing']}
+    if isinstance(applications, list) and (slots := target.get('required_recommended_slots')):
+        adopted = [offered[app['method_id']] for app in applications if isinstance(app, dict)
+                   and isinstance(app.get('method_id'), str) and app['method_id'] in offered]
+        if missing := missing_recommendation_slots(slots, adopted):
+            raise recommendation_error(missing, target['stage'], 'AI 未在本步产物中采用这些板块的冻结方法。')
     if not isinstance(applications, list) or not 1 <= len(applications) <= target['max_methods']:
         raise ValueError('PROJECT_METHOD: 世界设计须在实际产物中落实至少一种且不超过本步上限的拆解方法')
-    offered = {c['method']['id']: c for c in target['candidates'] if not c['missing']}
     ids = [app.get('method_id') if isinstance(app, dict) else None for app in applications]
     if any(not isinstance(ident, str) or ident not in offered for ident in ids) or len(set(ids)) != len(ids):
         raise ValueError('PROJECT_METHOD: 世界设计引用了候选外、未就绪或重复的方法')

@@ -1760,7 +1760,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             from nw.production_methods.world_gap import validate_gap
             reason = validate_gap(raw, {**method_plan['target'], 'candidates': payload['production_methods']})
             if page + 1 == page_count:
-                raise ValueError(f'{reason}（已核对 {len(world_candidates)} 个候选，可补资料后新建设计任务）')
+                detail = f'{reason}（已核对 {len(world_candidates)} 个候选，可补资料后新建设计任务）'
+                if slots := method_plan['target'].get('required_recommended_slots'):
+                    detail = detail.removeprefix('METHOD_DESIGN_REQUIRED: ')
+                    raise project_methods.recommendation_error(list(slots), stage, detail)
+                raise ValueError(detail)
             page += 1
             continue
         if 'products' in raw:
@@ -2006,10 +2010,16 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         except JobPaused:
             raise
         except ValueError as exc:
-            if not str(exc).startswith(('CONTEXT_TOO_LARGE:', 'MODEL_CONTEXT_WINDOW:', 'METHOD_DESIGN_REQUIRED:')):
+            reason = str(exc)
+            if reason.startswith('MATERIAL_WORK: '):
+                code = reason.split(': ', 2)[-1].partition(';')[0].partition(':')[0]
+            else:
+                code = reason.partition(':')[0]
+            if code not in ('CONTEXT_TOO_LARGE', 'MODEL_CONTEXT_WINDOW', 'METHOD_DESIGN_REQUIRED',
+                            'AUTO_RECOMMENDATIONS_MISSING', 'PROVIDER_OUTCOME_UNKNOWN'):
                 raise
             scope = package['scope']
-            raise JobPaused('BLOCKED', f'plan:{scope}:propose', str(exc), blocked_design={'scope': scope, 'stage': stage}) from exc
+            raise JobPaused('BLOCKED', f'plan:{scope}:propose', reason, blocked_design={'scope': scope, 'stage': stage}) from exc
         if 'cast_gap' in record:
             require(stage == 'plot_design' and checkpoint is not None and repair is None, '剧情回补超过本轮次数')
             gap = record['cast_gap']
