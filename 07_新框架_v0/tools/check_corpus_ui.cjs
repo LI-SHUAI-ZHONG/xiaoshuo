@@ -83,11 +83,12 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
       await page.locator('#wizardSkip').click();
     }
     await expect(page.locator('#modalBody')).toContainText('无需预写世界卡');
-    await expect(page.locator('#wizardUseMethods')).not.toBeChecked();
+    await expect(page.locator('#wizardNext')).toHaveText('人工选择');
+    await expect(page.locator('#wizardAuto')).toHaveText('AI 自动');
     await page.locator('#wizardTitle').fill('[FAKE] 无作者世界设定的向导项目');
     await page.locator('#wizardIdea').fill('[FAKE] 记录员在首班渡船离岸前追查失踪的放行簿。');
     const created=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname==='/api/novels');
-    await page.locator('#wizardNext').click();
+    await page.locator('#wizardAuto').click();
     const response=await created;expect(response.ok()).toBe(true);
     const novel=(await response.json()).novel;
     await expect(page).toHaveURL(new RegExp('#/studio/'+novel.id+'$'));
@@ -97,6 +98,8 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
     expect(wizard.genre_ids).toEqual(['GENRE_XUANYI']);
     expect(wizard.world_ids).toEqual([]);
     expect(wizard.method_references).toEqual([]);
+    expect(wizard.design_mode).toBe('auto');
+    expect(wizard.production_methods.recommendation_mode).toBe('auto');
     expect(wizard.production_methods.world_selection).toBe('ai');
     expect(wizard.production_methods.tasks).toEqual(['world_rules']);
     await page.goto(`${meta.base}/#/staging/${meta.retry_book_id}`);

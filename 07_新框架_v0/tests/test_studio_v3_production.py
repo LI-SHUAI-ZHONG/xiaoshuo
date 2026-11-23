@@ -78,6 +78,31 @@ def test_wrong_parent_and_three_secondary_types_are_rejected(app):
             freeze_wizard({**wizard(app), 'genre_ids': ids}, app.library)
 
 
+@pytest.mark.parametrize('change,limit', [
+    ({'tone_ids': ['TONE_SERIOUS', 'TONE_LIGHT', 'TONE_HUMOROUS'], 'choices': []}, '最多选 2 项'),
+    ({'genre_ids': ['GENRE_XUANYI', 'SUB_XUANYI_02', 'GENRE_DUSHI', 'GENRE_XUANHUAN']}, '最多选 3 项'),
+])
+def test_wizard_enforces_the_same_selection_limits_before_creating(app, change, limit):
+    with pytest.raises(ValueError, match=limit):
+        app.create({**wizard(app), **change, 'design_mode':'manual'})
+    assert not app.studio.list_projects()
+
+
+@pytest.mark.parametrize('mode',['manual','auto'])
+def test_wizard_starts_book_design_with_its_saved_mode_and_new_default_budget(app, mode):
+    created = app.create({**wizard(app), 'design_mode':mode})
+    novel = app.db.get(created['novel']['id'])
+    assert novel['wizard']['design_mode'] == mode
+    assert novel['wizard']['tone_ids'] == ['TONE_SERIOUS']
+    with app.open_store(novel) as store:
+        job = show_job(store, novel['job_id'])
+        request = json.loads(store.connection.execute('SELECT request_json FROM novel_jobs').fetchone()[0])
+        assert job.outputs['budget']['context_char_limit'] == 150000
+        assert request['design_scope'] == 'book'
+        assert request['production_method_policy']['recommendation_mode'] == mode
+        assert request['production_method_policy']['tasks'] == ['world_rules']
+
+
 def test_creation_and_concurrent_shelf_discovery_preserve_one_identity(app, monkeypatch):
     real_start = start_job
     def discover_during_creation(store, request):
@@ -425,6 +450,9 @@ def test_http_wizard_sse_and_mutation_origin(app):
     try:
         status, genres = call('GET', '/api/genres')
         assert status == 200 and genres['counts']['sub'] == 425
+        assert genres['selection_limits'] == dict(genre=3, tone=2, style=3, narration=30, world=30,
+                                                   character=30, structure=2, hook=5)
+        assert genres['default_budget']['context_char_limit'] == 150000
         status, created = call('POST', '/api/novels', wizard(app))
         assert status == 201, created
         ident = created['novel']['id']

@@ -189,12 +189,14 @@ def task_routes(reader: MethodReader, package: dict) -> dict:
 def relevant(reader: MethodReader, policy: dict, stage: str, scope: str, types: list[str], *, package: dict | None = None) -> list[dict]:
     tasks = set(policy['tasks'])
     production_scope = 'chapter' if scope == 'replan' else scope
-    if not policy.get('preferred_methods') and not any(stage in TASKS[task]['stages'] and production_scope in TASKS[task]['scopes'] for task in tasks):
-        return []
-    if not tasks:
-        return []
+    auto = policy.get('recommendation_mode') == 'auto'
     preferred = policy.get('preferred_methods', {})
+    if not reader.db_path.is_file():
+        return []
+    if not auto and (not tasks or not preferred and not any(
+            stage in TASKS[task]['stages'] and production_scope in TASKS[task]['scopes'] for task in tasks)):
+        return []
     return [reader.snapshot(row) for row, _ in matching_methods(reader, types)
             if (applicable := stage_tasks(row['body'], stage, scope))
             and enabled_outputs(row['body'],stage,package or {})
-            and (applicable & tasks or preferred.get(row['id']) == row['version'])]
+            and (auto or applicable & tasks or preferred.get(row['id']) == row['version'])]

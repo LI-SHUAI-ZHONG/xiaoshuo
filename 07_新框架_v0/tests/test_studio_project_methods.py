@@ -7,7 +7,7 @@ import time
 
 import pytest
 
-from nw.studio.api import StudioService
+from nw.studio.api import STAGE_LABELS, StudioService
 from nw.studio.server import create_studio_server
 from nw.config import Config
 from nw.studio.corpus_methods import publish_methods
@@ -74,6 +74,36 @@ def test_http_selects_a_real_method_then_reports_actual_project_placements(clien
     assert uses['review_checks']==[]  # design execution is separate from prose evidence
 
 
+def test_blocked_book_reports_the_actual_stage_and_reuses_its_job_with_the_new_budget(client, monkeypatch):
+    from ai_world_method_fixture import WorldModel
+
+    request,settled,server,_=client
+    production=server.production
+    runtime,_=production._runtime()
+    model=WorldModel()
+    monkeypatch.setattr(production,'runtime_factory',lambda:(runtime,model))
+    budget=production.budget
+    with monkeypatch.context() as old:
+        old.setattr(production,'budget',lambda raw=None:budget({'context_char_limit':4000,**(raw or {})}))
+        status,created=request('POST','/api/novels',{'title':'[FAKE] 容量和选材断点',
+            'idea':'[FAKE] 记录员调查潮刻为何变动','genre_ids':['GENRE_XUANYI'],'design_mode':'auto'})
+        assert status==201,created
+        ident=created['novel']['id']
+        blocked=settled(ident)
+    assert blocked['status']=='BLOCKED' and blocked['current_step']==STAGE_LABELS['type_selection']['zh'],blocked['reason']
+    assert blocked['tree'][0]['children'][0]['status']=='blocked'
+    assert '4,000 字符' in blocked['reason'] and not model.calls
+    root=f'/api/novels/{ident}'
+    assert request('GET','/api/kb/method-recommendations?slot=world&types=GENRE_XUANYI')[1]['book_world_available'] is False
+    assert request('POST',root+'/retry',{'use_saved_context_budget':True})[0]==200
+    retried=settled(ident)
+    assert retried['job']['id']==blocked['job']['id']
+    assert retried['job']['outputs']['budget']['context_char_limit']==150000
+    assert retried['status']=='BLOCKED' and 'METHOD_DESIGN_REQUIRED' in retried['reason'],retried['reason']
+    assert retried['job']['outputs']['blocked_design'] == {'scope':'book','stage':'world_design'}
+    assert [json.loads(messages[-1]['content'])['stage'] for messages in model.calls]==['type_selection','type_adaptation']
+
+
 def test_configuration_changes_only_new_jobs_and_requires_a_reason(client):
     request,settled,server,_=client;ident=make(request,enabled=False);settled(ident);root=f'/api/novels/{ident}/methods'
     assert request('POST',root,{'policy':{'tasks':['hook']},'reason':''})[0]==400
@@ -98,7 +128,7 @@ def test_http_rejects_wrong_method_selection_and_untrusted_mutation(client):
 
 def test_ui_modules_expose_method_gates_wizard_and_usage_panel(client):
     request,_,_,_=client
-    for name,needle in [('project-methods','methodGate'),('studio-decisions','bindMethodGate'),('wizard','production_methods'),('studio','openProjectMethods')]:
+    for name,needle in [('project-methods','methodGate'),('studio-decisions','bindMethodGate'),('wizard','design_mode:mode'),('studio','openProjectMethods')]:
         status,code=request('GET',f'/js/pages/{name}.js');assert status==200 and needle in code
 
 

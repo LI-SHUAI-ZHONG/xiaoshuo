@@ -42,6 +42,7 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/project-method-br
     await page.getByRole('button',{name:'刷新所选方法的版本'}).click();
     await expect(page.getByRole('region',{name:'已选制作方法'})).toContainText(`已有 v${nextVersion}`);
     await expect(page.locator('#wizardNext')).toBeDisabled();
+    await expect(page.locator('#wizardAuto')).toBeDisabled();
     await expect(page.locator('#wizardTitle')).toHaveValue('[FAKE] 立项方法版本校验');
     await page.locator('#wizardPrev').click();
     await expect(panel).toContainText(newBody.title);
@@ -51,6 +52,7 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/project-method-br
     const creation=page.waitForResponse(response=>response.url().endsWith('/api/novels')&&response.request().method()==='POST');
     await page.locator('#wizardNext').click();
     const created=await (await creation).json();
+    expect(created.novel.wizard.design_mode).toBe('manual');
     expect(created.novel.wizard.method_references[0].version).toBe(nextVersion);
     expect(created.novel.wizard.method_references[0].evidence_locations.length).toBeGreaterThan(0);
     await expect(page.locator('#modalBackdrop')).not.toBeVisible();

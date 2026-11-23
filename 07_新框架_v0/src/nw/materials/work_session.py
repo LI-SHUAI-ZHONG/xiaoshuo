@@ -5,7 +5,7 @@ from pathlib import Path
 import re
 from uuid import NAMESPACE_URL,uuid5
 
-from nw.call_budget import prepare_call
+from nw.call_budget import BudgetExceeded, message_size, prepare_call, read_budget
 from nw.call_control import model_settings
 from nw.config import Config
 from nw.llm.base import LLMProvider
@@ -109,6 +109,14 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
     elif previous and previous['attempt']>1:
         retry_of=saved['retry_of']
     model_payload={key:value for key,value in payload.items() if key!='mode'}
+    audit = None
+    selection = payload.get('source_selection', {})
+    if 'queries' in selection:
+        # Historical attempts keep their request shape and remain replayable.
+        previous_input = json.loads(saved['payload']['messages'][-1]['content']) if saved else {}
+        if 'queries' not in previous_input.get('source_selection', {}):
+            audit = {'queries': selection['queries']}
+            model_payload['source_selection'] = {key: value for key, value in selection.items() if key != 'queries'}
     if payload.get('stage_source_policy'):
         model_payload['current_instruction'] = ('所请求的本步资料已交付。现在提交本步设计产物或逐项说明为何不适用。'
             if payload['mode'] == 'execute' else '按本步资料与实际前置完成设计，需要补查时只在本步查找。')
@@ -127,10 +135,20 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
             *sources,*payload.get('method_requirement_sources',()),*payload.get('semantic_requirement_sources',())]
         system_text=step_material_prompt(prompt,step_material,(s['source']['key'] for s in step_sources))+prompt_suffix
     messages=[{'role':'system','content':system_text},{'role':'user','content':payload_text}]
-    params,_=prepare_call(store,request.budget_id,provider.name,config.params,messages)
+    try:
+        params,_=prepare_call(store,request.budget_id,provider.name,config.params,messages,
+                              context_window_tokens=config.context_window_tokens)
+    except BudgetExceeded as exc:
+        if str(exc) == 'CONTEXT_TOO_LARGE':
+            chars, _ = message_size(messages)
+            limit = read_budget(store, request.budget_id).context_char_limit
+            raise BudgetExceeded(f'CONTEXT_TOO_LARGE: 本步输入 {chars:,} 字符，项目上限 {limit:,} 字符') from exc
+        raise
     originals=[*sources,*(read_only_sources or [])]
     frozen={'study_input':model_payload,'call_mode':payload.get('mode'),'frozen_sources':originals,'base_plan_manifest':request.manifest_id,
             'actual_messages_sha256':content_sha256(messages)}
+    if audit is not None:
+        frozen['source_selection_audit'] = audit
     manifest_id=saved['manifest_id'] if saved else 'method-study:'+ident
     try:
         freeze_manifest(store,InputManifest(manifest_id,'material_work',

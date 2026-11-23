@@ -20,12 +20,20 @@ method_handoffs是上游/已批准父纲的具体产物。另含_method_receipts
 
 
 def prompt(plan: dict | None, incoming: tuple | list = ()) -> str:
-    if plan and plan['target'].get('selection_mode') == 'inherit_world':
+    mode = plan['target'].get('selection_mode') if plan else None
+    if mode == 'inherit_world':
         return PROMPT + ('\n本章/卷沿用production_method_selection.approved_world_members中的项目世界卡。'
                          '逐张保留其key、rule和limits，_method_applications为空。根据这些已批准规则推进后续剧情与场景。')
-    if not plan or plan['target'].get('selection_mode') != 'ai':
-        active=[*plan['selected'], *incoming] if plan else []
+    if mode != 'ai':
+        offered = plan['target']['candidates'] if mode == 'recommendations' else plan['selected'] if plan else []
+        active = [*offered, *incoming]
         instruction=PROMPT
+        if mode == 'recommendations':
+            instruction = instruction.replace(
+                'production_methods是作者已选并已确认前置版本的参考制作方法，不是原作情节可直接变成本项目事实的许可。',
+                'production_methods是通过类型、步骤、层级和实际前置筛选的候选。按当前设计需求核对适用与不适用条件，'
+                '优先考虑匹配的作者偏好。选用不超过production_method_selection.max_methods项，并覆盖required_tasks。'
+                '可选方法均不适用时，_method_applications为空。原作情节只作参考实例。')
         if any((item['method'].get('structure_origin') or {}).get('observation_domains') for item in active):
             instruction+=('\n采用人物出场或章场进展方法时，从本书当前问题与已知事实出发，把角色承担的工作、'
                           '自身理由、获知身份的途径或章场实际改变落实到本书所选产物。'
@@ -97,6 +105,11 @@ def packet(plan: dict | None,incoming: list[dict]) -> dict:
                 'production_method_selection': {'mode': 'ai', 'max_methods': target['max_methods'],
                     'demand': target['demand'], 'upstream_refs': target['upstream_refs'],
                     'adaptation_indices': target['adaptation_indices']}}
+    if target.get('selection_mode') == 'recommendations':
+        return {'production_methods': target['candidates'], 'method_handoffs': incoming,
+                'production_method_decision': None,
+                'production_method_selection': {'mode': 'recommendations', 'max_methods': target['max_methods'],
+                    'required_tasks': target['required_tasks']}}
     return {'production_methods':plan['selected'],'method_handoffs':incoming,
             'production_method_decision':plan['decision']}
 

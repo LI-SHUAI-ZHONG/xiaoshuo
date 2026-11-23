@@ -1,8 +1,9 @@
 """HTTP translation for the production client, keeping the original API compatible."""
 import json
+from dataclasses import asdict
 from typing import Any
 from urllib.parse import quote
-from nw.studio import method_routes, corpus_routes
+from nw.studio import catalog, method_routes, corpus_routes
 
 
 def first(query: dict, key: str, default: str = '') -> str:
@@ -22,7 +23,8 @@ class ProductionRoutes:
             handler._send_json(200, data)
             return True
         if segs == ['genres']:
-            data = lib.genres()
+            data = {**lib.genres(), 'selection_limits': catalog.wizard_selection_limits(),
+                    'default_budget': asdict(app.budget())}
         elif segs == ['kb', 'review-queue']:
             from nw.studio.review_queue import review_queue
             data = review_queue(lib)

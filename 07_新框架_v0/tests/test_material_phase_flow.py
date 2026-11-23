@@ -222,6 +222,13 @@ def test_dynamic_filter_uses_actual_type_and_scene_inputs(tmp_path, monkeypatch)
         stage_material = frozen['material_work']
         packets = {raw['study_input']['stage']: raw['study_input'] for receipt in stage_material['calls']
                    for _, raw in [read_input_manifest(store, receipt['manifest_id'])] if 'stage' in raw['study_input']}
+        _, type_call = next((m,f) for receipt in stage_material['calls']
+                            for m,f in [read_input_manifest(store,receipt['manifest_id'])]
+                            if f['study_input'].get('stage')=='type_selection')
+        assert 'queries' not in packets['type_selection']['source_selection']
+        assert 'queries' in type_call['source_selection_audit']
+        record = next(row for row in stage_material['stages'] if row['stage']=='type_selection')
+        assert type_call['source_selection_audit']['queries']==record['source_selection']['queries']
         assert 'type_adaptation' in packets['state_propagation']['inputs']
         assert packets['state_propagation']['inputs']['type_selection']['products']['selection']
         assert packets['state_propagation']['inputs']['scene_design']['products']['selected_actions']

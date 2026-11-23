@@ -37,9 +37,11 @@ def test_offer_owns_current_method_and_evidence_but_preserves_historical_selecti
     target = build_target(reader, package, 'world_design', products)
     [first] = target['candidates']
     from nw.studio.method_recommendations import recommendations
-    wizard = recommendations(reader, 'world', [TAXON], [])['recommendations']
-    assert [(r['id'], r['version']) for r in wizard] == [(first['method']['id'], first['method']['version'])]
-    assert not recommendations(reader, 'world', ['GENRE_QIHUAN'], [])['recommendations']
+    wizard = recommendations(reader, 'world', [TAXON], [])
+    assert wizard['book_world_available'] is True
+    assert [(r['id'], r['version']) for r in wizard['recommendations']] == [(first['method']['id'], first['method']['version'])]
+    other = recommendations(reader, 'world', ['GENRE_QIHUAN'], [])
+    assert not other['recommendations'] and other['book_world_available'] is False
     assert first['adaptation_indices'] == [0]
     mixed = deepcopy(products)
     mixed['type_selection']['products']['selection'].append({'id': 'GENRE_QIHUAN', 'basis': '以超自然边界约束魔法。'})
@@ -97,7 +99,7 @@ def test_rank_all_eligible_methods_before_freezing_window_and_only_bind_selected
     rows = [{**source, 'id': 'method-' + str(i).zfill(2), 'body': {**source['body'],
              'title': '岸亭回执须记号核验' if i == 48 else '边界方法'}} for i in range(49)]
     pin = reader.snapshot(source)
-    monkeypatch.setattr(reader, 'approved', lambda: rows)
+    monkeypatch.setattr(reader, 'current_methods', lambda: rows)
     monkeypatch.setattr(reader, 'world_source', lambda row, types: ({**pin, 'id': row['id'], 'body': row['body']},
                         {'level': 'main', 'type_ids': [TAXON], 'source_type_ids': [TAXON]}))
     target = build_target(reader, package, 'world_design', products)

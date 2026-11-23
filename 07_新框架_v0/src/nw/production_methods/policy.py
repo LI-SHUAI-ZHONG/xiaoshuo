@@ -8,7 +8,7 @@ DEFAULT_TASKS=['character_arc','main_plot','hook','pacing']
 
 def normalize(raw: object, *, types: list[str] = ()) -> dict:
     if raw is None:return {}
-    if not isinstance(raw,dict) or set(raw)-{'tasks','type_ids','max_methods','policy','preferred_methods','world_selection'}:
+    if not isinstance(raw,dict) or set(raw)-{'tasks','type_ids','max_methods','policy','preferred_methods','world_selection','recommendation_mode'}:
         raise ValueError('制作方法配置须包含实际生产任务和类型')
     tasks=raw.get('tasks',DEFAULT_TASKS)
     if not isinstance(tasks,list) or not tasks or len(tasks)>len(TASKS) or any(not isinstance(t,str) or t not in TASKS for t in tasks) or len(set(tasks))!=len(tasks):
@@ -33,6 +33,10 @@ def normalize(raw: object, *, types: list[str] = ()) -> dict:
     result = {'policy':POLICY,'tasks':list(tasks),'type_ids':ids,'max_methods':maximum}
     if mode == 'ai':
         result['world_selection'] = mode
+    if 'recommendation_mode' in raw:
+        if raw['recommendation_mode'] not in ('manual', 'auto'):
+            raise ValueError('未知的推荐方法选择方式')
+        result['recommendation_mode'] = raw['recommendation_mode']
     if preferred:
         result['preferred_methods'] = preferred.copy()
     return result

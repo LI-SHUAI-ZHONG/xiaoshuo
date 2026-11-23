@@ -26,6 +26,22 @@ SLOT_STAGES = {
 }
 
 
+def wizard_selection_limits() -> dict[str, int]:
+    from nw.materials.steps.type_connections import material_document
+
+    limits = material_document('类型组合约束.json')
+    return {
+        'genre': limits['max_genre_combination'],
+        'tone': limits['max_tones_per_project'],
+        'style': limits['max_styles_per_project'],
+        'narration': 30,
+        'world': 30,
+        'character': 30,
+        'structure': limits['max_structures_per_project'],
+        'hook': limits['max_mechanisms_per_project'],
+    }
+
+
 @lru_cache(maxsize=256)
 def material(filename: str) -> str:
     tree = ast.parse((STEPS / filename).read_text(encoding='utf-8'))

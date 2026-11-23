@@ -11,7 +11,7 @@ const fields = [
 ];
 
 const limits = [
-  {key:'context_char_limit', label:'每次完整输入上限（字符）', min:1000, max:1000000, fallback:64000},
+  {key:'context_char_limit', label:'每次完整输入上限（字符）', min:1000, max:1000000, fallback:150000},
   {key:'output_limit', label:'每次最大输出（token）', min:128, max:100000, fallback:4096},
 ];
 
@@ -79,7 +79,7 @@ function numberFields(plan, visibleFields) {
   }).join('')}</div>`;
 }
 
-export function lengthFields(plan, recommendation) {
+export function lengthFields(plan, recommendation, defaults = {}) {
   const tiered = plan.length_mode === 'tiered';
   const controls = tiered ? `${tierOptions(plan, recommendation)}
     <p class="length-chapter-rule"><strong>单章 ${chapterRange}</strong> · ${chapterEnding}</p>
@@ -88,7 +88,7 @@ export function lengthFields(plan, recommendation) {
     <div class="form-grid">${limits.map(({key,label,min,max,fallback}) =>
       `<label class="field"><span>${label}</span><input name="${key}" type="number" step="1"
         min="${min}" max="${max}" data-budget-field value="${esc(plan.budget?.[key] ?? '')}"
-        placeholder="默认 ${number(fallback)}"></label>`).join('')}</div>
+        placeholder="默认 ${number(defaults[key] ?? fallback)}"></label>`).join('')}</div>
     <p class="muted">字符上限用于组装输入，输出按 token 预留。模型的实际窗口在 API 设置中填写。</p>
   </details>`;
 }

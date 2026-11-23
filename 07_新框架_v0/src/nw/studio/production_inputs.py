@@ -19,15 +19,23 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     if not title or len(title) > 120 or not idea or len(idea) > 12000:
         raise ValueError('请填写书名（120字内）和一句话故事构想（12000字内）')
     wizard = {'title': title, 'idea': idea, 'constraints': str(raw.get('constraints', '')).strip()[:12000]}
+    mode = raw.get('design_mode')
+    if 'design_mode' in raw:
+        if mode not in ('manual', 'auto'):
+            raise ValueError('请选择人工选择或 AI 自动')
+        wizard['design_mode'] = mode
     for field in SLOTS.values():
         values = raw.get(field, [])
         if not isinstance(values, list) or len(values) > 30 or any(not isinstance(x, str) or len(x) > 200 for x in values):
             raise ValueError(f'无效的向导选项: {field}')
         wizard[field] = list(dict.fromkeys(values))
+    limits = catalog.wizard_selection_limits()
     genres = catalog.genres()
     known = {item['id'] for main in genres for item in [main, *main.get('children', [])]}
-    if not wizard['genre_ids'] or set(wizard['genre_ids']) - known or len(wizard['genre_ids']) > 4:
+    if not wizard['genre_ids'] or set(wizard['genre_ids']) - known:
         raise ValueError('请选择有效的主类型、子类型与最多两个副类型')
+    if len(wizard['genre_ids']) > limits['genre']:
+        raise ValueError(f"类型最多选 {limits['genre']} 项，请先取消部分选项。")
     main_ids = {main['id'] for main in genres}
     selected_types = wizard['genre_ids']
     if selected_types[0] not in main_ids:
@@ -55,6 +63,9 @@ def freeze_wizard(body: dict, library: Any) -> dict:
             canonical_keys.append(key)
         chosen_keys[slot] = set(canonical_keys)
         wizard[field] = list(dict.fromkeys(options[key]['id'] for key in canonical_keys))
+    for slot, limit in limits.items():
+        if len(chosen_keys[slot]) > limit:
+            raise ValueError(f'{catalog.SLOT_LABELS[slot]}最多选 {limit} 项，请先取消部分选项。')
     choices = raw.get('choices', [])
     if not isinstance(choices, list) or len(choices) > 200:
         raise ValueError('无效的向导选择记录')
@@ -83,11 +94,16 @@ def freeze_wizard(body: dict, library: Any) -> dict:
         from nw.studio.method_recommendations import freeze_preferences
         references = freeze_preferences(MethodReader(library.workspace), method_choices, selected_types)
         wizard['method_references'] = references
-    if raw.get('production_methods') is not None or references:
+    if raw.get('production_methods') is not None or references or mode:
         from nw.production_methods.policy import normalize
         configuration = raw.get('production_methods', {})
+        if mode and configuration is None:
+            configuration = {}
         if isinstance(configuration, dict):
             configuration = {**configuration, 'preferred_methods': {row['id']: row['version'] for row in references}}
+            if mode:
+                configuration.setdefault('tasks', ['world_rules'])
+                configuration.update(world_selection='ai', recommendation_mode=mode)
         if configuration is None:
             raise ValueError('如需关闭制作方法，请先取消所选立项方法')
         wizard['production_methods'] = normalize(configuration, types=selected_types)

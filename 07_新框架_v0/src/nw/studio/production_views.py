@@ -124,12 +124,15 @@ class ProductionViews:
             for node_scope in scopes:
                 matching = {row['stage']: row for row in phases
                             if row['budget_id'] == job_row['id'] and row['scope'] == node_scope}
+                blocked = job_row['outputs'].get('blocked_design', {})
                 stage_nodes = []
                 for stage in phase_order(node_scope):
                     phase = matching.get(stage)
                     parsed = json.loads(phase['result_json']) if phase and phase['result_json'] else {}
                     complete = bool(phase and phase['validation'] == 'VALID' and (parsed or {}).get('products'))
-                    state = 'done' if complete else ('running' if phase and phase['status'] == 'STARTED' else
+                    blocked_here = (job_row['status'] == 'BLOCKED'
+                                    and blocked.get('scope') == node_scope and blocked.get('stage') == stage)
+                    state = 'blocked' if blocked_here else 'done' if complete else ('running' if phase and phase['status'] == 'STARTED' else
                             ('failed' if phase and phase['validation'] == 'INVALID' else 'pending'))
                     stage_nodes.append({'id': f"{job_row['id']}:{node_scope}:{stage}", 'stage': stage,
                         'label': STAGE_LABELS[stage]['zh'], 'status': state, 'scope': node_scope,
@@ -167,9 +170,14 @@ class ProductionViews:
         if job and runtime not in ('CONFIG_REQUIRED', 'PAUSED', 'PAUSING', 'BLOCKED'):
             runtime = job['status']
         current_step = job.get('step') if job else None
-        active = next((row for row in reversed(phases) if row['status'] == 'STARTED'), None)
+        active = next((row for row in reversed(phases) if job and row['budget_id'] == job['id']
+                       and row['status'] == 'STARTED'), None)
         if active and runtime == 'RUNNING':
             current_step = STAGE_LABELS[active['stage']]['zh']
+        if job and runtime == 'BLOCKED':
+            blocked = job['outputs'].get('blocked_design', {})
+            if blocked.get('stage') in STAGE_LABELS:
+                current_step = STAGE_LABELS[blocked['stage']]['zh']
         logs = self.db.timeline(ident)['events'][-100:] if include_logs else []
         if include_logs:
             logs.extend(model_logs)

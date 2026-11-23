@@ -6,8 +6,9 @@ from nw.production_methods.handoff import inherited
 from nw.production_methods.inputs import binding,registry
 from nw.production_methods.matching import TYPE_PRIORITY, type_match
 from nw.production_methods.policy import needed
-from nw.production_methods.world_selection import build_world_target, finalize, is_ai_world
+from nw.production_methods.world_selection import build_world_target, finalize as finalize_world, is_ai_world, terms
 from nw.production_methods.sources import MethodReader,relevant,stage_tasks
+from nw.studio.catalog import canonical_types, type_map
 from nw.studio.method_catalog import TASKS
 from nw.task_models import InputManifest,canonical,content_sha256
 from nw.tasks import freeze_manifest,read_input_manifest
@@ -52,26 +53,82 @@ def build_target(reader: MethodReader, package: dict, stage: str, products: dict
     scope = package['scope']
     inputs = registry(package, products)
     required = needed(policy, stage, scope, package.get('method_task_stages'))
-    config = products.get('type_selection', {}).get('products', {}).get('_governance', {}).get('project_config', {})
+    selection = products.get('type_selection', {}).get('products', {})
+    config = selection.get('_governance', {}).get('project_config', {})
     types = config.get('genre_ids') or policy['type_ids']
     preferred = policy.get('preferred_methods', {})
+    auto = policy.get('recommendation_mode') == 'auto'
+    if auto:
+        known = type_map()
+        selected = [row['id'] for row in selection.get('selection', [])
+                    if row['id'].removeprefix('genre.') in known]
+        if selected:
+            types = canonical_types(selected)
+    required_tasks = set(required)
     candidates = []
     for method in relevant(reader, policy, stage, scope, types, package=package):
         candidate = binding(method, stage, inputs)
         candidate['type_match'] = type_match(types, method['body']['type_tags'])
         candidate['preferred'] = preferred.get(method['id']) == method['version']
         candidates.append(candidate)
+    if auto:
+        from nw.materials.phase_routes import REQUIRES, phase_order
+
+        dependencies = phase_order(scope)[:-1] if stage == 'bind_scope' else REQUIRES[stage]
+        upstream = [products[k]['products'] for k in dependencies if k in products]
+        demand = terms([package['brief'], *upstream])
+        for item in candidates:
+            body = item['method']['body']
+            features = terms([body['title'], body['applicability'], item['operations'], item['outputs']])
+            item['demand_score'] = len(demand & features)
+            if not item['missing']:
+                item['status'] = 'eligible_for_ai_selection'
     candidates.sort(key=lambda item: (
         bool(item['missing']), TYPE_PRIORITY[item['type_match']['level']], not item['preferred'],
-        -len(set(required) & stage_tasks(item['method']['body'], stage, scope))))
-    if len(candidates) > 40:
+        -len(required_tasks & stage_tasks(item['method']['body'], stage, scope)), -item.get('demand_score', 0)))
+    if not auto and len(candidates) > 40:
         raise ValueError('METHOD_DESIGN_REQUIRED: 本步候选方法超过40条，请缩小制作任务或整理适用范围后重建，未截断候选')
     covered = {task for item in candidates if not item['missing']
                for task in stage_tasks(item['method']['body'], stage, scope)}
-    return {'kind': 'production_method_selection', 'stage': stage, 'scope': scope, 'required_tasks': required,
-            'missing_tasks': sorted(set(required) - covered),
+    target = {'kind': 'production_method_selection', 'stage': stage, 'scope': scope, 'required_tasks': required,
+            'missing_tasks': sorted(required_tasks - covered),
             'demand': package['brief'], 'type_ids': types, 'candidates': candidates, 'max_methods': policy['max_methods'],
             'instruction': '核对适用条件，选择方法并批准其绑定的具体前置。原作情节只作为参考案例。'}
+    if auto:
+        ready = [item for item in candidates if not item['missing']]
+        prioritized = {}
+        for task in required:
+            best = next((item for item in ready if task in stage_tasks(item['method']['body'], stage, scope)), None)
+            if best:
+                prioritized[best['method']['id']] = best
+        for item in ready:
+            prioritized.setdefault(item['method']['id'], item)
+        size = max(len(required), min(12, policy['max_methods'] * 2))
+        target.update(selection_mode='recommendations', candidates=list(prioritized.values())[:size],
+                      candidate_total=len(ready),
+                      instruction='按适用条件与冻结前置选用本步需要的方法，并说明实际设计落点。')
+        if target['missing_tasks']:
+            target['unavailable_inputs'] = [row for item in candidates for row in item['missing']]
+    return target
+
+
+def finalize(plan: dict | None, products: dict) -> dict | None:
+    if plan is None or plan['target'].get('selection_mode') != 'recommendations':
+        return finalize_world(plan, products)
+    target = plan['target']
+    applications = products.get('_method_applications')
+    if not isinstance(applications, list) or any(not isinstance(row, dict) or not isinstance(row.get('method_id'), str)
+                                               for row in applications):
+        raise ValueError('PROJECT_METHOD: 请提交采用的推荐方法及实际执行记录')
+    ids = [row['method_id'] for row in applications]
+    ready = {item['method']['id']: item for item in target['candidates']}
+    if len(ids) != len(set(ids)) or len(ids) > target['max_methods'] or not set(ids) <= ready.keys():
+        raise ValueError('PROJECT_METHOD: AI 只能采用本步送达的推荐方法，且不能重复或超过上限')
+    selected = [ready[ident] for ident in ids]
+    covered = {task for item in selected for task in stage_tasks(item['method']['body'], target['stage'], target['scope'])}
+    if not set(target['required_tasks']) <= covered:
+        raise ValueError('METHOD_DESIGN_REQUIRED: AI 采用的方法没有覆盖当前必须完成的制作任务')
+    return {'target': target, 'selected': selected, 'decision': {'actor': 'ai', 'method_ids': ids}}
 
 
 def gate_target(gate: dict) -> dict:
@@ -115,6 +172,7 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
     policy=package.get('production_method_policy')
     if not policy:return None
     ai = uses_world_selection(package, stage)
+    auto = not ai and policy.get('recommendation_mode') == 'auto'
     scope = package['scope']
     key = method_step(scope, stage, cast_revision=cast_revision)
     reader = MethodReader(store.directory.parent)
@@ -134,7 +192,7 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
         target = build_target(reader, package, stage, products)
         if cast_revision:
             target['cast_revision'] = True
-        if ai:
+        if ai or auto:
             target['manifest_id'] = ident
         missing = target['missing_tasks']
         if missing:
@@ -143,16 +201,18 @@ def prepare(store: object,request: object,package: dict,stage: str,products: dic
                 raise ValueError('METHOD_DESIGN_REQUIRED: 世界设计（'+ '、'.join(target['type_ids']) + '，' + scope + '）缺少与实际类型相符、有世界规则线索、原作事件与引文依据、'
                                  '可交付世界设计卡的已批准拆解方法。请在类型资料库补对应类型参考作品的世界规则拆解和方法' + lack)
             names='、'.join(TASKS[t]['name'] for t in missing)
-            unavailable=[p for c in target['candidates'] for p in c['missing']]
+            unavailable=target.get('unavailable_inputs') or [p for c in target['candidates'] for p in c['missing']]
             raise ValueError('METHOD_DESIGN_REQUIRED: '+stage+' 缺少可执行的已批准方法或前置：'+names+
                 ('；请先补设计：'+canonical(unavailable) if unavailable else '；请到预存库拆解对应类型作品并在类型资料库批准方法'))
         base,_=read_input_manifest(store,request.manifest_id)
         manifest=replace(InputManifest(**base),id=ident,purpose='material_work',context_sha256=content_sha256(target))
         freeze_manifest(store,manifest,target)
-    if ai != (target.get('selection_mode') in ('ai', 'inherit_world')) or ai and (target.get('manifest_id') != ident or saved_gate):
+    mode=target.get('selection_mode')
+    if (ai != (mode in ('ai', 'inherit_world')) or auto != (mode == 'recommendations')
+            or (ai or auto) and (target.get('manifest_id') != ident or saved_gate)):
         raise ValueError('STALE_PROJECT_METHOD: 本步冻结的选材方式与任务不一致')
     check_bindings(target, registry(package, products, ai_world=ai))
-    if ai:
+    if ai or auto:
         return {'target': target, 'selected': [], 'decision': None}
     ready={c['method']['id']:c for c in target['candidates'] if not c['missing']}
     if not ready and not target['required_tasks'] and not saved_gate:return {'target':target,'selected':[],'decision':None}
@@ -184,30 +244,36 @@ def verify_sources(store: object,session: dict) -> None:
     for record in session.get('stages',[]):
         plan=record.get('production_methods')
         if not plan:continue
-        if plan['target'].get('selection_mode') in ('ai', 'inherit_world'):
-            target = plan['target']
+        target = plan['target']
+        mode = target.get('selection_mode')
+        if mode in ('ai', 'inherit_world', 'recommendations'):
             _, frozen = read_input_manifest(store, target['manifest_id'])
             if canonical(target) != canonical(frozen):
-                raise ValueError('STALE_PROJECT_METHOD: AI 世界方法候选与冻结输入不一致')
+                raise ValueError('STALE_PROJECT_METHOD: AI 方法候选与冻结输入不一致')
             if record.get('products') is not None:
                 actual = finalize(plan, record['products'])
-                if target['selection_mode'] == 'ai' and record.get('task_id'):
+                if mode != 'inherit_world':
+                    # These follow-up calls amend casting or network fields. Method adoption was
+                    # generated by the base stage call, and its placements must still hold.
+                    call_id = (record.get('static_relations_basis', {}).get('task_id')
+                               or record.get('cast_demand_revision', {}).get('basis', {}).get('task_id')
+                               or record.get('task_id'))
                     call = store.connection.execute('SELECT manifest_id,validation,result_json FROM task_calls WHERE id=?',
-                                                    (record['task_id'],)).fetchone()
+                                                    (call_id,)).fetchone()
                     if not call or call['validation'] != 'VALID':
-                        raise ValueError('STALE_PROJECT_METHOD: AI 世界设计缺少有效生成记录')
+                        raise ValueError('STALE_PROJECT_METHOD: AI 方法设计缺少有效生成记录')
                     _, saved_call = read_input_manifest(store, call['manifest_id'])
                     payload = saved_call['study_input']
                     offered = {c['method']['id']: c for c in payload.get('production_methods', [])}
                     original = json.loads(call['result_json']).get('products', {}).get('_method_applications')
                     if (payload.get('stage') != target['stage'] or payload.get('scope') != target['scope']
-                            or payload.get('production_method_selection', {}).get('mode') != 'ai'
-                            or canonical(record['products']['_method_applications']) != canonical(original)
+                            or payload.get('production_method_selection', {}).get('mode') != mode
+                            or canonical(record['products'].get('_method_applications')) != canonical(original)
                             or any(offered.get(c['method']['id']) != c for c in plan['selected'])):
-                        raise ValueError('STALE_PROJECT_METHOD: 实际世界设计的方法或执行记录不在本次调用送达的候选页内')
+                        raise ValueError('STALE_PROJECT_METHOD: 实际采用的方法或执行记录不在本次调用送达的候选中')
                 if canonical(actual) != canonical(plan):
-                    raise ValueError('STALE_PROJECT_METHOD: 已保存的 AI 世界方法与实际使用记录不符')
-            elif target['selection_mode'] == 'inherit_world':
+                    raise ValueError('STALE_PROJECT_METHOD: 已保存的 AI 方法与实际使用记录不符')
+            elif mode == 'inherit_world':
                 if plan['selected'] or plan['decision'] is not None:
                     raise ValueError('STALE_PROJECT_METHOD: 父纲承接步骤出现新的方法选择记录')
             elif plan['selected'] or plan['decision'] is not None:
@@ -215,11 +281,12 @@ def verify_sources(store: object,session: dict) -> None:
                 ids = (plan.get('decision') or {}).get('method_ids', [])
                 actual = finalize(plan, {'_method_applications': [{'method_id': key} for key in ids]})
                 if canonical(actual) != canonical(plan):
-                    raise ValueError('STALE_PROJECT_METHOD: AI 世界方法选择记录已改变')
+                    raise ValueError('STALE_PROJECT_METHOD: AI 方法选择记录已改变')
             for item in (plan['selected'] or target['candidates']):
                 pin = item['method']
-                reader.verify(pin, require_current=False, world_types=target['type_ids'],
-                              source_type_match=item['source_type_match'])
+                world = ({'world_types': target['type_ids'], 'source_type_match': item['source_type_match']}
+                         if mode != 'recommendations' else {})
+                reader.verify(pin, require_current=False, **world)
             continue
         for item in plan['selected']:reader.verify(item['method'], require_current=False)
         if plan['selected']:

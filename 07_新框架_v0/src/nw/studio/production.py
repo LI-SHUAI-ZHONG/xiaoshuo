@@ -41,7 +41,7 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
 
     @staticmethod
     def budget(raw: dict | None = None) -> Budget:
-        value = {'max_calls': 40, 'context_char_limit': 64000, 'output_limit': 4096, 'max_revisions': 2}
+        value = {'max_calls': 40, 'context_char_limit': 150000, 'output_limit': 4096, 'max_revisions': 2}
         raw = {} if raw is None else raw
         if not isinstance(raw, dict) or set(raw) - set(value):
             raise ValueError('无效的调用预算')

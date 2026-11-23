@@ -14,17 +14,15 @@ function methodDetails(item){
 }
 function usageRows(rows){
   return rows.map(row=>`<article class="card"><h3>${esc(row.title||'下游承接回执')}</h3><p class="muted">${esc(names[row.stage]||row.stage)}${row.method_version?' · 方法版本 '+row.method_version:''} · ${row.validation==='VALID'?'执行结果已校验':'尚未通过执行校验'}</p>
-    ${row.selection_origin==='ai'?`<div class="method-section"><h4>AI 采用这条方法时所依据的本书需求</h4>${row.design_needs.map(need=>`<p>${esc(names[need.kind]||need.kind)} · ${esc(need.value)}</p>`).join('')}</div>`:''}
+    ${row.design_needs?.length?`<div class="method-section"><h4>AI 采用这条方法时所依据的本书需求</h4>${row.design_needs.map(need=>`<p>${esc(names[need.kind]||need.kind)} · ${esc(need.value)}</p>`).join('')}</div>`:row.selection_origin==='ai'?'<p class="muted">AI 按本步需求采用</p>':''}
     ${row.application?row.application.operations.map(op=>`<p>${esc(op.explanation)}</p>`).join('')+row.application.outputs.flatMap(o=>o.placements).map(p=>`<div class="method-section"><h4>实际设计产物</h4>${paragraphs(p.value)}</div>`).join(''):row.receipt?`<p>${esc(row.receipt.operation)}</p>${row.receipt.placements.map(p=>`<div class="method-section"><h4>下游实际产物</h4>${paragraphs(p.value)}</div>`).join('')}`:'<p>只有送达记录，尚无有效产物。</p>'}
     <details class="details"><summary>高级 · 版本与具体字段</summary>${readable(row)}</details></article>`).join('');
 }
 
-export function wizardMethods(enabled, hasSelections) {
+export function wizardMethods(bookWorldAvailable) {
   return `<fieldset class="method-section"><legend>参考作品制作方法</legend>
     <p>世界设计由 AI 根据本书类型和前一步的适配需求，选用对应参考小说中有原文依据的制作方法，生成本书的规则与限制。无需预写世界卡。</p>
-    <label class="check-row"><input type="checkbox" id="wizardUseMethods" ${enabled ? 'checked' : ''}> 另外为人物弧光、主线、钩子和节奏启用方法确认</label>
-    <p class="muted">世界方法来自已审核的参考作品拆解。资料不足时，制作台会指出需补充的类型和方法。</p>
-    ${hasSelections ? '<p class="muted">已单独勾选的方法偏好会随立项保存。</p>' : ''}
+    ${bookWorldAvailable ? '' : '<p class="warning" role="status">当前类型缺少已批准的全书世界规则方法。可以先保存立项。全书设计走到世界设计时，需要从类型资料库补齐相应方法。</p>'}
   </fieldset>`;
 }
 
@@ -91,6 +89,10 @@ export async function showProjectMethods(novelId){
     $('#drawerBody').innerHTML=`<p class="notice">${esc(data.note)}</p><form id="projectMethodSettings" class="stack">
       <label class="check-row"><input name="enabled" type="checkbox" ${policy.policy?'checked':''}> 后续设计使用已批准的拆解方法</label>
       <label class="check-row"><input name="aiWorld" type="checkbox" ${policy.world_selection==='ai'?'checked':''}> 世界规则由 AI 按前置需求从参考小说方法中选用并设计</label>
+      <label class="field"><span>后续方法选择</span><select name="recommendationMode">
+        <option value="manual" ${policy.recommendation_mode==='auto'?'':'selected'}>人工选择</option>
+        <option value="auto" ${policy.recommendation_mode==='auto'?'selected':''}>AI 自动</option>
+      </select></label>
       ${!data.project_type_ids.length?`<label class="field"><span>本项目实际类型（旧项目需先明确）</span><select name="types" multiple size="6">${genres.genres.flatMap(g=>[g,...g.children]).map(g=>`<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('')}</select></label>`:''}
       <fieldset class="method-section"><legend>本项目需要的制作职责</legend>${catalog.tasks.map(t=>`<label class="check-row"><input name="tasks" type="checkbox" value="${t.id}" ${tasks.includes(t.id)?'checked':''}>${esc(t.name)}</label>`).join('')}</fieldset>
       <label class="field"><span>每步最多采用的方法数</span><input name="max_methods" type="number" min="1" max="12" value="${policy.max_methods||6}"></label>
@@ -109,7 +111,8 @@ export async function showProjectMethods(novelId){
       const form=e.target, aiWorld=$('[name=aiWorld]',form).checked;
       const tasks=$('[name=enabled]',form).checked?$$('[name=tasks]:checked',form).map(x=>x.value):[];
       if(aiWorld && !tasks.includes('world_rules')) tasks.push('world_rules');
-      const next=tasks.length?{tasks,max_methods:Number($('[name=max_methods]',form).value),...(aiWorld?{world_selection:'ai'}:{})}:null;
+      const next=tasks.length?{tasks,max_methods:Number($('[name=max_methods]',form).value),
+        recommendation_mode:$('[name=recommendationMode]',form).value,...(aiWorld?{world_selection:'ai'}:{})}:null;
       if(next&&$('[name=types]',form))next.type_ids=Array.from($('[name=types]',form).selectedOptions).map(o=>o.value);
       await api.post(`/novels/${enc(novelId)}/methods`,{policy:next,reason:$('[name=reason]',form).value});toast('后续制作配置已保存，当前任务保持冻结版本');await showProjectMethods(novelId);
     });};

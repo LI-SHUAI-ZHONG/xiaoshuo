@@ -85,6 +85,22 @@ def test_book_methods_wait_for_author_input_approval_and_keep_concrete_cards(pro
     assert len(plot['production_methods']['target']['candidates'][0]['method']['instance']['events'])>=2
 
 
+def test_ai_uses_an_approved_recommendation_without_a_separate_method_gate(project):
+    store,_,method,model = project
+    policy = normalize({'tasks':['hook'], 'recommendation_mode':'auto'}, types=['GENRE_XUANYI'])
+    job, result = start(store, model, policy=policy)
+    assert result.step == 'plan:book:confirm', result.reason
+    payload, = [p for messages in model.calls if (p:=json.loads(messages[-1]['content'])).get('stage')=='plot_design']
+    assert payload['production_method_selection']['mode']=='recommendations'
+    assert payload['production_methods'][0]['method']['id']==method['id']
+    done = approve_direction(store,job,model,result)
+    assert done.status=='DONE',done.reason
+    session = done.outputs['application']['material_design']['work_session']
+    plot=next(r for r in session['stages'] if r['stage']=='plot_design')
+    assert plot['production_methods']['decision'] == {'actor':'ai','method_ids':[method['id']]}
+    assert plot['products']['_method_applications'][0]['outputs'][0]['placements']
+
+
 def test_missing_matching_type_method_stops_before_any_paid_design_call(project):
     store,library,method,model=project
     policy=normalize({'tasks':['hook']},types=['GENRE_QIHUAN'])
@@ -122,16 +138,18 @@ def test_completed_stage_calls_are_reused_when_author_chooses_method(project):
     assert stages.count('world_design')==1
 
 
-def chapter_design(project):
-    store,library,method,model=project;book,result=start(store,model)
+def chapter_design(project, policy=None):
+    store,library,method,model=project;book,result=start(store,model,policy=policy)
     done=approve_direction(store,book,model,result);assert done.status=='DONE',done.reason
-    job,result=start(store,model,'chapter',done.outputs['proposal_id'])
+    job,result=start(store,model,'chapter',done.outputs['proposal_id'],policy)
     done=approve_direction(store,job,model,result);assert done.status=='DONE',done.reason
     return done
 
 
-def test_approved_book_method_reaches_chapter_scene_writer_review_and_acceptance(project):
-    store,library,method,model=project;done=chapter_design(project)
+@pytest.mark.parametrize('mode', ['manual', 'auto'])
+def test_approved_book_method_reaches_chapter_scene_writer_review_and_acceptance(project, mode):
+    policy = normalize({'tasks':['hook'], 'recommendation_mode':mode}, types=['GENRE_XUANYI'])
+    store,library,method,model=project;done=chapter_design(project,policy)
     application=done.outputs['application'];scene=application['chapters'][0]['scenes'][0]['scene_id']
     session=application['material_design']['work_session']
     assert session['production_method_parents']

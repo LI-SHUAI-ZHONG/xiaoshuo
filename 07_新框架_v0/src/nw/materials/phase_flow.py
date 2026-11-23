@@ -6,6 +6,7 @@ from nw.call_budget import prepare_call
 from nw.call_control import model_settings
 from nw.config import Config, resolve_stage_runtime
 from nw.llm.base import LLMProvider
+from nw.novel_store import JobPaused
 from nw.materials.binding_reviews import allows_stage_candidate, model_review
 from nw.materials.phase_contract import FIELDS,validate_phase,require
 from nw.materials.phase_routes import POLICY,REQUIRES,TEMPLATE_STAGES,phase_order,product_ref,route_method,readiness
@@ -1650,7 +1651,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 payload['output_contract']['products'][field] = []
             if design_candidates:
                 payload['output_contract']['products']['_network_design_uses'] = []
-            if method_plan is not None and package.get('production_method_policy', {}).get('world_selection') == 'ai':
+            if method_plan is not None and (package.get('production_method_policy', {}).get('world_selection') == 'ai'
+                                           or method_plan['target'].get('selection_mode') == 'recommendations'):
                 payload['output_contract']['products'].update(_method_applications=[], _method_receipts=[])
             if type_network_enabled and stage == 'type_selection':
                 payload['output_contract']['products']['adaptation_inputs'] = {}
@@ -1718,7 +1720,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     from nw.materials.cast_gap import stable_cast
                     stable_cast(products, clean['products'], context['previous_cast'], context['plot_cast_gap'])
                 design_network.validate(stage, clean['products'], design_candidates, products, stage_context)
-                applied_plan = finalize(method_plan, value['products']) if ai_world else method_plan
+                applied_plan = finalize(method_plan, value['products'])
                 if world_candidates:
                     visible = {m['method']['id'] for m in payload['production_methods']}
                     if not set(applied_plan['decision']['method_ids']) <= visible:
@@ -1784,7 +1786,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             if network_context is not None and early_static:
                 record['prepared_static_sources'] = stage_context['early_static_sources']
             if method_plan is not None:
-                record['production_methods'] = finalize(method_plan, raw['products']) if ai_world else method_plan
+                record['production_methods'] = finalize(method_plan, raw['products'])
             if screening and stage=='bind_scope':
                 from nw.materials.dynamic_screening import screening_report
 
@@ -1995,11 +1997,19 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             original = repair['superseded'][stage]['products']
             stage_inputs = {**context, 'previous_cast': {k: original[k] for k in ('members', 'cast_assignments')}}
         from nw.production_methods.selection import prepare as prepare_project_methods
-        method_plan=prepare_project_methods(store,request,package,stage,products,method_decision,
-                                            **({'cast_revision': True} if repair else {}))
-        record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,stage_inputs,
-                                          retry_failed,verify,max_rounds,index,studied_sources=list(sources.values()),governance=governance,
-                                          method_plan=method_plan,network=network)
+        try:
+            method_plan=prepare_project_methods(store,request,package,stage,products,method_decision,
+                                                **({'cast_revision': True} if repair else {}))
+            record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,stage_inputs,
+                                              retry_failed,verify,max_rounds,index,studied_sources=list(sources.values()),governance=governance,
+                                              method_plan=method_plan,network=network)
+        except JobPaused:
+            raise
+        except ValueError as exc:
+            if not str(exc).startswith(('CONTEXT_TOO_LARGE:', 'MODEL_CONTEXT_WINDOW:', 'METHOD_DESIGN_REQUIRED:')):
+                raise
+            scope = package['scope']
+            raise JobPaused('BLOCKED', f'plan:{scope}:propose', str(exc), blocked_design={'scope': scope, 'stage': stage}) from exc
         if 'cast_gap' in record:
             require(stage == 'plot_design' and checkpoint is not None and repair is None, '剧情回补超过本轮次数')
             gap = record['cast_gap']

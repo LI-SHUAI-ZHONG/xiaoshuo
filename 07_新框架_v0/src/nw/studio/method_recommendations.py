@@ -47,8 +47,14 @@ def recommendations(reader: MethodReader, slot: str, types: list[str], selected:
                 {key: row[key] for key in ('id', 'version', 'title', 'type_match', 'applicability')} for row in rows]})
         return {'slots': groups}
     current_versions = {row['id']: row['version'] for row, _ in matches if row['id'] in selected}
-    return {'slot': slot, 'recommendations': _ranked(reader, slot, types, matches),
-            'current_versions': current_versions}
+    result = {'slot': slot, 'recommendations': _ranked(reader, slot, types, matches),
+              'current_versions': current_versions}
+    if slot == 'world':
+        result['book_world_available'] = any(
+            stage_tasks(row['body'], 'world_design', 'book') & SLOT_TASKS['world']
+            and match['level'] != 'cross_type' and reader.world_source(row, types) is not None
+            for row, match in matches)
+    return result
 
 
 def _ranked(reader: MethodReader, slot: str, types: list[str], matches: list) -> list[dict]:
