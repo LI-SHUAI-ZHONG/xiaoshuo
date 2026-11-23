@@ -4,11 +4,60 @@ const {chromium,expect}=require(process.env.PLAYWRIGHT_MODULE||'@playwright/test
 const meta=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
 if(!meta.isolated||meta.github_sync!==false)throw Error('An isolated FAKE fixture is required');
 const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-evidence');fs.mkdirSync(out,{recursive:true});
+
+async function checkAutomaticEntry(page) {
+  await page.goto(`${meta.base}/#/home`);
+  const modal=page.locator('#modalBackdrop');
+  const start=modal.getByRole('button',{name:'开始创作',exact:true});
+  await page.getByRole('button',{name:'AI 自动',exact:true}).click();
+  await expect(start).toBeDisabled();
+  await modal.locator('[data-main=GENRE_XUANYI]').click();
+  await modal.locator('[data-sub=SUB_XUANYI_02]').click();
+  await expect(modal).toContainText('已批准的同类型');
+  await expect(modal.locator('#wizardIdea')).toHaveCount(0);
+  await expect(modal.locator('#wizardTitle')).toHaveCount(0);
+  const request=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname==='/api/novels');
+  await start.click();
+  const response=await request;
+  expect(response.request().postDataJSON()).toEqual({
+    design_mode:'auto',auto_recommendations:true,genre_ids:['GENRE_XUANYI','SUB_XUANYI_02'],
+    auto_length:true,length_mode:'tiered',
+  });
+  expect(response.status(),await response.text()).toBe(400);
+  expect((await response.json()).error).toContain('AUTO_RECOMMENDATIONS_MISSING');
+  await expect(modal.locator('#modalBody [role=alert]')).toContainText(/风格.*文笔/);
+  await expect(modal.locator('[data-sub=SUB_XUANYI_02]')).toHaveAttribute('aria-pressed','true');
+  await expect(start).toBeEnabled();
+  await expect(page).toHaveURL(/#\/home$/);
+  await page.screenshot({path:path.join(out,'AI自动_同类型推荐缺失.png'),fullPage:true});
+  await modal.locator('#modalFooter [data-close-modal]').click();
+
+  await page.goto(`${meta.base}/#/library?tab=writing`);
+  await page.getByRole('button',{name:'新建小说',exact:true}).click();
+  await expect(modal.getByRole('button',{name:'人工选择',exact:true})).toBeVisible();
+  await modal.getByRole('button',{name:'AI 自动',exact:true}).click();
+  await expect(start).toBeDisabled();
+  await modal.locator('#modalFooter [data-close-modal]').click();
+  await page.goto(`${meta.base}/#/atlas/SUB_XUANYI_02`);
+  await page.getByRole('button',{name:'用这个类型写一本',exact:true}).click();
+  await modal.getByRole('button',{name:'AI 自动',exact:true}).click();
+  await expect(modal.locator('[data-sub=SUB_XUANYI_02]')).toHaveAttribute('aria-pressed','true');
+  await expect(start).toBeEnabled();
+  await modal.locator('#modalFooter [data-close-modal]').click();
+  return response.status();
+}
+
 (async()=>{
   const browser=await chromium.launch({headless:true,executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE||undefined});
   const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
   try{
+    if(process.argv.includes('--auto-entry-only')){
+      const status=await checkAutomaticEntry(page);
+      expect(errors).toEqual([]);
+      console.log(JSON.stringify({passed:true,isolated:true,auto_recommendations_missing_status:status,errors}));
+      return;
+    }
     await page.goto(`${meta.base}/#/staging`);
     await page.locator('#importBooks').click();
     await page.locator('#stagingFiles').setInputFiles({name:'[FAKE] 世界拆解浏览器测试.md',mimeType:'text/markdown',
@@ -73,28 +122,7 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
     await page.locator('#methodReview button[type=submit]').click();
     await expect(page.locator('#drawerBody .tag').first()).toContainText('已批准');
     await page.locator('#drawer [data-close-drawer]').click();
-    await page.goto(`${meta.base}/#/home`);
-    await page.getByRole('button',{name:'AI 自动',exact:true}).click();
-    await page.locator('[data-main=GENRE_XUANYI]').click();
-    await page.locator('[data-sub=SUB_XUANYI_02]').click();
-    await expect(page.locator('#modalBody')).toContainText('已批准的同类型');
-    await expect(page.locator('#wizardIdea')).toHaveCount(0);
-    await expect(page.locator('#wizardTitle')).toHaveCount(0);
-    const created=page.waitForResponse(r=>r.request().method()==='POST'&&new URL(r.url()).pathname==='/api/novels');
-    await page.getByRole('button',{name:'开始创作',exact:true}).click();
-    const response=await created;
-    expect(response.request().postDataJSON()).toEqual({
-      design_mode:'auto',auto_recommendations:true,genre_ids:['GENRE_XUANYI','SUB_XUANYI_02'],
-      auto_length:true,length_mode:'tiered',
-    });
-    expect(response.status()).toBe(400);
-    expect((await response.json()).error).toContain('AUTO_RECOMMENDATIONS_MISSING');
-    await expect(page.locator('#modalBody [role=alert]')).toContainText(/风格.*文笔/);
-    await expect(page.locator('[data-sub=SUB_XUANYI_02]')).toHaveAttribute('aria-pressed','true');
-    await expect(page.getByRole('button',{name:'开始创作',exact:true})).toBeEnabled();
-    await expect(page).toHaveURL(/#\/home$/);
-    await page.screenshot({path:path.join(out,'AI自动_同类型推荐缺失.png'),fullPage:true});
-    await page.locator('#modalFooter [data-close-modal]').click();
+    const autoStatus=await checkAutomaticEntry(page);
     await page.goto(`${meta.base}/#/staging/${meta.retry_book_id}`);
     await expect(page.locator('#corpusJobPanel')).toContainText('已暂停');
     await page.locator('#resumeCorpusJob').click();
@@ -121,7 +149,7 @@ const out=path.resolve(process.env.STUDIO_CHECK_OUTPUT||'build/corpus-browser-ev
     expect(form.scroll).toBeLessThanOrEqual(form.width);
     expect(errors).toEqual([]);
     const result={passed:true,isolated:true,provider:meta.provider,desktop:{width:1440,height:1000},mobile:dimensions,form,errors,
-      auto_recommendations_missing_status:response.status()};
+      auto_recommendations_missing_status:autoStatus};
     fs.writeFileSync(path.join(out,'浏览器核验.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result));
   }catch(error){await page.screenshot({path:path.join(out,'failure.png'),fullPage:true});throw error;}
   finally{await browser.close();}
