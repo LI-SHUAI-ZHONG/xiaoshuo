@@ -21,6 +21,11 @@ def current() -> dict[str, str]:
 
 
 def verify(context: dict, plan: dict | None = None) -> None:
+    from nw.materials.book_direction import approved
+
+    direction = approved(context)
+    if plan is not None and direction != approved(plan):
+        raise ValueError('STALE_BOOK_DIRECTION: 阶段交接与原任务冻结的全书方向不同')
     for key, supported in VERSIONS.items():
         if key in context and context[key] not in supported:
             raise ValueError(f'MATERIAL_STAGE: 无法识别冻结的制作校验版本 {key}={context[key]}')

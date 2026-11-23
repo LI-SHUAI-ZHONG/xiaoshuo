@@ -31,6 +31,8 @@ class JobRequest:
     material_deferrals: dict[str, str] = field(default_factory=dict)
     governance_inputs: dict[str, dict] = field(default_factory=dict)
     production_method_policy: dict = field(default_factory=dict)
+    direction_review: bool = False
+    direction_retry_of: str | None = None
 
 
 @dataclass(frozen=True)
@@ -93,6 +95,11 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
         raise ValueError('Design options are available only in design mode')
     if request.parent_id is not None and not text(request.parent_id):
         raise ValueError('Invalid parent proposal ID')
+    if (type(request.direction_review) is not bool
+            or request.direction_review and (request.mode != 'design' or request.design_scope != 'book')
+            or request.direction_retry_of is not None
+            and (not request.direction_review or not text(request.direction_retry_of))):
+        raise ValueError('全书方向确认只能用于全书设计任务')
     if request.mode != 'design' and request.materials != []:
         raise ValueError('MATERIAL_SCOPE: assign materials in design; writing inherits the approved scene')
     if (not isinstance(request.material_deferrals, dict) or
@@ -158,6 +165,13 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
             raise ValueError('Novel job requires the current Brief version')
         if request.mode == 'revise' and request.budget.max_revisions == 0:
             raise ValueError('Revision mode requires at least one revision in the budget')
+        if request.direction_retry_of is not None:
+            from nw.book_direction_flow import CONFIRM
+
+            prior = job_row(store, request.direction_retry_of)
+            if (prior['status'] != 'REJECTED' or prior['step_key'] != CONFIRM
+                    or prior['branch_id'] != request.branch_id or json.loads(prior['request_json'])['brief_ref'] != pin):
+                raise ValueError('重新生成方向须沿用原分支和需求版本，并引用已退回的方向')
         frozen = {**asdict(request), 'scene_ids': scenes, 'brief_ref': pin,
                   'head': asdict(head), 'original_drafts': originals, 'materials': materials}
         _insert_budget(store, ident, request.budget)

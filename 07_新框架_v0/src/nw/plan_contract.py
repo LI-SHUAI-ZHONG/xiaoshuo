@@ -28,9 +28,17 @@ class PlanProposal:
     application: dict | None = None
 
 
-def plan_prompt(scope: str) -> str:
+def plan_prompt(scope: str, *, approved_direction: dict | None = None) -> str:
+    opening = f'按冻结的 Brief、已批准方向、已接受状态和可用参考，提出 2–3 种不同的 {scope} 方案。'
+    book = 'book 只提方向，chapters 为空；'
+    if approved_direction is not None:
+        from nw.materials.book_direction import stage_instruction
+
+        opening = ('沿用输入的 approved_direction.candidate，只提交一个详细的全书设计方案。'
+                   + stage_instruction('plot_design'))
+        book = 'book 细化已选方向的世界、人物、剧情和收束计划，chapters 为空；'
     return (
-        f'按冻结的 Brief、已批准方向、已接受状态和可用参考，提出 2–3 种不同的 {scope} 方案。只输出 JSON 对象，'
+        opening + '只输出 JSON 对象，' +
         f'顶层只有 scope（{scope}）及 candidate_cards 数组。每项只含 kind（plot）、body、members、chapters、'
         'open_world_rules（字符串数组）。body 必填：' + '、'.join(_DIRECTION) +
         '。members 是卡片，每项含 key（唯一 ASCII 字母、数字、下划线）、kind、body，可选 requires（必需卡 key/ID 数组）。'
@@ -42,7 +50,7 @@ def plan_prompt(scope: str) -> str:
         '私密设定留 author_only。核心世界规则待定时填 open_world_rules，勿擅自填成既定事实。'
         'chapters 每项含 index、card（本地 chapter key，已有章用 null）、scenes。'
         'scenes 每项含 index、card（本地 scene key）、story_order（整数，可倒叙）。'
-        'book 只提方向，chapters 为空；volume 带卷卡；chapter 只列一章；scene 只列一场；'
+        + book + 'volume 带卷卡；chapter 只列一章；scene 只列一场；'
         'replan 以新的章/场景号保存候选改案。每案都列清选择、代价、后果与未决问题。'
     )
 
@@ -118,9 +126,13 @@ def _chapters(rows: object, scope: str, members: dict[str, dict]) -> None:
 
 
 def validate_plan(output: dict, scope: str, existing: dict[str, str], materials: list[dict] = (),
-                  material_deferrals: dict | None = None,material_work: dict | None = None, length_context: dict | None = None) -> None:
+                  material_deferrals: dict | None = None,material_work: dict | None = None, length_context: dict | None = None,
+                  *, approved_direction: dict | None = None) -> None:
     minimum=1 if scope!='book' and material_work and material_work.get('policy') in {'artifact-stage-binding-v3','artifact-stage-binding-v4'} else 2
-    if output['scope'] != scope or not minimum <= len(output['candidate_cards']) <= 3:
+    if approved_direction is not None:
+        if scope != 'book' or output['scope'] != scope or len(output['candidate_cards']) != 1:
+            raise ValueError('BOOK_DIRECTION: 已确认全书方向只接受一个对应的深化方案')
+    elif output['scope'] != scope or not minimum <= len(output['candidate_cards']) <= 3:
         raise ValueError('Expected 2–3 candidates for the requested scope')
     choices = set()
     for candidate in output['candidate_cards']:

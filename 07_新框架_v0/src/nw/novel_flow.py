@@ -140,9 +140,13 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         output = applied['output']
         j.head = StateHead(**output['application']['branch_head'])
         return output['proposal_id'], output['application']
-    j.current_step = propose
-
     plan_calls = calls.for_stage('plan')
+    approved_direction = None
+    if scope == 'book' and j.request.get('direction_review'):
+        from nw.book_direction_flow import choose_direction
+
+        approved_direction = choose_direction(plan_calls, decide)
+    j.current_step = propose
 
     def prepare():
         j.check_active(propose)
@@ -152,7 +156,8 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
                                        materials=j.request.get('materials', ()),
                                        material_deferrals=j.request.get('material_deferrals'),
                                        governance_inputs=gov_for_scope,
-                                       production_method_policy=j.request.get('production_method_policy'))
+                                       production_method_policy=j.request.get('production_method_policy'),
+                                       approved_direction=approved_direction)
         from nw.materials.work_session import drive_plan
         from nw.production_methods.selection import method_step
         _,package=read_input_manifest(j.store,request.manifest_id)
@@ -169,12 +174,15 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         _, package = read_input_manifest(j.store, step['input']['request']['manifest_id'])
         from nw.materials.phase_projection import expand_output
         validate_plan(expand_output(output,package), scope, _known_cards(package), package.get('materials', ()),
-                      package.get('material_deferrals'),package.get('material_work'),package.get('length_context'))
+                      package.get('material_deferrals'),package.get('material_work'),package.get('length_context'),
+                      approved_direction=package.get('approved_direction'))
 
     def verify_plan() -> None:
         j.check_active(j.current_step or propose)
         step = j.latest(propose)
         manifest, frozen = read_input_manifest(j.store, step['input']['request']['manifest_id'])
+        if frozen.get('approved_direction') != approved_direction:
+            raise JobPaused('STALE', propose, 'STALE_BOOK_DIRECTION: 全书设计所用的确认方向已变化')
         verify_materials(j.store.directory.parent, frozen.get('materials', ()))
         if frozen.get('material_work'):
             from nw.materials.work_catalog import SourceDesk
@@ -208,7 +216,10 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         if choice['action'] == 'approve' and (not isinstance(root, str) or root not in roots):
             raise ValueError('Choose a root card from the current proposal')
 
-    choice = j.gate(confirm, {'proposal_id': proposal.id, 'candidates': candidates, 'findings': proposal.findings},
+    target = {'proposal_id': proposal.id, 'candidates': candidates, 'findings': proposal.findings}
+    if approved_direction is not None:
+        target['approved_direction'] = approved_direction
+    choice = j.gate(confirm, target,
                     decide, {'approve': 'novel_confirm', 'reject': 'novel_reject'}, check_choice)
     if choice['action'] == 'reject':
         raise JobPaused('REJECTED', confirm, 'PLAN_REJECTED')

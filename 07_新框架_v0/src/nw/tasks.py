@@ -55,7 +55,7 @@ def _insert_manifest(store: Store, inputs: InputManifest, package: dict, *, lega
     _check_settings(inputs.settings)
     scoped = (inputs.branch_id, inputs.state_revision, inputs.story_order, inputs.disclosure_order)
     if (any(v is not None for v in scoped) or
-            (not legacy and inputs.purpose not in ('plan', 'rule_extract', 'material_work'))):
+            (not legacy and inputs.purpose not in ('plan', 'book_directions', 'rule_extract', 'material_work'))):
         if (not isinstance(inputs.branch_id, str) or not inputs.branch_id or
                 type(inputs.state_revision) is not int or inputs.state_revision < 0 or
                 type(inputs.story_order) is not int or not _disclosure_position(inputs.disclosure_order)):
@@ -224,6 +224,9 @@ def _start_task(store: Store, request: TaskRequest, request_json: str, root: str
                      'MATERIAL_GOVERNANCE:','PROJECT_METHOD:','METHOD_DESIGN_REQUIRED:','STALE_PROJECT_METHOD:',
                      'CASTING_EDITOR:','AUTO_RECOMMENDATIONS_MISSING:')):
                 reason = str(exc)
+            if request.kind == 'book_directions':
+                reason = (str(exc) if str(exc).startswith('BOOK_DIRECTION:') else
+                          'BOOK_DIRECTION: 模型未返回可审核的候选 JSON')
     elif status == 'UNKNOWN':
         reason = 'PROVIDER_OUTCOME_UNKNOWN'
     with store.connection:

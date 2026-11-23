@@ -6,6 +6,7 @@ import threading
 from typing import Any, Callable
 from uuid import uuid4
 
+from nw.book_direction_flow import CONFIRM as DIRECTION_CONFIRM, GATE_KIND as DIRECTION_GATE, validate_choice
 from nw.chapter_break import require_break_review
 from nw.config import ConfigRequired, load_config, make_provider
 from nw.novel_flow import resume_job
@@ -78,7 +79,8 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                     'coverage': {'entities': [], 'predicates': []}, 'facts': [], 'card_refs': []}, {})
                 job = start_job(store, JobRequest('design', design_scope='book', budget=budget,
                                                  governance_inputs=governance(wizard),
-                                                 production_method_policy=wizard.get('production_methods',{})))
+                                                 production_method_policy=wizard.get('production_methods',{}),
+                                                 direction_review=wizard.get('direction_review', False)))
         except Exception as exc:
             self.db.update(ident, status='paused', runtime_status='BLOCKED', reason=f'立项初始化未完成：{exc}')
             raise
@@ -127,6 +129,20 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                     raise ConfigRequired(f"Missing environment variable: {spec['api_key_env']}")
         return config, provider
 
+    @staticmethod
+    def _rejected_direction_job(store: Store, novel: dict) -> str | None:
+        row = store.connection.execute('''SELECT id,request_json FROM novel_jobs
+            WHERE id=? AND branch_id=? AND status='REJECTED' AND step_key=?''',
+            (novel['job_id'], novel.get('current_branch', 'main'), DIRECTION_CONFIRM)).fetchone()
+        if row is None:
+            return None
+        from nw.story_dependencies import legacy_ref
+
+        brief = store.briefs()[-1]
+        if json.loads(row['request_json'])['brief_ref'] == asdict(legacy_ref('brief', store.project().id, brief)):
+            return row['id']
+        return None
+
     def _new_job(self, novel: dict, body: dict, store: Store) -> str:
         overview = self.project(novel)
         scenes = [row['id'] for row in overview['scenes']
@@ -151,12 +167,15 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
         if not isinstance(overrides, dict):
             raise ValueError('无效的调用预算')
         budget = self.budget({**novel['wizard'].get('call_budget', {}), **overrides})
+        direction_review = mode == 'design' and scope == 'book' and wizard.get('direction_review', False)
         req = JobRequest(str(mode), branch_id=novel.get('current_branch', 'main'),
                          design_scope=str(scope) if mode == 'design' else 'chapter',
                          parent_id=book_id if mode == 'design' and scope != 'book' else None,
                          scene_ids=selected, budget=budget,
                          governance_inputs=governance(novel['wizard'], library=self.library) if mode == 'design' else {},
-                         production_method_policy=novel['wizard'].get('production_methods',{}) if mode=='design' else {})
+                         production_method_policy=novel['wizard'].get('production_methods',{}) if mode=='design' else {},
+                         direction_review=direction_review,
+                         direction_retry_of=self._rejected_direction_job(store, novel) if direction_review else None)
         job = start_job(store, req)
         self.db.update(novel['id'], job_id=job.id, status='designing' if mode == 'design' else 'writing')
         self.db.event(novel['id'], 'design' if mode == 'design' else 'write',
@@ -297,6 +316,8 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                 raise ValueError('请选择当前节点允许的操作并填写确认理由')
             if gate['target'].get('kind')=='production_method_selection':
                 self.validate_method_choice(gate['target'],body)
+            elif gate['target'].get('kind') == DIRECTION_GATE:
+                validate_choice(gate['target'], body)
             elif action == 'approve' and gate['target'].get('candidates'):
                 roots = [row['root']['card_id'] for row in gate['target']['candidates']]
                 if body.get('root') not in roots:

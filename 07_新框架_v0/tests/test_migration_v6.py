@@ -3,6 +3,7 @@ from pathlib import Path
 import sqlite3
 
 import pytest
+from nw.schema import VERSION
 
 from nw.store import Store
 from test_migration_v5 import snapshot, v4_fixture
@@ -30,7 +31,7 @@ def _v5(directory: Path) -> tuple[list[str], dict]:
 def test_v5_database_and_backup_keep_all_old_rows(tmp_path: Path) -> None:
     tables, before = _v5(tmp_path)
     with Store(tmp_path) as store:
-        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 10
+        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == VERSION
         assert snapshot(store.connection, tables) == before
         assert not store.connection.execute('PRAGMA foreign_key_check').fetchall()
     [backup] = tmp_path.glob('nw.v5.*.bak')

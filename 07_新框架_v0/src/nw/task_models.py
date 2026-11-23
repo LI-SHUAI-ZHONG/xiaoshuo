@@ -4,7 +4,8 @@ import hashlib
 import json
 from typing import Any
 
-TASK_KINDS = frozenset({'plan', 'rule_extract', 'select', 'state_extract', 'fact_review', 'material_work'})
+TASK_KINDS = frozenset({'plan', 'rule_extract', 'select', 'state_extract', 'fact_review', 'material_work',
+                        'book_directions'})
 CARD_KINDS = frozenset({'world', 'character', 'style', 'taboo', 'plot', 'scene', 'promise',
                         'rule', 'brief', 'volume', 'chapter'})
 
@@ -146,7 +147,7 @@ def _evidence(ref: dict) -> bool:
 
 def validate_task_output(kind: str, text: str) -> dict:
     """Check the transport envelope. Source and story checks belong to its consumers."""
-    fields = {'plan': {'scope', 'candidate_cards'}, 'rule_extract': {'rules'},
+    fields = {'plan': {'scope', 'candidate_cards'}, 'book_directions': {'candidates'}, 'rule_extract': {'rules'},
               'select': {'selected_refs'}, 'state_extract': {'operations'}, 'fact_review': {'findings'},
               'material_work': {'status','tasks','requests','understanding','work_plan'}}
     if kind not in fields:
@@ -173,6 +174,8 @@ def validate_task_output(kind: str, text: str) -> dict:
                 any(not _text(c.get('kind')) or c['kind'] not in CARD_KINDS or
                     not isinstance(c.get('body'), dict) or not c['body'] for c in cards)):
             raise ValueError('Invalid scope or candidate card')
+    elif kind == 'book_directions':
+        _records(data['candidates'], 'candidates')
     elif kind == 'rule_extract':
         for rule in _records(data['rules'], 'rules'):
             sources = _records(rule.get('source_refs'), 'source_refs')

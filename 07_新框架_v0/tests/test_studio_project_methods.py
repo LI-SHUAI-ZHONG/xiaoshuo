@@ -17,12 +17,17 @@ from project_methods_fixture import seed_method,template_catalog,ProjectModel
 
 
 @pytest.fixture
-def client(tmp_path,monkeypatch):
+def client(tmp_path,monkeypatch,request):
     workspace=tmp_path/'[FAKE]-http';workspace.mkdir();template_catalog(workspace)
-    _,method=seed_method(workspace,monkeypatch)
+    if getattr(request, 'param', None) == 'world':
+        from ai_world_method_fixture import available_method
+
+        _, method = available_method(workspace, monkeypatch)
+    else:
+        _,method=seed_method(workspace,monkeypatch)
     # The small test source catalog has no original governance documents.
     # Keep this HTTP fixture focused on method execution; governance has its own suite.
-    monkeypatch.setattr('nw.studio.production.governance',lambda _: {})
+    monkeypatch.setattr('nw.studio.production.governance',lambda _, **_options: {})
     service=StudioService(workspace,config_path=tmp_path/'missing.toml');server=create_studio_server(service,port=0)
     model=ProjectModel();server.production.test_mode=True
     config=Config('fake','http://localhost','[FAKE] project-methods','',5,{},workspace,source_driven=False)

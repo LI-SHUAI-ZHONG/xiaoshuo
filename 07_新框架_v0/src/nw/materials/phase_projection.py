@@ -13,6 +13,7 @@ from nw.task_models import canonical,content_sha256
 
 def verify_chain(session: dict) -> None:
     require(session.get('policy') in STAGED_POLICIES,'unknown stage binding policy')
+    from nw.materials.book_direction import check_receipt
     from nw.materials.story_policies import verify_session
     verify_session(session)
     records=session.get('stages',[]);order=phase_order(session['scope'])
@@ -22,6 +23,7 @@ def verify_chain(session: dict) -> None:
     sources={row['source']['id']:row for row in session['sources']};products={}
     screening=session['context'].get('dynamic_screening')
     for row in records:
+        check_receipt(row, session['context'], session.get('calls', []))
         product_ref(row)
         from nw.materials.semantic_handoff import input_stages
         dependencies=input_stages(row['stage'],products,dynamic_screening=bool(screening))

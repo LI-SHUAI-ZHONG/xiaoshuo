@@ -770,13 +770,19 @@ for _stage in STAGE_MATERIALS:
 
 DEFAULT_STAGE_MATERIALS = dict(STAGE_MATERIALS)
 
+PLOT_OUTPUT_SCHEMA = (
+    'directions:[{title,conflict,consequence,reader_promise,protagonist_want,resistance,choice,cost,ending_direction}],'
+    'members:[{key,kind:plot或promise或chapter或volume,body}],reader_plan:[信息顺序与情绪变化],'
+    'promise_plan:[埋设、预期、回收安排],event_nodes:[{id,actors:[人物key],goal,setting,obstacle,completion_condition,status:planned}]'
+)
+
 SCHEMAS={
  'type_selection':'selection:[{id,label:本项目所选类型,basis:原义或作者需求依据}],concepts:[{id,label,type_refs:[selection.id],activation_basis:在项目中为何激活}],boundaries:[边界]；不凭名称补造来源定义',
  'type_adaptation':'adaptations:[{id,type_refs:[实际已选类型id],parameters:{参数:具体值},limits:[限制]}],focuses:[{id,concept:已激活concept.id,from_focus,to_focus,application:实际关注重点设计}],boundaries:[非保证边界]；组合、连接与表达适配只限定已选类型，概念触发不得变成实体状态变化',
  'world_design':'members:[{key,kind:world,body:{title,rule,limits}}],limitations:[限制],unknowns:[待作者确认事项]',
  'character_design':'members:[{key,kind:character,body:{name,role,want,visibility:public或holders或author_only}}],states:[{entity:key,state:{属性:前值},status:candidate}],capabilities:[{entity:人物key,can_act:true或false,abilities:[已有或明确提议的项目能力],basis:人设或行为依据,limits:[限制]}]；沿用approved_cards时不重建同ID；私密信息另置author_only卡',
  'static_relations':'relations:[{id,source:实际实体key,target:实际实体key,relation,condition}],requirements:[{id,source_id:本步方法ID,target_stage:后续阶段,constraint:方法给下游的设计要求,project_refs:[member:key或type:selection.id或brief]}]；读者情绪等方法关系转成设计约束，不虚构书内读者实体；不适用时空数组',
- 'plot_design':'directions:[{title,conflict,consequence,reader_promise,protagonist_want,resistance,choice,cost,ending_direction}],members:[{key,kind:plot或promise或chapter或volume,body}],reader_plan:[信息顺序与情绪变化],promise_plan:[埋设、预期、回收安排],event_nodes:[{id,actors:[人物key],goal,setting,obstacle,completion_condition,status:planned}]；book给2至3个方向，细化只围绕所选父方向给1个实际设计，另起方向必须另建细化方案',
+ 'plot_design':PLOT_OUTPUT_SCHEMA+'；book给2至3个方向，细化只围绕所选父方向给1个实际设计，另起方向必须另建细化方案',
  'event_design':'candidates:[{id,source_ids:[本步资料ID或空数组表示纯项目设计],predecessor:plot.event_nodes.id,event:后继事件设计,actors:[实际人物key],completion_gate:原样采用前事件completion_condition,status:conditional_candidate}]；前事件未完成时保留条件预案，不假称事实；本阶段不生成场景卡',
  'action_design':'candidates:[{id,source_ids:[本步资料ID或空数组],event:上游event_node或event_candidate.id,actor:实际人物key,action:完整行动选择,steps:[{object,action,obstacle,response,result}],requires:[人物capabilities中已有的最低能力],cost,limits:[限制],status:candidate}],waiting:[{source_id,missing:[缺失前置],reason}]；人物必须可行动，先按资料设计具体动作再供场景选择',
  'scene_design':'members:[{key,kind:scene,body:{title,goal,pov:实际人物key,characters:[key],character_goals:{key:目标},entering_state,conflict,choice:所选动作的action原文,planned_result,allowed_disclosure}}],chapters:[{index:正整数,card:上游chapter成员key或null,scenes:[{card:场景key,index:正整数,story_order:正整数}]}],events:[{id,scene:场景key,entity:实体key,trigger:候选事件,before_state:{属性:前值}}],selected_events:[{scene,event:实际上游event_node或event_candidate.id}],selected_actions:[{scene,action:上游action_candidate.id}]；每场明确选一个事件和一个动作，不能把候选当作已发生',
@@ -903,9 +909,11 @@ def model_semantics(contract: dict) -> dict:
 
 
 def retrieval_need(stage: str,package: dict,products: dict) -> str:
+    from nw.materials.book_direction import search_need
+
     brief = [package['brief']['text'], package['brief']['constraints']]
     action_state = stage == 'action_design' and package.get('action_state_policy') == ACTION_STATE_POLICY
-    cues = [] if action_state else list(brief)
+    cues = [] if action_state else [*search_need(package, stage), *brief]
     fields={'title','name','want','goal','conflict','choice','planned_result','voice','rule','limits',
             'trigger','information','expectation','emotion','setup','payoff','observable','action','condition','relation'}
     list_fields = {'selection','boundaries','limitations','reader_plan','promise_plan'}
@@ -1077,6 +1085,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.materials.work_session import _study_call,model_source
     from nw.materials.step_guard import build_continuity_ledger, build_joint_material_plan
     from nw.materials.phase_lifecycle import CANDIDATE_SELECTION
+    from nw.materials.book_direction import stage_input as direction_input, stage_instruction as direction_instruction
     from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY, scene_source_placements
     from nw.materials.scene_actions import MULTI_ACTION_POLICY
     from nw.materials.network_workflow import (EARLY_POLICY, early_waiting, prepared_static_source,
@@ -1158,6 +1167,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     if chapter_reviews:
         handoff_instruction += '\n' + plot_design_chapters.CHAPTER_REVIEWS
     demand = retrieval_need(stage, package, products)
+    chosen_direction = direction_input(package, stage)
     selection={'policy':'task-block-subitem-selection-v1','before_stage':stage,
         'function':{'stage':stage,'task':demand},
         'upstream':[product_ref(products[n]) for n in deps],
@@ -1214,6 +1224,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             'responses':responses,'output_schema':SCHEMAS[stage],
             'method_requirements':requirements_for(stage,products),
             'approved_cards':context['approved_cards'],'parent':package.get('parent')}
+        if chosen_direction is not None:
+            payload['approved_direction'] = chosen_direction
+            if stage == 'plot_design':
+                payload['output_schema'] = PLOT_OUTPUT_SCHEMA + '；只深化已确认的全书方向，directions 恰有一项。'
         if context.get('length_context'):
             from nw.length_plan import model_approved_cards
             payload['approved_cards'] = model_approved_cards(payload['approved_cards'])
@@ -1307,7 +1321,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             if stage == 'world_design':
                 payload['cast_plot_sources'] = cast_demands.source_options(context)
                 payload['output_schema'] += '；cast_demands:[{id,slot,need_ref,need_quote,event,obstacle,action,result,reuse_actor,reason,assessments}]'
-                suffix += '\n' + cast_demands.WORLD_INSTRUCTION
+                suffix += '\n' + cast_demands.world_instruction(context)
             elif stage == 'character_design':
                 payload['frozen_cast_demands'] = cast_demands.effective_demands(products, context)
                 payload['output_schema'] += '；cast_assignments:[{demand,actor}]'
@@ -1750,6 +1764,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 from nw.production_methods.selection import verify_sources
                 verify_sources(store,{'stages':[*products.values(),{'production_methods':method_plan}],
                     'production_method_parents':context.get('production_method_parents',[])})
+        if chosen_direction is not None:
+            suffix += '\n' + direction_instruction(stage)
         call_index = turn if world_candidates else index*max_rounds+turn
         call_version = 'world-method-pages-v1' if world_candidates else 'source-step-v4'
         if context.get('plot_cast_gap') and stage in ('character_design', 'static_relations', 'plot_design'):
@@ -1789,6 +1805,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     'binding_reviews':reviews,'deferred_sources':deferred,
                     'source_selection':selection,
                     'source_ids':[s['source']['id'] for s in sources]}
+            if chosen_direction is not None:
+                record['approved_direction_receipt'] = receipt
             if design_candidates:
                 record['network_design_candidates'] = design_candidates
             if network_context is not None and stage == 'plot_design':
@@ -1846,6 +1864,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
 def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMProvider,config: Config,*,
                  retry_failed: bool=False,verify: Callable | None=None,max_rounds: int=8,method_decision=None) -> tuple[TaskRequest,dict]:
     from nw.materials.story_policies import VERSIONS, verify_plan
+    from nw.materials.book_direction import approved, verify_calls as verify_direction_calls
+
     verify_plan(package)
     workspace=store.directory.parent
     if not (workspace/'materials/catalog.db').is_file():
@@ -1876,6 +1896,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         session=package['material_work']
         require(session.get('policy')==POLICY,'legacy global study must be redesigned through actual creation steps')
         verify_chain(session);desk.verify(session['sources'])
+        verify_direction_calls(store, session)
         from nw.materials.casting_editor import verify_calls
         verify_calls(store, session)
         from nw.materials.cast_gap import verify_archive
@@ -1891,6 +1912,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
              'material_source_snapshots':{},
              'approved_cards':package.get('approved_cards',[]),
              'accepted_state':package.get('accepted_state',[]),'accepted_changes':package.get('accepted_changes',[])}
+    if chosen_direction := approved(package):
+        context['approved_direction'] = chosen_direction
     if package.get('length_context'):
         context['length_context'] = package['length_context']
     if selected:
@@ -2076,6 +2099,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     session['semantic_contracts']=list({c['source_id']:c for row in products.values()
         for c in row['semantic_contracts']}.values())
     verify_chain(session);desk.verify(session['sources'])
+    verify_direction_calls(store, session)
     from nw.materials.casting_editor import verify_calls
     verify_calls(store, session)
     session['candidates']=compile_candidates(session)

@@ -63,8 +63,7 @@ export async function openWizard({mode, prefill} = {}) {
     $('#modalFooter').innerHTML = `<div class="wizard-selection">${step === 0 ? '已选类型' : '创作偏好'} <strong>${esc(summary)}</strong></div>
       ${step ? '<button class="secondary" id="wizardPrev">上一步</button>' : '<button class="secondary" data-close-modal>取消</button>'}
       ${step > 0 && step < 8 ? '<button class="ghost" id="wizardSkip">跳过此步</button>' : ''}
-      ${auto ? `<button class="button" id="wizardNext" ${unavailable}>开始创作 ${icon('arrow')}</button>`
-        : last ? `<button class="button" id="wizardNext" ${unavailable}>人工选择</button>`
+      ${auto || last ? `<button class="button" id="wizardNext" ${unavailable}>生成方向短案 ${icon('arrow')}</button>`
         : `<button class="button" id="wizardNext" ${unavailable}>下一步：${STEPS[step + 1].name} ${icon('arrow')}</button>`}`;
     const move = delta => {
       if (submitting) return;
@@ -166,7 +165,7 @@ export async function openWizard({mode, prefill} = {}) {
     const current = genres.find(genre => genre.id === selectedMain);
     const atLimit = types().length >= limits.genre;
     const secondaryLimit = Math.min(2, limits.genre - 1 - Number(Boolean(selectedSub)));
-    const intro = auto ? `<p class="wizard-description">AI 从已批准的同类型小说拆解推荐中为你选择风格、文笔、写法、世界观、人物、结构篇幅和卖点。缺少任一项推荐时，会提示缺失选项并停止立项。</p>
+    const intro = auto ? `<p class="wizard-description">AI 从已批准的同类型小说拆解推荐中为你选择风格、文笔、写法、世界观、人物、结构篇幅和卖点。齐备后会生成几份全书方向短案，请你选定一个。缺少推荐时，页面会列出缺项。</p>
       <p id="wizardAutoError" class="error" role="alert" tabindex="-1" hidden></p>` : stepsBar(0);
     $('#modalBody').innerHTML = intro + `
       <div id="wizardTypeSelection">
@@ -298,13 +297,13 @@ export async function openWizard({mode, prefill} = {}) {
         ${wizardMethods(bookWorldAvailable)}
         <div class="notice">
           <p><strong>人工选择</strong> 使用你勾选的偏好，需要采用所选拆解方法时由你核对确认。</p>
-          <p>立项后启动全书设计。你可以用「上一步」回改立项选项。书纲和章场方案确认后进入正文制作。</p>
+          <p>立项后生成方向短案，由你选定一个，再展开世界、人物和剧情设计。你可以用「上一步」回改立项选项。</p>
         </div>
       </div></div>`;
   }
 
   async function createNovel(payload) {
-    const result = await api.post('/novels', payload);
+    const result = await api.post('/novels', {...payload, direction_review:true});
     const novel = result.novel || result;
     if (!novel.id) throw new Error('项目创建结果没有返回作品标识');
     const active = alive();

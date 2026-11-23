@@ -27,6 +27,10 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     if len(constraints) > 12000:
         raise ValueError('作者硬约束最多 12000 字，请先缩短内容')
     wizard = {'title': title, 'idea': idea, 'constraints': constraints}
+    if 'direction_review' in raw:
+        if type(raw['direction_review']) is not bool:
+            raise ValueError('全书方向确认设置必须为布尔值')
+        wizard['direction_review'] = raw['direction_review']
     if 'design_mode' in raw:
         if mode not in ('manual', 'auto'):
             raise ValueError('请选择人工选择或 AI 自动')

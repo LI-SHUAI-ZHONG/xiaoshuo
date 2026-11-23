@@ -8,6 +8,8 @@ import re
 from tempfile import NamedTemporaryFile
 from typing import Any
 
+from nw.book_direction_flow import (CONFIRM as DIRECTION_CONFIRM, GATE_KIND as DIRECTION_GATE,
+                                    LABEL as DIRECTION_LABEL, PROPOSE as DIRECTION_PROPOSE)
 from nw.length_plan import count_words
 from nw.length_settings import saved_brief_length
 from nw.materials.phase_routes import phase_order
@@ -34,7 +36,8 @@ class ProductionViews:
             end = datetime.fromisoformat(row['ended_at']) if row['ended_at'] else datetime.now(timezone.utc)
             elapsed = max(0, round((end - datetime.fromisoformat(row['started_at'])).total_seconds(), 1))
             row['elapsed_seconds'] = elapsed
-            label = STAGE_LABELS.get(row.get('stage'), {}).get('zh', row['kind'])
+            label = ('全书方向短案' if row['kind'] == 'book_directions' else
+                     STAGE_LABELS.get(row.get('stage'), {}).get('zh', row['kind']))
             tokens = {key: usage[key] for key in ('total_tokens', 'input_tokens', 'output_tokens', 'prompt_tokens',
                                                  'completion_tokens', 'eval_count', 'prompt_eval_count') if key in usage}
             summary = f"{label} · {row['model'] or '模型未记录'} · {elapsed}s · {row['status']}"
@@ -80,11 +83,13 @@ class ProductionViews:
                 job = show_job(store, row['id'])
                 gate = job.outputs.get('gate')
                 if gate:
+                    summary = ('全书方向待选择' if gate.get('kind') == DIRECTION_GATE else
+                               '方案待选择' if str(job.step).startswith('plan:') else
+                               '核心设定变化需确认' if 'core' in str(job.step) else '本场稿件与状态待接受')
                     result.append({'id': gate['token'], 'job_id': job.id, 'step': job.step, 'token': gate['token'],
                                    'branch_id': row['branch_id'],
                                    'actions': gate['actions'], 'target': gate,
-                                   'summary': '方案待选择' if str(job.step).startswith('plan:') else
-                                   ('核心设定变化需确认' if 'core' in str(job.step) else '本场稿件与状态待接受')})
+                                   'summary': summary})
         return {'gates': result}
 
     @staticmethod
@@ -98,6 +103,23 @@ class ProductionViews:
             ORDER BY t.rowid''').fetchall()
         return [dict(row) for row in rows]
 
+    @staticmethod
+    def _direction_node(job: dict, row: dict | None) -> dict:
+        target = json.loads(row['input_json']) if row else {}
+        choice = json.loads(row['output_json']).get('choice', {}) if row else {}
+        selected = choice.get('root') if choice.get('action') == 'approve' else None
+        if selected or choice.get('action') == 'reject':
+            status = 'done' if selected else 'rejected'
+        elif job['status'] in ('BLOCKED', 'STALE', 'CANCELLED'):
+            status = 'blocked'
+        elif target:
+            status = 'waiting'
+        else:
+            status = 'running' if job['status'] == 'RUNNING' else 'pending'
+        return {'id': f"{job['id']}:book:direction", 'job_id': job['id'], 'scope': 'book',
+                'kind': 'book_direction', 'label': DIRECTION_LABEL, 'status': status,
+                'output': {'candidates': target.get('candidates', []), 'selected_id': selected}, 'children': []}
+
     def progress(self, ident: str, *, include_logs: bool = True) -> dict:
         novel = self.db.get(ident)
         project = self.project(novel)
@@ -107,6 +129,8 @@ class ProductionViews:
             model_logs = self.call_logs(store) if include_logs else []
             rows = store.connection.execute('SELECT id,request_json,status FROM novel_jobs ORDER BY rowid').fetchall()
             job_requests = {row['id']: json.loads(row['request_json']) for row in rows}
+            directions = {row['job_id']: dict(row) for row in store.connection.execute(
+                'SELECT job_id,input_json,output_json FROM novel_steps WHERE step_key=?', (DIRECTION_CONFIRM,))}
             reviews = {scene['id']: self.review_for_draft(store, scene['id'], scene['latest_draft_id'])
                        for scene in project['scenes'] if scene['latest_draft_id']}
             words = 0
@@ -126,6 +150,9 @@ class ProductionViews:
                             if row['budget_id'] == job_row['id'] and row['scope'] == node_scope}
                 blocked = job_row['outputs'].get('blocked_design', {})
                 stage_nodes = []
+                direction_enabled = node_scope == 'book' and request.get('direction_review')
+                if direction_enabled:
+                    stage_nodes.append(self._direction_node(job_row, directions.get(job_row['id'])))
                 for stage in phase_order(node_scope):
                     phase = matching.get(stage)
                     parsed = json.loads(phase['result_json']) if phase and phase['result_json'] else {}
@@ -139,7 +166,8 @@ class ProductionViews:
                         'output': (parsed or {}).get('products'), 'children': []})
                 applied = any(step['step_key'] == f'plan:{node_scope}:apply' and step['status'] == 'DONE'
                               for step in job_row['outputs']['steps'])
-                tree.append({'id': f"{job_row['id']}:{node_scope}", 'label': '全书设计' if node_scope == 'book' else '章节设计',
+                label = '全书制作' if direction_enabled else '全书设计' if node_scope == 'book' else '章节设计'
+                tree.append({'id': f"{job_row['id']}:{node_scope}", 'label': label,
                              'scope': node_scope, 'status': 'done' if applied else job_row['status'].lower(), 'children': stage_nodes})
         for chapter in project['chapters']:
             children = []
@@ -170,6 +198,8 @@ class ProductionViews:
         if job and runtime not in ('CONFIG_REQUIRED', 'PAUSED', 'PAUSING', 'BLOCKED'):
             runtime = job['status']
         current_step = job.get('step') if job else None
+        if current_step in (DIRECTION_PROPOSE, DIRECTION_CONFIRM):
+            current_step = DIRECTION_LABEL
         active = next((row for row in reversed(phases) if job and row['budget_id'] == job['id']
                        and row['status'] == 'STARTED'), None)
         if active and runtime == 'RUNNING':

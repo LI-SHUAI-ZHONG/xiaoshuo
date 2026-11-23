@@ -195,8 +195,13 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         _members(value['members'],{'plot','promise','volume','chapter'},entities)
         validate_static_bindings(value,products,sources,context)
         require(isinstance(value['directions'],list) and 1<=len(value['directions'])<=3,'concrete direction products required')
-        require(len(value['directions'])==1 if context.get('scope','chapter')!='book' else len(value['directions'])>=2,
-                'each detailed direction needs its own coherent scene products; book needs alternatives')
+        from nw.materials.book_direction import approved
+
+        if approved(context):
+            require(len(value['directions']) == 1, '已确认全书方向只接受一份对应的剧情深化')
+        else:
+            require(len(value['directions'])==1 if context.get('scope','chapter')!='book' else len(value['directions'])>=2,
+                    'each detailed direction needs its own coherent scene products; book needs alternatives')
         from nw.plan_contract import _DIRECTION
         for body in value['directions']:
             _body('plot',body);require(all(_text(body.get(k)) for k in _DIRECTION),'incomplete direction product')

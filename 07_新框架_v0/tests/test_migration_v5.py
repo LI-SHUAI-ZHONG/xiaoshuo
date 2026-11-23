@@ -5,7 +5,7 @@ import sqlite3
 
 import pytest
 
-from nw.schema import MIGRATE_V2, MIGRATE_V3, MIGRATE_V4, SCHEMA
+from nw.schema import MIGRATE_V2, MIGRATE_V3, MIGRATE_V4, SCHEMA, VERSION
 from nw.store import Store
 
 
@@ -46,7 +46,7 @@ def v4_fixture(directory: Path) -> tuple[list[str], dict]:
 def test_v4_full_fixture_migrates_without_loss(tmp_path: Path) -> None:
     tables, before = v4_fixture(tmp_path)
     with Store(tmp_path) as store:
-        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 10
+        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == VERSION
         assert snapshot(store.connection, tables) == before
         assert not store.connection.execute('PRAGMA foreign_key_check').fetchall()
         assert store.run_output('r1') == {'request_id': 'rid', 'raw': {'original': '初稿'}}

@@ -1,4 +1,5 @@
 """Freeze narrative jobs before deciding who will perform them."""
+from nw.materials.book_direction import approved
 from nw.materials.template_support import content, require
 from nw.task_models import _text
 
@@ -11,12 +12,13 @@ ACTOR_FIELDS = ('role', 'want', 'scene_function', 'independent_goal', 'backgroun
                 'need', 'wound')
 PLOT_FIELDS = ('goal', 'conflict', 'choice', 'consequence', 'resistance', 'protagonist_want', 'ending_direction',
                'setup', 'payoff', 'turn', 'cost', 'central_question')
+BOOK_SCOPE_INSTRUCTION = '全书只列几个候选方向都需要的人物职责，分支独有的演出者等选定方向后设计。'
 WORLD_INSTRUCTION = (
     '在本步独立交付下一步的剧情用人需求 cast_demands。先定剧情，不起新角色名字。'
     '逐项选择 cast_plot_sources 的真实前置，从中摘完整的具体句子 need_quote，写好要发生的 event、'
     '阻止进展的 obstacle、此时需要某人完成的可表演的 action 及其可观察的 result。'
     '先让环境、主角或已有角色解决；没有独立职责无需另列，没有需求交空数组。人物独白、拒绝、传递消息及互相影响的选择也可成为实际行动。'
-    '全书只列几个候选方向都需要的人物职责，分支独有的演出者等选定方向后设计。本章须从当前方向、章节任务或前章交接推导。'
+    + BOOK_SCOPE_INSTRUCTION + '本章须从当前方向、章节任务或前章交接推导。'
     '前章引文只证明实际写出的内容。已核验的个人误信或推断属于该人，开放问题只是可供推进的方向。'
     '每项填 id 和 slot；同一人可以兼任的几项都用同一 slot。reuse_actor 填批准人物的 card_id 或 null（确需新增）。'
     'assessments 列 {actor:已批准人物编号,field:其实际的身份/目标/能力限制等字段名,quote:该字段原文证据,reason:'
@@ -29,6 +31,13 @@ CHARACTER_INSTRUCTION = (
     '同一 slot 共用同一演员，分别被设计为不同 slot 的不合并。新卡 scene_function 原样使用其所承担的一项 action，'
     'casting.need_ref 和 need_quote 一同沿用该项原文；creation_reason 可解释他自己的身份、目标与这件事为何会在此刻相交。'
 )
+
+
+def world_instruction(context: dict) -> str:
+    if approved(context):
+        return WORLD_INSTRUCTION.replace(BOOK_SCOPE_INSTRUCTION,
+            '全书按已确认方向的剧情前提、主角目标、核心冲突和长线推进方式确定真实用人职责。')
+    return WORLD_INSTRUCTION
 
 
 def roster(context: dict) -> dict:
@@ -61,6 +70,11 @@ def source_card_ids(parent: dict | None, cards: list[dict], chapter_handoff: dic
 def source_options(context: dict) -> dict:
     """Only plot premises may commission a character. A world rule by itself cannot."""
     result = {}
+    if direction := approved(context):
+        selected = direction['candidate']
+        for field in ('premise', 'protagonist', 'goal', 'conflict', 'long_term_drive'):
+            if _text(value := selected.get(field)):
+                result[f'confirmed-direction:{field}'] = value
     parent = context.get('cast_parent', {})
     for field in PLOT_FIELDS:
         if _text(value := parent.get(field)):

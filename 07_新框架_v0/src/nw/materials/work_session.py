@@ -86,6 +86,10 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
 
         if keys := resolution_keys(payload.get('author_input', {}).get('creation_plan', {})):
             add_resolution_schema(shape, keys)
+        if payload.get('stage') == 'plot_design' and payload.get('approved_direction'):
+            for alternative in shape.get('anyOf', [shape]):
+                if products := alternative.get('properties', {}).get('products'):
+                    products['properties']['directions'].update(minItems=1, maxItems=1)
         if 'static_relations_basis' in payload:
             from nw.materials.static_followup_call import FOLLOWUP_FIELDS
             products = shape['properties']['products']

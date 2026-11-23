@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 10
+VERSION = 11
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -275,23 +275,27 @@ DROP TABLE story_decisions_v7;
 COMMIT;
 """
 
-MIGRATE_V9 = """
+def _task_kind_migration(old: int, new: int, kinds: str) -> str:
+    calls = MIGRATE_V5.split('CREATE TABLE task_calls(', 1)[1].split('CREATE TABLE call_reservations(', 1)[0]
+    calls = calls.replace("'fact_review'", f"'fact_review',{kinds}")
+    return f"""
 BEGIN IMMEDIATE;
-ALTER TABLE plan_applications RENAME TO plan_applications_v8;
-ALTER TABLE task_calls RENAME TO task_calls_v8;
-CREATE TABLE task_calls(
-""" + MIGRATE_V5.split('CREATE TABLE task_calls(',1)[1].split('CREATE TABLE call_reservations(',1)[0].replace(
-    "'state_extract','fact_review'", "'state_extract','fact_review','material_work'") + """
-INSERT INTO task_calls SELECT * FROM task_calls_v8 ORDER BY rowid;
+ALTER TABLE plan_applications RENAME TO plan_applications_v{old};
+ALTER TABLE task_calls RENAME TO task_calls_v{old};
+CREATE TABLE task_calls({calls}
+INSERT INTO task_calls SELECT * FROM task_calls_v{old} ORDER BY rowid;
 CREATE TABLE plan_applications(
  proposal_id TEXT PRIMARY KEY REFERENCES task_calls(id), decision_id TEXT NOT NULL REFERENCES card_decisions(id),
  mapping_json TEXT NOT NULL CHECK(json_valid(mapping_json)));
-INSERT INTO plan_applications SELECT * FROM plan_applications_v8 ORDER BY rowid;
-DROP TABLE plan_applications_v8;
-DROP TABLE task_calls_v8;
-PRAGMA user_version=9;
+INSERT INTO plan_applications SELECT * FROM plan_applications_v{old} ORDER BY rowid;
+DROP TABLE plan_applications_v{old};
+DROP TABLE task_calls_v{old};
+PRAGMA user_version={new};
 COMMIT;
 """
+
+
+MIGRATE_V9 = _task_kind_migration(8, 9, "'material_work'")
 
 MIGRATE_V10 = """
 BEGIN IMMEDIATE;
@@ -313,5 +317,7 @@ PRAGMA user_version=10;
 COMMIT;
 """
 
+MIGRATE_V11 = _task_kind_migration(10, 11, "'material_work','book_directions'")
+
 MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6,
-              6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10}
+              6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10, 10: MIGRATE_V11}

@@ -104,6 +104,11 @@ def run_followup(store: Store, request: TaskRequest, package: dict, provider: LL
 
     stage_config, stage_provider = resolve_stage_runtime(config, provider, stage)
     suffix = LAYER_INSTRUCTION if any(row.get('network_layer_fields') for row in model_contracts) else ''
+    from nw.materials.book_direction import stage_input, stage_instruction
+
+    if chosen_direction := stage_input(package, stage):
+        payload['approved_direction'] = chosen_direction
+        suffix += '\n' + stage_instruction(stage)
     delta, receipt = _study_call(store, request, stage_config, stage_provider, index, payload, sources, desk,
         retry_failed, verify, prompt=PROMPT, prompt_suffix=suffix, validator=validate,
         version=('static-network-cast-repair-v1' if context.get('plot_cast_gap') else 'static-network-followup-v1'),

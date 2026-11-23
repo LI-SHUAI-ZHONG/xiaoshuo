@@ -104,5 +104,10 @@ class JobCalls:
         reason = (result.reason if result.reason and result.reason.startswith(
             ('MATERIAL_DESIGN:','MATERIAL_WORK:','MATERIAL_STAGE:','MATERIAL_WAITING_INPUTS:'))
                   else f'{request.kind} {result.status}/{result.validation}')
+        if request.kind == 'book_directions':
+            outcome = {'truncated': '候选输出被截断', 'refused': '模型拒绝生成候选', 'error': '模型生成候选失败'}
+            detail = result.reason or outcome.get(result.finish_reason)
+            if detail:
+                reason = detail if detail.startswith('BOOK_DIRECTION:') else f'BOOK_DIRECTION: {detail}'
         j.result(key, 'FAILED', {'task_id': result.id, 'reason': reason})
         raise self._blocked(key, reason, task_id=result.id)

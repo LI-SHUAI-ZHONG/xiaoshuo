@@ -118,6 +118,10 @@ def validate_saved_work(store: Store,proposal_id: str,design: dict,root: dict) -
     _require(all(canonical(expected.get(key))==canonical(design.get(key)) for key in
                  ('work_session','work_application','work_context')),'approved method work was edited')
     validate_work(design['work_context'],design['work_session'])
+    if design['work_session'].get('policy') in STAGED_POLICIES:
+        from nw.materials.book_direction import verify_calls as verify_direction_calls
+
+        verify_direction_calls(store, design['work_session'])
     from nw.production_methods.selection import verify_sources
     verify_sources(store,design['work_session'])
     SourceDesk(store.directory.parent).verify(design['work_session']['sources'])

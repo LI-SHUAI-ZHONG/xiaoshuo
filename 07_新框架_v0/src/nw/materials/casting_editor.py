@@ -126,7 +126,7 @@ def edit_world_demands(store: Store, request: TaskRequest, provider: LLMProvider
             cast_demands.validate_demands(raw['cast_demands'], feedback['plot_sources'], feedback['current_cast'])
 
         prompt = ('[CASTING_REDESIGN] 按独立编辑指出的具体问题重设用人需求。返回 {"cast_demands":[...]}。'
-                  '保留有效职责，可以合并、改作复用或撤销多余职责。' + cast_demands.WORLD_INSTRUCTION)
+                  '保留有效职责，可以合并、改作复用或撤销多余职责。' + cast_demands.world_instruction(context))
         amended, receipt = _study_call(store, request, cfg, author, 0, feedback, [], desk, retry_failed, verify,
             version='cast-demand-redesign-v1', prompt=prompt, validator=validate)
         calls.append(receipt)

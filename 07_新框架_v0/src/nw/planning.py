@@ -1,6 +1,7 @@
 
 """Budgeted design calls, immutable candidates, and read-only proposal inspection."""
 from dataclasses import asdict, replace
+from copy import deepcopy
 import json
 from uuid import uuid4
 
@@ -97,11 +98,12 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                       branch: str = 'main', materials: list[dict] = (),
                       material_deferrals: dict | None = None,
                       governance_inputs: dict | None = None,
-                      production_method_policy: dict | None = None) -> tuple[TaskRequest, dict]:
+                      production_method_policy: dict | None = None,
+                      approved_direction: dict | None = None) -> tuple[TaskRequest, dict]:
     from nw.call_budget import read_budget
+    from nw.materials.book_direction import approved
 
     budget = read_budget(store, budget_id)
-    prompt = plan_prompt(scope)
     manifest_id = f'plan:{ident}'
     with store.connection:
         store.connection.execute('BEGIN')
@@ -137,7 +139,6 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         if scope != 'book' and processes & {'material_selection','material_conversion'} and not scene_routes(materials, deferrals):
             raise ValueError('MATERIAL_SCOPE: selection and conversion require concrete scene-level materials')
         verify_materials(store.directory.parent, materials)
-        prompt += material_prompt(materials, book=scope == 'book', deferrals=deferrals)
         brief = _brief(store, brief_ref.version if isinstance(brief_ref, Ref) else brief_ref)
         project_id = store.project().id
         brief_pin = legacy_ref('brief', project_id, brief)
@@ -226,6 +227,9 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         existing = store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest_id,)).fetchone()
         if existing:
             _, previous_package = read_input_manifest(store, manifest_id)
+            if approved_direction is not None and approved_direction != previous_package.get('approved_direction'):
+                raise ValueError('STALE_BOOK_DIRECTION: 当前方案已冻结本轮确认的全书方向')
+            approved_direction = previous_package.get('approved_direction')
             package.pop('cast_sample_reference', None)
             package.pop('passage_references', None)
             for key in ('passage_policy', 'passage_craft_policy', 'passage_references', 'cast_sample_reference', 'cast_distribution_policy', 'cast_distribution_book_plan',
@@ -323,6 +327,11 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     package['design_network_policy'] = DESIGN_NETWORK_POLICY
                     package['world_history_policy'] = WORLD_HISTORY_POLICY
                     package['network_layer_policy'] = NETWORK_LAYER_POLICY
+        if approved_direction is not None:
+            package['approved_direction'] = deepcopy(approved_direction)
+            approved(package)
+        prompt = plan_prompt(scope, approved_direction=approved_direction)
+        prompt += material_prompt(materials, book=scope == 'book', deferrals=deferrals)
         from nw.length_settings import effective_brief_text
         from nw.length_plan import design_context, instructions
         if not existing and package.get('production_method_policy'):
@@ -391,7 +400,8 @@ def _run_plan(store: Store, request: TaskRequest, package: dict, provider: LLMPr
     result = run_task(store, request, provider, config,
                       validate=lambda output: validate_plan(expand_output(output,package), package['scope'], _known_cards(package),
                                                             package.get('materials', ()),
-                                                            package.get('material_deferrals'),package.get('material_work'),package.get('length_context')))
+                                                            package.get('material_deferrals'),package.get('material_work'),package.get('length_context'),
+                                                            approved_direction=package.get('approved_direction')))
     if result.validation != 'VALID':
         raise ValueError(f'Plan {result.status}/{result.validation}: {result.reason or ""} {result.id}')
     return show_plan(store, request.id)
@@ -433,7 +443,8 @@ def _save_candidates(store: Store, ident: str, raw: dict, package: dict) -> Plan
     from nw.materials.phase_projection import expand_output
     raw=expand_output(raw,package)
     materials = package.get('materials', ())
-    validate_plan(raw, package['scope'], _known_cards(package), materials, package.get('material_deferrals'),package.get('material_work'),package.get('length_context'))
+    validate_plan(raw, package['scope'], _known_cards(package), materials, package.get('material_deferrals'),
+                  package.get('material_work'),package.get('length_context'), approved_direction=package.get('approved_direction'))
     parent = package['parent']
     roots, materialization, findings = [], [], []
     inherited = {card['card_id']: CardRef(card['card_id'], card['version']) for card in package['approved_cards']}
