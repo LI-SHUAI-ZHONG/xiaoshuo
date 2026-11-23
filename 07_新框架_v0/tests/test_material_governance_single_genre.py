@@ -122,9 +122,11 @@ def test_single_genre_declaration_revalidates_the_parent_of_the_frozen_subgenre(
         evaluate(context, product(stage['project_config']))
 
 
-def test_non_combination_limits_still_apply_to_the_actual_frozen_preferences(library):
-    context = studio_context(library, [MAIN], tone_ids=['TONE_SERIOUS','TONE_LIGHT','TONE_DARK'])
+def test_non_combination_limits_still_apply_to_legacy_frozen_preferences(library):
+    context = studio_context(library, [MAIN], tone_ids=['TONE_SERIOUS','TONE_LIGHT'])
     config = context['governance_inputs']['type_selection']['project_config']
+    # A previous desktop release could freeze three tones before reaching this check.
+    config['tone_ids'].append('TONE_DARK')
     report = evaluate(context, product(config))
     assert statuses(report)['CONFIG-max_tones_per_project'] == 'failed'
     with pytest.raises(ValueError,match='GOVERNANCE'):
