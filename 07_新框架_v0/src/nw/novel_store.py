@@ -33,6 +33,7 @@ class JobRequest:
     production_method_policy: dict = field(default_factory=dict)
     direction_review: bool = False
     direction_retry_of: str | None = None
+    planning_hierarchy: bool = False
 
 
 @dataclass(frozen=True)
@@ -95,6 +96,10 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
         raise ValueError('Design options are available only in design mode')
     if request.parent_id is not None and not text(request.parent_id):
         raise ValueError('Invalid parent proposal ID')
+    if (type(request.planning_hierarchy) is not bool or request.planning_hierarchy
+            and (request.mode != 'design' or request.design_scope not in ('book', 'volume', 'chapter')
+                 or (request.parent_id is None) != (request.design_scope == 'book'))):
+        raise ValueError('分级设计须按全书、卷纲、章纲的顺序选择已批准的上级方案')
     if (type(request.direction_review) is not bool
             or request.direction_review and (request.mode != 'design' or request.design_scope != 'book')
             or request.direction_retry_of is not None
@@ -174,6 +179,11 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
                 raise ValueError('重新生成方向须沿用原分支和需求版本，并引用已退回的方向')
         frozen = {**asdict(request), 'scene_ids': scenes, 'brief_ref': pin,
                   'head': asdict(head), 'original_drafts': originals, 'materials': materials}
+        if request.planning_hierarchy:
+            from nw.plan_hierarchy import parent_chain
+
+            frozen['outline_lineage'] = (parent_chain(store, request.design_scope, request.parent_id,
+                                                       branch=request.branch_id) if request.parent_id else [])
         _insert_budget(store, ident, request.budget)
         store.connection.execute("""INSERT INTO novel_jobs
             (id,branch_id,request_json,budget_id,status,output_json) VALUES (?,?,?,?,'READY','{}')""",

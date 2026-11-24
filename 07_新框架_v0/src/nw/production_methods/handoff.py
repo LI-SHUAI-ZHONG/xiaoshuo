@@ -66,15 +66,22 @@ def inherited(package: dict) -> list[dict]:
     if not package.get('parent'):
         return []
     direct = outputs(old.get('stages', []), parent=package['parent'], selected_direction=old.get('selected_direction'))
+    previous = old.get('production_method_parents', [])
+    # An outline-only volume cannot execute obligations addressed to concrete
+    # chapter scenes. Keep the original producer and approval for later stages.
+    carried = [entry for entry in previous
+               if entry.get('approved_parent') and 'world_design_basis' not in entry] if old.get('outline_only_volume') else []
     world = next((r for r in old.get('stages', []) if r['stage'] == 'world_design'), None)
-    if world is None:
+    if world is None and not carried:
         return direct
-    updated = {m['key'] for entry in direct for m in entry.get('world_design_basis', {}).get('members', [])}
-    current = {m['key']: m for m in world['products'].get('members', []) if m['kind'] == 'world'}
-    # An intervening volume may have preserved a book rule without executing its source method again.
-    carried = [remaining for entry in old.get('production_method_parents', [])
-               if (cards := entry.get('world_design_basis', {}).get('members'))
-               and (remaining := retained_world(entry, {m['key'] for m in cards if m['key'] not in updated and current.get(m['key'], m) == m}))]
+    if world is not None:
+        updated = {m['key'] for entry in direct for m in entry.get('world_design_basis', {}).get('members', [])}
+        current = {m['key']: m for m in world['products'].get('members', []) if m['kind'] == 'world'}
+        # World-rule deliveries survive only for the original cards still in effect.
+        carried.extend(remaining for entry in previous
+                       if (cards := entry.get('world_design_basis', {}).get('members'))
+                       and (remaining := retained_world(entry, {m['key'] for m in cards
+                            if m['key'] not in updated and current.get(m['key'], m) == m})))
     return list({r['id']: r for r in [*carried, *direct]}.values())
 
 

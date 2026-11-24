@@ -27,10 +27,11 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     if len(constraints) > 12000:
         raise ValueError('作者硬约束最多 12000 字，请先缩短内容')
     wizard = {'title': title, 'idea': idea, 'constraints': constraints}
-    if 'direction_review' in raw:
-        if type(raw['direction_review']) is not bool:
-            raise ValueError('全书方向确认设置必须为布尔值')
-        wizard['direction_review'] = raw['direction_review']
+    for key, label in (('direction_review', '全书方向确认'), ('planning_hierarchy', '分级设计')):
+        if key in raw:
+            if type(raw[key]) is not bool:
+                raise ValueError(f'{label}设置必须为布尔值')
+            wizard[key] = raw[key]
     if 'design_mode' in raw:
         if mode not in ('manual', 'auto'):
             raise ValueError('请选择人工选择或 AI 自动')
@@ -134,7 +135,8 @@ def freeze_wizard(body: dict, library: Any) -> dict:
             from nw.studio.method_recommendations import freeze_automatic_policy
 
             wizard['production_methods'] = freeze_automatic_policy(
-                MethodReader(library.workspace), selected_types, configuration, candidate_titles=candidate_titles)
+                MethodReader(library.workspace), selected_types, configuration, candidate_titles=candidate_titles,
+                planning_hierarchy=wizard.get('planning_hierarchy', False))
         else:
             wizard['production_methods'] = normalize(configuration, types=selected_types)
     if 'auto_length' in raw:

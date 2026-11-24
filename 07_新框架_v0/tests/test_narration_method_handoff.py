@@ -1,5 +1,6 @@
 """An approved reference observation must reach the scene that uses its technique."""
 from copy import deepcopy
+import json
 
 import pytest
 
@@ -13,6 +14,103 @@ from nw.studio.corpus_methods import manual_method
 from nw.studio.library import LibraryService
 from nw.studio.method_recommendations import freeze_preferences, recommendations
 from nw.task_models import content_sha256
+from test_studio_project_methods import client
+
+
+def test_outline_volume_continues_delivering_approved_book_method_to_scene():
+    from nw.production_methods.handoff import deliveries, inherited, outputs
+
+    ref = {'card_id': 'book', 'version': 2}
+    definition = {'key': 'disclosure', 'stage': 'plot_design', 'field': 'reader_plan',
+                  'artifact_kind': 'stage_product'}
+    method = {'id': 'book-clue-order', 'version': 1, 'body': {
+        'outputs': [definition],
+        'downstream': [{'output_key': 'disclosure', 'consumer': 'scene_design'}],
+        'acceptance': [{'output_key': 'disclosure', 'check': '[FAKE] 先呈现替换痕迹再问当事人'}],
+    }}
+    effect = '[FAKE] 让本书人物先辨封条旧印，再核查当事人的换班记录。'
+    products = {'reader_plan': [effect], '_method_applications': [{
+        'method_id': method['id'], 'outputs': [{'key': 'disclosure', 'scene_guidance': [],
+                                               'placements': [{'path': ['reader_plan', 0], 'value': effect}]}]}]}
+    record = {'stage': 'plot_design', 'task_id': 'book-plot', 'sha256': content_sha256(products),
+              'products': products, 'production_methods': {'selected': [{'method': method}]}}
+    [original] = outputs([record], parent=ref)
+    package = {'scope': 'chapter', 'parent': {'card_id': 'approved-volume', 'version': 1},
+               'parent_material_work': {'stages': [{'stage': 'world_design', 'products': {'members': []}}],
+                                        'production_method_parents': [original],
+                                        'outline_only_volume': True}}
+
+    forwarded = inherited(package)
+    assert forwarded == [original]
+    assert forwarded[0]['approved_parent'] == ref
+    assert deliveries('scene_design', {}, forwarded) == [original]
+    package['parent_material_work'].pop('outline_only_volume')
+    assert inherited(package) == []
+
+
+def test_studio_preserves_book_method_until_the_approved_scene_plan(client):
+    from project_methods_fixture import ProjectModel
+
+    request, settled, server, method = client
+    config, _ = server.production._runtime()
+
+    class Model(ProjectModel):
+        def generate(self, messages, **params):
+            response = super().generate(messages, **params)
+            payload = json.loads(messages[-1]['content'])
+            if payload.get('scope') == 'volume' and payload.get('stage') == 'plot_design':
+                raw = json.loads(response.text)
+                members = raw['products']['members']
+                members[:] = [m for m in members if m['kind'] not in ('volume', 'chapter')]
+                members.append({'key': 'investigation', 'kind': 'volume', 'body': {
+                    'title': '[FAKE] 换印案', 'goal': '[FAKE] 找到印章出处',
+                    'turn': '[FAKE] 守井人因调查被罢黜',
+                    'ending_direction': '[FAKE] 取得当年名单交给后续查证'}})
+                response.text = json.dumps(raw, ensure_ascii=False)
+            return response
+
+    model = Model()
+    server.production.runtime_factory = lambda: (config, model)
+    status, created = request('POST', '/api/novels', {
+        'title': '[FAKE] 逐级保留悬念', 'idea': '[FAKE] 核查两枚旧印的日期', 'genre_ids': ['GENRE_XUANYI'],
+        'planning_hierarchy': True, 'production_methods': {'tasks': ['hook']}})
+    assert status == 201, created
+    ident = created['novel']['id']
+    path = f'/api/novels/{ident}'
+
+    def gate(progress, **fields):
+        assert progress['status'] == 'WAITING', progress['reason']
+        waiting = progress['gates'][0]
+        status, reply = request('POST', f"{path}/gates/{waiting['id']}", {
+            'action': 'approve', 'token': waiting['token'], 'reason': '[FAKE] 核对批准', **fields})
+        assert status == 200, reply
+        return settled(ident)
+
+    def apply(progress):
+        assert progress['status'] == 'WAITING', progress['reason']
+        root = progress['gates'][0]['target']['candidates'][0]['root']['card_id']
+        return gate(progress, root=root)
+
+    book = apply(gate(settled(ident), method_ids=[method['id']]))
+    assert book['status'] == 'DONE', book['reason']
+    book_root = book['job']['outputs']['application']['root']['card_id']
+    # Only new selections are disabled. The book method still has a scene
+    # obligation, including when no direct world method carries its parents.
+    status, configured = request('POST', path + '/methods', {
+        'policy': None, 'reason': '[FAKE] 后续只落实原已批准的拆解方法'})
+    assert status == 200, configured
+    assert request('POST', path + '/run', {})[0] == 200
+    volume = apply(settled(ident))
+    assert volume['status'] == 'DONE', volume['reason']
+    assert request('POST', path + '/run', {})[0] == 200
+    ready = gate(settled(ident))
+    assert ready['status'] == 'WAITING', ready['reason']
+    scene = next(packet for call in model.calls
+                 if (packet := json.loads(call[-1]['content'])).get('stage') == 'scene_design')
+    inherited_method, = [entry for entry in scene['method_handoffs'] if entry['method']['id'] == method['id']]
+    assert inherited_method['approved_parent']['card_id'] == book_root
+    assert inherited_method['output']['placements'][0]['path'] == ['directions', 0, 'choice']
+    assert apply(ready)['status'] == 'DONE'
 
 
 def test_reference_narration_reaches_its_own_scene_after_reopen(tmp_path, monkeypatch):

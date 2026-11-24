@@ -147,6 +147,10 @@ def stage_tasks(body: dict, stage: str, scope: str) -> set[str]:
 
 def enabled_outputs(body: dict, stage: str, package: dict) -> bool:
     from nw.materials import cast_demands, chapter_progress
+    from nw.materials.planning_hierarchy import incompatible_method
+
+    if incompatible_method(body, stage, package):
+        return False
     fields={o['field'] for o in body['outputs'] if o['stage']==stage}
     if fields & CAST_OUTPUTS.get(stage,set()) and package.get('cast_demand_policy')!=cast_demands.POLICY:
         return False
@@ -171,14 +175,14 @@ def task_routes(reader: MethodReader, package: dict) -> dict:
         return {}
     available={}
     preferred=policy.get('preferred_methods',{})
+    order=phase_order(scope, planning_hierarchy=package.get('planning_hierarchy', False))
     for row,_ in matching_methods(reader,policy['type_ids']):
         body=row['body']
-        for stage in {o['stage'] for o in body['outputs']}:
+        for stage in {o['stage'] for o in body['outputs']}.intersection(order):
             covered=stage_tasks(body,stage,scope) & tasks
             if covered and enabled_outputs(body,stage,package):
                 for task in covered:
                     available.setdefault(task,{}).setdefault(stage,set()).add((row['id'],row['version']))
-    order=phase_order(scope)
     routes={}
     for task, stages in available.items():
         preferred_stages={s for s,versions in stages.items() if any(preferred.get(k)==v for k,v in versions)}

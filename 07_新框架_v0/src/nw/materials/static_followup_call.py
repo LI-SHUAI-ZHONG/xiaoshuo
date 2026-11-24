@@ -76,7 +76,7 @@ def run_followup(store: Store, request: TaskRequest, package: dict, provider: LL
     from nw.materials.binding_reviews import model_review
 
     pinned_basis = product_ref(upstream[BASIS_STAGE])
-    order = phase_order(package['scope'])
+    order = phase_order(package['scope'], planning_hierarchy=package.get('planning_hierarchy', False))
     payload = {'stage': stage, 'scope': package['scope'], 'mode': 'execute', 'policy': ctx['same_stage_network_policy'],
         'brief': package['brief'], 'stage_source_policy': package['stage_source_policy'],
         'static_relations_basis': {'ref': pinned_basis, 'relations': relations,

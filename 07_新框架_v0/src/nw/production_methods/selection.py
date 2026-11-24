@@ -25,7 +25,7 @@ def preflight(store: object,package: dict,request_id: str) -> None:
     if not policy:return
     from nw.materials.phase_routes import phase_order
     scope = package['scope']
-    stages = phase_order(scope)
+    stages = phase_order(scope, planning_hierarchy=package.get('planning_hierarchy', False))
     # A plan that already started keeps its pending gates and completed calls.
     first = f'project-methods:{request_id}:{stages[0]}'
     if store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (first,)).fetchone():
@@ -123,7 +123,8 @@ def build_target(reader: MethodReader, package: dict, stage: str, products: dict
     if auto:
         from nw.materials.phase_routes import REQUIRES, phase_order
 
-        dependencies = phase_order(scope)[:-1] if stage == 'bind_scope' else REQUIRES[stage]
+        dependencies = (phase_order(scope, planning_hierarchy=package.get('planning_hierarchy', False))[:-1]
+                        if stage == 'bind_scope' else REQUIRES[stage])
         upstream = [products[k]['products'] for k in dependencies if k in products]
         demand = terms([package['brief'], *upstream])
         for item in candidates:

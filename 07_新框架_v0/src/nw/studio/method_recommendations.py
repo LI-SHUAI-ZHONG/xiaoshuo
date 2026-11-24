@@ -2,6 +2,7 @@
 import json
 
 from nw.materials.phase_routes import phase_order
+from nw.materials.planning_hierarchy import incompatible_method
 from nw.materials.story_policies import current as current_story_policies
 from nw.production_methods.inputs import binding
 from nw.production_methods.matching import TYPE_PRIORITY, type_match
@@ -51,18 +52,20 @@ def same_reference_type(types: list[str], method_types: list[str], source_types:
 
 
 def freeze_automatic_policy(reader: MethodReader, types: list[str], settings: dict, *,
-                            candidate_titles: dict[str, str] | None = None) -> dict:
+                            candidate_titles: dict[str, str] | None = None,
+                            planning_hierarchy: bool = False) -> dict:
     from nw.production_methods.policy import normalize
 
     policy = normalize({**settings, 'world_selection': 'ai', 'recommendation_mode': 'auto',
                         'tasks': ['world_rules']}, types=types)
     maximum = min(3, policy['max_methods'])
-    routes = automatic_requirements(reader, types, max_methods=maximum, candidate_titles=candidate_titles)
+    routes = automatic_requirements(reader, types, max_methods=maximum, candidate_titles=candidate_titles,
+                                    planning_hierarchy=planning_hierarchy)
     return normalize({**policy, 'max_methods': maximum, 'recommended_slots': routes}, types=types)
 
 
 def automatic_requirements(reader: MethodReader, types: list[str], *, max_methods: int = 3,
-                           candidate_titles: dict[str, str] | None = None) -> dict:
+                           candidate_titles: dict[str, str] | None = None, planning_hierarchy: bool = False) -> dict:
     """Freeze actionable seven-board coverage and keep every step within its method budget."""
     sources: dict[str, list[str]] = {}
     matches = []
@@ -77,7 +80,7 @@ def automatic_requirements(reader: MethodReader, types: list[str], *, max_method
                 matches.append(row)
 
     blocked: dict[str, dict[str, None]] = {}
-    candidates = _launch_candidates(reader, types, matches, blocked)
+    candidates = _launch_candidates(reader, types, matches, blocked, planning_hierarchy=planning_hierarchy)
     capacity = min(3, max_methods)
     eligible = set().union(*(slots for stage in candidates.values() for slots in stage.values()))
     missing = AUTO_SLOT_TASKS.keys() - eligible
@@ -107,10 +110,11 @@ def automatic_requirements(reader: MethodReader, types: list[str], *, max_method
 
 
 def _launch_candidates(reader: MethodReader, types: list[str], matches: list[dict],
-                       blocked: dict[str, dict[str, None]]) -> dict[StageRoute, RouteCandidates]:
+                       blocked: dict[str, dict[str, None]], *, planning_hierarchy: bool) -> dict[StageRoute, RouteCandidates]:
     candidates = {}
     policies = current_story_policies() if (reader.workspace / 'materials/catalog.db').is_file() else {}
     for scope in ('book', 'chapter'):
+        scope_policy = {**policies, 'scope': scope, 'planning_hierarchy': planning_hierarchy}
         for stage in phase_order(scope):
             available = _anticipated_inputs(scope, stage)
             offers = {}
@@ -124,7 +128,7 @@ def _launch_candidates(reader: MethodReader, types: list[str], matches: list[dic
                          and tasks.intersection(STORY_TASKS[SLOT_OBSERVATION[slot]]))))
                 if not boards:
                     continue
-                reason = _unavailable_reason(reader, row, types, stage, available, policies, boards)
+                reason = _unavailable_reason(reader, row, types, stage, available, scope_policy, boards)
                 if reason:
                     for slot in boards:
                         blocked.setdefault(slot, {})[f'{SCOPES[scope]}·{STAGES[stage]}{reason}'] = None
@@ -147,6 +151,8 @@ def _anticipated_inputs(scope: str, stage: str) -> dict:
 def _unavailable_reason(reader: MethodReader, row: dict, types: list[str], stage: str,
                         available: dict, policies: dict, boards: frozenset[str]) -> str:
     body = row['body']
+    if incompatible_method(body, stage, policies):
+        return '要求建立超出本级规划职责的卡片'
     if not enabled_outputs(body, stage, policies):
         if any(out['stage'] == stage and out['field'] == 'continuations' for out in body['outputs']):
             return '需要前章已核验的遗留事项'

@@ -303,7 +303,7 @@ export async function openWizard({mode, prefill} = {}) {
   }
 
   async function createNovel(payload) {
-    const result = await api.post('/novels', {...payload, direction_review:true});
+    const result = await api.post('/novels', {...payload, direction_review:true, planning_hierarchy:true});
     const novel = result.novel || result;
     if (!novel.id) throw new Error('项目创建结果没有返回作品标识');
     const active = alive();

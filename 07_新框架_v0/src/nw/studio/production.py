@@ -16,6 +16,7 @@ from nw.project_paths import project_directory
 from nw.story_state import adopt_story
 from nw.task_models import Budget
 from nw.studio.production_inputs import brief_text, freeze_wizard, governance
+from nw.studio.production_design import design_route
 from nw.studio.production_store import ProductionStore
 from nw.story_delta import read_delta
 from nw.studio.production_length import change_length, manuscript_length, retire_unstarted_book, verify_finish_length
@@ -80,7 +81,8 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                 job = start_job(store, JobRequest('design', design_scope='book', budget=budget,
                                                  governance_inputs=governance(wizard),
                                                  production_method_policy=wizard.get('production_methods',{}),
-                                                 direction_review=wizard.get('direction_review', False)))
+                                                 direction_review=wizard.get('direction_review', False),
+                                                 planning_hierarchy=wizard.get('planning_hierarchy', False)))
         except Exception as exc:
             self.db.update(ident, status='paused', runtime_status='BLOCKED', reason=f'立项初始化未完成：{exc}')
             raise
@@ -155,7 +157,13 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
         needs = self.branch_status(novel['id'])['needs_revalidation'] if novel.get('current_branch', 'main') != 'main' else []
         revalidate = [row['id'] for row in overview['scenes'] if row['id'] in needs and row['accepted_draft_id']]
         mode = body.get('mode') or ('revise' if revalidate else 'write' if scenes else 'design')
-        scope = body.get('scope') or ('chapter' if book_id else 'book')
+        branch = novel.get('current_branch', 'main')
+        hierarchy = mode == 'design' and wizard.get('planning_hierarchy', False)
+        if hierarchy:
+            scope, parent_id = design_route(store, branch, body.get('scope'), body.get('parent_id'))
+        else:
+            scope = body.get('scope') or ('chapter' if book_id else 'book')
+            parent_id = book_id if mode == 'design' and scope != 'book' else None
         if mode == 'design' and novel.get('current_branch', 'main') == 'main' and any(scene['accepted_draft_id'] for scene in overview['scenes']):
             raise ValueError('已有正文后的追加设计需先建立候选分支并复核旧稿。'
                              '请打开“⋯ → 制作候选与主线 → 建立候选”，完成旧稿复核后再合并。未启动模型调用。')
@@ -168,14 +176,15 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
             raise ValueError('无效的调用预算')
         budget = self.budget({**novel['wizard'].get('call_budget', {}), **overrides})
         direction_review = mode == 'design' and scope == 'book' and wizard.get('direction_review', False)
-        req = JobRequest(str(mode), branch_id=novel.get('current_branch', 'main'),
+        req = JobRequest(str(mode), branch_id=branch,
                          design_scope=str(scope) if mode == 'design' else 'chapter',
-                         parent_id=book_id if mode == 'design' and scope != 'book' else None,
+                         parent_id=parent_id,
                          scene_ids=selected, budget=budget,
                          governance_inputs=governance(novel['wizard'], library=self.library) if mode == 'design' else {},
                          production_method_policy=novel['wizard'].get('production_methods',{}) if mode=='design' else {},
                          direction_review=direction_review,
-                         direction_retry_of=self._rejected_direction_job(store, novel) if direction_review else None)
+                         direction_retry_of=self._rejected_direction_job(store, novel) if direction_review else None,
+                         planning_hierarchy=hierarchy)
         job = start_job(store, req)
         self.db.update(novel['id'], job_id=job.id, status='designing' if mode == 'design' else 'writing')
         self.db.event(novel['id'], 'design' if mode == 'design' else 'write',

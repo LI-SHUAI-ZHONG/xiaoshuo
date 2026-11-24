@@ -14,10 +14,13 @@ from nw.task_models import canonical,content_sha256
 def verify_chain(session: dict) -> None:
     require(session.get('policy') in STAGED_POLICIES,'unknown stage binding policy')
     from nw.materials.book_direction import check_receipt
+    from nw.materials.planning_hierarchy import verify_chapter
     from nw.materials.story_policies import verify_session
     verify_session(session)
-    records=session.get('stages',[]);order=phase_order(session['scope'])
+    records=session.get('stages',[])
+    order=phase_order(session['scope'], planning_hierarchy=session['context'].get('planning_hierarchy', False))
     require([row['stage'] for row in records]==order,'missing, repeated or out-of-order creation stages')
+    verify_chapter(session)
     from nw.materials.cast_gap import verify_archive
     verify_archive(session)
     sources={row['source']['id']:row for row in session['sources']};products={}
@@ -101,8 +104,10 @@ def verify_chain(session: dict) -> None:
         products[row['stage']]=row
 
 
-def member_stages(scope: str, project_methods: bool, cast_policy: str | None) -> tuple:
+def member_stages(scope: str, project_methods: bool, cast_policy: str | None, *, planning_hierarchy: bool = False) -> tuple:
     from nw.materials.cast_demands import POLICY as CAST_POLICY
+    if planning_hierarchy and scope == 'volume':
+        return ('world_design', 'character_design', 'plot_design')
     if scope != 'book':
         return ('world_design', 'character_design', 'plot_design', 'scene_design')
     if project_methods:
@@ -115,12 +120,13 @@ def compile_candidates(session: dict) -> list[dict]:
     binder=products['bind_scope'];scope=session['scope']
     proof={'session_id':session['id'],'stage_uses':[product_ref(row) for row in session['stages']]}
     directions=products['plot_design']['directions'];result=[]
+    hierarchy = session.get('context', {}).get('planning_hierarchy', False)
     for body in directions:
         members=[];chapters=[]
         for stage in member_stages(scope, bool(session.get('production_method_policy')),
-                                   session.get('context', {}).get('cast_demand_policy')):
+                                   session.get('context', {}).get('cast_demand_policy'), planning_hierarchy=hierarchy):
             members.extend(deepcopy(products[stage]['members']))
-        if scope!='book':
+        if scope!='book' and not (scope=='volume' and hierarchy):
             scenes={row['key']:row for row in members if row['kind']=='scene'}
             actions={row['id']:row for row in products['action_design']['candidates']}
             selected=selected_action_ids(products['scene_design'])

@@ -99,9 +99,11 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                       material_deferrals: dict | None = None,
                       governance_inputs: dict | None = None,
                       production_method_policy: dict | None = None,
-                      approved_direction: dict | None = None) -> tuple[TaskRequest, dict]:
+                      approved_direction: dict | None = None, planning_hierarchy: bool = False,
+                      outline_lineage: list[dict] | None = None) -> tuple[TaskRequest, dict]:
     from nw.call_budget import read_budget
     from nw.materials.book_direction import approved
+    from nw.materials.planning_hierarchy import volume_outline
 
     budget = read_budget(store, budget_id)
     manifest_id = f'plan:{ident}'
@@ -136,7 +138,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         if scope != 'book' and required_for(materials, book=True).keys() != book_bindings.keys():
             raise ValueError('MATERIAL_SCOPE: confirm type commitments in the book plan first')
         processes = {row['profile'] for row in materials if row['request']['disposition'] == 'required'} & PROCESS
-        if scope != 'book' and processes & {'material_selection','material_conversion'} and not scene_routes(materials, deferrals):
+        if (scope != 'book' and not volume_outline(scope, planning_hierarchy)
+                and processes & {'material_selection','material_conversion'} and not scene_routes(materials, deferrals)):
             raise ValueError('MATERIAL_SCOPE: selection and conversion require concrete scene-level materials')
         verify_materials(store.directory.parent, materials)
         brief = _brief(store, brief_ref.version if isinstance(brief_ref, Ref) else brief_ref)
@@ -166,9 +169,13 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                    'outline': {'chapters': outline, 'scenes': places}, 'method_cards': methods}
         if inherited.get('work_application'):
             session=inherited['work_session']
+            carry_volume_parents = volume_outline(session.get('scope', ''),
+                                                   session.get('context', {}).get('planning_hierarchy', False))
+            parent_deliveries = session.get('production_method_parents', [])
             package['parent_material_work']={'application':inherited['work_application'],
-                **({'production_method_parents': session['production_method_parents']}
-                   if any(p.get('world_design_basis') for p in session.get('production_method_parents', [])) else {}),
+                **({'outline_only_volume': True} if carry_volume_parents else {}),
+                **({'production_method_parents': parent_deliveries}
+                   if carry_volume_parents or any(p.get('world_design_basis') for p in parent_deliveries) else {}),
                 'stages':session.get('stages',[]),'work_plan':session.get('result',{}).get('work_plan',[]),
                 'selected_direction':{k:v for k,v in parent_card['body'].items() if k not in ('members','unknowns')}}
             if session.get('context', {}).get('design_network_policy'):
@@ -192,7 +199,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             if (not isinstance(governance_inputs, dict) or governance_inputs.keys() - set(phase_order(scope))
                     or not all(isinstance(value, dict) for value in governance_inputs.values())):
                 raise ValueError('MATERIAL_GOVERNANCE: expected inputs keyed by current planning stage')
-            material_governance = dict(governance_inputs)
+            current_stages = phase_order(scope, planning_hierarchy=planning_hierarchy)
+            material_governance = {key: val for key, val in governance_inputs.items() if key in current_stages}
             world_inputs = dict(material_governance.get('world_design', {}))
             if world_inputs.keys() & {'cast_sample_reference','passage_references'}:
                 if 'cast_sample_reference' in world_inputs:
@@ -227,6 +235,11 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         existing = store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest_id,)).fetchone()
         if existing:
             _, previous_package = read_input_manifest(store, manifest_id)
+            if (planning_hierarchy and not previous_package.get('planning_hierarchy') or
+                    outline_lineage is not None and outline_lineage != previous_package.get('outline_lineage')):
+                raise ValueError('STALE_PLAN_HIERARCHY: 已冻结任务使用的上级方案或制作层级已变化')
+            planning_hierarchy = previous_package.get('planning_hierarchy', False)
+            outline_lineage = previous_package.get('outline_lineage')
             if approved_direction is not None and approved_direction != previous_package.get('approved_direction'):
                 raise ValueError('STALE_BOOK_DIRECTION: 当前方案已冻结本轮确认的全书方向')
             approved_direction = previous_package.get('approved_direction')
@@ -299,7 +312,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     package['cast_previous_appearances'] = previous_appearances(store, cards)
                 package['action_template_priority_enabled'] = True
                 package['stage_materials'] = {
-                    stage: STAGE_MATERIALS[stage] for stage in phase_order(scope) if stage in STAGE_MATERIALS
+                    stage: STAGE_MATERIALS[stage]
+                    for stage in phase_order(scope, planning_hierarchy=planning_hierarchy) if stage in STAGE_MATERIALS
                 }
                 if staged_catalog:
                     from nw.materials.network_followup import POLICY as NETWORK_FOLLOWUP_POLICY
@@ -330,8 +344,16 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         if approved_direction is not None:
             package['approved_direction'] = deepcopy(approved_direction)
             approved(package)
-        prompt = plan_prompt(scope, approved_direction=approved_direction)
-        prompt += material_prompt(materials, book=scope == 'book', deferrals=deferrals)
+        if planning_hierarchy:
+            lineage = outline_lineage or []
+            if parent and (not lineage or lineage[-1].get('proposal_id') != parent_id or
+                           any(lineage[-1].get('root', {}).get(key) != value
+                               for key, value in parent['root'].items())):
+                raise ValueError('STALE_PLAN_HIERARCHY: 本级设计须引用当前已批准的上级方案')
+            package.update(planning_hierarchy=True, outline_lineage=deepcopy(lineage))
+        prompt = plan_prompt(scope, approved_direction=approved_direction, planning_hierarchy=planning_hierarchy)
+        if not volume_outline(scope, planning_hierarchy):
+            prompt += material_prompt(materials, book=scope == 'book', deferrals=deferrals)
         from nw.length_settings import effective_brief_text
         from nw.length_plan import design_context, instructions
         if not existing and package.get('production_method_policy'):
@@ -360,7 +382,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     length['length_recommendation'] = suggestion
                 package['length_context'] = length
         if package.get('length_context'):
-            prompt += '\n' + instructions('plan', package['length_context'])
+            length_stage = 'plot_design' if volume_outline(scope, planning_hierarchy) else 'plan'
+            prompt += '\n' + instructions(length_stage, package['length_context'])
         while methods and len(prompt) + len(canonical(model_package(package))) > budget.context_char_limit:
             methods.pop()
         sources = _source_refs(store, [*cards, *methods])
@@ -401,7 +424,8 @@ def _run_plan(store: Store, request: TaskRequest, package: dict, provider: LLMPr
                       validate=lambda output: validate_plan(expand_output(output,package), package['scope'], _known_cards(package),
                                                             package.get('materials', ()),
                                                             package.get('material_deferrals'),package.get('material_work'),package.get('length_context'),
-                                                            approved_direction=package.get('approved_direction')))
+                                                            approved_direction=package.get('approved_direction'),
+                                                            planning_hierarchy=package.get('planning_hierarchy', False)))
     if result.validation != 'VALID':
         raise ValueError(f'Plan {result.status}/{result.validation}: {result.reason or ""} {result.id}')
     return show_plan(store, request.id)
@@ -444,7 +468,8 @@ def _save_candidates(store: Store, ident: str, raw: dict, package: dict) -> Plan
     raw=expand_output(raw,package)
     materials = package.get('materials', ())
     validate_plan(raw, package['scope'], _known_cards(package), materials, package.get('material_deferrals'),
-                  package.get('material_work'),package.get('length_context'), approved_direction=package.get('approved_direction'))
+                  package.get('material_work'),package.get('length_context'), approved_direction=package.get('approved_direction'),
+                  planning_hierarchy=package.get('planning_hierarchy', False))
     parent = package['parent']
     roots, materialization, findings = [], [], []
     inherited = {card['card_id']: CardRef(card['card_id'], card['version']) for card in package['approved_cards']}

@@ -54,8 +54,10 @@ EXTERNAL_REQUIRES={
 }
 
 
-def phase_order(scope: str) -> list[str]:
-    return [*ORDER[:6],'bind_scope'] if scope=='book' else list(ORDER)
+def phase_order(scope: str, *, planning_hierarchy: bool = False) -> list[str]:
+    if scope == 'book' or planning_hierarchy and scope == 'volume':
+        return [*ORDER[:6], 'bind_scope']
+    return list(ORDER)
 
 
 _ANCHOR_TABLE_SHA256 = '9b7ea71e53613a453fe71fa0a862411f65f22328a38ee7b97db7fd5bab7be759'
@@ -223,8 +225,8 @@ def route_method(source: dict) -> dict:
             'template_policy':'instantiate_after_project_inputs_without_promoting_source_or_completed_facts'}
 
 
-def readiness(stage: str,products: dict,scope: str='chapter') -> dict:
-    required=(phase_order(scope)[:-1] if stage=='bind_scope' else REQUIRES[stage])
+def readiness(stage: str,products: dict,scope: str='chapter', *, planning_hierarchy: bool = False) -> dict:
+    required=(phase_order(scope, planning_hierarchy=planning_hierarchy)[:-1] if stage=='bind_scope' else REQUIRES[stage])
     missing=[name for name in required if not isinstance(products.get(name),dict)
              or not products[name].get('products') or not products[name].get('sha256')]
     return {'stage':stage,'state':'waiting_for_inputs' if missing else 'ready','missing':missing,

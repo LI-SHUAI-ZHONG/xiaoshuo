@@ -14,9 +14,11 @@ from nw.length_plan import count_words
 from nw.length_settings import saved_brief_length
 from nw.materials.phase_routes import phase_order
 from nw.materials.step_guard import build_continuity_ledger
+from nw.novel_flow import CHAPTER_OUTLINE_CONFIRM, TERMINAL
 from nw.novel_store import show_job
 from nw.studio.api import STAGE_LABELS
 from nw.studio.production_inputs import SLOTS
+from nw.studio.production_design import SCOPE_LABELS, next_design
 
 
 class ProductionViews:
@@ -84,6 +86,9 @@ class ProductionViews:
                 gate = job.outputs.get('gate')
                 if gate:
                     summary = ('全书方向待选择' if gate.get('kind') == DIRECTION_GATE else
+                               '章纲待确认' if gate.get('kind') == 'chapter_outline_approval' else
+                               '卷纲待确认' if gate.get('scope') == 'volume' else
+                               '场景设计待确认' if gate.get('scope') == 'chapter' else
                                '方案待选择' if str(job.step).startswith('plan:') else
                                '核心设定变化需确认' if 'core' in str(job.step) else '本场稿件与状态待接受')
                     result.append({'id': gate['token'], 'job_id': job.id, 'step': job.step, 'token': gate['token'],
@@ -120,17 +125,40 @@ class ProductionViews:
                 'kind': 'book_direction', 'label': DIRECTION_LABEL, 'status': status,
                 'output': {'candidates': target.get('candidates', []), 'selected_id': selected}, 'children': []}
 
+    @staticmethod
+    def _chapter_outline_node(job: dict, row: dict | None) -> dict:
+        target = json.loads(row['input_json']) if row else {}
+        choice = json.loads(row['output_json']).get('choice', {}) if row else {}
+        state = {'approve': 'done', 'reject': 'rejected'}.get(choice.get('action'))
+        if state is None:
+            state = 'waiting' if job['status'] == 'WAITING' and target else 'pending'
+        return {'id': f"{job['id']}:chapter:outline", 'job_id': job['id'], 'scope': 'chapter',
+                'stage': 'chapter_outline', 'label': '章纲确认', 'status': state, 'children': [],
+                'output': {'members': [target['chapter']], 'event_nodes': target.get('event_nodes', [])}
+                if target else None}
+
     def progress(self, ident: str, *, include_logs: bool = True) -> dict:
         novel = self.db.get(ident)
         project = self.project(novel)
+        upcoming = None
+        can_plan_volume = False
         with self.open_store(novel) as store:
             job = asdict(show_job(store, novel['job_id'])) if novel['job_id'] else None
             phases = self._phase_rows(store)
             model_logs = self.call_logs(store) if include_logs else []
             rows = store.connection.execute('SELECT id,request_json,status FROM novel_jobs ORDER BY rowid').fetchall()
             job_requests = {row['id']: json.loads(row['request_json']) for row in rows}
-            directions = {row['job_id']: dict(row) for row in store.connection.execute(
-                'SELECT job_id,input_json,output_json FROM novel_steps WHERE step_key=?', (DIRECTION_CONFIRM,))}
+            checkpoints = {(row['job_id'], row['step_key']): dict(row) for row in store.connection.execute(
+                'SELECT job_id,step_key,input_json,output_json FROM novel_steps WHERE step_key IN (?,?)',
+                (DIRECTION_CONFIRM, CHAPTER_OUTLINE_CONFIRM))}
+            if include_logs and novel['wizard'].get('planning_hierarchy') and novel['status'] != 'done':
+                branch = novel.get('current_branch', 'main')
+                blocked_by_manuscript = branch == 'main' and any(s['accepted_draft_id'] for s in project['scenes'])
+                if not blocked_by_manuscript and (not job or job['status'] in TERMINAL):
+                    route = next_design(store, branch)
+                    can_plan_volume = route['scope'] != 'book'
+                    if not any(s['story_approved_on_branch'] and not s['accepted_draft_id'] for s in project['scenes']):
+                        upcoming = route
             reviews = {scene['id']: self.review_for_draft(store, scene['id'], scene['latest_draft_id'])
                        for scene in project['scenes'] if scene['latest_draft_id']}
             words = 0
@@ -151,9 +179,10 @@ class ProductionViews:
                 blocked = job_row['outputs'].get('blocked_design', {})
                 stage_nodes = []
                 direction_enabled = node_scope == 'book' and request.get('direction_review')
+                hierarchical = request.get('planning_hierarchy', False)
                 if direction_enabled:
-                    stage_nodes.append(self._direction_node(job_row, directions.get(job_row['id'])))
-                for stage in phase_order(node_scope):
+                    stage_nodes.append(self._direction_node(job_row, checkpoints.get((job_row['id'], DIRECTION_CONFIRM))))
+                for stage in phase_order(node_scope, planning_hierarchy=hierarchical):
                     phase = matching.get(stage)
                     parsed = json.loads(phase['result_json']) if phase and phase['result_json'] else {}
                     complete = bool(phase and phase['validation'] == 'VALID' and (parsed or {}).get('products'))
@@ -164,11 +193,22 @@ class ProductionViews:
                     stage_nodes.append({'id': f"{job_row['id']}:{node_scope}:{stage}", 'stage': stage,
                         'label': STAGE_LABELS[stage]['zh'], 'status': state, 'scope': node_scope,
                         'output': (parsed or {}).get('products'), 'children': []})
+                    if hierarchical and node_scope == 'chapter' and stage == 'plot_design':
+                        stage_nodes.append(self._chapter_outline_node(
+                            job_row, checkpoints.get((job_row['id'], CHAPTER_OUTLINE_CONFIRM))))
                 applied = any(step['step_key'] == f'plan:{node_scope}:apply' and step['status'] == 'DONE'
                               for step in job_row['outputs']['steps'])
-                label = '全书制作' if direction_enabled else '全书设计' if node_scope == 'book' else '章节设计'
-                tree.append({'id': f"{job_row['id']}:{node_scope}", 'label': label,
-                             'scope': node_scope, 'status': 'done' if applied else job_row['status'].lower(), 'children': stage_nodes})
+                if direction_enabled:
+                    label = '全书制作'
+                else:
+                    label = SCOPE_LABELS.get(node_scope, '设计') if hierarchical or node_scope == 'volume' else (
+                        '全书设计' if node_scope == 'book' else '章节设计')
+                entry = {'id': f"{job_row['id']}:{node_scope}", 'label': label,
+                         'scope': node_scope, 'status': 'done' if applied else job_row['status'].lower(),
+                         'children': stage_nodes}
+                if lineage := request.get('outline_lineage'):
+                    entry['approved_parent'] = lineage[-1]
+                tree.append(entry)
         for chapter in project['chapters']:
             children = []
             chapter_scenes = [row for row in project['scenes'] if row['chapter_id'] == chapter['id']]
@@ -200,6 +240,8 @@ class ProductionViews:
         current_step = job.get('step') if job else None
         if current_step in (DIRECTION_PROPOSE, DIRECTION_CONFIRM):
             current_step = DIRECTION_LABEL
+        elif current_step == CHAPTER_OUTLINE_CONFIRM:
+            current_step = '章纲确认'
         active = next((row for row in reversed(phases) if job and row['budget_id'] == job['id']
                        and row['status'] == 'STARTED'), None)
         if active and runtime == 'RUNNING':
@@ -216,6 +258,7 @@ class ProductionViews:
                 'branch_id': novel.get('current_branch', 'main'),
                 'main_revision': next((row['head_revision'] for row in project['branches'] if row['id'] == 'main'), None),
                 'current_step': current_step, 'progress': percentage, 'tree': tree,
+                'next_design': upcoming, 'can_plan_volume': can_plan_volume,
                 'gates': self.gates(ident)['gates'], 'words': words, 'connection': True,
                 'reason': novel['reason'] or (job.get('reason') if job else None),
                 'logs': logs[-100:]}

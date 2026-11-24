@@ -89,7 +89,8 @@ def _members(rows: object,kinds: set[str],existing: set[str]) -> set[str]:
 
 
 def validate_phase(raw: dict,stage: str,products: dict,sources: list[dict],context: dict) -> None:
-    state=readiness(stage,products,context.get('scope','chapter'))
+    state=readiness(stage,products,context.get('scope','chapter'),
+                    planning_hierarchy=context.get('planning_hierarchy', False))
     if state['missing']:
         raise ValueError('MATERIAL_WAITING_INPUTS: '+stage+' needs '+','.join(state['missing']))
     for key in (products if stage=='bind_scope' else REQUIRES[stage]):
@@ -103,10 +104,13 @@ def validate_phase(raw: dict,stage: str,products: dict,sources: list[dict],conte
 
 
 def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: dict) -> None:
+    from nw.materials import planning_hierarchy
     from nw.materials.type_network import POLICY as TYPE_NETWORK_POLICY, validate_adaptation_inputs
 
     require(isinstance(raw,dict) and set(raw)=={'stage','products'} and raw['stage']==stage,'wrong stage output')
     value=raw['products']
+    volume_outline = planning_hierarchy.volume_outline(context.get('scope','chapter'),
+                                                        context.get('planning_hierarchy', False))
     from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, passage_sequence
     passage_enabled = context.get('passage_policy') == passage_sequence.POLICY
     from nw.materials import passage_craft
@@ -135,6 +139,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     from nw.materials.creation_preferences import validate_resolutions, validate_selected_types
 
     validate_resolutions(stage, value, context)
+    planning_hierarchy.validate_types(stage, value, context)
     if '_governance' in value:
         config=value['_governance']
         require(stage=='type_selection' and isinstance(config,dict) and set(config)=={'project_config'}
@@ -193,6 +198,8 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             seen.add(row['id'])
     elif stage=='plot_design':
         _members(value['members'],{'plot','promise','volume','chapter'},entities)
+        if context.get('planning_hierarchy'):
+            planning_hierarchy.validate_plot(value, context['scope'])
         validate_static_bindings(value,products,sources,context)
         require(isinstance(value['directions'],list) and 1<=len(value['directions'])<=3,'concrete direction products required')
         from nw.materials.book_direction import approved
@@ -249,6 +256,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
                      for r in products[stage_name]['products']['members']}
         all_members.update(scenes)
         _chapters(value['chapters'],context.get('scope','chapter'),all_members)
+        planning_hierarchy.validate_scene_handoff(value, context)
         if cast_distribution:
             cast_distribution_plan.validate(value, products, context)
         if passage_enabled:
@@ -349,7 +357,10 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
                 and isinstance(value['method_guidance'],list),'scope binding products required')
         from nw.materials.binding_assembly import validate_assembly
         validate_assembly(value,products,sources,context)
-        if context.get('scope','chapter')!='book':
+        if volume_outline:
+            require(not any(value[key] for key in ('material_bindings', 'process_bindings', 'method_guidance')),
+                    '卷纲只交付阶段设计，正文绑定在具体场景环节完成')
+        elif context.get('scope','chapter')!='book':
             scenes={r['key'] for r in products['scene_design']['products']['members']}
             uses=[u for row in products.values() for u in row['products']['_uses']]+value['_uses']
             used_ids=writing_sources(products,value['_uses']);covered=set();placements=set()
@@ -432,7 +443,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         from nw.materials.scene_source_bindings import POLICY, validate_candidate_sources, validate_scene_sources
         require(context['scene_source_binding_policy'] == POLICY, 'unknown scene source binding policy')
         validate_candidate_sources(stage, value)
-        if stage == 'bind_scope' and context.get('scope', 'chapter') != 'book':
+        if stage == 'bind_scope' and context.get('scope', 'chapter') != 'book' and not volume_outline:
             validate_scene_sources(value, products)
     from nw.materials.semantic_handoff import validate_handoffs
     validate_handoffs(stage,value,products,context)

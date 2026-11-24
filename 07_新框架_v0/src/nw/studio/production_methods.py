@@ -99,7 +99,8 @@ class ProductionMethodMixin:
                     and configuration.get('recommendation_mode') == 'auto'):
                 from nw.studio.method_recommendations import freeze_automatic_policy
 
-                policy = freeze_automatic_policy(MethodReader(self.studio.workspace), types, configuration)
+                policy = freeze_automatic_policy(MethodReader(self.studio.workspace), types, configuration,
+                                                 planning_hierarchy=novel['wizard'].get('planning_hierarchy', False))
             else:
                 policy = normalize(configuration, types=types)
             wizard={**novel['wizard'],'production_methods':policy}

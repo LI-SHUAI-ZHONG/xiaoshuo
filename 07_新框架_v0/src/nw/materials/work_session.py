@@ -251,8 +251,10 @@ def legacy_study_plan(store: Store,request: TaskRequest,package: dict,provider: 
 
 
 def drive_plan(store: Store,request: TaskRequest,package: dict,provider: LLMProvider,config: Config,*,
-               retry_failed: bool=False,verify=None,max_rounds: int=8,method_decision=None) -> tuple[TaskRequest,dict]:
+               retry_failed: bool=False,verify=None,max_rounds: int=8,method_decision=None,
+               chapter_decision=None) -> tuple[TaskRequest,dict]:
     """Normal entry: create actual upstream products before calling each method."""
     from nw.materials.phase_flow import drive_phases
     return drive_phases(store,request,package,provider,config,retry_failed=retry_failed,
-                        verify=verify,max_rounds=max_rounds,method_decision=method_decision)
+                        verify=verify,max_rounds=max_rounds,method_decision=method_decision,
+                        chapter_decision=chapter_decision)

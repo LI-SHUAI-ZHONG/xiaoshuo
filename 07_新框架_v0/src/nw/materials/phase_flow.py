@@ -878,7 +878,8 @@ def _stage_search(desk: SourceDesk,stage: str,query: str,cursor: int=0,*,trace: 
 
 
 def network_materials(desk: SourceDesk, package: dict) -> tuple[dict, dict]:
-    authored = {stage: _step_source_pool(desk, stage, package) or {} for stage in phase_order(package['scope'])}
+    authored = {stage: _step_source_pool(desk, stage, package) or {}
+                for stage in phase_order(package['scope'], planning_hierarchy=package.get('planning_hierarchy', False))}
     return authored, desk.dynamic_rules()
 
 
@@ -1086,6 +1087,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     from nw.materials.step_guard import build_continuity_ledger, build_joint_material_plan
     from nw.materials.phase_lifecycle import CANDIDATE_SELECTION
     from nw.materials.book_direction import stage_input as direction_input, stage_instruction as direction_instruction
+    from nw.materials import planning_hierarchy
     from nw.materials.scene_source_bindings import POLICY as SCENE_SOURCE_BINDING_POLICY, scene_source_placements
     from nw.materials.scene_actions import MULTI_ACTION_POLICY
     from nw.materials.network_workflow import (EARLY_POLICY, early_waiting, prepared_static_source,
@@ -1097,7 +1099,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     multi_actions = context.get('multi_action_policy') == MULTI_ACTION_POLICY
     action_state = stage == 'action_design' and context.get('action_state_policy') == ACTION_STATE_POLICY
     stage_config, stage_provider = resolve_stage_runtime(config, provider, stage)
-    state=readiness(stage,products,package['scope'])
+    hierarchy = context.get('planning_hierarchy', False)
+    is_volume_outline = planning_hierarchy.volume_outline(package['scope'], hierarchy)
+    chapter = context.get('approved_chapter')
+    state=readiness(stage,products,package['scope'],planning_hierarchy=hierarchy)
     if state['missing']:raise ValueError('MATERIAL_WAITING_INPUTS: '+','.join(state['missing']))
     from nw.materials.semantic_handoff import input_stages,handoffs_for
     screening=context.get('dynamic_screening')
@@ -1191,6 +1196,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
     page_count = max(1, (len(world_candidates) + page_size - 1) // page_size)
     page = 0
     for turn in range(max_rounds + page_count - 1):
+        suffix = handoff_instruction
         contracts=[desk.semantic_contract(source) for source in sources]
         reviews={s['source']['id']:review for s in sources
                  if (review:=desk.binding_review(s,stage,package['scope'])) is not None}
@@ -1228,6 +1234,15 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['approved_direction'] = chosen_direction
             if stage == 'plot_design':
                 payload['output_schema'] = PLOT_OUTPUT_SCHEMA + '；只深化已确认的全书方向，directions 恰有一项。'
+        if hierarchy:
+            payload['outline_lineage'] = context['outline_lineage']
+            if inherited_type := context.get('hierarchy_inherited_types', {}).get(stage):
+                payload['locked_type_products'] = inherited_type
+                suffix += '\nlocked_type_products 是上级已批准的项目类型结果，各所列字段逐项原样沿用。资料使用记录按本步实际填写。'
+            if stage == 'plot_design' and is_volume_outline:
+                payload['output_schema'] = PLOT_OUTPUT_SCHEMA + '；directions 只填当前卷的细化方向，members 恰有一张卷卡，卷卡含 title、goal、turn、ending_direction。'
+            if chapter is not None:
+                payload['approved_chapter'] = chapter
         if context.get('length_context'):
             from nw.length_plan import model_approved_cards
             payload['approved_cards'] = model_approved_cards(payload['approved_cards'])
@@ -1269,7 +1284,6 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['chapter_summary'] = chapter_summary
         if chapter_reviews:
             payload['chapter_reviews'] = chapter_reviews
-        suffix = handoff_instruction
         if context.get('cast_distribution_policy') and stage in ('world_design', 'character_design', 'plot_design', 'scene_design'):
             from nw.materials import cast_distribution_plan
             payload['cast_distribution_context'] = cast_distribution_plan.planning_context(context)
@@ -1691,7 +1705,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                        '照此设计动作的可行选择、阻碍、应对与代价。'
                        '资料适用条款用到状态时，在input_refs引用实际索引，例如fact:0:/value。'
                        '对照story_order和角色知情范围。时间或必要前提未确定时，给出与前提对应的候选或指出待补项。')
-        if stage=='bind_scope':
+        if stage=='bind_scope' and is_volume_outline:
+            payload.update(binding_sources=[], writing_source_ids=[])
+            payload['binding_contract'] = '本级只交付卷纲。正文、过程与可写表现绑定到已批准章纲的具体场景。'
+            suffix += '\n卷纲的 material_bindings、process_bindings 均为空对象，method_guidance 为空数组。'
+        elif stage=='bind_scope':
             from nw.materials.binding import material_prompt
             from nw.materials.stage_input import model_material
             payload['binding_contract']=material_prompt(package.get('materials',[]),book=package['scope']=='book',
@@ -1766,6 +1784,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     'production_method_parents':context.get('production_method_parents',[])})
         if chosen_direction is not None:
             suffix += '\n' + direction_instruction(stage)
+        if hierarchy:
+            suffix += '\n' + planning_hierarchy.INSTRUCTIONS.get('scene' if chapter is not None else package['scope'], '')
+            if chapter is not None:
+                suffix += '以 approved_chapter.target 中的章卡和事件节点为授权范围。chapters 使用章卡原 key。'
         call_index = turn if world_candidates else index*max_rounds+turn
         call_version = 'world-method-pages-v1' if world_candidates else 'source-step-v4'
         if context.get('plot_cast_gap') and stage in ('character_design', 'static_relations', 'plot_design'):
@@ -1807,6 +1829,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     'source_ids':[s['source']['id'] for s in sources]}
             if chosen_direction is not None:
                 record['approved_direction_receipt'] = receipt
+            if chapter is not None:
+                record['approved_chapter_receipt'] = receipt
             if design_candidates:
                 record['network_design_candidates'] = design_candidates
             if network_context is not None and stage == 'plot_design':
@@ -1862,13 +1886,17 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
 
 
 def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMProvider,config: Config,*,
-                 retry_failed: bool=False,verify: Callable | None=None,max_rounds: int=8,method_decision=None) -> tuple[TaskRequest,dict]:
+                 retry_failed: bool=False,verify: Callable | None=None,max_rounds: int=8,method_decision=None,
+                 chapter_decision=None) -> tuple[TaskRequest,dict]:
     from nw.materials.story_policies import VERSIONS, verify_plan
     from nw.materials.book_direction import approved, verify_calls as verify_direction_calls
+    from nw.materials.planning_hierarchy import approve_chapter, inherited_types, verify_chapter
 
     verify_plan(package)
     workspace=store.directory.parent
     if not (workspace/'materials/catalog.db').is_file():
+        if package.get('planning_hierarchy') and package['scope'] == 'chapter':
+            raise ValueError('MATERIAL_WORK: MATERIAL_CATALOG_REQUIRED: 分级章场设计须从真实剧情步骤生成可确认的章纲')
         if (config.source_driven or package.get('governance_inputs') or package.get('production_method_policy') or package.get('cast_sample_reference')
                 or VERSIONS.keys() & package.keys() or package.get('material_mode') == 'source_driven_staged'):
             raise ValueError('MATERIAL_WORK: MATERIAL_CATALOG_REQUIRED: index source materials before novel design')
@@ -1897,6 +1925,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         require(session.get('policy')==POLICY,'legacy global study must be redesigned through actual creation steps')
         verify_chain(session);desk.verify(session['sources'])
         verify_direction_calls(store, session)
+        verify_chapter(session, store)
         from nw.materials.casting_editor import verify_calls
         verify_calls(store, session)
         from nw.materials.cast_gap import verify_archive
@@ -1914,6 +1943,9 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
              'accepted_state':package.get('accepted_state',[]),'accepted_changes':package.get('accepted_changes',[])}
     if chosen_direction := approved(package):
         context['approved_direction'] = chosen_direction
+    if package.get('planning_hierarchy'):
+        context.update(planning_hierarchy=True, outline_lineage=package['outline_lineage'],
+                       hierarchy_inherited_types=inherited_types(package))
     if package.get('length_context'):
         context['length_context'] = package['length_context']
     if selected:
@@ -2016,7 +2048,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.binding_assembly import freeze_required_sources
     freeze_required_sources(desk,package.get('materials',[]),context)
     from nw.materials import cast_gap
-    order = phase_order(package['scope'])
+    order = phase_order(package['scope'], planning_hierarchy=package.get('planning_hierarchy', False))
     index = 0
     checkpoint = None
     repair = None
@@ -2078,6 +2110,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
                 network, record, read, receipts, list(sources.values()), retry_failed, verify, governance, index)
         products[stage]=record;sources.update({row['source']['id']:row for row in read});calls.extend(receipts)
         context['binding_reviews'].update(record['binding_reviews'])
+        if context.get('planning_hierarchy') and context['scope'] == 'chapter' and stage == 'plot_design':
+            context['approved_chapter'] = approve_chapter(store, record, context, chapter_decision)
         if network is not None and stage == 'type_selection':
             families = {} if context.get('type_network_policy') == TYPE_NETWORK_POLICY else None
             context['network_type_scope'] = resolve_type_scope(workspace, record['products'], families=families)
@@ -2100,6 +2134,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         for c in row['semantic_contracts']}.values())
     verify_chain(session);desk.verify(session['sources'])
     verify_direction_calls(store, session)
+    verify_chapter(session, store)
     from nw.materials.casting_editor import verify_calls
     verify_calls(store, session)
     session['candidates']=compile_candidates(session)

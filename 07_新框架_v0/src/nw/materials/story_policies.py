@@ -26,6 +26,13 @@ def verify(context: dict, plan: dict | None = None) -> None:
     direction = approved(context)
     if plan is not None and direction != approved(plan):
         raise ValueError('STALE_BOOK_DIRECTION: 阶段交接与原任务冻结的全书方向不同')
+    if plan is not None and any(context.get(key) != plan.get(key) for key in ('planning_hierarchy', 'outline_lineage')):
+        raise ValueError('STALE_PLAN_HIERARCHY: 阶段交接与原任务冻结的上级方案不同')
+    if plan is not None and plan.get('planning_hierarchy'):
+        from nw.materials.planning_hierarchy import inherited_types
+
+        if context.get('hierarchy_inherited_types') != inherited_types(plan):
+            raise ValueError('STALE_PLAN_HIERARCHY: 阶段采用了不同的已批准类型与适配')
     for key, supported in VERSIONS.items():
         if key in context and context[key] not in supported:
             raise ValueError(f'MATERIAL_STAGE: 无法识别冻结的制作校验版本 {key}={context[key]}')

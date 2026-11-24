@@ -28,7 +28,7 @@ class PlanProposal:
     application: dict | None = None
 
 
-def plan_prompt(scope: str, *, approved_direction: dict | None = None) -> str:
+def plan_prompt(scope: str, *, approved_direction: dict | None = None, planning_hierarchy: bool = False) -> str:
     opening = f'按冻结的 Brief、已批准方向、已接受状态和可用参考，提出 2–3 种不同的 {scope} 方案。'
     book = 'book 只提方向，chapters 为空；'
     if approved_direction is not None:
@@ -37,6 +37,14 @@ def plan_prompt(scope: str, *, approved_direction: dict | None = None) -> str:
         opening = ('沿用输入的 approved_direction.candidate，只提交一个详细的全书设计方案。'
                    + stage_instruction('plot_design'))
         book = 'book 细化已选方向的世界、人物、剧情和收束计划，chapters 为空；'
+    details = 'volume 带卷卡；chapter 只列一章；scene 只列一场；'
+    if planning_hierarchy:
+        from nw.materials.planning_hierarchy import INSTRUCTIONS
+
+        opening += INSTRUCTIONS.get(scope, '')
+        if scope == 'volume':
+            opening = '沿用输入的已批准全书方案，只提交一份当前卷纲。' + INSTRUCTIONS[scope]
+            details = '当前卷纲的 chapters 为空。'
     return (
         opening + '只输出 JSON 对象，' +
         f'顶层只有 scope（{scope}）及 candidate_cards 数组。每项只含 kind（plot）、body、members、chapters、'
@@ -50,7 +58,7 @@ def plan_prompt(scope: str, *, approved_direction: dict | None = None) -> str:
         '私密设定留 author_only。核心世界规则待定时填 open_world_rules，勿擅自填成既定事实。'
         'chapters 每项含 index、card（本地 chapter key，已有章用 null）、scenes。'
         'scenes 每项含 index、card（本地 scene key）、story_order（整数，可倒叙）。'
-        + book + 'volume 带卷卡；chapter 只列一章；scene 只列一场；'
+        + book + details +
         'replan 以新的章/场景号保存候选改案。每案都列清选择、代价、后果与未决问题。'
     )
 
@@ -127,11 +135,17 @@ def _chapters(rows: object, scope: str, members: dict[str, dict]) -> None:
 
 def validate_plan(output: dict, scope: str, existing: dict[str, str], materials: list[dict] = (),
                   material_deferrals: dict | None = None,material_work: dict | None = None, length_context: dict | None = None,
-                  *, approved_direction: dict | None = None) -> None:
+                  *, approved_direction: dict | None = None, planning_hierarchy: bool = False) -> None:
+    from nw.materials.planning_hierarchy import validate_plot, volume_outline
+
+    outline = volume_outline(scope, planning_hierarchy)
     minimum=1 if scope!='book' and material_work and material_work.get('policy') in {'artifact-stage-binding-v3','artifact-stage-binding-v4'} else 2
     if approved_direction is not None:
         if scope != 'book' or output['scope'] != scope or len(output['candidate_cards']) != 1:
             raise ValueError('BOOK_DIRECTION: 已确认全书方向只接受一个对应的深化方案')
+    elif outline:
+        if output['scope'] != scope or len(output['candidate_cards']) != 1:
+            raise ValueError('当前卷只提交一份围绕已批准父纲的设计')
     elif output['scope'] != scope or not minimum <= len(output['candidate_cards']) <= 3:
         raise ValueError('Expected 2–3 candidates for the requested scope')
     choices = set()
@@ -149,14 +163,20 @@ def validate_plan(output: dict, scope: str, existing: dict[str, str], materials:
             raise ValueError('Plan candidates need distinct choices')
         choices.add(choice)
         members = _members(candidate['members'], existing)
-        _chapters(candidate['chapters'], scope, members)
+        if planning_hierarchy and scope in ('book', 'volume'):
+            validate_plot(candidate, scope)
+        _chapters(candidate['chapters'], 'book' if outline else scope, members)
         if length_context:
             from nw.length_plan import validate_candidate
             validate_candidate(candidate, scope, length_context)
         elif 'length_plan' in body or any({'word_budget', 'chapter_word_budget'} & member['body'].keys()
                                            for member in members.values()):
             raise ValueError('未冻结项目篇幅需求，不能给此方案附加写审字数约束')
-        validate_bindings(candidate, scope, members, existing, materials, material_deferrals)
+        if outline:
+            if any(candidate.get(field) for field in ('material_bindings', 'process_bindings')):
+                raise ValueError('卷纲只交付阶段设计，正文绑定在具体场景环节完成')
+        else:
+            validate_bindings(candidate, scope, members, existing, materials, material_deferrals)
         from nw.materials.work_application import validate_work
         validate_work(candidate,material_work)
         if scope == 'volume' and not any(row['kind'] == 'volume' for row in members.values()):

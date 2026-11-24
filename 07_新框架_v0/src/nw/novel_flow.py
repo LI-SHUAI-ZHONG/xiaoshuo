@@ -28,6 +28,7 @@ __all__ = ['JobRef', 'JobRequest', 'JobResult', 'cancel_job', 'resume_job', 'sho
 
 Decision = Callable[[str, dict], dict | None]
 TERMINAL = frozenset({'DONE', 'CANCELLED', 'REJECTED', 'STALE'})
+CHAPTER_OUTLINE_CONFIRM = 'plan:chapter:outline:confirm'
 
 
 def _routing_identity(settings: dict, config: Config) -> dict:
@@ -147,9 +148,26 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
 
         approved_direction = choose_direction(plan_calls, decide)
     j.current_step = propose
+    hierarchical = j.request.get('planning_hierarchy', False)
+    lineage = j.request.get('outline_lineage', [])
+
+    def verify_lineage() -> None:
+        if hierarchical and parent is not None:
+            from nw.plan_hierarchy import parent_chain
+
+            if parent_chain(j.store, scope, parent, branch=j.head.branch_id) != lineage:
+                raise JobPaused('STALE', propose, 'STALE_PLAN_PARENT: 上级方案已变化，请按本分支批准方案重建设计')
+
+    def choose_chapter(target: dict) -> dict:
+        key = CHAPTER_OUTLINE_CONFIRM
+        choice = j.gate(key, target, decide, {'approve': 'novel_confirm', 'reject': 'novel_reject'})
+        if choice['action'] == 'reject':
+            raise JobPaused('REJECTED', key, 'CHAPTER_OUTLINE_REJECTED: 已退回章纲，可按当前批准卷纲重做')
+        return {'decision_id': j.latest(key)['output']['decision_id'], 'choice': choice}
 
     def prepare():
         j.check_active(propose)
+        verify_lineage()
         gov_for_scope = _scope_governance_inputs(j.request.get('governance_inputs'), scope)
         request, _ = prepare_plan_task(j.store, Ref(**j.request['brief_ref']), scope, plan_calls.provider, plan_calls.config,
                                        j.id, call_id(j.id, propose, 1), parent_id=parent, branch=j.head.branch_id,
@@ -157,7 +175,8 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
                                        material_deferrals=j.request.get('material_deferrals'),
                                        governance_inputs=gov_for_scope,
                                        production_method_policy=j.request.get('production_method_policy'),
-                                       approved_direction=approved_direction)
+                                       approved_direction=approved_direction,
+                                       **({'planning_hierarchy': True, 'outline_lineage': lineage} if hierarchical else {}))
         from nw.materials.work_session import drive_plan
         from nw.production_methods.selection import method_step
         _,package=read_input_manifest(j.store,request.manifest_id)
@@ -166,7 +185,8 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
             choice=j.gate(key,target,decide,{'approve':'novel_confirm','reject':'novel_reject'},validate_choice)
             return {'choice':choice,'decision_id':f'{j.id}:{key}'}
         request,_=drive_plan(j.store,request,package,plan_calls.provider,plan_calls.config,retry_failed=calls.retry_failed,
-                            verify=lambda:j.check_active(propose),method_decision=choose_method)
+                            verify=lambda:j.check_active(propose),method_decision=choose_method,
+                            **({'chapter_decision': choose_chapter} if hierarchical and scope == 'chapter' else {}))
         return request
 
     def validate(output: dict) -> None:
@@ -175,14 +195,18 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
         from nw.materials.phase_projection import expand_output
         validate_plan(expand_output(output,package), scope, _known_cards(package), package.get('materials', ()),
                       package.get('material_deferrals'),package.get('material_work'),package.get('length_context'),
-                      approved_direction=package.get('approved_direction'))
+                      approved_direction=package.get('approved_direction'),
+                      planning_hierarchy=package.get('planning_hierarchy', False))
 
     def verify_plan() -> None:
         j.check_active(j.current_step or propose)
+        verify_lineage()
         step = j.latest(propose)
         manifest, frozen = read_input_manifest(j.store, step['input']['request']['manifest_id'])
         if frozen.get('approved_direction') != approved_direction:
             raise JobPaused('STALE', propose, 'STALE_BOOK_DIRECTION: 全书设计所用的确认方向已变化')
+        if hierarchical and frozen.get('outline_lineage', []) != lineage:
+            raise JobPaused('STALE', propose, 'STALE_PLAN_PARENT: 本方案引用的上级产物与任务冻结的版本不同')
         verify_materials(j.store.directory.parent, frozen.get('materials', ()))
         if frozen.get('material_work'):
             from nw.materials.work_catalog import SourceDesk
@@ -217,6 +241,17 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
             raise ValueError('Choose a root card from the current proposal')
 
     target = {'proposal_id': proposal.id, 'candidates': candidates, 'findings': proposal.findings}
+    if hierarchical:
+        target['scope'] = scope
+        if lineage:
+            target['approved_parent'] = lineage[-1]
+        if scope == 'chapter':
+            step = j.latest(propose)
+            _, frozen = read_input_manifest(j.store, step['input']['request']['manifest_id'])
+            chapter = frozen.get('material_work', {}).get('context', {}).get('approved_chapter')
+            if not chapter:
+                raise JobPaused('BLOCKED', propose, 'CHAPTER_OUTLINE_REQUIRED: 尚无已确认章纲可用于场景设计')
+            target['approved_chapter'] = chapter['target']['chapter']
     if approved_direction is not None:
         target['approved_direction'] = approved_direction
     choice = j.gate(confirm, target,
