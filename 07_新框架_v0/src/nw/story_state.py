@@ -26,9 +26,12 @@ def position(value: object) -> tuple[int, int, int]:
     return tuple(value)
 
 
+def claim_group(claim: str) -> str:
+    return claim if claim in ('utterance', 'plan') else 'knowledge'
+
+
 def fact_key(fact: Fact) -> tuple[str, str, str, str]:
-    group = fact.claim if fact.claim in ('utterance', 'plan') else 'knowledge'
-    return fact.holder, fact.entity_id, fact.predicate, group
+    return fact.holder, fact.entity_id, fact.predicate, claim_group(fact.claim)
 
 
 def validate_identity_status(predicate: str, holder: str, value: object) -> None:

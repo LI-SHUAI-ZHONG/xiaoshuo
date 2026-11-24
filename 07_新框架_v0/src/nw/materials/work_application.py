@@ -121,9 +121,11 @@ def validate_saved_work(store: Store,proposal_id: str,design: dict,root: dict) -
     if design['work_session'].get('policy') in STAGED_POLICIES:
         from nw.materials.book_direction import verify_calls as verify_direction_calls
         from nw.materials.planning_hierarchy import verify_chapter
+        from nw.materials.scene_knowledge import verify_archive as verify_scene_knowledge
 
         verify_direction_calls(store, design['work_session'])
         verify_chapter(design['work_session'], store)
+        verify_scene_knowledge(store, frozen, design['work_session'])
     from nw.production_methods.selection import verify_sources
     verify_sources(store,design['work_session'])
     SourceDesk(store.directory.parent).verify(design['work_session']['sources'])

@@ -88,9 +88,12 @@ def scene_bases(products: dict, context: dict, scene: str | None = None) -> dict
     policy = context.get('narration_policy')
     access = policy in ACCESS_POLICIES
     claims = ('fact', 'belief', 'suspicion', 'utterance', 'plan') if access else ('fact', 'belief', 'suspicion')
+    from nw.materials.scene_knowledge import scoped
     from nw.materials.cast_design import entry_bases
+    exact = scoped(scene_product, context)
+    accepted = context.get('narration_facts', context.get('accepted_state', []))
     cast = (entry_bases(scene_product, cards, context.get('cast_previous_appearances', {}),
-                        context.get('narration_facts', context.get('accepted_state', [])),
+                        accepted, scene_facts=exact,
                         new_people=new_people if policy == EVIDENCE_POLICY else None,
                         unverified_chapters=context.get('cast_history_unverified_chapters', ()))
             if access else {})
@@ -104,7 +107,7 @@ def scene_bases(products: dict, context: dict, scene: str | None = None) -> dict
         people = {pov, *body.get('characters', [])}
         bases.update(_card_bases(pov, people, cards, personal_sources=policy == EVIDENCE_POLICY))
         order, disclosure = places[key]
-        for index, fact in enumerate(context.get('narration_facts', context.get('accepted_state', []))):
+        for index, fact in enumerate(accepted if exact is None else exact[key]):
             audience, claim = fact.get('holder'), fact.get('claim')
             if access and (audience in new_people or fact.get('entity_id') in new_people):
                 # Local planning keys will acquire fresh card IDs on approval.
@@ -112,10 +115,10 @@ def scene_bases(products: dict, context: dict, scene: str | None = None) -> dict
             speaker_source = access and audience in people and audience != pov
             if (audience not in (pov, 'READER') and not speaker_source) or claim not in claims:
                 continue
-            if audience == 'READER' and claim != 'fact':
+            if audience == 'READER' and (claim != 'fact' or fact.get('story_order', order + 1) > order):
                 continue
-            if (fact.get('story_order', order + 1) > order or
-                    tuple(fact.get('disclosure_order', disclosure)) >= disclosure):
+            if exact is None and (fact.get('story_order', order + 1) > order or
+                                  tuple(fact.get('disclosure_order', disclosure)) >= disclosure):
                 continue
             value = fact['value']
             bases[f'fact:{index}'] = {'text': value if isinstance(value, str) else canonical(value),
@@ -143,9 +146,11 @@ def register_beat(bases: dict, order: int, guide: dict) -> None:
         bases[f'beat:{order}']['witnesses'] = beat['witnesses']
 
 
-def verify_scene_facts(required: set[str], current: list[Fact]) -> None:
-    if required - {content_sha256(asdict(fact)) for fact in current}:
+def verify_scene_facts(required: set[str], current: list[Fact]) -> list[Fact]:
+    matched = {sha: fact for fact in current if (sha := content_sha256(asdict(fact))) in required}
+    if required - matched.keys():
         raise ValueError('MATERIAL_PRECONDITION: 表达所依的角色所知、读者获知或原稿证据已经变化，需按当前分支重设')
+    return list(matched.values())
 
 
 def _source_sentence(source: str, quote: str) -> tuple[str, int]:

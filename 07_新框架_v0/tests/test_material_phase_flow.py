@@ -742,6 +742,13 @@ def test_template_change_traverses_normal_design_write_review_and_acceptance(tmp
                                             governance_inputs=governance)
                     _, following = plan_input(reopened, proposal.id)
                     session = following['material_work']
+                    assert following['scene_knowledge_policy'] == 'scene-clock-knowledge-v1'
+                    before_scene = next(p for call in reversed(provider.calls)
+                                        if (p := json.loads(call[-1]['content'])).get('stage') == 'scene_design')
+                    [hand] = [change for change in before_scene['chapter_changes'].values()
+                              if change['predicate'] == 'hand']
+                    assert hand['text'] == '划伤' and hand['holder'] == 'WORLD' and hand['claim'] == 'fact'
+                    assert hand['claim_group'] == 'knowledge' and hand['evidence_sha256']
                     if use_cast_sample:
                         from nw.materials.cast_appearances import accepted_scene
                         actor = performances[0]['actor']

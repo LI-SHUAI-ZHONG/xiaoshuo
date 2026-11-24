@@ -3,6 +3,8 @@ from copy import deepcopy
 import json
 from pathlib import Path
 
+import pytest
+
 from nw.acceptance import accept_batch
 from nw.call_budget import create_budget
 from nw.config import Config
@@ -130,3 +132,66 @@ def test_plot_step_receives_chapter_facts_without_sending_them_to_type_selection
         reviews = [(payload['stage'], payload['chapter_reviews'][0]['id']) for messages in model.calls
                    for payload in [json.loads(messages[-1]['content'])] if 'chapter_reviews' in payload]
         assert reviews == [('plot_design', finding['id'])]
+
+
+def test_accepted_removal_reaches_continuation_and_requires_same_prose_at_writing(tmp_path: Path) -> None:
+    from nw.materials.chapter_progress import chapter_changes, verify_current
+    from nw.story_models import Fact
+    from nw.story_state import current_head, revision_state, selected_operations, state_at
+
+    with Store(tmp_path / 'story', create=True, test_mode=True) as store:
+        parent, (first, second) = prepare_story(store)
+        before = current_head(store)
+        draft = draft_for(store, first, '[FAKE] 守门人当众撤销了那笔十枚铜钱的寄存登记。')
+        removal = {**operation(draft, entity='purse', predicate='coins', old=10, new=None), 'op': 'unset'}
+        end = draft_for(store, second, '[FAKE] 河埂上没有旁人。')
+        head = accept_batch(store, [proposal(store, before, draft, [removal]),
+                                    proposal(store, before, end, [])], before, 'accept-removal')
+        model = Planner('chapter', chapter=2)
+        config = Config('fake', 'http://localhost', 'test', '', 5, {}, store.directory, source_driven=False)
+        budget = create_budget(store, 'next', Budget(4, 90000, 4000))
+        _, package = prepare_plan_task(store, 1, 'chapter', model, config, budget, 'next', parent_id=parent)
+        [change] = chapter_changes(package['chapter_handoff']).values()
+        assert change['text'] == '已移除的原状态为 10'
+        assert change['removal_source']['draft_id'] == draft.id
+        snapshot = revision_state(store, head)
+        facts = state_at(store, head.branch_id, head.revision, 2, 'AUTHOR').facts
+        checks = [{'chapter_progress_prior': change}]
+        operations = selected_operations(store, snapshot)
+        verify_current(checks, facts, snapshot['slots'], (2, 1, 0), operations=operations, story_order=2)
+        with pytest.raises(ValueError, match='MATERIAL_PRECONDITION'):
+            verify_current(checks, facts, {key: value for key, value in snapshot['slots'].items()
+                                            if key != first}, (2, 1, 0), operations=operations, story_order=2)
+        restored = Fact('purse', 'coins', 10, 'WORLD', 'fact', 2, (1, 2, 0), ())
+        with pytest.raises(ValueError, match='MATERIAL_PRECONDITION'):
+            verify_current(checks, [restored], snapshot['slots'], (2, 1, 0), operations=operations, story_order=2)
+        later_removal = {**removal, 'story_order': 2, 'disclosure_order': [1, 2, 0]}
+        with pytest.raises(ValueError, match='MATERIAL_PRECONDITION'):
+            verify_current(checks, facts, snapshot['slots'], (2, 1, 0),
+                           operations=[*operations, later_removal], story_order=2)
+
+
+def test_same_statement_accepted_as_fact_replaces_the_old_suspicion(tmp_path: Path) -> None:
+    from nw.chapter_state import continuation_chapter_state
+    from nw.materials.chapter_progress import chapter_changes, verify_current
+    from nw.story_state import current_head, revision_state, state_at
+
+    with Store(tmp_path / 'story', create=True, test_mode=True) as store:
+        _, (first, second) = prepare_story(store)
+        before = current_head(store)
+        hunch = draft_for(store, first, '[FAKE] 井下还有通路？沈砚没有证据。')
+        confirm = draft_for(store, second, '[FAKE] 沈砚走到井底，确认井下还有通路。')
+        suspicion = operation(hunch, holder='yan', claim='suspicion', entity='well', predicate='passage',
+                              new='井下还有通路')
+        known = operation(confirm, time=2, order=(1, 2, 0), holder='yan', claim='fact',
+                          entity='well', predicate='passage', old='井下还有通路', new='井下还有通路')
+        head = accept_batch(store, [proposal(store, before, hunch, [suspicion]),
+                                    proposal(store, before, confirm, [known])], before, 'confirm-passage')
+        snap = revision_state(store, head)
+        old, current = chapter_changes(continuation_chapter_state(store, head, snap)).values()
+        assert [old['claim'], current['claim']] == ['suspicion', 'fact']
+        assert current['value_unchanged'] is True
+        facts = state_at(store, head.branch_id, head.revision, 2, 'AUTHOR').facts
+        verify_current([{'chapter_progress_prior': current}], facts, snap['slots'])
+        with pytest.raises(ValueError, match='MATERIAL_PRECONDITION'):
+            verify_current([{'chapter_progress_prior': old}], facts, snap['slots'])

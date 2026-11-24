@@ -342,6 +342,7 @@ def model_material(row: dict, *, book: bool) -> dict:
 def model_package(package: dict) -> dict:
     result={key:value for key,value in package.items() if key not in {
         'length_override','material_recall','material_input','stage_materials','stage_source_policy','chapter_handoff','chapter_summary','chapter_reviews','accepted_cast_history',
+        'scene_knowledge_policy','promise_continuity',
         'type_hierarchy_enabled','type_source_scope_enabled','type_name_evidence_enabled','governance_inputs','passage_policy','passage_craft_policy','passage_references',
         'dynamic_reference_checks','dynamic_screening_enabled','scene_source_binding_policy','action_state_policy',
         'action_template_priority_enabled','network_prerequisite_policy','multi_action_policy','network_layer_policy',

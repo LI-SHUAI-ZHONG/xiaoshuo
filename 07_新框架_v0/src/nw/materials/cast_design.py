@@ -172,7 +172,7 @@ def previous_appearances(store: Store, cards: list[dict], *, accepted: dict | No
 
 def entry_bases(scene_product: dict, cards: list[tuple[str, str, dict]], prior: dict,
                 facts: Iterable[dict] = (), *, new_people: set[str] | None = None,
-                unverified_chapters: Iterable[int] = ()) -> dict:
+                unverified_chapters: Iterable[int] = (), scene_facts: dict | None = None) -> dict:
     characters = {key: body for key, kind, body in cards if kind == 'character'}
     cast = {key: body['casting'] for key, body in characters.items() if 'casting' in body}
     places = {s['card']: [c['index'], s['index']] for c in scene_product['chapters'] for s in c['scenes']}
@@ -192,8 +192,9 @@ def entry_bases(scene_product: dict, cards: list[tuple[str, str, dict]], prior: 
                 source = None
                 if profile['entry'] == 'other':
                     require(profile['introducer'] in people - {person}, '首次出场缺少已设计的实际介绍者')
-                    previous = [f for f in facts if f.get('story_order', times[key]+1) <= times[key] and
-                                tuple(f.get('disclosure_order', ())) < (*places[key], 0)]
+                    previous = (scene_facts[key] if scene_facts is not None else
+                                [f for f in facts if f.get('story_order', times[key]+1) <= times[key] and
+                                 tuple(f.get('disclosure_order', ())) < (*places[key], 0)])
                     if profile['introducer_source'] == 'prior':
                         if new_people and ({person, profile['introducer']} & new_people):
                             previous = []

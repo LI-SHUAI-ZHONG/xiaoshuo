@@ -252,6 +252,8 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
             if not chapter:
                 raise JobPaused('BLOCKED', propose, 'CHAPTER_OUTLINE_REQUIRED: 尚无已确认章纲可用于场景设计')
             target['approved_chapter'] = chapter['target']['chapter']
+            if 'chapter_index' in chapter['target']:
+                target['chapter_index'] = chapter['target']['chapter_index']
     if approved_direction is not None:
         target['approved_direction'] = approved_direction
     choice = j.gate(confirm, target,

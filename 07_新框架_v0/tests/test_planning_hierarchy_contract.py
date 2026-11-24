@@ -79,6 +79,36 @@ def test_chapter_gate_targets_actual_plot_and_scene_keeps_its_chapter_identity()
         validate_scene_handoff({'chapters': [{'index': 1, 'card': None, 'scenes': []}]}, context)
 
 
+def test_new_chapter_is_pinned_to_next_published_number_after_accepted_predecessor(tmp_path):
+    from nw.acceptance import accept_batch
+    from nw.materials.planning_hierarchy import next_chapter_index, chapter_target, validate_scene_handoff
+    from nw.story_state import current_head, revision_state
+    from story_fixture import draft_for, proposal
+    from test_chapter_state import prepare_story
+
+    with Store(tmp_path / 'next-chapter', create=True, test_mode=True) as store:
+        _, scenes = prepare_story(store)
+        head = current_head(store)
+        with pytest.raises(ValueError, match='尚有未接受'):
+            next_chapter_index(store, revision_state(store, head))
+        pending = [proposal(store, head, draft_for(store, scene, '[FAKE] 各场均完成。'), []) for scene in scenes]
+        accepted = accept_batch(store, pending, head, 'phase-four-chapter')
+        assert next_chapter_index(store, revision_state(store, accepted)) == 2
+
+    member = {'kind': 'chapter', 'key': 'chapter', 'body': {'title': '[FAKE] 续查',
+        'goal': '[FAKE] 核查日簿', 'consequence': '[FAKE] 获得签名'}}
+    output = {'members': [member], 'directions': [Planner('book').output['candidate_cards'][0]['body']],
+              'event_nodes': [{'id': 'query'}]}
+    plot = {'stage': 'plot_design', 'task_id': 'plot-task', 'sha256': content_sha256(output), 'products': output}
+    target = chapter_target(plot, [], chapter_index=2)
+    assert target['chapter_index'] == 2
+    context = {'planning_hierarchy': True, 'scope': 'chapter', 'approved_chapter': {'target': target},
+               'chapter_target_index': 2}
+    with pytest.raises(ValueError, match='第 2 章'):
+        validate_scene_handoff({'chapters': [{'index': 1, 'card': 'chapter', 'scenes': []}]}, context)
+    validate_scene_handoff({'chapters': [{'index': 2, 'card': 'chapter', 'scenes': []}]}, context)
+
+
 class HierarchyModel(Model):
     def generate(self, messages: list[dict], **params):
         reply = super().generate(messages, **params)

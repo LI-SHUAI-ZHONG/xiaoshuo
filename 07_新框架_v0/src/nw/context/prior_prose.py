@@ -6,7 +6,7 @@ from nw.cards import read_card
 from nw.materials.narration_review import PREFIX, issue, reviewed_spans
 from nw.models import Draft
 from nw.store import Store
-from nw.story_delta import draft_ref, read_delta
+from nw.story_delta import draft_ref, read_delta, story_write_manifest
 from nw.story_models import CardRef
 from nw.tasks import read_input_manifest
 
@@ -41,11 +41,24 @@ def _reviewed_paragraphs(draft: Draft, beats: dict, review: dict, contract: dict
     return private
 
 
-def prior_prose(store: Store, draft: Draft, slot: dict, pov: str) -> tuple[str, list[tuple[int, int]]]:
+def prior_prose(store: Store, draft: Draft, slot: dict, pov: str, *,
+                at_story_order: int | None = None) -> tuple[str, list[tuple[int, int]]]:
     """Return the text and unreadable paragraphs; an unverified optional excerpt stays out."""
     hidden = [(0, len(draft.text))]
     try:
         run = store.get('run', draft.run_id)
+        if at_story_order is not None:
+            clock = story_write_manifest(store, draft)
+            if clock is None and slot.get('delta_id'):
+                delta = read_delta(store, slot['delta_id'])
+                if delta.draft_id != draft.id:
+                    return draft.text, hidden
+                clock, _ = read_input_manifest(store, delta.manifest_id)
+            if clock is None:
+                clock = json.loads(store.get('scene', draft.scene_id).card_json).get('story', {})
+            story_order = clock.get('story_order')
+            if type(story_order) is not int or story_order > at_story_order:
+                return draft.text, hidden
         items = json.loads(run.context_package_json).get('items', [])
         viewers = [item['source'][4:] for item in items if item['source'].startswith('pov:')]
         if not viewers:

@@ -1165,6 +1165,10 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
         return {'step_material_delivered': ident in search_pool}
     chapter_handoff = package.get('chapter_handoff') if stage == 'plot_design' else None
     handoff_instruction = '\n' + plot_design_chapters.CHAPTER_HANDOFF if chapter_handoff is not None else ''
+    if chapter_handoff and chapter_handoff.get('change_projection'):
+        from nw.materials.chapter_progress import CHANGE_PROJECTION, PROJECTION_INSTRUCTION
+        if chapter_handoff['change_projection'] == CHANGE_PROJECTION:
+            handoff_instruction += '\n' + PROJECTION_INSTRUCTION
     chapter_summary = package.get('chapter_summary') if chapter_handoff is not None else None
     if chapter_summary is not None:
         handoff_instruction += '\n' + plot_design_chapters.CHAPTER_SUMMARY
@@ -1236,6 +1240,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 payload['output_schema'] = PLOT_OUTPUT_SCHEMA + '；只深化已确认的全书方向，directions 恰有一项。'
         if hierarchy:
             payload['outline_lineage'] = context['outline_lineage']
+            if 'chapter_target_index' in context and stage in ('plot_design', 'scene_design'):
+                payload['chapter_target_index'] = context['chapter_target_index']
+                suffix += '\nchapter_target_index 是本分支下一章的正式章号，场景产物 chapters.index 必须沿用。'
             if inherited_type := context.get('hierarchy_inherited_types', {}).get(stage):
                 payload['locked_type_products'] = inherited_type
                 suffix += '\nlocked_type_products 是上级已批准的项目类型结果，各所列字段逐项原样沿用。资料使用记录按本步实际填写。'
@@ -1311,6 +1318,8 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                     payload['chapter_changes'] = context['chapter_changes']
                 payload['output_schema'] += '；scene_progress:[{scene,basis_ref,basis_quote,origin,connection,stimulus,change,next_pressure}]'
                 suffix += '\n' + chapter_progress.SCENE_INSTRUCTION
+                if any('claim_group' in row for row in context.get('chapter_changes', {}).values()):
+                    suffix += '\n' + chapter_progress.PROJECTION_INSTRUCTION
         from nw.materials import cast_demands, cast_fulfillment, narration
         cast_enabled = context.get('cast_demand_policy') == cast_demands.POLICY
         if cast_enabled and stage in ('character_design', 'expression_design', 'bind_scope') and 'world_design' in inputs:
@@ -1753,6 +1762,11 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             else:
                 clean,_=project_methods.split(value)
                 if method_plan is None and clean!=value:raise ValueError('PROJECT_METHOD: 未请求的方法执行记录')
+                if stage == 'scene_design':
+                    from nw.materials import scene_knowledge
+                    if stage_context.get('scene_knowledge_policy') == scene_knowledge.POLICY:
+                        stage_context['_project_scene_knowledge'] = lambda scenes: scene_knowledge.freeze(
+                            store, package['branch_head'], scenes)
                 validate_phase(clean,stage,products,sources,stage_context)
                 if stage == 'character_design' and context.get('plot_cast_gap'):
                     from nw.materials.cast_gap import stable_cast
@@ -1891,6 +1905,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     from nw.materials.story_policies import VERSIONS, verify_plan
     from nw.materials.book_direction import approved, verify_calls as verify_direction_calls
     from nw.materials.planning_hierarchy import approve_chapter, inherited_types, verify_chapter
+    from nw.materials import scene_knowledge
 
     verify_plan(package)
     workspace=store.directory.parent
@@ -1924,6 +1939,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         session=package['material_work']
         require(session.get('policy')==POLICY,'legacy global study must be redesigned through actual creation steps')
         verify_chain(session);desk.verify(session['sources'])
+        scene_knowledge.verify_archive(store, package, session)
         verify_direction_calls(store, session)
         verify_chapter(session, store)
         from nw.materials.casting_editor import verify_calls
@@ -1946,6 +1962,8 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     if package.get('planning_hierarchy'):
         context.update(planning_hierarchy=True, outline_lineage=package['outline_lineage'],
                        hierarchy_inherited_types=inherited_types(package))
+        if 'chapter_target_index' in package:
+            context['chapter_target_index'] = package['chapter_target_index']
     if package.get('length_context'):
         context['length_context'] = package['length_context']
     if selected:
@@ -1959,12 +1977,16 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
         context['chapter_progress_policy'] = package['chapter_progress_policy']
         context['chapter_changes'] = chapter_changes(package.get('chapter_handoff', {}))
         context['chapter_openings'] = chapter_openings(package.get('chapter_handoff', {}), package['chapter_progress_policy'])
+    if 'promise_continuity' in package:
+        context['promise_continuity'] = package['promise_continuity']
     if 'network_layer_policy' in package:
         context['network_layer_policy'] = package['network_layer_policy']
     if 'action_state_policy' in package:
         context['action_state_policy'] = package['action_state_policy']
     if 'narration_policy' in package:
         context['narration_policy'] = package['narration_policy']
+    if 'scene_knowledge_policy' in package:
+        context['scene_knowledge_policy'] = package['scene_knowledge_policy']
     if 'passage_policy' in package:
         context['passage_policy'] = package['passage_policy']
         context['passage_references'] = package.get('passage_references', [])
@@ -2063,6 +2085,9 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
             stage_inputs = {**context, 'previous_cast': {k: original[k] for k in ('members', 'cast_assignments')}}
         from nw.production_methods.selection import prepare as prepare_project_methods
         try:
+            if stage == 'expression_design' and context.get('scene_knowledge_policy') == scene_knowledge.POLICY:
+                context['narration_scene_facts'] = scene_knowledge.freeze(
+                    store, package['branch_head'], products['scene_design']['products'])
             method_plan=prepare_project_methods(store,request,package,stage,products,method_decision,
                                                 **({'cast_revision': True} if repair else {}))
             record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,stage_inputs,
@@ -2133,6 +2158,7 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
     session['semantic_contracts']=list({c['source_id']:c for row in products.values()
         for c in row['semantic_contracts']}.values())
     verify_chain(session);desk.verify(session['sources'])
+    scene_knowledge.verify_archive(store, package, session)
     verify_direction_calls(store, session)
     verify_chapter(session, store)
     from nw.materials.casting_editor import verify_calls

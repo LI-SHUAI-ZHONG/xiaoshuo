@@ -5,6 +5,7 @@ from typing import Callable
 
 from nw.materials.phase_routes import product_ref
 from nw.store import Store
+from nw.story_state import approved_scene_positions
 
 
 INSTRUCTIONS = {
@@ -66,7 +67,14 @@ def validate_plot(value: dict, scope: str) -> None:
             raise ValueError('章纲须用实际事件节点说明本章如何推进')
 
 
-def chapter_target(record: dict, lineage: list[dict]) -> dict:
+def next_chapter_index(store: Store, snapshot: dict) -> int:
+    positions = approved_scene_positions(store, snapshot)
+    if positions.keys() - snapshot['slots'].keys():
+        raise ValueError('CHAPTER_CONTINUATION_REQUIRED: 已批准章节尚有未接受场景，请完成前章后再续章')
+    return max((chapter for chapter, _ in positions.values()), default=0) + 1
+
+
+def chapter_target(record: dict, lineage: list[dict], chapter_index: int | None = None) -> dict:
     value = record['products']
     validate_plot(value, 'chapter')
     if len(value['directions']) != 1:
@@ -74,7 +82,8 @@ def chapter_target(record: dict, lineage: list[dict]) -> dict:
     return deepcopy({'kind': 'chapter_outline_approval',
                      'chapter': next(row for row in value['members'] if row['kind'] == 'chapter'),
                      'plot_ref': product_ref(record), 'direction': value['directions'][0],
-                     'event_nodes': value['event_nodes'], 'outline_lineage': lineage})
+                     'event_nodes': value['event_nodes'], 'outline_lineage': lineage,
+                     **({'chapter_index': chapter_index} if chapter_index is not None else {})})
 
 
 def validate_scene_handoff(value: dict, context: dict) -> None:
@@ -83,6 +92,9 @@ def validate_scene_handoff(value: dict, context: dict) -> None:
         chapter = approved['target']['chapter'] if approved else None
         if not chapter or len(value['chapters']) != 1 or value['chapters'][0]['card'] != chapter['key']:
             raise ValueError('场景须落到本轮已批准章纲对应的同一章卡')
+        index = context.get('chapter_target_index')
+        if index is not None and value['chapters'][0]['index'] != index:
+            raise ValueError(f'场景须使用已批准的第 {index} 章编号')
 
 
 def _verify_decision(store: Store, approved: dict) -> None:
@@ -98,7 +110,7 @@ def _verify_decision(store: Store, approved: dict) -> None:
 def approve_chapter(store: Store, record: dict, context: dict, decide: Callable | None) -> dict:
     if decide is None:
         raise ValueError('CHAPTER_OUTLINE_APPROVAL_REQUIRED: 请在制作台先确认章纲')
-    target = chapter_target(record, context['outline_lineage'])
+    target = chapter_target(record, context['outline_lineage'], context.get('chapter_target_index'))
     decision = decide(target)
     approval = {'target': target, 'decision_id': decision['decision_id'], 'choice': decision['choice']}
     _verify_decision(store, approval)
@@ -111,7 +123,8 @@ def verify_chapter(session: dict, store: Store | None = None) -> None:
         return
     approved = context.get('approved_chapter')
     plot = next(row for row in session['stages'] if row['stage'] == 'plot_design')
-    if not approved or approved['target'] != chapter_target(plot, context['outline_lineage']):
+    if not approved or approved['target'] != chapter_target(
+            plot, context['outline_lineage'], context.get('chapter_target_index')):
         raise ValueError('STALE_CHAPTER_OUTLINE: 场景采用的章纲与批准的剧情步骤产物不同')
     if store is not None:
         from nw.tasks import read_input_manifest

@@ -255,10 +255,14 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
                         'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy',
                         'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy',
-                        'parent_design_network'):
+                        'parent_design_network', 'chapter_target_index', 'scene_knowledge_policy', 'promise_continuity'):
                 if key in previous_package:
                     package[key] = previous_package[key]
         else:
+            if scope == 'chapter' and planning_hierarchy and state is not None:
+                from nw.materials.planning_hierarchy import next_chapter_index
+
+                package['chapter_target_index'] = next_chapter_index(store, state)
             if scope == 'chapter' and head is not None:
                 handoff = continuation_chapter_state(store, head, state)
                 if handoff is not None:
@@ -290,6 +294,14 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 package['multi_action_policy'] = MULTI_ACTION_POLICY
                 package['action_state_policy'] = ACTION_STATE_POLICY
                 package.update(current_story_policies())
+                if head is not None and scope in ('chapter', 'scene', 'replan'):
+                    from nw.materials.scene_knowledge import POLICY as SCENE_KNOWLEDGE_POLICY
+
+                    package['scene_knowledge_policy'] = SCENE_KNOWLEDGE_POLICY
+                if state is not None and scope in ('volume', 'chapter', 'scene', 'replan'):
+                    from nw.materials.promise_continuity import approved_promise_snapshot
+
+                    package['promise_continuity'] = approved_promise_snapshot(store, settings, cards, facts, operations)
                 if package.get('cast_sample_reference'):
                     from nw.materials.cast_distribution_plan import POLICY as CAST_DISTRIBUTION_POLICY
                     from nw.length_plan import approved_book_plan

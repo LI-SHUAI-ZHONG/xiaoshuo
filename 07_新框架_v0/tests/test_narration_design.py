@@ -164,15 +164,17 @@ def test_narrator_cannot_drop_the_hearsay_qualifier_from_a_mixed_history_record(
         validate_beat(row['narration'], body, scene_bases(records, context)['scene'])
 
 
-def test_client_design_freezes_public_history_and_personal_inference_for_reopened_writer(tmp_path):
+@pytest.mark.parametrize('private_from_draft', [False, True])
+def test_client_design_freezes_public_history_and_personal_inference_for_reopened_writer(tmp_path, private_from_draft):
     from dataclasses import asdict
     from nw.cards import decide_card, save_card
     from nw.context.story import build_story_context, scene_scope
     from nw.novel_flow import JobRequest, resume_job, start_job
     from nw.store import Store
-    from nw.story_state import adopt_story, current_head, state_at
+    from nw.story_delta import draft_ref
+    from nw.story_state import adopt_story, current_head, fork_story, state_at
     from nw.task_models import Budget
-    from story_fixture import baseline
+    from story_fixture import baseline, draft_for, operation, proposal
     from test_material_phase_flow import PhaseModel, template_catalog
     from test_material_workflow import choose
     from test_novel_flow import config
@@ -218,6 +220,7 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
 
     directory = tmp_path / 'story'
     template_catalog(tmp_path)
+    branch_id = 'main'
     with Store(directory, create=True, test_mode=True) as store:
         store.init_project('库门口的两种叙述')
         store.add_brief('先讲旧库封闭始末，回到门口写沈砚的疑心')
@@ -229,18 +232,34 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
         approval = decide_card(store, person, 'approved', '核对既有守簿人的身份')
         belief = {'entity_id':'archive','predicate':'cause','holder':'informant','value':private_belief,'claim':'belief',
                   'story_order':0,'disclosure_order':[0,0,0]}
+        facts = [{**belief, 'holder': 'yan', 'value': orphan}]
+        if not private_from_draft:
+            facts.append(belief)
         adopt_story(store, baseline(card_refs=[{**asdict(ref),'decision_id':approved.id},
-                    {**asdict(person), 'decision_id': approval.id}],
-                    facts=[belief, {**belief, 'holder': 'yan', 'value': orphan}]), {})
+                    {**asdict(person), 'decision_id': approval.id}], facts=facts), {})
+        if private_from_draft:
+            from nw.acceptance import accept_batch
+            prior_scene = store.add_scene(store.add_chapter(2, '补述老许的来历').id, 1, '{}')
+            draft = draft_for(store, prior_scene.id, private_belief)
+            head = current_head(store)
+            accepted = proposal(store, head, draft, [operation(draft, time=0, order=(2, 1, 0), holder='informant',
+                claim='belief', entity='archive', predicate='cause', new=private_belief)])
+            head = accept_batch(store, [accepted], head, '已核对属于老许的判断')
+            branch_id = fork_story(store, head, 'pov-candidate').branch_id
         provider = Model()
-        job = start_job(store, JobRequest('design', budget=Budget(32, 90000, 4000))).id
+        job = start_job(store, JobRequest('design', branch_id=branch_id, budget=Budget(32, 90000, 4000))).id
         assert resume_job(store, job, provider, config(store)).step == 'plan:book:confirm'
-        assert resume_job(store, job, provider, config(store), choose).step == 'plan:chapter:confirm'
+        proposed = resume_job(store, job, provider, config(store), choose)
+        assert proposed.step == 'plan:chapter:confirm', proposed.reason
         result = resume_job(store, job, provider, config(store), choose)
         assert result.status == 'DONE', result.reason
-        scene = store.list('scene')[0].id
+        scene = next(item.id for item in store.list('scene') if store.get('chapter', item.chapter_id).index == 1)
     with Store(directory, test_mode=True) as store:
-        items = build_story_context(store, scene, scene_scope(store, scene), 90000).package['items']
+        work = build_story_context(store, scene, scene_scope(store, scene, branch_id), 90000)
+        if private_from_draft:
+            assert draft_ref(draft) in work.dependency_refs
+            assert not work.predecessor_drafts
+        items = work.package['items']
         beats = [json.loads(json.loads(item['text'])['observable']) for item in items
                  if item['source'].startswith('material:work:narration:')]
         history, statement, response = [b for b in beats if b['basis_claim'] != 'cast_entry']
@@ -251,7 +270,7 @@ def test_client_design_freezes_public_history_and_personal_inference_for_reopene
         assert (response['mode'], response['basis_claim'], response['basis_quote']) == ('inference', 'speech', spoken)
         package = json.dumps(items, ensure_ascii=False)
         assert private_belief not in package and orphan not in package and '戊九' not in package
-        head = current_head(store)
+        head = current_head(store, branch_id)
         def beliefs(holder):
             view = state_at(store, head.branch_id, head.revision, 1, holder, (1, 1, 0), before_scene=scene)
             return [f.value for f in view.facts if f.claim == 'belief']

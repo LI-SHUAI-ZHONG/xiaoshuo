@@ -184,6 +184,45 @@ def test_accepted_current_state_and_evidence_must_still_match_at_writing_time():
     assert not progress.chapter_changes({'identity_disclosures': [accepted]})
 
 
+def test_an_accepted_fact_supersedes_the_same_persons_old_suspicion_during_design():
+    plan, records, context = designs()
+    old = {'entity_id': 'gate', 'predicate': 'time', 'holder': 'yan', 'claim': 'suspicion',
+           'story_order': 2, 'disclosure_order': [1, 1, 0], 'new_value': '起疑昨夜开过闸'}
+    known = {**old, 'claim': 'fact', 'story_order': 3, 'disclosure_order': [1, 2, 0],
+             'new_value': '已从记录查清昨夜闸门未开'}
+    context['chapter_changes'] = progress.chapter_changes({'character_changes': [old, known],
+                                                          'change_projection': 'chapter-state-slots-v1'})
+    row = plan['scene_progress'][0]
+    row.update(basis_ref='prior:0', basis_quote=old['new_value'], origin='reflection')
+    with pytest.raises(ValueError, match='使用此时有效'):
+        progress.validate(plan, records, context)
+    row.update(basis_ref='prior:1', basis_quote=known['new_value'])
+    progress.validate(plan, records, context)
+
+
+def test_cast_duty_validates_prior_state_at_its_actual_scene_while_designing():
+    plan, records, context = designs()
+    old = {'entity_id': 'gate', 'predicate': 'time', 'holder': 'yan', 'claim': 'suspicion',
+           'story_order': 2, 'disclosure_order': [1, 1, 0], 'new_value': '起疑昨夜开过闸'}
+    known = {**old, 'claim': 'fact', 'story_order': 3, 'disclosure_order': [1, 2, 0],
+             'new_value': '已从记录查清昨夜闸门未开'}
+    context['chapter_changes'] = progress.chapter_changes({'character_changes': [old, known],
+                                                          'change_projection': progress.CHANGE_PROJECTION})
+    duty = {'id': 'witness', 'need_ref': 'prior:0:change'}
+    records['world_design'] = {'products': {'cast_demands': [duty]}}
+    plan['cast_payoffs'] = [{'scene': 'river', 'demand': duty['id']}]
+    # The scene's own progress uses its event and cannot hide a stale prerequisite behind cast work.
+    with pytest.raises(ValueError, match='使用此时有效'):
+        progress.validate(plan, records, context)
+    duty['need_ref'] = 'prior:1:change'
+    progress.validate(plan, records, context)
+    plan['chapters'][0]['scenes'][0]['story_order'] = 2
+    with pytest.raises(ValueError, match='尚未在本场'):
+        progress.validate(plan, records, context)
+    duty['need_ref'] = 'prior:0:change'
+    progress.validate(plan, records, context)
+
+
 def test_world_event_can_change_the_situation_but_is_learned_by_a_current_character():
     plan, records, context = designs()
     context['chapter_changes']['prior:0'].update(holder='WORLD', claim='fact', text='闸门已经落下')

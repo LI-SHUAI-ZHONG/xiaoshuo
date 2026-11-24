@@ -2,10 +2,12 @@
 from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, narration, passage_sequence
 from nw.materials.phase_routes import POLICY, STAGED_POLICIES
 from nw.materials.passage_craft import POLICY as CRAFT_POLICY
+from nw.materials.scene_knowledge import POLICY as KNOWLEDGE_POLICY
 
 
 VERSIONS = {
     'narration_policy': narration.POLICIES,
+    'scene_knowledge_policy': (KNOWLEDGE_POLICY,),
     'chapter_progress_policy': chapter_progress.POLICIES,
     'cast_demand_policy': (cast_demands.POLICY,),
     'cast_distribution_policy': (cast_distribution_plan.POLICY,),
@@ -26,7 +28,8 @@ def verify(context: dict, plan: dict | None = None) -> None:
     direction = approved(context)
     if plan is not None and direction != approved(plan):
         raise ValueError('STALE_BOOK_DIRECTION: 阶段交接与原任务冻结的全书方向不同')
-    if plan is not None and any(context.get(key) != plan.get(key) for key in ('planning_hierarchy', 'outline_lineage')):
+    if plan is not None and any(context.get(key) != plan.get(key) for key in (
+            'planning_hierarchy', 'outline_lineage', 'chapter_target_index', 'promise_continuity')):
         raise ValueError('STALE_PLAN_HIERARCHY: 阶段交接与原任务冻结的上级方案不同')
     if plan is not None and plan.get('planning_hierarchy'):
         from nw.materials.planning_hierarchy import inherited_types
@@ -66,6 +69,9 @@ def verify_session(session: dict, plan: dict | None = None) -> None:
 
 def verify_plan(plan: dict) -> None:
     verify(plan)
+    if plan.get('scene_knowledge_policy') and (not plan.get('branch_head') or not plan.get('narration_policy') or
+            plan['scope'] == 'book' or plan.get('planning_hierarchy') and plan['scope'] == 'volume'):
+        raise ValueError('MATERIAL_STAGE: 人物所知核对需要已冻结的分支与章场叙述方案')
     if plan.get('material_mode') == 'source_driven_staged' or ('material_work' in plan and VERSIONS.keys() & plan.keys()):
         session = plan.get('material_work') or {}
         verify_session(session, plan)

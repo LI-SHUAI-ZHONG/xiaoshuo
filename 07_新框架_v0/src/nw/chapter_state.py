@@ -2,6 +2,7 @@
 from dataclasses import asdict
 
 from nw.cards import read_card
+from nw.materials.chapter_progress import CHANGE_PROJECTION
 from nw.materials.identity_evidence import accepted_scene_checks
 from nw.models import Chapter
 from nw.store import Store
@@ -48,9 +49,9 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
         identity_anchor_checks.extend(anchors)
         reviewed_progress.extend(progress)
         for operation in sorted(delta.operations, key=lambda op: (op['disclosure_order'], op['story_order'])):
-            if canonical(operation['expected_old']) == canonical(operation['new_value']):
-                continue
             change = {**operation, 'scene_id': scene.id, 'delta_id': delta_id}
+            if canonical(operation['expected_old']) == canonical(operation['new_value']):
+                change['value_unchanged'] = True
             identity_status = operation['predicate'].startswith(IDENTITY_STATUS_PREFIX)
             if identity_status:
                 change['paragraph_evidence'] = paragraph_evidence(draft, operation['evidence'])
@@ -72,6 +73,7 @@ def _chapter_state(store: Store, head: StateHead, snapshot: dict, chapter: Chapt
                                         'role': card['body']['role']})
     scope_complete = bool(approved_ids) and not pending
     return {'head': asdict(head), 'chapter': asdict(chapter), 'scope_complete': scope_complete,
+            'change_projection': CHANGE_PROJECTION,
             'drafts': drafts, 'pending_scene_ids': pending, 'missing_delta_scene_ids': missing_deltas,
             'affected_characters': affected_characters, 'changes': changes,
             **({'character_changes': character_changes} if character_changes else {}),

@@ -265,9 +265,12 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             from nw.materials.cast_design import entry_bases
             from nw.materials.narration import EVIDENCE_POLICY
             from nw.materials.phase_context import new_character_keys
+            from nw.materials.scene_knowledge import scoped
             entry_bases(value, [(k, 'character', v) for k, v in people_bodies.items()],
                         context.get('cast_previous_appearances', {}), context.get('accepted_state', []),
-                        new_people=new_character_keys(products, context) if context.get('narration_policy') == EVIDENCE_POLICY else None)
+                        new_people=new_character_keys(products, context) if context.get('narration_policy') == EVIDENCE_POLICY else None,
+                        unverified_chapters=context.get('cast_history_unverified_chapters', ()),
+                        scene_facts=scoped(value, context))
         if progress_enabled:
             chapter_progress.validate(value, products, context)
         if length := context.get('length_context'):

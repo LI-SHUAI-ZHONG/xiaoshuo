@@ -91,6 +91,8 @@ class ProductionViews:
                                '场景设计待确认' if gate.get('scope') == 'chapter' else
                                '方案待选择' if str(job.step).startswith('plan:') else
                                '核心设定变化需确认' if 'core' in str(job.step) else '本场稿件与状态待接受')
+                    if type(index := gate.get('chapter_index')) is int:
+                        summary = f'第 {index} 章 · {summary}'
                     result.append({'id': gate['token'], 'job_id': job.id, 'step': job.step, 'token': gate['token'],
                                    'branch_id': row['branch_id'],
                                    'actions': gate['actions'], 'target': gate,
@@ -132,8 +134,9 @@ class ProductionViews:
         state = {'approve': 'done', 'reject': 'rejected'}.get(choice.get('action'))
         if state is None:
             state = 'waiting' if job['status'] == 'WAITING' and target else 'pending'
+        label = f"第 {target['chapter_index']} 章 · 章纲确认" if 'chapter_index' in target else '章纲确认'
         return {'id': f"{job['id']}:chapter:outline", 'job_id': job['id'], 'scope': 'chapter',
-                'stage': 'chapter_outline', 'label': '章纲确认', 'status': state, 'children': [],
+                'stage': 'chapter_outline', 'label': label, 'status': state, 'children': [],
                 'output': {'members': [target['chapter']], 'event_nodes': target.get('event_nodes', [])}
                 if target else None}
 

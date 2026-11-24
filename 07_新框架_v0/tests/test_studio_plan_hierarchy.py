@@ -111,6 +111,7 @@ def test_studio_runs_approved_book_volume_chapter_and_scene_in_order(client):
     assert awaiting_outline['status'] == 'WAITING', awaiting_outline['reason']
     chapter_gate = awaiting_outline['gates'][0]
     assert chapter_gate['target']['kind'] == 'chapter_outline_approval'
+    assert chapter_gate['target']['chapter_index'] == 1
     assert chapter_gate['target']['outline_lineage'][-1] == proof
     assert not any(json.loads(call[-1]['content']).get('stage') in ('event_design', 'action_design', 'scene_design')
                    for call in model.calls[before:])
@@ -118,6 +119,7 @@ def test_studio_runs_approved_book_volume_chapter_and_scene_in_order(client):
     scene_review = approve(chapter_gate)
     assert scene_review['status'] == 'WAITING', scene_review['reason']
     scene_gate = scene_review['gates'][0]
+    assert scene_gate['target']['chapter_index'] == 1
     assert scene_gate['target']['approved_chapter'] == chapter_gate['target']['chapter']
     assert scene_gate['target']['approved_parent'] == proof
     later = [json.loads(call[-1]['content']) for call in model.calls[before:]]
@@ -125,6 +127,7 @@ def test_studio_runs_approved_book_volume_chapter_and_scene_in_order(client):
     assert {row['stage'] for row in downstream} == {'event_design', 'action_design', 'scene_design'}
     assert all(row['approved_chapter']['target']['chapter'] == chapter_gate['target']['chapter']
                and row['outline_lineage'][-1] == proof for row in downstream)
+    assert next(row for row in downstream if row['stage'] == 'scene_design')['chapter_target_index'] == 1
     final = approve(scene_gate, scene_gate['target']['candidates'][0]['root']['card_id'])
     assert final['status'] == 'DONE', final['reason']
     detail = send('GET', base)[1]

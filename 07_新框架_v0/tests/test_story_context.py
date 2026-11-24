@@ -126,3 +126,71 @@ def test_pov_knowledge_disclosed_later_keeps_the_draft_dependency(project):
     assert 'FROM_LATER_SCENE' in json.dumps(work.package)
     assert draft_ref(draft) in work.dependency_refs
     assert not work.predecessor_drafts
+
+
+def test_previous_chapter_flash_forward_is_not_raw_pov_context(project):
+    from nw.acceptance import accept_batch
+    from nw.story_delta import draft_ref
+
+    store, earlier, scope = project
+    chapter = store.add_chapter(2, '当时')
+    scene = store.add_scene(chapter.id, 1, '{}')
+    binding = {'story': {'scene_ref': scope.scene_ref, 'story_order': 9}}
+    store.connection.execute('UPDATE scenes SET card_json=? WHERE id=?', (json.dumps(binding), earlier))
+    future = 'FUTURE_SCENE_PASSCODE'
+    draft = draft_for(store, earlier, f'沈砚在井口听到了{future}。')
+    head = StateHead('main', 0)
+    request = proposal(store, head, draft, [operation(draft, time=9, holder='yan', claim='belief',
+        entity='well', predicate='password', old='POV_BELIEF', new=future)])
+    accepted = accept_batch(store, [request], head, 'earlier chapter')
+    work = build_story_context(store, scene.id, StoryScope('main', accepted.revision, 1, scope.scene_ref), 15000)
+    assert future not in json.dumps(work.package)
+    assert not any(item['source'].startswith('previous:') for item in work.package['items'])
+    assert draft_ref(draft) in work.predecessor_drafts
+
+
+def test_scene_design_uses_character_history_and_separate_reader_clock(project):
+    from nw.acceptance import accept_batch
+    from nw.materials import scene_knowledge
+    from nw.materials.narration import EVIDENCE_POLICY, scene_bases
+
+    store, first, _ = project
+    last = store.add_scene(store.add_chapter(3, '晚揭示').id, 1, '{}')
+    later_draft = draft_for(store, first, '未来才会改变的判断。')
+    old_draft = draft_for(store, last.id, '回溯得知的信息。')
+    head = StateHead('main', 0)
+    head = accept_batch(store, [proposal(store, head, later_draft, [
+        operation(later_draft, time=8, holder='yan', claim='belief', entity='well', predicate='password',
+                  old='POV_BELIEF', new='FUTURE_BELIEF'),
+        operation(later_draft, time=8, holder='READER', entity='well', predicate='seal', new='READER_FLASH_FORWARD'),
+    ])], head, 'future')
+    head = accept_batch(store, [proposal(store, head, old_draft, [
+        operation(old_draft, time=2, order=(3, 1, 0), holder='yan', entity='well', predicate='location',
+                  old='SHARED_FACT', new='EARLIER_CHARACTER_KNOWLEDGE'),
+        operation(old_draft, time=2, order=(3, 1, 0), holder='READER', entity='well', predicate='location',
+                  old='SHARED_FACT', new='LATER_READER_REVEAL'),
+        operation(old_draft, time=2, order=(3, 1, 0), holder='yan', entity='other', predicate='identity',
+                  new='先前在簿册核实了他是来接手的掌柜'),
+    ])], head, 'flashback')
+    scenes = {'chapters': [{'index': 2, 'scenes': [{'index': 1, 'story_order': 3, 'card': 's'}]}],
+              'members': [{'key': 's', 'body': {'pov': 'yan', 'characters': ['yan', 'other']}}]}
+    frozen = scene_knowledge.freeze(store, asdict(head), scenes)
+    products = {'scene_design': {'products': scenes}}
+    cards = [{'card_id': 'yan', 'kind': 'character', 'body': {'name': '沈砚', 'visibility': 'public'}},
+             {'card_id': 'other', 'kind': 'character', 'body': {'name': '掌柜', 'visibility': 'public', 'casting': {
+                 'entry': 'other', 'public_identity': '掌柜', 'introducer': 'yan',
+                 'introducer_source': 'prior', 'introducer_basis': '在簿册核实'}}}]
+    context = {'scene_knowledge_policy': scene_knowledge.POLICY, 'narration_scene_facts': frozen,
+               'narration_policy': EVIDENCE_POLICY, 'approved_cards': cards}
+    bases = scene_bases(products, context)['s']
+    texts = {source['text'] for source in bases.values() if source['kind'] == 'state'}
+    assert {'POV_BELIEF', 'EARLIER_CHARACTER_KNOWLEDGE', 'SHARED_FACT'} <= texts
+    assert {'FUTURE_BELIEF', 'LATER_READER_REVEAL', 'SECRET_FACT', 'READER_FLASH_FORWARD'}.isdisjoint(texts)
+    assert bases['cast:other:entry']['state_sha256']
+    with pytest.raises(ValueError, match='scene knowledge'):
+        scene_bases(products, {**context, 'narration_scene_facts': {}})
+    package = {'scene_knowledge_policy': scene_knowledge.POLICY, 'branch_head': asdict(head)}
+    session = {'stages': [{'stage': 'scene_design', 'products': scenes}], 'context': context}
+    scene_knowledge.verify_archive(store, package, session)
+    with pytest.raises(ValueError, match='scene knowledge'):
+        scene_knowledge.verify_archive(store, package, {**session, 'context': {**context, 'narration_scene_facts': {'s': []}}})

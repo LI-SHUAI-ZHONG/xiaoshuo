@@ -2,17 +2,23 @@
 from nw.materials.template_support import content, events, product, require, rows
 from nw.materials.phase_context import new_character_keys
 from nw.story_models import Fact
+from nw.story_state import claim_group, fact_key
 from nw.task_models import canonical, content_sha256
 
 
 POLICY = 'chapter-progress-v2'
 LEGACY_POLICY = 'chapter-progress-v1'
 POLICIES = (LEGACY_POLICY, POLICY)
+CHANGE_PROJECTION = 'chapter-state-slots-v1'
 PRESSURE_MARK = '【未决原文】'
 ORIGINS = ('conversation', 'reflection', 'discovery', 'incident', 'continuation')
 CONNECTIONS = ('causal', 'coincident', 'unresolved')
 CHANGES = ('knowledge', 'decision', 'relationship', 'ability', 'resource', 'situation', 'emotion', 'reader', 'setup')
 FIELDS = {'scene', 'basis_ref', 'basis_quote', 'origin', 'connection', 'stimulus', 'change', 'next_pressure'}
+PROJECTION_INSTRUCTION = (
+    'value_unchanged表示状态文字没变。认知是否由怀疑变成确证，按claim和证据判断。'
+    'new_value为null或带removal_source时，承接已经撤回的状态或已经解除的关系，旧值仅说明移除的对象。'
+)
 PLOT_INSTRUCTION = (
     '以已有方向、章前处境和未解决的问题定章任务。event_nodes.setting说明人物抵达前世界或他人已在做什么；'
     '用章卡goal/consequence写明章初问题与章末实际推进，可以是一句对话、一次改判或关系变化。'
@@ -34,17 +40,49 @@ SCENE_INSTRUCTION = (
 def chapter_changes(handoff: dict) -> dict:
     changes = [*handoff.get('changes', ()), *handoff.get('character_changes', ()),
                *handoff.get('identity_disclosures', ())]
+    typed = handoff.get('change_projection') == CHANGE_PROJECTION
     result = {}
     for index, change in enumerate(changes):
         value = change['new_value']
         if change['holder'] == 'READER':
             continue
-        result[f'prior:{index}'] = {key: change[key] for key in
-            ('entity_id', 'predicate', 'holder', 'claim', 'story_order', 'disclosure_order')}
-        result[f'prior:{index}']['text'] = value if value is None or isinstance(value, str) else canonical(value)
+        item = {key: change[key] for key in
+                ('entity_id', 'predicate', 'holder', 'claim', 'story_order', 'disclosure_order')}
+        item['text'] = value if value is None or isinstance(value, str) else canonical(value)
         if change.get('evidence'):
-            result[f'prior:{index}']['evidence_sha256'] = content_sha256(change['evidence'])
+            item['evidence_sha256'] = content_sha256(change['evidence'])
+        if typed:
+            item['claim_group'] = claim_group(change['claim'])
+            if change.get('value_unchanged'):
+                item['value_unchanged'] = True
+            if change.get('op') in ('unset', 'remove_relation'):
+                item['text'] = _removal_text(change)
+                item['removal_source'] = {'draft_id': change['evidence'][0]['draft_id'], 'delta_id': change['delta_id']}
+        result[f'prior:{index}'] = item
     return result
+
+
+def _removal_text(change: dict) -> str:
+    previous = change['expected_old']
+    return '已移除的原状态为 ' + (previous if isinstance(previous, str) else canonical(previous))
+
+
+def _change_slot(change: dict) -> tuple[str, str, str, str]:
+    return change['holder'], change['entity_id'], change['predicate'], change.get('claim_group', change['claim'])
+
+
+def _change_order(change: dict) -> tuple:
+    return change['story_order'], tuple(change['disclosure_order'])
+
+
+def _validate_effective_change(prior: dict, ref: str, order: int, disclosure: tuple) -> None:
+    source = prior[ref]
+    require(source['story_order'] <= order and tuple(source['disclosure_order']) < disclosure,
+            '前章变化尚未在本场的故事时间或披露顺序发生')
+    applicable = [key for key, change in prior.items() if _change_slot(change) == _change_slot(source)
+                  and change['story_order'] <= order and tuple(change['disclosure_order']) < disclosure]
+    latest = max(applicable, key=lambda key: (*_change_order(prior[key]), int(key.split(':')[1])))
+    require(ref == latest, '本场之前该状态已经改变，需要使用此时有效的前章变化')
 
 
 def chapter_openings(handoff: dict, policy: str = POLICY) -> dict:
@@ -138,15 +176,13 @@ def validate(value: dict, products: dict, context: dict) -> None:
             require(row['origin'] != 'reflection' and (row['change'] not in ('knowledge', 'decision', 'emotion')
                     or row['origin'] in ('conversation', 'discovery')),
                     '客观处境不能替人物默知或回忆；本人的新认知或决定需要本场交流、听见或发现的途径')
-        order, disclosure = places[scene]
-        require(source['story_order'] <= order and tuple(source['disclosure_order']) < disclosure,
-                '前章变化尚未在本场的故事时间或披露顺序发生')
-        applicable = [key for key, change in prior.items() if all(change[field] == source[field]
-                      for field in ('entity_id', 'predicate', 'holder', 'claim'))
-                      and change['story_order'] <= order and tuple(change['disclosure_order']) < disclosure]
-        latest = max(applicable, key=lambda key: (prior[key]['story_order'], prior[key]['disclosure_order'],
-                                                   int(key.split(':')[1])))
-        require(ref == latest, '本场之前该状态已经改变，需要使用此时有效的前章变化')
+        elif source.get('removal_source'):
+            require(row['origin'] != 'reflection', '已撤回的个人状态不能作为人物当下回想的唯一依据')
+        _validate_effective_change(prior, ref, *places[scene])
+    if any('claim_group' in change for change in prior.values()):
+        for scene, source_ref in _cast_sources(products, context, value.get('cast_payoffs', ())):
+            if source_ref.startswith('prior:'):
+                _validate_effective_change(prior, source_ref.rsplit(':', 1)[0], *places[scene])
     require(seen == set(places), '每个实际场景须有自己的推进设计')
     required = {(r['ref'], r['event']) for r in product(products, 'plot_design').get('continuations', ())}
     require(required == carried, '本章已采用的接续事项须落在至少一个实际选中该事件的场景')
@@ -170,7 +206,10 @@ def scene_check(records: dict, scene: str, context: dict) -> dict | None:
     observable.update(entering_state=body['entering_state'], candidate_result=patch.get('planned_result', body['planned_result']))
     source = context.get('chapter_changes', {}).get(row['basis_ref'])
     if source and source['holder'] == body['pov']:
-        observable['personal_basis'] = {key: source[key] for key in ('claim', 'predicate', 'text')}
+        if source.get('removal_source'):
+            observable['withdrawn_personal_state'] = {key: source[key] for key in ('claim', 'predicate')}
+        else:
+            observable['personal_basis'] = {key: source[key] for key in ('claim', 'predicate', 'text')}
     check = ('以本稿原句核对场面为后续建立的具体处境，不虚构人物改变。' if row['change'] == 'setup'
              else '以本稿原句核对这个视角遇到的触发、回应及实际变化；保留误信、意图、偶合或未决的原意。')
     if row['change'] == 'reader' and context.get('passage_craft_policy') == 'scene-craft-v1':
@@ -211,24 +250,31 @@ def scene_check(records: dict, scene: str, context: dict) -> dict | None:
             'evidence_required': evidence_required}
 
 
-def cast_preconditions(session: dict, scene: str) -> list[dict]:
-    """Follow only the selected cast duties, including a plot-requested replacement."""
-    records = {r['stage']: r for r in session.get('stages', ())}
-    links = [r for r in product(records, 'scene_design').get('cast_payoffs', ()) if r['scene'] == scene]
+def _cast_sources(records: dict, context: dict, links: list[dict] | tuple) -> list[tuple[str, str]]:
     if not links:
         return []
-    context = session['context']
     initial = {r['id']: r['need_ref'] for r in product(records, 'world_design')['cast_demands']}
     gap = context.get('plot_cast_gap') or {}
     demands = {**initial, **{r['id']: r['need_ref'] for r in gap.get('cast_demands', ())}}
     turns = {r['id']: r['source_ref'] for r in gap.get('turns', ())}
-    checks = []
+    sources = []
     for link in links:
         ref = demands[link['demand']]
         if ref.startswith('plot-gap:'):
             ref = turns[ref[len('plot-gap:'):].rsplit(':', 1)[0]]
         if ref.startswith('initial-demand:'):
             ref = initial[ref[len('initial-demand:'):].rsplit(':', 1)[0]]
+        sources.append((link['scene'], ref))
+    return sources
+
+
+def cast_preconditions(session: dict, scene: str) -> list[dict]:
+    """Follow only the selected cast duties, including a plot-requested replacement."""
+    records = {r['stage']: r for r in session.get('stages', ())}
+    links = [r for r in product(records, 'scene_design').get('cast_payoffs', ()) if r['scene'] == scene]
+    context = session.get('context', {})
+    checks = []
+    for _, ref in _cast_sources(records, context, links):
         if ref.startswith('prior:'):
             checks.append({'chapter_progress_prior': context['chapter_changes'][ref.rsplit(':', 1)[0]]})
         elif ref.startswith('open:'):
@@ -249,7 +295,24 @@ def writing_preconditions(checks: list[dict], session: dict, scene: str) -> list
     return selected
 
 
-def verify_current(checks: list[dict], facts: list[Fact], slots: dict, disclosure: tuple | None = None) -> None:
+def _removal_is_current(prior: dict, facts: list[Fact], operations: list[dict], accepted: set,
+                        story_order: int, disclosure: tuple | None) -> bool:
+    receipt = prior['removal_source']
+    key = _change_slot(prior)
+    if (receipt['draft_id'], receipt['delta_id']) not in accepted or any(fact_key(fact) == key for fact in facts):
+        return False
+    available = [op for op in operations if (op['holder'], op['entity_id'], op['predicate'], claim_group(op['claim'])) == key
+                 and op['story_order'] <= story_order and (disclosure is None or tuple(op['disclosure_order']) < disclosure)]
+    if not available:
+        return False
+    _, latest = max(enumerate(available), key=lambda pair: (*_change_order(pair[1]), pair[0]))
+    return (latest['op'] in ('unset', 'remove_relation') and _change_order(latest) == _change_order(prior)
+            and latest['claim'] == prior['claim'] and _removal_text(latest) == prior['text']
+            and content_sha256(latest['evidence']) == prior['evidence_sha256'])
+
+
+def verify_current(checks: list[dict], facts: list[Fact], slots: dict, disclosure: tuple | None = None, *,
+                   operations: list[dict] | None = None, story_order: int | None = None) -> None:
     accepted = {(slot['draft_id'], slot.get('delta_id')) for slot in slots.values()}
     for check in checks:
         receipts = [link['prior'] for link in check.get('continuations', ())]
@@ -263,6 +326,11 @@ def verify_current(checks: list[dict], facts: list[Fact], slots: dict, disclosur
             continue
         if disclosure is not None and tuple(prior['disclosure_order']) >= disclosure:
             raise ValueError('MATERIAL_PRECONDITION: 本场所依前章变化尚未披露，请按当前场次重新设计')
+        if prior.get('removal_source'):
+            if (operations is None or story_order is None
+                    or not _removal_is_current(prior, facts, operations, accepted, story_order, disclosure)):
+                raise ValueError('MATERIAL_PRECONDITION: 本场所依前章状态移除或稿件证据已经改变，请按当前分支重新设计')
+            continue
         for fact in facts:
             if not all(getattr(fact, field) == prior[field] for field in ('entity_id', 'predicate', 'holder', 'claim')):
                 continue

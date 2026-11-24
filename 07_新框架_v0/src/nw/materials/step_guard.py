@@ -521,7 +521,14 @@ def build_continuity_ledger(stage: str, products: dict, deps: list[str], context
             ledger['character_voice_guard'] = voice_guard
 
     # 6. Foreshadowing 3-state lifecycle & payoff/overdue reminder
-    if stage in ('scene_design', 'anchor_design', 'expression_design', 'bind_scope', 'writing'):
+    if 'promise_continuity' in context:
+        if stage in ('plot_design', 'event_design', 'action_design', 'scene_design', 'state_transition',
+                     'anchor_design', 'expression_design', 'bind_scope'):
+            from nw.materials.promise_continuity import continuation_reminder
+
+            if (foreshadow := continuation_reminder(products, context)) is not None:
+                ledger['foreshadow_reminder'] = foreshadow
+    elif stage in ('scene_design', 'anchor_design', 'expression_design', 'bind_scope', 'writing'):
         foreshadow = _build_foreshadow_reminder(stage, products, context)
         if foreshadow is not None:
             ledger['foreshadow_reminder'] = foreshadow

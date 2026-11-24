@@ -92,6 +92,9 @@ class StoryProvider:
             items.append(ContextItem('chapter:length', canonical(progress), '按已接受稿与其余场景分配的本场可写字数'))
         from nw.length_plan import model_approved_cards
         for card in model_approved_cards(project['settings']):
+            if card['kind'] == 'promise':
+                # Planned setups and payoffs reach prose through the authorized scene checks.
+                continue
             body = card['body']
             if card['kind'] == 'character' and 'casting' in body:
                 from nw.materials.cast_design import writer_card
@@ -252,6 +255,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
             inputs['chapter_length_progress'] = progress
     design = scene_materials(store, scene_id, scope.scene_ref)
     source_keys = set()
+    narration_evidence = []
     if design:
         verify_materials(store.directory.parent, design['materials'])
         checks = scene_checks(design)
@@ -270,9 +274,15 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
                               disclosure, before_scene=scene_id, snapshot=snapshot)
             if narration_states:
                 from nw.materials.narration import verify_scene_facts
-                verify_scene_facts(narration_states, author.facts)
+                narration_evidence = verify_scene_facts(narration_states, author.facts)
             if progress_preconditions:
-                verify_current(progress_preconditions, author.facts, snapshot['slots'], disclosure)
+                operations = None
+                if any((check.get('chapter_progress_prior') or {}).get('removal_source')
+                       for check in progress_preconditions):
+                    from nw.story_state import selected_operations
+                    operations = selected_operations(store, snapshot)
+                verify_current(progress_preconditions, author.facts, snapshot['slots'], disclosure,
+                               operations=operations, story_order=scope.story_order)
             if legacy_preconditions:
                 legacy_design={key:value for key,value in design.items() if key!='work_session'}
                 verify_preconditions(legacy_design, author.facts, {item['card_id'] for item in snapshot['settings']})
@@ -306,14 +316,16 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
             return False
 
     fits(assembled, mandatory=True)
-    predecessors, other_evidence = _previous_refs(store, snapshot, view.facts, disclosure)
+    dependency_facts = [*view.facts, *narration_evidence]
+    predecessors, other_evidence = _previous_refs(store, snapshot, dependency_facts, disclosure)
     earlier = {ref.id for ref in predecessors}
     prior_slots_by_draft = {slot['draft_id']: slot for slot in snapshot['slots'].values()}
     prior_texts: dict[str, tuple[str, list[tuple[int, int]]]] = {}
 
     def excerpt_source(ident: str) -> tuple[str, list[tuple[int, int]]]:
         if ident not in prior_texts:
-            prior_texts[ident] = prior_prose(store, store.get('draft', ident), prior_slots_by_draft[ident], view.holder)
+            prior_texts[ident] = prior_prose(store, store.get('draft', ident), prior_slots_by_draft[ident], view.holder,
+                                             at_story_order=scope.story_order)
         return prior_texts[ident]
 
     def _enrich_span(span: dict) -> dict:
@@ -363,7 +375,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         elif optional:
             omitted.append(name)
     if inputs.get('reader'):
-        predecessors, other_evidence = _previous_refs(store, snapshot, [*view.facts, *shared], disclosure)
+        predecessors, other_evidence = _previous_refs(store, snapshot, [*dependency_facts, *shared], disclosure)
     selection = select_rules(store, scene_ref, view)
     selected = []
     for mapping in selection.mappings:
