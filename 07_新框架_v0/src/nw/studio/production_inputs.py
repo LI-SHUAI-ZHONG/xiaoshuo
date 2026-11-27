@@ -114,7 +114,8 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     if 'method_preferences' in raw:
         from nw.production_methods.sources import MethodReader
         from nw.studio.method_recommendations import freeze_preferences
-        references = freeze_preferences(MethodReader(library.workspace), method_choices, selected_types)
+        references = freeze_preferences(MethodReader(library.workspace), method_choices, selected_types,
+                                        planning_hierarchy=wizard.get('planning_hierarchy', False))
         wizard['method_references'] = references
     if raw.get('production_methods') is not None or references or mode:
         from nw.production_methods.policy import normalize
@@ -168,9 +169,22 @@ def freeze_length_recommendation(wizard: dict, library) -> None:
 def governance(wizard: dict, *, library=None) -> dict:
     result = {stage: {'author_preferences': {}} for stage in ORDER}
     for slot, field in SLOTS.items():
-        for stage in STAGES[slot]:
-            if wizard.get(field):
-                result[stage]['author_preferences'][slot] = wizard[field]
+        values = wizard.get(field)
+        if not values:
+            continue
+        if slot in ('character', 'structure', 'hook', 'narration'):
+            opt_by_id = {row['id']: row for row in catalog.option_map(slot).values() if row.get('selectable', True)}
+            by_stage: dict[str, list[str]] = {}
+            for ident in values:
+                target_stages = opt_by_id.get(ident, {}).get('stages') or STAGES[slot]
+                for stage in target_stages:
+                    if stage in result:
+                        by_stage.setdefault(stage, []).append(ident)
+            for stage, stage_vals in by_stage.items():
+                result[stage]['author_preferences'][slot] = stage_vals
+        else:
+            for stage in STAGES[slot]:
+                result[stage]['author_preferences'][slot] = values
     plan = wizard.get('creation_plan')
     if plan and plan.get('version') == 1:
         for stage in result:

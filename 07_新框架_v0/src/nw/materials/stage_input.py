@@ -347,7 +347,8 @@ def model_package(package: dict) -> dict:
         'dynamic_reference_checks','dynamic_screening_enabled','scene_source_binding_policy','action_state_policy',
         'action_template_priority_enabled','network_prerequisite_policy','multi_action_policy','network_layer_policy',
         'early_network_policy','same_stage_network_policy','type_network_policy','world_network_policy',
-        'world_advancement_policy','world_conversion_policy','world_resource_policy','world_market_policy','world_history_policy','design_network_policy','parent_design_network'}}
+        'world_advancement_policy','world_conversion_policy','world_resource_policy','world_market_policy','world_history_policy','design_network_policy','parent_design_network',
+        'world_material_profile','character_material_profile','plot_material_profile','execution_material_profile','craft_material_profile','reference_method_portfolio'}}
     if package.get('length_context'):
         from nw.length_plan import model_approved_cards, model_length_context
         result['length_context'] = model_length_context(package['length_context'])

@@ -48,7 +48,8 @@ def normalize(raw: object, *, types: list[str] = ()) -> dict:
             raise ValueError('AI 自动须有各板块的制作方法与对应步骤')
         for slot, route in slots.items():
             if (not isinstance(route, dict) or set(route) != {'scope', 'stage', 'versions'}
-                    or route['scope'] not in ('book','chapter') or route['stage'] not in phase_order(route['scope'])
+                    or route['scope'] not in ('book', 'volume', 'chapter')
+                    or route['stage'] not in phase_order(route['scope'])
                     or slot == 'world' and (route['scope'], route['stage']) != ('book', 'world_design')):
                 raise ValueError('无效的自动推荐制作步骤')
             versions = route['versions']

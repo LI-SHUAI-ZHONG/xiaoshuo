@@ -104,6 +104,7 @@ def method_catalog(*, include_story_outputs: bool = True) -> dict:
     labels = set.union(*fields.values())
     stages = [{'id': stage, 'name': STAGES[stage], 'required_stages': list(REQUIRES[stage]),
         'scopes': [scope for scope in SCOPES if stage in phase_order(scope)],
+        'hierarchical_scopes': [scope for scope in SCOPES if stage in phase_order(scope, planning_hierarchy=True)],
         'output_fields': sorted(fields[stage]),
         **({'conditional_output_fields': conditional_outputs(stage)} if include_story_outputs else {}),
         'consumers': [consumer for consumer in ORDER if stage in REQUIRES[consumer]],

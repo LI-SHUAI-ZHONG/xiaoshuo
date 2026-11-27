@@ -103,7 +103,7 @@ def merge_followup(basis: dict, delta: dict, sources: list[dict], products: dict
 
     former = basis['products']['requirements']
     seen = {row['id'] for row in former}
-    order = phase_order(context.get('scope', 'chapter'))
+    order = phase_order(context.get('scope', 'chapter'), planning_hierarchy=context.get('planning_hierarchy', False))
     later = set(order[order.index(STAGE) + 1:])
     requirements = {}
     for index, row in enumerate(delta['requirements'], start=len(former)):

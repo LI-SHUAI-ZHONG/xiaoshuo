@@ -13,7 +13,15 @@ def locate(service: Any, body: dict) -> dict:
     start = body.get('start')
     if start is None:
         start = content.find(quote)
-        if start >= 0 and content.find(quote, start + 1) >= 0:
+        if start < 0 and '\n' in quote and '\r\n' in content:
+            crlf_quote = quote.replace('\r\n', '\n').replace('\n', '\r\n')
+            pos = content.find(crlf_quote)
+            if pos >= 0:
+                if content.find(crlf_quote, pos + 1) >= 0:
+                    raise ValueError('摘录出现多次，请填写原文字符起点')
+                quote = crlf_quote
+                start = pos
+        elif start >= 0 and content.find(quote, start + 1) >= 0:
             raise ValueError('摘录出现多次，请填写原文字符起点')
     if type(start) is not int or start < 0 or content[start:start + len(quote)] != quote:
         raise ValueError('证据与原文定位不一致')

@@ -156,8 +156,15 @@ class BranchMixin:
                 self._branch_idle(novel, store)
                 current_head(store, branch_id)
                 jobs = store.connection.execute('SELECT id,request_json FROM novel_jobs ORDER BY rowid DESC').fetchall()
-                job_id = next((row['id'] for row in jobs if json.loads(row['request_json'])['branch_id'] == branch_id), None)
-            self.db.update(ident, current_branch=branch_id, job_id=job_id, status='writing', runtime_status='READY', reason=None)
+                matched = next(((row['id'], json.loads(row['request_json']))
+                                for row in jobs if json.loads(row['request_json'])['branch_id'] == branch_id), None)
+                job_id, job_req = matched if matched else (None, {})
+                job = show_job(store, job_id) if job_id else None
+            runtime = 'PAUSED' if job and job.reason == 'AUTHOR_PAUSED' else (job.status if job else 'READY')
+            reason = job.reason if job else None
+            status = ('paused' if runtime in ('PAUSED', 'BLOCKED', 'CANCELLED', 'REJECTED', 'STALE')
+                      else ('designing' if job and job_req.get('mode') == 'design' and runtime != 'DONE' else 'writing'))
+            self.db.update(ident, current_branch=branch_id, job_id=job_id, status=status, runtime_status=runtime, reason=reason)
             self.db.event(ident, 'branch', f'作者切换到 {branch_id}', {'branch_id': branch_id})
             self.changed.set()
         return self.branch_status(ident)

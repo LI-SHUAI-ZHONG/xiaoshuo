@@ -187,7 +187,7 @@ class RepositorySync:
     @contextmanager
     def mutation(self) -> Iterator[None]:
         with self.data_lock:
-            if self._draining or self.check_running_source() or (self.enabled and self.restore_required):
+            if self._draining or self.check_running_source() or (self.enabled and (self.restore_required or self.git is None)):
                 raise SyncError('RESTART', '仓库资料尚未就绪或程序已更新，请查看 GitHub 同步状态并重启客户端')
             try:
                 yield

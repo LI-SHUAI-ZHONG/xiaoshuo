@@ -1,7 +1,9 @@
 """Refresh the pending selection using the already saved inputs for this plan."""
+from copy import deepcopy
 import json
 
 from nw.call_control import execution_lock
+from nw.materials.network_followup import DELTA_FIELDS
 from nw.materials.phase_routes import phase_order
 from nw.novel_calls import call_id
 from nw.novel_store import Journal, job_row
@@ -13,11 +15,13 @@ from nw.task_models import canonical, content_sha256
 from nw.tasks import read_input_manifest
 
 
-def _prior_products(store: object, job_id: str, manifest_id: str, scope: str, stage: str) -> dict:
-    stages = phase_order(scope)
+def _prior_products(store: object, job_id: str, manifest_id: str, scope: str, stage: str,
+                    *, planning_hierarchy: bool = False) -> dict:
+    stages = phase_order(scope, planning_hierarchy=planning_hierarchy)
     preceding = set(stages[:stages.index(stage)])
     rows = store.connection.execute('''SELECT t.id, t.manifest_id, t.result_json,
-            json_extract(m.package_json, '$.study_input.stage') AS stage
+            json_extract(m.package_json, '$.study_input.stage') AS stage,
+            json_extract(m.payload_json, '$.settings.prompt_version') AS call_version
         FROM task_calls t JOIN input_manifests m ON m.id=t.manifest_id
         WHERE t.budget_id=? AND t.kind='material_work'
           AND json_extract(m.package_json, '$.base_plan_manifest')=?
@@ -32,9 +36,26 @@ def _prior_products(store: object, job_id: str, manifest_id: str, scope: str, st
         if completed not in preceding:
             continue
         _, frozen = read_input_manifest(store, row['manifest_id'])
-        if frozen['study_input']['scope'] != scope or completed in records:
+        if frozen['study_input']['scope'] != scope:
             raise ValueError('本轮前置产物记录无法唯一确认，请检查任务状态')
         products = json.loads(row['result_json'])['products']
+        version = row['call_version'] or ''
+        basis = frozen['study_input'].get('static_relations_basis')
+        if (completed == 'static_relations' and basis and completed in records
+                and version in ('static-network-followup-v1', 'static-network-cast-repair-v1')
+                and basis.get('ref', {}).get('task_id') == records['static_relations']['task_id']
+                and set(products) == DELTA_FIELDS):
+            merged = deepcopy(records['static_relations']['products'])
+            for key, items in products.items():
+                if items or key in merged:
+                    merged[key] = [*merged.get(key, []), *deepcopy(items)]
+            records['static_relations'] = {'stage': completed, 'task_id': row['id'], 'products': merged,
+                                           'sha256': content_sha256(merged)}
+            continue
+        is_repair = (version == 'source-step-cast-repair-v1'
+                     and completed in ('character_design', 'static_relations', 'plot_design'))
+        if completed in records and not is_repair:
+            raise ValueError('本轮前置产物记录无法唯一确认，请检查任务状态')
         records[completed] = {'stage': completed, 'task_id': row['id'], 'products': products,
                               'sha256': content_sha256(products)}
     if records.keys() != preceding:
@@ -69,7 +90,8 @@ def refresh_pending(store: object, job_id: str, token: str) -> tuple[dict, bool]
         task = call_id(job_id, f'plan:{scope}:propose', 1)
         manifest_id = f'plan:{task}'
         _, package = read_input_manifest(store, manifest_id)
-        if (package['scope'] != scope or stage not in phase_order(scope)
+        hierarchical = package.get('planning_hierarchy', False)
+        if (package['scope'] != scope or stage not in phase_order(scope, planning_hierarchy=hierarchical)
                 or package['branch_head']['branch_id'] != job['branch_id']):
             raise ValueError('待确认节点与已保存的制作范围不一致')
         journal.head = StateHead(**package['branch_head'])
@@ -77,7 +99,7 @@ def refresh_pending(store: object, job_id: str, token: str) -> tuple[dict, bool]
         if revised:
             _, products = read_input_manifest(store, f'project-methods:{task}:{stage}:cast-repair:inputs')
         else:
-            products = _prior_products(store, job_id, manifest_id, scope, stage)
+            products = _prior_products(store, job_id, manifest_id, scope, stage, planning_hierarchy=hierarchical)
         check_bindings(before, registry(package, products))
         updated = build_target(MethodReader(store.directory.parent), package, stage, products)
         if revised:

@@ -22,8 +22,8 @@ BASE=(
 INSTRUCTIONS={
     'survey': '通读映射：只提取本片段有证据的人物和少量关键总览事件。events.granularity=overview，unit_id使用当前章节，parent_event_ids=[]。不输出方法，不提前声称已读全书。',
     'overview': '全书整合：本次接续先前全局总览与尚未闭合线索，整合当前总览事件。形成主线、人物弧光、事件因果和披露/兑现链，全部使用已观察的事件/证据id。保留开放问题，更新已有thread时不要丢前面节点和证据。输出overview、threads、links、character_updates及uncertainties；不要重造events/characters/evidence。总览冻结后将送每章细拆。',
-    'detail': '章场细拆：必须对照冻结的全书总览和本章总览事件。细化实际场景及事件，granularity=detail，parent_event_ids必须指向对应总览事件。保留人物选择、代价、结果、前后信息/情绪。场景start/end须在本章且含自身事件证据，边界是分析推断，无法判断应列待核。可沿用前片段的场景id并扩展end；不能重写全书纲。',
-    'relations': '跨章核对：只处理输入指定domain，接续以前未闭合线索及事件前沿。依实际事件及多处原文证据建立该职责的有序threads和links；不能依标题猜。当前全部事件窗口已走完时必须提交该domain的domains判定observed/not_observed/uncertain及依据。未观察不代表整本原作没有，受source_extent限制。缺兑现不得写resolved，不能用数量固定套所有类型。',
+    'detail': '章场细拆：必须对照冻结的全书总览和本章总览事件。细化实际场景及事件，granularity=detail，parent_event_ids必须指向对应总览事件。保留人物选择、代价、结果、前后信息/情绪。场景start/end须在本章且含自身事件证据，boundary_basis填analyst_inference，无法判断应列待核。可沿用前片段的场景id并扩展end；不能重写全书纲。当本章overview_events为空（如前言/感言/纯标题等非正文章节）时，不得虚构detail事件、场景或线索，应留空数组并在uncertainties说明原因。',
+    'relations': '跨章核对：只处理输入指定domain，接续以前未闭合线索及事件前沿。依实际事件及多处原文证据建立该职责的有序threads和links；不能依标题猜。当前全部事件窗口已走完时必须提交该domain的domains判定observed/not_observed/uncertain及依据（未见或存疑时evidence_ids可留空[]）。未观察不代表整本原作没有，受source_extent限制。缺兑现不得写resolved，不能用数量固定套所有类型。',
 }
 
 
@@ -68,15 +68,16 @@ def survey_messages(payload: dict) -> list[dict]:
         'events 只记录片段中有证据的关键事件。granularity 填 overview，unit_id 用本次 unit.id，'
         'parent_event_ids 填 []，characters 和 evidence_ids 引用实际标识。故事时间未知时 story_order 填 null，'
         '不要把叙述顺序当作事件发生顺序。原文证实的规则、行动及结果写入对应事件，明确是人物说法时保留归属。'
+        '同时留意决定事件能否发生的制度/资源/规律及往事/先报结果后讲过程的时间差，先记入对应事件与引文，不确定处记入 uncertainties。'
         '每个事件至少引用一条本片段的故事正文。引用 quote 连续照录，保留空白。重复引文必须指定绝对字符 start，'
-        'end 使用不含末尾的 Unicode 字符位置。可定位的唯一引文可省略 start 和 end。'
+        'end 使用不含末尾的 Unicode 字符位置。唯一引文可同时省略 start 和 end（不要填 null）。'
         '此段只有章名、题外互动、无实际事件的背景或原文不足时，必须以 uncertainties 交代原因，留待细拆核对。'
         '线索、关系、场景边界、领域判断及写法留给后续阶段。字段如下。'+encode(fields))
     return [{'role':'system','content':instruction},{'role':'user','content':encode({'phase':'survey',**payload})}]
 
 
 def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION, passages: bool = True,
-             craft: bool = True, survey_contract: bool = False) -> list[dict]:
+             craft: bool = True, survey_contract: bool = False, confirmed_types: list[str] | None = None) -> list[dict]:
     if phase=='survey' and survey_contract:
         return survey_messages(payload)
     closed = ('钩子或伏笔标resolved须有实际回应或回收。叙述手法观察可依原句闭合，故事里尚未发生的结果继续未决。'
@@ -113,7 +114,7 @@ def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION, passag
                             '以observed的causes/enables/changes_character连前后两章；观察到身份揭晓，'
                             '以observed的reveals/pays_off连接同一人的出场和揭晓两处原句。cast_entry的characters'
                             '记录所研究的出场人物，事件人物包括被揭示身份的对象；转述者和听者在细节指明。'
-                            '扩展新判断另建观察，引用两端事件。原文未见的领域可记未观察。')
+                            '不得修改既有线索的details；跨章补充later_use/later_reveal或扩展新判断时，必须使用本次prefix另建新观察并引用两端事件。原文未见的领域可记未观察。')
     if version>=5 and (phase=='detail' or payload.get('domain')=='cast_roster'):
         instruction += ('逐个核对本段全部参与人物和能辨认的被提及者。每人每个细拆事件用单独cast_roster线索：'
             'characters正好一人，node_ids正好一个本章detail事件，appearance_evidence是两者共享的当场原句编号。'
@@ -148,8 +149,24 @@ def messages(phase: str, payload: dict, *, version: int = SCHEMA_VERSION, passag
                             '没有足够证据的作用保留待核。')
         else:
             instruction += '覆盖不足、只见单段技巧或中间隔了举证不了的完整段落，保留普通观察；不可拼凑远处分散原句。'
+    if phase == 'relations' and payload.get('domain'):
+        from nw.studio.step_material_blueprint import domain_prompt_guide
+        if guide := domain_prompt_guide(payload['domain'], craft=craft):
+            instruction += guide
+        if payload['domain'] == 'world_rules':
+            from nw.studio.world_materials import world_decomposition_prompt
+            instruction += world_decomposition_prompt(confirmed_types, phase='relations')
+        elif payload['domain'] in ('character_arc', 'cast_entry', 'cast_roster'):
+            from nw.studio.character_materials import character_decomposition_prompt
+            instruction += character_decomposition_prompt(confirmed_types, payload['domain'], phase='relations')
+        elif payload['domain'] in ('main_plot', 'subplot', 'hook', 'foreshadow', 'information', 'chapter_progress'):
+            from nw.studio.plot_materials import plot_event_decomposition_prompt
+            instruction += plot_event_decomposition_prompt(confirmed_types, payload['domain'], phase='relations')
+        elif payload['domain'] in ('narration', 'pacing'):
+            from nw.studio.craft_materials import craft_decomposition_prompt
+            instruction += craft_decomposition_prompt(confirmed_types, payload['domain'], phase='relations')
     return [{'role':'system','content':instruction},
-            {'role':'user','content':encode({'phase':phase,**payload})}]
+            {'role':'user','content':encode({'phase':'relations' if phase=='relations' else phase,**payload})}]
 
 
 def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dict]:
@@ -164,14 +181,16 @@ def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dic
         'body.evidence含book_id/start/end/quote/explanation，必须是该结构现存证据。'
         '来源不完整或完整性未知时，禁止book/volume范围，只能归纳当前有证据的局部方法。'
         '所有输出只是待独立审核的方法草稿，不得宣布文学效果已验证。类型只能取原书确认类型或明确跨类型空列表。'
-        '字段形状：prerequisites[{key,input_kind,artifact,requirement}], operations[{key,instruction,input_keys,output_keys}],'
+        '字段形状：body 顶层含 title(<=120字), tasks(生产任务数组), scopes(制作层级数组，须与tasks兼容), type_tags(确认类型数组或跨类型[]), '
+        'prerequisites[{key,input_kind,artifact,requirement}], operations[{key,instruction,input_keys,output_keys}],'
         'outputs[{key,stage,field,artifact_kind,description}], downstream[{output_key,consumer,usage}],'
-        'acceptance[{output_key,check,evidence_required}], applicability/non_applicability均为字符串数组。'
+        'acceptance[{output_key,check,evidence_required}], evidence[{book_id,start,end,quote,explanation}], '
+        'applicability/non_applicability 均为字符串数组。'
         '方法目录：'+encode(catalog))
     if payload['thread']['domain']=='narration':
-        instruction += ('从本次narration观察提炼章或场的narration方法。分别指定事实与出处、读者何时得知、叙述者或焦点人物权限及原作效果。'
+        instruction += ('从本次narration观察提炼章或场的narration方法（或专注文风表达呈现在expression_design.guidance时也可标注expression任务）。分别指定事实与出处、读者何时得知、叙述者或焦点人物权限及原作效果。'
                         '把原作呈现方式换成本项目已有世界事实、人物经历或场景目标。至少生成expression_design.guidance表达指导，'
-                        '分别交给writer和review，按具体段落核对谁有理由知道、发生了什么变化。需要时另给scene_design.members场景卡。'
+                        '分别交给writer和review，按具体段落核对谁有理由知道、发生了什么变化。需要时另给scene_design.members场景卡（且scene_design产物在downstream必须交给consumer=expression_design）。'
                         '摘录没写的判断或后果继续未决，只迁移可核的写法。没证据可返回空列表。')
         if sequence := payload['thread'].get('details',{}).get('passage_sequence'):
             instruction += ('按passage_sequence的condition和boundary说明适用与不适用需求，操作按原句顺序迁移各拍作用、'
@@ -181,11 +200,13 @@ def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dic
                 instruction += ('本项举证要求为'+_craft_roles(sequence['kind'])+'。操作只使用这条观察实际拿出的证据；'
                                 '一拍即可举证的写法可以独立提炼，验收时在本项目段落核对相同作用。')
     if payload['thread']['domain']=='world_rules':
+        from nw.studio.world_materials import world_decomposition_prompt
         instruction += ('本次从world_rules原作观察提炼；证据须定位约束及其改变实际选择或后果的事件。'
                         '单场足以证明时引用该事件，否则引用能解释前后因果的关系及两端原文。不能只转述通用世界观模板。'
                         '依据本项目立项需求、已选类型或类型适配，将原作机制转成设计操作，原作设定仅作来源。'
                         '输出含world_design.members的world世界卡，明确规则、条件及已知限制或未知，写明哪一步'
-                        '用它限制人物选择、剧情或场景，并给出核验依据。无法提炼时返回空列表。')
+                        '用它限制人物选择、剧情或场景，并给出核验依据。无法提炼时返回空列表。'
+                        + world_decomposition_prompt(payload.get('confirmed_types'), phase='methods'))
     if payload['thread']['domain'] in STORY_TASKS:
         tasks=STORY_TASKS[payload['thread']['domain']]
         instruction += ('此观察对应现有生产任务'+ '、'.join(tasks)+'。按本项目已批准的输入和实际任务落在'
@@ -194,4 +215,23 @@ def method_messages(payload: dict, *, version: int = SCHEMA_VERSION) -> list[dic
                         '章场进展可落到scene_progress，已有前章审稿遗留时可用continuations。写清下游怎样用及核对何处。'
                         '逐个所选细拆事件引用原句；利用跨章收获或身份揭晓时须包含已观察关系及两端不同的原句。'
                         '仅有预告不能归纳已发生的后果，局部摘录不能断定某人是全书初次出场。')
-    return [{'role':'system','content':instruction},{'role':'user','content':encode({'phase':'methods',**payload})}]
+    if payload['thread']['domain'] in ('character_arc', 'cast_entry', 'cast_roster'):
+        from nw.studio.character_materials import character_decomposition_prompt
+        instruction += character_decomposition_prompt(payload.get('confirmed_types'), payload['thread']['domain'], phase='methods')
+    elif payload['thread']['domain'] in ('main_plot', 'subplot', 'hook', 'foreshadow', 'information', 'chapter_progress'):
+        from nw.studio.plot_materials import plot_event_decomposition_prompt
+        instruction += plot_event_decomposition_prompt(payload.get('confirmed_types'), payload['thread']['domain'], phase='methods')
+    if payload['thread']['domain'] in ('chapter_progress', 'information', 'character_arc', 'world_rules'):
+        from nw.studio.execution_materials import execution_decomposition_prompt
+        instruction += execution_decomposition_prompt(payload.get('confirmed_types'), payload['thread']['domain'], phase='methods')
+    if payload['thread']['domain'] in ('narration', 'pacing'):
+        from nw.studio.craft_materials import craft_decomposition_prompt
+        instruction += craft_decomposition_prompt(payload.get('confirmed_types'), payload['thread']['domain'], phase='methods')
+    from nw.studio.step_material_blueprint import method_derivation_guide
+    step_guide = method_derivation_guide(payload['thread']['domain'])
+    if step_guide:
+        instruction += ('请对照输入 target_step_blueprint 中目标制作步骤的实际资料需求分类、推荐任务与产物落点：'
+                        '先判定本条观察的「作用性」（在故事中解决什么问题/产出何种效果），再归纳可迁移的「方式性」'
+                        '（具体操作步骤、所需前置、适用与不适用边界），确保不同性质的资料绑定到准确的目标步骤与产物字段。')
+    user_payload = {'phase': 'methods', **payload, **({'target_step_blueprint': step_guide} if step_guide else {})}
+    return [{'role':'system','content':instruction},{'role':'user','content':encode(user_payload)}]

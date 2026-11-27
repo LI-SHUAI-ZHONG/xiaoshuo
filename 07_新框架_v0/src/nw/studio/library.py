@@ -125,9 +125,26 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
                 'notes': ['当前原表有 35 个主类型、33 个子类型分表，共 425 个子类型；层级以原 ID 为准。',
                           '原资料未提供男频、女频、出版频道归属，未推断频道。']}
 
-    def options(self, slot: str, parent: str = '') -> dict:
-        return {'slot': slot, 'label': catalog.SLOT_LABELS.get(slot, slot),
-                'options': catalog.options(slot, parent), 'slots': list(catalog.SLOTS)}
+    def options(self, slot: str, parent: str = '', types: list[str] | None = None) -> dict:
+        result = {
+            'slot': slot,
+            'label': catalog.SLOT_LABELS.get(slot, slot),
+            'options': catalog.options(slot, parent, types=types),
+            'slots': list(catalog.SLOTS),
+        }
+        if slot == 'world':
+            from nw.studio.world_materials import world_profile_for_types
+            result['world_profile'] = world_profile_for_types(types)
+        elif slot == 'character':
+            from nw.studio.character_materials import character_profile_for_types
+            result['character_profile'] = character_profile_for_types(types)
+        elif slot in ('structure', 'hook'):
+            from nw.studio.plot_materials import plot_profile_for_types
+            result['plot_profile'] = plot_profile_for_types(types)
+        elif slot in ('narration', 'tone', 'style'):
+            from nw.studio.craft_materials import craft_profile_for_types
+            result['craft_profile'] = craft_profile_for_types(types)
+        return result
 
     def _item(self, row: sqlite3.Row | dict) -> dict:
         result = dict(row)

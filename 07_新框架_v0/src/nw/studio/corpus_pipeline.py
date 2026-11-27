@@ -14,11 +14,38 @@ from nw.studio.corpus_story_observations import STORY_TASKS
 from nw.studio.library_util import encode, timestamp
 
 
+def _job_progress(kind: str, state: dict, options: dict) -> float:
+    if kind == 'methods':
+        total = max(1, len(options.get('thread_ids', [])))
+        ratio = state.get('method_cursor', 0) / total
+        return round(min(0.98, max(0.02, ratio * 0.96 + 0.02)), 3)
+    spans = max(1, len(state.get('spans', [])))
+    survey_frac = min(1.0, state.get('survey_cursor', 0) / spans)
+    doc = state.get('document', {})
+    overview_total = max(1, sum(1 for e in doc.get('events', []) if e.get('granularity') == 'overview'))
+    overview_frac = 1.0 if 'global_basis' in state else min(1.0, state.get('overview_cursor', 0) / overview_total)
+    detail_frac = min(1.0, state.get('detail_cursor', 0) / spans)
+    domains = max(1, len(domains_for(doc.get('schema_version', 1))))
+    rel_events = max(1, len(relation_events(doc))) if state.get('detail_cursor', 0) >= spans else 1
+    rel_inner = min(1.0, state.get('relation_cursor', 0) / rel_events)
+    relations_frac = min(1.0, (state.get('domain_index', 0) + rel_inner) / domains)
+    ratio = 0.25 * survey_frac + 0.10 * overview_frac + 0.30 * detail_frac + 0.33 * relations_frac
+    return round(min(0.98, max(0.02, ratio)), 3)
+
+
 def save_state(service: object, job_id: str, state: dict, phase: str) -> None:
+    now = timestamp()
     with service.connect() as conn:
+        row = conn.execute("SELECT book_id,kind,options_json FROM corpus_jobs WHERE id=? AND status='running'", (job_id,)).fetchone()
+        if not row:
+            raise PipelineStop('任务已停止','cancelled')
         changed=conn.execute("UPDATE corpus_jobs SET state_json=?,phase=?,updated_at=? WHERE id=? AND status='running'",
-                             (encode(state),phase,timestamp(),job_id)).rowcount
-    if not changed:raise PipelineStop('任务已停止','cancelled')
+                             (encode(state),phase,now,job_id)).rowcount
+        if not changed:
+            raise PipelineStop('任务已停止','cancelled')
+        progress = _job_progress(row['kind'], state, json.loads(row['options_json']))
+        conn.execute("UPDATE staging_books SET progress=?,updated_at=? WHERE id=? AND status='decomposing'",
+                     (progress,now,row['book_id']))
 
 
 def do_read(service: object, job: dict, state: dict, config: object, provider: object, content: str, phase: str) -> None:
@@ -38,7 +65,7 @@ def do_read(service: object, job: dict, state: dict, config: object, provider: o
         unit=next(u for u in doc['units'] if u['id']==span['unit_id'])
         payload={'prefix':prefix,'unit':unit,'span':span,'source_extent':doc['source_extent'],
                  'source_text':content[span['start']:span['end']],
-                 'known_characters':[{'id':p['id'],'name':p['name'],'canonical_id':p['canonical_id']} for p in doc['characters']]}
+                 'known_characters':[{'id':p['id'],'name':p['name'],'canonical_id':p['canonical_id'],'evidence_ids':p['evidence_ids']} for p in doc['characters']]}
         if phase=='detail':
             basis=state['global_basis'];coarse=[e for e in doc['events'] if e['unit_id']==unit['id'] and e['granularity']=='overview']
             ids={e['id'] for e in coarse}
@@ -100,9 +127,18 @@ def do_windows(service: object, job: dict, state: dict, config: object, provider
                 if not all(integrated['overview'].values()) or not integrated['threads']:
                     raise ValueError('必须先形成有来源节点的全局结构和覆盖限制，再进入章场细拆')
             return patch
+        confirmed_types = None
+        if phase == 'relations' and domain in (
+            'world_rules', 'character_arc', 'cast_entry', 'cast_roster',
+            'main_plot', 'subplot', 'hook', 'foreshadow', 'information', 'chapter_progress',
+        ):
+            try:
+                confirmed_types = json.loads(service._staging_row(job['book_id'])['confirmed_types_json'])
+            except Exception:
+                confirmed_types = None
         patch,_=model_call(service,job['id'],config,provider,key=key,phase=phase,
                            messages=messages(phase,payload,version=doc['schema_version'],passages=state.get('passage_observations',False),
-                                             craft=state.get('craft_observations',False)),validator=validator)
+                                             craft=state.get('craft_observations',False),confirmed_types=confirmed_types),validator=validator)
         state['document']=merge_fragment(doc,patch);state[cursor_key]=next_cursor;state.pop('pending_window',None)
         save_state(service,job['id'],state,phase)
 

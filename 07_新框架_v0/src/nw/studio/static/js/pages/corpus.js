@@ -76,9 +76,12 @@ export async function renderCorpus(ctx,book){
       });};
     });
     $('#manualCorpusMethod').onclick=()=>{
-      modal('选择方法依据',`<form id="manualFromCorpus" class="stack"><p class="notice">只复制实际结构依据和证据，具体方法仍须由作者归纳并补齐八类要求。</p><select name="thread" aria-label="手工提炼依据">${record.body.threads.map(t=>`<option value="${esc(t.id)}">${esc(catalog.domains[t.domain])} · ${esc(t.title)}</option>`).join('')}</select><button class="button" type="submit">建立待补齐方法草稿</button></form>`);
+      const choices=record.body.threads.filter(t=>t.status!=='uncertain');
+      modal('选择方法依据',`<form id="manualFromCorpus" class="stack"><p class="notice">只复制实际结构依据和证据，具体方法仍须由作者归纳并补齐八类要求。</p><select name="thread" multiple size="6" required aria-label="手工提炼依据">${choices.map(t=>`<option value="${esc(t.id)}">${esc(catalog.domains[t.domain])} · ${esc(t.title)}</option>`).join('')}</select><small class="muted">可按住 Ctrl/Command 多选（叙述观察建议逐条单选）。</small><button class="button" type="submit">建立待补齐方法草稿</button></form>`);
       $('#manualFromCorpus').onsubmit=e=>{e.preventDefault();busy(e.target.querySelector('button'),async()=>{
-        const result=await api.post(root+'/methods',{version:record.version,thread_ids:[$('[name=thread]',e.target).value]});
+        const ids=Array.from($('[name=thread]',e.target).selectedOptions).map(o=>o.value);
+        if(!ids.length)throw new Error('请选择至少一条已核实线索');
+        const result=await api.post(root+'/methods',{version:record.version,thread_ids:ids});
         $('#modalBackdrop').close();location.hash=`#/kb/items?method=${enc(result.id)}`;
       });};
     };
@@ -91,7 +94,7 @@ export async function renderCorpus(ctx,book){
       const showProgress=record.body.schema_version>=4;
       const observations=ids=>(ids||[]).map(id=>{
         const t=threads.get(id);
-        return `<button class="ghost" data-chapter-observation="${esc(id)}">${esc(t.title)}${t.status==='uncertain'?'（存疑）':''}</button>`;
+        return t?`<button class="ghost" data-chapter-observation="${esc(id)}">${esc(t.title)}${t.status==='uncertain'?'（存疑）':''}</button>`:`<span class="muted">${esc(id)}</span>`;
       }).join('<br>')||'未登记';
       $('#corpusSection').innerHTML=`<p class="notice">${esc(stats.counting_basis)}机器通读 ${stats.survey.characters}/${stats.survey.total} 字符，细拆 ${stats.detail.characters}/${stats.detail.total}；人工确认 ${stats.manual_reviewed_units.length} 个章节范围。</p>
         ${castDistributionHtml(stats.cast_distribution,record,catalog)}
@@ -101,14 +104,18 @@ export async function renderCorpus(ctx,book){
       return;
     }
     if(tab==='overview'){
-      $('#corpusSection').innerHTML=`<div class="stack">${analysisCatalogHtml(latestCatalog,record.statistics.thread_counts)}${Object.entries(catalog.overview_fields).map(([id,label])=>`<section class="card"><h3>${label}</h3><p class="corpus-text">${esc(record.body.overview[id]||'尚未形成全书总览')}</p></section>`).join('')}
+      $('#corpusSection').innerHTML=`<div class="stack">${analysisCatalogHtml(latestCatalog,record.statistics.thread_counts)}
+        <section class="card stack" id="corpusHandoffCard"><h3>下游步骤接收与入库核验（对接小说工作流）</h3><p class="muted">正在对照小说工作流真实规则核验本书拆解产物的下游可接收状态…</p></section>
+        ${Object.entries(catalog.overview_fields).map(([id,label])=>`<section class="card"><h3>${label}</h3><p class="corpus-text">${esc(record.body.overview[id]||'尚未形成全书总览')}</p></section>`).join('')}
         ${canEdit?'<button class="secondary" id="editCorpusOverview">编辑全书总览</button>':''}<section class="card"><h3>待核实项</h3>${record.body.uncertainties.map(s=>`<p>${esc(s)}</p>`).join('')||'<p class="muted">未登记待核实项；不代表没有问题。</p>'}${canEdit?'<button class="ghost" id="editCorpusUnknowns">维护待核实项</button>':''}</section>
         <section class="card"><h3>已提炼方法版本</h3>${record.derived_methods.filter(m=>m.structure_version===record.version).map(m=>`<p><a class="text-link" href="#/kb/items?method=${enc(m.method_id)}&amp;version=${m.method_version}">方法版本 ${m.method_version} · 依据结构修订 ${m.structure_version} →</a></p>`).join('')||'<p class="muted">这份结构修订尚无已提炼方法。</p>'}</section></div>`;
       $$('[data-domain-observations]').forEach(b=>b.onclick=()=>{
         tab='threads';page=0;search='';unitFilter='';domainFilter=b.dataset.domainObservations;paintSection(canEdit);
         $$('[data-corpus-tab]').forEach(t=>t.classList.toggle('active',t.dataset.corpusTab===tab));
       });
-      $('#editCorpusOverview')?.addEventListener('click',()=>editor('overview',record.body.overview));$('#editCorpusUnknowns')?.addEventListener('click',()=>editor('uncertainties',record.body.uncertainties));return;
+      $('#editCorpusOverview')?.addEventListener('click',()=>editor('overview',record.body.overview));$('#editCorpusUnknowns')?.addEventListener('click',()=>editor('uncertainties',record.body.uncertainties));
+      paintHandoffAudit().catch(()=>{});
+      return;
     }
     const all=record.body[tab]||[];
     const selected=all.filter(row=>{
@@ -128,6 +135,41 @@ export async function renderCorpus(ctx,book){
     $$('[data-corpus-detail]').forEach(b=>b.onclick=()=>tab==='units'?sourceDrawer(book,rows[Number(b.dataset.corpusDetail)]):recordDrawer(tab,rows[Number(b.dataset.corpusDetail)],record,catalog));
     $$('[data-corpus-edit]').forEach(b=>b.onclick=()=>editor(tab,rows[Number(b.dataset.corpusEdit)]));
     $('#corpusPrevious')?.addEventListener('click',()=>{page--;paintSection(canEdit);});$('#corpusNext')?.addEventListener('click',()=>{page++;paintSection(canEdit);});
+  }
+  async function paintHandoffAudit(){
+    const card=$('#corpusHandoffCard');
+    if(!card||stopped||!ctx.alive())return;
+    try{
+      const audit=await api.get(`/kb/handoff-audit?book_id=${enc(book.id)}&planning_hierarchy=1`,ctx.signal);
+      if(!ctx.alive()||!card.isConnected)return;
+      const s=audit.summary||{};
+      const primaryType=audit.type_ids?.[0]||(book.confirmed_types||[])[0]||'';
+      const castBook=audit.cast_samples?.book_status;
+      const castLine=castBook
+        ?(castBook.included_in_book_range
+          ?'已纳入同类型全书人数分布样本（可供世界/人物/剧情/场景设计参照）'
+          :`未纳入全书人数区间：${(castBook.coverage_gaps||[]).join('；')||'请核对文本完整性与逐章阵容核实状态'}`)
+        :'尚未形成同类型人数分布样本（批准结构并核实逐章阵容后自动进入）';
+      const blocked=(audit.methods||[]).filter(m=>m.status==='blocked');
+      const readySteps=(audit.steps||[]).filter(st=>st.receivable_count>0);
+      card.innerHTML=`<div class="row spread wrap"><h3>下游步骤接收与入库核验（对接小说工作流）</h3>
+          <div class="row wrap">
+            <span class="tag green">可接收方法 ${s.receivable_methods||0}</span>
+            ${s.draft_methods?`<span class="tag amber">待审核草稿 ${s.draft_methods}</span>`:''}
+            ${s.blocked_methods?`<span class="tag" style="color:var(--danger)">受阻 ${s.blocked_methods}</span>`:''}
+            <span class="tag blue">覆盖步骤 ${readySteps.length} / ${s.total_steps||17}</span>
+          </div></div>
+        <p class="muted"><strong>已接通制作步骤</strong>：${readySteps.length?readySteps.map(st=>`${esc(st.short_name)}（${st.receivable_count}）`).join(' · '):'尚无可被下游直接接收的已批准方法。请先批准当前结构，再提炼并独立审核方法。'}</p>
+        <p class="muted"><strong>人物分布样本</strong>：${esc(castLine)} ｜ <strong>段落技法通道</strong>：${s.passage_reference_count||0} 条已进入场景/表达候选</p>
+        ${blocked.length?`<div class="notice warning"><strong>以下已批准方法尚不能被下游步骤接收（需修订前置、层级或类型匹配）</strong><ul>${blocked.map(m=>`<li><a class="text-link" href="#/kb/items?method=${enc(m.id)}&amp;version=${m.version}">${esc(m.title)}</a>：${esc((m.block_reasons||[]).join('；'))}</li>`).join('')}</ul></div>`:''}
+        <div class="row wrap">
+          <a class="secondary" href="#/kb/items">管理 / 审核本书提炼方法</a>
+          <a class="secondary" href="#/kb/prerequisites${primaryType?'?type='+enc(primaryType):''}">查看本类型 17 步下游接收体检</a>
+          ${primaryType?`<button type="button" class="button" data-new-novel="manual" data-prefill="${esc(primaryType)}">以此类型新建小说</button>`:''}
+        </div>`;
+    }catch(error){
+      if(card.isConnected)card.innerHTML=`<h3>下游步骤接收与入库核验</h3><p class="error">体检读取失败：${esc(error.message)}</p>`;
+    }
   }
   async function paintJobs(){
     if(stopped||!ctx.alive()||!$('#corpusJobPanel'))return;

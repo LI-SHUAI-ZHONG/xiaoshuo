@@ -1,12 +1,14 @@
 
 """Build, draft, review, and extract one scene within a pinned novel job."""
-from dataclasses import asdict
+from dataclasses import asdict, replace
+import json
 from typing import Callable
 
 from nw.call_budget import BudgetExceeded, prepare_call, read_budget
 from nw.call_control import model_settings
 from nw.cards import eligible_rule_refs
 from nw.context.story import WRITE_PROMPT, StoryScope, build_story_context, scene_scope
+from nw.llm.base import GenResult
 from nw.materials.action_review import check_material_acceptance, review_result
 from nw.materials.binding import verify_materials
 from nw.materials.evidence import review_contract, scene_materials, state_hypotheses
@@ -19,10 +21,13 @@ from nw.scene_messages import REVIEW_PROMPT, REVISE_PROMPT, draft_messages
 from nw.scene_capacity import SceneCapacity
 from nw.novel_calls import JobCalls, call_id
 from nw.novel_store import JobPaused
+from nw.store import now
 from nw.story_delta import (candidate_projection_digest, check_delta, draft_ref, manifest_refs, read_delta)
 from nw.story_extract import freeze_delta_input, prepare_delta
 from nw.story_models import CardRef, StateDelta
+from nw.studio.craft_materials import design_genre_ids
 from nw.task_models import InputManifest, TaskRequest, TaskResult, canonical, content_sha256
+from nw.tasks import freeze_manifest
 
 CORE_PREDICATES = frozenset({'core_goal', 'protagonist_goal', 'world_rule', 'pov', 'ending', 'ending_promise',
                             'alive', 'death', 'life_status', '生死', '核心目标', '世界规则', '终局承诺', '视角'})
@@ -67,9 +72,11 @@ def _inputs(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...]) -> 
             disclosure_order=work.disclosure, predecessor_drafts=work.predecessor_drafts,
             dependency_refs=work.dependency_refs, candidate_delta_refs=chain, candidate_projection_sha256=digest,
             selection=work.selection, novel_job_id=j.id, material_design_sha256=work.material_design_sha256)
+        genre_ids = design_genre_ids(scene_materials(j.store, scene))
         row = j.reserve(key, {'package': work.package, 'manifest': asdict(manifest), 'messages': messages,
                               'writing_material': WRITING_MATERIAL, 'review_material': REVIEW_MATERIAL,
-                              'writing_source_keys': list(work.writing_source_keys), 'capacity_preflight': capacity_report})
+                              'writing_source_keys': list(work.writing_source_keys), 'capacity_preflight': capacity_report,
+                              **({'genre_ids': genre_ids} if genre_ids else {})})
     frozen = row['input']
     manifest = frozen['manifest']
     if manifest['candidate_delta_refs'] != [list(ref) for ref in chain] or (
@@ -104,7 +111,8 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
     package = frozen['package']
     material = frozen.get('review_material' if purpose == 'review' else 'writing_material', '')
     messages, version = draft_messages(package, purpose, draft, review, contract, material,
-                                       frozen.get('writing_source_keys', ()), length_feedback)
+                                       frozen.get('writing_source_keys', ()), length_feedback,
+                                       genre_ids=frozen.get('genre_ids'))
     dependencies = [*frozen['manifest']['dependency_refs'], asdict(draft_ref(draft))]
     if contract and 'comparison' in contract and contract['comparison']['ref'] not in dependencies:
         dependencies.append(contract['comparison']['ref'])
@@ -139,7 +147,8 @@ def _extract(calls: JobCalls, scene: str, draft: Draft, frozen: dict,
     if not j.store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (ident,)).fetchone():
         settings = _settings(extract_calls, 'state-extract-v1', [])
         freeze_delta_input(j.store, draft.id, scope, settings, material_review_run=material_review_run,
-                           material_hypotheses=hypotheses, reader_only_spans=reader_only)
+                           material_hypotheses=hypotheses, reader_only_spans=reader_only,
+                           genre_ids=frozen.get('genre_ids'))
 
     def invoke(kind: str, request: TaskRequest, validate: Callable[[dict], None]) -> TaskResult:
         task_key = f'{key}:{kind}'
@@ -158,23 +167,84 @@ def _core_gate(calls: JobCalls, decide: Callable, key: str, target: dict) -> Non
         raise JobPaused('REJECTED', key, 'CORE_CHANGE_REJECTED')
 
 
+def _is_manual_author_draft(calls: JobCalls, draft: Draft | None) -> bool:
+    if draft is None:
+        return False
+    run = calls.journal.store.get('run', draft.run_id)
+    if run.provider != 'author':
+        return False
+    try:
+        snap = json.loads(run.input_snapshot_json)
+    except ValueError:
+        return False
+    return isinstance(snap, dict) and snap.get('source') == 'studio_manual_author'
+
+
+def _pin_manual_draft(calls: JobCalls, scene: str, source_draft: Draft, frozen: dict) -> Draft:
+    """Bind an author's manual prose to this job's frozen writing manifest before independent 16 review."""
+    j = calls.journal
+    key = f'scene:{scene}:manual-pin'
+    step = j.latest(key)
+    if step and step['status'] == 'DONE':
+        return j.store.get('draft', step['output']['draft_id'])
+    if step is None:
+        step = j.reserve(key, {'source_draft_id': source_draft.id})
+    ident = call_id(j.id, key, step['attempt'])
+    manifest = replace(InputManifest(**frozen['manifest']), id=f'run:{ident}')
+    if manifest.selection is not None:
+        manifest = replace(manifest, selection={**manifest.selection, 'manifest_id': manifest.id})
+    if not j.store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest.id,)).fetchone():
+        freeze_manifest(j.store, manifest, frozen['package'])
+    existing_run = j.store.connection.execute('SELECT id FROM runs WHERE id=?', (ident,)).fetchone()
+    if existing_run is None:
+        j.store.add_run(Run(
+            ident, scene, 'write', 'author', 'manual-studio', '{}',
+            canonical({
+                'manifest_id': manifest.id,
+                'messages': frozen['messages'],
+                'source': 'studio_manual_author',
+                'source_draft_id': source_draft.id,
+                'branch_id': j.head.branch_id,
+            }),
+            canonical(frozen['package']), '', 'error', '{}', now(), '',
+        ))
+        _, draft = j.store.finish_run(ident, GenResult(
+            text=source_draft.text, finish_reason='complete',
+            usage={'source': 'author'}, request_id=f'manual-pin:{ident}',
+            raw={'author': True, 'source_draft_id': source_draft.id},
+        ))
+    else:
+        draft_row = j.store.connection.execute('SELECT id FROM drafts WHERE run_id=?', (ident,)).fetchone()
+        draft = j.store.get('draft', draft_row['id']) if draft_row else None
+    if draft is None:
+        raise JobPaused('BLOCKED', key, '无法为手动草稿绑定冻结写作清单')
+    j.result(key, 'DONE', {'run_id': ident, 'draft_id': draft.id, 'manifest_id': manifest.id,
+                           'source_draft_id': source_draft.id})
+    return draft
+
+
 def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...], decide: Callable) -> StateDelta:
     j = calls.journal
     prefix = f'scene:{scene}'
     frozen = _inputs(calls, scene, chain)
     prior = j.request['original_drafts'].get(scene)
     review = None
-    round_no = int(prior is not None)
+    prior_draft = j.store.get('draft', prior) if prior else None
+    manual_prior = _is_manual_author_draft(calls, prior_draft)
+    round_no = 0 if manual_prior else int(prior is not None)
     from nw.chapter_break import chapter_end
     ending = chapter_end(frozen['package'])
     max_revisions = read_budget(j.store, j.id).max_revisions
-    draft = j.store.get('draft', prior) if prior else None
+    draft = prior_draft
     def verify() -> None:
         _verify_context(calls, j.current_step or prefix, scene, frozen['manifest'])
 
     while True:
         if round_no == 0:
-            _, draft, _ = calls.for_stage('write').run(f'{prefix}:write', scene, lambda: frozen, verify=verify)
+            if manual_prior and draft is not None:
+                draft = _pin_manual_draft(calls, scene, draft, frozen)
+            else:
+                _, draft, _ = calls.for_stage('write').run(f'{prefix}:write', scene, lambda: frozen, verify=verify)
         else:
             _, draft, _ = calls.for_stage('revise').run(
                 f'{prefix}:revise:{round_no}', scene,

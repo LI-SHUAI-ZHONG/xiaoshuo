@@ -48,23 +48,40 @@ class ProductionViews:
             logs.append({'ts': row['started_at'], 'kind': row['kind'], 'summary': summary, 'ref': row})
         return sorted(logs, key=lambda row: row['ts'])[-limit:]
 
+    def _repo_writable(self) -> bool:
+        repo = getattr(self.studio, 'repository_sync', None)
+        if not repo or not repo.enabled:
+            return True
+        return not (repo._draining or repo.restore_required or repo.check_running_source())
+
+    def _wake_repo(self) -> None:
+        repo = getattr(self.studio, 'repository_sync', None)
+        if repo and repo.enabled:
+            repo._wake.set()
+
     def list(self, status: str = '') -> dict:
         known = {row['project_dir'] for row in self.db.list()}
-        for project in self.studio.list_projects():
-            if project['dir_name'] in known or project.get('error'):
-                continue
-            wizard = {field: [] for field in SLOTS.values()}
-            wizard.update(title=project['name'], idea=(project.get('latest_brief') or {}).get('text', ''),
-                          constraints='', choices=[], author_references=[], upgrade_snapshot={'items': []}, imported=True)
-            try:
-                wizard.update(saved_brief_length(wizard['idea']))
-            except ValueError:
-                pass  # Handwritten legacy Briefs can contain free-form length preferences.
-            if not self.db.add(project['id'], project['dir_name'], project['name'], wizard):
-                continue
-            jobs = self.studio.project_overview(project['dir_name']).get('jobs', [])
-            self.db.update(project['id'], status='writing', job_id=jobs[0]['id'] if jobs else None)
-            self.db.event(project['id'], 'import', '已连接现有工作流项目。原始 Brief 和正文保持原样。')
+        discovered = False
+        if self._repo_writable():
+            for project in self.studio.list_projects():
+                if project['dir_name'] in known or project.get('error'):
+                    continue
+                wizard = {field: [] for field in SLOTS.values()}
+                wizard.update(title=project['name'], idea=(project.get('latest_brief') or {}).get('text', ''),
+                              constraints=(project.get('latest_brief') or {}).get('constraints', ''),
+                              choices=[], author_references=[], upgrade_snapshot={'items': []}, imported=True)
+                try:
+                    wizard.update(saved_brief_length(wizard['idea']))
+                except ValueError:
+                    pass  # Handwritten legacy Briefs can contain free-form length preferences.
+                if not self.db.add(project['id'], project['dir_name'], project['name'], wizard):
+                    continue
+                jobs = self.studio.project_overview(project['dir_name']).get('jobs', [])
+                self.db.update(project['id'], status='writing', job_id=jobs[0]['id'] if jobs else None)
+                self.db.event(project['id'], 'import', '已连接现有工作流项目。原始 Brief 和正文保持原样。')
+                discovered = True
+            if discovered:
+                self._wake_repo()
         items = []
         for row in self.db.list(status):
             try:
@@ -85,7 +102,10 @@ class ProductionViews:
                 job = show_job(store, row['id'])
                 gate = job.outputs.get('gate')
                 if gate:
+                    method_stage = STAGE_LABELS.get(gate.get('stage', ''), {}).get('zh', gate.get('stage', ''))
                     summary = ('全书方向待选择' if gate.get('kind') == DIRECTION_GATE else
+                               (f'制作方法待确认 · {method_stage}' if method_stage else '制作方法待确认')
+                               if gate.get('kind') == 'production_method_selection' else
                                '章纲待确认' if gate.get('kind') == 'chapter_outline_approval' else
                                '卷纲待确认' if gate.get('scope') == 'volume' else
                                '场景设计待确认' if gate.get('scope') == 'chapter' else
@@ -169,10 +189,16 @@ class ProductionViews:
                 draft_id = scene['accepted_draft_id'] or scene['latest_draft_id']
                 if draft_id and scene['in_branch_manuscript']:
                     words += count_words(store.get('draft', draft_id).text)
+            jobs_by_id = {row['id']: row for row in project['jobs']}
+            design_jobs = [jobs_by_id.get(row['id']) or asdict(show_job(store, row['id']))
+                           for row in reversed(rows)
+                           if job_requests.get(row['id'], {}).get('mode') == 'design']
         tree = []
-        for job_row in reversed(project['jobs']):
+        current_branch = novel.get('current_branch', 'main')
+        visible_branches = {'main'} if current_branch == 'main' else {'main', current_branch}
+        for job_row in design_jobs:
             request = job_requests.get(job_row['id'], {})
-            if request.get('mode') != 'design':
+            if (job_row.get('branch_id') or request.get('branch_id', 'main')) not in visible_branches:
                 continue
             scope = request.get('design_scope', 'chapter')
             scopes = ['book', scope] if scope != 'book' and not request.get('parent_id') else [scope]
@@ -249,10 +275,12 @@ class ProductionViews:
                        and row['status'] == 'STARTED'), None)
         if active and runtime == 'RUNNING':
             current_step = STAGE_LABELS[active['stage']]['zh']
+        blocked_design = None
         if job and runtime == 'BLOCKED':
             blocked = job['outputs'].get('blocked_design', {})
             if blocked.get('stage') in STAGE_LABELS:
                 current_step = STAGE_LABELS[blocked['stage']]['zh']
+                blocked_design = blocked
         logs = self.db.timeline(ident)['events'][-100:] if include_logs else []
         if include_logs:
             logs.extend(model_logs)
@@ -260,7 +288,7 @@ class ProductionViews:
         return {'novel_id': ident, 'status': runtime, 'novel_status': novel['status'], 'job': job,
                 'branch_id': novel.get('current_branch', 'main'),
                 'main_revision': next((row['head_revision'] for row in project['branches'] if row['id'] == 'main'), None),
-                'current_step': current_step, 'progress': percentage, 'tree': tree,
+                'current_step': current_step, 'blocked_design': blocked_design, 'progress': percentage, 'tree': tree,
                 'next_design': upcoming, 'can_plan_volume': can_plan_volume,
                 'gates': self.gates(ident)['gates'], 'words': words, 'connection': True,
                 'reason': novel['reason'] or (job.get('reason') if job else None),
@@ -288,8 +316,10 @@ class ProductionViews:
                               dedup=f"{ident}:decision:{row['id']}", timestamp=row['created_at'])
 
     def timeline(self, ident: str) -> dict:
-        self.sync_history(ident)
-        self.sync_adoptions(ident)
+        if self._repo_writable():
+            self.sync_history(ident)
+            self.sync_adoptions(ident)
+            self._wake_repo()
         return self.db.timeline(ident)
 
     def sync_adoptions(self, ident: str) -> None:
@@ -328,8 +358,9 @@ class ProductionViews:
         result = {'scene_id': scene or None, 'review': None, 'guards': [], 'materials': [], 'metrics': {}}
         with self.open_store(novel) as store:
             phases = self._phase_rows(store)
+            active_phases = [row for row in phases if not novel.get('job_id') or row['budget_id'] == novel['job_id']]
             products = {row['stage']: {'products': (json.loads(row['result_json']) or {}).get('products', {})}
-                        for row in phases if row['validation'] == 'VALID'}
+                        for row in active_phases if row['validation'] == 'VALID'}
             if scene:
                 from nw.materials.evidence import scene_materials
                 design = scene_materials(store, scene)
@@ -357,13 +388,116 @@ class ProductionViews:
                 if cast := scene_cast_view(store, design, scene_row):
                     result['cast'] = cast
                 draft_id = scene_row['latest_draft_id']
+                accepted_id = scene_row['accepted_draft_id']
+                draft_obj = store.get('draft', draft_id) if draft_id else None
+                draft_run = store.get('run', draft_obj.run_id) if draft_obj else None
+                is_manual = bool(draft_run and draft_run.provider == 'author')
                 review = self.review_for_draft(store, scene, draft_id) if draft_id else None
                 if review:
                     result['review'] = {**review['result'], 'draft_id': draft_id, 'run_id': review['run_id']}
                     result['materials'] = review['result'].get('material_checks', [])
+                    if review['result'].get('length_feedback'):
+                        result['length_feedback'] = review['result']['length_feedback']
+                    if review['result'].get('chapter_break'):
+                        result['chapter_break'] = review['result']['chapter_break']
+                # 17 State extraction & fact-review ledger for the active draft on current branch.
+                delta_info = None
+                fact_findings: list[dict] = []
+                if draft_id:
+                    branch_id = novel.get('current_branch', 'main')
+                    drow = store.connection.execute(
+                        'SELECT id FROM state_deltas WHERE draft_id=? AND branch_id=? ORDER BY rowid DESC LIMIT 1',
+                        (draft_id, branch_id),
+                    ).fetchone()
+                    if drow:
+                        from nw.story_delta import check_delta, read_delta
+                        delta_obj = read_delta(store, drow['id'])
+                        fact_findings = [asdict(f) for f in check_delta(store, delta_obj)]
+                        delta_info = {
+                            'id': delta_obj.id,
+                            'draft_id': delta_obj.draft_id,
+                            'manifest_id': delta_obj.manifest_id,
+                            'branch_id': delta_obj.branch_id,
+                            'base_revision': delta_obj.base_revision,
+                            'operations': list(delta_obj.operations),
+                            'world_operations': [op for op in delta_obj.operations if op.get('holder') == 'WORLD'],
+                            'character_operations': [op for op in delta_obj.operations if op.get('holder') != 'WORLD'],
+                        }
+                result['delta'] = delta_info
+                result['fact_findings'] = fact_findings
+                # 15 Writing contract: upstream 09/12/13/14 handoff summary + genre 15–17 focuses.
+                card_body = dict(scene_row.get('card') or {})
+                story_meta = card_body.get('story') if isinstance(card_body.get('story'), dict) else {}
+                scene_ref = story_meta.get('scene_ref') if isinstance(story_meta.get('scene_ref'), dict) else None
+                if scene_ref and scene_ref.get('card_id') and scene_ref.get('version'):
+                    try:
+                        from nw.cards import read_card
+                        from nw.story_models import CardRef
+                        resolved = read_card(store, CardRef(str(scene_ref['card_id']), int(scene_ref['version'])))
+                        if isinstance(resolved, dict) and isinstance(resolved.get('body'), dict):
+                            card_body = {**card_body, **resolved['body']}
+                    except Exception:
+                        pass
+                mkey = design.get('material_key') if design else None
+                stages_by_name = {row['stage']: row.get('products', {}) for row in session.get('stages', [])} if design else {}
+                anchor_beats = [b for b in stages_by_name.get('anchor_design', {}).get('beats', ())
+                                if isinstance(b, dict) and (not mkey or b.get('scene') == mkey)]
+                expr_guidance = [g for g in stages_by_name.get('expression_design', {}).get('guidance', ())
+                                 if isinstance(g, dict) and (not mkey or g.get('scene') == mkey)]
+                bind_guidance = [g for g in stages_by_name.get('bind_scope', {}).get('method_guidance', ())
+                                 if isinstance(g, dict) and (not mkey or g.get('scene') == mkey)]
+                from nw.studio.craft_materials import craft_profile_for_types
+                try:
+                    cprof = craft_profile_for_types(novel['wizard'].get('genre_ids') or ())
+                except ValueError:
+                    cprof = craft_profile_for_types(())
+                result['writing_contract'] = {
+                    'title': card_body.get('title', ''),
+                    'pov': card_body.get('pov', ''),
+                    'goal': card_body.get('goal', ''),
+                    'conflict': card_body.get('conflict', ''),
+                    'allowed_disclosure': card_body.get('allowed_disclosure', ''),
+                    'characters': list(card_body.get('characters', ())) if isinstance(card_body.get('characters'), list) else [],
+                    'anchor_beats_count': len(anchor_beats),
+                    'expression_guidance_count': len(expr_guidance),
+                    'method_guidance_count': len(bind_guidance),
+                    'writer_review_focus': cprof['craft_profile']['writer_review_focus'],
+                    'acceptance_focus': cprof['craft_profile']['acceptance_focus'],
+                }
+                # 15–17 live execution status for this scene's current draft.
+                rec = review['result'].get('recommendation') if review else None
+                hard_count = sum(1 for f in fact_findings if f.get('severity') == 'hard')
+                is_accepted = bool(draft_id and accepted_id == draft_id)
+                if not draft_id:
+                    stage_label = '15 待写作'
+                elif is_accepted:
+                    stage_label = '17 已接受入库'
+                elif is_manual and not review:
+                    stage_label = '15 手动修改待独立审稿'
+                elif not review:
+                    stage_label = '16 待独立审稿'
+                elif rec != 'pass':
+                    stage_label = '16 审稿未通过待修订'
+                elif not delta_info:
+                    stage_label = '17 审稿通过待提取状态'
+                elif hard_count:
+                    stage_label = f'17 事实复核受阻（{hard_count} 项硬问题）'
+                else:
+                    stage_label = '17 已提取状态待批次接受'
+                result['draft_status'] = {
+                    'draft_id': draft_id,
+                    'accepted_draft_id': accepted_id,
+                    'is_accepted': is_accepted,
+                    'is_manual': is_manual,
+                    'needs_review': bool(draft_id and not is_accepted and rec != 'pass'),
+                    'review_recommendation': rec,
+                    'has_delta': bool(delta_info),
+                    'hard_findings_count': hard_count,
+                    'stage_label': stage_label,
+                }
                 result['draft_id'] = draft_id
                 result['metrics'] = {'draft_versions': len(drafts), 'review_rounds': sum(run.kind == 'review' for run in runs),
-                                     'words': count_words(store.get('draft', draft_id).text) if draft_id else 0,
+                                     'words': count_words(draft_obj.text) if draft_obj else 0,
                                      'model_calls': sum(run.provider != 'author' for run in runs)}
         return result
 

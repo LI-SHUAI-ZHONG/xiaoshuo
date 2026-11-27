@@ -86,8 +86,8 @@ class StagingMixin:
         target = folder / f'{ident}.txt'
         target.write_bytes(text.encode('utf-8'))
         chapters = []
-        for match in re.finditer(r'(?m)^(?:#{1,6}\s+[^\r\n]+|第[〇零一二三四五六七八九十百千万\d]+[卷章回节][^\r\n]*)', text):
-            chapters.append({'title': match[0], 'start': match.start()})
+        for match in re.finditer(r'(?m)^[ \t]*(?:#{1,6}[ \t]+[^\r\n]+|第[〇零一二三四五六七八九十百千万两\d]+[卷部篇章回节][^\r\n]*)', text):
+            chapters.append({'title': match[0].strip(), 'start': match.start()})
         if not chapters:
             chapters = [{'title': '全文', 'start': 0}]
         for index, chapter in enumerate(chapters):
@@ -109,6 +109,10 @@ class StagingMixin:
             raise ValueError('审核决定必须为 approve 或 reject')
         if decision == 'reject':
             with self.connect() as conn:
+                conn.execute('BEGIN IMMEDIATE')
+                active = conn.execute("SELECT id FROM corpus_jobs WHERE book_id=? AND status IN ('pending','running')", (ident,)).fetchone()
+                if active:
+                    raise ValueError('作品有拆解任务正在运行，请先取消任务再驳回')
                 conn.execute("UPDATE staging_books SET status='rejected',note=?,updated_at=? WHERE id=?",
                              (str(body.get('note', '')), timestamp(), ident))
             self._refresh_stats()
@@ -132,6 +136,38 @@ class StagingMixin:
                          'decomposition_requested=?,progress=? WHERE id=?',
                          ('queued' if requested else 'archived', encode(types), grade, str(body.get('note', '')),
                           timestamp(), int(requested), 0 if requested else 1, ident))
+        return self._book(self._staging_row(ident))
+
+    def reclassify_book(self, ident: str, body: dict) -> dict:
+        row = self._staging_row(ident)
+        if row['status'] in ('pending_review', 'rejected', 'decomposing'):
+            raise ValueError('当前状态不能直接调整分类；待审核请先通过审核，拆解中请先暂停或取消')
+        types = catalog.canonical_types(body.get('types', body.get('confirmed_types', [])))
+        if not types:
+            raise ValueError('请确认至少一个类型')
+        grade = body.get('grade', row['grade'])
+        if grade not in ('S', 'A', 'B'):
+            raise ValueError('质量评级必须为 S / A / B')
+        note = str(body.get('note', row['note']))
+        allowed = set(types)
+        with self.connect() as conn:
+            conn.execute('BEGIN IMMEDIATE')
+            active = conn.execute("SELECT id FROM corpus_jobs WHERE book_id=? AND status IN ('pending','running')", (ident,)).fetchone()
+            if active:
+                raise ValueError('作品有拆解任务正在运行，请先停止后再调整类型')
+            bound = conn.execute(
+                """SELECT m.id, v.body_json FROM corpus_method_origins o
+                   JOIN production_methods m ON m.id=o.method_id
+                   JOIN production_method_versions v ON v.method_id=m.id AND v.version=o.method_version
+                   WHERE o.book_id=? AND o.method_version IN (m.latest_version, coalesce(m.approved_version, m.latest_version))""",
+                (ident,),
+            ).fetchall()
+            for method_row in bound:
+                tags = set(json.loads(method_row['body_json']).get('type_tags', []))
+                if tags and not tags <= allowed:
+                    raise ValueError('已有衍生方法依赖原确认类型，请先修订方法类型后再缩减本书类型')
+            conn.execute('UPDATE staging_books SET confirmed_types_json=?,grade=?,note=?,updated_at=? WHERE id=?',
+                         (encode(types), grade, note, timestamp(), ident))
         return self._book(self._staging_row(ident))
 
     def _validate_item(self, row: dict, item: dict, text: str) -> dict:

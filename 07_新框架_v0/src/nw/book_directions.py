@@ -34,6 +34,7 @@ PROMPT = (
     '普通偏好按候选的实际需要使用。每案让主角的起始处境产生明确目标，说明哪些人或力量阻止他，'
     '首轮行动会引发什么变化，以及这些后果怎样积累成后续长篇推进。让候选在目标、对抗方式或推进路径上有实质差异。'
     '所有世界前提和人物处境都是各自独立的提案。选定一个方向后，制作步骤再核证规则、设计具体卡片和细化剧情。'
+    '若 production_methods.method_summaries 给出了作者已选或系统冻结的拆解方法抽象摘要，请让候选方向与这些方法的目标步骤和适用条件相容，但严禁照搬任何参考作品的人名、设定或情节。'
     '已发生的故事事实与作者约束以 Brief 为准。若有 previous_rejection，回应作者退回理由并提出新的方向。'
     '严格返回一个 JSON 对象，唯一字段为 candidates。每个候选的字段和字数上限由 contract 给出，'
     '全部填写短文本。禁止输出正文、世界规则卡、卷章纲或制作步骤的完成结论。'
@@ -84,7 +85,80 @@ def _creation_input(journal: Journal) -> dict:
     for stage in governance.values():
         for row in stage.get('creation_plan', {}).get('preferences', []):
             prefs.setdefault(row['key'], row)
-    return {'types': types, 'preferences': list(prefs.values())}
+    result: dict = {'types': types, 'preferences': list(prefs.values())}
+    plot_gov = governance.get('plot_design') or {}
+    if plot_gov.get('length_policy'):
+        result['length_policy'] = plot_gov['length_policy']
+    if plot_gov.get('length_recommendation'):
+        result['length_recommendation'] = plot_gov['length_recommendation']
+    world_gov = governance.get('world_design') or {}
+    if world_gov.get('cast_sample_reference'):
+        result['cast_sample_reference'] = world_gov['cast_sample_reference']
+    if world_gov.get('passage_references'):
+        kinds: dict[str, str] = {}
+        for ref in world_gov['passage_references']:
+            if isinstance(ref, dict) and ref.get('kind'):
+                kinds.setdefault(ref['kind'], str(ref.get('condition', ''))[:160])
+        if kinds:
+            result['passage_technique_kinds'] = [{'kind': k, 'condition': v} for k, v in kinds.items()]
+    if method_policy := journal.request.get('production_method_policy'):
+        summary = {k: method_policy[k] for k in ('tasks', 'preferred_methods', 'recommended_slots')
+                   if method_policy.get(k)}
+        method_summaries = _resolve_method_summaries(journal, method_policy)
+        if method_summaries:
+            summary['method_summaries'] = method_summaries
+        if summary:
+            result['production_methods'] = summary
+    if journal.request.get('planning_hierarchy'):
+        result['planning_hierarchy'] = True
+    return result
+
+
+def _resolve_method_summaries(journal: Journal, policy: dict) -> list[dict]:
+    """Resolve pinned method IDs into abstract, non-copying summaries for direction planning."""
+    pinned: dict[tuple[str, int], list[str]] = {}
+    for ident, version in (policy.get('preferred_methods') or {}).items():
+        if isinstance(ident, str) and type(version) is int:
+            pinned.setdefault((ident, version), []).append('author_preferred')
+    for slot, route in (policy.get('recommended_slots') or {}).items():
+        if isinstance(route, dict):
+            for ident, version in (route.get('versions') or {}).items():
+                if isinstance(ident, str) and type(version) is int:
+                    pinned.setdefault((ident, version), []).append(
+                        f"auto:{slot}@{route.get('scope', '')}.{route.get('stage', '')}"
+                    )
+    if not pinned:
+        return []
+    try:
+        from nw.production_methods.sources import MethodReader
+        reader = MethodReader(journal.store.directory.parent)
+        if not reader.db_path.is_file():
+            return []
+    except Exception:
+        return []
+    summaries = []
+    for (ident, version), roles in pinned.items():
+        try:
+            row = reader.get_method(ident, version)
+        except Exception:
+            continue
+        body = row.get('body') or {}
+        summaries.append({
+            'id': ident,
+            'version': version,
+            'title': body.get('title', ''),
+            'roles': roles,
+            'tasks': list(body.get('tasks', ())),
+            'scopes': list(body.get('scopes', ())),
+            'target_stages': sorted({o['stage'] for o in body.get('outputs', ()) if o.get('stage')}),
+            'applicability': [str(x)[:160] for x in body.get('applicability', ())[:3]],
+            'non_applicability': [str(x)[:160] for x in body.get('non_applicability', ())[:2]],
+            'output_targets': [
+                f"{o.get('stage', '')}.{o.get('field', '')}:{str(o.get('description', ''))[:100]}"
+                for o in body.get('outputs', ())[:4]
+            ],
+        })
+    return summaries
 
 
 def _previous_rejection(journal: Journal) -> dict | None:

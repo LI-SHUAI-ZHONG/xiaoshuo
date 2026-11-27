@@ -20,6 +20,11 @@ def runtime_profile(config: object, version: int) -> dict:
             'params':config.params,'timeout':config.timeout,'pipeline_version':f'corpus-v{version}'}
 
 
+def _runtime_compatible(current: dict, saved: dict) -> bool:
+    return ({k: v for k, v in current.items() if k != 'timeout'}
+            == {k: v for k, v in saved.items() if k != 'timeout'})
+
+
 def minimum_structure_calls(spans: list[dict], version: int) -> int:
     domains=domains_for(version)
     roster_windows=len({s['unit_id'] for s in spans}) if 'cast_roster' in domains else 0
@@ -33,7 +38,7 @@ def options_for(raw: dict, *, extent: dict, minimum: int) -> dict:
         'chunk_chars':raw.get('chunk_chars',6000),'max_calls':raw.get('max_calls',128),
         'max_input_chars':raw.get('max_input_chars',64000),'thread_ids':raw.get('thread_ids',[]),
         'retry_failed':raw.get('retry_failed',False)}
-    for name,lo,hi in (('chunk_chars',1000,20000),('max_calls',1,3000),('max_input_chars',8000,512000)):
+    for name,lo,hi in (('chunk_chars',1000,20000),('max_calls',1,30000),('max_input_chars',8000,512000)):
         if type(result[name]) is not int or not lo<=result[name]<=hi:raise ValueError(f'{name}须在{lo}–{hi}之间')
     if result['extent'] not in ('complete','excerpt','unknown') or not isinstance(result['note'],str) or not result['note'].strip() or len(result['note'])>4000:
         raise ValueError('请确认参考文本完整性并填写依据；未知也须明确说明')
@@ -139,12 +144,18 @@ class CorpusJobsMixin:
     def _launch_corpus(self,book_id: str,ident: str,config: object,provider: object) -> None:
         with self._task_lock:
             lock=execution_lock(SimpleNamespace(directory=self.root),f'decompose:{book_id}')
-            if not lock.__enter__():lock.__exit__(None,None,None);raise ValueError('另一个客户端正在处理此作品')
+            if not lock.__enter__():
+                lock.__exit__(None,None,None)
+                if any(t.is_alive() for t in self._tasks.values()):
+                    raise ValueError('当前作品的上一个后台任务正在退出，请稍候再试')
+                raise ValueError('另一个客户端正在处理此作品')
+            original_status=None
             try:
                 with self.connect() as conn:
                     conn.execute('BEGIN IMMEDIATE')
                     job=conn.execute('SELECT * FROM corpus_jobs WHERE id=?',(ident,)).fetchone()
                     if job['status'] not in ('pending','paused','failed'):raise ValueError('任务不能重复启动')
+                    original_status=job['original_book_status']
                     conn.execute("UPDATE corpus_jobs SET status='running',control='',error='',updated_at=? WHERE id=?",(timestamp(),ident))
                     conn.execute("UPDATE staging_books SET status='decomposing',error='',updated_at=? WHERE id=? AND status NOT IN ('rejected','archived')",(timestamp(),book_id))
                 from nw.studio.corpus_pipeline import run_job
@@ -154,13 +165,21 @@ class CorpusJobsMixin:
                         lock.__exit__(None,None,None)
                         with self._task_lock:self._tasks.pop(ident,None)
                 thread=threading.Thread(target=worker,daemon=True,name='corpus-'+ident[:8]);self._tasks[ident]=thread;thread.start()
-            except Exception:
-                lock.__exit__(None,None,None);self._tasks.pop(ident,None);raise
+            except Exception as exc:
+                lock.__exit__(None,None,None);self._tasks.pop(ident,None)
+                if original_status is not None:
+                    with self.connect() as conn:
+                        conn.execute("UPDATE corpus_jobs SET status='failed',error=?,control='',updated_at=? WHERE id=? AND status='running'",
+                                     (str(exc)[:4000],timestamp(),ident))
+                        conn.execute("UPDATE staging_books SET status=?,updated_at=? WHERE id=? AND status='decomposing'",
+                                     (original_status,timestamp(),book_id))
+                raise
 
     def control_corpus_job(self,book_id: str,ident: str,request: dict) -> dict:
         action=request.get('action');job=self.get_corpus_job(book_id,ident)
         if action in ('pause','cancel'):
             if job['status'] not in ACTIVE:raise ValueError('该任务已结束')
+            worker=self._tasks.get(ident) if action=='cancel' else None
             with self.connect() as conn:
                 conn.execute('BEGIN IMMEDIATE')
                 current=conn.execute('SELECT status FROM corpus_jobs WHERE id=?',(ident,)).fetchone()
@@ -169,18 +188,21 @@ class CorpusJobsMixin:
                     conn.execute("UPDATE corpus_jobs SET status='cancelled',control='cancel',updated_at=? WHERE id=?",(timestamp(),ident))
                     conn.execute("UPDATE staging_books SET status=?,updated_at=? WHERE id=? AND status='decomposing'",(job['original_book_status'],timestamp(),book_id))
                 elif current['status']=='running':conn.execute("UPDATE corpus_jobs SET control='pause',updated_at=? WHERE id=?",(timestamp(),ident))
+            if worker and worker.is_alive() and worker is not threading.current_thread():
+                worker.join(timeout=2)
         elif action=='resume':
             if job['status'] not in ('paused','failed'):raise ValueError('只有已暂停/失败的任务可以续接')
             if not isinstance(request.get('options',{}),dict) or set(request.get('options',{}))-{'max_calls','max_input_chars'}:
                 raise ValueError('续接只可调整调用上限和输入预算；其他分析参数改变须新建任务')
             config,provider=self._corpus_runtime()
-            if runtime_profile(config,job['structure_schema_version'])!=job['runtime']:raise ValueError('模型配置已改变，请恢复原配置续接或取消后新建，不能混用结果')
+            current_runtime=runtime_profile(config,job['structure_schema_version'])
+            if not _runtime_compatible(current_runtime,job['runtime']):raise ValueError('模型配置已改变，请恢复原配置续接或取消后新建，不能混用结果')
             current=self.get_corpus(book_id)
             actual=current['approved_version'] if job['kind']=='methods' else current['latest_version']
             if actual!=job['base_version']:raise ValueError('拆解结构已修改，请取消旧任务后重建')
             options={**job['options'],**request.get('options',{}),'retry_failed':request.get('retry_failed',False)}
             validated=options_for(options,extent=current['body']['source_extent'],minimum=job['calls_used'])
-            with self.connect() as conn:conn.execute('UPDATE corpus_jobs SET options_json=? WHERE id=?',(encode(validated),ident))
+            with self.connect() as conn:conn.execute('UPDATE corpus_jobs SET options_json=?,runtime_json=? WHERE id=?',(encode(validated),encode(current_runtime),ident))
             self._launch_corpus(book_id,ident,config,provider)
         else:raise ValueError('未知任务操作')
         return self.get_corpus_job(book_id,ident)

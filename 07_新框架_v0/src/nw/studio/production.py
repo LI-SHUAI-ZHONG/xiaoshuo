@@ -79,7 +79,7 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                 adopt_story(store, {'as_of_story_order': 0, 'disclosure_order': [0, 0, 0],
                     'coverage': {'entities': [], 'predicates': []}, 'facts': [], 'card_refs': []}, {})
                 job = start_job(store, JobRequest('design', design_scope='book', budget=budget,
-                                                 governance_inputs=governance(wizard),
+                                                 governance_inputs=governance(wizard, library=self.library),
                                                  production_method_policy=wizard.get('production_methods',{}),
                                                  direction_review=wizard.get('direction_review', False),
                                                  planning_hierarchy=wizard.get('planning_hierarchy', False)))
@@ -147,27 +147,35 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
 
     def _new_job(self, novel: dict, body: dict, store: Store) -> str:
         overview = self.project(novel)
+        branch = novel.get('current_branch', 'main')
         scenes = [row['id'] for row in overview['scenes']
                   if row['story_approved_on_branch'] and not row['accepted_draft_id']]
+        from nw.novel_store import _manual_branch_draft
+        manual_edits = [
+            row['id'] for row in overview['scenes']
+            if row['story_approved_on_branch'] and row['latest_draft_id']
+            and row['latest_draft_id'] != row['accepted_draft_id']
+            and _manual_branch_draft(store, store.get('draft', row['latest_draft_id']), branch)
+        ]
         from nw.length_plan import approved_book_application
         wizard = novel['wizard']
         needs_tier_proposal = wizard.get('length_mode') == 'tiered' and not wizard.get('target_words')
         book_id, _ = approved_book_application(store, {'settings': overview['active_settings']},
                                                 tiered_only=needs_tier_proposal)
-        needs = self.branch_status(novel['id'])['needs_revalidation'] if novel.get('current_branch', 'main') != 'main' else []
+        needs = self.branch_status(novel['id'])['needs_revalidation'] if branch != 'main' else []
         revalidate = [row['id'] for row in overview['scenes'] if row['id'] in needs and row['accepted_draft_id']]
-        mode = body.get('mode') or ('revise' if revalidate else 'write' if scenes else 'design')
-        branch = novel.get('current_branch', 'main')
+        mode = body.get('mode') or ('revise' if (revalidate or manual_edits) else 'write' if scenes else 'design')
         hierarchy = mode == 'design' and wizard.get('planning_hierarchy', False)
         if hierarchy:
             scope, parent_id = design_route(store, branch, body.get('scope'), body.get('parent_id'))
         else:
             scope = body.get('scope') or ('chapter' if book_id else 'book')
             parent_id = book_id if mode == 'design' and scope != 'book' else None
-        if mode == 'design' and novel.get('current_branch', 'main') == 'main' and any(scene['accepted_draft_id'] for scene in overview['scenes']):
+        if mode == 'design' and branch == 'main' and any(scene['accepted_draft_id'] for scene in overview['scenes']):
             raise ValueError('已有正文后的追加设计需先建立候选分支并复核旧稿。'
                              '请打开“⋯ → 制作候选与主线 → 建立候选”，完成旧稿复核后再合并。未启动模型调用。')
         selected = body.get('scene_ids', revalidate[:1] if mode == 'revise' and revalidate else
+                            manual_edits[:1] if mode == 'revise' and manual_edits else
                             scenes if mode in ('write', 'revise', 'continue') else [])
         if not isinstance(selected, list):
             raise ValueError('场景必须是 ID 列表')
@@ -269,16 +277,20 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
             with self.open_store(novel) as store:
                 result = resume_job(store, job_id, provider, config, choose, retry_failed=retry)
             status = 'PAUSED' if result.reason == 'AUTHOR_PAUSED' else result.status
-            self.db.update(ident, runtime_status=status, reason=result.reason,
-                           status='paused' if status in ('PAUSED', 'BLOCKED', 'CANCELLED', 'REJECTED', 'STALE') else
-                           ('writing' if result.status == 'DONE' else novel['status']))
-            self.db.event(ident, 'status', result.reason or f'制作任务：{status}',
-                          {'job_id': job_id, 'status': status, 'step': result.step})
+            with self._lock:
+                latest = self.db.get(ident)
+                if not (latest['runtime_status'] == 'CANCELLED' and status != 'CANCELLED'):
+                    self.db.update(ident, runtime_status=status, reason=result.reason,
+                                   status='paused' if status in ('PAUSED', 'BLOCKED', 'CANCELLED', 'REJECTED', 'STALE') else
+                                   ('writing' if result.status == 'DONE' else latest['status']))
+                self.db.event(ident, 'status', result.reason or f'制作任务：{status}',
+                              {'job_id': job_id, 'status': status, 'step': result.step})
             self.sync_history(ident)
             self.sync_adoptions(ident)
         except Exception as exc:
-            self.db.update(ident, runtime_status='BLOCKED', status='paused', reason=str(exc))
-            self.db.event(ident, 'error', str(exc), {'job_id': job_id})
+            with self._lock:
+                self.db.update(ident, runtime_status='BLOCKED', status='paused', reason=str(exc))
+                self.db.event(ident, 'error', str(exc), {'job_id': job_id})
         finally:
             self.changed.set()
 
@@ -302,7 +314,26 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                     cancel_job(store, novel['job_id'])
             self.db.update(ident, status='paused', runtime_status='CANCELLED', reason='CANCELLED')
             self.db.event(ident, 'cancel', '作者取消了当前任务；已有产物和调用记录已保留。')
-            return {'status': 'CANCELLED', 'job_id': novel['job_id']}
+            worker = self._workers.get(ident)
+            result = {'status': 'CANCELLED', 'job_id': novel['job_id']}
+        if worker and worker.is_alive() and worker is not threading.current_thread():
+            worker.join(timeout=1)
+        return result
+
+    def accept_scene(self, ident: str, scene_id: str, body: dict) -> dict:
+        with self._lock:
+            worker = self._workers.get(ident)
+            if worker and worker.is_alive():
+                raise ValueError('当前制作任务仍在运行，请等待当前步骤结束后再单独接受本场')
+            novel = self.db.get(ident)
+            branch = str(body.get('branch') or novel.get('current_branch') or 'main')
+            result = self.studio.accept_scene_delta(novel['project_dir'], {**body, 'scene_id': scene_id, 'branch': branch})
+            self.db.event(ident, 'confirmation', str(body.get('reason') or '客户端审核通过并接收本场正文与状态增量'),
+                          {'scene_id': scene_id, 'branch': branch, **result})
+            self.sync_history(ident)
+            self.sync_adoptions(ident)
+            self.changed.set()
+            return result
 
     def decide(self, ident: str, gate_id: str, body: dict) -> dict:
         # The workflow can expose WAITING before its worker has finished

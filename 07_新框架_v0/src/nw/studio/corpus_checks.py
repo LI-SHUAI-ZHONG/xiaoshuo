@@ -42,7 +42,8 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None, *, conte
             refs=row['evidence_ids']
             if section != 'domains' and nonstory.intersection(refs):
                 check(False,section,'标题或面向读者的题外文字不能用来证明故事中的人物与事件：'+row['id'])
-            check(bool(refs) and set(refs)<=evidence.keys(),section,'记录缺少可定位原作证据：'+str(row.get('id',row.get('domain'))))
+            require_nonempty = section != 'domains' or row.get('status') == 'observed'
+            check((not require_nonempty or bool(refs)) and set(refs)<=evidence.keys(),section,'记录缺少可定位原作证据：'+str(row.get('id',row.get('domain'))))
     for person in people.values():
         check(bool(person['name']),'characters','人物名称为空')
         target=person['canonical_id'];seen={person['id']}
@@ -154,7 +155,7 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None, *, conte
                       'domains','已观察的'+label+'须引用同一条有根据的观察')
             if domain=='cast_roster' and coverage is not None:
                 roster=[t for t in threads.values() if t['domain']==domain]
-                issue=coverage_issue(roster,events,people,units,row['status'])
+                issue=coverage_issue(roster,events,people,units,row['status'],evidence=evidence)
                 check(not issue,'coverage',issue)
                 if row['status']=='observed':
                     check(any(t['status']!='uncertain' and t['details']['appearance_evidence'] in row['evidence_ids'] for t in roster),

@@ -41,12 +41,13 @@ def _band(index: int, count: int) -> str:
 
 
 def _coverage_gaps(chapters: list[dict], extent: str) -> list[dict]:
+    story = [row for row in chapters if row['coverage'] != 'non_story']
     return [{'chapter_index':row['chapter_index'], 'coverage':row['coverage'],
-             'band': _band(row['chapter_index'], len(chapters)) if extent == 'complete' and len(chapters) > 1 else None,
+             'band': _band(pos, len(story)) if extent == 'complete' and len(story) > 1 else None,
              'confirmed_appearing':len(row['appearing_ids']), 'pending_individual_count':len(row['pending_person_ids']),
              'pending_observation_count':len(row['pending_observation_ids']),
              'unidentified_observation_count':row['unidentified_observation_count']}
-            for row in chapters if row['coverage'] != 'verified']
+            for pos, row in enumerate(story, 1) if row['coverage'] != 'verified']
 
 
 def genre_cast_samples(library, types: list[str]) -> dict:
@@ -83,18 +84,20 @@ def genre_cast_samples(library, types: list[str]) -> dict:
                 continue
             seen.add(identity)
             all_chapters = counts['chapters']
-            covered = [chapter for chapter in all_chapters if chapter['coverage'] == 'verified']
+            story_chapters = [chapter for chapter in all_chapters if chapter['coverage'] != 'non_story']
+            covered = [chapter for chapter in story_chapters if chapter['coverage'] == 'verified']
             chapters.extend(covered)
             extent = record['body']['source_extent']['status']
-            full = extent == 'complete' and bool(covered) and len(covered) == len(all_chapters)
+            full = extent == 'complete' and bool(covered) and len(covered) == len(story_chapters)
             if full:
                 complete.append(counts)
-            if extent == 'complete' and len(all_chapters) > 1:
-                for chapter in covered:
-                    groups[_band(chapter['chapter_index'], len(all_chapters))].append(chapter)
+            if extent == 'complete' and len(story_chapters) > 1:
+                for pos, chapter in enumerate(story_chapters, 1):
+                    if chapter['coverage'] == 'verified':
+                        groups[_band(pos, len(story_chapters))].append(chapter)
             sources.append({'book_id':book['id'], 'title':book['title'], 'version':book['version'], 'extent':extent,
                             'chapter_count':len(covered), 'unique_count':counts['unique_count'] or 0,
-                            'coverage_gaps':_coverage_gaps(all_chapters, extent),
+                            'coverage_gaps':_coverage_gaps(story_chapters, extent),
                             'included_in_book_range':full, 'body_sha256':record['body_sha256']})
     labels = library.corpus_catalog().get('cast_roster_options', {})
     uncertain = [s for s in sources if s['coverage_gaps']]

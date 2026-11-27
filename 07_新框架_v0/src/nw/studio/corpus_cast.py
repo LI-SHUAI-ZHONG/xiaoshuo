@@ -1,7 +1,7 @@
 """Count the people attested by roster observations, keeping chapter evidence attached."""
 from collections import defaultdict
 
-from nw.studio.corpus_roster import roster_issue, subject_evidence
+from nw.studio.corpus_roster import _is_nonstory_chapter, roster_issue, subject_evidence
 from nw.studio.corpus_story_observations import event_chapter
 
 
@@ -84,10 +84,12 @@ def cast_distribution(document: dict) -> dict | None:
             functions[function].add(who)
         missing = event_people[chapter['id']] - checked
         pending_people.update(who for _, who in missing if who)
+        non_story = (status == 'observed' and not observations and not missing
+                     and _is_nonstory_chapter(chapter['id'], events, units, evidence))
         first = present - seen
         ambiguous = first if prior_uncovered else first & prior_pending
         measured = bool(included)
-        coverage = 'pending' if pending or missing else 'verified' if measured else 'unassessed'
+        coverage = 'non_story' if non_story else 'pending' if pending or missing else 'verified' if measured else 'unassessed'
         rows.append({'unit_id': chapter['id'], 'chapter_index': index, 'title': chapter['title'], 'observed': measured,
                      'coverage': coverage, 'pending_observation_ids': pending,
                      'pending_person_ids': sorted(pending_people - present),
@@ -104,7 +106,7 @@ def cast_distribution(document: dict) -> dict | None:
         seen.update(present)
         mentioned.update(named)
         prior_pending.update(pending_people)
-        prior_uncovered = prior_uncovered or not observations or bool(unidentified) or status != 'observed'
+        prior_uncovered = prior_uncovered or (not non_story and not observations) or bool(unidentified) or status != 'observed'
     measured = any(r['observed'] for r in rows)
     return {'status': status, 'unique_count': len(seen) if measured else None,
             'mentioned_only_count': len(mentioned - seen) if measured else None,

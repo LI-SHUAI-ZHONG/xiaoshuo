@@ -53,7 +53,7 @@ def resolve_fragment(raw: dict, document: dict, content: str, *, span: dict | No
                     start=span['start']+local
                 end=start+len(quote)
                 if not span['start']<=start<end<=span['end']:raise ValueError('模型引文超出当前片段')
-                if 'end' in row and row['end']!=end:raise ValueError('证据终点不符')
+                if row.get('end') is not None and row['end']!=end:raise ValueError('证据终点不符')
                 row.update(start=start,end=end)
             if section=='units' and (row.get('level')!='scene' or not span or row.get('parent_id')!=span['unit_id']):
                 raise ValueError('细拆只能在本章新增实际场景范围')

@@ -38,7 +38,7 @@ export async function render(ctx){
         <p class="muted" style="margin:16px 0">可单独指定模型或窗口。同一服务和模型可以共用通用窗口。改用其他模型时，请填写对应容量，留空时按输入字符预算检查。</p>
         <div class="form-grid">${[...(config.design_stages||[]),...(config.runtime_stages||[])].map(s=>{
           const spec=staged[s.stage];
-          const value=typeof spec==='string'?spec:(!spec?.provider||spec.provider==='openai_compat'?spec?.model||'':'');
+          const value=typeof spec==='string'?spec:spec?.model||'';
           const title=esc(s.zh||s.label||s.stage), stage=esc(s.stage);
           return `<label class="field"><span>${title} · 模型</span><input data-stage-model="${stage}" value="${esc(value)}" placeholder="跟随默认模型"></label>
             <label class="field"><span>${title} · 窗口（token）</span><input type="number" min="1" step="1" data-stage-window="${stage}" value="${esc(spec?.context_window_tokens??'')}"></label>`;
@@ -60,7 +60,7 @@ export async function render(ctx){
     const stage_models={...staged};
     $$('[data-stage-model]').forEach(el=>{
       const stage=el.dataset.stageModel, old=staged[stage];
-      const spec=typeof old==='object'&&old&&(!old.provider||old.provider==='openai_compat')?{...old}:{};
+      const spec=typeof old==='object'&&old?{...old}:{};
       const window=document.querySelector(`[data-stage-window="${CSS.escape(stage)}"]`).value;
       if(el.value.trim())spec.model=el.value.trim();else delete spec.model;
       if(window)spec.context_window_tokens=Number(window);else delete spec.context_window_tokens;

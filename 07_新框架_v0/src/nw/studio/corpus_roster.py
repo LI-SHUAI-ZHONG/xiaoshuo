@@ -1,4 +1,6 @@
 """Check the original passage and subject behind each chapter's cast observation."""
+import re
+
 from nw.studio.corpus_story_observations import event_chapter
 
 
@@ -65,12 +67,28 @@ def roster_issue(row: dict, events: dict, units: dict, people: dict, evidence: d
     return ''
 
 
-def coverage_issue(rows: list, events: dict, people: dict, units: dict, status: str) -> str:
+def _is_nonstory_chapter(chapter_id: str, events: dict, units: dict, evidence: dict | None) -> bool:
+    unit = units.get(chapter_id, {})
+    if any(event_chapter(e, units) == chapter_id for e in events.values()):
+        return False
+    if unit.get('boundary_basis') == 'analyst_inference':
+        return True
+    if re.search(r'(?:新书感言|完本感言|上架感言|作者的话|序言|前言|目录|楔子|后记|边界待核)', unit.get('title', '')):
+        return True
+    if evidence is None:
+        return False
+    in_chapter = [e for e in evidence.values() if unit['start'] <= e['start'] < e['end'] <= unit['end']]
+    return bool(in_chapter) and all(e.get('text_role') in ('heading', 'reader_address') for e in in_chapter)
+
+
+def coverage_issue(rows: list, events: dict, people: dict, units: dict, status: str,
+                   *, evidence: dict | None = None) -> str:
     if status == 'uncertain':
         return ''
     chapters={u['id'] for u in units.values() if u['level']=='chapter'}
     checked={event_chapter(e,units) for e in events.values() if e['granularity']=='detail'}
-    if chapters-checked:
+    missing_chapters = {cid for cid in (chapters - checked) if not _is_nonstory_chapter(cid, events, units, evidence)}
+    if missing_chapters:
         return '有章节尚无可定位的细拆事件，不能将未核对的章节登记为零人；请补证或将阵容范围标为存疑'
     expected = {(e['id'], canonical_person(p, people)) for e in events.values()
                 if e['granularity'] == 'detail' for p in e['characters']}

@@ -16,7 +16,7 @@ def body_hash(body: dict) -> str:
 
 class CorpusMixin:
     def corpus_catalog(self, version: int = SCHEMA_VERSION) -> dict:
-        return corpus_catalog(version)
+        return corpus_catalog(version, include_blueprint=True)
 
     def _corpus_row(self, book_id: str, version: int, conn: object) -> dict:
         head=conn.execute('SELECT * FROM corpus_structures WHERE book_id=?',(book_id,)).fetchone()
@@ -56,8 +56,17 @@ class CorpusMixin:
                 result['history']=[dict(r) for r in conn.execute('SELECT v.version,v.body_sha256,v.created_at,r.decision '
                     'FROM corpus_structure_versions v LEFT JOIN corpus_structure_reviews r ON r.book_id=v.book_id AND r.version=v.version '
                     'WHERE v.book_id=? ORDER BY v.version DESC',(book_id,))]
-            result['derived_methods']=[dict(r) for r in conn.execute('SELECT o.method_id,o.method_version,o.structure_version '
-                'FROM corpus_method_origins o WHERE o.book_id=? ORDER BY o.created_at DESC',(book_id,))]
+            derived=[]
+            for r in conn.execute('SELECT o.method_id,o.method_version,o.structure_version,o.basis_json '
+                'FROM corpus_method_origins o WHERE o.book_id=? ORDER BY o.created_at DESC',(book_id,)):
+                basis=json.loads(r['basis_json']) if r['basis_json'] else {}
+                derived.append({
+                    'method_id':r['method_id'],
+                    'method_version':r['method_version'],
+                    'structure_version':r['structure_version'],
+                    'thread_ids':list(basis.get('thread_ids',())) if isinstance(basis,dict) else [],
+                })
+            result['derived_methods']=derived
         result['jobs']=self.list_corpus_jobs(book_id)['jobs']
         from nw.studio.corpus_stats import corpus_statistics
         result['statistics']=corpus_statistics(result['body'],result['coverage'])

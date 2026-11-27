@@ -23,7 +23,8 @@ REVISE_PROMPT = (
 
 
 def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | None, contract: dict | None,
-                   material: str, writing_keys: Iterable[str], length_feedback: list[str] | None = None) -> tuple[list[dict], str]:
+                   material: str, writing_keys: Iterable[str], length_feedback: list[str] | None = None,
+                   *, genre_ids: list[str] | tuple[str, ...] | None = None) -> tuple[list[dict], str]:
     data = {'context': package, 'draft': asdict(draft)}
     if review is not None:
         checks = review.get('material_checks', ())
@@ -77,6 +78,11 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         appended += ' ' + (BREAK_REVIEW if purpose == 'review' else BREAK_WRITING)
         if purpose == 'revise' and review and review.get('chapter_break'):
             data['chapter_break_revision'] = '补完末段动作或对话，在自然节拍换章。'
+    if genre_ids:
+        from nw.studio.craft_materials import review_genre_guidance, writing_genre_guidance
+        note = review_genre_guidance(genre_ids) if purpose == 'review' else writing_genre_guidance(genre_ids)
+        if note:
+            appended += ' ' + note
     keys = check_source_keys(contract['checks']) if contract else writing_keys
     body = canonical(data)
     prompt = step_material_prompt(prompt, material, keys)

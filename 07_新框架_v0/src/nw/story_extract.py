@@ -20,7 +20,8 @@ from nw.tasks import freeze_manifest, read_input_manifest, run_task
 
 def freeze_delta_input(store: Store, draft_id: str, scope: dict, settings: dict, *,
                        material_review_run: str | None = None,
-                       material_hypotheses: list[dict] | None = None, reader_only_spans: list[dict] | None = None) -> str:
+                       material_hypotheses: list[dict] | None = None, reader_only_spans: list[dict] | None = None,
+                       genre_ids: list[str] | tuple[str, ...] | None = None) -> str:
     required = {'id', 'branch_id', 'base_revision', 'story_order'}
     if not isinstance(scope, dict) or not required <= scope.keys() or scope.keys() - required - {
             'candidate_delta_refs', 'predecessor_drafts', 'brief_ref', 'dependency_refs'}:
@@ -93,6 +94,8 @@ def freeze_delta_input(store: Store, draft_id: str, scope: dict, settings: dict,
         package['material_hypotheses'] = material_hypotheses
     if reader_only_spans:
         package['reader_only_spans'] = reader_only_spans
+    if genre_ids:
+        package['genre_ids'] = list(genre_ids)
     return freeze_manifest(store, InputManifest(
         scope['id'], 'state_extract', settings, content_sha256(package),
         brief_ref=brief_ref,
@@ -129,7 +132,12 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
     evidence_format = {'draft_id': draft.id, 'text_sha256': draft_digest(draft), 'start': 0, 'end': len(draft.text)}
     step_material = package.get('state_extract_material')
     material_prompt = '\n\n' + step_material if step_material else ''
-    context = {key: value for key, value in package.items() if key != 'state_extract_material'}
+    genre_note = ''
+    if package.get('genre_ids'):
+        from nw.studio.craft_materials import acceptance_genre_guidance
+        if g := acceptance_genre_guidance(package['genre_ids']):
+            genre_note = ' ' + g
+    context = {key: value for key, value in package.items() if key not in ('state_extract_material', 'genre_ids')}
     frozen_input = {'draft': asdict(draft), 'target_ref': asdict(draft_ref(draft)), 'context': context,
                     'evidence_format': evidence_format,
                     'story_order': manifest['story_order'], 'disclosure_order': manifest['disclosure_order']}
@@ -153,7 +161,7 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
         ('按 reader_only_spans 给定的受众核对正文原句。听见某人的说法只证明听到了这句话。'
          '私人判断、听者所信与已经证实的事实分别记录。'
          if any('holders' in span for span in package.get('reader_only_spans', [])) else '') +
-        material_note + material_prompt)},
+        material_note + genre_note + material_prompt)},
         {'role': 'user', 'content': canonical(frozen_input)}]
     extraction_id = f'delta-extract:{manifest_id}'
     extract_cfg, extract_prov = resolve_stage_runtime(config, provider, 'state_extract')
@@ -181,7 +189,7 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
         '独立核对正文与候选变更。只输出 JSON {"findings":[]}。问题需含 code、severity（hard/soft/info）、'
         'target_ref、evidence、explanation、suggested_action、status。问题用 OPEN，正文未支持的事实用 hard。'
         + (' 独立核对 material_hypotheses 中的目标和引用。方案、前次意见或标签均不能证明变化发生。'
-           if material_note else '') + material_prompt)},
+           if material_note else '') + genre_note + material_prompt)},
         {'role': 'user', 'content': canonical(review_package)}]
     review_manifest_id = f'delta-review-manifest:{manifest_id}'
     if invoke is None or not store.connection.execute(

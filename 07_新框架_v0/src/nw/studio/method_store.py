@@ -75,7 +75,7 @@ class MethodMixin:
         return result
 
     def save_method(self, request: dict, ident: str | None = None) -> dict:
-        if not isinstance(request, dict) or set(request) - {'body', 'expected_version'}:
+        if not isinstance(request, dict) or set(request) - {'body', 'expected_version', 'structure_origin'}:
             raise ValueError('方法保存请求无效')
         body, _ = draft(request.get('body'))
         pins, source_issues = resolve(self, body['evidence'])
@@ -86,9 +86,17 @@ class MethodMixin:
         expected = request.get('expected_version')
         if type(expected) is not int or expected < 0:
             raise ValueError('保存须提供当前版本，新方法为 0')
+        has_origin = 'structure_origin' in request
+        origin_spec = request.get('structure_origin')
         now = timestamp()
         with self.connect() as conn:
             conn.execute('BEGIN IMMEDIATE')
+            prepared_origin = None
+            if has_origin and origin_spec is not None:
+                from nw.studio.corpus_methods import prepare_method, resolve_origin_basis
+                structure, basis = resolve_origin_basis(self, conn, origin_spec)
+                prepared = prepare_method(self, structure, {'body': body, 'basis': basis}, complete=False)
+                prepared_origin = (structure['book_id'], structure['version'], encode(prepared['basis']))
             legacy = '{}'
             if ident is not None:
                 head = self._method_head(ident, conn)
@@ -106,10 +114,22 @@ class MethodMixin:
                 conn.execute('INSERT INTO production_methods VALUES(?,?,NULL,NULL,?,?)', (ident, version, now, now))
             conn.execute('INSERT INTO production_method_versions VALUES(?,?,?,?,?,?,?)',
                 (ident, version, encode(body), digest(body), encode(pins), legacy, now))
-            if version > 1:
+            if prepared_origin is not None:
+                conn.execute('INSERT INTO corpus_method_origins VALUES(?,?,?,?,?,?)',
+                             (ident, version, prepared_origin[0], prepared_origin[1], prepared_origin[2], now))
+            elif version > 1 and not (has_origin and origin_spec is None):
                 from nw.studio.corpus_methods import inherit_origin
                 inherit_origin(conn, ident, expected, version)
         return self.get_method(ident)
+
+    def bind_method_origin(self, ident: str, request: dict) -> dict:
+        """Create a new method revision bound to an approved v5 corpus structure."""
+        if not isinstance(request, dict) or set(request) - {'expected_version', 'book_id', 'structure_version', 'thread_ids', 'event_ids', 'link_ids', 'explanation'}:
+            raise ValueError('绑定结构依据请求无效')
+        current = self.get_method(ident)
+        expected = request.get('expected_version', current['latest_version'])
+        origin_spec = {k: v for k, v in request.items() if k != 'expected_version'}
+        return self.save_method({'body': current['body'], 'expected_version': expected, 'structure_origin': origin_spec}, ident)
 
     def review_method(self, ident: str, body: dict) -> dict:
         version, decision = body.get('version'), body.get('decision')
@@ -139,10 +159,13 @@ class MethodMixin:
                              (version, timestamp(), ident))
         return self.get_method(ident)
 
-    def list_methods(self, *, task: str = '', scope: str = '', types: list[str] | None = None,
+    def list_methods(self, *, task: str = '', scope: str = '', stage: str = '', types: list[str] | None = None,
                      status: str = '', q: str = '', limit: int = 40, offset: int = 0) -> dict:
+        from nw.materials.phase_routes import ORDER
         states = ('draft', 'approved', 'rejected', 'source_unavailable')
-        if task and task not in TASKS or scope and scope not in SCOPES or status and status not in states:
+        allowed_stages = (*ORDER, 'writer', 'review', 'acceptance')
+        if (task and task not in TASKS or scope and scope not in SCOPES
+                or stage and stage not in allowed_stages or status and status not in states):
             raise ValueError('方法筛选条件无效')
         if type(limit) is not int or not 1 <= limit <= 100 or type(offset) is not int or offset < 0:
             raise ValueError('分页须为 1–100 条且起点非负')
@@ -162,6 +185,15 @@ class MethodMixin:
                 method = row['body']
                 if task and task not in method['tasks'] or scope and scope not in method['scopes']:
                     continue
+                if stage:
+                    output_stages = {out['stage'] for out in method.get('outputs', ())}
+                    consumers = {d['consumer'] for d in method.get('downstream', ())}
+                    task_stages = {s for tid in method.get('tasks', ()) for s in TASKS.get(tid, {}).get('stages', ())}
+                    if stage in ('writer', 'review', 'acceptance'):
+                        if stage not in consumers:
+                            continue
+                    elif stage not in output_stages and stage not in task_stages:
+                        continue
                 # Exact selected type tags must all be covered, unless explicitly cross-type.
                 if selected and method['type_tags'] and not selected <= set(method['type_tags']):
                     continue

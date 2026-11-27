@@ -3,6 +3,7 @@ from dataclasses import asdict
 import hashlib
 import json
 from pathlib import Path
+import re
 from typing import Callable
 
 from nw.studio.library_util import encode, timestamp
@@ -31,10 +32,33 @@ def artifact(service: object, name: str) -> Path:
     return path
 
 
+def _extract_json_text(text: str) -> str:
+    cleaned = text.strip()
+    if not cleaned:
+        return cleaned
+    if cleaned.startswith('```'):
+        matched = re.match(r'^```[A-Za-z0-9_-]*\s*([\s\S]*?)\s*```$', cleaned)
+        if matched:
+            return matched.group(1).strip()
+        if '\n' in cleaned:
+            cleaned = cleaned.split('\n', 1)[1].rsplit('```', 1)[0].strip()
+        else:
+            cleaned = re.sub(r'^```[A-Za-z0-9_-]*|```$', '', cleaned).strip()
+        return cleaned
+    fenced = re.search(r'```(?:json)?\s*(\{[\s\S]*\})\s*```', cleaned)
+    if fenced:
+        return fenced.group(1).strip()
+    if not cleaned.startswith('{'):
+        start = cleaned.find('{')
+        end = cleaned.rfind('}')
+        if 0 <= start < end:
+            return cleaned[start:end + 1]
+    return cleaned
+
+
 def parse_result(raw: dict, validator: Callable) -> object:
     if raw.get('finish_reason')!='complete':raise ValueError('模型未完整返回：'+str(raw.get('finish_reason')))
-    text=raw.get('text','').strip()
-    if text.startswith('```'):text=text.split('\n',1)[1].rsplit('```',1)[0].strip()
+    text=_extract_json_text(raw.get('text',''))
     return validator(json.loads(text))
 
 
@@ -53,7 +77,7 @@ def model_call(service: object, job_id: str, config: object, provider: object, *
         if prior['request_sha256']!=fingerprint:raise ValueError('中断调用的输入已变化')
         try:
             value=parse_result(json.loads(artifact(service,prior['output_path']).read_text(encoding='utf-8')),validator)
-        except (ValueError,KeyError,TypeError) as exc:
+        except (ValueError,KeyError,TypeError,IndexError) as exc:
             with service.connect() as conn:conn.execute("UPDATE corpus_calls SET status='invalid',error=?,updated_at=? WHERE job_id=? AND seq=?",(str(exc),timestamp(),job_id,prior['seq']))
             raise ValueError('已保留的模型结果无效，须明确重试该调用') from exc
         with service.connect() as conn:conn.execute("UPDATE corpus_calls SET status='completed',result_json=?,error='',updated_at=? WHERE job_id=? AND seq=?",(encode(value),timestamp(),job_id,prior['seq']))

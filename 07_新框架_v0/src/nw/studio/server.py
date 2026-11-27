@@ -176,7 +176,7 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 self.close_connection = True
             except FileNotFoundError as exc:
                 self._send_json(404, {'error': str(exc)})
-            except (ValueError, KeyError, sqlite3.Error) as exc:
+            except (ValueError, KeyError, TypeError, sqlite3.Error) as exc:
                 self._send_json(400, {'error': str(exc)})
             except Exception as exc:
                 self._send_json(500, {'error': f'内部错误: {exc}'})
@@ -296,7 +296,7 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
                 self.close_connection = True
             except FileNotFoundError as exc:
                 self._send_json(404, {'error': str(exc)})
-            except (ValueError, KeyError, sqlite3.Error) as exc:
+            except (ValueError, KeyError, TypeError, sqlite3.Error) as exc:
                 self._send_json(400, {'error': str(exc)})
             except Exception as exc:
                 self._send_json(500, {'error': f'内部错误: {exc}'})
@@ -328,7 +328,7 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
         service.repository_sync = repository
         library = LibraryService(service.workspace, config_path=service.config_path, ledger_path=service.ledger_path)
         production = ProductionService(service, library)
-        routes = ProductionRoutes(production, library)
+        routes = ProductionRoutes(production, library, data_lock=repository.data_lock)
         repository.attach(production, library)
         server.production = production
         server.library = library

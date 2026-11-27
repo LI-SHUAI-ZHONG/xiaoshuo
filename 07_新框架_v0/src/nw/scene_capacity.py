@@ -5,7 +5,8 @@ import json
 
 from nw.call_budget import BudgetExceeded, check_window, message_size, output_cap, read_budget
 from nw.length_plan import frozen_scene_budget, scene_length_feedback
-from nw.materials.evidence import review_contract
+from nw.materials.evidence import review_contract, scene_materials
+from nw.studio.craft_materials import design_genre_ids
 from nw.materials.steps.review import MATERIAL as REVIEW_MATERIAL
 from nw.materials.steps.writing import MATERIAL as WRITING_MATERIAL
 from nw.models import Draft
@@ -37,6 +38,7 @@ class SceneCapacity:
             'branch_id': head.branch_id, 'state_revision': head.revision, 'candidate_delta_refs': chain,
         }
         self.contract, _ = review_contract(journal.store, self.draft_shape, manifest)
+        self.genre_ids = design_genre_ids(scene_materials(journal.store, scene))
         self.feedback_shape = scene_length_feedback(journal.store, scene, manifest, '')
         self.omitted_for: set[str] = set()
 
@@ -68,16 +70,17 @@ class SceneCapacity:
         writing_messages = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': canonical(package)}]
         report = {'write': self._fit('write', writing_messages, 0, 0)}
         review, _ = draft_messages(package, 'review', self.draft_shape, None, self.contract, REVIEW_MATERIAL, keys,
-                                   self.feedback_shape)
+                                   self.feedback_shape, genre_ids=self.genre_ids)
         report['review'] = self._fit('review', review, prose_chars, 3 * prose_chars)
         if 'revise' in self.runtimes:
             revise, _ = draft_messages(package, 'revise', self.draft_shape, {}, None, WRITING_MATERIAL, keys,
-                                       self.feedback_shape)
+                                       self.feedback_shape, genre_ids=self.genre_ids)
             review_chars = self.caps['review']
             report['revise'] = self._fit('revise', revise, prose_chars + review_chars, 3 * (prose_chars + review_chars))
             if self.prior:
                 # A manual revision can start with an actual, much longer old draft.
-                actual, _ = draft_messages(package, 'revise', self.prior, {}, None, WRITING_MATERIAL, keys)
+                actual, _ = draft_messages(package, 'revise', self.prior, {}, None, WRITING_MATERIAL, keys,
+                                           genre_ids=self.genre_ids)
                 report['initial_revision'] = self._fit('revise', actual, 0, 0)
         return {'stages': report, 'reserved_draft_chars': prose_chars,
                 'draft_estimate_basis': basis,

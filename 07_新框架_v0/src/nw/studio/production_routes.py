@@ -1,4 +1,5 @@
 """HTTP translation for the production client, keeping the original API compatible."""
+from contextlib import nullcontext
 import json
 from dataclasses import asdict
 from typing import Any
@@ -11,8 +12,8 @@ def first(query: dict, key: str, default: str = '') -> str:
 
 
 class ProductionRoutes:
-    def __init__(self, production: Any, library: Any) -> None:
-        self.production, self.library = production, library
+    def __init__(self, production: Any, library: Any, *, data_lock: Any = None) -> None:
+        self.production, self.library, self.data_lock = production, library, data_lock
 
     def get(self, handler: Any, segs: list[str], query: dict) -> bool:
         lib, app = self.library, self.production
@@ -36,7 +37,8 @@ class ProductionRoutes:
             from nw.studio.cast_samples import genre_cast_samples
             data = genre_cast_samples(lib, first(query, 'types').split(',') if first(query, 'types') else [])
         elif segs == ['options']:
-            data = lib.options(first(query, 'slot', 'tone'), first(query, 'parent'))
+            types = [t for t in first(query, 'types').split(',') if t]
+            data = lib.options(first(query, 'slot', 'world'), first(query, 'parent'), types=types or None)
         elif segs == ['novel-cache']:
             data = app.novel_cache()
         elif segs == ['novels']:
@@ -126,12 +128,14 @@ class ProductionRoutes:
                 branch_actions = {'fork': app.fork_branch, 'select': app.select_branch, 'promote': app.promote_branch}
                 if segs[3] in branch_actions:
                     data = branch_actions[segs[3]](ident, body)
+            elif len(segs) == 5 and action == 'scenes' and segs[4] == 'accept':
+                data = app.accept_scene(ident, segs[3], body)
         elif segs == ['staging']:
             data, status = lib.import_book(body), 201
         elif len(segs) == 3 and segs[0] == 'staging':
             if segs[2]=='verify' or (segs[2]=='decompose' and 'items' in body):
                 raise ValueError('历史局部条目只读。新分析和复核请打开本书的多层结构拆解。')
-            actions = {'review': lib.review_book, 'decompose': lib.decompose_book}
+            actions = {'review': lib.review_book, 'decompose': lib.decompose_book, 'reclassify': lib.reclassify_book}
             if segs[2] in actions:
                 data = actions[segs[2]](segs[1], body)
         elif len(segs) == 3 and segs[:2] == ['kb', 'types']:
@@ -144,7 +148,11 @@ class ProductionRoutes:
         return True
 
     def events(self, handler: Any, ident: str) -> None:
-        initial = self.production.progress(ident)
+        def read_progress() -> dict:
+            with (self.data_lock or nullcontext()):
+                return self.production.progress(ident)
+
+        initial = read_progress()
         handler.send_response(200)
         handler.send_header('Content-Type', 'text/event-stream; charset=utf-8')
         handler.send_header('Cache-Control', 'no-cache')
@@ -155,7 +163,7 @@ class ProductionRoutes:
         ticks = 0
         try:
             while not handler.server.studio_shutdown.is_set():
-                progress = initial if previous is None else self.production.progress(ident)
+                progress = initial if previous is None else read_progress()
                 raw = json.dumps(progress, ensure_ascii=False, separators=(',', ':'))
                 if raw != previous:
                     handler.wfile.write(f'event: progress\ndata: {raw}\n\n'.encode('utf-8'))
@@ -166,7 +174,7 @@ class ProductionRoutes:
                     handler.wfile.flush()
                 ticks += 1
                 handler.server.studio_shutdown.wait(0.35)
-        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, OSError):
+        except Exception:
             pass
         finally:
             handler.close_connection = True

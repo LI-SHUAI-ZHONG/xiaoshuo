@@ -1,5 +1,5 @@
 import {api,enc} from '../api.js';
-import {$,$$,esc,modal,busy,toast} from '../ui.js';
+import {$,$$,esc,modal,busy,toast,confirmAction} from '../ui.js';
 import {passageEditor} from './corpus_passage_editor.js';
 
 const optionList=(rows,value='',multiple=false)=>Object.entries(rows).map(([key,label])=>`<option value="${esc(key)}" ${(multiple?value.includes(key):value===key)?'selected':''}>${esc(label)}</option>`).join('');
@@ -55,11 +55,12 @@ export function openCorpusEditor({book,catalog,record,section,row=null,initialDo
     value.text_role??='narrative';
     fields.push(['text_role','引文用途']);
   }
+  const removeId=existing&&(existing.id||existing.domain);
   modal(existing?'修改记录 · 新增结构版本':'维护参考作品结构',`<form id="corpusRecordForm" class="stack">
     <p class="notice">保存会新增版本。引用必须来自本作品结构；未知保持待核，不凭字段完整宣称文学效果。</p>
     ${fields.map(([key,label])=>control(key,label,value[key])).join('')}
     ${section==='evidence'?'<button class="secondary" type="button" id="locateCorpusQuote">按原作定位摘录</button>':''}
-    <button class="button" type="submit">保存新版本</button></form>`,'',true);
+    <div class="row spread wrap"><button class="button" type="submit">保存新版本</button>${removeId&&removeId!=='book'?'<button class="danger" type="button" id="deleteCorpusRecord">删除此条记录</button>':''}</div></form>`,'',true);
   let readPassage=null;
   function domainFields(){
     const domain=$('#corpusRecordForm [name=domain]')?.value;
@@ -102,7 +103,12 @@ export function openCorpusEditor({book,catalog,record,section,row=null,initialDo
     const body={book_id:book.id,quote,explanation:$('[name=explanation]',form).value};
     if(rawStart!=='')body.start=Number(rawStart);
     const located=await api.post('/kb/method-evidence',body);
-    $('[name=start]',form).value=located.start;$('[name=end]',form).value=located.end;toast('原作字符位置已核对');
+    $('[name=quote]',form).value=located.quote;$('[name=start]',form).value=located.start;$('[name=end]',form).value=located.end;toast('原作字符位置已核对');
+  });
+  $('#deleteCorpusRecord')?.addEventListener('click',async()=>{
+    if(!removeId)return;
+    await api.post(`/staging/${enc(book.id)}/corpus/record`,{expected_version:record.latest_version,section,remove_id:removeId});
+    $('#modalBackdrop').close();toast('记录已移除并保存新结构版本');await reload();
   });
   $('#corpusRecordForm').onsubmit=e=>{
     e.preventDefault();busy(e.target.querySelector('[type=submit]'),async()=>{
@@ -155,7 +161,12 @@ export function openCorpusReview({book,record,reload}){
       const saved=await api.post(`/staging/${enc(book.id)}/corpus/record`,{expected_version:record.latest_version,section:'read_confirmation',row:reviewed});
       version=saved.version;record.latest_version=version;record.version=version;selected=reviewed;
     }
-    await api.post(`/staging/${enc(book.id)}/corpus/review`,{version,decision,note:$('[name=note]',form).value,accept_limitations:$('[name=limitations]',form).checked});
+    try{
+      await api.post(`/staging/${enc(book.id)}/corpus/review`,{version,decision,note:$('[name=note]',form).value,accept_limitations:$('[name=limitations]',form).checked});
+    }catch(error){
+      await reload();
+      throw error;
+    }
     $('#modalBackdrop').close();toast(decision==='approve'?'结构版本已批准；方法仍需独立提炼和审核':'结构版本已退回');await reload();
   });}
   $('#corpusReviewForm').onsubmit=e=>{e.preventDefault();submit('approve',e.target.querySelector('[type=submit]'));};

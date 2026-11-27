@@ -1078,6 +1078,89 @@ def _requests(value: dict,stage: str,readable: set[str] | None=None) -> None:
             require(readable is None or row['id'] in readable,'read is outside the current step source IDs')
 
 
+def _reference_method_portfolio(workspace, package: dict, products: dict) -> dict | None:
+    """Summarize planned decomposed methods and source diversity for type_adaptation."""
+    policy = package.get('production_method_policy') or {}
+    if not policy:
+        return None
+    try:
+        from nw.production_methods.sources import MethodReader, matching_methods
+        from nw.studio.catalog import canonical_types, type_map
+
+        reader = MethodReader(workspace)
+        if not reader.db_path.is_file():
+            return None
+        selection = products.get('type_selection', {}).get('products', {})
+        known = type_map()
+        chosen = [
+            row['id'].removeprefix('genre.')
+            for row in selection.get('selection', ())
+            if isinstance(row, dict) and isinstance(row.get('id'), str)
+            and row['id'].removeprefix('genre.') in known
+        ]
+        types = canonical_types(chosen) if chosen else list(policy.get('type_ids', ()))
+        if not types:
+            return None
+        pinned: set[tuple[str, int]] = set()
+        for ident, ver in (policy.get('preferred_methods') or {}).items():
+            if isinstance(ident, str) and type(ver) is int:
+                pinned.add((ident, ver))
+        for route in (policy.get('recommended_slots') or {}).values():
+            if isinstance(route, dict):
+                for ident, ver in (route.get('versions') or {}).items():
+                    if isinstance(ident, str) and type(ver) is int:
+                        pinned.add((ident, ver))
+        tasks = set(policy.get('tasks', ()))
+        planned = []
+        book_counts: dict[str, dict] = {}
+        for row, match in matching_methods(reader, types):
+            body = row.get('body') or {}
+            origin = row.get('structure_origin') or {}
+            if pinned and (row['id'], row['version']) not in pinned and not (set(body.get('tasks', ())) & tasks):
+                continue
+            if not pinned and tasks and not (set(body.get('tasks', ())) & tasks):
+                continue
+            bid = origin.get('book_id', '')
+            if bid and bid not in book_counts:
+                try:
+                    book_row = reader._staging_row(bid)
+                    title = book_row['title']
+                except Exception:
+                    title = bid
+                book_counts[bid] = {'book_id': bid, 'title': title, 'method_count': 0}
+            if bid:
+                book_counts[bid]['method_count'] += 1
+            planned.append({
+                'id': row['id'],
+                'version': row['version'],
+                'title': body.get('title', ''),
+                'tasks': list(body.get('tasks', ())),
+                'target_stages': sorted({o['stage'] for o in body.get('outputs', ()) if o.get('stage')}),
+                'book_id': bid,
+                'type_match': match.get('level'),
+                'non_applicability': [str(x)[:120] for x in body.get('non_applicability', ())[:2]],
+            })
+            if len(planned) >= 16:
+                break
+        if not planned:
+            return None
+        warnings = []
+        if len(planned) >= 3 and len(book_counts) == 1:
+            only = next(iter(book_counts.values()))
+            warnings.append(
+                f"TYPE_F/OR 单一来源集中提醒：当前计划采用的 {len(planned)} 条拆解方法均来自《{only['title']}》，"
+                f"须在 boundaries 写明防结构雷同的原创改编约束。"
+            )
+        return {
+            'planned_methods': planned,
+            'distinct_source_books': len(book_counts),
+            'sources': list(book_counts.values()),
+            'originality_warnings': warnings,
+        }
+    except Exception:
+        return None
+
+
 def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLMProvider,config: Config,
                    desk: SourceDesk,stage: str,products: dict,context: dict,retry_failed: bool,
                    verify: Callable | None,max_rounds: int,index: int,*,studied_sources: list[dict] | None=None,
@@ -1444,6 +1527,88 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             payload['project_genres'] = [{'id': k, 'name': taxonomy[k]['name']} for k in genre_ids]
             suffix += ('\n为后续世界设计保留实际类型编号。selection.id 使用与本书相符的 project_genres 目录编号，'
                        'basis 说明选型依据；adaptations.type_refs 引用本轮 selection.id，parameters 或 limits 写具体的本书制作需求。')
+        if stage == 'type_adaptation' and package.get('reference_method_portfolio'):
+            payload['reference_method_portfolio'] = package['reference_method_portfolio']
+            suffix += ('\nreference_method_portfolio 列出本轮后续步骤计划使用的拆解方法抽象清单及参考作品来源分布（不含原作情节）。'
+                       '请按原工作流作品案例适配与原创性规则，在 adaptations、focuses 或 boundaries 中为后续步骤设定兼容边界；'
+                       '若 originality_warnings 提示单一来源集中，须在 boundaries 写明防雷同改编约束。')
+        if stage == 'world_design' and package.get('world_material_profile'):
+            payload['world_material_profile'] = package['world_material_profile']
+            suffix += ('\nworld_material_profile 给出当前所选类型在 03 世界设计中应优先建立的世界资料子域、典型资源口径与步骤边界：'
+                       '优先落实 primary_categories 与 resource_profile 中的核心外部规则、限制与代价；'
+                       '标为 out_of_scope_categories 的跨题材机制（如非超自然题材下的力量公式、奇幻种族或特殊系统）除非作者立项明确要求，否则不要引入；'
+                       '本步只产出世界规则卡（rule/limits/visibility）、limitations、unknowns（及启用时的 cast_demands），'
+                       '不越界写人物个人弧光（04）、私人关系（05）或分章剧情结局（06）。')
+        if stage in ('character_design', 'static_relations') and package.get('character_material_profile'):
+            stage_profile = package['character_material_profile'].get(stage)
+            if stage_profile:
+                payload['character_material_profile'] = stage_profile
+                if stage == 'character_design':
+                    suffix += ('\ncharacter_material_profile 给出当前所选类型在 04 人物设计中的核心子域、角色建卡重点与步骤边界：'
+                               '承接 03 世界限制与 cast_demands，坚持复用已有角色优先、严禁按样本人数硬造人；'
+                               '标为 out_of_scope_categories 的跨题材超凡能力/血脉/基因机制除非作者明确要求，否则不要引入；'
+                               '严守人物身份防覆盖原则（CONFLICT_B_004）及暗身份隔离（secret/trigger 仅限私有字段），'
+                               '多人关系网与派系张力交由 05 静态关系展开。')
+                else:
+                    suffix += ('\ncharacter_material_profile 给出当前所选类型在 05 静态关系中的核心关系子域、张力焦点与步骤边界：'
+                               '仅以 03 世界与 04 已确立的真实实体为关系两端，不新建人物、不篡改人物核心目标、不虚构书内“读者”实体；'
+                               '全书关系网须包含至少 2 条不经过主角的独立配角互动；标为 out_of_scope_categories 的种族张力等跨题材项非明确需要勿引入；'
+                               '尚未发生的背叛/和解只记当前张力与触发条件，留给 06 剧情与 10 状态变化。')
+        if stage in ('plot_design', 'event_design') and package.get('plot_material_profile'):
+            plot_stage_profile = package['plot_material_profile'].get(stage)
+            if plot_stage_profile:
+                payload['plot_material_profile'] = plot_stage_profile
+                if stage == 'plot_design':
+                    suffix += ('\nplot_material_profile 给出当前所选类型在 06 剧情设计中的核心结构、推进节奏、伏笔钩子与步骤边界：'
+                               '承接 01–05 已确认的世界限制、人物目标、静态关系与篇幅计划；reader_plan 只描述读者的信息顺序与情绪变化，不得用人物情绪替代；'
+                               'promise_plan 远期未定章节/事件填 null，绝不编造；标为 out_of_scope_categories 或跨题材推进机制除非作者立项明确要求，否则不要引入；'
+                               '本步不越界生成具体场景 POV 卡（09）或具体动作试错步骤（08）。')
+                else:
+                    suffix += ('\nplot_material_profile 给出当前所选类型在 07 事件设计中的事件链触发重点与步骤边界：'
+                               '严格引用 06 plot_design.event_nodes.id 作为 predecessor 并原样保留 completion_condition 作为 completion_gate（104.1 事件顺序不可颠倒）；'
+                               '所有后继事件保持 conditional_candidate，绝不把未发生预案当作 WORLD 事实，也不在本步生成场景卡（09）；'
+                               '标为 out_of_scope_categories 的跨题材危机机制（如现实/悬疑/历史下的副本/外星/生化/主神任务）除非作者明确要求，否则不要引入。')
+        if stage in ('action_design', 'scene_design', 'state_transition', 'state_propagation') and package.get('execution_material_profile'):
+            exec_stage_profile = package['execution_material_profile'].get(stage)
+            if exec_stage_profile:
+                payload['execution_material_profile'] = exec_stage_profile
+                if stage == 'action_design':
+                    suffix += ('\nexecution_material_profile 给出当前所选类型在 08 行动设计中的行动博弈重点与题材边界：'
+                               '行动者必须为 04 capabilities 中 can_act=true 的人物，requires 仅使用已确立能力；'
+                               '每条行动候选必须写出完整的 object/action/obstacle/response/result 步骤链及真实 cost/limits，缺前置记入 waiting；'
+                               '标为 out_of_scope_categories 的跨题材动作机制（如现实/悬疑/历史下的炼丹/阵法/召唤/机甲/收容）除非作者明确要求，否则不要引入；'
+                               '本步不越界生成 09 场景卡或 10 最终状态变化。')
+                elif stage == 'scene_design':
+                    suffix += ('\nexecution_material_profile 给出当前所选类型在 09 场景设计中的 POV、空间与节奏边界：'
+                               '每场必须显式绑定上游事件（selected_events）与行动（selected_actions），choice 忠实采用所选动作原文；'
+                               '严格守住单场 POV 视角一致与 allowed_disclosure 披露范围，严禁偷跑未在场信息或暗身份，并在 events 中准确交付 before_state；'
+                               '标为 out_of_scope_categories 的超凡能量盲区/突破临界场域规则除非作者明确要求，否则不要引入；本步不提前改写 after_state（10）或直接撰写正文（15）。')
+                elif stage == 'state_transition':
+                    suffix += ('\nexecution_material_profile 给出当前所选类型在 10 状态变化中的外部因果与代价守恒边界：'
+                               'before_state 必须与 09 events.before_state 完全一致，after_state 须由本场具体外部行动触发至少一项实质变化；'
+                               '核心属性不突变、旧代价不可凭空清零、写清 failure 与 continuity，并同步回写 patches；'
+                               '标为 out_of_scope_categories 的超凡能量储备/构造演化规则除非作者明确要求，否则不要引入；场外未目击者的知情传播交由 11 state_propagation 处理。')
+                else:
+                    suffix += ('\nexecution_material_profile 给出当前所选类型在 11 状态传播中的非全知扩散边界：'
+                               '以 10 planned_change 或 accepted_fact 为根变化，明确可行动的 source_entity 与具体 external_action 载体（目击/传信/流言/留痕/资源流变）；'
+                               '严禁场外人物瞬间全知，所有候选保持 conditional_candidate 且三门 gates 全为 true，绝不直接写入 WORLD 事实，留待 12 anchor_design 决定是否本场采用。')
+        if stage in ('anchor_design', 'expression_design', 'bind_scope') and package.get('craft_material_profile'):
+            craft_stage_profile = package['craft_material_profile'].get(stage)
+            if craft_stage_profile:
+                payload['craft_material_profile'] = craft_stage_profile
+                if stage == 'anchor_design':
+                    suffix += ('\ncraft_material_profile 给出当前所选类型在 12 锚点设计中的具象节拍重点与步骤边界：'
+                               'beats 的 observer 必须为本场 POV 人物，锚点资料节拍须准确绑定本场 selected_actions 的 action_ref、step_index 与 timing（before/during/after）；'
+                               'selected_propagations 仅收录本场确实触发的上游传播候选，未选传播保留为后续预案；本步不直接写正文散文或虚构新剧情事实。')
+                elif stage == 'expression_design':
+                    suffix += ('\ncraft_material_profile 给出当前所选类型在 13 表达设计中的叙述距离、对白潜台词与语气文风重点：'
+                               '严格承接 09 allowed_disclosure 与 12 具象节拍，输出可写可核的 guidance（observable + check）；'
+                               '当存在互相竞争的风格/语气偏好时，通过 preference_resolutions 分别落至不重叠的 /guidance/序号/observable 或明确延后；'
+                               '本步不篡改 10 状态或提前撰写 15 正文散文。')
+                else:
+                    suffix += ('\ncraft_material_profile 给出当前所选类型在 14 范围绑定中的收口与写审交接边界：'
+                               '只汇总本范围已读且实际采用的方法与资料，不改写上游 01–13 设计；'
+                               '章/场细化须为每项落场方法在 method_guidance 提供 POV 可见表现（observable）与独立审稿判据（check），全书/卷纲无场景时 method_guidance 保持为空数组。')
         if type_network_enabled and stage == 'type_selection':
             payload['type_network_policy'] = TYPE_NETWORK_POLICY
             payload['adaptation_input_fields'] = FIELD_LABELS
@@ -1694,8 +1859,7 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 payload['output_contract']['products'][field] = []
             if design_candidates:
                 payload['output_contract']['products']['_network_design_uses'] = []
-            if method_plan is not None and (package.get('production_method_policy', {}).get('world_selection') == 'ai'
-                                           or method_plan['target'].get('selection_mode') == 'recommendations'):
+            if method_plan is not None:
                 payload['output_contract']['products'].update(_method_applications=[], _method_receipts=[])
             if type_network_enabled and stage == 'type_selection':
                 payload['output_contract']['products']['adaptation_inputs'] = {}

@@ -14,30 +14,33 @@ from nw.studio.corpus_story_observations import STORY_TASKS
 
 SLOT_TASKS = {
     'genre': {'type_choice', 'type_adaptation'},
-    'tone': {'expression', 'pacing', 'anchors'},
-    'style': {'expression', 'anchors'},
-    'narration': {'narration', 'expression', 'scene_composition', 'information'},
     'world': {'world_rules'},
     'character': {'character_arc', 'relationships', 'state_change', 'state_propagation'},
     'structure': {'main_plot', 'subplot', 'volume_outline', 'chapter_outline', 'event_chain',
                   'action_chain', 'scene_composition', 'pacing', 'method_binding'},
     'hook': {'hook', 'foreshadow', 'information'},
+    'narration': {'narration', 'expression', 'scene_composition', 'information'},
+    'tone': {'expression', 'pacing', 'anchors'},
+    'style': {'expression', 'anchors'},
 }
 
 
 SLOT_OBSERVATION={'character':'cast_entry','structure':'chapter_progress'}
+SLOT_OBSERVATIONS={'character':('cast_entry','cast_roster'),'structure':('chapter_progress',)}
 
 AUTO_BASE_TASKS = {
-    'tone': {'pacing'},
-    'style': {'expression'},
-    'narration': {'narration'},
     'world': SLOT_TASKS['world'],
     'character': SLOT_TASKS['character'],
     'structure': SLOT_TASKS['structure'] - {'pacing', 'method_binding'},
     'hook': {'hook', 'foreshadow'},
+    'narration': {'narration'},
+    'tone': {'pacing'},
+    'style': {'expression'},
 }
-AUTO_SLOT_TASKS = {slot: tasks.union(STORY_TASKS.get(SLOT_OBSERVATION.get(slot), ()))
-                   for slot, tasks in AUTO_BASE_TASKS.items()}
+AUTO_SLOT_TASKS = {
+    slot: tasks.union(*(STORY_TASKS.get(domain, ()) for domain in SLOT_OBSERVATIONS.get(slot, ())))
+    for slot, tasks in AUTO_BASE_TASKS.items()
+}
 # Old jobs may already have frozen a binding-only method. Only new launches use AUTO_BASE_TASKS.
 AUTO_SLOT_TASKS['structure'].add('method_binding')
 MethodVersion = tuple[str, int]
@@ -113,19 +116,20 @@ def _launch_candidates(reader: MethodReader, types: list[str], matches: list[dic
                        blocked: dict[str, dict[str, None]], *, planning_hierarchy: bool) -> dict[StageRoute, RouteCandidates]:
     candidates = {}
     policies = current_story_policies() if (reader.workspace / 'materials/catalog.db').is_file() else {}
-    for scope in ('book', 'chapter'):
+    scopes = ('book', 'volume', 'chapter') if planning_hierarchy else ('book', 'chapter')
+    for scope in scopes:
         scope_policy = {**policies, 'scope': scope, 'planning_hierarchy': planning_hierarchy}
-        for stage in phase_order(scope):
-            available = _anticipated_inputs(scope, stage)
+        for stage in phase_order(scope, planning_hierarchy=planning_hierarchy):
+            available = _anticipated_inputs(scope, stage, planning_hierarchy=planning_hierarchy)
             offers = {}
             for row in matches:
                 body = row['body']
                 tasks = stage_tasks(body, stage, scope)
-                observed = row['structure_origin'].get('observation_domains', ())
+                observed = set(row['structure_origin'].get('observation_domains', ()))
                 boards = frozenset(slot for slot, allowed in AUTO_BASE_TASKS.items() if (
                     (slot != 'world' or (scope, stage) == ('book', 'world_design'))
-                    and (tasks & allowed or SLOT_OBSERVATION.get(slot) in observed
-                         and tasks.intersection(STORY_TASKS[SLOT_OBSERVATION[slot]]))))
+                    and (tasks & allowed or any(domain in observed and tasks.intersection(STORY_TASKS[domain])
+                                                 for domain in SLOT_OBSERVATIONS.get(slot, ())))))
                 if not boards:
                     continue
                 reason = _unavailable_reason(reader, row, types, stage, available, scope_policy, boards)
@@ -139,12 +143,13 @@ def _launch_candidates(reader: MethodReader, types: list[str], matches: list[dic
     return candidates
 
 
-def _anticipated_inputs(scope: str, stage: str) -> dict:
-    order = phase_order(scope)
+def _anticipated_inputs(scope: str, stage: str, *, planning_hierarchy: bool = False) -> dict:
+    order = phase_order(scope, planning_hierarchy=planning_hierarchy)
     kinds = ['brief', 'accepted_state', *order[:order.index(stage)]]
     if scope != 'book':
-        # In the launch route the first chapter inherits the approved book products.
-        kinds.extend(('parent_outline', *phase_order('chapter' if scope == 'scene' else 'book')))
+        # In the launch route the first chapter inherits the approved parent products.
+        parent_scope = 'volume' if scope == 'chapter' and planning_hierarchy else ('chapter' if scope == 'scene' else 'book')
+        kinds.extend(('parent_outline', *phase_order(parent_scope, planning_hierarchy=planning_hierarchy)))
     return {kind: {'kind': kind} for kind in kinds}
 
 
@@ -207,16 +212,20 @@ def _missing_automatic(types: list[str], missing: set[str], blocked: dict[str, d
                      f'{labels}{reason}。请在类型资料库补齐对应参考小说的拆解方法，核对前置和产物后批准。')
 
 
-def uses(body: dict, slot: str, origin: dict | None = None) -> list[dict]:
+def uses(body: dict, slot: str, origin: dict | None = None, *, planning_hierarchy: bool = False) -> list[dict]:
     allowed = SLOT_TASKS[slot]
-    domain = SLOT_OBSERVATION.get(slot)
-    if domain in (origin or {}).get('observation_domains', []):
-        allowed = allowed.union(STORY_TASKS[domain])
+    domains = SLOT_OBSERVATIONS.get(slot, ())
+    observed = set((origin or {}).get('observation_domains', []))
+    for domain in domains:
+        if domain in observed:
+            allowed = allowed.union(STORY_TASKS[domain])
     routes = []
     for scope in body['scopes']:
-        for stage in phase_order(scope):
+        for stage in phase_order(scope, planning_hierarchy=planning_hierarchy):
+            if planning_hierarchy and incompatible_method(body, stage, {'scope': scope, 'planning_hierarchy': True}):
+                continue
             tasks = stage_tasks(body, stage, scope) & allowed
-            if not tasks or binding({'body': body}, stage, _anticipated_inputs(scope, stage))['missing']:
+            if not tasks or binding({'body': body}, stage, _anticipated_inputs(scope, stage, planning_hierarchy=planning_hierarchy))['missing']:
                 continue
             conditional = conditional_outputs(stage)
             conditions = list(dict.fromkeys(conditional[out['field']] for out in body['outputs']
@@ -227,57 +236,63 @@ def uses(body: dict, slot: str, origin: dict | None = None) -> list[dict]:
     return routes
 
 
-def recommendations(reader: MethodReader, slot: str, types: list[str], selected: list[str]) -> dict:
+def recommendations(reader: MethodReader, slot: str, types: list[str], selected: list[str], *,
+                    planning_hierarchy: bool = False, limit: int = 3) -> dict:
     if slot not in SLOT_TASKS and slot != 'all':
         raise ValueError('未知的立项方法推荐板块')
     if len(selected) > 24:
         raise ValueError('立项最多查询 24 条已选方法')
+    limit = max(1, min(24, int(limit)))
     matches = matching_methods(reader, types) if types else []
     if slot == 'all':
         groups = []
         for board in SLOT_TASKS:
-            rows = _ranked(reader, board, types, matches)
+            rows, _ = _ranked(reader, board, types, matches, planning_hierarchy=planning_hierarchy, limit=limit)
             groups.append({'slot': board, 'recommendations': [
                 {key: row[key] for key in ('id', 'version', 'title', 'type_match', 'applicability')} for row in rows]})
         return {'slots': groups}
     current_versions = {row['id']: row['version'] for row, _ in matches if row['id'] in selected}
-    result = {'slot': slot, 'recommendations': _ranked(reader, slot, types, matches),
+    ranked_rows, total_available = _ranked(reader, slot, types, matches, planning_hierarchy=planning_hierarchy, limit=limit)
+    result = {'slot': slot, 'recommendations': ranked_rows, 'total_available': total_available,
               'current_versions': current_versions}
     if slot == 'world':
         result['book_world_available'] = any(
             match['level'] != 'cross_type'
             and any(route['scope'] == 'book' and route['stage'] == 'world_design'
-                    for route in uses(row['body'], 'world', row['structure_origin']))
+                    for route in uses(row['body'], 'world', row['structure_origin'], planning_hierarchy=planning_hierarchy))
             and reader.world_source(row, types) is not None
             for row, match in matches)
     return result
 
 
-def _ranked(reader: MethodReader, slot: str, types: list[str], matches: list) -> list[dict]:
+def _ranked(reader: MethodReader, slot: str, types: list[str], matches: list, *,
+            planning_hierarchy: bool = False, limit: int = 3) -> tuple[list[dict], int]:
     if slot == 'narration':
         matches = sorted(matches, key=lambda item: (TYPE_PRIORITY[item[1]['level']],
                                        'narration' not in item[0]['body']['tasks']))
-    if slot in SLOT_OBSERVATION:
-        domain=SLOT_OBSERVATION[slot]
-        matches = sorted(matches, key=lambda item:(TYPE_PRIORITY[item[1]['level']],
-            domain not in (item[0].get('structure_origin') or {}).get('observation_domains',[])))
+    if slot in SLOT_OBSERVATIONS:
+        domains = set(SLOT_OBSERVATIONS[slot])
+        matches = sorted(matches, key=lambda item: (TYPE_PRIORITY[item[1]['level']],
+            not domains.intersection((item[0].get('structure_origin') or {}).get('observation_domains', []))))
     result = []
+    total_available = 0
     for row, match in matches:
         body = row['body']
-        placements = uses(body, slot, row['structure_origin'])
+        placements = uses(body, slot, row['structure_origin'], planning_hierarchy=planning_hierarchy)
         if not placements or (slot == 'world' and (match['level'] == 'cross_type' or reader.world_source(row, types) is None)):
             continue
-        result.append({'id': row['id'], 'version': row['version'], 'title': body['title'], 'type_match': match,
-                       'uses': placements, 'applicability': body['applicability'],
-                       'non_applicability': body['non_applicability'], 'prerequisites': body['prerequisites'],
-                       'evidence': body['evidence'], 'evidence_locations': row['evidence_locations'],
-                       'structure_origin': row['structure_origin']})
-        if len(result) == 3:
-            break
-    return result
+        total_available += 1
+        if len(result) < limit:
+            result.append({'id': row['id'], 'version': row['version'], 'title': body['title'], 'type_match': match,
+                           'uses': placements, 'applicability': body['applicability'],
+                           'non_applicability': body['non_applicability'], 'prerequisites': body['prerequisites'],
+                           'evidence': body['evidence'], 'evidence_locations': row['evidence_locations'],
+                           'structure_origin': row['structure_origin']})
+    return result, total_available
 
 
-def freeze_preferences(reader: MethodReader, requested: object, types: list[str]) -> list[dict]:
+def freeze_preferences(reader: MethodReader, requested: object, types: list[str], *,
+                       planning_hierarchy: bool = False) -> list[dict]:
     if not isinstance(requested, list) or len(requested) > 24:
         raise ValueError('立项最多保存 24 条方法偏好')
     if not requested:
@@ -295,7 +310,7 @@ def freeze_preferences(reader: MethodReader, requested: object, types: list[str]
         if method is None or method[0]['version'] != version:
             raise ValueError('所选方法的批准版本或适用类型已变化，请刷新方法推荐后重新选择')
         row, match = method
-        placements = uses(row['body'], slot, row['structure_origin'])
+        placements = uses(row['body'], slot, row['structure_origin'], planning_hierarchy=planning_hierarchy)
         if not placements:
             raise ValueError('所选方法缺少可用的制作步骤或前置，请刷新方法推荐后重新选择')
         if slot == 'world' and (match['level'] == 'cross_type' or reader.world_source(row, types) is None):

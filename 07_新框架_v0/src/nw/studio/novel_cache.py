@@ -230,18 +230,25 @@ class NovelCacheMixin:
                     raise ValueError('另一本作品也登记了同一目录，请先核对目录归属')
                 internal = row['project_id'] or ''
                 if project.exists():
-                    actual = project_identity(project)
-                    if not internal:
-                        # Legacy imports used the internal project ID; wizard novels
-                        # kept their independently generated job ID in the project DB.
-                        if actual == ident:
-                            internal = actual
-                        elif row['job_id']:
-                            with _db_read(project) as source:
-                                if source.execute('SELECT 1 FROM novel_jobs WHERE id=?', (row['job_id'],)).fetchone():
-                                    internal = actual
-                    if actual != internal:
-                        raise ValueError('缺少与当前目录一致的作品身份，已保留原文件')
+                    if not internal and not row['job_id'] and not (project / 'nw.db').is_file():
+                        internal = ''
+                    else:
+                        actual = project_identity(project)
+                        if not internal:
+                            # Legacy imports used the internal project ID; wizard novels
+                            # kept their independently generated job ID in the project DB.
+                            if actual == ident:
+                                internal = actual
+                            elif row['job_id']:
+                                with _db_read(project) as source:
+                                    if source.execute('SELECT 1 FROM novel_jobs WHERE id=?', (row['job_id'],)).fetchone():
+                                        internal = actual
+                            elif not db.execute(
+                                'SELECT 1 FROM novels WHERE project_id=? AND id<>?', (actual, ident)
+                            ).fetchone():
+                                internal = actual
+                        if actual != internal:
+                            raise ValueError('缺少与当前目录一致的作品身份，已保留原文件')
                 entry = _archive(root, folder, {'id': ident, 'project_dir': row['project_dir'], 'project_id': internal,
                                                 'title': row['title'], 'deleted_at': now()})
                 _forget(db, entry)

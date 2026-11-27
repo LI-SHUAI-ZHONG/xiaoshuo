@@ -52,11 +52,11 @@ DETAILS = {
 }
 FIELDS = {
     'units': {'id': '标识', 'level': '层级', 'title': '标题', 'parent_id': '上级', 'start': '字符起点',
-              'end': '字符终点', 'boundary_basis': '边界依据', 'summary': '本层职责 / 内容'},
-    'characters': {'id': '标识', 'name': '人物', 'canonical_id': '同一人物的归并标识（未知留空）', 'role': '作用', 'goal': '目标',
+              'end': '字符终点', 'boundary_basis': '边界依据（见 boundary_bases，场景填 analyst_inference）', 'summary': '本层职责 / 内容'},
+    'characters': {'id': '标识', 'name': '人物', 'canonical_id': '同一人物的归并标识（未知填 null）', 'role': '作用', 'goal': '目标',
                    'initial_state': '初态', 'final_state': '末态', 'evidence_ids': '原作证据'},
     'events': {'id': '标识', 'unit_id': '所属卷章场', 'granularity': '总览 / 细节',
-        'parent_event_ids': '对应总览节点', 'story_order': '故事时间顺序（未知留空）', 'summary': '实际事件',
+        'parent_event_ids': '对应总览节点', 'story_order': '故事时间顺序（未知填 null）', 'summary': '实际事件',
         'characters': '参与人物', 'goal': '目标', 'conflict': '阻力 / 冲突', 'choice': '选择', 'cost': '代价',
         'result': '结果', 'information_before': '事前所知', 'information_after': '事后所知',
         'emotion_before': '事前情绪', 'emotion_after': '事后情绪', 'evidence_ids': '原作证据'},
@@ -65,9 +65,9 @@ FIELDS = {
         'final_state': '离开状态', 'explanation': '作用及不确定处', 'details': '具体分析', 'evidence_ids': '原作证据'},
     'links': {'id': '标识', 'kind': '关系', 'source': '前事件', 'target': '后事件', 'thread_id': '对应线索 / 弧光',
         'explanation': '为什么成立', 'certainty': '直接观察 / 分析推断', 'evidence_ids': '多处原作证据'},
-    'evidence': {'id': '标识', 'start': '字符起点', 'end': '字符终点', 'quote': '原文短摘录', 'explanation': '证明什么'},
+    'evidence': {'id': '标识', 'start': '字符起点（唯一摘录可省略）', 'end': '字符终点（唯一摘录可省略）', 'quote': '原文短摘录', 'explanation': '证明什么'},
     'domains': {'domain': '制作职责', 'status': '已观察 / 当前范围未见 / 存疑',
-                'explanation': '判断依据与限制', 'evidence_ids': '原作证据'},
+                'explanation': '判断依据与限制', 'evidence_ids': '原作证据（未见或存疑可为空数组）'},
 }
 SURVEY_FIELDS = ('characters','events','evidence','uncertainties')
 OVERVIEW = {'central_question': '全书总问题', 'mainline': '主线因果与结局', 'character_arcs': '主要人物变化',
@@ -86,10 +86,11 @@ def require_current_schema(version: int | None) -> None:
         raise ValueError(f'来源采用历史拆解规格 v{version or 1}，请先按现行 v{SCHEMA_VERSION} 补齐并批准结构后再用于新制作')
 
 
-def corpus_catalog(version: int = SCHEMA_VERSION, *, passages: bool = True, craft: bool = True) -> dict:
+def corpus_catalog(version: int = SCHEMA_VERSION, *, passages: bool = True, craft: bool = True,
+                   include_blueprint: bool = False) -> dict:
     domains = domains_for(version)
     techniques = KINDS | CRAFT_KINDS if craft else KINDS
-    return {'schema_version': version, 'domains': domains, 'levels': LEVELS, 'link_kinds': LINKS,
+    result = {'schema_version': version, 'domains': domains, 'levels': LEVELS, 'link_kinds': LINKS,
         **({'passage_sequences':{kind:{**deepcopy(item),'role_order':list(item['roles'])}
                                  for kind,item in techniques.items()}} if version>=5 and passages else {}),
         **({'evidence_roles':{'narrative':'故事正文', 'reader_address':'面向读者的题外互动', 'heading':'章名与标题'}}
@@ -98,6 +99,7 @@ def corpus_catalog(version: int = SCHEMA_VERSION, *, passages: bool = True, craf
         **({'narration_claims': NARRATION_CLAIMS.copy()} if version >= 3 else {}),
         'overview_fields': OVERVIEW, 'row_fields': deepcopy(FIELDS), 'domain_details': {k: deepcopy(DETAILS[k]) for k in domains},
         'source_extents': {'complete': '作者确认完整作品', 'excerpt': '摘录 / 不完整文本', 'unknown': '完整性未确认'},
+        'boundary_bases': {'source_file': '原始文件', 'source_heading': '原文标题', 'analyst_inference': '分析推断', 'author_confirmed': '作者核对'},
         'thread_statuses': {'open': '未决', 'resolved': '已兑现 / 已结束', 'uncertain': '存疑'},
         'domain_statuses': {'observed': '已观察', 'not_observed': '当前覆盖范围未见', 'uncertain': '存疑'},
         'certainty': {'observed': '直接观察', 'inferred': '分析推断'},
@@ -106,3 +108,13 @@ def corpus_catalog(version: int = SCHEMA_VERSION, *, passages: bool = True, craf
                    'relations': '跨章关系核对', 'methods': '提炼可复用方法', 'publish': '保存待审核版本'},
         'notes': ['读过全部已导入字符不代表原作本身完整，也不代表文学分析正确。',
                   '原始观察、分析推断与可迁移方法分开；新方法仍须单独审核。']}
+    if include_blueprint:
+        from nw.studio.step_material_blueprint import (
+            DECOMPOSITION_METHODOLOGY,
+            MATERIAL_NATURES,
+            domain_bindings,
+        )
+        result['decomposition_methodology'] = deepcopy(DECOMPOSITION_METHODOLOGY)
+        result['material_natures'] = list(deepcopy(MATERIAL_NATURES).values())
+        result['domain_bindings'] = domain_bindings(version)
+    return result

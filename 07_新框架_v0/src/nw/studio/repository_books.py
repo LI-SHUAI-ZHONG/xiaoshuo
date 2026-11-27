@@ -24,7 +24,7 @@ def plan_remote_deletions(staged: Path, workspace: Path, root: Path, local: set[
     tombstones = _rows(remote, 'novel_deletions', 'novel_id,project_dir,project_id,deleted_at')
     by_project = {(r['project_dir'], r['project_id']): r for r in tombstones if r['project_id']}
     active = {r['project_dir']: r for r in _rows(workspace / 'library/library.db', 'novels', 'id,project_dir,title')}
-    extra = local - expected
+    extra = {path for path in (local - expected) if not path.startswith('library/')}
     archives = []
     book_names = {p.split('/', 1)[0] for p in local | expected if not p.startswith('library/')}
     for name in sorted(book_names):
@@ -45,6 +45,8 @@ def plan_remote_deletions(staged: Path, workspace: Path, root: Path, local: set[
             extra = {path for path in extra if not path.startswith(name + '/')}
         elif incoming != current_id:
             raise ValueError('本地有 Git 快照未包含的作品或同名不同身份的作品，已保留：' + name)
+        else:
+            extra = {path for path in extra if not path.startswith(name + '/')}
     if extra:
         raise ValueError('本地有 Git 快照未包含的作品文件，已保留；请先保存本地版本再同步')
     return archives

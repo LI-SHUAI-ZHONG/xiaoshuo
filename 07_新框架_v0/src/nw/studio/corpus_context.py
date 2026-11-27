@@ -28,7 +28,8 @@ def window_payload(document: dict, selected: list[dict], *, domain: str | None, 
         prior=next((t for t in threads if t['status']!='uncertain' and not window.intersection(t['node_ids'])),None)
         threads=local+([prior] if prior else [])
     open_threads=[t for t in threads if t['status']!='resolved']
-    frontier={node for t in threads for node in ([t['node_ids'][0],t['node_ids'][-1]] if t['node_ids'] else [])}
+    frontier={node for t in threads for node in (
+        t['node_ids'] if t['status']!='resolved' else ([t['node_ids'][0],t['node_ids'][-1]] if t['node_ids'] else []))}
     # Causal continuation across windows also keeps the last processed event.
     all_events={e['id']:e for e in document['events']}
     frontier.update(parent for e in selected for parent in e['parent_event_ids'])
@@ -41,16 +42,18 @@ def window_payload(document: dict, selected: list[dict], *, domain: str | None, 
         observations=[t for t in threads if t['status']=='resolved' and window.intersection(t['node_ids'])]
         evidence_ids.update(eid for t in observations for eid in t['evidence_ids'])
     people_ids={p for e in [*selected,*endpoint_events] for p in e['characters']}
+    people_ids.update(p for t in [*open_threads,*observations] for p in t['characters'])
     if domain=='cast_roster':
         people_ids.update(p for t in threads for p in t['characters'])
         evidence_ids.update(k for t in threads for k in t['evidence_ids'])
-        roster_people={p['id']:p for p in document['characters']}
-        pending=list(people_ids)
-        while pending:
-            target=roster_people.get(pending.pop(),{}).get('canonical_id')
-            if target and target not in people_ids:
-                people_ids.add(target)
-                pending.append(target)
+    roster_people={p['id']:p for p in document['characters']}
+    pending=list(people_ids)
+    while pending:
+        target=roster_people.get(pending.pop(),{}).get('canonical_id')
+        if target and target not in people_ids:
+            people_ids.add(target)
+            pending.append(target)
+    if domain in ('cast_roster','cast_entry','character_arc'):
         evidence_ids.update(k for p in people_ids if p in roster_people for k in roster_people[p]['evidence_ids'])
     return {'prefix':prefix,'source_extent':document['source_extent'],'domain':domain,'last_window':last,
         'overview':global_basis['overview'] if global_basis else document['overview'],

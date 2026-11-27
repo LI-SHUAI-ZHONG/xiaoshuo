@@ -30,8 +30,8 @@ def migrate_legacy(service: Any) -> int:
     count = 0
     with service.connect() as conn:
         conn.execute('BEGIN IMMEDIATE')
-        rows = conn.execute('SELECT d.* FROM decomp_items d LEFT JOIN production_methods m '
-                            'ON m.origin_item_id=d.id WHERE m.id IS NULL ORDER BY d.created_at,d.id').fetchall()
+        rows = conn.execute("SELECT d.* FROM decomp_items d LEFT JOIN production_methods m "
+                            "ON m.origin_item_id=d.id WHERE m.id IS NULL AND d.status!='discarded' ORDER BY d.created_at,d.id").fetchall()
         for raw in rows:
             old = service._item(raw)
             evidence = old['evidence']

@@ -4,6 +4,7 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import asdict
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -75,6 +76,7 @@ STAGE_LABELS: dict[str, dict[str, str]] = {
 }
 
 RUNTIME_STAGE_LABELS: dict[str, dict[str, str]] = {
+    'decompose': {'zh': '参考小说拆解与方法提炼 (decompose)', 'owner_hint': '长上下文强推理模型'},
     'plan': {'zh': '设计总装冻结 (plan assembly)', 'owner_hint': 'Carbon 主力'},
     'write': {'zh': '场景正文创作 (write)', 'owner_hint': 'Opus 5.5 主力'},
     'review': {'zh': '独立场景审稿与证据核验 (review)', 'owner_hint': 'Carbon 主力'},
@@ -503,21 +505,23 @@ class StudioService:
         """List jobs for the Job Stepper Drawer."""
         with self._open_store(project_name) as store:
             jobs: list[dict[str, Any]] = []
-            try:
-                for row in store.connection.execute(
-                    'SELECT id, scene_id, status, step, created FROM jobs ORDER BY rowid DESC LIMIT 20'
-                ):
-                    jobs.append({
-                        'id': row['id'],
-                        'scene_id': row['scene_id'],
-                        'status': row['status'],
-                        'current_step': row['step'],
-                        'created': row['created'],
-                        'scope': 'scene',
-                        'needs_confirm': row['status'] == 'needs_confirm',
-                    })
-            except Exception:
-                pass  # jobs table may not exist in offline mode
+            for row in store.connection.execute(
+                'SELECT id, branch_id, status, step_key, request_json, reason '
+                'FROM novel_jobs ORDER BY rowid DESC LIMIT 20'
+            ):
+                req = json.loads(row['request_json'])
+                scenes = req.get('scene_ids') or []
+                jobs.append({
+                    'id': row['id'],
+                    'scene_id': scenes[0] if scenes else None,
+                    'status': row['status'],
+                    'current_step': row['step_key'],
+                    'reason': row['reason'],
+                    'mode': req.get('mode'),
+                    'scope': req.get('design_scope') or req.get('mode'),
+                    'branch_id': row['branch_id'],
+                    'needs_confirm': row['status'] == 'WAITING',
+                })
             return {'jobs': jobs}
 
     def save_author_card(self, project_name: str, payload: dict[str, Any]) -> dict[str, Any]:
@@ -543,14 +547,12 @@ class StudioService:
                     from nw.story_state import apply_settings
                     branch = str(payload.get('branch') or 'main')
                     head = current_head(store, branch)
-                    snap = revision_state(store, head)
                     hist = decision_history(store, ref)
-                    updated = [s for s in snap['settings'] if s['card_id'] != ref.card_id]
-                    updated.append({'card_id': ref.card_id, 'version': ref.version, 'decision_id': hist[-1].id})
-                    apply_settings(store, head, updated, f'studio-card:{ref.card_id}:v{ref.version}:{uuid4().hex[:8]}')
+                    apply_settings(store, head, [hist[-1].id], f'studio-card:{ref.card_id}:v{ref.version}:{uuid4().hex[:8]}')
             if payload.get('bind_scene_id') and payload['kind'] == 'scene':
                 sc_id = str(payload['bind_scene_id'])
-                story_order = int(payload.get('story_order', 1))
+                raw_order = payload.get('story_order')
+                story_order = 1 if raw_order is None else int(raw_order)
                 sc = store.get('scene', sc_id)
                 card_json = json.loads(sc.card_json)
                 card_json['story'] = {'scene_ref': {'card_id': ref.card_id, 'version': ref.version}, 'story_order': story_order}
@@ -567,7 +569,7 @@ class StudioService:
     def add_card_link(self, project_name: str, source_id: str, source_ver: int, relation: str,
                       target_id: str, target_ver: int) -> dict[str, Any]:
         with self._open_store(project_name) as store:
-            link = link_cards(store, CardRef(source_id, int(source_ver)), relation, CardRef(target_id, int(target_ver)))
+            link = link_cards(store, CardRef(source_id, int(source_ver)), CardRef(target_id, int(target_ver)), relation)
             return asdict(link)
 
     def inspect_state_matrix(self, project_name: str, *, branch: str = 'main', revision: int | None = None,
@@ -613,12 +615,16 @@ class StudioService:
 
     # ---------- 4. 14-Step Pipeline Blueprint & Joint-Material Dry-Run ----------
 
-    def pipeline_blueprint(self, scope: str = 'chapter') -> dict[str, Any]:
-        stages = phase_order(scope)
+    def pipeline_blueprint(self, scope: str = 'chapter', *, planning_hierarchy: bool = False) -> dict[str, Any]:
+        from nw.studio.step_material_blueprint import build_step_blueprint
+        blueprint = build_step_blueprint()
+        by_step = {row['step_id']: row for row in blueprint['steps']}
+        stages = phase_order(scope, planning_hierarchy=planning_hierarchy)
         steps: list[dict[str, Any]] = []
         for idx, stage in enumerate(stages, start=1):
             meta = STAGE_LABELS.get(stage, {'zh': stage, 'group': '', 'owner_hint': ''})
             mat_text = STAGE_MATERIALS.get(stage, '')
+            need = by_step.get(stage, {})
             steps.append({
                 'step_no': idx,
                 'stage': stage,
@@ -629,6 +635,10 @@ class StudioService:
                 'output_fields': sorted(FIELDS[stage]),
                 'conditional_output_fields': conditional_outputs(stage),
                 'function_queries': list(FUNCTION_QUERIES.get(stage, ())),
+                'need_categories': need.get('need_categories', []),
+                'material_natures': need.get('material_natures', []),
+                'corpus_domains': need.get('corpus_domains', []),
+                'decomposition_guide': need.get('decomposition_guide', {}),
                 'anti_forgetting_guards': _anti_forgetting_notes(stage),
                 'stage_instruction': STAGE_INSTRUCTIONS.get(stage, ''),
                 'schema_summary': SCHEMAS.get(stage, ''),
@@ -982,6 +992,7 @@ class StudioService:
         if not text.strip():
             raise ValueError('草稿正文不能为空')
         with self._open_store(project_name) as store:
+            store.get('scene', scene_id)
             if branch != 'main':
                 current_head(store, branch)
             run_id = uuid4().hex
@@ -1004,7 +1015,8 @@ class StudioService:
             head = current_head(store, branch)
             sc = store.get('scene', draft.scene_id)
             binding = json.loads(sc.card_json).get('story') or {}
-            story_order = int(payload.get('story_order', binding.get('story_order', 1)))
+            raw_order = payload.get('story_order')
+            story_order = int(binding.get('story_order', 1) or 1) if raw_order is None else int(raw_order)
             delta_id = str(payload.get('id') or f'delta-manual-{uuid4().hex[:10]}')
             scope = {
                 'id': f'manifest-{delta_id}',
@@ -1151,8 +1163,10 @@ class StudioService:
                 if q not in hay:
                     continue
             matched.append((row, stages))
+        offset = max(0, int(offset))
+        limit = max(1, min(int(limit), 100))
         total = len(matched)
-        page = matched[offset: offset + max(1, min(limit, 100))]
+        page = matched[offset: offset + limit]
         return {
             'available': True,
             'total': total,
@@ -1230,6 +1244,8 @@ class StudioService:
             if q and q not in json.dumps(r, ensure_ascii=False).lower():
                 continue
             matched.append(r)
+        offset = max(0, int(offset))
+        limit = max(1, min(int(limit), 100))
         return {
             'available': self.ledger_path.is_file(),
             'total': len(matched),
@@ -1239,7 +1255,7 @@ class StudioService:
                 'corpora': dict(corpora.most_common(20)),
                 'dispositions': dict(dispositions.most_common(20)),
             },
-            'items': matched[offset: offset + max(1, min(limit, 100))],
+            'items': matched[offset: offset + limit],
         }
 
     # ---------- 7. Model Routing & Safe API Configuration ----------
@@ -1300,7 +1316,15 @@ class StudioService:
         base_url = str(model.get('base_url') or '').strip()
         model_name = str(model.get('model') or '').strip()
         api_key_env = str(model.get('api_key_env') or '').strip()
-        timeout = float(model.get('timeout') or 120)
+        raw_timeout = model.get('timeout', 120)
+        timeout = 120.0 if raw_timeout in (None, '') else float(raw_timeout)
+        if not math.isfinite(timeout) or timeout <= 0:
+            raise ValueError('调用超时必须是大于 0 的有限数值')
+
+        def check_toml_key(key: str, label: str) -> str:
+            if not isinstance(key, str) or not re.fullmatch(r'[A-Za-z0-9_-]+', key):
+                raise ValueError(f'无效的{label}字段名：{key}')
+            return key
 
         if _SECRET_LIKE_RE.match(api_key_env):
             raise ValueError('安全拦截：api_key_env 只能填写环境变量名（如 NOVEL_GATEWAY_API_KEY），严禁直接粘贴密钥明文！')
@@ -1327,7 +1351,8 @@ class StudioService:
             '[params]',
         ]
         for k, v in (payload.get('params') or {}).items():
-            lines.append(f'{k} = {json.dumps(v)}')
+            if v is not None:
+                lines.append(f'{check_toml_key(k, "采样参数")} = {json.dumps(v)}')
         lines.extend([
             '',
             '[paths]',
@@ -1342,24 +1367,36 @@ class StudioService:
             for stage_name, spec in stage_models.items():
                 if not spec:
                     continue
+                stage_key = check_toml_key(stage_name, '步骤模型')
                 if isinstance(spec, str):
-                    lines.append(f'[stage_models.{stage_name}]')
+                    lines.append(f'[stage_models.{stage_key}]')
                     lines.append(f'model = {json.dumps(spec)}')
-                elif isinstance(spec, dict) and (spec.get('model') or spec.get('context_window_tokens') is not None):
+                elif isinstance(spec, dict) and any(
+                    spec.get(k) not in (None, '', {})
+                    for k in ('provider', 'base_url', 'model', 'api_key_env', 'timeout', 'context_window_tokens', 'params')
+                ):
                     sp_env = str(spec.get('api_key_env') or '').strip()
                     if _SECRET_LIKE_RE.match(sp_env):
-                        raise ValueError(f'安全拦截：stage_models.{stage_name}.api_key_env 严禁填写密钥明文！')
-                    lines.append(f'[stage_models.{stage_name}]')
+                        raise ValueError(f'安全拦截：stage_models.{stage_key}.api_key_env 严禁填写密钥明文！')
+                    if sp_env and not _ENV_NAME_RE.match(sp_env):
+                        raise ValueError(f'stage_models.{stage_key}.api_key_env 必须是合法的环境变量名')
+                    lines.append(f'[stage_models.{stage_key}]')
                     for field in ('provider', 'base_url', 'model', 'api_key_env', 'timeout'):
                         if field in spec and spec[field] not in (None, ''):
-                            val = float(spec[field]) if field == 'timeout' else spec[field]
-                            lines.append(f'{field} = {json.dumps(val) if not isinstance(val, float) else f"{val:g}"}')
-                    if spec.get('context_window_tokens') is not None:
+                            if field == 'timeout':
+                                val = float(spec[field])
+                                if not math.isfinite(val) or val <= 0:
+                                    raise ValueError(f'stage_models.{stage_key}.timeout 必须是大于 0 的有限数值')
+                                lines.append(f'timeout = {val:g}')
+                            else:
+                                lines.append(f'{field} = {json.dumps(spec[field])}')
+                    if spec.get('context_window_tokens') not in (None, ''):
                         lines.append(f"context_window_tokens = {model_window(spec['context_window_tokens'])}")
                     if isinstance(spec.get('params'), dict) and spec['params']:
-                        lines.append(f'[stage_models.{stage_name}.params]')
+                        lines.append(f'[stage_models.{stage_key}.params]')
                         for pk, pv in spec['params'].items():
-                            lines.append(f'{pk} = {json.dumps(pv)}')
+                            if pv is not None:
+                                lines.append(f'{check_toml_key(pk, "步骤采样参数")} = {json.dumps(pv)}')
         return '\n'.join(lines) + '\n'
 
     def save_routing_config(self, payload: dict[str, Any]) -> dict[str, Any]:

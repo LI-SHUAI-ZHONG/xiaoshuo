@@ -67,10 +67,6 @@ def verify_chain(session: dict) -> None:
                 selection.get('control_review_sha256')==session['context'].get('retrieval_control',{}).get('review',{}).get('sha256'),
                 'pre-step source selection trace changed or was omitted')
         from nw.production_methods import runtime as project_methods
-        if row['stage'] == 'world_design' and context.get('cast_demand_policy'):
-            from nw.materials.casting_editor import verify_world
-
-            verify_world(row, {**session['context'], 'plot_cast_gap': None}, session.get('calls', []))
         raw={'stage':row['stage'],'products':row['products']};clean,_=project_methods.split(raw)
         step_products = verify_followup(row, products, sources, context, session.get('calls', []))
         if BASIS_STAGE in step_products:
@@ -80,6 +76,10 @@ def verify_chain(session: dict) -> None:
         require(canonical(row.get('network_design_candidates', [])) == canonical(offered),
                 '世界或人物设计方法的冻结前置与实际交付不一致')
         validate_phase(clean,row['stage'],step_products,selected,context)
+        if row['stage'] == 'world_design' and context.get('cast_demand_policy'):
+            from nw.materials.casting_editor import verify_world
+
+            verify_world(row, {**session['context'], 'plot_cast_gap': None}, session.get('calls', []))
         design_network.validate(row['stage'], clean['products'], offered, products, context)
         plan=row.get('production_methods')
         if session.get('production_method_policy'):

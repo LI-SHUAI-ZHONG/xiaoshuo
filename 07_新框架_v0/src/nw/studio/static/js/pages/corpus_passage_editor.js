@@ -74,6 +74,11 @@ export function passageEditor(host,catalog,doc,initial,source){
       quotes.innerHTML=options({'':hint,...labels},selected);
     }
     showQuotes(beat.evidence_id);event.onchange=()=>showQuotes('');
+    if(!judgment){
+      const claimSelect=row.querySelector('[data-key="claim_status"]'),changeBox=row.querySelector('[data-key="story_change"]');
+      const syncClaim=()=>{const stated=claimSelect.value==='stated';if(!stated)changeBox.value='';changeBox.disabled=!stated;};
+      syncClaim();claimSelect.onchange=syncClaim;
+    }
     row.querySelector('[data-add]').onclick=()=>row.after(addBeat(container,{role:row.querySelector('[data-key="role"]').value}));
     row.querySelector('[data-remove]').onclick=()=>row.remove();
     container.append(row);

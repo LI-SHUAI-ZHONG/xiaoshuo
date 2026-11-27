@@ -2,7 +2,7 @@ import {api,enc} from '../api.js';
 import {$,$$,esc,drawer,loading,readable,busy,toast,fail} from '../ui.js';
 import {matchLabel, methodEvidence} from '../components/MethodEvidence.js';
 
-const names={type_selection:'类型选择',type_adaptation:'类型适配',world_design:'世界设计',character_design:'人物设计',static_relations:'人物关系',plot_design:'剧情设计',event_design:'事件设计',action_design:'行动设计',scene_design:'场景设计',state_transition:'状态变化',state_propagation:'后果传播',anchor_design:'表现锚点',expression_design:'表达设计',bind_scope:'交接汇总',brief:'立项需求',parent_outline:'上层大纲',accepted_state:'已接受状态',world_rules:'世界规则与限制',narration:'叙述时序、视角与呈现',hook:'钩子与问题接力',foreshadow:'伏笔与兑现',pacing:'节奏与情绪',main_plot:'主线与结局',character_arc:'人物弧光'};
+const names={type_selection:'类型选择',type_adaptation:'类型适配',world_design:'世界设计',character_design:'人物设计',static_relations:'静态关系',plot_design:'剧情设计',event_design:'事件设计',action_design:'行动设计',scene_design:'场景设计',state_transition:'状态变化',state_propagation:'状态传播',anchor_design:'表现锚点',expression_design:'表达设计',bind_scope:'交接汇总',brief:'立项需求',parent_outline:'上层大纲',accepted_state:'已接受状态',type_choice:'类型选择与边界',world_rules:'世界规则与限制',character_arc:'人物目标与弧光',relationships:'人物关系与势力',main_plot:'全书主线与结局兑现',subplot:'支线与主线交汇',volume_outline:'分卷目标与转折',chapter_outline:'连续章纲与承接',event_chain:'事件触发与因果',action_chain:'行动、阻碍与代价',scene_composition:'场景职责与选择',state_change:'人物与关系状态变化',anchors:'可见线索与表现锚点',information:'信息披露与悬念',hook:'钩子与问题接力',foreshadow:'伏笔埋设与回收',pacing:'节奏与情绪序列',expression:'叙事、对话与文风',narration:'叙述时序、视角与呈现',method_binding:'方法交接与核验'};
 const words=value=>typeof value==='string'?[value]:Array.isArray(value)?value.flatMap(words):value&&typeof value==='object'?Object.entries(value).filter(([key])=>!key.startsWith('_')&&!['ref','source_ids','input_refs','output_refs'].includes(key)).flatMap(([,v])=>words(v)):[];
 const paragraphs=value=>words(value).filter((v,i,a)=>v&&a.indexOf(v)===i).map(v=>`<p class="corpus-text">${esc(v)}</p>`).join('');
 function methodDetails(item){
@@ -29,18 +29,23 @@ export function wizardMethods(bookWorldAvailable) {
 export function methodGate(gate, {checked = new Set(), reason = ''} = {}) {
   const {target} = gate;
   const missingTasks = (target.missing_tasks || []).map(key => esc(names[key] || key));
-  return drawer('选择具体方法并确认前置', `<p class="notice">核对方法的适用条件和项目前置。新生成的设计会另行提交审核。</p>
+  const maxMethods = target.max_methods || 6;
+  const initialSelectedCount = (target.candidates || []).filter(item => !item.missing.length && checked.has(item.method.snapshot_sha256)).length;
+  return drawer('选择具体方法并确认前置', `<p class="notice">核对方法的适用条件、预期落点字段与项目前置。新生成的设计会另行提交审核。</p>
     <div class="row spread wrap">
-      <p>${esc(names[target.stage] || target.stage)} · ${target.required_tasks.map(key => esc(names[key] || key)).join('、') || '按本步需要选用'}</p>
+      <p><strong>${esc(names[target.stage] || target.stage)}</strong> · ${target.required_tasks.map(key => esc(names[key] || key)).join('、') || '按本步需要选用'} <span class="tag blue" id="methodGateCount">已选 ${initialSelectedCount} / 上限 ${maxMethods}</span></p>
       <button type="button" class="secondary" id="refreshMethodCandidates">刷新方法候选</button>
     </div>
-    ${missingTasks.length ? `<p class="error">以下职责缺少前置就绪的方法 · ${missingTasks.join('、')}。可补充资料后刷新。</p>` : ''}
+    ${missingTasks.length ? `<div class="notice warning"><strong>以下职责缺少前置就绪的方法：${missingTasks.join('、')}</strong><div class="row wrap" style="margin-top:8px"><a class="secondary" href="#/kb/items?stage=${enc(target.stage)}" data-project-method-source>前往类型资料库补本步方法</a><a class="ghost" href="#/staging" data-project-method-source>前往预存库拆解</a></div></div>` : ''}
     <div class="stack">${target.candidates.map(item => {
       const {method} = item;
       const snapshot = method.snapshot_sha256;
+      const targetOutputs = (item.outputs || []).map(o => `${names[o.stage] || o.stage}·${o.field}${o.artifact_kind !== 'stage_product' ? `(${o.artifact_kind})` : ''}`).join('、');
+      const consumers = [...new Set((method.body.downstream || []).map(d => names[d.consumer] || d.consumer))].join('、');
       return `<section class="card">
         <label class="check-row"><input name="projectMethod" type="checkbox" value="${esc(method.id)}" data-snapshot="${esc(snapshot)}" ${item.missing.length ? 'disabled' : checked.has(snapshot) ? 'checked' : ''}> ${esc(method.body.title)} · v${method.version}</label>
         ${item.type_match || item.preferred ? `<p class="muted">${[matchLabel(item.type_match), item.preferred ? '立项已选' : ''].filter(Boolean).map(esc).join(' · ')}</p>` : ''}
+        ${targetOutputs ? `<p class="muted">落点产物：${esc(targetOutputs)}${consumers ? ` ｜ 下游交接：${esc(consumers)}` : ''}</p>` : ''}
         <p>${method.body.applicability.map(esc).join('。')}</p><p class="muted">不适用情况 · ${method.body.non_applicability.map(esc).join('。')}</p>
         ${item.missing.length ? `<p class="error">缺少前置 · ${item.missing.map(input => esc(input.artifact)).join('、')}</p>` : ''}
         <details class="details"><summary>核对当前项目前置、操作和原作实例</summary>${methodDetails(item)}</details>
@@ -53,6 +58,20 @@ export function methodGate(gate, {checked = new Set(), reason = ''} = {}) {
 
 export function bindMethodGate(gate, novelId, onSaved) {
   const path = `/novels/${enc(novelId)}/gates/${enc(gate.id)}`;
+  const maxMethods = gate.target?.max_methods || 6;
+  const syncGateCount = () => {
+    const picked = $$('[name=projectMethod]:checked').length;
+    const badge = $('#methodGateCount');
+    if (badge) badge.textContent = `已选 ${picked} / 上限 ${maxMethods}`;
+  };
+  $$('[name=projectMethod]').forEach(cb => cb.addEventListener('change', () => {
+    if (cb.checked && $$('[name=projectMethod]:checked').length > maxMethods) {
+      cb.checked = false;
+      toast(`本步最多采用 ${maxMethods} 条方法`, true);
+    }
+    syncGateCount();
+  }));
+  $$('[data-project-method-source]').forEach(link => link.onclick = () => $('#drawer').close());
   const refresh = $('#refreshMethodCandidates');
   refresh.onclick = () => busy(refresh, async () => {
     const panel = $('#drawer');
@@ -91,29 +110,55 @@ export async function showProjectMethods(novelId){
       <label class="check-row"><input name="aiWorld" type="checkbox" ${policy.world_selection==='ai'?'checked':''}> 世界规则由 AI 按前置需求从参考小说方法中选用并设计</label>
       <label class="field"><span>后续方法选择</span><select name="recommendationMode">
         <option value="manual" ${policy.recommendation_mode==='auto'?'':'selected'}>人工选择</option>
-        <option value="auto" ${policy.recommendation_mode==='auto'?'selected':''}>AI 自动</option>
+        <option value="auto" ${policy.recommendation_mode==='auto'?'selected':''}>AI 自动（自动覆盖七大板块、启用 AI 世界规则，每步上限不超过 3 条）</option>
       </select></label>
-      ${!data.project_type_ids.length?`<label class="field"><span>本项目实际类型（旧项目需先明确）</span><select name="types" multiple size="6">${genres.genres.flatMap(g=>[g,...g.children]).map(g=>`<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('')}</select></label>`:''}
+      ${!data.project_type_ids.length?`<label class="field"><span>本项目实际类型（旧项目需先明确，最多选 8 项）</span><select name="types" multiple size="6">${genres.genres.flatMap(g=>[g,...g.children]).map(g=>`<option value="${esc(g.id)}">${esc(g.name)}</option>`).join('')}</select></label>`:''}
       <fieldset class="method-section"><legend>本项目需要的制作职责</legend>${catalog.tasks.map(t=>`<label class="check-row"><input name="tasks" type="checkbox" value="${t.id}" ${tasks.includes(t.id)?'checked':''}>${esc(t.name)}</label>`).join('')}</fieldset>
       <label class="field"><span>每步最多采用的方法数</span><input name="max_methods" type="number" min="1" max="12" value="${policy.max_methods||6}"></label>
       <label class="field"><span>修改依据</span><textarea name="reason" required rows="3"></textarea></label>
       <p class="muted">保存用于下一次新建设计任务；关闭不撤销已批准父纲，仍须承接其设计。当前任务保留冻结配置；如需改当前任务，先取消后新建设计，已有正文继续按候选分支规则处理。</p>
       <button class="button" type="submit">保存后续制作配置</button></form>
+      ${data.handoff_audit ? `<section class="method-section card stack" id="projectHandoffAudit">
+        <div class="row spread wrap"><h3>本项目下一步拆解产物接收体检</h3>
+          <div class="row wrap">
+            <span class="tag green">当前配置可接收 ${data.handoff_audit.summary?.receivable_methods || 0} 条</span>
+            ${data.handoff_audit.summary?.inactive_methods ? `<span class="tag amber">未启用职责 ${data.handoff_audit.summary.inactive_methods} 条</span>` : ''}
+            ${data.handoff_audit.summary?.blocked_methods ? `<span class="tag" style="color:var(--danger)">受阻 ${data.handoff_audit.summary.blocked_methods} 条</span>` : ''}
+          </div></div>
+        <p class="muted">全书世界方法：${data.handoff_audit.summary?.book_world_ready ? '已就绪' : '待补'} ｜ 人物分布样本：${data.handoff_audit.summary?.cast_sample_ready ? '已就绪' : '待补'} ｜ 段落技法：${data.handoff_audit.summary?.passage_reference_count || 0} 条</p>
+        ${(data.handoff_audit.originality_audit?.warnings || []).map(w => `<div class="notice warning">${esc(w.message)}</div>`).join('')}
+        <p class="muted">已接通步骤：${(data.handoff_audit.steps || []).filter(s => s.receivable_count > 0).map(s => `${esc(s.short_name)}（${s.receivable_count}）`).join(' · ') || '暂无'}</p>
+      </section>` : ''}
       ${data.method_references?.length ? `<section class="method-section"><h3>立项保存的方法版本</h3>${data.method_references.map(method => `
         <details class="details"><summary>${esc(method.title)} · v${method.version} · ${esc(matchLabel(method.type_match))}</summary>
           ${methodEvidence(method)}
         </details>`).join('')}</section>` : ''}
-      <section class="method-section"><h3>符合本项目类型的已批准制作方法：${data.available_methods.length}</h3>${data.available_methods.map(m=>`<p><a href="#/kb/items?method=${enc(m.id)}&version=${m.version}" data-project-method-source>${esc(m.title)} · v${m.version}</a></p>`).join('')||'<p>暂无适用方法。可在<a href="#/staging" data-project-method-source>预存库</a>导入对应类型作品，批准结构拆解并提炼制作方法。</p>'}</section>
+      <section class="method-section"><h3>符合本项目类型的已批准制作方法：${data.available_methods.length}</h3>${data.available_methods.map(m=>{
+        const stageText=(m.stages||[]).map(st=>names[st]||st).join('、');
+        const stTag=m.handoff_status==='receivable'?'<span class="tag green">当前配置可接收</span>':m.handoff_status==='inactive_by_policy'?'<span class="tag amber">未勾选对应职责</span>':'<span class="tag" style="color:var(--danger)">前置/条件受阻</span>';
+        return `<div style="margin-bottom:8px"><p><a href="#/kb/items?method=${enc(m.id)}&version=${m.version}" data-project-method-source>${esc(m.title)} · v${m.version}</a> ${stTag}</p>${stageText?`<small class="muted">目标步骤：${esc(stageText)}</small>`:''}${m.block_reasons?.length?`<br><small class="muted">${esc(m.block_reasons[0])}</small>`:''}</div>`;
+      }).join('')||'<p>暂无适用方法。可在<a href="#/staging" data-project-method-source>预存库</a>导入对应类型作品，批准结构拆解并提炼制作方法。</p>'}</section>
       <section class="method-section" id="actualProjectMethodUses"><h3>本项目实际执行与下游回执</h3>${data.uses.length?usageRows(data.uses):'<p>尚无执行记录；开启配置不等于已经使用。</p>'}</section>
       <section class="method-section"><h3>正文独立审稿证据</h3>${data.review_checks.length?readable(data.review_checks):'<p>尚无正文方法核验证据。</p>'}</section>`;
     $$('[data-project-method-source]').forEach(link=>link.onclick=()=>$('#drawer').close());
+    $('#projectMethodSettings [name=recommendationMode]')?.addEventListener('change',e=>{
+      if(e.target.value==='auto'){
+        const form=$('#projectMethodSettings');
+        if($('[name=enabled]',form))$('[name=enabled]',form).checked=true;
+        if($('[name=aiWorld]',form))$('[name=aiWorld]',form).checked=true;
+      }
+    });
     $('#projectMethodSettings').onsubmit=e=>{e.preventDefault();busy(e.target.querySelector('[type=submit]'),async()=>{
       const form=e.target, aiWorld=$('[name=aiWorld]',form).checked;
       const tasks=$('[name=enabled]',form).checked?$$('[name=tasks]:checked',form).map(x=>x.value):[];
       if(aiWorld && !tasks.includes('world_rules')) tasks.push('world_rules');
       const next=tasks.length?{tasks,max_methods:Number($('[name=max_methods]',form).value),
         recommendation_mode:$('[name=recommendationMode]',form).value,...(aiWorld?{world_selection:'ai'}:{})}:null;
-      if(next&&$('[name=types]',form))next.type_ids=Array.from($('[name=types]',form).selectedOptions).map(o=>o.value);
+      if(next&&$('[name=types]',form)){
+        const types=Array.from($('[name=types]',form).selectedOptions).map(o=>o.value);
+        if(types.length>8)throw new Error('项目类型最多选择 8 项');
+        next.type_ids=types;
+      }
       await api.post(`/novels/${enc(novelId)}/methods`,{policy:next,reason:$('[name=reason]',form).value});toast('后续制作配置已保存，当前任务保持冻结版本');await showProjectMethods(novelId);
     });};
   }catch(error){fail(error);$('#drawerBody').innerHTML=`<p class="error">${esc(error.message)}</p>`;}

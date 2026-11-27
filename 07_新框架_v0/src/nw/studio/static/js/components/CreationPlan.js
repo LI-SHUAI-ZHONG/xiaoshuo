@@ -10,7 +10,7 @@ const stageNames = {
   state_transition:'状态变化', state_propagation:'后果传播', anchor_design:'表现锚点',
   expression_design:'表达设计', bind_scope:'交接汇总',
 };
-const scopeNames = {book:'全书', chapter:'章场'};
+const scopeNames = {book:'全书', volume:'卷纲', chapter:'章场', scene:'场景'};
 const stages = keys => keys.map(key => stageNames[key] || key).join('、');
 const location = ({scope, stage, scope_name, stage_name}) =>
   [scope_name || scopeNames[scope], stage_name || stageNames[stage] || stage].filter(Boolean).join(' · ');

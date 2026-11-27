@@ -24,7 +24,6 @@ def check_story_method(service: object, structure: dict, body: dict, basis: dict
         return
     check_source_types(service,structure,body)
     quotes={(e['start'],e['end'],e['quote']) for e in body['evidence'] if e['book_id']==structure['book_id']}
-    evidence={e['id']:e for e in document['evidence'] if (e['start'],e['end'],e['quote']) in quotes}
     events={e['id']:e for e in document['events'] if e['id'] in basis['event_ids']}
     links=[l for l in document['links'] if l['id'] in basis['link_ids']]
     units={u['id']:u for u in document['units']}
@@ -32,8 +31,10 @@ def check_story_method(service: object, structure: dict, body: dict, basis: dict
     observed={d['domain'] for d in document['domains'] if d['status']=='observed'}
     source_ids={key for t in document['threads'] if t['id'] in basis['thread_ids'] for key in t['evidence_ids']}
     source_ids.update(key for row in [*events.values(),*links] for key in row['evidence_ids'])
-    if not evidence.keys() <= source_ids:
+    allowed_spans={(e['start'],e['end'],e['quote']) for e in document['evidence'] if e['id'] in source_ids}
+    if not quotes <= allowed_spans:
         raise ValueError('章场方法引文不属于所选观察、事件或关系')
+    evidence={e['id']:e for e in document['evidence'] if e['id'] in source_ids and (e['start'],e['end'],e['quote']) in quotes}
     for thread in threads:
         domain=thread['domain']
         if thread['status']=='uncertain' or domain not in observed:
@@ -52,8 +53,8 @@ def check_story_method(service: object, structure: dict, body: dict, basis: dict
         if issue:
             raise ValueError(issue)
         stages={stage for task in target_tasks for stage in TASKS[task]['stages']}
-        targets={'members','event_nodes','reader_plan','promise_plan','candidates','events','chapters',
-                 'guidance','patches','transitions'}
+        targets={'members','event_nodes','directions','reader_plan','promise_plan','candidates','events','chapters',
+                 'guidance','patches','transitions','relations','requirements','beats'}
         targets.update({'cast_assignments','cast_events','cast_payoffs'} if domain in ('cast_entry','cast_roster')
                        else {'continuations','scene_progress'})
         if not any(o['stage'] in stages and o['field'] in targets and
@@ -71,11 +72,12 @@ def check_source_types(service: object, structure: dict, body: dict) -> None:
 def check_narration_method(service: object, structure: dict, body: dict, basis: dict) -> None:
     document=structure['body']
     threads=[t for t in document['threads'] if t['id'] in basis['thread_ids'] and t['domain']=='narration']
-    if not threads and 'narration' not in body['tasks']:
+    has_narration_task = 'narration' in body['tasks']
+    if not threads and not has_narration_task:
         return
-    if not threads or 'narration' not in body['tasks'] or not any(
+    if not threads or not ({'narration', 'expression', 'anchors'} & set(body['tasks'])) or not any(
             d['domain']=='narration' and d['status']=='observed' for d in document['domains']):
-        raise ValueError('叙述方法须使用已核实的叙述观察和叙述制作任务')
+        raise ValueError('叙述方法须使用已核实的叙述观察和叙述、表达或锚点制作任务')
     if any('passage_sequence' in t['details'] for t in threads) and len(basis['thread_ids']) != 1:
         raise ValueError('段落写法的操作须分别归属一项原文观察，请逐条提炼后在同一场按需组合')
     check_source_types(service,structure,body)
@@ -247,6 +249,7 @@ def publish_methods(service: object, conn: object, book_id: str, version: int, c
 def manual_method(service: object, book_id: str, request: dict) -> dict:
     version=request.get('version');thread_ids=request.get('thread_ids',[])
     structure=service.get_corpus(book_id,version)
+    version=structure['version']
     require_current_schema(structure['body'].get('schema_version', 1))
     threads=[t for t in structure['body']['threads'] if t['id'] in thread_ids]
     if not threads or len(threads)!=len(set(thread_ids)):raise ValueError('请选择实际线索/弧光作为手工提炼依据')
@@ -263,3 +266,83 @@ def manual_method(service: object, book_id: str, request: dict) -> dict:
         conn.execute('BEGIN IMMEDIATE')
         result=publish_methods(service,conn,book_id,version,[candidate],complete=False)[0]
     return service.get_method(result['id'])
+
+
+def approved_structures_summary(service: object) -> list[dict]:
+    """List approved v5 reference structures and their derivable threads for KB method binding."""
+    with service.connect() as conn:
+        rows = conn.execute(
+            """SELECT b.id, b.title, b.confirmed_types_json, h.approved_version
+               FROM staging_books b
+               JOIN corpus_structures h ON h.book_id=b.id
+               JOIN corpus_structure_versions v ON v.book_id=h.book_id AND v.version=h.approved_version
+               WHERE b.status!='rejected' AND json_extract(v.body_json,'$.schema_version')=?
+               ORDER BY b.updated_at DESC, b.id""",
+            (corpus_catalog_version(),),
+        ).fetchall()
+        result = []
+        for row in rows:
+            structure = service._corpus_row(row['id'], row['approved_version'], conn)
+            if not structure['available']:
+                continue
+            doc = structure['body']
+            threads = [
+                {
+                    'id': t['id'], 'domain': t['domain'], 'title': t['title'], 'status': t['status'],
+                    'event_ids': list(t['node_ids']),
+                    'link_ids': [l['id'] for l in doc['links'] if l['thread_id'] == t['id']],
+                    'evidence_ids': list(t['evidence_ids']),
+                }
+                for t in doc['threads'] if t['status'] != 'uncertain'
+            ]
+            result.append({
+                'book_id': row['id'], 'title': row['title'],
+                'confirmed_types': json.loads(row['confirmed_types_json']),
+                'structure_version': row['approved_version'],
+                'source_extent': doc['source_extent'],
+                'threads': threads,
+                'evidence': doc['evidence'],
+            })
+        return result
+
+
+def corpus_catalog_version() -> int:
+    from nw.studio.corpus_catalog import SCHEMA_VERSION
+    return SCHEMA_VERSION
+
+
+def resolve_origin_basis(service: object, conn: object, origin_spec: object) -> tuple[dict, dict]:
+    """Validate and expand a method-to-structure origin link from user selection."""
+    if not isinstance(origin_spec, dict):
+        raise ValueError('结构依据必须是对象')
+    book_id = str(origin_spec.get('book_id', '')).strip()
+    if not book_id:
+        raise ValueError('请选择参考作品')
+    head = conn.execute('SELECT approved_version FROM corpus_structures WHERE book_id=?', (book_id,)).fetchone()
+    if not head or head['approved_version'] is None:
+        raise ValueError('所选参考作品尚未批准多层拆解结构')
+    version = origin_spec.get('structure_version') or head['approved_version']
+    if version != head['approved_version']:
+        raise ValueError('只能绑定参考作品当前已批准的多层结构版本')
+    structure = service._corpus_row(book_id, version, conn)
+    require_current_schema(structure['body'].get('schema_version', 1))
+    if not structure['available']:
+        raise ValueError('所选参考结构来源或完整性检查未通过，不能绑定')
+    thread_ids = origin_spec.get('thread_ids')
+    if not isinstance(thread_ids, list) or not thread_ids or any(not isinstance(t, str) for t in thread_ids):
+        raise ValueError('请选择至少一条参考结构线索或弧光作为依据')
+    doc = structure['body']
+    selected_threads = [t for t in doc['threads'] if t['id'] in thread_ids]
+    if len(selected_threads) != len(set(thread_ids)):
+        raise ValueError('结构依据包含不存在的线索或弧光')
+    event_ids = origin_spec.get('event_ids')
+    if event_ids is None:
+        event_ids = sorted({eid for t in selected_threads for eid in t['node_ids']})
+    link_ids = origin_spec.get('link_ids')
+    if link_ids is None:
+        link_ids = [l['id'] for l in doc['links'] if l['thread_id'] in set(thread_ids)
+                    and l['source'] in set(event_ids) and l['target'] in set(event_ids)]
+    explanation = str(origin_spec.get('explanation') or '作者在类型资料库关联已批准的参考结构依据。').strip()
+    basis = {'thread_ids': list(dict.fromkeys(thread_ids)), 'event_ids': list(event_ids),
+             'link_ids': list(link_ids), 'explanation': explanation}
+    return structure, basis

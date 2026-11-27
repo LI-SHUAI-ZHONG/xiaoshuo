@@ -82,7 +82,10 @@ def check_material_acceptance(store: Store, draft: Draft, delta: StateDelta) -> 
             or sum(row['id'].startswith(_ACTION_CHECK_PREFIX) for row in rows) >= 2):
         # The base check has matched this frozen review message to the current contract.
         _, package = read_input_manifest(store, delta.manifest_id)
-        reviewed = store.get('run', package['material_review_run'])
+        review_run_id = package.get('material_review_run')
+        if not review_run_id:
+            raise ValueError('MATERIAL_EVIDENCE: 已规划材料约束的场景必须先完成独立审稿并通过核验后再接受')
+        reviewed = store.get('run', review_run_id)
         snapshot = json.loads(reviewed.input_snapshot_json)
         contract = json.loads(snapshot['messages'][-1]['content'])['material_review']
         narration_review.assess_beats(contract['checks'], rows, draft)

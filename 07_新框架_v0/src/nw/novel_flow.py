@@ -116,11 +116,11 @@ def _design(calls: JobCalls, decide: Decision) -> JobResult:
                         proposal_id=proposal, application=application)
 
 
-def _scope_governance_inputs(raw_gov: dict | None, scope: str) -> dict | None:
+def _scope_governance_inputs(raw_gov: dict | None, scope: str, *, planning_hierarchy: bool = False) -> dict | None:
     if not raw_gov:
         return None
     from nw.materials.phase_routes import phase_order
-    allowed = set(phase_order(scope))
+    allowed = set(phase_order(scope, planning_hierarchy=planning_hierarchy))
     if scope in raw_gov and isinstance(raw_gov[scope], dict):
         scoped = {k: v for k, v in raw_gov[scope].items() if k in allowed and isinstance(v, dict)}
         return scoped or None
@@ -168,7 +168,8 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
     def prepare():
         j.check_active(propose)
         verify_lineage()
-        gov_for_scope = _scope_governance_inputs(j.request.get('governance_inputs'), scope)
+        gov_for_scope = _scope_governance_inputs(j.request.get('governance_inputs'), scope,
+                                                 planning_hierarchy=hierarchical)
         request, _ = prepare_plan_task(j.store, Ref(**j.request['brief_ref']), scope, plan_calls.provider, plan_calls.config,
                                        j.id, call_id(j.id, propose, 1), parent_id=parent, branch=j.head.branch_id,
                                        materials=j.request.get('materials', ()),

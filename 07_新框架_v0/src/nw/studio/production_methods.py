@@ -69,15 +69,35 @@ class ProductionMethodMixin:
                 for check in value.get('material_checks',[]):
                     if str(check.get('id','')).startswith('method:'):reviews.append({'review_run_id':row['id'],**check})
         types=novel['wizard'].get('genre_ids',[])
+        policy=novel['wizard'].get('production_methods',{})
+        handoff_audit=None
+        audited_by_id={}
         try:
-            available=[{'id':r['id'],'version':r['version'],'title':r['body']['title'],'tasks':r['body']['tasks'],
-                        'scopes':r['body']['scopes'],'type_tags':r['body']['type_tags']}
-                       for r,_ in matching_methods(MethodReader(self.studio.workspace),types)] if types else []
+            from nw.studio.downstream_handoff import audit_downstream_handoff
+            handoff_audit=audit_downstream_handoff(
+                self.library,
+                types=types,
+                planning_hierarchy=novel['wizard'].get('planning_hierarchy', False),
+                active_tasks=policy.get('tasks') if policy else None,
+            )
+            audited_by_id={m['id']:m for m in handoff_audit.get('methods',())}
+        except Exception:
+            handoff_audit=None
+        try:
+            available=[{
+                'id':r['id'],'version':r['version'],'title':r['body']['title'],'tasks':r['body']['tasks'],
+                'scopes':r['body']['scopes'],'type_tags':r['body']['type_tags'],
+                'stages':audited_by_id.get(r['id'],{}).get('output_stages',sorted({o['stage'] for o in r['body'].get('outputs',())})),
+                'receivable_stages':audited_by_id.get(r['id'],{}).get('receivable_stages',[]),
+                'handoff_status':audited_by_id.get(r['id'],{}).get('status','receivable'),
+                'block_reasons':audited_by_id.get(r['id'],{}).get('block_reasons',[]),
+            } for r,_ in matching_methods(MethodReader(self.studio.workspace),types)] if types else []
         except ValueError:available=[]
-        return {'policy':novel['wizard'].get('production_methods',{}),'current_job_policy':current,
+        return {'policy':policy,'current_job_policy':current,
             'project_type_ids':novel['wizard'].get('genre_ids',[]),
             'method_references':novel['wizard'].get('method_references',[]),
             'default_tasks':DEFAULT_TASKS,'available_methods':available,'uses':uses,'review_checks':reviews,
+            'handoff_audit':handoff_audit,
             'note':'送达、有效执行、作者批准设计和正文证据分别保存；出现记录不代表文学效果通过。'}
 
     def configure_methods(self,ident: str,body: dict) -> dict:
@@ -94,9 +114,9 @@ class ProductionMethodMixin:
                 if 'recommended_slots' in configuration:
                     raise ValueError('推荐候选版本由类型资料库自动核定')
                 preferences = {row['id']: row['version'] for row in novel['wizard'].get('method_references', [])}
-                configuration = {**configuration, 'preferred_methods': preferences}
-            if (isinstance(configuration, dict) and novel['wizard'].get('auto_recommendations')
-                    and configuration.get('recommendation_mode') == 'auto'):
+                if preferences and 'preferred_methods' not in configuration:
+                    configuration = {'preferred_methods': preferences, **configuration}
+            if isinstance(configuration, dict) and configuration.get('recommendation_mode') == 'auto':
                 from nw.studio.method_recommendations import freeze_automatic_policy
 
                 policy = freeze_automatic_policy(MethodReader(self.studio.workspace), types, configuration,
@@ -104,6 +124,8 @@ class ProductionMethodMixin:
             else:
                 policy = normalize(configuration, types=types)
             wizard={**novel['wizard'],'production_methods':policy}
+            if not policy:
+                wizard.pop('method_references', None)
             if policy and not wizard.get('genre_ids'):wizard['genre_ids']=policy['type_ids']
             with self.db.connect() as conn:
                 conn.execute('UPDATE novels SET wizard_json=?,updated_at=? WHERE id=?',(canonical(wizard),now(),ident))

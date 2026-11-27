@@ -196,10 +196,10 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
             package['material_recall'] = recall
         if governance_inputs is not None:
             from nw.materials.phase_routes import phase_order
-            if (not isinstance(governance_inputs, dict) or governance_inputs.keys() - set(phase_order(scope))
+            current_stages = phase_order(scope, planning_hierarchy=planning_hierarchy)
+            if (not isinstance(governance_inputs, dict) or governance_inputs.keys() - set(current_stages)
                     or not all(isinstance(value, dict) for value in governance_inputs.values())):
                 raise ValueError('MATERIAL_GOVERNANCE: expected inputs keyed by current planning stage')
-            current_stages = phase_order(scope, planning_hierarchy=planning_hierarchy)
             material_governance = {key: val for key, val in governance_inputs.items() if key in current_stages}
             world_inputs = dict(material_governance.get('world_design', {}))
             if world_inputs.keys() & {'cast_sample_reference','passage_references'}:
@@ -207,7 +207,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                     package['cast_sample_reference'] = world_inputs.pop('cast_sample_reference')
                 if 'passage_references' in world_inputs:
                     method_scope = 'chapter' if scope == 'replan' else scope
-                    passages = [ref for ref in world_inputs.pop('passage_references') if method_scope in ref['scopes']]
+                    passages = [ref for ref in world_inputs.pop('passage_references')
+                                if method_scope in ref['scopes'] or (method_scope == 'chapter' and 'scene' in ref['scopes'])]
                     if passages:
                         package['passage_references'] = passages
                 if world_inputs:
@@ -251,7 +252,7 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         'dynamic_reference_checks', 'dynamic_screening_enabled', 'scene_source_binding_policy',
                         'action_state_policy', 'action_template_priority_enabled', 'network_prerequisite_policy',
                         'multi_action_policy', 'narration_policy', 'cast_previous_appearances', 'cast_demand_policy',
-                        'cast_source_cards', 'cast_completed_direction', 'method_task_stages', 'accepted_cast_history',
+                        'cast_source_cards', 'cast_completed_direction', 'method_task_stages', 'reference_method_portfolio', 'world_material_profile', 'character_material_profile', 'plot_material_profile', 'execution_material_profile', 'craft_material_profile', 'accepted_cast_history',
                         'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
                         'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy',
                         'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy',
@@ -369,10 +370,34 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
         from nw.length_settings import effective_brief_text
         from nw.length_plan import design_context, instructions
         if not existing and package.get('production_method_policy'):
+            from nw.materials.phase_flow import _reference_method_portfolio
             from nw.production_methods.sources import MethodReader, task_routes
             routes=task_routes(MethodReader(store.directory.parent), package)
             if routes:
                 package['method_task_stages']=routes
+            portfolio=_reference_method_portfolio(store.directory.parent, package, {})
+            if portfolio:
+                package['reference_method_portfolio']=portfolio
+        if not existing:
+            genre_ids = list(
+                package.get('production_method_policy', {}).get('type_ids')
+                or package.get('governance_inputs', {}).get('type_selection', {}).get('project_config', {}).get('genre_ids')
+                or ()
+            )
+            if genre_ids:
+                from nw.studio.world_materials import world_stage_prompt_packet
+                from nw.studio.character_materials import character_stage_prompt_packet
+                from nw.studio.plot_materials import plot_event_stage_prompt_packet
+                from nw.studio.execution_materials import execution_stage_prompt_packet
+                from nw.studio.craft_materials import craft_stage_prompt_packet
+                try:
+                    package['world_material_profile'] = world_stage_prompt_packet(genre_ids)
+                    package['character_material_profile'] = character_stage_prompt_packet(genre_ids)
+                    package['plot_material_profile'] = plot_event_stage_prompt_packet(genre_ids)
+                    package['execution_material_profile'] = execution_stage_prompt_packet(genre_ids)
+                    package['craft_material_profile'] = craft_stage_prompt_packet(genre_ids)
+                except ValueError:
+                    pass
         override = (governance_inputs or {}).get('plot_design', {}).get('length_policy')
         if existing:
             package['brief'] = previous_package['brief']

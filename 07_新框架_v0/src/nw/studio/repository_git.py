@@ -35,9 +35,17 @@ def shared_config_safe(path: Path) -> None:
         endpoint = urlsplit(spec.get('base_url', ''))
         if endpoint.username or endpoint.password or endpoint.query or endpoint.fragment:
             raise SyncError('CONFIG_SECRET', 'API 地址不能包含凭据或查询密钥，未上传')
-    allowed = {'temperature', 'top_p', 'max_tokens', 'max_completion_tokens', 'seed', 'stop'}
-    if any(set(params) - allowed for params in [data.get('params', {}), *(s.get('params', {}) for s in specs)]):
-        raise SyncError('CONFIG_SECRET', '共享配置只支持通用 API 采样参数，未上传其他字段')
+    allowed_by_provider = {
+        'openai_compat': {'temperature', 'top_p', 'max_tokens', 'max_completion_tokens', 'seed', 'stop'},
+        'ollama': {'temperature', 'top_p', 'top_k', 'num_predict', 'seed', 'stop', 'repeat_penalty'},
+    }
+    default_provider = data.get('model', {}).get('provider', 'openai_compat')
+    param_pairs = [(default_provider, data.get('params', {})),
+                   *((s.get('provider', default_provider), s.get('params', {})) for s in specs)]
+    for prov, params in param_pairs:
+        allowed = allowed_by_provider.get(prov)
+        if allowed is None or (isinstance(params, dict) and set(params) - allowed):
+            raise SyncError('CONFIG_SECRET', '共享配置含不支持的采样参数，未上传其他字段')
     if set(data) - {'model', 'params', 'paths', 'workflow', 'stage_models'}:
         raise SyncError('CONFIG_SECRET', 'API 配置含未识别的区段，未上传')
 

@@ -82,6 +82,21 @@ def _next_scene(store: Store, snapshot: dict) -> list[str]:
     return [min(candidates)[1]]
 
 
+def _manual_branch_draft(store: Store, candidate: Any, branch_id: str) -> bool:
+    if candidate.status != 'complete':
+        return False
+    run = store.get('run', candidate.run_id)
+    if run.provider != 'author':
+        return False
+    try:
+        snap = json.loads(run.input_snapshot_json)
+    except ValueError:
+        return False
+    return (isinstance(snap, dict)
+            and snap.get('source') == 'studio_manual_author'
+            and snap.get('branch_id', 'main') == branch_id)
+
+
 def start_job(store: Store, request: JobRequest) -> JobRef:
     if (request.mode not in ('design', 'write', 'revise', 'continue') or not text(request.branch_id)
             or not isinstance(request.scene_ids, list) or not all(map(text, request.scene_ids))
@@ -145,6 +160,10 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
             for scene in scenes:
                 slot = snapshot['slots'].get(scene)
                 draft = store.get('draft', slot['draft_id']) if slot else None
+                latest_complete = next((c for c in reversed(store.drafts(scene)) if c.status == 'complete'), None)
+                if (latest_complete is not None and _manual_branch_draft(store, latest_complete, head.branch_id)
+                        and (draft is None or latest_complete.id != draft.id)):
+                    draft = latest_complete
                 if draft is None:
                     for candidate in reversed(store.drafts(scene)):
                         frozen = story_write_manifest(store, candidate)

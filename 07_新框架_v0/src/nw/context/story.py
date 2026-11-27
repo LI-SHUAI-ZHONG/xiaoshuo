@@ -300,6 +300,10 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     if inputs.get('chapter_length_progress', {}).get('length_mode') == 'tiered':
         from nw.chapter_break import WRITING
         base_prompt += ' ' + WRITING
+    if design:
+        from nw.studio.craft_materials import design_genre_ids, writing_genre_guidance
+        if genre_note := writing_genre_guidance(design_genre_ids(design)):
+            base_prompt += ' ' + genre_note
     prompt = step_material_prompt(base_prompt, WRITING_MATERIAL, source_keys)
     provider = get_provider('story')
     assembled = asdict(provider.build(inputs, card))
