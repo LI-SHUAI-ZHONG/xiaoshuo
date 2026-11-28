@@ -130,6 +130,12 @@ class StoryProvider:
         if project.get('style_reference'):
             items.append(ContextItem('style-reference', canonical(project['style_reference']),
                                      '写前语感参照（只学行文呼吸、对白脾气与节奏，严禁照搬人名设定）'))
+        if project.get('author_memory'):
+            items.append(ContextItem('author-memory', canonical(project['author_memory']),
+                                     '作者跨书与本书显式创作偏好（2KB预算截断透明提示）'))
+        if project.get('verified_excerpts'):
+            items.append(ContextItem('verified-excerpts', canonical(project['verified_excerpts']),
+                                     '三检零预警匿名真人实文范例（仅学语流与节奏，严禁照搬）'))
         if project.get('previous'):
             prev = project['previous']
             items.append(ContextItem('previous:' + prev['scene_id'], prev['tail_text'], '同视角紧邻前场正文衔接'))
@@ -224,7 +230,8 @@ def _previous_refs(store: Store, snapshot: dict, facts: list[Fact],
 
 def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_limit: int, *,
                         candidate_refs: tuple[tuple[str, str], ...] = (), base_prompt: str = WRITE_PROMPT,
-                        validate_capacity: Callable[[str, dict, set[str]], object] | None = None) -> StoryWork:
+                        validate_capacity: Callable[[str, dict, set[str]], object] | None = None,
+                        library_conn: object | None = None) -> StoryWork:
     """Freeze the same versioned information the model receives, with source receipts."""
     if type(char_limit) is not int or char_limit < 1:
         raise ValueError('Context character limit must be a positive integer')
@@ -475,6 +482,32 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     optional_parts: list[tuple[str, Any]] = [('continuity', continuity), ('reader', already_disclosed)]
     if style_ref is not None:
         optional_parts.insert(0, ('style_reference', style_ref))
+    if library_conn is not None:
+        try:
+            from nw.verified_excerpts import build_writer_verified_excerpts_packet
+            g_ids = list((book_voice_spec or {}).get('genre_ids') or ())
+            sf = infer_scene_function(scene_body_filtered, chapter_index=chapter.index, scene_index=scene.index)
+            vex_packet = build_writer_verified_excerpts_packet(library_conn, type_tags=g_ids or None, scene_function=sf, limit=2)
+            if vex_packet:
+                optional_parts.insert(0, ('verified_excerpts', vex_packet))
+        except Exception:
+            pass
+    try:
+        from nw.author_memory import query_merged_author_memory
+        g_ids = list((book_voice_spec or {}).get('genre_ids') or ())
+        book_mem = query_merged_author_memory(
+            library_conn, store, genre_ids=g_ids or None, workflow_stage='writing',
+        )
+        if book_mem.get('lines'):
+            optional_parts.insert(0, ('author_memory', {
+                'lines': book_mem['lines'],
+                'bytes_used': book_mem['bytes_used'],
+                'byte_budget': book_mem['byte_budget'],
+                'omitted_ids': book_mem['omitted_ids'],
+                'omission_notice': book_mem['omission_notice'],
+            }))
+    except Exception:
+        pass
     if scene_beat_hint is not None:
         optional_parts.insert(0, ('scene_beat', scene_beat_hint))
     if voice_packet is not None:

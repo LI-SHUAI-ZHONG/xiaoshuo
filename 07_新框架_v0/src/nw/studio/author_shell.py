@@ -221,6 +221,51 @@ _ERROR_CATALOG: tuple[tuple[str, dict[str, Any]], ...] = (
         'action_hint': '打开预算设置保持默认或自定义上限后重试即可。',
         'overridable': False,
     }),
+    ('PRE_VERBATIM_REPEAT', {
+        'code': 'PRE_VERBATIM_REPEAT',
+        'title': '检测到正文复读退化',
+        'summary': '模型连续输出了完全相同的句子或段落。',
+        'impact': '带复读退化的草稿不可进入审稿或入库。',
+        'action_label': '删除复读句或重新生成本场',
+        'action_hint': '手动删除重复行或点击重写本场，系统已自动阻断复读入库。',
+        'overridable': False,
+    }),
+    ('PRE_MARKDOWN_BOLD_LEAK', {
+        'code': 'PRE_MARKDOWN_BOLD_LEAK',
+        'title': '正文混入 Markdown 加粗星号',
+        'summary': '草稿中残留了 **加粗** 等 Markdown 格式符号。',
+        'impact': '直接上架会在阅读器中裸露星号符号。',
+        'action_label': '清除星号标记后重试',
+        'action_hint': '删去正文中的 ** 标记，或在「上架体检」中一键清扫。',
+        'overridable': False,
+    }),
+    ('PRE_CENSORED_PINYIN', {
+        'code': 'PRE_CENSORED_PINYIN',
+        'title': '正文残留敏感词拼音代写',
+        'summary': '草稿中混入了“身ti/杀si/尸ti”等半中文半拼音谐音。',
+        'impact': '严重破坏阅读沉浸感且易触发平台质量降权。',
+        'action_label': '改回自然中文表达',
+        'action_hint': '替换为自然中文或隐晦实写，或如确属刻意玩梗请登记签收豁免。',
+        'overridable': True,
+    }),
+    ('PRE_OUTLINE_COPY', {
+        'code': 'PRE_OUTLINE_COPY',
+        'title': '正文疑似逐字抄写大纲/场景卡',
+        'summary': '检测到正文与场景卡或节拍存在连续 16 字以上逐字重合。',
+        'impact': '把大纲摘要直接贴进正文会失去现场展开与真实读感。',
+        'action_label': '改写成现场动作、心理与对白',
+        'action_hint': '核对标红片段并展开为真实场景；如属指定原话请在大纲标注「原话：」。',
+        'overridable': True,
+    }),
+    ('PUBLISH_PREFLIGHT_BLOCKED', {
+        'code': 'PUBLISH_PREFLIGHT_BLOCKED',
+        'title': '平台发书上架合规体检未通过',
+        'summary': '书名、简介、标签或章节正文存在平台硬性违规项（如超字、含禁用符号、乱码或未清理元信息）。',
+        'impact': '直接提交到番茄/起点/七猫/晋江大概率会被驳回或触发签约风险。',
+        'action_label': '按上架体检清单逐项修复',
+        'action_hint': '打开「发书上架体检」抽屉查看标红项，使用一键标点退化清扫后重新校验。',
+        'overridable': False,
+    }),
     ('已有正文后的追加设计需先建立候选分支', {
         'code': 'CANDIDATE_BRANCH_REQUIRED',
         'title': '已有正式正文，追加设计需先开候选分支',
@@ -255,9 +300,9 @@ def translate_error(raw_error: str | Exception) -> dict[str, Any]:
 
 
 def _priority_tuple(item: dict[str, Any]) -> tuple[int, int]:
-    sev_rank = {'hard': 0, 'blocking': 0, 'warning': 1, 'medium': 2, 'info': 3}
+    sev_rank = {'hard': 0, 'blocking': 0, 'review_required': 1, 'warning': 2, 'medium': 3, 'info': 4}
     ovr_rank = 0 if not item.get('overridable') else 1
-    return (sev_rank.get(str(item.get('severity') or 'warning'), 2), ovr_rank)
+    return (sev_rank.get(str(item.get('severity') or 'warning'), 3), ovr_rank)
 
 
 def build_unified_review_view(
@@ -299,7 +344,8 @@ def build_unified_review_view(
         action_items.append({
             'lens': 'script_gate',
             'lens_label': '机检闸门',
-            'severity': 'hard' if sev == 'hard' else 'warning',
+            'severity': 'hard' if sev == 'hard' else ('review_required' if sev == 'review_required' else 'warning'),
+            'tier': str(row.get('tier') or ('blocking' if sev == 'hard' else 'advisory')),
             'overridable': bool(row.get('overridable')),
             'constraint_code': code,
             'title': str(row.get('message') or ''),

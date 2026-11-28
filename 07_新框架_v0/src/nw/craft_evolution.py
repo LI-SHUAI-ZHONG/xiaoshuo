@@ -428,6 +428,30 @@ def check_style_drift(
             'message': f'近期千字 AI 套话密度升高（{b_cliche:.2f} → {c_cliche:.2f}/千字），建议回拉语感校准。',
         })
 
+    # Empirical 150k-chapter prose balance drift checks (body-action vs causal-thought equilibrium)
+    c_body_ratio = float(cm.get('body_action_sentence_ratio') or 0.0)
+    b_body_ratio = float(bm.get('body_action_sentence_ratio') or 0.0)
+    if c_body_ratio >= 0.26 and c_body_ratio > b_body_ratio + 0.06:
+        drifts.append({
+            'metric': 'body_action_sentence_ratio',
+            'label': '身体微动作句占比',
+            'baseline': b_body_ratio,
+            'current': c_body_ratio,
+            'delta_pct': round(((c_body_ratio - b_body_ratio) / max(0.05, b_body_ratio)) * 100, 1),
+            'message': f'近期身体微动作句占比升至 {c_body_ratio * 100:.0f}%（人类长篇常模约 12%，上限 23%），警惕过度“展示而非讲述”导致流水账微动作泛滥。',
+        })
+    c_thought_ratio = float(cm.get('causal_thought_sentence_ratio') or 0.0)
+    b_thought_ratio = float(bm.get('causal_thought_sentence_ratio') or 0.0)
+    if b_thought_ratio >= 0.10 and c_thought_ratio <= 0.04 and (b_thought_ratio - c_thought_ratio) >= 0.06:
+        drifts.append({
+            'metric': 'causal_thought_sentence_ratio',
+            'label': '因果心理/利害算账句占比',
+            'baseline': b_thought_ratio,
+            'current': c_thought_ratio,
+            'delta_pct': round(((c_thought_ratio - b_thought_ratio) / max(0.05, b_thought_ratio)) * 100, 1),
+            'message': f'近期因果心理/利害算账句占比骤降至 {c_thought_ratio * 100:.0f}%（人类常模约 15%），警惕把活人心理改没、叙事变冷变干。',
+        })
+
     status = 'drift_detected' if drifts else 'stable'
     summary = (
         f'检测到 {len(drifts)} 项文体指标漂移（第 {c_start}–{c_end} 章 vs 基线第 {baseline["range_start"]}–{baseline["range_end"]} 章），'

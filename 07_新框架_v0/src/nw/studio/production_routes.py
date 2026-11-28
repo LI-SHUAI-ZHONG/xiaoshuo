@@ -91,6 +91,13 @@ class ProductionRoutes:
                     data = app.analyze_deslop(ident, first(query, 'scene'), first(query, 'draft'))
                 elif action == 'manuscript-imports':
                     data = app.manuscript_imports(ident)
+                elif action == 'author-memory':
+                    data = app.author_memory(ident, first(query, 'stage'))
+                elif action == 'publish-preflight':
+                    data = app.publish_preflight(ident, {
+                        'platform': first(query, 'platform', 'fanqie'),
+                        'quote_mode': first(query, 'quote_mode', 'keep'),
+                    })
                 elif action == 'continuation':
                     data = app.continuation(ident)
                 elif action == 'finish-check':
@@ -146,6 +153,14 @@ class ProductionRoutes:
                 ),
                 'setup': recommend_all_craft_setup(types or None, target_words=tw_val, library=lib),
             }
+        elif segs == ['kb', 'verified-excerpts']:
+            types = [t for t in first(query, 'types').split(',') if t]
+            data = {
+                'excerpts': lib.list_verified_excerpts(
+                    types=types or None,
+                    scene_function=first(query, 'scene_function'),
+                ),
+            }
         if data is None:
             return False
         handler._send_json(200, data)
@@ -191,6 +206,14 @@ class ProductionRoutes:
                     data = app.run_deslop(ident, body)
                 elif action == 'manuscript-imports':
                     data = app.analyze_manuscript_import(ident, body)
+                elif action == 'author-memory':
+                    data = app.save_author_memory(ident, body)
+                elif action == 'style-whitelist':
+                    data = app.save_style_whitelist(ident, body)
+                elif action == 'publish-preflight':
+                    data = app.publish_preflight(ident, body)
+                elif action == 'ab-judge':
+                    data = app.run_ab_blind_judge(ident, body)
                 elif action == 'run':
                     data = app.run(ident, body)
                 elif action == 'retry':
@@ -246,6 +269,8 @@ class ProductionRoutes:
             data = lib.save_type(segs[2], body)
         elif len(segs) == 3 and segs[:2] == ['kb', 'upgrades']:
             raise ValueError('历史升级记录只读。新方法请从本书已批准的现行结构提炼并审核。')
+        elif segs == ['kb', 'verified-excerpts']:
+            data, status = lib.add_verified_excerpt(body), 201
         if data is None:
             return False
         handler._send_json(status, data)

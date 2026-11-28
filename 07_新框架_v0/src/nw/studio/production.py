@@ -1043,3 +1043,168 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
             res = apply_manuscript_import_to_baseline(store, import_id, resolved_conflicts=resolutions)
         self.db.event(ident, 'manuscript_import', f'已将 {res["chapters_imported"]} 章导入书稿写入正史基线', res)
         return res
+
+    def author_memory(self, ident: str, workflow_stage: str = '') -> dict:
+        from nw.author_memory import list_book_preferences, list_global_preferences, query_merged_author_memory
+        from nw.voice_specs import load_book_style_whitelist
+        novel = self.db.get(ident)
+        genres = list(novel.get('wizard', {}).get('genres') or ())
+        with self.open_store(novel) as store, self.library.connect() as lib_conn:
+            merged = query_merged_author_memory(
+                lib_conn, store, genre_ids=genres or None, workflow_stage=workflow_stage or 'writing',
+            )
+            global_items = list_global_preferences(lib_conn, status='active')
+            book_items = list_book_preferences(store, status='active')
+            whitelist = load_book_style_whitelist(store)
+        return {
+            'novel_id': ident,
+            'merged': merged,
+            'global_items': global_items,
+            'book_items': book_items,
+            'style_whitelist': whitelist,
+        }
+
+    def save_author_memory(self, ident: str, body: dict) -> dict:
+        from nw.author_memory import (
+            forget_preference,
+            promote_book_preference_to_global,
+            remember_book_preference,
+            remember_global_preference,
+            replace_preference,
+        )
+        novel = self.db.get(ident)
+        action = str(body.get('action') or 'remember').strip().lower()
+        level = str(body.get('level') or 'book').strip().lower()
+
+        with self.open_store(novel) as store, self.library.connect() as lib_conn:
+            if action == 'forget':
+                res = forget_preference(str(body.get('id') or ''), library_conn=lib_conn, store=store)
+                self.db.event(ident, 'author_memory', f'遗忘作者偏好 {res["id"]}', res)
+                return res
+            if action == 'replace':
+                res = replace_preference(
+                    str(body.get('id') or ''),
+                    new_assertion=str(body.get('assertion') or body.get('new_assertion') or ''),
+                    importance=(int(body['importance']) if body.get('importance') is not None else None),
+                    kind=(str(body['kind']) if body.get('kind') else None),
+                    library_conn=lib_conn,
+                    store=store,
+                )
+                self.db.event(ident, 'author_memory', f'更新作者偏好 {res["replaced_id"]} → {res["new_item"]["id"]}', res)
+                return res
+            if action == 'promote':
+                res = promote_book_preference_to_global(
+                    store, lib_conn, str(body.get('id') or ''),
+                    scope=str(body.get('scope') or 'global'),
+                    genre_tags=body.get('genre_tags') if isinstance(body.get('genre_tags'), list) else None,
+                    workflow_stage=str(body.get('workflow_stage') or ''),
+                )
+                self.db.event(ident, 'author_memory', f'将本书偏好 {res["promoted_from"]} 升格为跨书全局偏好 {res["global_item"]["id"]}', res)
+                return res
+
+            if level == 'global':
+                item = remember_global_preference(
+                    lib_conn,
+                    assertion=str(body.get('assertion') or ''),
+                    kind=str(body.get('kind') or 'prose'),
+                    scope=str(body.get('scope') or 'global'),
+                    genre_tags=body.get('genre_tags') if isinstance(body.get('genre_tags'), list) else None,
+                    workflow_stage=str(body.get('workflow_stage') or ''),
+                    importance=int(body.get('importance') or 3),
+                )
+                self.db.event(ident, 'author_memory', f'新增跨书全局偏好 {item["id"]}', {'id': item['id']})
+                return {'item': item}
+            item = remember_book_preference(
+                store,
+                assertion=str(body.get('assertion') or ''),
+                kind=str(body.get('kind') or 'prose'),
+                importance=int(body.get('importance') or 3),
+                overrides_global_id=str(body.get('overrides_global_id') or ''),
+            )
+            self.db.event(ident, 'author_memory', f'新增本书偏好 {item["id"]}', {'id': item['id']})
+            return {'item': item}
+
+    def save_style_whitelist(self, ident: str, body: dict) -> dict:
+        from nw.voice_specs import save_book_style_whitelist
+        novel = self.db.get(ident)
+        raw_items = body.get('items')
+        if isinstance(raw_items, str):
+            items = [ln.strip() for ln in raw_items.splitlines() if ln.strip()]
+        elif isinstance(raw_items, list):
+            items = [str(x).strip() for x in raw_items if str(x).strip()]
+        else:
+            items = []
+        with self.open_store(novel) as store:
+            saved = save_book_style_whitelist(store, items)
+        self.db.event(ident, 'style_whitelist', f'更新本书样式白名单（{len(saved)} 条）', {'count': len(saved)})
+        return {'novel_id': ident, 'style_whitelist': saved}
+
+    def publish_preflight(self, ident: str, body: dict | None = None) -> dict:
+        from nw.publish_preflight import PLATFORM_SPECS, sweep_book_for_publish, validate_publish_package
+        novel = self.db.get(ident)
+        payload = body if isinstance(body, dict) else {}
+        platform = str(payload.get('platform') or 'fanqie').strip().lower()
+        quote_mode = str(payload.get('quote_mode') or 'keep').strip().lower()
+        branch = str(payload.get('branch') or novel.get('current_branch') or 'main')
+        title = str(payload.get('title') if payload.get('title') is not None else (novel.get('title') or ''))
+        wizard = novel.get('wizard') or {}
+        synopsis = str(payload.get('synopsis') if payload.get('synopsis') is not None else (wizard.get('summary') or wizard.get('idea') or ''))
+        tags = payload.get('tags')
+        if isinstance(tags, str):
+            tags = [t.strip() for t in tags.replace('，', ',').split(',') if t.strip()]
+        elif not isinstance(tags, list):
+            tags = list(wizard.get('genres') or ())[:4]
+        category = str(payload.get('category') or (wizard.get('genres')[0] if wizard.get('genres') else ''))
+
+        metadata_check = validate_publish_package(
+            platform, title=title, synopsis=synopsis, tags=tags, category=category,
+        )
+        with self.open_store(novel) as store:
+            sweep = sweep_book_for_publish(store, branch=branch, platform=platform, quote_mode=quote_mode)
+        return {
+            'novel_id': ident,
+            'platforms': [{'id': k, 'name': v['name'], 'signing_notes': v['signing_notes']} for k, v in PLATFORM_SPECS.items()],
+            'metadata_check': metadata_check,
+            'chapter_sweep': sweep,
+            'overall_passed': bool(metadata_check['passed'] and sweep['passed']),
+        }
+
+    def run_ab_blind_judge(self, ident: str, body: dict) -> dict:
+        from nw.ab_judge import run_position_swapped_ab_judge
+        novel = self.db.get(ident)
+        scene_id = str(body.get('scene_id') or '').strip()
+        draft_a_id = str(body.get('draft_a_id') or '').strip()
+        draft_b_id = str(body.get('draft_b_id') or '').strip()
+        draft_a_text = str(body.get('draft_a_text') or '')
+        draft_b_text = str(body.get('draft_b_text') or '')
+        label_a = str(body.get('label_a') or '稿件 A')
+        label_b = str(body.get('label_b') or '稿件 B')
+        outline_text = str(body.get('outline_text') or '')
+        criteria = str(body.get('criteria') or '')
+
+        with self.open_store(novel) as store:
+            if scene_id and (not draft_a_text or not draft_b_text):
+                drafts = store.drafts(scene_id)
+                by_id = {d.id: d for d in drafts}
+                if draft_a_id in by_id:
+                    draft_a_text = by_id[draft_a_id].text
+                    label_a = f'草稿 v{by_id[draft_a_id].version}'
+                elif len(drafts) >= 2 and not draft_a_text:
+                    draft_a_text = drafts[-2].text
+                    label_a = f'草稿 v{drafts[-2].version}'
+                if draft_b_id in by_id:
+                    draft_b_text = by_id[draft_b_id].text
+                    label_b = f'草稿 v{by_id[draft_b_id].version}'
+                elif len(drafts) >= 1 and not draft_b_text:
+                    draft_b_text = drafts[-1].text
+                    label_b = f'草稿 v{drafts[-1].version}'
+
+        config, provider = self._runtime()
+        result = run_position_swapped_ab_judge(
+            draft_a_text, draft_b_text,
+            provider=provider, model=config.model, params=dict(config.params),
+            outline_text=outline_text, criteria=criteria,
+            label_a=label_a, label_b=label_b,
+        )
+        self.db.event(ident, 'ab_judge', f'完成双向换位双盲评审：{result["winner_label"]}', {'scene_id': scene_id, 'winner': result['winner']})
+        return result

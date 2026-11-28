@@ -766,6 +766,7 @@ def compile_book_voice_spec(
         'fingerprints': attached_fps[:3],
         'fingerprint_ids': [fp['id'] for fp in attached_fps[:3] if fp.get('id')],
         'custom_notes': notes_clean,
+        'style_whitelist': [],
         'updated_at': now(),
     }
     spec['sha256'] = content_sha256({k: v for k, v in spec.items() if k not in ('updated_at', 'sha256')})
@@ -881,6 +882,15 @@ def load_book_voice_spec(store: Store) -> dict[str, Any] | None:
 def save_book_voice_spec(store: Store, spec: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(spec, dict) or not spec.get('base_voice_id'):
         raise ValueError('无效的本书语感规范卡')
+    # Preserve existing book-local style_whitelist / learned_contrasts / learned_redlines when caller omits them
+    existing = load_book_voice_spec(store)
+    if isinstance(existing, dict):
+        if 'style_whitelist' not in spec and isinstance(existing.get('style_whitelist'), list):
+            spec = {**spec, 'style_whitelist': list(existing['style_whitelist'])}
+        if 'learned_contrasts' not in spec and isinstance(existing.get('learned_contrasts'), list):
+            spec = {**spec, 'learned_contrasts': list(existing['learned_contrasts'])}
+        if 'learned_redlines' not in spec and isinstance(existing.get('learned_redlines'), list):
+            spec = {**spec, 'learned_redlines': list(existing['learned_redlines'])}
     path = _voice_spec_path(store)
     path.parent.mkdir(parents=True, exist_ok=True)
     staged = NamedTemporaryFile('w', encoding='utf-8', newline='', dir=path.parent,
@@ -893,6 +903,47 @@ def save_book_voice_spec(store: Store, spec: dict[str, Any]) -> dict[str, Any]:
     finally:
         tmp.unlink(missing_ok=True)
     return spec
+
+
+def load_book_style_whitelist(store: Store | None) -> list[str]:
+    """Load book-local literal exemptions (catchphrases, in-world idioms, deliberate stylistic phrases).
+
+    Strictly book-local: NEVER shared across books!
+    """
+    if store is None:
+        return []
+    spec = load_book_voice_spec(store)
+    if not isinstance(spec, dict):
+        return []
+    raw = spec.get('style_whitelist')
+    if not isinstance(raw, list):
+        return []
+    seen: set[str] = set()
+    cleaned: list[str] = []
+    for item in raw:
+        s = str(item or '').strip()
+        if 2 <= len(s) <= 80 and s not in seen:
+            seen.add(s)
+            cleaned.append(s)
+    return cleaned[:60]
+
+
+def save_book_style_whitelist(store: Store, items: list[str] | tuple[str, ...]) -> list[str]:
+    """Persist book-local style whitelist literals inside `voice_spec.json`."""
+    spec = load_book_voice_spec(store)
+    if spec is None:
+        spec = compile_book_voice_spec((), enabled=True)
+    seen: set[str] = set()
+    cleaned: list[str] = []
+    for item in (items or ()):
+        s = str(item or '').strip()
+        if 2 <= len(s) <= 80 and s not in seen:
+            seen.add(s)
+            cleaned.append(s)
+    spec['style_whitelist'] = cleaned[:60]
+    spec['updated_at'] = now()
+    save_book_voice_spec(store, spec)
+    return spec['style_whitelist']
 
 
 # ---------- Library.db Multi-Genre Voice Fingerprint Registry ----------

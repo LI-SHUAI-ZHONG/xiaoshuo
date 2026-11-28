@@ -52,16 +52,31 @@ _FUNCTIONAL_SLOP_PATTERNS: tuple[tuple[str, str, re.Pattern[str]], ...] = (
 )
 
 SEMANTIC_CLEANUP_RUBRIC = (
-    '【语义去 AI 味七问准则】对每个待修区间逐句自检：'
-    '1. 动作或眼神已体现的情绪，删掉冗余的旁白情绪标签；'
-    '2. 抽掉人名放进任何小说都成立的万金油过渡句，换成与当前人物处境绑定的具体物象/感官；'
-    '3. 围观群演不要齐声倒吸凉气，只给 1–2 个具体人分化的反应；'
-    '4. 对话不要借人物之口宣讲背景设定，改回带利害与潜台词的真实交锋；'
-    '5. 严禁机械删除正常衔接词、贴切比喻或刻意节奏排比。'
+    '【语义去 AI 味准则（四通道平衡 · 拒绝矫枉过正）】对每个待修区间逐句自检：'
+    '1. 情绪、心理、对白、动作四通道平权：保留直接情绪、人物利害算账与口语因果推进（因为/所以/省得/免得/索性/偏偏），绝不把所有心理和情绪一律改成身体微动作；'
+    '2. 清理无后果慢速手眼道具套动作（指腹摩挲/慢慢拢住/手往袖里缩/视线落…停半秒）和动作后冗余情绪标签，只留推动局面或有真实物理后果的动作；'
+    '3. 抽掉人名放进任何小说都成立的万金油过渡句与预告式结尾，换成与当前人物处境绑定的具体判断或实景；'
+    '4. 围观群演不要齐声倒吸凉气，只给 1–2 个具体人分化的反应；对话不要借人物之口宣讲背景设定；'
+    '5. 严禁机械删除正常衔接词、贴切比喻、本书样式白名单固定表达或刻意节奏排比。'
 )
 
 
-def analyze_deslop_targets(text: str, *, max_targets: int = 4) -> dict[str, Any]:
+def _mask_style_whitelist(text: str, whitelist: list[str] | tuple[str, ...] | None) -> str:
+    if not text or not whitelist:
+        return text
+    out = text
+    for literal in sorted({str(w) for w in whitelist if isinstance(w, str) and w.strip()}, key=len, reverse=True):
+        if literal in out:
+            out = out.replace(literal, '〇' * len(literal))
+    return out
+
+
+def analyze_deslop_targets(
+    text: str,
+    *,
+    max_targets: int = 4,
+    style_whitelist: list[str] | tuple[str, ...] | None = None,
+) -> dict[str, Any]:
     """Score every paragraph for lexical + functional AI-slop density (0 tokens)."""
     paras = segment_prose(text or '')
     scored: list[dict[str, Any]] = []
@@ -69,12 +84,13 @@ def analyze_deslop_targets(text: str, *, max_targets: int = 4) -> dict[str, Any]
 
     for p in paras:
         p_text = p['text']
+        scan_text = _mask_style_whitelist(p_text, style_whitelist)
         hits: list[dict[str, str]] = []
         for code, desc, pat in _AI_CLICHE_PATTERNS:
-            for m in pat.finditer(p_text):
+            for m in pat.finditer(scan_text):
                 hits.append({'code': code, 'kind': 'lexical', 'label': desc, 'match': m.group(0)})
         for code, desc, pat in _FUNCTIONAL_SLOP_PATTERNS:
-            for m in pat.finditer(p_text):
+            for m in pat.finditer(scan_text):
                 hits.append({'code': code, 'kind': 'functional', 'label': desc, 'match': m.group(0)})
         if hits:
             total_hits += len(hits)
@@ -183,7 +199,9 @@ def run_semantic_deslop(
     extra_instruction: str = '',
 ) -> dict[str, Any]:
     """Run a host-bounded, fact-frozen semantic deslop/polish pass on a draft."""
-    analysis = analyze_deslop_targets(draft_text)
+    from nw.voice_specs import load_book_style_whitelist
+    whitelist = load_book_style_whitelist(store)
+    analysis = analyze_deslop_targets(draft_text, style_whitelist=whitelist)
     chosen = list(target_paragraphs) if target_paragraphs is not None else list(analysis['recommended_target_paragraphs'])
     if not chosen:
         return {

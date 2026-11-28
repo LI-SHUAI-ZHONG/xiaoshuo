@@ -28,6 +28,20 @@ from nw.voice_specs import (
     get_voice_fingerprints_by_ids,
     list_voice_fingerprints as _list_voice_fingerprints,
 )
+from nw.author_memory import (
+    GLOBAL_AUTHOR_MEMORY_SCHEMA,
+    forget_preference as _forget_preference,
+    list_global_preferences as _list_global_preferences,
+    remember_global_preference as _remember_global_preference,
+    replace_preference as _replace_preference,
+)
+from nw.verified_excerpts import (
+    VERIFIED_EXCERPT_SCHEMA,
+    build_writer_verified_excerpts_packet as _build_writer_verified_excerpts_packet,
+    extract_and_verify_corpus_excerpt as _extract_and_verify_corpus_excerpt,
+    list_verified_excerpts as _list_verified_excerpts,
+    save_verified_excerpt as _save_verified_excerpt,
+)
 
 
 SCHEMA = '''
@@ -89,6 +103,8 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
             conn.executescript(CORPUS_SCHEMA)
             conn.executescript(VOICE_FINGERPRINT_SCHEMA)
             conn.executescript(CRAFT_FINGERPRINT_SCHEMA)
+            conn.executescript(GLOBAL_AUTHOR_MEMORY_SCHEMA)
+            conn.executescript(VERIFIED_EXCERPT_SCHEMA)
         migrate_legacy(self)
         recover_corpus_jobs(self)
         from nw.studio.staging_model import recover_decompositions
@@ -219,3 +235,72 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
         from nw.craft_specs import all_base_name_map
         with self.connect() as conn:
             return _get_craft_fingerprints_by_ids(conn, ids, domain=domain, base_names=all_base_name_map())
+
+    def list_global_author_memory(self, *, status: str | None = 'active', scope: str | None = None) -> list[dict]:
+        with self.connect() as conn:
+            return _list_global_preferences(conn, status=status, scope=scope)
+
+    def remember_global_author_memory(self, body: dict) -> dict:
+        with self.connect() as conn:
+            return _remember_global_preference(
+                conn,
+                assertion=str(body.get('assertion') or ''),
+                kind=str(body.get('kind') or 'prose'),
+                scope=str(body.get('scope') or 'global'),
+                genre_tags=body.get('genre_tags') if isinstance(body.get('genre_tags'), list) else None,
+                workflow_stage=str(body.get('workflow_stage') or ''),
+                importance=int(body.get('importance') or 3),
+                source=str(body.get('source') or 'author_explicit'),
+            )
+
+    def replace_global_author_memory(self, pref_id: str, body: dict) -> dict:
+        with self.connect() as conn:
+            return _replace_preference(
+                pref_id,
+                new_assertion=str(body.get('assertion') or body.get('new_assertion') or ''),
+                importance=(int(body['importance']) if body.get('importance') is not None else None),
+                kind=(str(body['kind']) if body.get('kind') else None),
+                library_conn=conn,
+            )
+
+    def forget_global_author_memory(self, pref_id: str) -> dict:
+        with self.connect() as conn:
+            return _forget_preference(pref_id, library_conn=conn)
+
+    def list_verified_excerpts(
+        self,
+        *,
+        types: list[str] | tuple[str, ...] | None = None,
+        scene_function: str = '',
+        limit: int = 20,
+    ) -> list[dict]:
+        with self.connect() as conn:
+            return _list_verified_excerpts(conn, type_tags=types, scene_function=scene_function, limit=limit)
+
+    def add_verified_excerpt(self, body: dict) -> dict:
+        raw_text = str(body.get('raw_chapter_text') or body.get('text') or '')
+        start = int(body.get('start', 0))
+        end = int(body.get('end', len(raw_text)))
+        extracted = _extract_and_verify_corpus_excerpt(
+            raw_text, start, end,
+            book_id=str(body.get('book_id') or ''),
+            chapter_index=int(body.get('chapter_index') or 0),
+            type_tags=body.get('type_tags') if isinstance(body.get('type_tags'), list) else None,
+            scene_function=str(body.get('scene_function') or 'confrontation'),
+            learn_what=str(body.get('learn_what') or ''),
+            do_not_copy=str(body.get('do_not_copy') or ''),
+            known_names=body.get('known_names'),
+        )
+        with self.connect() as conn:
+            saved = _save_verified_excerpt(conn, extracted)
+        return {'excerpt': saved, 'verification': extracted['verification']}
+
+    def verified_excerpts_packet(
+        self,
+        *,
+        types: list[str] | tuple[str, ...] | None = None,
+        scene_function: str = 'confrontation',
+        limit: int = 2,
+    ) -> dict | None:
+        with self.connect() as conn:
+            return _build_writer_verified_excerpts_packet(conn, type_tags=types, scene_function=scene_function, limit=limit)

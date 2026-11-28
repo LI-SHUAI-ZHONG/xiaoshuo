@@ -95,6 +95,8 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         appended += ' ' + craft_guard
     if purpose == 'review' and pre_review_note:
         appended += ' ' + pre_review_note + ' 只依据正文证据、机检线索与已确认规范核验，不自由主观评价“文笔好坏”。'
+    if purpose == 'review':
+        appended += ' 核查本场核心冲突与关键节拍是否当场展开演出（scene），而非仅用一两句旁白概述带过（summary）或遗漏（missing）。'
     if purpose == 'review' and revision_diff_note:
         appended += '\n' + revision_diff_note + ' 请结合上述改前/改后差异核验是否已修复原问题，并检查是否存在未授权段落的越界破坏。'
     keys = check_source_keys(contract['checks']) if contract else writing_keys

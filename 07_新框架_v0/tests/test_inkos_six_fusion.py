@@ -169,7 +169,7 @@ def _make_managed_store(tmp_path: Path, *, with_promise: bool = True, with_resou
 def test_schema_v13_and_author_shell_translations(tmp_path: Path) -> None:
     store = Store(tmp_path / 'v13_check', create=True, test_mode=True)
     version = store.connection.execute('PRAGMA user_version').fetchone()[0]
-    assert version == 13
+    assert version >= 13
     tables = {r[0] for r in store.connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     assert 'narrative_forecasts' in tables
     assert 'manuscript_imports' in tables

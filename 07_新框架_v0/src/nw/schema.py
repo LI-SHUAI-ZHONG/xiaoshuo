@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 13
+VERSION = 14
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -425,6 +425,25 @@ PRAGMA user_version=13;
 COMMIT;
 """
 
+MIGRATE_V14 = """
+BEGIN IMMEDIATE;
+CREATE TABLE book_author_memory(
+ id TEXT PRIMARY KEY,
+ kind TEXT NOT NULL DEFAULT 'prose' CHECK(kind IN ('prose','dialogue','pacing','character','world','workflow','taboo','other')),
+ assertion TEXT NOT NULL CHECK(length(trim(assertion))>0),
+ importance INTEGER NOT NULL DEFAULT 3 CHECK(importance BETWEEN 1 AND 5),
+ overrides_global_id TEXT NOT NULL DEFAULT '',
+ status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','replaced','forgotten')),
+ replaced_by TEXT NOT NULL DEFAULT '',
+ source TEXT NOT NULL DEFAULT 'author_explicit',
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL);
+CREATE INDEX book_author_memory_status ON book_author_memory(status,importance,updated_at);
+
+PRAGMA user_version=14;
+COMMIT;
+"""
+
 MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6,
               6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10, 10: MIGRATE_V11, 11: MIGRATE_V12,
-              12: MIGRATE_V13}
+              12: MIGRATE_V13, 13: MIGRATE_V14}

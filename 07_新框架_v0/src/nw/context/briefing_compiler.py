@@ -93,6 +93,8 @@ def compile_writer_briefing(
     voice_data: dict[str, Any] | None = None
     scene_beat_data: dict[str, Any] | None = None
     style_ref_data: dict[str, Any] | None = None
+    author_memory_data: dict[str, Any] | None = None
+    verified_excerpts_data: dict[str, Any] | None = None
     previous_prose = ''
     pov_holder = ''
     pov_facts: list[dict[str, Any]] = []
@@ -128,6 +130,10 @@ def compile_writer_briefing(
             scene_beat_data = parsed
         elif src == 'style-reference' and isinstance(parsed, dict):
             style_ref_data = parsed
+        elif src == 'author-memory' and isinstance(parsed, dict):
+            author_memory_data = parsed
+        elif src == 'verified-excerpts' and isinstance(parsed, dict):
+            verified_excerpts_data = parsed
         elif src.startswith('previous:'):
             previous_prose = raw_text.strip()
         elif src.startswith('pov:'):
@@ -317,6 +323,22 @@ def compile_writer_briefing(
                 s4.append(f'- {lbl}：{str(scene_beat_data[k]).strip()[:180]}')
     if style_ref_data and style_ref_data.get('excerpt'):
         s4.append(f'- 写前语感参照（只学呼吸与口吻，严禁照搬设定/人名）：\n  {str(style_ref_data["excerpt"]).strip()[:500]}')
+    if author_memory_data and author_memory_data.get('lines'):
+        s4.append('- 作者显式创作偏好（2KB 预算内最高优先级规则）：')
+        for ln in (author_memory_data.get('lines') or ())[:16]:
+            cleaned_ln = str(ln or '').strip()
+            if cleaned_ln:
+                s4.append(f'  {cleaned_ln}')
+        if author_memory_data.get('omission_notice'):
+            s4.append(f'  （注：{str(author_memory_data["omission_notice"]).strip()[:240]}）')
+    if verified_excerpts_data and verified_excerpts_data.get('excerpts'):
+        s4.append('- 三检实文匿名范例（只学行文呼吸与节奏，严禁照搬桥段）：')
+        for ex in (verified_excerpts_data.get('excerpts') or ())[:2]:
+            if not isinstance(ex, dict) or not ex.get('text'):
+                continue
+            learn = str(ex.get('learn_what') or '').strip()
+            s4.append(f'  · [{ex.get("scene_function") or "实文示范"}] {learn}')
+            s4.append(f'    {str(ex["text"]).strip()[:360]}')
 
     # ── Section 5: 前文紧邻承接、近期脉络与本场写法约束 ──
     s5: list[str] = ['## 五、前文紧邻承接与近期脉络']

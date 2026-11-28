@@ -537,3 +537,265 @@ export async function openManuscriptImportDrawer(novelId, {onChanged = null} = {
     fail(err);
   }
 }
+
+export async function openAuthorMemoryDrawer(novelId, {onChanged = null} = {}) {
+  drawer('作者跨书记忆（AP / BP）与本书样式白名单', loading());
+  try {
+    const data = await api.get(`/novels/${enc(novelId)}/author-memory`);
+    const merged = data.merged || {};
+    const bookItems = data.book_items || [];
+    const globalItems = data.global_items || [];
+    const whitelist = data.style_whitelist || [];
+    const used = Number(merged.bytes_used || 0);
+    const budget = Number(merged.byte_budget || 2048);
+    const pct = Math.min(100, Math.round((used / Math.max(1, budget)) * 100));
+
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:14px">
+      <div class="card stack" style="gap:8px">
+        <div class="row spread wrap">
+          <strong>写前偏好注入预算（按渲染行 UTF-8 字节实测）</strong>
+          <span class="tag ${pct >= 90 ? 'amber' : 'green'}">${number(used)} / ${number(budget)} B（${pct}%）</span>
+        </div>
+        <div class="progress-track"><span style="width:${pct}%"></span></div>
+        <p class="muted" style="margin:0;font-size:12px">已注入 ${(merged.items || []).length} 条（本书 BP ${bookItems.length} 条 · 跨书全局 AP ${globalItems.length} 条）；按重要度 → 本书覆写 → 最近更新排序。</p>
+        ${merged.omission_notice ? `<div class="notice warning" style="margin:0;font-size:12px">${esc(merged.omission_notice)}</div>` : ''}
+      </div>
+
+      <form id="authorMemoryForm" class="card stack" style="gap:10px">
+        <strong>新增作者显式偏好</strong>
+        <div class="row wrap" style="gap:8px">
+          <label class="field" style="flex:1"><span>作用域级别</span><select name="level"><option value="book">本书专属（BP · 随书携带可覆写全局）</option><option value="global">跨书全局（AP · 写入 library.db 复用）</option></select></label>
+          <label class="field" style="flex:1"><span>分类</span><select name="kind"><option value="prose">行文语感</option><option value="dialogue">对白口吻</option><option value="pacing">节奏推进</option><option value="character">人物塑造</option><option value="world">世界规则</option><option value="taboo">雷点禁忌</option><option value="workflow">工作流偏好</option></select></label>
+          <label class="field" style="width:110px"><span>重要度 (1-5)</span><input type="number" name="importance" min="1" max="5" value="4"></label>
+        </div>
+        <label class="field"><span>偏好断言（简明可执行，不超过 240 字）</span><textarea name="assertion" rows="2" required placeholder="例如：对峙场面优先用人物利害算账和短交锋推进，不要让角色反复摩挲指腹或茶杯。"></textarea></label>
+        <label class="field"><span>可选：覆写哪条全局偏好 ID（仅本书 BP 生效，如 AP001）</span><input name="overrides_global_id" placeholder="留空表示不覆写"></label>
+        <div><button type="submit" class="button">记住这条偏好</button></div>
+      </form>
+
+      <div class="card stack" style="gap:8px">
+        <strong>本书专属偏好（BP · ${bookItems.length} 条）</strong>
+        ${bookItems.map(it => `<div class="review-item row spread wrap" style="gap:8px">
+          <div class="grow">
+            <span class="tag blue">${esc(it.id)}</span>
+            <span class="tag">重要度 ${it.importance}</span>
+            ${it.overrides_global_id ? `<span class="tag amber">覆写 ${esc(it.overrides_global_id)}</span>` : ''}
+            <span style="font-size:13px;margin-left:4px">${esc(it.assertion)}</span>
+          </div>
+          <div class="row" style="gap:6px">
+            <button type="button" class="ghost" data-mem-promote="${esc(it.id)}">升格全局</button>
+            <button type="button" class="ghost" data-mem-forget="${esc(it.id)}">遗忘</button>
+          </div>
+        </div>`).join('') || '<p class="muted" style="margin:0;font-size:12px">暂无本书专属偏好。</p>'}
+      </div>
+
+      <div class="card stack" style="gap:8px">
+        <strong>跨书全局偏好（AP · ${globalItems.length} 条）</strong>
+        ${globalItems.map(it => `<div class="review-item row spread wrap" style="gap:8px">
+          <div class="grow">
+            <span class="tag green">${esc(it.id)}</span>
+            <span class="tag">${esc(it.scope)} · 重要度 ${it.importance}</span>
+            <span style="font-size:13px;margin-left:4px">${esc(it.assertion)}</span>
+          </div>
+          <button type="button" class="ghost" data-mem-forget="${esc(it.id)}">遗忘</button>
+        </div>`).join('') || '<p class="muted" style="margin:0;font-size:12px">暂无跨书全局偏好。</p>'}
+      </div>
+
+      <form id="styleWhitelistForm" class="card stack" style="gap:8px">
+        <strong>本书样式白名单（严格仅限本书，绝不跨书污染）</strong>
+        <p class="muted" style="margin:0;font-size:12px">每行一条固定口头禅、书内专有标语或刻意保留的格式字面量；0-Token 机检、去 AI 味和标点归一化都会精确豁免这些片段。</p>
+        <textarea name="items" rows="3" placeholder="例如：&#10;这一刻，命运的齿轮开始转动&#10;【系统提示】">${esc(whitelist.join('\n'))}</textarea>
+        <div><button type="submit" class="secondary">保存本书样式白名单</button></div>
+      </form>
+    </div>`;
+
+    $('#authorMemoryForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      busy(f.querySelector('[type=submit]'), async () => {
+        await api.post(`/novels/${enc(novelId)}/author-memory`, {
+          action: 'remember',
+          level: f.querySelector('[name=level]').value,
+          kind: f.querySelector('[name=kind]').value,
+          importance: Number(f.querySelector('[name=importance]').value || 4),
+          assertion: f.querySelector('[name=assertion]').value.trim(),
+          overrides_global_id: f.querySelector('[name=overrides_global_id]').value.trim(),
+        });
+        toast('已记住作者创作偏好');
+        if (onChanged) await onChanged();
+        await openAuthorMemoryDrawer(novelId, {onChanged});
+      });
+    });
+    $$('[data-mem-promote]').forEach(btn => {
+      btn.onclick = e => busy(e.currentTarget, async () => {
+        const res = await api.post(`/novels/${enc(novelId)}/author-memory`, {
+          action: 'promote', id: btn.dataset.memPromote, scope: 'global',
+        });
+        toast(`已升格为跨书全局偏好 ${res.global_item?.id || ''}`);
+        await openAuthorMemoryDrawer(novelId, {onChanged});
+      });
+    });
+    $$('[data-mem-forget]').forEach(btn => {
+      btn.onclick = e => busy(e.currentTarget, async () => {
+        await api.post(`/novels/${enc(novelId)}/author-memory`, {action: 'forget', id: btn.dataset.memForget});
+        toast(`已遗忘偏好 ${btn.dataset.memForget}`);
+        await openAuthorMemoryDrawer(novelId, {onChanged});
+      });
+    });
+    $('#styleWhitelistForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      busy(f.querySelector('[type=submit]'), async () => {
+        const res = await api.post(`/novels/${enc(novelId)}/style-whitelist`, {
+          items: f.querySelector('[name=items]').value,
+        });
+        toast(`已保存 ${res.style_whitelist.length} 条本书样式白名单`);
+        if (onChanged) await onChanged();
+      });
+    });
+  } catch (err) {
+    fail(err);
+  }
+}
+
+export async function openPublishPreflightDrawer(novelId, {onChanged = null} = {}) {
+  drawer('发书上架合规体检与全书一键清扫', loading());
+  try {
+    const initial = await api.get(`/novels/${enc(novelId)}/publish-preflight?platform=fanqie`);
+    const renderBody = (rep, formVals = {}) => {
+      const meta = rep.metadata_check || {};
+      const sweep = rep.chapter_sweep || {};
+      const platforms = rep.platforms || [];
+      $('#drawerBody').innerHTML = `<div class="stack" style="gap:14px">
+        <div class="card stack" style="gap:10px">
+          <div class="row spread wrap">
+            <strong>目标发书平台合规校验</strong>
+            <span class="tag ${rep.overall_passed ? 'green' : 'amber'}">${rep.overall_passed ? '✅ 可直接发书上架' : '⚠️ 存在待修项'}</span>
+          </div>
+          <p class="muted" style="margin:0;font-size:12px">${esc(meta.signing_notes || '')}</p>
+          <form id="publishPreflightForm" class="stack" style="gap:8px">
+            <div class="row wrap" style="gap:8px">
+              <label class="field" style="flex:1"><span>发布平台</span><select name="platform">${platforms.map(p => `<option value="${esc(p.id)}" ${p.id === meta.platform ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
+              <label class="field" style="flex:1"><span>引号归一化格式</span><select name="quote_mode"><option value="keep" ${sweep.quote_mode === 'keep' ? 'selected' : ''}>保持原样（仅修破损标点）</option><option value="curly" ${sweep.quote_mode === 'curly' ? 'selected' : ''}>统一为双引号“”</option><option value="yan" ${sweep.quote_mode === 'yan' ? 'selected' : ''}>统一为直角引号「」</option></select></label>
+            </div>
+            <label class="field"><span>书名（当前折算 ${meta.weighted_title_length ?? 0} / 上限 ${meta.max_title_length ?? 15} 字）</span><input name="title" value="${esc(formVals.title ?? '')}" placeholder="输入待上架书名（留空使用当前立项书名）"></label>
+            <label class="field"><span>简介（当前 ${meta.synopsis_length ?? 0} 字，区间 ${(meta.synopsis_range || [40, 500]).join('–')} 字）</span><textarea name="synopsis" rows="3" placeholder="输入发书简介（留空使用立项梗概）">${esc(formVals.synopsis ?? '')}</textarea></label>
+            <label class="field"><span>发书标签（逗号分隔，最多 ${meta.max_tags ?? 5} 个）</span><input name="tags" value="${esc(formVals.tags ?? '')}" placeholder="例如：悬疑推理, 现实向, 强反转"></label>
+            <div><button type="submit" class="button">执行上架体检 + 整书标点退化扫描</button></div>
+          </form>
+        </div>
+
+        <div class="card stack" style="gap:8px">
+          <strong>元信息检查结果（书名 / 简介 / 标签）</strong>
+          ${(meta.blocking_issues || []).map(it => `<div class="notice warning" style="margin:0;font-size:12px">⛔ ${esc(it.message)}</div>`).join('')}
+          ${(meta.warnings || []).map(it => `<div class="notice" style="margin:0;font-size:12px">⚠️ ${esc(it.message)}</div>`).join('')}
+          ${!(meta.blocking_issues || []).length && !(meta.warnings || []).length ? '<p class="muted" style="margin:0;font-size:12px">✅ 书名、简介与标签全部通过平台规范。</p>' : ''}
+        </div>
+
+        <div class="card stack" style="gap:8px">
+          <div class="row spread wrap">
+            <strong>全书已接受章节清扫（${number(sweep.chapter_count || 0)} 章 · ${number(sweep.total_chars || 0)} 字）</strong>
+            <div class="row" style="gap:6px">
+              <span class="tag ${sweep.blocked_chapters ? 'amber' : 'green'}">阻断 ${number(sweep.blocked_chapters || 0)} 章</span>
+              <span class="tag blue">自动修标点 ${number(sweep.auto_cleaned_chapters || 0)} 章</span>
+            </div>
+          </div>
+          ${(sweep.chapters || []).map(ch => `<div class="review-item stack" style="gap:4px">
+            <div class="row spread wrap">
+              <strong>第${ch.chapter_index}章 ${esc(ch.title)}</strong>
+              <span class="tag ${ch.status === 'blocked' ? 'amber' : (ch.status === 'clean' ? 'green' : 'blue')}">${esc(ch.status)} · ${number(ch.chars)} 字</span>
+            </div>
+            ${ch.length_note ? `<p class="muted" style="margin:0;font-size:12px">${esc(ch.length_note)}</p>` : ''}
+            ${(ch.blocking_issues || []).map(x => `<p style="margin:0;font-size:12px">⛔ ${esc(x.message)}</p>`).join('')}
+            ${(ch.attention_issues || []).map(x => `<p class="muted" style="margin:0;font-size:12px">⚠️ ${esc(x.message)}</p>`).join('')}
+          </div>`).join('') || '<p class="muted" style="margin:0;font-size:12px">当前尚无已接受章节正文。</p>'}
+          ${sweep.clean_export_text ? `<details class="details"><summary>预览 / 复制一键标点归一化后的发书净稿</summary><textarea readonly rows="8" style="width:100%;margin-top:8px">${esc(sweep.clean_export_text)}</textarea></details>` : ''}
+        </div>
+      </div>`;
+
+      $('#publishPreflightForm')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const f = e.currentTarget;
+        const vals = {
+          platform: f.querySelector('[name=platform]').value,
+          quote_mode: f.querySelector('[name=quote_mode]').value,
+          title: f.querySelector('[name=title]').value.trim() || undefined,
+          synopsis: f.querySelector('[name=synopsis]').value.trim() || undefined,
+          tags: f.querySelector('[name=tags]').value.trim() || undefined,
+        };
+        busy(f.querySelector('[type=submit]'), async () => {
+          const next = await api.post(`/novels/${enc(novelId)}/publish-preflight`, vals);
+          toast(next.overall_passed ? '上架合规体检全部通过' : '体检完成，请按标红项修正');
+          renderBody(next, {
+            title: f.querySelector('[name=title]').value,
+            synopsis: f.querySelector('[name=synopsis]').value,
+            tags: f.querySelector('[name=tags]').value,
+          });
+        });
+      });
+    };
+    renderBody(initial);
+  } catch (err) {
+    fail(err);
+  }
+}
+
+export async function openAbBlindJudgeDrawer(novelId, sceneId, {onChanged = null} = {}) {
+  drawer('同场双稿双向换位双盲裁判（抗位置偏见）', loading());
+  try {
+    const wb = await api.get(`/novels/${enc(novelId)}/quality?scene=${enc(sceneId || '')}`);
+    const detail = await api.get(`/novels/${enc(novelId)}`);
+    const sc = (detail.project?.scenes || []).find(s => s.id === sceneId);
+    const drafts = sc?.drafts || [];
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:14px">
+      <div class="notice" style="margin:0;font-size:12px">
+        单次让模型对比 A/B 两稿极易出现「总是偏爱排在前面的稿一」的位置偏见。本裁判自动执行 <strong>(A, B)</strong> 与 <strong>(B, A)</strong> 两轮完全匿名换位评审：<strong>只有两轮结论完全一致才判胜出，否则自动裁定平局交作者拍板</strong>。
+      </div>
+      <form id="abJudgeForm" class="card stack" style="gap:10px">
+        ${drafts.length >= 2 ? `<div class="row wrap" style="gap:8px">
+          <label class="field" style="flex:1"><span>稿件 A</span><select name="draft_a_id">${drafts.map((d, i) => `<option value="${esc(d.id)}" ${i === drafts.length - 2 ? 'selected' : ''}>草稿 v${d.version}</option>`).join('')}</select></label>
+          <label class="field" style="flex:1"><span>稿件 B</span><select name="draft_b_id">${drafts.map((d, i) => `<option value="${esc(d.id)}" ${i === drafts.length - 1 ? 'selected' : ''}>草稿 v${d.version}</option>`).join('')}</select></label>
+        </div>` : `<div class="stack" style="gap:8px">
+          <label class="field"><span>粘贴稿件 A 正文</span><textarea name="draft_a_text" rows="4" required placeholder="粘贴第一版草稿"></textarea></label>
+          <label class="field"><span>粘贴稿件 B 正文</span><textarea name="draft_b_text" rows="4" required placeholder="粘贴第二版草稿"></textarea></label>
+        </div>`}
+        <label class="field"><span>附加评审侧重点（可选）</span><input name="criteria" placeholder="例如：重点比较两人对峙的张力与去 AI 套话自然度"></label>
+        <div><button type="submit" class="button">发起双向换位盲评（2 轮校验）</button></div>
+      </form>
+      <div id="abJudgeResult"></div>
+    </div>`;
+
+    $('#abJudgeForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      busy(f.querySelector('[type=submit]'), async () => {
+        const res = await api.post(`/novels/${enc(novelId)}/ab-judge`, {
+          scene_id: sceneId,
+          draft_a_id: f.querySelector('[name=draft_a_id]')?.value || '',
+          draft_b_id: f.querySelector('[name=draft_b_id]')?.value || '',
+          draft_a_text: f.querySelector('[name=draft_a_text]')?.value || '',
+          draft_b_text: f.querySelector('[name=draft_b_text]')?.value || '',
+          criteria: f.querySelector('[name=criteria]').value.trim(),
+        });
+        $('#abJudgeResult').innerHTML = `<div class="card stack" style="gap:8px">
+          <div class="row spread wrap">
+            <strong>裁决结果：${esc(res.winner_label)}</strong>
+            <div class="row" style="gap:6px">
+              <span class="tag ${res.consensus ? 'green' : 'amber'}">${res.consensus ? '两轮一致' : '未一致 / 平局'}</span>
+              ${res.position_bias_detected ? '<span class="tag amber">已拦截位置偏见</span>' : ''}
+            </div>
+          </div>
+          <p style="margin:0;font-size:13px">${esc(res.summary)}</p>
+          ${(res.rounds || []).map((rd, idx) => `<div class="review-item stack" style="gap:4px">
+            <strong>第 ${idx + 1} 轮（匿名顺位：${esc((rd.order || []).join(' vs '))} → 映射胜者：${esc(rd.mapped_winner)}）</strong>
+            <p class="muted" style="margin:0;font-size:12px">${esc(rd.rationale || '')}</p>
+          </div>`).join('')}
+        </div>`;
+        toast(`盲评完成：${res.winner_label}`);
+        if (onChanged) await onChanged();
+      });
+    });
+  } catch (err) {
+    fail(err);
+  }
+}
