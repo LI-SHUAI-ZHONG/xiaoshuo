@@ -1,6 +1,6 @@
 {
   "format_version": 1,
-  "content_sha256": "2afcb2b7fd4035931b1063b68b3ba7d9089ee0e985c7330e3b21578454f85a25",
+  "content_sha256": "63d333d75107fba1b04461d89e1e1e351e3d826103d199df2b4b56ae83f18d83",
   "entries": [
     {
       "path": "library/corpus_calls/0c9b88f1757f4024a5b10a75e5fe0125/00001.input.json",
@@ -21,6 +21,16 @@
       "path": "library/corpus_calls/0c9b88f1757f4024a5b10a75e5fe0125/00002.output.json",
       "bytes": 6070,
       "sha256": "acb88b37610704628511ffc7d2f6651832bc690d992f7a3e3ef09f513c8352c4"
+    },
+    {
+      "path": "library/corpus_calls/0c9b88f1757f4024a5b10a75e5fe0125/00003.input.json",
+      "bytes": 4143,
+      "sha256": "619542f5a8391b8f864b73e04839c0b68268251781b44ab7750625f90b516a2b"
+    },
+    {
+      "path": "library/corpus_calls/0c9b88f1757f4024a5b10a75e5fe0125/00003.output.json",
+      "bytes": 136,
+      "sha256": "151fcd284d6a2504c4ef594a07c568b9c2a1a68af9e7fa0073143b4ec051de77"
     },
     {
       "path": "library/corpus_calls/0e9af6db4cb24c9b852301b149b3253e/00001.input.json",
@@ -89,8 +99,8 @@
     },
     {
       "path": "library/library.db",
-      "bytes": 688128,
-      "sha256": "cf66878fd02ba3206e32de8423681227884b4f862857623bb0f8f9d2da10a75a"
+      "bytes": 696320,
+      "sha256": "f6cd8555fbb518d4222cb324e277203ddf99e80baf601a9a194a6e28691b056c"
     },
     {
       "path": "novel-3f2863bc35b7/nw.db",
@@ -108,12 +118,12 @@
       "sha256": "45cdd2feebfc8281e80ad83ec6dd52d1f8cb5e8317f661294fe0c24bdca5dd43"
     }
   ],
-  "archive_sha256": "23289cb487e9edda3dde4f9d264d6f2ff3ee45ac6f8ceab3137653443d34d7c7",
+  "archive_sha256": "02acbb1e6723579722144bdd48799d359bb3333ac2ae0cd3ab7b8cbed470b9d8",
   "parts": [
     {
       "path": "runtime.zip.part001",
-      "bytes": 5892233,
-      "sha256": "23289cb487e9edda3dde4f9d264d6f2ff3ee45ac6f8ceab3137653443d34d7c7"
+      "bytes": 5894834,
+      "sha256": "02acbb1e6723579722144bdd48799d359bb3333ac2ae0cd3ab7b8cbed470b9d8"
     }
   ]
 }
