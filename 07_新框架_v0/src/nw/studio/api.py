@@ -663,10 +663,14 @@ class StudioService:
             {'stage': 'acceptance', 'zh': '批次原子提交与章总结复盘 (accept_batch + chapter_records)', 'owner_hint': '确定性状态机 + 作者确认',
              'requires': list(EXTERNAL_REQUIRES['acceptance']), 'base_prompt': '无模型幻觉介入：SQLite 事务原子推进版本头并导出 Markdown。', 'material_chars': 0},
         ]
+        from nw.materials.creative_workflow import step_label, workflow_overview
+        for row in steps:
+            row['creative_label'] = step_label(scope, row['stage'], fallback=row.get('zh', row['stage']))
         return {
             'scope': scope,
             'policy': POLICY,
             'priority_hierarchy': PRIORITY_HIERARCHY,
+            'creative_workflow': workflow_overview(),
             'design_steps': steps,
             'runtime_steps': runtime_steps,
         }

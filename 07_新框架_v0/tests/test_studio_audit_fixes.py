@@ -2517,7 +2517,7 @@ def test_craft_blueprint_options_http_and_frontend_12_17_hooks(tmp_path: Path, m
 
     # 1) Verify frontend UI hooks across WizardStep, wizard, PlanArtifacts, prerequisites, and atlas.
     js_root = ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js'
-    assert "stage:'09/12/13'" in (js_root / 'components' / 'WizardStep.js').read_text(encoding='utf-8')
+    assert "stage:'场景视角'" in (js_root / 'components' / 'WizardStep.js').read_text(encoding='utf-8')
     wizard_js = (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
     for token in ('wizardNarrationGuide', 'wizardToneGuide', 'wizardStyleGuide', '/kb/craft-blueprint'):
         assert token in wizard_js, token

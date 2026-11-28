@@ -4,11 +4,11 @@ import {lengthSummary} from './LengthPlan.js';
 import {slotName} from './WizardStep.js';
 
 const stageNames = {
-  type_selection:'类型选择', type_adaptation:'类型适配', world_design:'世界设计',
-  character_design:'人物设计', static_relations:'人物关系', plot_design:'剧情设计',
-  event_design:'事件设计', action_design:'行动设计', scene_design:'场景设计',
-  state_transition:'状态变化', state_propagation:'后果传播', anchor_design:'表现锚点',
-  expression_design:'表达设计', bind_scope:'交接汇总',
+  type_selection:'立项类型契约（自动冻结）', type_adaptation:'多类型融合适配（单类型自动）', world_design:'世界规则定稿',
+  character_design:'核心人物定稿', static_relations:'人物关系张力', plot_design:'故事大纲与卷章切分',
+  event_design:'本章事件链', action_design:'行动博弈与代价', scene_design:'场景卡与POV',
+  state_transition:'场内状态变化', state_propagation:'状态连锁传播', anchor_design:'具象动作锚点',
+  expression_design:'叙述与表达指导', bind_scope:'可写场景工作包',
 };
 const scopeNames = {book:'全书', volume:'卷纲', chapter:'章场', scene:'场景'};
 const stages = keys => keys.map(key => stageNames[key] || key).join('、');

@@ -111,13 +111,14 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
     value=raw['products']
     volume_outline = planning_hierarchy.volume_outline(context.get('scope','chapter'),
                                                         context.get('planning_hierarchy', False))
-    from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, passage_sequence
+    from nw.materials import cast_demands, cast_distribution_plan, chapter_progress, creative_workflow, passage_sequence
     passage_enabled = context.get('passage_policy') == passage_sequence.POLICY
     from nw.materials import passage_craft
     craft_enabled = context.get('passage_craft_policy') == passage_craft.POLICY and context.get('scope') != 'book'
     cast_distribution = context.get('cast_distribution_policy') == cast_distribution_plan.POLICY
     cast_enabled = context.get('cast_demand_policy') == cast_demands.POLICY
     progress_enabled = context.get('chapter_progress_policy') in chapter_progress.POLICIES
+    creative_plot_fields = creative_workflow.extra_plot_field_names(context.get('scope', 'chapter'), context) if stage == 'plot_design' else set()
     require('<填写' not in canonical(value),'unfilled transport shape is not an actual project product')
     type_network_inputs = stage == 'type_selection' and context.get('type_network_policy') == TYPE_NETWORK_POLICY
     require(isinstance(value,dict) and FIELDS[stage]|{'_uses'}<=value.keys()
@@ -134,6 +135,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
             -({'passage_choices'} if passage_enabled and stage == 'scene_design' else set())
             -({'passage_sequences'} if passage_enabled and stage == 'expression_design' else set())
             -(passage_craft.schema_fields(stage).keys() if craft_enabled else set())
+            -creative_plot_fields
             -{'preference_resolutions'}
             -({'_network_design_uses'} if context.get('design_network_policy') else set()),'wrong stage product fields')
     from nw.materials.creation_preferences import validate_resolutions, validate_selected_types
@@ -228,6 +230,7 @@ def _validate(raw: dict,stage: str,products: dict,sources: list[dict],context: d
         for key in ('reader_plan','promise_plan'):
             require(all(_text(row) or isinstance(row,dict) and bool(row) for row in value[key]),
                     'reader/promise planning needs actual design content')
+        creative_workflow.validate_plot_deliverables(value, products, context)
     elif stage=='scene_design':
         _members(value['members'],{'scene'},entities)
         require(bool(value['members']) and isinstance(value['chapters'],list) and bool(value['chapters']),'actual scene task products required')

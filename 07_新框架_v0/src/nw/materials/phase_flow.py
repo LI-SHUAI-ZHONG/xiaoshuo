@@ -1828,8 +1828,17 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
                 payload['history_receipts'] = history
                 suffix += ('\n在回执引用的具体产物中，用项目史实推动人物选择、限制或后果。只有相对先后时沿用原事件与间隔。history_receipts 列出各回执'
                            '对应的项目依据。核对同一产物中的纪年、时期、地理与制度条件。')
+        if stage == 'plot_design' and context.get('creative_workflow_policy'):
+            from nw.materials.creative_workflow import plot_instructions, plot_output_contract_extras
+            payload['creative_workflow_policy'] = context['creative_workflow_policy']
+            if context.get('creative_handoff'):
+                payload['creative_handoff'] = context['creative_handoff']
+            suffix += plot_instructions(package['scope'], context.get('creative_handoff'))
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
+            if stage == 'plot_design' and context.get('creative_workflow_policy'):
+                from nw.materials.creative_workflow import plot_output_contract_extras
+                payload['output_contract']['products'].update(plot_output_contract_extras(package['scope']))
             from nw.materials.creation_preferences import resolution_keys
 
             if keys := resolution_keys(payload.get('author_input', {}).get('creation_plan', {})):
@@ -2129,6 +2138,11 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
                        hierarchy_inherited_types=inherited_types(package))
         if 'chapter_target_index' in package:
             context['chapter_target_index'] = package['chapter_target_index']
+    if package.get('creative_workflow_policy'):
+        from nw.materials.creative_workflow import extract_creative_handoff
+        context['creative_workflow_policy'] = package['creative_workflow_policy']
+        if handoff := extract_creative_handoff(package):
+            context['creative_handoff'] = handoff
     if package.get('length_context'):
         context['length_context'] = package['length_context']
     if selected:
@@ -2255,9 +2269,14 @@ def drive_phases(store: Store,request: TaskRequest,package: dict,provider: LLMPr
                     store, package['branch_head'], products['scene_design']['products'])
             method_plan=prepare_project_methods(store,request,package,stage,products,method_decision,
                                                 **({'cast_revision': True} if repair else {}))
-            record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,stage_inputs,
-                                              retry_failed,verify,max_rounds,index,studied_sources=list(sources.values()),governance=governance,
-                                              method_plan=method_plan,network=network)
+            from nw.materials.creative_workflow import can_auto_compile_stage, compile_stage_record
+            if can_auto_compile_stage(stage, package, products, stage_inputs, method_plan):
+                record = compile_stage_record(stage, request, package, products, stage_inputs, governance, method_plan)
+                read, receipts = [], []
+            else:
+                record,read,receipts=_perform_stage(store,request,package,provider,config,desk,stage,products,stage_inputs,
+                                                  retry_failed,verify,max_rounds,index,studied_sources=list(sources.values()),governance=governance,
+                                                  method_plan=method_plan,network=network)
         except JobPaused:
             raise
         except ValueError as exc:

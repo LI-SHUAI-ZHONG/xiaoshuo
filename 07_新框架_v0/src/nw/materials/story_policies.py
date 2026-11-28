@@ -29,7 +29,8 @@ def verify(context: dict, plan: dict | None = None) -> None:
     if plan is not None and direction != approved(plan):
         raise ValueError('STALE_BOOK_DIRECTION: 阶段交接与原任务冻结的全书方向不同')
     if plan is not None and any(context.get(key) != plan.get(key) for key in (
-            'planning_hierarchy', 'outline_lineage', 'chapter_target_index', 'promise_continuity')):
+            'planning_hierarchy', 'outline_lineage', 'chapter_target_index', 'promise_continuity',
+            'creative_workflow_policy')):
         raise ValueError('STALE_PLAN_HIERARCHY: 阶段交接与原任务冻结的上级方案不同')
     if plan is not None and plan.get('planning_hierarchy'):
         from nw.materials.planning_hierarchy import inherited_types

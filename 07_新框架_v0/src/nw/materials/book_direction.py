@@ -24,6 +24,7 @@ SEARCH_FIELDS = {
 DIRECTION_FIELDS = {
     'id', 'title', 'premise', 'protagonist', 'goal', 'conflict', 'world_premise', 'long_term_drive', 'type_fit',
 }
+OPTIONAL_DIRECTION_FIELDS = {'author_fit', 'opening_hook', 'story_arcs', 'protagonist_arc', 'design_needs'}
 
 
 def approved(context: dict) -> dict | None:
@@ -38,10 +39,10 @@ def approved(context: dict) -> dict | None:
         raise ValueError('STALE_BOOK_DIRECTION: 已确认全书方向的范围或引用无效')
     candidate = row['candidate']
     if (candidate.get('id') != row['candidate_id']
-            or not DIRECTION_FIELDS <= candidate.keys() <= DIRECTION_FIELDS | {'author_fit'}
+            or not DIRECTION_FIELDS <= candidate.keys() <= DIRECTION_FIELDS | OPTIONAL_DIRECTION_FIELDS
             or not all(isinstance(key, str) and isinstance(value, str) and 0 < len(value.strip()) <= 500
                        for key, value in candidate.items())
-            or sum(map(len, candidate.values())) > 2200
+            or sum(map(len, candidate.values())) > 4200
             or content_sha256(candidate) != row['sha256']):
         raise ValueError('STALE_BOOK_DIRECTION: 已确认全书方向的内容与冻结版本不符')
     return row
@@ -71,6 +72,10 @@ def check_receipt(record: dict, context: dict, calls: list[dict]) -> None:
     if direction is None:
         if receipt is not None:
             raise ValueError('STALE_BOOK_DIRECTION: 此阶段没有已确认全书方向需要交接')
+        return
+    if str(record.get('execution_mode', '')).startswith('programmatic_'):
+        if record.get('approved_direction_sha256') != direction['sha256']:
+            raise ValueError('STALE_BOOK_DIRECTION: 自动编译步骤与已确认全书方向版本不一致')
         return
     original = (record.get('static_relations_basis') or record.get('cast_demand_revision', {}).get('basis')
                 or record)

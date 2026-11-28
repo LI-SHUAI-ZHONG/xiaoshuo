@@ -530,31 +530,30 @@ export async function openWizard({mode, prefill} = {}) {
         <label class="field"><span>一句话故事构想 <span class="error">*</span></span><textarea id="wizardIdea" rows="4" maxlength="12000" required placeholder="谁，在什么处境下，为了什么目标，必须做出怎样的选择？">${esc(idea)}</textarea></label>
         <label class="field"><span>硬约束（选填）</span><textarea id="wizardConstraints" rows="3" maxlength="12000" placeholder="必须保留的设定、不能发生的情节、阅读对象…">${esc(constraints)}</textarea></label>
         ${wizardMethods(bookWorldAvailable)}
-        <details class="details" ${applyTasks ? 'open' : ''}><summary>可选 · 启用全流程 22 项制作职责（不改则仅按所选偏好与 AI 世界规则执行）</summary>
+        <details class="details" ${applyTasks ? 'open' : ''}><summary>可选 · 按创作环节启用 22 项制作方法职责（不改则按所选偏好与世界方法自动执行）</summary>
           <div class="method-choices" style="margin-top:8px">
             ${[
-              ['type_choice','01类型·类型选择与边界'],['type_adaptation','02适配·类型组合与适配'],
-              ['world_rules','03世界·世界规则与限制'],['character_arc','04人物·人物目标与弧光'],['relationships','05关系·人物关系与势力'],
-              ['main_plot','06剧情·全书主线与结局'],['subplot','06/07·支线与主线交汇'],['volume_outline','06卷纲·分卷目标与转折'],
-              ['chapter_outline','06/09·连续章纲与承接'],['hook','06/09·钩子与问题接力'],['foreshadow','06/09·伏笔埋设与回收'],
-              ['information','06/09·信息披露与悬念'],['event_chain','07事件·事件触发与因果'],['action_chain','08行动·行动阻碍与代价'],
-              ['scene_composition','09场景·场景职责与选择'],['state_change','10状态·状态变化与代价'],['state_propagation','11传播·后果与影响传播'],
-              ['anchors','12锚点·可见线索与节拍'],['pacing','节奏与情绪序列'],['narration','13表达·叙述时序与视角'],
-              ['expression','13表达·叙事对话与文风'],['method_binding','14收口·方法交接与核验'],
+              ['world_rules','世界定稿·世界规则与限制'],['character_arc','人物定稿·人物目标与弧光'],['relationships','人物定稿·人物关系与势力'],
+              ['main_plot','全书大纲·主线与结局兑现'],['subplot','全书/卷纲·支线与主线交汇'],['volume_outline','卷纲切章·分卷目标与转折'],
+              ['chapter_outline','章细纲·连续章纲与承接'],['hook','大纲/章纲·钩子与问题接力'],['foreshadow','大纲/章纲·伏笔埋设与回收'],
+              ['information','大纲/场景·信息披露与悬念'],['event_chain','场景节拍·事件触发与因果'],['action_chain','场景节拍·行动阻碍与代价'],
+              ['scene_composition','场景节拍·场景职责与选择'],['state_change','场景节拍·状态变化与代价'],['state_propagation','场景节拍·后果与影响传播'],
+              ['anchors','写前表达·可见线索与节拍'],['pacing','节奏与情绪序列'],['narration','写前表达·叙述时序与视角'],
+              ['expression','写前表达·叙事对话与文风'],['method_binding','工作包·方法交接与核验'],
+              ['type_choice','前置契约·类型边界（按需）'],['type_adaptation','前置契约·多类型融合（按需）'],
             ].map(([id,label])=>`<label class="method-choice"><input type="checkbox" name="wizardTask" value="${id}" ${selectedTasks.has(id)?'checked':''}> ${label}</label>`).join('')}
           </div>
           <label class="check-row"><input type="checkbox" id="wizardApplyTasks" ${applyTasks ? 'checked' : ''}> 启用以上勾选职责作为本轮制作要求</label>
         </details>
-        <label class="check-row"><input type="checkbox" id="wizardDirectionReview" ${directionReview ? 'checked' : ''}> 先生成全书方向短案供对比选择（取消则直接进入全书设计）</label>
+        <label class="check-row"><input type="checkbox" id="wizardDirectionReview" ${directionReview ? 'checked' : ''}> 先生成 2–3 份全书方向与故事大纲供对比选择（若已在构想中写明方向，取消勾选则直接展开设定与全书大纲）</label>
         <div class="notice">
-          <p><strong>人工选择</strong> 使用你勾选的偏好，需要采用所选拆解方法时由你核对确认。</p>
-          <p>若勾选方向短案，立项后先提出候选方向供你选定，再展开世界、人物和剧情设计；你可以用「上一步」回改立项选项。</p>
+          <p><strong>实际创作工作流（默认启用）</strong>：立项选定的类型与偏好由程序自动冻结并继承至卷纲与每一章，不再重复空转「类型判定 / 类型适配」；直接围绕<strong>全书大纲（含开篇黄金三章与人物弧）→ 世界与人物定稿 → 卷纲逐章任务切分 → 章细纲与场景包 → 正文写审接受</strong>推进。</p>
         </div>
       </div></div>`;
   }
 
   async function createNovel(payload) {
-    const result = await api.post('/novels', {direction_review:true, planning_hierarchy:true, ...payload});
+    const result = await api.post('/novels', {direction_review:true, planning_hierarchy:true, creative_workflow:true, ...payload});
     const novel = result.novel || result;
     if (!novel.id) throw new Error('项目创建结果没有返回作品标识');
     const active = alive();

@@ -55,7 +55,7 @@ def card(kind: str, *, narration: bool | str = False) -> dict:
 def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | None=None,*,allow_requests: bool=True,
            contracts: list[dict] | None=None, type_network_inputs: bool=False, narration: bool | str=False,
            chapter_progress: bool=False, cast_demand: bool=False, cast_distribution: bool=False, passage: bool=False,
-           craft: bool=False, effect_kinds=None) -> dict:
+           craft: bool=False, effect_kinds=None, creative_workflow: bool=False, scope: str='chapter') -> dict:
     state={'type':'object','additionalProperties':ANY,'minProperties':1}
     use=obj({**strings('source_id','operation'),'output_refs':array(TEXT,1)})
     use['properties']['operation']={'type':'string','minLength':8,'maxLength':160}
@@ -228,13 +228,21 @@ def schema(stage: str,sources: list[dict],readable: list[str]=(),inputs: dict | 
         from nw.materials.cast_demands import add_schema
         add_schema(stage, fields)
     if stage=='plot_design':fields['static_bindings']=shapes['static_bindings']
+    creative_optional: tuple[str, ...] = ()
+    if creative_workflow and stage == 'plot_design':
+        from nw.materials.creative_workflow import plot_schema_fields
+        extra_plot = plot_schema_fields(scope)
+        fields.update(extra_plot)
+        if scope in ('volume', 'chapter') and 'character_arcs' in extra_plot:
+            creative_optional = ('character_arcs',)
     if stage == 'type_selection' and type_network_inputs:
         from nw.materials.type_network import INPUT_FIELDS
 
         names = tuple(sorted(INPUT_FIELDS))
         fields['adaptation_inputs'] = obj({name: obj(strings('ref', 'quote')) for name in names}, names)
     final=obj({'stage':{'const':stage},'products':obj(fields,('_excluded','_requirements','static_bindings','_governance',
-                                                            '_receipts','adaptation_inputs','passage_choices','passage_sequences',*craft_fields))})
+                                                            '_receipts','adaptation_inputs','passage_choices','passage_sequences',
+                                                            *craft_fields,*creative_optional))})
     if not allow_requests:return final
     actions=[obj({'action':{'const':'search'},'query':TEXT,'cursor':{'type':'integer','minimum':0}},('cursor',))]
     if readable:actions.append(obj({'action':{'const':'read'},'id':{'enum':list(readable)}}))

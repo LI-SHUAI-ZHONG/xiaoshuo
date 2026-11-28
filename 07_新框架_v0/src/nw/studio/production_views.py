@@ -131,6 +131,28 @@ class ProductionViews:
         return [dict(row) for row in rows]
 
     @staticmethod
+    def _compiled_stages(store: Any) -> dict[tuple[str, str, str], dict]:
+        rows = store.connection.execute(
+            "SELECT package_json FROM input_manifests WHERE id LIKE 'plan:%:stages' ORDER BY rowid"
+        ).fetchall()
+        compiled: dict[tuple[str, str, str], dict] = {}
+        for row in rows:
+            try:
+                pkg = json.loads(row['package_json'])
+            except (ValueError, TypeError):
+                continue
+            budget_id = (pkg.get('plan_checkpoint') or {}).get('budget_id')
+            scope = pkg.get('scope')
+            session = pkg.get('material_work') or {}
+            if not budget_id or not scope:
+                continue
+            for record in session.get('stages') or []:
+                stage = record.get('stage')
+                if stage:
+                    compiled[(budget_id, scope, stage)] = record
+        return compiled
+
+    @staticmethod
     def _direction_node(job: dict, row: dict | None) -> dict:
         target = json.loads(row['input_json']) if row else {}
         choice = json.loads(row['output_json']).get('choice', {}) if row else {}
@@ -168,6 +190,7 @@ class ProductionViews:
         with self.open_store(novel) as store:
             job = asdict(show_job(store, novel['job_id'])) if novel['job_id'] else None
             phases = self._phase_rows(store)
+            compiled_stages = self._compiled_stages(store)
             model_logs = self.call_logs(store) if include_logs else []
             rows = store.connection.execute('SELECT id,request_json,status FROM novel_jobs ORDER BY rowid').fetchall()
             job_requests = {row['id']: json.loads(row['request_json']) for row in rows}
@@ -200,45 +223,96 @@ class ProductionViews:
         tree = []
         current_branch = novel.get('current_branch', 'main')
         visible_branches = {'main'} if current_branch == 'main' else {'main', current_branch}
+        from nw.materials.creative_workflow import step_label as creative_step_label, step_meta as creative_step_meta, workflow_overview
         for job_row in design_jobs:
             request = job_requests.get(job_row['id'], {})
             if (job_row.get('branch_id') or request.get('branch_id', 'main')) not in visible_branches:
                 continue
             scope = request.get('design_scope', 'chapter')
             scopes = ['book', scope] if scope != 'book' and not request.get('parent_id') else [scope]
+            creative_mode = bool(request.get('creative_workflow'))
+            gov_ts = (request.get('governance_inputs') or {}).get('type_selection', {})
+            from nw.studio.catalog import single_genre_path
+            chosen_genre_ids = (
+                [r['id'] for r in gov_ts.get('creation_plan', {}).get('types', []) if r.get('id')]
+                or list((request.get('production_method_policy') or {}).get('type_ids') or [])
+            )
+            single_genre_book = bool(gov_ts.get('single_genre_selection') or single_genre_path(chosen_genre_ids))
             for node_scope in scopes:
                 matching = {row['stage']: row for row in phases
                             if row['budget_id'] == job_row['id'] and row['scope'] == node_scope}
                 blocked = job_row['outputs'].get('blocked_design', {})
                 stage_nodes = []
+                auto_contracts = []
                 direction_enabled = node_scope == 'book' and request.get('direction_review')
                 hierarchical = request.get('planning_hierarchy', False)
                 if direction_enabled:
-                    stage_nodes.append(self._direction_node(job_row, checkpoints.get((job_row['id'], DIRECTION_CONFIRM))))
+                    dir_node = self._direction_node(job_row, checkpoints.get((job_row['id'], DIRECTION_CONFIRM)))
+                    if creative_mode:
+                        dir_node['label'] = '全书方向与故事大纲'
+                        dir_node['group'] = 'book_direction'
+                        dir_node['group_label'] = '零、全书方向与故事大纲'
+                    stage_nodes.append(dir_node)
                 for stage in phase_order(node_scope, planning_hierarchy=hierarchical):
                     phase = matching.get(stage)
+                    compiled = compiled_stages.get((job_row['id'], node_scope, stage))
                     parsed = json.loads(phase['result_json']) if phase and phase['result_json'] else {}
-                    complete = bool(phase and phase['validation'] == 'VALID' and (parsed or {}).get('products'))
+                    products_out = (parsed or {}).get('products') or (compiled.get('products') if compiled else None)
+                    is_programmatic = bool(compiled and str(compiled.get('execution_mode', '')).startswith('programmatic_'))
+                    complete = bool((phase and phase['validation'] == 'VALID' and (parsed or {}).get('products')) or is_programmatic)
                     blocked_here = (job_row['status'] == 'BLOCKED'
                                     and blocked.get('scope') == node_scope and blocked.get('stage') == stage)
                     state = 'blocked' if blocked_here else 'done' if complete else ('running' if phase and phase['status'] == 'STARTED' else
                             ('failed' if phase and phase['validation'] == 'INVALID' else 'pending'))
-                    stage_nodes.append({'id': f"{job_row['id']}:{node_scope}:{stage}", 'stage': stage,
-                        'label': STAGE_LABELS[stage]['zh'], 'status': state, 'scope': node_scope,
-                        'output': (parsed or {}).get('products'), 'children': []})
+                    meta = creative_step_meta(node_scope, stage) if creative_mode else {}
+                    node_entry = {
+                        'id': f"{job_row['id']}:{node_scope}:{stage}", 'stage': stage,
+                        'label': creative_step_label(node_scope, stage, fallback=STAGE_LABELS[stage]['zh']) if creative_mode else STAGE_LABELS[stage]['zh'],
+                        'status': state, 'scope': node_scope,
+                        'output': products_out, 'children': [],
+                        **({'execution_mode': compiled.get('execution_mode')} if is_programmatic else {}),
+                        **({'group': meta['group'], 'group_label': meta.get('group_label', '')} if creative_mode and meta.get('group') else {}),
+                    }
+                    # In creative workflow mode, auto-compiled/inherited type contracts and empty volume bind_scope
+                    # do not clutter the author's step list unless they ran via LLM or blocked/failed.
+                    auto_expected = (
+                        creative_mode and not blocked_here and state != 'failed' and phase is None and (
+                            (node_scope in ('volume', 'chapter') and stage in ('type_selection', 'type_adaptation'))
+                            or (node_scope == 'volume' and stage == 'bind_scope')
+                            or (node_scope == 'book' and stage == 'type_selection' and bool(chosen_genre_ids))
+                            or (node_scope == 'book' and stage == 'type_adaptation' and single_genre_book)
+                        )
+                    )
+                    if is_programmatic or auto_expected:
+                        node_entry['status'] = 'done' if (is_programmatic or any(
+                            matching.get(later) for later in phase_order(node_scope, planning_hierarchy=hierarchical)
+                            if later not in ('type_selection', 'type_adaptation', 'bind_scope')
+                        )) else state
+                        auto_contracts.append(node_entry)
+                    else:
+                        stage_nodes.append(node_entry)
                     if hierarchical and node_scope == 'chapter' and stage == 'plot_design':
-                        stage_nodes.append(self._chapter_outline_node(
-                            job_row, checkpoints.get((job_row['id'], CHAPTER_OUTLINE_CONFIRM))))
+                        ch_node = self._chapter_outline_node(
+                            job_row, checkpoints.get((job_row['id'], CHAPTER_OUTLINE_CONFIRM)))
+                        if creative_mode:
+                            ch_node['group'] = 'chapter_outline_prep'
+                            ch_node['group_label'] = '一、本章承接与章纲确认'
+                        stage_nodes.append(ch_node)
                 applied = any(step['step_key'] == f'plan:{node_scope}:apply' and step['status'] == 'DONE'
                               for step in job_row['outputs']['steps'])
                 if direction_enabled:
-                    label = '全书制作'
+                    label = '全书创作大纲与定稿' if creative_mode else '全书制作'
+                elif creative_mode:
+                    label = {'book': '全书大纲与设定', 'volume': '卷纲与逐章切分', 'chapter': '章细纲与可写场景包'}.get(
+                        node_scope, SCOPE_LABELS.get(node_scope, '设计'))
                 else:
                     label = SCOPE_LABELS.get(node_scope, '设计') if hierarchical or node_scope == 'volume' else (
                         '全书设计' if node_scope == 'book' else '章节设计')
                 entry = {'id': f"{job_row['id']}:{node_scope}", 'label': label,
                          'scope': node_scope, 'status': 'done' if applied else job_row['status'].lower(),
-                         'children': stage_nodes}
+                         'children': stage_nodes,
+                         **({'creative_workflow': True} if creative_mode else {}),
+                         **({'auto_contracts': auto_contracts} if auto_contracts else {})}
                 if lineage := request.get('outline_lineage'):
                     entry['approved_parent'] = lineage[-1]
                 tree.append(entry)
@@ -270,20 +344,27 @@ class ProductionViews:
         runtime = novel['runtime_status']
         if job and runtime not in ('CONFIG_REQUIRED', 'PAUSED', 'PAUSING', 'BLOCKED'):
             runtime = job['status']
+        current_job_req = job_requests.get(job['id'], {}) if job else {}
+        current_creative = bool(current_job_req.get('creative_workflow'))
+        current_scope = current_job_req.get('design_scope', 'chapter')
         current_step = job.get('step') if job else None
         if current_step in (DIRECTION_PROPOSE, DIRECTION_CONFIRM):
-            current_step = DIRECTION_LABEL
+            current_step = '全书方向与故事大纲' if current_creative else DIRECTION_LABEL
         elif current_step == CHAPTER_OUTLINE_CONFIRM:
             current_step = '章纲确认'
         active = next((row for row in reversed(phases) if job and row['budget_id'] == job['id']
                        and row['status'] == 'STARTED'), None)
         if active and runtime == 'RUNNING':
-            current_step = STAGE_LABELS[active['stage']]['zh']
+            current_step = (creative_step_label(active.get('scope') or current_scope, active['stage'],
+                                                fallback=STAGE_LABELS[active['stage']]['zh'])
+                            if current_creative else STAGE_LABELS[active['stage']]['zh'])
         blocked_design = None
         if job and runtime == 'BLOCKED':
             blocked = job['outputs'].get('blocked_design', {})
             if blocked.get('stage') in STAGE_LABELS:
-                current_step = STAGE_LABELS[blocked['stage']]['zh']
+                current_step = (creative_step_label(blocked.get('scope') or current_scope, blocked['stage'],
+                                                    fallback=STAGE_LABELS[blocked['stage']]['zh'])
+                                if current_creative else STAGE_LABELS[blocked['stage']]['zh'])
                 blocked_design = blocked
         logs = self.db.timeline(ident)['events'][-100:] if include_logs else []
         if include_logs:
@@ -293,6 +374,8 @@ class ProductionViews:
                 'branch_id': novel.get('current_branch', 'main'),
                 'main_revision': next((row['head_revision'] for row in project['branches'] if row['id'] == 'main'), None),
                 'current_step': current_step, 'blocked_design': blocked_design, 'progress': percentage, 'tree': tree,
+                'creative_workflow': bool(novel['wizard'].get('creative_workflow')),
+                'workflow_overview': workflow_overview(),
                 'next_design': upcoming, 'can_plan_volume': can_plan_volume,
                 **({'continuation': continuation} if continuation is not None else {}),
                 'gates': self.gates(ident)['gates'], 'words': words, 'connection': True,

@@ -82,7 +82,8 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                                                  governance_inputs=governance(wizard, library=self.library),
                                                  production_method_policy=wizard.get('production_methods',{}),
                                                  direction_review=wizard.get('direction_review', False),
-                                                 planning_hierarchy=wizard.get('planning_hierarchy', False)))
+                                                 planning_hierarchy=wizard.get('planning_hierarchy', False),
+                                                 creative_workflow=wizard.get('creative_workflow', False)))
         except Exception as exc:
             self.db.update(ident, status='paused', runtime_status='BLOCKED', reason=f'立项初始化未完成：{exc}')
             raise
@@ -192,7 +193,8 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                          production_method_policy=novel['wizard'].get('production_methods',{}) if mode=='design' else {},
                          direction_review=direction_review,
                          direction_retry_of=self._rejected_direction_job(store, novel) if direction_review else None,
-                         planning_hierarchy=hierarchy)
+                         planning_hierarchy=hierarchy,
+                         creative_workflow=(mode == 'design' and bool(wizard.get('creative_workflow', False))))
         job = start_job(store, req)
         self.db.update(novel['id'], job_id=job.id, status='designing' if mode == 'design' else 'writing')
         self.db.event(novel['id'], 'design' if mode == 'design' else 'write',

@@ -98,7 +98,7 @@ DECOMPOSITION_METHODOLOGY: list[dict[str, str]] = [
 _STEP_SPECS: list[dict[str, Any]] = [
     {
         'step_id': 'type_selection',
-        'name': '01. 类型判定与承诺',
+        'name': '前置契约 · 立项类型冻结（自动继承）',
         'phase_group': '全书与细化共用',
         'material_natures': ['structural_causal'],
         'need_categories': ['主/子/副类型本体定义', '核心读者承诺与预期边界', '题材禁止项与反例边界'],
@@ -113,7 +113,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'type_adaptation',
-        'name': '02. 类型组合与适配',
+        'name': '前置契约 · 多类型融合（单类型自动冻结）',
         'phase_group': '全书与细化共用',
         'material_natures': ['structural_causal', 'rule_constraint'],
         'need_categories': ['多类型组合冲突与调和规则', '受众/篇幅/节奏适配参数', '概念激活与关注重点转移'],
@@ -128,7 +128,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'world_design',
-        'name': '03. 世界设定与限制',
+        'name': '世界规则与限制定稿（底层域 03）',
         'phase_group': '全书与细化共用',
         'material_natures': ['rule_constraint'],
         'need_categories': [
@@ -152,7 +152,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'character_design',
-        'name': '04. 人物动机与弧线',
+        'name': '核心人物与弧光起点（底层域 04）',
         'phase_group': '全书与细化共用',
         'material_natures': ['functional_role', 'rule_constraint'],
         'need_categories': [
@@ -175,7 +175,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'static_relations',
-        'name': '05. 静态关系与张力',
+        'name': '人物关系与势力张力（底层域 05）',
         'phase_group': '全书与细化共用',
         'material_natures': ['rule_constraint', 'functional_role'],
         'need_categories': [
@@ -196,7 +196,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'plot_design',
-        'name': '06. 剧情因果与伏笔',
+        'name': '故事大纲、开篇承诺与卷章切分（底层域 06）',
         'phase_group': '全书与细化共用',
         'material_natures': ['structural_causal', 'functional_role'],
         'need_categories': [
@@ -219,7 +219,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'event_design',
-        'name': '07. 事件链与候选分支',
+        'name': '本章事件链与因果触发（底层域 07）',
         'phase_group': '卷/章/场细化专用',
         'material_natures': ['structural_causal', 'functional_role'],
         'need_categories': [
@@ -239,7 +239,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'action_design',
-        'name': '08. 行动博弈与试错代价',
+        'name': '人物行动博弈与试错代价（底层域 08）',
         'phase_group': '卷/章/场细化专用',
         'material_natures': ['method_technique', 'rule_constraint'],
         'need_categories': [
@@ -259,7 +259,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'scene_design',
-        'name': '09. 场景结构与POV边界',
+        'name': '场景卡与 POV 边界排布（底层域 09）',
         'phase_group': '卷/章/场细化专用',
         'material_natures': ['functional_role', 'method_technique'],
         'need_categories': [
@@ -279,7 +279,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'state_transition',
-        'name': '10. 状态变化与外部因果',
+        'name': '场内状态变化与代价（底层域 10）',
         'phase_group': '卷/章/场细化专用',
         'material_natures': ['rule_constraint', 'functional_role'],
         'need_categories': [
@@ -299,7 +299,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'state_propagation',
-        'name': '11. 状态传播与连锁感知',
+        'name': '状态连锁传播预案（底层域 11）',
         'phase_group': '卷/章/场细化专用',
         'material_natures': ['rule_constraint', 'structural_causal'],
         'need_categories': [
@@ -318,7 +318,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'anchor_design',
-        'name': '12. 具象锚点与身体节拍',
+        'name': '具象动作锚点与感官节拍（底层域 12）',
         'phase_group': '卷/章/场细化专用',
         'material_natures': ['observable_anchor'],
         'need_categories': [
@@ -338,7 +338,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'expression_design',
-        'name': '13. 叙述距离与表达设计',
+        'name': '叙述距离、对白与文风指导（底层域 13）',
         'phase_group': '卷/章/场细化专用',
         'material_natures': ['method_technique', 'observable_anchor'],
         'need_categories': [
@@ -358,7 +358,7 @@ _STEP_SPECS: list[dict[str, Any]] = [
     },
     {
         'step_id': 'bind_scope',
-        'name': '14. 范围绑定与检验收口',
+        'name': '冻结可写场景工作包（底层域 14 · 卷纲自动收口）',
         'phase_group': '全书收口(第7步)/细化收口(第14步)',
         'material_natures': ['verification_gate'],
         'need_categories': [
@@ -1024,8 +1024,10 @@ def build_step_blueprint(library: Any = None) -> dict[str, Any]:
             entry['step_boundary'] = deepcopy(bnd)
         steps.append(entry)
 
+    from nw.materials.creative_workflow import workflow_overview
     return {
         'schema_version': 1,
+        'creative_workflow': workflow_overview(),
         'methodology': deepcopy(DECOMPOSITION_METHODOLOGY),
         'material_natures': list(deepcopy(MATERIAL_NATURES).values()),
         'steps': steps,

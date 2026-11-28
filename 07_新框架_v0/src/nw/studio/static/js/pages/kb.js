@@ -16,12 +16,12 @@ async function items(ctx){const genreData=await api.get('/genres',ctx.signal);if
 async function upgrades(ctx){const data=await api.get('/kb/upgrades',ctx.signal);if(!ctx.alive())return;const rows=data.upgrades||[];$('#kbContent').innerHTML=`<div class="notice" style="margin-bottom:24px">这里保存局部短文的历史升级审核。新建制作任务使用已批准的结构拆解方法。</div><div class="tabs" id="upgradeTabs"><button class="active" data-upgrade-status="pending">待批准</button><button data-upgrade-status="approved">已批准</button><button data-upgrade-status="rejected">已驳回</button></div><div id="upgradeList"></div>`;function paint(status){const selected=rows.filter(u=>u.status===status);$('#upgradeList').innerHTML=selected.length?selected.map(u=>`<section class="card" style="margin-bottom:16px"><div class="row spread"><h3>${esc(u.name||u.usage_text||u.id)}</h3><span class="tag">${{enhance:'增强',fill:'补缺',new:'新增'}[u.kind]||esc(u.kind)}</span></div><p class="muted" style="margin:14px 0">${esc(u.reason||u.description||'与现有资料比对后提出，等待作者核对。')}</p><div class="row wrap"><button class="secondary" data-upgrade-detail="${esc(u.id)}">查看依据</button></div></section>`).join(''):empty('暂无'+({pending:'待批准',approved:'已批准',rejected:'已驳回'}[status])+'候选','本页记录局部短文历史升级的审核情况。','','spark');$$('[data-upgrade-detail]').forEach(b=>b.onclick=()=>drawer('升级候选依据',readable(rows.find(u=>u.id===b.dataset.upgradeDetail))));}$$('[data-upgrade-status]').forEach(b=>b.onclick=()=>{$$('[data-upgrade-status]').forEach(x=>x.classList.toggle('active',x===b));paint(b.dataset.upgradeStatus);});paint('pending');}
 function search(ctx){
   const stageOpts=[
-    ['','全部步骤'],['type_selection','01. 类型选择'],['type_adaptation','02. 类型适配'],
-    ['world_design','03. 世界设计'],['character_design','04. 人物设计'],['static_relations','05. 静态关系'],
-    ['plot_design','06. 剧情设计'],['event_design','07. 事件设计'],['action_design','08. 行动设计'],
-    ['scene_design','09. 场景设计'],['state_transition','10. 状态变化'],['state_propagation','11. 状态传播'],
-    ['anchor_design','12. 锚点设计'],['expression_design','13. 表达设计'],['bind_scope','14. 绑定汇总'],
-    ['writer','15. 正文写作'],['review','16. 独立审稿'],
+    ['','全部创作环节'],['world_design','世界规则与限制定稿'],['character_design','核心人物与弧光起点'],
+    ['static_relations','人物关系与势力张力'],['plot_design','故事大纲、开篇承诺与卷章切分'],['event_design','本章事件链与因果触发'],
+    ['action_design','人物行动博弈与试错代价'],['scene_design','场景卡与 POV 边界排布'],['state_transition','场内状态变化与代价'],
+    ['state_propagation','状态连锁传播预案'],['anchor_design','具象动作锚点与感官节拍'],['expression_design','叙述距离、对白与文风指导'],
+    ['bind_scope','冻结可写场景工作包'],['writer','场景正文起草 (15)'],['review','事实与读者独立审稿 (16)'],
+    ['type_selection','前置契约 · 立项类型冻结'],['type_adaptation','前置契约 · 多类型融合'],
   ];
   let offset=0,limit=40,ledgerFacets={dispositions:{},corpora:{}};
   $('#kbContent').innerHTML=`<form id="kbSearchForm" class="stack" style="gap:12px">

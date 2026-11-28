@@ -34,6 +34,7 @@ class JobRequest:
     direction_review: bool = False
     direction_retry_of: str | None = None
     planning_hierarchy: bool = False
+    creative_workflow: bool = False
 
 
 @dataclass(frozen=True)
@@ -111,6 +112,8 @@ def start_job(store: Store, request: JobRequest) -> JobRef:
         raise ValueError('Design options are available only in design mode')
     if request.parent_id is not None and not text(request.parent_id):
         raise ValueError('Invalid parent proposal ID')
+    if type(request.creative_workflow) is not bool or (request.creative_workflow and request.mode != 'design'):
+        raise ValueError('实际创作工作流选项只用于设计任务')
     if (type(request.planning_hierarchy) is not bool or request.planning_hierarchy
             and (request.mode != 'design' or request.design_scope not in ('book', 'volume', 'chapter')
                  or (request.parent_id is None) != (request.design_scope == 'book'))):

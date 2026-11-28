@@ -2,10 +2,14 @@ import {api, enc} from '../api.js';
 import {$, busy, drawer, esc, toast} from '../ui.js';
 
 const fields = [
+  ['opening_hook', '开篇与黄金三章钩子'],
   ['protagonist', '主角处境'],
   ['goal', '主角目标'],
   ['conflict', '核心矛盾'],
+  ['story_arcs', '全书阶段因果路线'],
+  ['protagonist_arc', '主角核心弧光'],
   ['world_premise', '世界前提'],
+  ['design_needs', '所需世界规则与人物条件'],
   ['long_term_drive', '长篇推进'],
   ['type_fit', '类型依据'],
   ['author_fit', '立项要求落实'],

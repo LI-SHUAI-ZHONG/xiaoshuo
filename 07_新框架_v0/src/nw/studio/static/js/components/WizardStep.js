@@ -1,15 +1,15 @@
 import {esc,icon} from '../ui.js';
 
 export const STEPS = [
-  {slot:'genre', stage:'01–02', name:'类型'},
-  {slot:'world', stage:'03', name:'世界观'},
-  {slot:'character', stage:'04–05', name:'人物'},
-  {slot:'structure', stage:'06', name:'结构篇幅'},
-  {slot:'hook', stage:'06–07', name:'卖点'},
-  {slot:'narration', stage:'09/12/13', name:'写法'},
-  {slot:'tone', stage:'13', name:'风格'},
-  {slot:'style', stage:'13', name:'文笔'},
-  {slot:'confirm', stage:'立项', name:'确认'},
+  {slot:'genre', stage:'立项契约', name:'类型'},
+  {slot:'world', stage:'世界定稿', name:'世界观'},
+  {slot:'character', stage:'人物关系', name:'人物'},
+  {slot:'structure', stage:'大纲卷章', name:'结构篇幅'},
+  {slot:'hook', stage:'钩子伏笔', name:'卖点'},
+  {slot:'narration', stage:'场景视角', name:'写法'},
+  {slot:'tone', stage:'节奏语气', name:'风格'},
+  {slot:'style', stage:'表达文风', name:'文笔'},
+  {slot:'confirm', stage:'确认开写', name:'确认'},
 ];
 
 export const slotName = slot => STEPS.find(x => x.slot === slot)?.name || slot;

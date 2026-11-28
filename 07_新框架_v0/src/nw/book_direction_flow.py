@@ -24,8 +24,10 @@ def choose_direction(calls: JobCalls, decide: Callable) -> dict:
     from nw.book_directions import direction_options, prepare_direction_task, validate_direction_options
 
     journal = calls.journal
-    result = calls.task(PROPOSE, lambda: prepare_direction_task(calls, PROPOSE), validate_direction_options)
-    candidates = direction_options(result.parsed)
+    creative = bool(journal.request.get('creative_workflow'))
+    result = calls.task(PROPOSE, lambda: prepare_direction_task(calls, PROPOSE),
+                        lambda raw: validate_direction_options(raw, creative=creative))
+    candidates = direction_options(result.parsed, creative=creative)
     target = {'kind': GATE_KIND, 'task_id': result.id, 'candidates': candidates}
     actions = {'approve': 'novel_confirm', 'reject': 'novel_reject'}
     choice = journal.gate(CONFIRM, target, decide, actions, lambda item: validate_choice(target, item))

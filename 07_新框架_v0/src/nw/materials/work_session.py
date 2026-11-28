@@ -78,7 +78,9 @@ def _study_call(store: Store,request: TaskRequest,config: Config,provider: LLMPr
             passage=bool(payload.get('passage_policy')),
             craft=bool(payload.get('passage_craft_policy')),
             effect_kinds=[r['kind'] for r in payload.get('effect_needs',[])],
-            narration=payload.get('narration_policy', False))
+            narration=payload.get('narration_policy', False),
+            creative_workflow=bool(payload.get('creative_workflow_policy')),
+            scope=payload.get('scope', 'chapter'))
         if payload.get('network_design_candidates'):
             from nw.materials.design_network import add_schema
             add_schema(shape, payload['network_design_candidates'])

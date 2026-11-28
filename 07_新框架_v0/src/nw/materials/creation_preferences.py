@@ -47,8 +47,13 @@ def validate_resolutions(stage: str, value: dict, context: dict) -> None:
             raise ValueError('立项偏好安排须逐项填写理由，不能重复')
         ref = row['output_ref']
         if row['status'] == 'applied':
-            if not isinstance(ref, str) or not re.fullmatch(r'/guidance/(?:0|[1-9]\d{0,4})/observable', ref):
-                raise ValueError('已采用的立项偏好须指向本步场景指导中的具体表达')
+            allowed_ref = (
+                r'/(?:event_nodes|promise_plan|story_segments|chapter_splits|directions|reader_plan)/(?:0|[1-9]\d{0,4})(?:/[a-z_]+)?'
+                if stage == 'plot_design'
+                else r'/guidance/(?:0|[1-9]\d{0,4})/observable'
+            )
+            if not isinstance(ref, str) or not re.fullmatch(allowed_ref, ref):
+                raise ValueError('已采用的立项偏好须指向本步具体剧情节点或场景指导中的实际落点')
             from nw.materials.semantic_application import output_value
 
             try:

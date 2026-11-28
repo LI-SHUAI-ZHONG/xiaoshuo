@@ -45,17 +45,25 @@ def _comparison_key(value: str) -> str:
     return ''.join(ch for ch in normalize('NFKC', value).casefold() if ch.isalnum())
 
 
-def validate_direction_options(raw: dict) -> None:
+def _fields_for(creative: bool = False) -> dict[str, tuple[str, int]]:
+    if not creative:
+        return FIELDS
+    from nw.materials.creative_workflow import CREATIVE_DIRECTION_FIELDS
+    return {**FIELDS, **CREATIVE_DIRECTION_FIELDS}
+
+
+def validate_direction_options(raw: dict, *, creative: bool = False) -> None:
     if (not isinstance(raw, dict) or set(raw) != {'candidates'}
             or not isinstance(raw['candidates'], list) or not 2 <= len(raw['candidates']) <= 3):
         raise ValueError('BOOK_DIRECTION: 请提交两到三个独立方向短案')
 
+    expected = _fields_for(creative)
     titles = set()
     drives = []
     for index, row in enumerate(raw['candidates'], start=1):
-        if not isinstance(row, dict) or row.keys() != FIELDS.keys():
+        if not isinstance(row, dict) or row.keys() != expected.keys():
             raise ValueError(f'BOOK_DIRECTION: 第 {index} 个短案须完整使用方向字段')
-        for field, (label, limit) in FIELDS.items():
+        for field, (label, limit) in expected.items():
             value = row[field]
             key = _comparison_key(value) if isinstance(value, str) else ''
             if not key or key in PLACEHOLDERS or len(value) > limit:
@@ -71,8 +79,8 @@ def validate_direction_options(raw: dict) -> None:
             raise ValueError('BOOK_DIRECTION: 请让候选在主角目标、核心矛盾或长篇推进上有实质差异')
 
 
-def direction_options(raw: dict) -> list[dict]:
-    validate_direction_options(raw)
+def direction_options(raw: dict, *, creative: bool = False) -> list[dict]:
+    validate_direction_options(raw, creative=creative)
     return [{'id': 'direction-' + content_sha256(row)[:20], **row} for row in raw['candidates']]
 
 
@@ -189,11 +197,21 @@ def prepare_direction_task(calls: JobCalls, key: str) -> TaskRequest:
     pin = Ref(**j.request['brief_ref'])
     if pin != legacy_ref('brief', project, brief):
         raise ValueError('STALE_BRIEF: 方向短案所需的立项版本已经改变')
+    creative = bool(j.request.get('creative_workflow'))
+    active_fields = _fields_for(creative)
     package = {'brief': asdict(brief), 'branch_head': asdict(j.head), **_creation_input(j),
-               'contract': {field: {'name': label, 'max_chars': limit} for field, (label, limit) in FIELDS.items()}}
+               'contract': {field: {'name': label, 'max_chars': limit} for field, (label, limit) in active_fields.items()}}
+    if creative:
+        package['creative_workflow'] = True
     if feedback := _previous_rejection(j):
         package['previous_rejection'] = feedback
-    messages = [{'role': 'system', 'content': PROMPT}, {'role': 'user', 'content': canonical(package)}]
+    prompt = PROMPT + (
+        '\n[CREATIVE_WORKFLOW] 本次采用实际创作工作流：每个方向大纲除核心矛盾外，须一并写清'
+        '开篇切入瞬间与黄金三章钩子（opening_hook）、从开端到结局的阶段因果路线（story_arcs）、'
+        '主角起点盲点→选择→代价→蜕变弧光（protagonist_arc），以及后续世界与人物步骤必须落实的设计条件（design_needs）。'
+        if creative else ''
+    )
+    messages = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': canonical(package)}]
     params, _ = prepare_call(store, j.id, calls.provider.name, calls.config.params, messages,
                              context_window_tokens=calls.config.context_window_tokens)
     ident = call_id(j.id, key, 1)

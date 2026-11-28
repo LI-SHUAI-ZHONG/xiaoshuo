@@ -100,7 +100,8 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                       governance_inputs: dict | None = None,
                       production_method_policy: dict | None = None,
                       approved_direction: dict | None = None, planning_hierarchy: bool = False,
-                      outline_lineage: list[dict] | None = None) -> tuple[TaskRequest, dict]:
+                      outline_lineage: list[dict] | None = None,
+                      creative_workflow: bool = False) -> tuple[TaskRequest, dict]:
     from nw.call_budget import read_budget
     from nw.materials.book_direction import approved
     from nw.materials.planning_hierarchy import volume_outline
@@ -262,10 +263,14 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                         'network_layer_policy', 'early_network_policy', 'same_stage_network_policy',
                         'type_network_policy', 'world_network_policy', 'world_advancement_policy', 'world_conversion_policy',
                         'world_resource_policy', 'world_market_policy', 'world_history_policy', 'design_network_policy',
-                        'parent_design_network', 'chapter_target_index', 'scene_knowledge_policy', 'promise_continuity'):
+                        'parent_design_network', 'chapter_target_index', 'scene_knowledge_policy', 'promise_continuity',
+                        'creative_workflow_policy'):
                 if key in previous_package:
                     package[key] = previous_package[key]
         else:
+            if creative_workflow:
+                from nw.materials.creative_workflow import POLICY as CREATIVE_WORKFLOW_POLICY
+                package['creative_workflow_policy'] = CREATIVE_WORKFLOW_POLICY
             if scope == 'chapter' and planning_hierarchy and state is not None:
                 from nw.materials.planning_hierarchy import next_chapter_index
 

@@ -177,6 +177,7 @@ def _plan_stage(calls: JobCalls, scope: str, parent: str | None, decide: Decisio
                                        governance_inputs=gov_for_scope,
                                        production_method_policy=j.request.get('production_method_policy'),
                                        approved_direction=approved_direction,
+                                       creative_workflow=bool(j.request.get('creative_workflow', False)),
                                        **({'planning_hierarchy': True, 'outline_lineage': lineage} if hierarchical else {}))
         from nw.materials.work_session import drive_plan
         from nw.production_methods.selection import method_step

@@ -27,7 +27,8 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     if len(constraints) > 12000:
         raise ValueError('作者硬约束最多 12000 字，请先缩短内容')
     wizard = {'title': title, 'idea': idea, 'constraints': constraints}
-    for key, label in (('direction_review', '全书方向确认'), ('planning_hierarchy', '分级设计')):
+    for key, label in (('direction_review', '全书方向确认'), ('planning_hierarchy', '分级设计'),
+                       ('creative_workflow', '实际创作工作流')):
         if key in raw:
             if type(raw[key]) is not bool:
                 raise ValueError(f'{label}设置必须为布尔值')

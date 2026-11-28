@@ -2,14 +2,14 @@ import {api, enc} from '../api.js';
 import {$, esc, empty, loading} from '../ui.js';
 
 const stageNames = {
-  type_selection: '01. 类型选择', type_adaptation: '02. 类型适配',
-  world_design: '03. 世界设计', character_design: '04. 人物设计',
-  static_relations: '05. 静态关系', plot_design: '06. 剧情设计',
-  event_design: '07. 事件设计', action_design: '08. 行动设计',
-  scene_design: '09. 场景设计', state_transition: '10. 状态变化',
-  state_propagation: '11. 状态传播', anchor_design: '12. 锚点设计',
-  expression_design: '13. 表达设计', bind_scope: '14. 绑定汇总',
-  writer: '15. 正文写作', review: '16. 独立审稿', acceptance: '17. 状态提取与验收',
+  type_selection: '前置契约 · 立项类型冻结（自动继承）', type_adaptation: '前置契约 · 多类型融合（单类型自动冻结）',
+  world_design: '世界规则与限制定稿', character_design: '核心人物与弧光起点',
+  static_relations: '人物关系与势力张力', plot_design: '故事大纲、开篇承诺与卷章切分',
+  event_design: '本章事件链与因果触发', action_design: '人物行动博弈与试错代价',
+  scene_design: '场景卡与 POV 边界排布', state_transition: '场内状态变化与代价',
+  state_propagation: '状态连锁传播预案', anchor_design: '具象动作锚点与感官节拍',
+  expression_design: '叙述距离、对白与文风指导', bind_scope: '冻结可写场景工作包',
+  writer: '场景正文起草 (15)', review: '事实与读者独立审稿 (16)', acceptance: '状态提取、接受与续章 (17)',
 };
 
 const scopeLabels = {book: '全书', volume: '卷纲', chapter: '章纲', scene: '场景'};
@@ -462,11 +462,26 @@ export async function renderPrerequisites(ctx) {
         }
       }
 
-      blueprintPanel.innerHTML = `<div class="section-head"><h2>全流程步骤资料需求与拆解映射蓝图</h2>
-        <span class="muted">共 ${summary.total_steps || steps.length} 步（${summary.design_steps || 14} 个设计步骤 + ${summary.execution_steps || 3} 个写审验收步骤） · 已覆盖拆解方法 ${summary.covered_steps || 0} 步</span></div>
+      const cw = bp.creative_workflow || null;
+      const cwHtml = cw ? `<section class="card stack" id="creativeWorkflowOverviewPanel">
+        <div class="row spread wrap">
+          <div><h3 style="margin:0">${esc(cw.title || '实际创作工作流')}</h3>
+          <p class="muted" style="margin:4px 0 0;font-size:12px">${esc(cw.summary || '')}</p></div>
+          <span class="tag green">新版默认工作流</span>
+        </div>
+        ${cw.auto_contract ? `<div class="notice" style="font-size:12px"><strong>${esc(cw.auto_contract.label)}：</strong>${esc(cw.auto_contract.behavior)}</div>` : ''}
+        <div class="stack" style="gap:8px">${(cw.tiers || []).map(tier => `<div class="method-section">
+          <strong>${esc(tier.title)}</strong>
+          <p class="muted" style="margin:4px 0 6px;font-size:12px">${esc(tier.goal)}</p>
+          <ul style="margin:0 0 0 18px;font-size:12px">${(tier.steps || []).map(st => `<li><strong>${esc(st.label)}</strong>：${esc(st.deliverable)}</li>`).join('')}</ul>
+        </div>`).join('')}</div>
+      </section>` : '';
+      blueprintPanel.innerHTML = `<div class="section-head"><h2>实际创作工作流与步骤资料蓝图</h2>
+        <span class="muted">4 大创作层级（底层映射 ${summary.total_steps || steps.length} 项资料供给与校验域） · 已覆盖拆解方法 ${summary.covered_steps || 0} 步</span></div>
+        ${cwHtml}
         <div class="card"><strong>拆解方法论（以步骤需求驱动拆解）</strong>
           <div class="row wrap" style="margin-top:8px">${(bp.methodology || []).map(m => `<span class="tag blue">${esc(m.order)}. ${esc(m.name)}</span>`).join('')}</div>
-          <p class="muted" style="margin-top:8px">拆解参考小说时先明确该观察服务哪一步，再分别判定「作用性（解决什么问题/效果）」与「方式性（具体操作与边界）」，最后绑定到对应步骤的方法产物字段。</p>
+          <p class="muted" style="margin-top:8px">拆解参考小说时先明确该观察服务哪一创作环节，再分别判定「作用性（解决什么问题/效果）」与「方式性（具体操作与边界）」，最后绑定到对应产物字段。</p>
         </div>
         <div class="row wrap">
           <label class="field"><span>按小说类型做下游接收体检</span><select id="handoffAuditType">
@@ -474,10 +489,10 @@ export async function renderPrerequisites(ctx) {
             ${flatGenres.map(g => `<option value="${esc(g.id)}" ${initialType === g.id ? 'selected' : ''}>${g.parent_id ? '　' : ''}${esc(g.name)}</option>`).join('')}
           </select></label>
           <label class="field"><span>按阶段筛选</span><select id="blueprintFilter">
-            <option value="all">全部 17 步</option>
-            <option value="全书与细化共用">全书与细化共用（01–06）</option>
-            <option value="卷/章/场细化专用">卷/章/场细化专用（07–13）</option>
-            <option value="写作与验收">写作、审稿与验收（15–17）</option>
+            <option value="all">全部底层资料供给域（17）</option>
+            <option value="全书与细化共用">全书/卷纲设定与大纲（01–06）</option>
+            <option value="卷/章/场细化专用">章细纲与场景节拍包（07–13）</option>
+            <option value="写作与验收">正文写作、审稿与验收（15–17）</option>
             <option value="gap">仅看尚未有可接收拆解方法的步骤</option>
           </select></label>
         </div>

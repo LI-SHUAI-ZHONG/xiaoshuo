@@ -93,8 +93,8 @@ function worldStageExtras(rest, stage) {
   const parts = [];
   if (stage === 'world_design') {
     parts.push(`<section class="card stack" id="worldStageHandoffBanner" style="margin-bottom:14px">
-      <div class="row spread wrap"><strong>03 世界设定与限制 · 上下游职责贯通</strong><span class="tag blue">只立外部规则与边界</span></div>
-      <p class="muted"><strong>承接上游</strong>：01 类型选择 → 02 类型适配 + 拆解库同类型世界规则方法 ｜ <strong>交付下游</strong>：04 人物定位与能力上限 → 05 静态关系与势力张力 → 06 剧情矛盾 → 08 行动代价 → 09 场景可见性。</p>
+      <div class="row spread wrap"><strong>世界规则与限制定稿 · 上下游职责贯通</strong><span class="tag blue">只立外部规则与边界</span></div>
+      <p class="muted"><strong>承接上游</strong>：立项自动冻结的类型契约 + 全书方向设计需求 + 同类型世界规则方法 ｜ <strong>交付下游</strong>：人物定位与能力上限 → 势力与关系张力 → 主线大纲与矛盾 → 行动代价 → 场景可见性。</p>
     </section>`);
   }
   if (Array.isArray(rest.limitations) && rest.limitations.length) {
@@ -181,9 +181,38 @@ function plotAndEventStageExtras(rest, stage) {
   const parts = [];
   if (stage === 'plot_design') {
     parts.push(`<section class="card stack" id="plotStageHandoffBanner" style="margin-bottom:14px">
-      <div class="row spread wrap"><strong>06 剧情因果与伏笔 · 上下游职责贯通</strong><span class="tag blue">主支线 · 读者序 · 伏笔窗口</span></div>
-      <p class="muted"><strong>承接上游</strong>：01–05 类型承诺/世界限制/人物目标/静态关系 + 篇幅计划 ｜ <strong>交付下游</strong>：07 事件完成门（event_nodes）→ 08 行动阻碍 → 09 场景披露与伏笔落场（reader_plan / promise_plan）。</p>
+      <div class="row spread wrap"><strong>故事大纲、人物弧光与卷章任务切分</strong><span class="tag blue">主支线 · 开篇承诺 · 人物弧 · 逐章切分</span></div>
+      <p class="muted"><strong>承接上游</strong>：立项类型契约 + 世界硬规则 + 核心人物与关系网 + 篇幅计划 ｜ <strong>交付下游</strong>：全书交付开篇黄金三章/剧情段/人物弧 → 卷纲交付逐章任务切分表 → 章纲交付事件节点与场景节拍。</p>
     </section>`);
+  }
+  if (rest.opening_plan && typeof rest.opening_plan === 'object') {
+    const op = rest.opening_plan;
+    parts.push(`<section class="design-card" id="openingPlanCard"><h3>开篇抢跑与黄金三章设计</h3>
+      ${definitionList(op, {hook_moment:'开篇切入瞬间', first_chapter_promise:'第一章核心承诺', reader_expectation:'前三章追更期待'})}
+      ${Array.isArray(op.golden_three_beats) && op.golden_three_beats.length ? `<div style="margin-top:8px"><small class="muted">黄金三章节拍</small><ol>${op.golden_three_beats.map(b => `<li>${esc(b)}</li>`).join('')}</ol></div>` : ''}
+    </section>`);
+    delete rest.opening_plan;
+  }
+  if (Array.isArray(rest.character_arcs) && rest.character_arcs.length) {
+    parts.push(`<section class="design-card" id="characterArcsCard"><h3>关键人物弧光变化链（${rest.character_arcs.length} 条）</h3>${rest.character_arcs.map(arc => `<div class="method-section">
+      <p><strong>人物 <code>${esc(arc.character || '')}</code></strong>${arc.target_span ? ` · <span class="tag blue">${esc(arc.target_span)}</span>` : ''}</p>
+      ${definitionList(arc, {start_state:'原状态与盲点', trigger_event:'触发事件', choice:'自主抉择', cost:'付出代价', new_state:'变化后新状态'})}
+    </div>`).join('')}</section>`);
+    delete rest.character_arcs;
+  }
+  if (Array.isArray(rest.story_segments) && rest.story_segments.length) {
+    parts.push(`<section class="design-card" id="storySegmentsCard"><h3>全书可拆分因果剧情段（${rest.story_segments.length} 段）</h3>${rest.story_segments.map((seg, idx) => `<div class="method-section">
+      <p><strong>第 ${idx + 1} 段 · ${esc(seg.title || seg.id || '')}</strong> <small class="faint">${esc(seg.id || '')}</small></p>
+      ${definitionList(seg, {entry_condition:'进入局面', core_events:'核心事件', turning_choice:'关键转折抉择', ending_state:'段末新局面', next_driver:'推动下一段的原因'})}
+    </div>`).join('')}</section>`);
+    delete rest.story_segments;
+  }
+  if (Array.isArray(rest.chapter_splits) && rest.chapter_splits.length) {
+    parts.push(`<section class="design-card" id="chapterSplitsCard"><h3>本卷逐章任务切分与交接表（${rest.chapter_splits.length} 章）</h3>${rest.chapter_splits.map(ch => `<div class="method-section">
+      <p><strong>第 ${esc(ch.chapter_index ?? '')} 章 · ${esc(ch.title || '未命名章节')}</strong></p>
+      ${definitionList(ch, {mission:'本章核心剧情任务', entering_state:'承接的进入局面', key_turn:'本章关键转折', ending_change:'章末实际变化', handoff_to_next:'留给下一章的问题/钩子', hook_or_foreshadow:'钩子或伏笔安排'})}
+    </div>`).join('')}</section>`);
+    delete rest.chapter_splits;
   }
   if (stage === 'event_design') {
     parts.push(`<section class="card stack" id="eventStageHandoffBanner" style="margin-bottom:14px">
