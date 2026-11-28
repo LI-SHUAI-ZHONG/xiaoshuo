@@ -67,6 +67,79 @@ def freeze_automatic_policy(reader: MethodReader, types: list[str], settings: di
     return normalize({**policy, 'max_methods': maximum, 'recommended_slots': routes}, types=types)
 
 
+def freeze_optional_policy(reader: MethodReader, types: list[str], settings: dict, *,
+                           candidate_titles: dict[str, str] | None = None,
+                           planning_hierarchy: bool = False,
+                           preferred_references: list[dict] | None = None) -> dict:
+    """Builtin-first AI Auto policy: use full 7-board routes if ready, partial enhancement if some
+    approved same-type methods exist, or empty policy (100% built-in workflow rules) without blocking."""
+    from nw.production_methods.policy import normalize
+
+    # 1. If all 7 boards happen to be ready, seamlessly use full automatic routes.
+    try:
+        return freeze_automatic_policy(
+            reader, types, settings,
+            candidate_titles=candidate_titles, planning_hierarchy=planning_hierarchy,
+        )
+    except ValueError:
+        pass
+
+    # 2. Otherwise collect any approved same-type executable methods that actually exist.
+    sources: dict[str, list[str]] = {}
+    matches = []
+    if reader.db_path.is_file():
+        for row, match in matching_methods(reader, types):
+            if match['level'] == 'cross_type':
+                continue
+            book_id = row['structure_origin']['book_id']
+            if book_id not in sources:
+                sources[book_id] = json.loads(reader._staging_row(book_id)['confirmed_types_json'])
+            if same_reference_type(types, row['body']['type_tags'], sources[book_id]):
+                matches.append(row)
+    if not matches and not preferred_references:
+        return {}
+
+    blocked: dict[str, dict[str, None]] = {}
+    candidates = _launch_candidates(reader, types, matches, blocked, planning_hierarchy=planning_hierarchy)
+    ready_pins = {pin for offers in candidates.values() for pin in offers}
+    if not ready_pins and not preferred_references:
+        return {}
+
+    by_pin = {(row['id'], row['version']): row for row in matches}
+    preferred: dict[str, int] = {}
+    active_tasks: list[str] = []
+    has_world_ready = False
+    for ident, ver in sorted(ready_pins):
+        row = by_pin.get((ident, ver))
+        if not row:
+            continue
+        preferred[ident] = ver
+        if candidate_titles is not None:
+            candidate_titles[ident] = row['body']['title']
+        for task in row['body'].get('tasks', ()):
+            if task not in active_tasks:
+                active_tasks.append(task)
+            if task == 'world_rules' and any(
+                (scope, stage) == ('book', 'world_design') and (ident, ver) in offers
+                for (scope, stage), offers in candidates.items()
+            ):
+                has_world_ready = True
+    for ref in (preferred_references or ()):
+        preferred[ref['id']] = ref['version']
+    if not active_tasks:
+        return {}
+    raw_policy: dict = {
+        **{k: v for k, v in settings.items() if k in ('max_methods',)},
+        'tasks': active_tasks,
+        'recommendation_mode': 'auto',
+        'preferred_methods': preferred,
+    }
+    if has_world_ready:
+        raw_policy['world_selection'] = 'ai'
+    raw_policy['max_methods'] = min(3, int(raw_policy.get('max_methods', 3)))
+    return normalize(raw_policy, types=types)
+
+
 def automatic_requirements(reader: MethodReader, types: list[str], *, max_methods: int = 3,
                            candidate_titles: dict[str, str] | None = None, planning_hierarchy: bool = False) -> dict:
     """Freeze actionable seven-board coverage and keep every step within its method budget."""

@@ -15,6 +15,12 @@ from nw.studio.library_util import encode, timestamp
 
 
 def _job_progress(kind: str, state: dict, options: dict) -> float:
+    if kind == 'targeted':
+        spans = max(1, len(state.get('spans', [])))
+        extract_frac = min(1.0, state.get('extract_cursor', 0) / spans)
+        synth_frac = 1.0 if state.get('synthesis_done') else 0.0
+        ratio = 0.78 * extract_frac + 0.18 * synth_frac
+        return round(min(0.98, max(0.02, ratio)), 3)
     if kind == 'methods':
         total = max(1, len(options.get('thread_ids', [])))
         ratio = state.get('method_cursor', 0) / total
@@ -197,6 +203,10 @@ def run_job(service: object, job_id: str, config: object, provider: object) -> N
     job=dict(raw);job['options']=json.loads(job['options_json']);state=json.loads(job['state_json'])
     try:
         content=service._book_text(service._staging_row(job['book_id']))
+        if job['kind']=='targeted':
+            from nw.studio.corpus_direct import run_targeted_job
+            run_targeted_job(service,job,state,config,provider,content)
+            return
         if job['kind']=='methods':derive_methods(service,job,state,config,provider)
         else:
             do_read(service,job,state,config,provider,content,'survey')

@@ -20,13 +20,25 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     auto_recommendations = raw.get('auto_recommendations', False)
     if type(auto_recommendations) is not bool or auto_recommendations and mode != 'auto':
         raise ValueError('只有 AI 自动入口可以启用自动推荐')
+    method_policy_mode = raw.get('method_policy_mode')
+    if method_policy_mode is not None and method_policy_mode not in ('builtin_enhanced', 'strict_corpus'):
+        raise ValueError('制作方法运行策略须为 builtin_enhanced 或 strict_corpus')
+    # Creative workflow uses builtin_enhanced by default unless strict_corpus is explicitly requested.
+    creative_default = bool(raw.get('creative_workflow'))
+    effective_method_mode = method_policy_mode or (
+        'strict_corpus' if (auto_recommendations and not creative_default)
+        else ('builtin_enhanced' if creative_default else 'legacy')
+    )
+    auto_builtin_mode = (mode == 'auto' and effective_method_mode == 'builtin_enhanced')
     title, idea = str(raw.get('title', '')).strip(), str(raw.get('idea', '')).strip()
-    if len(title) > 120 or len(idea) > 12000 or not auto_recommendations and (not title or not idea):
+    if len(title) > 120 or len(idea) > 12000 or (not auto_recommendations and not auto_builtin_mode) and (not title or not idea):
         raise ValueError('请填写书名（120字内）和一句话故事构想（12000字内）')
     constraints = str(raw.get('constraints', '')).strip()
     if len(constraints) > 12000:
         raise ValueError('作者硬约束最多 12000 字，请先缩短内容')
     wizard = {'title': title, 'idea': idea, 'constraints': constraints}
+    if method_policy_mode is not None or creative_default:
+        wizard['method_policy_mode'] = effective_method_mode
     for key, label in (('direction_review', '全书方向确认'), ('planning_hierarchy', '分级设计'),
                        ('creative_workflow', '实际创作工作流')):
         if key in raw:
@@ -63,7 +75,7 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     if len(selected_types[secondary_at:]) > 2:
         raise ValueError('副类型最多选择两个')
     candidate_titles: dict[str, str] = {}
-    if auto_recommendations:
+    if auto_recommendations and effective_method_mode == 'strict_corpus':
         if any(wizard[field] for slot, field in SLOTS.items() if slot != 'genre') or raw.get('method_preferences'):
             raise ValueError('按类型自动推荐的入口使用已批准的方法，请在人工选择入口提交手动偏好')
         wizard['auto_recommendations'] = True
@@ -72,6 +84,20 @@ def freeze_wizard(body: dict, library: Any) -> dict:
             wizard['idea'] = ('根据所选类型及当前步骤获准的参考小说制作方法，提出原创小说的人物、处境、'
                               '目标、冲突和全书方向。将方法落实为本书具体设计。')
             wizard['idea_origin'] = 'auto_brief'
+    elif auto_builtin_mode:
+        from nw.studio.wizard_setup import auto_select_genre_preferences
+
+        wizard['auto_recommendations'] = bool(auto_recommendations)
+        wizard['title'] = title or f"未命名·{primary['name']}"
+        if not idea:
+            wizard['idea'] = (f"围绕「{primary['name']}」核心读者承诺与高辨识度冲突，结合内置写作工作流规则"
+                              f"与同类型可用参考方法，原创构思主角处境、核心矛盾、代价抉择与全书推进方向。")
+            wizard['idea_origin'] = 'auto_brief'
+        # Fill differentiating genre defaults when author left slots blank in AI Auto mode.
+        defaults = auto_select_genre_preferences(selected_types)
+        for field_name, vals in defaults.items():
+            if not wizard.get(field_name):
+                wizard[field_name] = vals
     chosen_keys = {'genre': {f'genre.{value}' for value in selected_types}}
     for slot, field in SLOTS.items():
         if slot == 'genre':
@@ -120,27 +146,61 @@ def freeze_wizard(body: dict, library: Any) -> dict:
         wizard['method_references'] = references
     if raw.get('production_methods') is not None or references or mode:
         from nw.production_methods.policy import normalize
+        from nw.production_methods.sources import MethodReader
+        from nw.studio.method_recommendations import freeze_automatic_policy, freeze_optional_policy
+
         configuration = raw.get('production_methods', {})
         if mode and configuration is None:
             configuration = {}
-        if isinstance(configuration, dict):
-            configuration = {**configuration, 'preferred_methods': {row['id']: row['version'] for row in references}}
-            if 'recommended_slots' in configuration:
-                raise ValueError('推荐候选版本由类型资料库自动核定')
-            if mode:
-                configuration.setdefault('tasks', ['world_rules'])
-                configuration.update(world_selection='ai', recommendation_mode=mode)
         if configuration is None:
             raise ValueError('如需关闭制作方法，请先取消所选立项方法')
-        if auto_recommendations and isinstance(configuration, dict):
-            from nw.production_methods.sources import MethodReader
-            from nw.studio.method_recommendations import freeze_automatic_policy
-
-            wizard['production_methods'] = freeze_automatic_policy(
-                MethodReader(library.workspace), selected_types, configuration, candidate_titles=candidate_titles,
-                planning_hierarchy=wizard.get('planning_hierarchy', False))
+        if effective_method_mode == 'builtin_enhanced':
+            # Builtin-first creative workflow: never deadlocks on missing reference methods!
+            # Auto-attaches any available approved same-type corpus methods as optional enhancement.
+            reader = MethodReader(library.workspace)
+            explicit_tasks = list(configuration.get('tasks', ())) if isinstance(configuration, dict) else []
+            if mode == 'auto':
+                policy = freeze_optional_policy(
+                    reader, selected_types, configuration if isinstance(configuration, dict) else {},
+                    candidate_titles=candidate_titles,
+                    planning_hierarchy=wizard.get('planning_hierarchy', False),
+                    preferred_references=references,
+                )
+                if policy:
+                    wizard['production_methods'] = policy
+            elif references or explicit_tasks:
+                cfg = {**(configuration if isinstance(configuration, dict) else {})}
+                cfg['preferred_methods'] = {row['id']: row['version'] for row in references}
+                if not explicit_tasks:
+                    # Derive tasks strictly from the author's actually selected methods (no missing-world deadlock)
+                    derived_tasks = list(dict.fromkeys(
+                        t for row in references for t in _tasks_for_reference(reader, row)
+                    ))
+                    if derived_tasks:
+                        cfg['tasks'] = derived_tasks
+                if cfg.get('tasks'):
+                    cfg.setdefault('recommendation_mode', 'manual')
+                    wizard['production_methods'] = normalize(cfg, types=selected_types)
+            elif mode == 'manual' and _has_book_world_method(reader, selected_types, wizard.get('planning_hierarchy', False)):
+                # Auto-enhance manual mode with verified same-type world method ONLY when one actually exists.
+                wizard['production_methods'] = normalize(
+                    {'tasks': ['world_rules'], 'world_selection': 'ai', 'recommendation_mode': 'manual'},
+                    types=selected_types,
+                )
         else:
-            wizard['production_methods'] = normalize(configuration, types=selected_types)
+            if isinstance(configuration, dict):
+                configuration = {**configuration, 'preferred_methods': {row['id']: row['version'] for row in references}}
+                if 'recommended_slots' in configuration:
+                    raise ValueError('推荐候选版本由类型资料库自动核定')
+                if mode:
+                    configuration.setdefault('tasks', ['world_rules'])
+                    configuration.update(world_selection='ai', recommendation_mode=mode)
+            if auto_recommendations and isinstance(configuration, dict):
+                wizard['production_methods'] = freeze_automatic_policy(
+                    MethodReader(library.workspace), selected_types, configuration, candidate_titles=candidate_titles,
+                    planning_hierarchy=wizard.get('planning_hierarchy', False))
+            else:
+                wizard['production_methods'] = normalize(configuration, types=selected_types)
     if 'auto_length' in raw:
         if type(raw['auto_length']) is not bool:
             raise ValueError('AI 篇幅设计选项必须为布尔值')
@@ -156,6 +216,25 @@ def freeze_wizard(body: dict, library: Any) -> dict:
         wizard['passage_references'] = passages
     wizard['creation_plan'] = creation_plan.freeze(wizard, library, candidate_titles)
     return wizard
+
+
+def _has_book_world_method(reader: Any, types: list[str], planning_hierarchy: bool) -> bool:
+    if not types or not reader.db_path.is_file():
+        return False
+    try:
+        from nw.studio.method_recommendations import recommendations
+        rec = recommendations(reader, 'world', types, [], planning_hierarchy=planning_hierarchy, limit=1)
+        return bool(rec.get('book_world_available'))
+    except Exception:
+        return False
+
+
+def _tasks_for_reference(reader: Any, ref: dict) -> list[str]:
+    try:
+        row = reader.get_method(ref['id'], ref['version'])
+        return list(row.get('body', {}).get('tasks', ()))
+    except Exception:
+        return []
 
 
 def freeze_length_recommendation(wizard: dict, library) -> None:

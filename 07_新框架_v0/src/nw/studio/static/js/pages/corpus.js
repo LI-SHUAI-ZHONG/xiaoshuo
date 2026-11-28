@@ -54,17 +54,19 @@ export async function renderCorpus(ctx,book){
       ${record.history.length?`<select id="corpusVersion" aria-label="拆解版本">${record.history.map(v=>`<option value="${v.version}" ${v.version===record.version?'selected':''}>版本 ${v.version} · ${v.decision==='approve'?'已批准':v.decision==='reject'?'已退回':'待审核'}</option>`).join('')}</select>`:''}</div>
       <p class="notice">请按原文位置核对规则、事件因果和适用边界。方法单独审核后，项目可按前置需求和已选类型生成设计卡。</p>
       ${!currentSchema?`<p class="notice">当前规格 v${esc(latestCatalog.schema_version)} 有 ${Object.keys(latestCatalog.domains).length} 项。此份旧分析保留原记录。重新拆解原文，或在最新修订中补齐各项观察并审核后，可继续提炼。</p>`:''}
-      <div class="row wrap corpus-toolbar">${!record.initialized&&canStart?'<button class="secondary" id="initializeCorpus">人工建立目录</button>':''}<button class="button" id="startCorpus" ${canStart?'':'disabled'}>多层自动拆解</button>
+      <div class="row wrap corpus-toolbar">${!record.initialized&&canStart?'<button class="secondary" id="initializeCorpus">人工建立目录</button>':''}<button class="button" id="startTargetedCorpus" ${canStart?'':'disabled'}>精准步骤拆解（推荐）</button>
+      <button class="secondary" id="startCorpus" ${canStart?'':'disabled'}>全书多层图谱拆解</button>
       ${canEdit?'<button class="secondary" id="editCorpusExtent">核对文本完整性</button>':''}
       ${canEdit&&currentSchema&&!record.review?'<button class="secondary" id="reviewCorpus">审核当前结构</button>':''}
-      <button class="secondary" id="extractCorpusMethods" ${canDerive?'':'disabled'}>自动提炼方法</button><button class="secondary" id="manualCorpusMethod" ${canDerive?'':'disabled'}>手工提炼方法草稿</button></div>
+      <button class="secondary" id="extractCorpusMethods" ${canDerive?'':'disabled'}>补充提炼方法</button><button class="secondary" id="manualCorpusMethod" ${canDerive?'':'disabled'}>手工提炼方法草稿</button></div>
       ${!latest?'<p class="notice">正在查看历史版本。切换最新版本后编辑；提炼使用当前批准版本。</p>':''}
       <div id="corpusJobPanel"></div>
       ${record.initialized?`<details class="details" ${errors.length?'open':''}><summary>结构核对：${errors.length} 项阻断 · ${warnings.length} 项待核</summary>${record.issues.map(i=>`<p class="${i.severity==='error'?'error':'muted'}">${esc(i.message)}</p>`).join('')||'<p class="muted">结构与引用检查没有发现阻断；这不是文学质量评分。</p>'}</details>`:''}
       <div class="tabs corpus-tabs">${[['overview','全书总览'],['distribution','逐章进展、人物与线索分布'],...Object.entries(sectionNames)].map(([id,name])=>`<button data-corpus-tab="${id}" class="${tab===id?'active':''}">${name}</button>`).join('')}</div>
       <div id="corpusSection"></div></div>`;
     $$('[data-corpus-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.corpusTab;page=0;search='';unitFilter='';domainFilter='';paintSection(canEdit);$$('[data-corpus-tab]').forEach(t=>t.classList.toggle('active',t===b));});
-    $('#startCorpus').onclick=()=>openCorpusRun({book,record,catalog:latestCatalog,reload:loadLatest});
+    $('#startTargetedCorpus')?.addEventListener('click',()=>openCorpusRun({book,record,catalog:latestCatalog,reload:loadLatest,kind:'targeted'}));
+    $('#startCorpus').onclick=()=>openCorpusRun({book,record,catalog:latestCatalog,reload:loadLatest,kind:'structure'});
     $('#extractCorpusMethods').onclick=()=>openCorpusRun({book,record,catalog,reload:loadLatest,kind:'methods'});
     $('#editCorpusExtent')?.addEventListener('click',()=>editor('source_extent',record.body.source_extent));
     $('#reviewCorpus')?.addEventListener('click',()=>openCorpusReview({book,record,reload:loadLatest}));
@@ -179,9 +181,11 @@ export async function renderCorpus(ctx,book){
     jobDetail=await api.get(root+'/jobs/'+enc(shownJob),ctx.signal);if(stopped||!ctx.alive())return;
     const job=jobDetail,coverage=job.coverage;
     const chars=ranges=>{const merged=[];for(const r of [...(ranges||[])].sort((a,b)=>a.start-b.start)){if(merged.length&&r.start<=merged.at(-1).end)merged.at(-1).end=Math.max(r.end,merged.at(-1).end);else merged.push({start:r.start,end:r.end});}return merged.reduce((n,r)=>n+r.end-r.start,0);};
-    $('#corpusJobPanel').innerHTML=`<section class="card corpus-job"><div class="row spread wrap"><h3>${phaseName[job.phase]||job.phase} · ${jobState[job.status]||job.status}${job.control==='pause'?' · 当前调用后暂停':''}</h3><select id="chooseCorpusJob" aria-label="选择拆解任务">${jobs.map(j=>`<option value="${esc(j.id)}" ${j.id===shownJob?'selected':''}>${j.kind==='methods'?'方法提炼':'结构拆解'} · ${jobState[j.status]} · ${esc(j.created_at)}</option>`).join('')}</select></div>
-      <p class="muted">任务冻结规格 v${esc(job.structure_schema_version)} · 调用记录 ${job.calls_used} / 上限 ${job.options.max_calls} · 通读 ${chars(coverage.survey_ranges)} 字符 · 细拆 ${chars(coverage.detail_ranges)} 字符</p>
-      ${job.error?`<p class="error">${esc(job.error)}</p>`:''}<div class="row wrap">${job.status==='running'?'<button class="secondary" id="pauseCorpusJob">当前调用后暂停</button>':''}${['paused','failed'].includes(job.status)?'<button class="button" id="resumeCorpusJob">续接 / 明确重试</button>':''}${['pending','running','paused','failed'].includes(job.status)?'<button class="ghost" id="cancelCorpusJob">取消此任务（保留记录）</button>':''}<button class="ghost" id="corpusCallList">查看逐次调用记录</button></div></section>`;
+    const kindLabel=k=>k==='targeted'?'精准步骤拆解':k==='methods'?'方法提炼':'全书图谱拆解';
+    const publishedCount=Array.isArray(job.progress?.published_methods)?job.progress.published_methods.length:0;
+    $('#corpusJobPanel').innerHTML=`<section class="card corpus-job"><div class="row spread wrap"><h3>${kindLabel(job.kind)} · ${phaseName[job.phase]||job.phase} · ${jobState[job.status]||job.status}${job.control==='pause'?' · 当前调用后暂停':''}</h3><select id="chooseCorpusJob" aria-label="选择拆解任务">${jobs.map(j=>`<option value="${esc(j.id)}" ${j.id===shownJob?'selected':''}>${kindLabel(j.kind)} · ${jobState[j.status]} · ${esc(j.created_at)}</option>`).join('')}</select></div>
+      <p class="muted">任务规格 v${esc(job.structure_schema_version)} · 调用 ${job.calls_used} / 上限 ${job.options.max_calls} · 已读 ${chars(coverage.survey_ranges)} 字符${publishedCount?` · <strong>已直接核验入库 ${publishedCount} 条方法</strong>`:''}</p>
+      ${job.error?`<p class="error">${esc(job.error)}</p>`:''}<div class="row wrap">${job.status==='running'?'<button class="secondary" id="pauseCorpusJob">当前调用后暂停</button>':''}${['paused','failed'].includes(job.status)?'<button class="button" id="resumeCorpusJob">续接 / 重试</button>':''}${['pending','running','paused','failed'].includes(job.status)?'<button class="ghost" id="cancelCorpusJob">取消此任务（保留记录）</button>':''}${publishedCount?'<a class="button" href="#/kb/items">查看已入库方法</a>':''}<button class="ghost" id="corpusCallList">查看逐次调用记录</button></div></section>`;
     $('#chooseCorpusJob').onchange=e=>{shownJob=e.target.value;paintJobs().catch(fail);};
     for(const action of ['pause','cancel'])$(`#${action}CorpusJob`)?.addEventListener('click',e=>busy(e.currentTarget,async()=>{await api.post(root+'/jobs/'+enc(job.id),{action});await load();}));
     $('#resumeCorpusJob')?.addEventListener('click',()=>openCorpusResume({book,job,reload:load}));

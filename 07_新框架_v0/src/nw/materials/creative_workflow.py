@@ -200,7 +200,8 @@ def _has_type_network_work(stage: str, products: dict, context: dict) -> bool:
 
 
 def _book_chosen_genre_ids(package: dict, context: dict) -> list[str]:
-    gov = (context.get('governance_inputs') or {}).get('type_selection', {})
+    gov_root = package.get('governance_inputs') or context.get('governance_inputs') or {}
+    gov = gov_root.get('type_selection', {}) if isinstance(gov_root, dict) else {}
     plan_types = [str(r.get('id', '')).strip() for r in (gov.get('creation_plan', {}).get('types') or []) if r.get('id')]
     if plan_types:
         return plan_types
@@ -274,7 +275,8 @@ def can_auto_compile_stage(
 def _build_book_type_selection(package: dict, context: dict) -> dict:
     from nw.studio.catalog import option_map, type_map
 
-    gov = (context.get('governance_inputs') or {}).get('type_selection', {})
+    gov_root = package.get('governance_inputs') or context.get('governance_inputs') or {}
+    gov = gov_root.get('type_selection', {}) if isinstance(gov_root, dict) else {}
     plan = gov.get('creation_plan') or {}
     known_types = type_map()
     plan_types = plan.get('types') or [

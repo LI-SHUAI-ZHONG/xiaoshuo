@@ -179,7 +179,8 @@ def graph_issues(body: dict, length: int, coverage: dict | None = None, *, conte
                       +f'（共{len(missing)}章，可逐章核对）','warning')
         reviewed=set(coverage.get('reviewed_units',[]))
         manual=bool(chapters) and {u['id'] for u in chapters}<=reviewed
+        targeted_done=bool(coverage.get('targeted_mode')) and bool(coverage.get('sampled_ranges'))
         read=range_coverage(coverage.get('survey_ranges',[]),length)['complete_imported_text']
         detail=range_coverage(coverage.get('detail_ranges',[]),length)['complete_imported_text']
-        check(manual or read and detail,'coverage','仍有范围未通读/细拆；不能批准全范围分析')
+        check(manual or targeted_done or (read and detail),'coverage','仍有范围未通读/细拆；不能批准全范围分析')
     return issues

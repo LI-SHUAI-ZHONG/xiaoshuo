@@ -1239,8 +1239,8 @@ def test_book_directions_type_adaptation_portfolio_and_http_handoff_chain(tmp_pa
     assert 'corpusHandoffCard' in (js_root / 'pages' / 'corpus.js').read_text(encoding='utf-8')
     assert 'handoffAuditType' in (js_root / 'pages' / 'prerequisites.js').read_text(encoding='utf-8')
     assert 'wizardAutoReadiness' in (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
-    assert 'syncWizardTasksFromMethods' in (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
-    assert 'type_choice' in (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
+    assert '/wizard/setup-profile' in (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
+    assert 'builtin_enhanced' in (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
     assert 'methodGateCount' in (js_root / 'pages' / 'project-methods.js').read_text(encoding='utf-8')
     assert 'projectHandoffAudit' in (js_root / 'pages' / 'project-methods.js').read_text(encoding='utf-8')
     assert 'noticeProjectMethods' in (js_root / 'pages' / 'studio.js').read_text(encoding='utf-8')
@@ -1401,13 +1401,14 @@ def test_world_blueprint_options_http_and_client_workflow_step_order(tmp_path: P
     js_root = ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js'
     wizard_step_js = (js_root / 'components' / 'WizardStep.js').read_text(encoding='utf-8')
     parsed_slots = re.findall(r"slot\s*:\s*'([a-z]+)'", wizard_step_js)
-    assert tuple(parsed_slots) == (*expected_slots, 'confirm')
-    assert 'outOfScopeOptions' in wizard_step_js
+    # Redesigned 4-step wizard removes mandatory world/character craft checkboxes into autoCapabilitiesHtml.
+    assert tuple(parsed_slots) == ('genre', 'structure', 'style', 'confirm')
+    assert 'outOfScopeOptions' in wizard_step_js and 'wizardAutoCapabilities' in wizard_step_js
 
     wizard_js = (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
     assert 'step === 6' not in wizard_js and 'step === 8' not in wizard_js
-    assert 'wizardWorldGuide' in wizard_js
-    assert '/kb/world-blueprint' in wizard_js
+    assert '/wizard/setup-profile' in wizard_js
+    assert 'autoCapabilitiesHtml' in wizard_js
     assert 'worldStageHandoffBanner' in (js_root / 'components' / 'PlanArtifacts.js').read_text(encoding='utf-8')
     assert 'worldBlueprintCategories' in (js_root / 'pages' / 'prerequisites.js').read_text(encoding='utf-8')
     assert 'atlasWorldProfile' in (js_root / 'pages' / 'atlas.js').read_text(encoding='utf-8')
@@ -1655,7 +1656,7 @@ def test_character_blueprint_options_http_and_frontend_04_05_hooks(tmp_path: Pat
     js_root = ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js'
     assert 'target_stage_label' in (js_root / 'components' / 'WizardStep.js').read_text(encoding='utf-8')
     wizard_js = (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
-    assert 'wizardCharacterGuide' in wizard_js and '/kb/character-blueprint' in wizard_js
+    assert 'autoCapabilitiesHtml' in wizard_js and '/wizard/setup-profile' in wizard_js
     plan_js = (js_root / 'components' / 'PlanArtifacts.js').read_text(encoding='utf-8')
     assert 'characterStageHandoffBanner' in plan_js and 'staticRelationsStageHandoffBanner' in plan_js
     prereq_js = (js_root / 'pages' / 'prerequisites.js').read_text(encoding='utf-8')
@@ -1922,8 +1923,8 @@ def test_plot_blueprint_options_http_and_frontend_06_07_hooks(tmp_path: Path, mo
 
     js_root = ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js'
     wizard_js = (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
-    assert 'wizardStructureGuide' in wizard_js and 'wizardHookGuide' in wizard_js
-    assert 'drawerOutOfScopeOptions' in wizard_js and '/kb/plot-blueprint' in wizard_js
+    assert 'paintArchitecture' in wizard_js and 'FlatOptionSection' in wizard_js
+    assert 'special_mechanisms' in wizard_js and '/wizard/setup-profile' in wizard_js
     plan_js = (js_root / 'components' / 'PlanArtifacts.js').read_text(encoding='utf-8')
     assert 'plotStageHandoffBanner' in plan_js and 'eventStageHandoffBanner' in plan_js
     prereq_js = (js_root / 'pages' / 'prerequisites.js').read_text(encoding='utf-8')
@@ -2519,7 +2520,7 @@ def test_craft_blueprint_options_http_and_frontend_12_17_hooks(tmp_path: Path, m
     js_root = ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js'
     assert "stage:'场景视角'" in (js_root / 'components' / 'WizardStep.js').read_text(encoding='utf-8')
     wizard_js = (js_root / 'pages' / 'wizard.js').read_text(encoding='utf-8')
-    for token in ('wizardNarrationGuide', 'wizardToneGuide', 'wizardStyleGuide', '/kb/craft-blueprint'):
+    for token in ('paintCraftAndMethods', 'viewpoint_choices', 'FlatOptionSection', '/wizard/setup-profile'):
         assert token in wizard_js, token
     plan_js = (js_root / 'components' / 'PlanArtifacts.js').read_text(encoding='utf-8')
     for token in (

@@ -1,4 +1,5 @@
 """Job lifecycle for hierarchical corpus analysis, sharing book execution locks."""
+from dataclasses import replace
 import json
 import threading
 from types import SimpleNamespace
@@ -9,10 +10,17 @@ from nw.config import ConfigRequired, load_config, make_provider, resolve_stage_
 from nw.studio.corpus_calls import artifact
 from nw.studio.corpus_catalog import SCHEMA_VERSION, domains_for, require_current_schema
 from nw.studio.corpus_checks import graph_issues
+from nw.studio.corpus_direct import (
+    DEFAULT_TRACK_IDS,
+    TARGETED_TRACKS,
+    estimate_targeted_calls,
+    select_targeted_spans,
+)
 from nw.studio.corpus_index import empty_document, source_spans
 from nw.studio.library_util import encode, timestamp
 
 ACTIVE=('pending','running','paused','failed')
+DECOMPOSE_MIN_TIMEOUT = 300.0
 
 
 def runtime_profile(config: object, version: int) -> dict:
@@ -31,11 +39,15 @@ def minimum_structure_calls(spans: list[dict], version: int) -> int:
     return 2*len(spans)+1+len(domains)+max(0,roster_windows-1)
 
 
-def options_for(raw: dict, *, extent: dict, minimum: int) -> dict:
-    if not isinstance(raw,dict) or set(raw)-{'extent','note','chunk_chars','max_calls','max_input_chars','thread_ids','retry_failed'}:
+def options_for(raw: dict, *, extent: dict, minimum: int, kind: str = 'structure') -> dict:
+    allowed_keys = {'extent','note','chunk_chars','max_calls','max_input_chars','thread_ids','retry_failed',
+                    'sample_mode','sample_count','chapter_start','chapter_end','tracks','auto_approve'}
+    if not isinstance(raw,dict) or set(raw)-allowed_keys:
         raise ValueError('多层拆解参数无效')
+    default_chunk = 8000 if kind == 'targeted' else 6000
+    default_calls = 24 if kind == 'targeted' else 128
     result={'extent':raw.get('extent',extent.get('status','unknown')),'note':raw.get('note',extent.get('note','')),
-        'chunk_chars':raw.get('chunk_chars',6000),'max_calls':raw.get('max_calls',128),
+        'chunk_chars':raw.get('chunk_chars',default_chunk),'max_calls':raw.get('max_calls',default_calls),
         'max_input_chars':raw.get('max_input_chars',64000),'thread_ids':raw.get('thread_ids',[]),
         'retry_failed':raw.get('retry_failed',False)}
     for name,lo,hi in (('chunk_chars',1000,20000),('max_calls',1,30000),('max_input_chars',8000,512000)):
@@ -45,6 +57,34 @@ def options_for(raw: dict, *, extent: dict, minimum: int) -> dict:
     if type(result['retry_failed']) is not bool:raise ValueError('重试必须明确选择')
     if not isinstance(result['thread_ids'],list) or any(not isinstance(v,str) for v in result['thread_ids']) or len(set(result['thread_ids']))!=len(result['thread_ids']) or len(result['thread_ids'])>20:
         raise ValueError('每次请明确选择最多20条线索/弧光，可分批提炼')
+    if kind == 'targeted' or any(k in raw for k in ('sample_mode','sample_count','chapter_start','chapter_end','tracks','auto_approve')):
+        sample_mode = raw.get('sample_mode', 'key_chapters')
+        if sample_mode not in ('key_chapters', 'chapter_range', 'all_chapters'):
+            raise ValueError('抽样范围须为 key_chapters / chapter_range / all_chapters')
+        sample_count = raw.get('sample_count', 6)
+        if type(sample_count) is not int or not 1 <= sample_count <= 20:
+            raise ValueError('核心抽样章数须在 1–20 之间')
+        ch_start = raw.get('chapter_start')
+        ch_end = raw.get('chapter_end')
+        for label, val in (('起始章号', ch_start), ('结束章号', ch_end)):
+            if val is not None and (type(val) is not int or val < 1):
+                raise ValueError(f'{label}须为正整数')
+        raw_tracks = raw.get('tracks', list(DEFAULT_TRACK_IDS))
+        if (not isinstance(raw_tracks, list) or not raw_tracks
+                or any(not isinstance(t, str) or t not in TARGETED_TRACKS for t in raw_tracks)
+                or len(set(raw_tracks)) != len(raw_tracks)):
+            raise ValueError('请选择至少 1 个有效的精准步骤拆解维度')
+        auto_approve = raw.get('auto_approve', True)
+        if type(auto_approve) is not bool:
+            raise ValueError('自动核验入库开关须为布尔值')
+        result.update(
+            sample_mode=sample_mode,
+            sample_count=sample_count,
+            chapter_start=ch_start,
+            chapter_end=ch_end,
+            tracks=list(raw_tracks),
+            auto_approve=auto_approve,
+        )
     if result['max_calls']<minimum:raise ValueError(f'调用上限低于已知最低需求{minimum}次；尚未请求模型')
     return result
 
@@ -53,11 +93,22 @@ class CorpusJobsMixin:
     def estimate_corpus(self,book_id: str,request: dict) -> dict:
         book=self._staging_row(book_id);content=self._book_text(book);current=self.get_corpus(book_id)
         raw=dict(request);raw.setdefault('note',current['body']['source_extent']['note'] or '等待作者确认完整性')
-        options=options_for(raw,extent=current['body']['source_extent'],minimum=0)
+        kind=str(raw.pop('kind', 'structure'))
+        options=options_for(raw,extent=current['body']['source_extent'],minimum=0,kind=kind if kind in ('structure','targeted') else 'structure')
         spans=source_spans(current['body']['units'],options['chunk_chars'])
         minimum=minimum_structure_calls(spans,SCHEMA_VERSION)
+        targeted = estimate_targeted_calls(
+            current['body']['units'], content,
+            sample_mode=options.get('sample_mode', 'key_chapters'),
+            sample_count=options.get('sample_count', 6),
+            chapter_start=options.get('chapter_start'),
+            chapter_end=options.get('chapter_end'),
+            chunk_chars=options['chunk_chars'],
+            tracks=options.get('tracks'),
+        )
         return {'book_id':book_id,'characters':len(content),'chapter_units':len({s['unit_id'] for s in spans}),
             'source_spans':len(spans),'minimum_structure_calls':minimum,
+            'targeted': targeted,
             'note':'最低次数不含长文本额外整合批次或重试；每次发送前仍受调用/字符预算限制。',
             'source_extent':current['body']['source_extent'],'options':options}
 
@@ -75,7 +126,7 @@ class CorpusJobsMixin:
         result=dict(row);state=json.loads(result.pop('state_json'));result['options']=json.loads(result.pop('options_json'))
         result['runtime']=json.loads(result.pop('runtime_json'));result['calls']=calls
         result['structure_schema_version']=state['document'].get('schema_version',1)
-        result['progress']={k:state.get(k) for k in ('survey_cursor','overview_cursor','detail_cursor','domain_index','relation_cursor','method_cursor','published_version','published_methods')}
+        result['progress']={k:state.get(k) for k in ('survey_cursor','overview_cursor','detail_cursor','domain_index','relation_cursor','method_cursor','extract_cursor','synthesis_done','published_version','published_methods')}
         result['coverage']=state.get('coverage',{});result['calls_used']=len(calls)
         return result
 
@@ -93,28 +144,55 @@ class CorpusJobsMixin:
             config,provider=resolve_stage_runtime(config,provider,'decompose')
         except ConfigRequired as exc:raise ConfigRequired('CONFIG_REQUIRED: '+str(exc)) from exc
         if provider.name=='fake':raise ConfigRequired('CONFIG_REQUIRED: 正式多层拆解不接受fake模型')
+        # Reasoning/structured-JSON models routinely exceed 120s on long chapters; enforce a safe floor.
+        if getattr(config, 'timeout', 0) < DECOMPOSE_MIN_TIMEOUT:
+            config = replace(config, timeout=DECOMPOSE_MIN_TIMEOUT)
+            provider = make_provider(config)
         return config,provider
 
     def start_corpus_job(self,book_id: str,request: dict) -> dict:
         config,provider=self._corpus_runtime()
         kind=request.get('kind','structure')
-        if set(request)-{'kind','options'} or kind not in ('structure','methods'):raise ValueError('未知多层拆解任务')
+        if set(request)-{'kind','options'} or kind not in ('structure','methods','targeted'):raise ValueError('未知多层拆解任务')
         book=self._staging_row(book_id)
         if book['status'] in ('pending_review','rejected','decomposing'):raise ValueError('请先确认作品类型、等待当前任务结束，且不要使用已撤回作品')
         current=self.get_corpus(book_id);raw=request.get('options',{})
-        options=options_for(raw,extent=current['body']['source_extent'],minimum=0)
+        options=options_for(raw,extent=current['body']['source_extent'],minimum=0,kind=kind)
         content=self._book_text(book)
         body=empty_document(content,options['extent'],options['note'])
         body['units']=[u for u in current['body']['units'] if u['level']!='scene']
         unit_errors=[i['message'] for i in graph_issues(body,len(content)) if i['field']=='units' and i['severity']=='error']
         if unit_errors:raise ValueError('请先修正章节目录：'+'；'.join(unit_errors[:8]))
-        spans=source_spans(body['units'],options['chunk_chars'])
-        base=current['latest_version'];minimum=minimum_structure_calls(spans,body['schema_version'])
-        state={'document':body,'spans':spans,'passage_observations':body['schema_version']>=5,
-               'craft_observations':body['schema_version']>=5,
-               'survey_contract_from':0,
-               'coverage':{'survey_ranges':[],'detail_ranges':[],'reviewed_units':[]},
-               'survey_cursor':0,'overview_cursor':0,'detail_cursor':0,'domain_index':0,'relation_cursor':0,'method_cursor':0,'candidates':[]}
+        base=current['latest_version']
+        if kind=='targeted':
+            spans, paratext, total_story = select_targeted_spans(
+                body['units'], content,
+                sample_mode=options.get('sample_mode', 'key_chapters'),
+                sample_count=options.get('sample_count', 6),
+                chapter_start=options.get('chapter_start'),
+                chapter_end=options.get('chapter_end'),
+                chunk_chars=options['chunk_chars'],
+            )
+            minimum = len(spans) + 1
+            state = {
+                'document': body,
+                'spans': spans,
+                'skipped_paratext': [u['id'] for u in paratext],
+                'total_story_chapters': total_story,
+                'coverage': {'targeted_mode': True, 'survey_ranges': [], 'detail_ranges': [], 'reviewed_units': []},
+                'extract_cursor': 0,
+                'extracted': [],
+                'synthesis': None,
+                'synthesis_done': False,
+            }
+        else:
+            spans=source_spans(body['units'],options['chunk_chars'])
+            minimum=minimum_structure_calls(spans,body['schema_version'])
+            state={'document':body,'spans':spans,'passage_observations':body['schema_version']>=5,
+                   'craft_observations':body['schema_version']>=5,
+                   'survey_contract_from':0,
+                   'coverage':{'survey_ranges':[],'detail_ranges':[],'reviewed_units':[]},
+                   'survey_cursor':0,'overview_cursor':0,'detail_cursor':0,'domain_index':0,'relation_cursor':0,'method_cursor':0,'candidates':[]}
         if kind=='methods':
             base=current['approved_version']
             if base is None:raise ValueError('请先审核全书结构，再提炼方法')
@@ -125,15 +203,16 @@ class CorpusJobsMixin:
             selected=options['thread_ids']
             if not selected or len(selected)>20 or not set(selected)<=ids:raise ValueError('请选择1–20条已批准结构中的线索/弧光')
             options['thread_ids']=selected;state['document']=approved['body'];minimum=len(selected)
-        options_for(options,extent=body['source_extent'],minimum=minimum)
+        options_for(options,extent=body['source_extent'],minimum=minimum,kind=kind)
         ident=uuid4().hex
+        initial_phase = 'methods' if kind=='methods' else ('extract' if kind=='targeted' else 'survey')
         with self.connect() as conn:
             conn.execute('BEGIN IMMEDIATE')
             active=conn.execute("SELECT id FROM corpus_jobs WHERE book_id=? AND status IN ('pending','running','paused','failed')",(book_id,)).fetchone()
             if active:raise ValueError('该作品已有未结束任务，请续接或取消后再开始')
             now=timestamp()
             conn.execute('INSERT INTO corpus_jobs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                (ident,book_id,kind,'pending','','methods' if kind=='methods' else 'survey',book['sha256'],base,
+                (ident,book_id,kind,'pending','',initial_phase,book['sha256'],base,
                  encode(options),encode(runtime_profile(config,state['document']['schema_version'])),encode(state),'',book['status'],now,now))
         try:self._launch_corpus(book_id,ident,config,provider)
         except Exception:
@@ -201,7 +280,7 @@ class CorpusJobsMixin:
             actual=current['approved_version'] if job['kind']=='methods' else current['latest_version']
             if actual!=job['base_version']:raise ValueError('拆解结构已修改，请取消旧任务后重建')
             options={**job['options'],**request.get('options',{}),'retry_failed':request.get('retry_failed',False)}
-            validated=options_for(options,extent=current['body']['source_extent'],minimum=job['calls_used'])
+            validated=options_for(options,extent=current['body']['source_extent'],minimum=job['calls_used'],kind=job['kind'])
             with self.connect() as conn:conn.execute('UPDATE corpus_jobs SET options_json=?,runtime_json=? WHERE id=?',(encode(validated),encode(current_runtime),ident))
             self._launch_corpus(book_id,ident,config,provider)
         else:raise ValueError('未知任务操作')

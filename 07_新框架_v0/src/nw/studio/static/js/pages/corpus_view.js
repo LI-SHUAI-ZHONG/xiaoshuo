@@ -12,8 +12,17 @@ export function analysisCatalogHtml(catalog,counts=null){
     return rows.length?`<p>${esc(title)}</p><ul>${rows.map(k=>`<li>${esc(k.label)} · ${k.role_order.map(r=>esc(k.roles[r])+(k.required_roles.includes(r)?'':'（原文出现时）')).join(k.role_order_flexible?' 与 ':' → ')}${k.role_order_flexible?'（按原文先后）':''}</li>`).join('')}</ul>`:'';
   }
   const methodHtml=methodology.length?`<div class="card" style="margin-bottom:16px"><h3>拆解四步法（按制作步骤资料需求拆解）</h3><ol style="margin:8px 0 0 18px">${methodology.map(m=>`<li><strong>${esc(m.name)}</strong>：${esc(m.summary)}</li>`).join('')}</ol></div>`:'';
-  return `<section aria-label="现行拆解条目"><div class="section-head"><h2>现行拆解条目</h2><span class="muted">规格 v${esc(catalog.schema_version)} · ${domains.length} 项</span></div>
-    ${methodHtml}
+  const targetedTracks=catalog.targeted_tracks||[];
+  const tracksHtml=targetedTracks.length?`<div class="card stack" id="targetedTracksOverview" style="margin-bottom:16px">
+    <div class="row spread wrap"><h3>精准步骤拆解 · 4 大非重叠工作流轨道（推荐默认）</h3><span class="tag green">自动跳过非正文 · 精确原文偏移核验 · 直出可用方法</span></div>
+    <div class="option-grid">${targetedTracks.map(t=>`<article class="card" style="padding:10px 12px">
+      <strong>${esc(t.name)}</strong>
+      <p class="muted" style="margin:4px 0">对接步骤：${esc((t.target_step_names||[]).join(' / '))}</p>
+      <p class="muted">${esc(t.description)}</p>
+    </article>`).join('')}</div>
+  </div>`:'';
+  return `<section aria-label="现行拆解条目"><div class="section-head"><h2>现行拆解条目</h2><span class="muted">规格 v${esc(catalog.schema_version)} · ${targetedTracks.length?`${targetedTracks.length} 大精准轨道 / `:''}${domains.length} 项图谱明细</span></div>
+    ${tracksHtml}${methodHtml}
     ${domains.map(([id,name])=>{
       const bind=bindings[id];
       const stepTags=bind?.target_step_names?.length?` <span class="muted">→ ${esc(bind.target_step_names.join(' / '))}</span>`:'';

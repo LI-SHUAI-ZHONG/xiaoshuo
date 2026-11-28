@@ -71,7 +71,7 @@ def survey_messages(payload: dict) -> list[dict]:
         '同时留意决定事件能否发生的制度/资源/规律及往事/先报结果后讲过程的时间差，先记入对应事件与引文，不确定处记入 uncertainties。'
         '每个事件至少引用一条本片段的故事正文。引用 quote 连续照录，保留空白。重复引文必须指定绝对字符 start，'
         'end 使用不含末尾的 Unicode 字符位置。唯一引文可同时省略 start 和 end（不要填 null）。'
-        '此段只有章名、题外互动、无实际事件的背景或原文不足时，必须以 uncertainties 交代原因，留待细拆核对。'
+        '此段只有章名、书籍信息、简介、题外互动、无实际事件的背景或原文不足时，只返回 evidence（可留空）与 uncertainties 交代原因，严禁输出 threads/domains/units，留待细拆核对。'
         '线索、关系、场景边界、领域判断及写法留给后续阶段。字段如下。'+encode(fields))
     return [{'role':'system','content':instruction},{'role':'user','content':encode({'phase':'survey',**payload})}]
 

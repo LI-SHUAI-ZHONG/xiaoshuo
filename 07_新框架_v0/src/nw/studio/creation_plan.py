@@ -35,7 +35,8 @@ def freeze(wizard: dict, library, candidate_titles: dict[str, str]) -> dict:
     return {'version': 1, 'mode': wizard.get('design_mode', 'manual'), 'constraints': wizard['constraints'],
             'types': freeze_type_knowledge(library, wizard['genre_ids']), 'preferences': preferences,
             'references': deepcopy(wizard.get('method_references', [])), 'recommendations': recommendations,
-            'preference_interactions': _interactions(seen)}
+            'preference_interactions': _interactions(seen),
+            **({'creative_workflow': True} if wizard.get('creative_workflow') else {})}
 
 
 def _interactions(keys: set[str]) -> list[dict]:
@@ -71,6 +72,16 @@ def for_stage(plan: dict, stage: str) -> dict:
         ]
         if compass:
             result['macro_craft_compass'] = compass
+    # Deliver concise genre-scoped boundaries & craft focus to core creative stages in creative_workflow mode.
+    if plan.get('creative_workflow') and stage in (
+        'world_design', 'character_design', 'static_relations', 'plot_design',
+        'event_design', 'anchor_design', 'expression_design',
+    ):
+        type_ids = [r['id'] for r in plan.get('types', ()) if isinstance(r, dict) and r.get('id')]
+        if type_ids:
+            from nw.studio.wizard_setup import genre_scope_for_stage
+            if scope_guide := genre_scope_for_stage(type_ids, stage):
+                result['genre_scope'] = scope_guide
     # Approved methods use the existing production-method contracts. Their
     # scopes, applicable inputs and output placement are enforced there.
     return deepcopy(result)

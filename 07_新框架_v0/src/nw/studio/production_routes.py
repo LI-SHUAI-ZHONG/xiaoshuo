@@ -39,6 +39,10 @@ class ProductionRoutes:
         elif segs == ['options']:
             types = [t for t in first(query, 'types').split(',') if t]
             data = lib.options(first(query, 'slot', 'world'), first(query, 'parent'), types=types or None)
+        elif segs == ['wizard', 'setup-profile']:
+            from nw.studio.wizard_setup import setup_profile_for_types
+            types = [t for t in first(query, 'types').split(',') if t]
+            data = setup_profile_for_types(types or None, library=lib)
         elif segs == ['novel-cache']:
             data = app.novel_cache()
         elif segs == ['novels']:

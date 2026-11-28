@@ -109,6 +109,7 @@ def corpus_catalog(version: int = SCHEMA_VERSION, *, passages: bool = True, craf
         'notes': ['读过全部已导入字符不代表原作本身完整，也不代表文学分析正确。',
                   '原始观察、分析推断与可迁移方法分开；新方法仍须单独审核。']}
     if include_blueprint:
+        from nw.studio.corpus_direct import TARGETED_TRACKS
         from nw.studio.step_material_blueprint import (
             DECOMPOSITION_METHODOLOGY,
             MATERIAL_NATURES,
@@ -117,4 +118,5 @@ def corpus_catalog(version: int = SCHEMA_VERSION, *, passages: bool = True, craf
         result['decomposition_methodology'] = deepcopy(DECOMPOSITION_METHODOLOGY)
         result['material_natures'] = list(deepcopy(MATERIAL_NATURES).values())
         result['domain_bindings'] = domain_bindings(version)
+        result['targeted_tracks'] = list(deepcopy(TARGETED_TRACKS).values())
     return result

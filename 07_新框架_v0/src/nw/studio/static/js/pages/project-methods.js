@@ -20,9 +20,9 @@ function usageRows(rows){
 }
 
 export function wizardMethods(bookWorldAvailable) {
-  return `<fieldset class="method-section"><legend>参考作品制作方法</legend>
-    <p>世界设计由 AI 根据本书类型和前一步的适配需求，选用对应参考小说中有原文依据的制作方法，生成本书的规则与限制。无需预写世界卡。</p>
-    ${bookWorldAvailable ? '' : '<p class="warning" role="status">当前类型缺少已批准的全书世界规则方法。可以先保存立项。全书设计走到世界设计时，需要从类型资料库补齐相应方法。</p>'}
+  return `<fieldset class="method-section"><legend>参考作品制作方法（可选增强）</legend>
+    <p>默认由内置 15,375 条工作流规则按所选题材驱动世界与创作设计，不再因缺少参考书拆解而卡死；若已拆解同类型参考小说，可随时勾选挂载增强写法。</p>
+    ${bookWorldAvailable ? '<p class="muted">当前类型已具备可用的同类型世界规则拆解方法，可在需要时挂载增强。</p>' : ''}
   </fieldset>`;
 }
 
