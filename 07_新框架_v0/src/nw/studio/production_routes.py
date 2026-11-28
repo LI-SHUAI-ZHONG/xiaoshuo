@@ -65,6 +65,10 @@ class ProductionRoutes:
                     data = app.timeline(ident)
                 elif action == 'quality':
                     data = app.quality(ident, first(query, 'scene'))
+                elif action == 'style-reference':
+                    data = app.style_reference(ident)
+                elif action == 'cold-reads':
+                    data = app.cold_reads(ident, first(query, 'scene'))
                 elif action == 'continuation':
                     data = app.continuation(ident)
                 elif action == 'finish-check':
@@ -118,6 +122,10 @@ class ProductionRoutes:
                     data = app.configure_length(ident, body)
                 elif action == 'methods':
                     data = app.configure_methods(ident,body)
+                elif action == 'style-reference':
+                    data = app.save_style_reference(ident, body)
+                elif action == 'cold-reads':
+                    data = app.run_cold_read(ident, body)
                 elif action == 'run':
                     data = app.run(ident, body)
                 elif action == 'retry':

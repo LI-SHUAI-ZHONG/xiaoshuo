@@ -70,6 +70,31 @@ def _pov_goals(body: dict, pov: str) -> dict:
         actor: goal for actor, goal in body['character_goals'].items() if actor == pov}}
 
 
+def _filter_settings_for_pov(settings: list[dict], scene_body: dict, pov: str) -> list[dict]:
+    from nw.length_plan import model_approved_cards
+    filtered: list[dict] = []
+    for card in model_approved_cards(settings):
+        if card['kind'] == 'promise':
+            # Planned setups and payoffs reach prose through the authorized scene checks.
+            continue
+        body = card['body']
+        if card['kind'] == 'character' and 'casting' in body:
+            from nw.materials.cast_design import writer_card
+            body = writer_card(body, own=card['card_id'] == pov)
+        elif card['kind'] == 'character' and card['card_id'] != pov and (
+                body.get('visibility') == 'public' or scene_body.get('narrative_person') and body.get('visibility') == 'holders'):
+            # Public casting cards often mix a speaking voice with author-side wounds
+            # and motives. Private facts the POV has learned come through its state.
+            body = {key: body[key] for key in ('name', 'role', 'voice') if key in body}
+        elif card['kind'] == 'scene':
+            body = _pov_goals(body, pov)
+        elif card['kind'] == 'world' and scene_body.get('narrative_person') and 'history' in body:
+            # Only a chosen disclosure beat may bring this history into today's scene.
+            body = {key: value for key, value in body.items() if key != 'history'}
+        filtered.append({**card, 'body': body})
+    return filtered
+
+
 class StoryProvider:
     name = 'story'
 
@@ -90,27 +115,15 @@ class StoryProvider:
         items.append(ContextItem('scene:' + scene['card_id'], canonical(scene_body), '本场任务'))
         if progress:
             items.append(ContextItem('chapter:length', canonical(progress), '按已接受稿与其余场景分配的本场可写字数'))
-        from nw.length_plan import model_approved_cards
-        for card in model_approved_cards(project['settings']):
-            if card['kind'] == 'promise':
-                # Planned setups and payoffs reach prose through the authorized scene checks.
-                continue
-            body = card['body']
-            if card['kind'] == 'character' and 'casting' in body:
-                from nw.materials.cast_design import writer_card
-                body = writer_card(body, own=card['card_id'] == pov)
-            elif card['kind'] == 'character' and card['card_id'] != pov and (
-                    body.get('visibility') == 'public' or scene_body.get('narrative_person') and body.get('visibility') == 'holders'):
-                # Public casting cards often mix a speaking voice with author-side wounds
-                # and motives. Private facts the POV has learned come through its state.
-                body = {key: body[key] for key in ('name', 'role', 'voice') if key in body}
-            elif card['kind'] == 'scene':
-                body = _pov_goals(body, pov)
-            elif card['kind'] == 'world' and scene_body.get('narrative_person') and 'history' in body:
-                # Only a chosen disclosure beat may bring this history into today's scene.
-                body = {key: value for key, value in body.items() if key != 'history'}
-            items.append(ContextItem('card:' + card['card_id'], canonical(body), '本场确认设定'))
+        for card in _filter_settings_for_pov(project['settings'], scene_body, pov):
+            items.append(ContextItem('card:' + card['card_id'], canonical(card['body']), '本场确认设定'))
         items.append(ContextItem('pov:' + project['holder'], canonical(project['facts']), '此时POV所知与误信'))
+        if project.get('situation_card'):
+            items.append(ContextItem('situation:' + scene['card_id'], canonical(project['situation_card']),
+                                     '本场写前处境卡（按处境自然推进，不照剧本报账）'))
+        if project.get('style_reference'):
+            items.append(ContextItem('style-reference', canonical(project['style_reference']),
+                                     '写前语感参照（只学行文呼吸、对白脾气与节奏，严禁照搬人名设定）'))
         if project.get('previous'):
             prev = project['previous']
             items.append(ContextItem('previous:' + prev['scene_id'], prev['tail_text'], '同视角紧邻前场正文衔接'))
@@ -296,10 +309,24 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         source_keys.update(row['source']['key'] for row in design['materials'] if row['source']['id'] in ids)
         source_keys.update(check_source_keys(scene_checks(design, scoped=True)) & _WRITING_SCOPE_KEYS)
     from nw.context.registry import get_provider
+    from nw.writing_craft import (
+        PRE_WRITE_CRAFT_GUIDE,
+        build_situation_card,
+        load_style_reference,
+        resolve_style_reference_item,
+    )
+
+    scene_body_filtered = _pov_goals(card['body'], view.holder)
+    filtered_settings = _filter_settings_for_pov(settings, scene_body_filtered, view.holder)
+    situation_card = build_situation_card(
+        scene_body_filtered, view.holder, filtered_settings, facts, has_design=bool(design),
+    )
+    style_cfg = load_style_reference(store)
 
     if inputs.get('chapter_length_progress', {}).get('length_mode') == 'tiered':
         from nw.chapter_break import WRITING
         base_prompt += ' ' + WRITING
+    craft_guide_added = False
     if design:
         from nw.studio.craft_materials import design_genre_ids, writing_genre_guidance
         if genre_note := writing_genre_guidance(design_genre_ids(design)):
@@ -315,7 +342,10 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
             })
             if guard_note := format_writing_continuity_prompt(ledger):
                 base_prompt += ' ' + guard_note
-            base_prompt += ' 叙事生命力原则：以人物在当场压力下的真实选择、对手阻力与可见感官动作推动叙事，杜绝机械汇报设定或套话抒情。'
+            base_prompt += ' ' + PRE_WRITE_CRAFT_GUIDE
+            craft_guide_added = True
+    if not craft_guide_added and (design or situation_card is not None or style_cfg['enabled']):
+        base_prompt += ' ' + PRE_WRITE_CRAFT_GUIDE
     prompt = step_material_prompt(base_prompt, WRITING_MATERIAL, source_keys)
     provider = get_provider('story')
     assembled = asdict(provider.build(inputs, card))
@@ -379,7 +409,19 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
                   and (fact.entity_id, fact.predicate, canonical(fact.value)) in known]
     already_disclosed = [{'entity_id': fact.entity_id, 'predicate': fact.predicate, 'value': fact.value}
                          for fact in shared]
-    optional_parts = [('continuity', continuity), ('reader', already_disclosed)]
+    style_ref = (
+        resolve_style_reference_item(
+            store, snapshot, pov=view.holder, story_order=scope.story_order, disclosure=disclosure,
+            adjacent_scene_id=adjacent_previous['scene_id'] if adjacent_previous else None,
+            excerpt_loader=excerpt_source,
+        )
+        if style_cfg['enabled'] else None
+    )
+    optional_parts: list[tuple[str, Any]] = [('continuity', continuity), ('reader', already_disclosed)]
+    if style_ref is not None:
+        optional_parts.insert(0, ('style_reference', style_ref))
+    if situation_card is not None:
+        optional_parts.insert(0, ('situation_card', situation_card))
     if adjacent_previous is not None:
         optional_parts.insert(0, ('previous', adjacent_previous))
     omitted = []

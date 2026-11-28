@@ -410,3 +410,94 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
             self.db.update(ident, status='done', runtime_status='DONE', finished_at=now(), reason=None)
             self.db.event(ident, 'completion', '作者确认全书完稿。')
             return {'status': 'DONE'}
+
+    def style_reference(self, ident: str) -> dict:
+        from nw.writing_craft import style_reference_overview
+        novel = self.db.get(ident)
+        with self.open_store(novel) as store:
+            return style_reference_overview(store, branch=novel.get('current_branch', 'main'))
+
+    def save_style_reference(self, ident: str, body: dict) -> dict:
+        from nw.writing_craft import save_style_reference, style_reference_overview
+        with self._lock:
+            novel = self.db.get(ident)
+            if novel['status'] == 'done':
+                raise ValueError('已完稿作品不能修改写前语感参照')
+            with self.open_store(novel) as store:
+                saved = save_style_reference(store, body)
+                overview = style_reference_overview(store, branch=novel.get('current_branch', 'main'))
+            mode_label = {'off': '关闭', 'author_sample': '作者参照样段', 'auto_book_prose': '本书已采用正文语感'}.get(
+                saved['mode'], saved['mode'])
+            self.db.event(
+                ident, 'style_reference',
+                f"更新写前语感参照：{mode_label}" + (f"（{saved['title']}）" if saved.get('title') else ''),
+                {'mode': saved['mode'], 'enabled': saved['enabled'], 'title': saved.get('title', ''),
+                 'excerpt_chars': len(saved.get('excerpt') or '')},
+            )
+            return overview
+
+    def cold_reads(self, ident: str, scene: str = '') -> dict:
+        from nw.cold_read import cold_read_summary, list_cold_reads
+        novel = self.db.get(ident)
+        project = self.project(novel)
+        branch = novel.get('current_branch', 'main')
+        scene_row = next((r for r in project['scenes'] if r['id'] == scene), None) if scene else None
+        draft_id = scene_row['latest_draft_id'] if scene_row else None
+        chapter_index = scene_row.get('chapter_index') if scene_row else None
+        with self.open_store(novel) as store:
+            reports = list_cold_reads(store, scene_id=scene, limit=30)
+            summary = cold_read_summary(store, scene_id=scene, draft_id=draft_id, chapter_index=chapter_index)
+        chapters = [
+            {'index': c['index'], 'title': c['title']}
+            for c in sorted(project.get('chapters') or (), key=lambda r: int(r.get('index') or 0))
+        ]
+        return {
+            'novel_id': ident,
+            'branch_id': branch,
+            'scene_id': scene or None,
+            'draft_id': draft_id,
+            'summary': summary,
+            'reports': reports,
+            'chapters': chapters,
+        }
+
+    def run_cold_read(self, ident: str, body: dict) -> dict:
+        from nw.cold_read import cold_read_summary, run_cold_read
+        novel = self.db.get(ident)
+        branch = str(body.get('branch') or novel.get('current_branch') or 'main')
+        scope = str(body.get('scope') or 'scene').strip()
+        scene_id = str(body.get('scene_id') or '').strip()
+        draft_id = str(body.get('draft_id') or '').strip()
+        chapter_index = int(body['chapter_index']) if body.get('chapter_index') not in (None, '') else None
+        chapter_start = int(body['chapter_start']) if body.get('chapter_start') not in (None, '') else None
+        chapter_end = int(body['chapter_end']) if body.get('chapter_end') not in (None, '') else None
+        include_prior = bool(body.get('include_prior_chapters', True))
+        custom_focus = str(body.get('custom_focus') or '').strip()
+        config, provider = self._runtime()
+        with self.open_store(novel) as store:
+            report = run_cold_read(
+                store, config, provider,
+                scope=scope,
+                scene_id=scene_id,
+                draft_id=draft_id,
+                chapter_index=chapter_index,
+                chapter_start=chapter_start,
+                chapter_end=chapter_end,
+                branch=branch,
+                include_prior_chapters=include_prior,
+                custom_focus=custom_focus,
+            )
+            summary = cold_read_summary(
+                store,
+                scene_id=report.get('scene_id', ''),
+                draft_id=report.get('draft_id'),
+                chapter_index=(report.get('chapter_indices') or [None])[0],
+            )
+        want = (report.get('parsed') or {}).get('keep_reading', {}).get('want_next', 'unknown')
+        self.db.event(
+            ident, 'cold_read',
+            f"完成陌生读者盲态冷读：{report.get('label', scope)}（追读意愿：{want}）",
+            {'report_id': report['id'], 'scope': scope, 'label': report.get('label'), 'want_next': want,
+             'model': report.get('model'), 'isolated_input_keys': report.get('isolated_input_keys')},
+        )
+        return {'report': report, 'summary': summary}

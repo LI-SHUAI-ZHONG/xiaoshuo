@@ -603,9 +603,22 @@ class ProductionViews:
                     'stage_label': stage_label,
                 }
                 result['draft_id'] = draft_id
+                from nw.cold_read import cold_read_summary
+                result['cold_read'] = cold_read_summary(
+                    store, scene_id=scene, draft_id=draft_id, chapter_index=scene_row.get('chapter_index'),
+                )
                 result['metrics'] = {'draft_versions': len(drafts), 'review_rounds': sum(run.kind == 'review' for run in runs),
                                      'words': count_words(draft_obj.text) if draft_obj else 0,
                                      'model_calls': sum(run.provider != 'author' for run in runs)}
+            from nw.writing_craft import style_reference_overview
+            style_ov = style_reference_overview(store, branch=novel.get('current_branch', 'main'))
+            result['style_reference'] = {
+                'enabled': style_ov['enabled'],
+                'mode': style_ov['mode'],
+                'title': style_ov['title'],
+                'excerpt_chars': len(style_ov.get('excerpt') or ''),
+                'can_use_auto_book_prose': style_ov['can_use_auto_book_prose'],
+            }
         return result
 
     @staticmethod
