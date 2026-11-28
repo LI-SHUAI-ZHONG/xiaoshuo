@@ -847,6 +847,7 @@ def build_event_scene_pacing_packet(
     ]
     if rls := (spec.get('anti_drift_redlines') or ())[:2]:
         lines.append(f"- 禁忌：{'；'.join(rls)}")
+    lines.append('- 信号与剧透边界：普通场景卡只写角色当下可见的异常信号，不提前把后期大反转底牌剧透给写手。')
     return {
         'domain': 'plot_pacing',
         'base_id': spec.get('base_id', ''),

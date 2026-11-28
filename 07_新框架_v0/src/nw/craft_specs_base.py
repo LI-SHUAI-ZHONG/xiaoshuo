@@ -319,6 +319,16 @@ def save_craft_fingerprint(
         },
         'evidence_spans': list(body.get('evidence_spans') or ())[:6],
     }
+    if body.get('conditional_framework'):
+        clean_body['conditional_framework'] = str(body['conditional_framework']).strip()[:240]
+    if body.get('do_not_copy'):
+        dnc = [str(x).strip()[:120] for x in (body['do_not_copy'] if isinstance(body['do_not_copy'], (list, tuple)) else [body['do_not_copy']]) if str(x).strip()][:8]
+        if dnc:
+            clean_body['do_not_copy'] = dnc
+    if body.get('differentiation_hint'):
+        clean_body['differentiation_hint'] = str(body['differentiation_hint']).strip()[:240]
+    if body.get('golden_three_metrics'):
+        clean_body['golden_three_metrics'] = str(body['golden_three_metrics']).strip()[:240]
     if existing:
         conn.execute(
             '''UPDATE craft_fingerprints

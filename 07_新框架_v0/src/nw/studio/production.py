@@ -552,18 +552,33 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                 raise ValueError('指纹最多叠加 5 项')
             fps = self.library.craft_fingerprints_by_ids(fp_ids, domain=domain) if fp_ids else []
             target_words = wiz.get('target_words') if isinstance(wiz.get('target_words'), int) else None
-            spec = compile_craft_spec(
-                domain,
-                genre_ids,
-                base_id=base_id or None,
-                knobs=body.get('knobs') if isinstance(body.get('knobs'), dict) else None,
-                fingerprints=fps,
-                custom_notes=str(body.get('custom_notes') or ''),
-                enabled=bool(body.get('enabled', True)),
-                target_words=target_words,
-                wizard=wiz,
-            )
             with self.open_store(novel) as store:
+                from nw.craft_specs import load_craft_spec
+                prior_spec = load_craft_spec(store, domain)
+                spec = compile_craft_spec(
+                    domain,
+                    genre_ids,
+                    base_id=base_id or None,
+                    knobs=body.get('knobs') if isinstance(body.get('knobs'), dict) else None,
+                    fingerprints=fps,
+                    custom_notes=str(body.get('custom_notes') or ''),
+                    enabled=bool(body.get('enabled', True)),
+                    target_words=target_words,
+                    wizard=wiz,
+                )
+                # Preserve living evolution layer (learned author contrasts & promoted redlines) across re-saves!
+                if isinstance(prior_spec, dict):
+                    if prior_spec.get('learned_contrasts'):
+                        spec['learned_contrasts'] = list(prior_spec['learned_contrasts'])
+                    if prior_spec.get('learned_redlines'):
+                        spec['learned_redlines'] = list(prior_spec['learned_redlines'])
+                        rl_key = 'drift_redlines' if domain == 'voice' else 'anti_drift_redlines'
+                        cur_rls = list(spec.get(rl_key) or [])
+                        for lr in prior_spec['learned_redlines']:
+                            rtxt = lr.get('rule') if isinstance(lr, dict) else ''
+                            if rtxt and rtxt not in cur_rls:
+                                cur_rls.append(rtxt)
+                        spec[rl_key] = cur_rls[:14]
                 _save_spec(store, domain, spec)
             spec_name = spec.get('base_name') or spec.get('base_voice_name') or base_id
             self.db.event(
@@ -658,3 +673,227 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
              'model': report.get('model'), 'isolated_input_keys': report.get('isolated_input_keys')},
         )
         return {'report': report, 'summary': summary}
+
+    # ── P0/P1/P2 Fusion Cockpit APIs (Serial Health, Overrides, Evolution, Doctor, Briefing) ──
+
+    def serial_health(self, ident: str) -> dict:
+        from nw.context.memory_orchestrator import list_volume_summaries
+        from nw.craft_specs import load_all_craft_specs
+        from nw.serial_health import build_foreshadowing_opportunity_brief, build_serial_health_board
+        novel = self.db.get(ident)
+        branch = novel.get('current_branch', 'main')
+        wiz = novel['wizard']
+        tw = wiz.get('target_words') if isinstance(wiz.get('target_words'), int) else None
+        with self.open_store(novel) as store:
+            specs = load_all_craft_specs(store, wizard=wiz)
+            board = build_serial_health_board(store, branch=branch, plot_spec=specs.get('plot_pacing'), target_words=tw)
+            foreshadow = build_foreshadowing_opportunity_brief(store, branch=branch)
+            vol_summaries = list_volume_summaries(store, branch_id=branch)
+        return {
+            'novel_id': ident,
+            'branch_id': branch,
+            'board': board,
+            'foreshadowing_opportunities': foreshadow,
+            'volume_summaries': vol_summaries,
+        }
+
+    def save_chapter_telemetry(self, ident: str, body: dict) -> dict:
+        from nw.serial_health import record_chapter_telemetry
+        novel = self.db.get(ident)
+        branch = str(body.get('branch') or novel.get('current_branch') or 'main')
+        ch_idx = int(body.get('chapter_index') or 0)
+        if ch_idx < 1:
+            raise ValueError('请提供有效的章节序号')
+        with self.open_store(novel) as store:
+            saved = record_chapter_telemetry(
+                store,
+                branch_id=branch,
+                chapter_index=ch_idx,
+                dominant_strand=str(body.get('dominant_strand') or 'quest'),
+                hook_type=str(body.get('hook_type') or ''),
+                hook_strength=str(body.get('hook_strength') or 'medium'),
+                micro_payoff_count=int(body.get('micro_payoff_count') or 1),
+                promise_touched=bool(body.get('promise_touched', False)),
+            )
+        return {'saved': saved, 'health': self.serial_health(ident)}
+
+    def save_volume_summary_record(self, ident: str, body: dict) -> dict:
+        from nw.context.memory_orchestrator import draft_volume_summary_from_chapters, save_volume_summary
+        novel = self.db.get(ident)
+        branch = str(body.get('branch') or novel.get('current_branch') or 'main')
+        vol_idx = int(body.get('volume_index') or 1)
+        title = str(body.get('title') or f'第{vol_idx}卷')
+        ch_start = int(body.get('chapter_start') or 1)
+        ch_end = int(body.get('chapter_end') or ch_start)
+        with self.open_store(novel) as store:
+            if body.get('mode') == 'draft':
+                return draft_volume_summary_from_chapters(
+                    store, branch_id=branch, volume_index=vol_idx, title=title,
+                    chapter_start=ch_start, chapter_end=ch_end,
+                )
+            saved = save_volume_summary(
+                store,
+                branch_id=branch,
+                volume_index=vol_idx,
+                title=title,
+                chapter_start=ch_start,
+                chapter_end=ch_end,
+                summary_text=str(body.get('summary_text') or ''),
+                open_promises=body.get('open_promises') if isinstance(body.get('open_promises'), list) else [],
+                relation_shifts=body.get('relation_shifts') if isinstance(body.get('relation_shifts'), list) else [],
+            )
+        self.db.event(ident, 'volume_summary', f'已保存卷级摘要：第{vol_idx}卷《{title}》', {'volume_index': vol_idx})
+        return {'saved': saved, 'health': self.serial_health(ident)}
+
+    def overrides(self, ident: str, scene: str = '', status: str = 'active') -> dict:
+        from nw.override_ledger import HARD_NON_OVERRIDABLE_CODES, OVERRIDE_RATIONALE_TAGS, list_overrides
+        novel = self.db.get(ident)
+        branch = novel.get('current_branch', 'main')
+        with self.open_store(novel) as store:
+            rows = list_overrides(store, branch_id=branch, scene_id=scene or None, status=status or None)
+        return {
+            'novel_id': ident,
+            'branch_id': branch,
+            'overrides': rows,
+            'rationale_tags': OVERRIDE_RATIONALE_TAGS,
+            'hard_non_overridable_codes': sorted(HARD_NON_OVERRIDABLE_CODES),
+        }
+
+    def record_soft_override(self, ident: str, body: dict) -> dict:
+        from nw.override_ledger import record_override
+        novel = self.db.get(ident)
+        branch = str(body.get('branch') or novel.get('current_branch') or 'main')
+        with self.open_store(novel) as store:
+            rec = record_override(
+                store,
+                branch_id=branch,
+                constraint_kind=str(body.get('constraint_kind') or 'soft_gate'),
+                constraint_code=str(body.get('constraint_code') or ''),
+                reason_tag=str(body.get('reason_tag') or 'EDITORIAL_INTENT'),
+                reason_text=str(body.get('reason_text') or ''),
+                scene_id=str(body.get('scene_id') or '') or None,
+                chapter_index=int(body['chapter_index']) if body.get('chapter_index') not in (None, '') else None,
+                draft_id=str(body.get('draft_id') or '') or None,
+                details=body.get('details') if isinstance(body.get('details'), dict) else None,
+            )
+        self.db.event(
+            ident, 'override',
+            f'登记软约束显式豁免：{rec["constraint_code"]}（{rec["reason_label"]}）',
+            rec,
+        )
+        return {'override': rec}
+
+    def revoke_soft_override(self, ident: str, override_id: str) -> dict:
+        from nw.override_ledger import revoke_override
+        novel = self.db.get(ident)
+        with self.open_store(novel) as store:
+            return revoke_override(store, override_id)
+
+    def craft_evolution(self, ident: str, scene: str = '') -> dict:
+        from nw.craft_evolution import (
+            check_style_drift,
+            detect_author_edit_candidates,
+            list_promotion_proposals,
+        )
+        from nw.craft_specs import load_all_craft_specs
+        from nw.craft_specs_base import CRAFT_DOMAINS
+        novel = self.db.get(ident)
+        branch = novel.get('current_branch', 'main')
+        with self.open_store(novel) as store:
+            specs = load_all_craft_specs(store, wizard=novel['wizard'])
+            drift = check_style_drift(store, branch=branch)
+            proposals = list_promotion_proposals(store, branch=branch, min_count=3)
+            pending_contrasts: list[dict] = []
+            if scene:
+                pending_contrasts = detect_author_edit_candidates(store, scene_id=scene, branch=branch)
+            else:
+                for sc in store.list('scene'):
+                    cands = detect_author_edit_candidates(store, scene_id=sc.id, branch=branch, max_candidates=1)
+                    pending_contrasts.extend(cands)
+                    if len(pending_contrasts) >= 4:
+                        break
+        voice_spec = specs.get('voice') or {}
+        learned_redlines = {
+            dom: list((specs.get(dom) or {}).get('learned_redlines') or ())
+            for dom in CRAFT_DOMAINS
+        }
+        return {
+            'novel_id': ident,
+            'branch_id': branch,
+            'style_drift': drift,
+            'promotion_proposals': proposals,
+            'learned_contrasts': list(voice_spec.get('learned_contrasts') or ()),
+            'learned_redlines_by_domain': learned_redlines,
+            'pending_author_edit_contrasts': pending_contrasts[:4],
+        }
+
+    def accept_evolution_contrast(self, ident: str, body: dict) -> dict:
+        from nw.craft_evolution import accept_learned_contrast
+        novel = self.db.get(ident)
+        with self.open_store(novel) as store:
+            res = accept_learned_contrast(store, body)
+        self.db.event(ident, 'craft_evolution', f'收录作者亲改语感微对照：{res["entry"]["label"]}', res['entry'])
+        return {'entry': res['entry'], 'learned_count': res['learned_count']}
+
+    def remove_evolution_contrast(self, ident: str, body: dict) -> dict:
+        from nw.craft_evolution import remove_learned_contrast
+        novel = self.db.get(ident)
+        with self.open_store(novel) as store:
+            return remove_learned_contrast(store, str(body.get('contrast_id') or ''))
+
+    def promote_evolution_rule(self, ident: str, body: dict) -> dict:
+        from nw.craft_evolution import promote_pattern_to_craft_spec
+        novel = self.db.get(ident)
+        with self.open_store(novel) as store:
+            res = promote_pattern_to_craft_spec(
+                store,
+                target_domain=str(body.get('target_domain') or 'voice'),
+                redline_text=str(body.get('redline_text') or body.get('proposed_redline') or ''),
+                override_ids=body.get('override_ids') if isinstance(body.get('override_ids'), list) else [],
+                chapters=body.get('chapters') if isinstance(body.get('chapters'), list) else [],
+                pattern_key=str(body.get('pattern_key') or ''),
+            )
+        self.db.event(
+            ident, 'craft_evolution',
+            f'升格活体工艺红线至{res["domain_name"]}：{res["entry"]["rule"][:60]}',
+            res,
+        )
+        return res
+
+    def pin_evolution_baseline(self, ident: str, body: dict) -> dict:
+        from nw.craft_evolution import pin_style_baseline
+        novel = self.db.get(ident)
+        branch = str(body.get('branch') or novel.get('current_branch') or 'main')
+        start_ch = int(body.get('start_chapter') or 1)
+        end_ch = int(body.get('end_chapter') or max(start_ch, 10))
+        with self.open_store(novel) as store:
+            res = pin_style_baseline(store, branch=branch, start_chapter=start_ch, end_chapter=end_ch)
+        self.db.event(ident, 'craft_evolution', f'锁定文体基线：第 {res["range_start"]}–{res["range_end"]} 章', {'id': res['id']})
+        return res
+
+    def doctor(self, ident: str, *, repair_cache: bool = False) -> dict:
+        from nw.project_doctor import run_project_doctor
+        novel = self.db.get(ident)
+        branch = novel.get('current_branch', 'main')
+        with self.open_store(novel) as store:
+            return run_project_doctor(store, branch=branch, wizard=novel['wizard'], repair_cache=repair_cache)
+
+    def scene_briefing(self, ident: str, scene: str) -> dict:
+        from nw.context.briefing_compiler import compile_writer_briefing
+        from nw.context.story import build_story_context, scene_scope
+        novel = self.db.get(ident)
+        branch = novel.get('current_branch', 'main')
+        if not scene:
+            raise ValueError('需要指定 scene 参数以预览写前自然语境任务书')
+        with self.open_store(novel) as store:
+            scope = scene_scope(store, scene, branch)
+            work = build_story_context(store, scene, scope, self.budget(novel['wizard'].get('call_budget')).context_char_limit)
+            briefing = compile_writer_briefing(work.package)
+        return {
+            'scene_id': scene,
+            'branch_id': branch,
+            'briefing_text': briefing,
+            'briefing_chars': len(briefing),
+            'package_items_count': len(work.package.get('items') or ()),
+            'omitted_optional_groups': list(work.omitted_optional_groups),
+        }

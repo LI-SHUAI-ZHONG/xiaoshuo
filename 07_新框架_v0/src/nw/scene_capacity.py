@@ -67,7 +67,14 @@ class SceneCapacity:
 
     def _check_stages(self, prompt: str, package: dict, keys: set[str], prose_chars: int,
                       basis: str) -> dict:
-        writing_messages = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': canonical(package)}]
+        from nw.context.briefing_compiler import compile_writer_briefing, should_use_natural_briefing
+        write_rt = self.runtimes['write']
+        user_body = (
+            compile_writer_briefing(package)
+            if should_use_natural_briefing(write_rt.provider.name, write_rt.config, store=write_rt.journal.store)
+            else canonical(package)
+        )
+        writing_messages = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_body}]
         report = {'write': self._fit('write', writing_messages, 0, 0)}
         review, _ = draft_messages(package, 'review', self.draft_shape, None, self.contract, REVIEW_MATERIAL, keys,
                                    self.feedback_shape, genre_ids=self.genre_ids)

@@ -75,6 +75,16 @@ class ProductionRoutes:
                     data = app.style_reference(ident)
                 elif action == 'cold-reads':
                     data = app.cold_reads(ident, first(query, 'scene'))
+                elif action == 'serial-health':
+                    data = app.serial_health(ident)
+                elif action == 'overrides':
+                    data = app.overrides(ident, first(query, 'scene'), first(query, 'status', 'active'))
+                elif action == 'craft-evolution':
+                    data = app.craft_evolution(ident, first(query, 'scene'))
+                elif action == 'doctor':
+                    data = app.doctor(ident, repair_cache=first(query, 'repair_cache') in ('1', 'true'))
+                elif action == 'briefing':
+                    data = app.scene_briefing(ident, first(query, 'scene'))
                 elif action == 'continuation':
                     data = app.continuation(ident)
                 elif action == 'finish-check':
@@ -165,6 +175,10 @@ class ProductionRoutes:
                     data = app.save_style_reference(ident, body)
                 elif action == 'cold-reads':
                     data = app.run_cold_read(ident, body)
+                elif action == 'overrides':
+                    data = app.record_soft_override(ident, body)
+                elif action == 'volume-summaries':
+                    data = app.save_volume_summary_record(ident, body)
                 elif action == 'run':
                     data = app.run(ident, body)
                 elif action == 'retry':
@@ -177,6 +191,19 @@ class ProductionRoutes:
                     data = app.finish(ident)
             elif len(segs) == 4 and action == 'craft-specs':
                 data = app.save_craft_spec(ident, segs[3], body)
+            elif len(segs) == 4 and action == 'serial-health' and segs[3] == 'telemetry':
+                data = app.save_chapter_telemetry(ident, body)
+            elif len(segs) == 4 and action == 'craft-evolution':
+                evo_actions = {
+                    'accept-contrast': app.accept_evolution_contrast,
+                    'remove-contrast': app.remove_evolution_contrast,
+                    'promote': app.promote_evolution_rule,
+                    'pin-baseline': app.pin_evolution_baseline,
+                }
+                if segs[3] in evo_actions:
+                    data = evo_actions[segs[3]](ident, body)
+            elif len(segs) == 5 and action == 'overrides' and segs[4] == 'revoke':
+                data = app.revoke_soft_override(ident, segs[3])
             elif len(segs) == 4 and action == 'gates':
                 data = app.decide(ident, segs[3], body)
             elif len(segs) == 5 and action == 'gates' and segs[4] == 'refresh':

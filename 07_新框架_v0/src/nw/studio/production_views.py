@@ -206,9 +206,28 @@ class ProductionViews:
                     if not any(s['story_approved_on_branch'] and not s['accepted_draft_id'] for s in project['scenes']):
                         upcoming = route
             continuation = None
+            serial_health_summary = None
+            evolution_alerts_count = 0
             if include_logs:
                 from nw.studio.continuation_views import continuation_signal
                 continuation = continuation_signal(self, novel, project, store, job, upcoming)
+                try:
+                    from nw.craft_evolution import list_promotion_proposals
+                    from nw.craft_specs import load_all_craft_specs
+                    from nw.serial_health import build_serial_health_board
+                    branch_cur = novel.get('current_branch', 'main')
+                    specs_cur = load_all_craft_specs(store, wizard=novel['wizard'])
+                    tw_cur = novel['wizard'].get('target_words') if isinstance(novel['wizard'].get('target_words'), int) else None
+                    sb = build_serial_health_board(store, branch=branch_cur, plot_spec=specs_cur.get('plot_pacing'), target_words=tw_cur)
+                    serial_health_summary = {
+                        'status': sb['status'],
+                        'rhythm_debt_score': sb['rhythm_debt_score'],
+                        'latest_chapter': sb['latest_chapter'],
+                        'corrections': sb['next_chapter_corrections'][:3],
+                    }
+                    evolution_alerts_count = len(list_promotion_proposals(store, branch=branch_cur, min_count=3))
+                except Exception:
+                    pass
             reviews = {scene['id']: self.review_for_draft(store, scene['id'], scene['latest_draft_id'])
                        for scene in project['scenes'] if scene['latest_draft_id']}
             words = 0
@@ -370,6 +389,11 @@ class ProductionViews:
         if include_logs:
             logs.extend(model_logs)
             logs.sort(key=lambda row: row['ts'])
+        raw_reason = novel['reason'] or (job.get('reason') if job else None)
+        author_reason = None
+        if raw_reason:
+            from nw.studio.author_shell import translate_error
+            author_reason = translate_error(raw_reason)
         return {'novel_id': ident, 'status': runtime, 'novel_status': novel['status'], 'job': job,
                 'branch_id': novel.get('current_branch', 'main'),
                 'main_revision': next((row['head_revision'] for row in project['branches'] if row['id'] == 'main'), None),
@@ -378,8 +402,11 @@ class ProductionViews:
                 'workflow_overview': workflow_overview(),
                 'next_design': upcoming, 'can_plan_volume': can_plan_volume,
                 **({'continuation': continuation} if continuation is not None else {}),
+                **({'serial_health_summary': serial_health_summary} if serial_health_summary is not None else {}),
+                'evolution_alerts_count': evolution_alerts_count,
                 'gates': self.gates(ident)['gates'], 'words': words, 'connection': True,
-                'reason': novel['reason'] or (job.get('reason') if job else None),
+                'reason': raw_reason,
+                **({'author_reason': author_reason} if author_reason is not None else {}),
                 'logs': logs[-100:]}
 
     def continuation(self, ident: str) -> dict:
@@ -607,6 +634,32 @@ class ProductionViews:
                 result['cold_read'] = cold_read_summary(
                     store, scene_id=scene, draft_id=draft_id, chapter_index=scene_row.get('chapter_index'),
                 )
+                # Lens 0 (0-Token Pre-Review Gate) + Explicit Soft Overrides + 3-Second Unified Author Review View
+                branch_cur = novel.get('current_branch', 'main')
+                pre_review = None
+                if draft_obj and (draft_obj.text or '').strip():
+                    from nw.pre_review_gate import run_pre_review_gate
+                    pre_review = run_pre_review_gate(store, scene, draft_obj.text, branch=branch_cur)
+                from nw.override_ledger import OVERRIDE_RATIONALE_TAGS, list_overrides
+                from nw.studio.author_shell import build_unified_review_view
+                scene_overrides = list_overrides(store, branch_id=branch_cur, scene_id=scene, status='active', limit=30)
+                result['pre_review'] = pre_review
+                result['overrides'] = scene_overrides
+                result['override_rationale_tags'] = OVERRIDE_RATIONALE_TAGS
+                result['author_review_view'] = build_unified_review_view(
+                    pre_review=pre_review,
+                    review=result.get('review'),
+                    fact_findings=fact_findings,
+                    cold_read=result.get('cold_read'),
+                    overrides=scene_overrides,
+                )
+                if is_manual:
+                    from nw.craft_evolution import detect_author_edit_candidates
+                    result['author_edit_contrasts'] = detect_author_edit_candidates(
+                        store, scene_id=scene, branch=branch_cur, max_candidates=2,
+                    )
+                else:
+                    result['author_edit_contrasts'] = []
                 result['metrics'] = {'draft_versions': len(drafts), 'review_rounds': sum(run.kind == 'review' for run in runs),
                                      'words': count_words(draft_obj.text) if draft_obj else 0,
                                      'model_calls': sum(run.provider != 'author' for run in runs)}

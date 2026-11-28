@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 11
+VERSION = 12
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -319,5 +319,76 @@ COMMIT;
 
 MIGRATE_V11 = _task_kind_migration(10, 11, "'material_work','book_directions'")
 
+MIGRATE_V12 = """
+BEGIN IMMEDIATE;
+CREATE TABLE override_ledger(
+ id TEXT PRIMARY KEY,
+ branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ scene_id TEXT,
+ chapter_index INTEGER,
+ draft_id TEXT,
+ constraint_kind TEXT NOT NULL,
+ constraint_code TEXT NOT NULL,
+ reason_tag TEXT NOT NULL,
+ reason_text TEXT NOT NULL CHECK(length(trim(reason_text))>0),
+ details_json TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(details_json)),
+ status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','revoked','promoted')),
+ created_at TEXT NOT NULL);
+CREATE INDEX override_ledger_branch_status ON override_ledger(branch_id,status,reason_tag);
+CREATE INDEX override_ledger_scene ON override_ledger(branch_id,scene_id,draft_id);
+
+CREATE TABLE serial_chapter_metrics(
+ branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ chapter_index INTEGER NOT NULL CHECK(chapter_index>0),
+ dominant_strand TEXT NOT NULL DEFAULT 'quest' CHECK(dominant_strand IN ('quest','fire','constellation')),
+ hook_type TEXT NOT NULL DEFAULT '',
+ hook_strength TEXT NOT NULL DEFAULT 'medium' CHECK(hook_strength IN ('strong','medium','weak','none')),
+ micro_payoff_count INTEGER NOT NULL DEFAULT 1,
+ promise_touched INTEGER NOT NULL DEFAULT 0 CHECK(promise_touched IN (0,1)),
+ cold_read_want_next TEXT NOT NULL DEFAULT '',
+ cold_read_skip_count INTEGER NOT NULL DEFAULT 0,
+ stats_json TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(stats_json)),
+ updated_at TEXT NOT NULL,
+ PRIMARY KEY(branch_id,chapter_index));
+
+CREATE TABLE volume_summaries(
+ id TEXT PRIMARY KEY,
+ branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ volume_index INTEGER NOT NULL CHECK(volume_index>0),
+ title TEXT NOT NULL,
+ chapter_start INTEGER NOT NULL CHECK(chapter_start>0),
+ chapter_end INTEGER NOT NULL CHECK(chapter_end>=chapter_start),
+ summary_text TEXT NOT NULL CHECK(length(trim(summary_text))>0),
+ open_promises_json TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(open_promises_json)),
+ relation_shifts_json TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(relation_shifts_json)),
+ source_sha256 TEXT NOT NULL DEFAULT '',
+ created_at TEXT NOT NULL,
+ UNIQUE(branch_id,volume_index));
+
+CREATE TABLE state_replay_cache(
+ branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ revision INTEGER NOT NULL,
+ story_order INTEGER NOT NULL,
+ holder TEXT NOT NULL,
+ disclosure_key TEXT NOT NULL,
+ state_sha256 TEXT NOT NULL,
+ facts_json TEXT NOT NULL CHECK(json_valid(facts_json)),
+ created_at TEXT NOT NULL,
+ PRIMARY KEY(branch_id,revision,story_order,holder,disclosure_key));
+
+CREATE TABLE style_drift_snapshots(
+ id TEXT PRIMARY KEY,
+ branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ range_start INTEGER NOT NULL CHECK(range_start>0),
+ range_end INTEGER NOT NULL CHECK(range_end>=range_start),
+ is_baseline INTEGER NOT NULL DEFAULT 0 CHECK(is_baseline IN (0,1)),
+ metrics_json TEXT NOT NULL CHECK(json_valid(metrics_json)),
+ created_at TEXT NOT NULL);
+CREATE INDEX style_drift_branch ON style_drift_snapshots(branch_id,is_baseline,range_end);
+
+PRAGMA user_version=12;
+COMMIT;
+"""
+
 MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6,
-              6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10, 10: MIGRATE_V11}
+              6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10, 10: MIGRATE_V11, 11: MIGRATE_V12}

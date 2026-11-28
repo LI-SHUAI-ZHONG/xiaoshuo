@@ -63,8 +63,11 @@ def _inputs(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...]) -> 
         capacity_report = capacity.check(work.prompt, work.package, set(work.writing_source_keys))
         capacity_report['omitted_optional_groups'] = list(work.omitted_optional_groups)
         digest = candidate_projection_digest(j.store, j.head, chain, scene) if chain else None
-        messages = [{'role': 'system', 'content': work.prompt}, {'role': 'user', 'content': canonical(work.package)}]
         write_calls = calls.for_stage('write')
+        from nw.context.briefing_compiler import compile_writer_briefing, should_use_natural_briefing
+        use_natural = should_use_natural_briefing(write_calls.provider.name, write_calls.config, store=j.store)
+        user_content = compile_writer_briefing(work.package, char_limit=limit) if use_natural else canonical(work.package)
+        messages = [{'role': 'system', 'content': work.prompt}, {'role': 'user', 'content': user_content}]
         manifest = InputManifest(
             f'{j.id}:{key}', 'write', _settings(write_calls, 'story-write-v1', messages), content_sha256(work.package),
             brief_ref=work.brief_ref, card_refs=work.card_refs, source_refs=work.source_refs,
@@ -74,6 +77,7 @@ def _inputs(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...]) -> 
             selection=work.selection, novel_job_id=j.id, material_design_sha256=work.material_design_sha256)
         genre_ids = design_genre_ids(scene_materials(j.store, scene))
         row = j.reserve(key, {'package': work.package, 'manifest': asdict(manifest), 'messages': messages,
+                              'natural_briefing': use_natural,
                               'writing_material': WRITING_MATERIAL, 'review_material': REVIEW_MATERIAL,
                               'writing_source_keys': list(work.writing_source_keys), 'capacity_preflight': capacity_report,
                               **({'genre_ids': genre_ids} if genre_ids else {})})
@@ -107,7 +111,8 @@ def _verify_context(calls: JobCalls, key: str, scene: str, manifest: dict) -> No
 
 
 def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, review: dict | None,
-                 *, contract: dict | None = None, length_feedback: list[str] | None = None) -> dict:
+                 *, contract: dict | None = None, length_feedback: list[str] | None = None,
+                 pre_review_note: str = '') -> dict:
     from nw.craft_specs import load_all_craft_specs
 
     package = frozen['package']
@@ -116,7 +121,8 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
     messages, version = draft_messages(package, purpose, draft, review, contract, material,
                                        frozen.get('writing_source_keys', ()), length_feedback,
                                        genre_ids=frozen.get('genre_ids'),
-                                       craft_specs=live_specs)
+                                       craft_specs=live_specs,
+                                       pre_review_note=pre_review_note)
     dependencies = [*frozen['manifest']['dependency_refs'], asdict(draft_ref(draft))]
     if contract and 'comparison' in contract and contract['comparison']['ref'] not in dependencies:
         dependencies.append(contract['comparison']['ref'])
@@ -243,6 +249,9 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
     def verify() -> None:
         _verify_context(calls, j.current_step or prefix, scene, frozen['manifest'])
 
+    from nw.pre_review_gate import format_pre_review_rewrite_feedback, run_pre_review_gate
+
+    pre_rewrote = False
     while True:
         if round_no == 0:
             if manual_prior and draft is not None:
@@ -254,6 +263,45 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
                 f'{prefix}:revise:{round_no}', scene,
                 lambda: _draft_input(calls, frozen, 'revise', draft, review or {},
                                      length_feedback=(review or {}).get('length_feedback')), verify=verify)
+        # Lens 0: 0-Token deterministic pre-review script gate (Scripts < Model < Author)
+        pre_report = run_pre_review_gate(
+            j.store, scene, draft.text,
+            branch=j.head.branch_id,
+            revision=frozen['manifest'].get('state_revision'),
+            story_order=frozen['manifest'].get('story_order'),
+            disclosure=tuple(frozen['manifest']['disclosure_order']) if frozen['manifest'].get('disclosure_order') else None,
+            manifest=frozen['manifest'],
+        )
+        pre_step_key = f'{prefix}:pre-review:{round_no}'
+        if j.latest(pre_step_key) is None:
+            j.reserve(pre_step_key, {'draft_id': draft.id})
+        j.result(pre_step_key, 'DONE', pre_report)
+        allow_auto_rewrite = (
+            not pre_rewrote
+            and round_no == 0
+            and not manual_prior
+            and pre_report['action'] == 'auto_rewrite'
+            and (calls.for_stage('write').provider.name != 'fake' or getattr(calls.config, 'pre_review_auto_rewrite', False))
+        )
+        if allow_auto_rewrite:
+            pre_rewrote = True
+            rewrite_note = format_pre_review_rewrite_feedback(pre_report)
+            _, draft, _ = calls.for_stage('revise').run(
+                f'{prefix}:pre-rewrite', scene,
+                lambda: _draft_input(calls, frozen, 'revise', draft, {
+                    'recommendation': 'revise',
+                    'notes': rewrite_note,
+                    'core_changes': [],
+                }), verify=verify)
+            pre_report = run_pre_review_gate(
+                j.store, scene, draft.text,
+                branch=j.head.branch_id,
+                revision=frozen['manifest'].get('state_revision'),
+                story_order=frozen['manifest'].get('story_order'),
+                disclosure=tuple(frozen['manifest']['disclosure_order']) if frozen['manifest'].get('disclosure_order') else None,
+                manifest=frozen['manifest'],
+            )
+            j.result(pre_step_key, 'DONE', pre_report)
         length_feedback = scene_length_feedback(j.store, scene, frozen['manifest'], draft.text)
         contract, comparison = review_contract(j.store, draft, frozen['manifest'])
         def assess(run: Run) -> dict:
@@ -262,9 +310,11 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
                 result.update(recommendation='revise', length_feedback=length_feedback)
             return result
 
+        pre_note = pre_report.get('review_handoff_note', '') if calls.for_stage('review').provider.name != 'fake' else ''
         review_run, _, review = calls.for_stage('review').run(
             f'{prefix}:review:{round_no}', scene,
-            lambda: _draft_input(calls, frozen, 'review', draft, None, contract=contract, length_feedback=length_feedback),
+            lambda: _draft_input(calls, frozen, 'review', draft, None, contract=contract,
+                                 length_feedback=length_feedback, pre_review_note=pre_note),
             assess, verify=verify)
         if review['core_changes']:
             _core_gate(calls, decide, f'{prefix}:core:{round_no}',

@@ -396,6 +396,26 @@ def governance(wizard: dict, *, library=None, store=None, scope: str = 'book') -
                    'plot_design', 'event_design', 'scene_design'):
             if packet := build_stage_craft_spec_packet(st, scope, craft_specs):
                 filtered.setdefault(st, {})['craft_spec'] = packet
+    if store is not None and store.managed_story():
+        from nw.serial_health import (
+            SIGNAL_VS_SPOILER_GUIDE,
+            build_foreshadowing_opportunity_brief,
+            build_serial_health_board,
+        )
+        try:
+            tw = wizard.get('target_words') if isinstance(wizard.get('target_words'), int) else None
+            health = build_serial_health_board(store, plot_spec=craft_specs.get('plot_pacing'), target_words=tw)
+            if health.get('next_chapter_corrections'):
+                filtered.setdefault('plot_design', {})['serial_health_corrections'] = health['next_chapter_corrections']
+            if scope in ('chapter', 'volume'):
+                filtered.setdefault('plot_design', {})['signal_vs_spoiler_guard'] = SIGNAL_VS_SPOILER_GUIDE
+                filtered.setdefault('scene_design', {})['signal_vs_spoiler_guard'] = SIGNAL_VS_SPOILER_GUIDE
+            if scope == 'volume':
+                opp = build_foreshadowing_opportunity_brief(store)
+                if opp.get('prompt_hint'):
+                    filtered.setdefault('plot_design', {})['foreshadowing_opportunities'] = opp['prompt_hint']
+        except Exception:
+            pass
     return filtered
 
 

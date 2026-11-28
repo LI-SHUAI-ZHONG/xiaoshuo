@@ -795,10 +795,13 @@ def build_writer_voice_packet(spec: dict[str, Any] | None, *, scene_function: st
     """Compile a compact, executable Step 15 writer voice packet with scene-matched micro-contrasts."""
     if not isinstance(spec, dict) or not spec.get('enabled', True):
         return None
+    learned = [c for c in (spec.get('learned_contrasts') or ()) if isinstance(c, dict)]
+    learned_matched = [c for c in learned if c.get('scene_function') == scene_function]
     contrasts = list(spec.get('micro_contrasts') or ())
     matched = [c for c in contrasts if c.get('scene_function') == scene_function]
     others = [c for c in contrasts if c.get('scene_function') != scene_function]
-    picked_contrasts = (matched + others)[:2]
+    # Author's own confirmed edit contrasts take top priority over generic template contrasts!
+    picked_contrasts = (learned_matched + matched + learned + others)[:2]
 
     fp_techniques: list[dict[str, Any]] = []
     for fp in (spec.get('fingerprints') or ())[:2]:
@@ -814,13 +817,14 @@ def build_writer_voice_packet(spec: dict[str, Any] | None, *, scene_function: st
         'voice_name': spec.get('base_voice_name') or spec.get('base_voice_id', ''),
         'scene_function': SCENE_FUNCTION_LABELS.get(scene_function, scene_function),
         'six_dimensions': spec.get('dimensions') or {},
-        'drift_redlines': list(spec.get('drift_redlines') or ())[:6],
+        'drift_redlines': list(spec.get('drift_redlines') or ())[:8],
         'micro_contrasts': [
             {
                 'label': c.get('label', ''),
                 'avoid_ai': c.get('bad_ai', ''),
                 'target_voice': c.get('target_voice', ''),
                 'why': c.get('why', ''),
+                **({'source': c['source']} if c.get('source') else {}),
             }
             for c in picked_contrasts
         ],

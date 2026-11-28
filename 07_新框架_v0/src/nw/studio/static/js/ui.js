@@ -44,7 +44,16 @@ export function icon(name, cls = '') { return `<svg class="${esc(cls)}" viewBox=
 export function empty(title, text, action = '', glyph = 'book') { return `<div class="empty-state"><div class="empty-art">${icon(glyph)}</div><h3>${esc(title)}</h3><p>${esc(text)}</p>${action}</div>`; }
 export function button(label, action, primary = false, glyph = '') { return `<button class="${primary ? 'button' : 'secondary'}" data-action="${esc(action)}">${glyph ? icon(glyph) : ''}${esc(label)}</button>`; }
 export function toast(message, error = false) { const div = document.createElement('div'); div.className = `toast-message${error ? ' error' : ''}`; div.textContent = message; $('#toastBanner').append(div); setTimeout(() => div.remove(), error ? 10000 : 5000); }
-export function fail(error) { if (error?.name !== 'AbortError') toast(error?.message || String(error), true); }
+export function fail(error) {
+  if (error?.name === 'AbortError') return;
+  const ae = error?.data?.author_error;
+  if (ae && ae.title) {
+    const msg = `${ae.title}：${ae.summary || ''}${ae.action_hint ? `（建议：${ae.action_hint}）` : ''}`;
+    toast(msg, true);
+    return;
+  }
+  toast(error?.message || String(error), true);
+}
 export function modal(title, body, footer = '', full = false) { const el = $('#modalBackdrop'); $('#modalTitle').textContent = title; $('#modalBody').innerHTML = body; $('#modalFooter').innerHTML = footer; el.classList.toggle('fullscreen', full); if (!el.open) el.showModal(); return el; }
 export function drawer(title, body) { $('#drawerTitle').textContent = title; $('#drawerBody').innerHTML = body; if (!$('#drawer').open) $('#drawer').showModal(); return $('#drawer'); }
 export async function confirmAction(title, message, label = '确认') { return new Promise(resolve => { const d = modal(title, `<p>${esc(message)}</p>`, `<button class="secondary" data-close-modal>取消</button><button class="danger" id="confirmAction">${esc(label)}</button>`); const close = () => resolve(false); d.addEventListener('close', close, {once:true}); $('#confirmAction').onclick = () => { d.removeEventListener('close', close); d.close(); resolve(true); }; }); }

@@ -348,9 +348,12 @@ def _extract_messages(span: dict[str, Any], chapter_text: str, tracks: list[str]
             '  "plot_signals": {\n'
             '    "plan_function": "golden_three | chapter_split_rhythm | hook_aftermath",\n'
             '    "drive_loop": "本章冲突驱动循环与局势位移方式（<=60字，不含原作情节）",\n'
+            '    "conditional_framework": "条件框架：什么前提条件组合触发了本章的期待、反差或爽感（<=80字，脱剧情）",\n'
             '    "hook_contract": "本章回应前钩与章末抛新钩的做法（<=60字）",\n'
             '    "pacing_cadence": "本章属重/中/轻哪类节拍及信息密度特点（<=60字）",\n'
             '    "aftermath_carry": "本章成果或代价如何带入下章局面（<=60字）",\n'
+            '    "golden_three_metrics": "若属前3章，简记开篇钩位置、铺垫/释放比与反应层数；否则空串（<=60字）",\n'
+            '    "do_not_copy": ["本章绝对不可照搬的原作专有梗/设定/人名元素1"],\n'
             '    "quote": "最能代表本章推进或章尾钩子的1句连续原文短摘录（15-120字，一字不改）"\n'
             '  }'
         )
@@ -483,11 +486,16 @@ def _validate_extract(raw: dict[str, Any], content: str, span: dict[str, Any], a
     for sig_key, raw_key, allowed_keys in (
         ('world_signal', 'world_signals', ('card_function', 'premise_law', 'scarcity_cost', 'institution_gate', 'exposition_policy')),
         ('cast_signal', 'cast_signals', ('card_function', 'protagonist_drive', 'antagonist_logic', 'relation_asymmetry', 'supporting_roster')),
-        ('plot_signal', 'plot_signals', ('plan_function', 'drive_loop', 'hook_contract', 'pacing_cadence', 'aftermath_carry')),
+        ('plot_signal', 'plot_signals', ('plan_function', 'drive_loop', 'conditional_framework', 'hook_contract', 'pacing_cadence', 'aftermath_carry', 'golden_three_metrics')),
         ('voice_signal', 'voice_signals', ('scene_function', 'register', 'cadence', 'dialogue_texture', 'psychic_distance')),
     ):
         sig = _extract_signal(raw_key, allowed_keys)
         if sig is not None:
+            raw_sig = raw.get(raw_key)
+            if isinstance(raw_sig, dict) and isinstance(raw_sig.get('do_not_copy'), list):
+                dnc = [str(x).strip()[:80] for x in raw_sig['do_not_copy'] if str(x).strip()][:6]
+                if dnc:
+                    sig['do_not_copy'] = dnc
             extracted_signals[sig_key] = sig
 
     if not obs_out and not chars_out:
@@ -557,9 +565,12 @@ def _synthesize_messages(
             '    "title": "脱剧情节奏钩子指纹标题（<=32字，不含书名与原作情节）",\n'
             '    "base_id": "从 plot_base_ids 中选最贴合的 1 项",\n'
             '    "target_functions": ["golden_three", "chapter_split_rhythm", "hook_aftermath"],\n'
-            '    "dimensions": {"drive_loop": "推进循环特点", "golden_three": "开篇起势法", "pacing_cadence": "轻重节奏切换", "hook_contract": "章尾留钩与回应法", "aftermath_carry": "余波承接法"},\n'
+            '    "dimensions": {"drive_loop": "推进循环特点", "golden_three": "开篇起势与铺放比", "pacing_cadence": "轻重节奏切换", "hook_contract": "章尾留钩与回应法", "aftermath_carry": "余波承接法"},\n'
+            '    "conditional_framework": "脱剧情条件框架：什么前提组合引发核心期待/爽感（<=120字）",\n'
             '    "techniques": ["可复用脱剧情剧情推进/钩子手法1（<=140字）"],\n'
-            '    "drift_guards": ["仿此节奏时要防哪种跑偏（<=100字）"]\n'
+            '    "drift_guards": ["仿此节奏时要防哪种跑偏（<=100字）"],\n'
+            '    "do_not_copy": ["严禁照搬的原作专有梗/设定/桥段识别特征（防原作污染）"],\n'
+            '    "differentiation_hint": "迁移到新书时建议替换哪类地图、关系或代价机制以防雷同（<=120字）"\n'
             '  }'
         )
     if 'scene_prose_craft' in tracks:
@@ -1401,9 +1412,19 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
                                 'start': q['start'], 'end': q['end'], 'quote': q['quote'],
                             })
                 fp_funcs = list(raw_fp.get('target_functions') or [])
+                dnc_items: list[str] = [str(x).strip()[:100] for x in (raw_fp.get('do_not_copy') or ()) if str(x).strip()]
+                cond_fw = str(raw_fp.get('conditional_framework') or '').strip()
+                g3_metrics = ''
                 for sig in t_sigs:
                     if sig.get(fn_key) and sig[fn_key] not in fp_funcs:
                         fp_funcs.append(sig[fn_key])
+                    if not cond_fw and sig.get('conditional_framework'):
+                        cond_fw = str(sig['conditional_framework']).strip()
+                    if not g3_metrics and sig.get('golden_three_metrics'):
+                        g3_metrics = str(sig['golden_three_metrics']).strip()
+                    for item in (sig.get('do_not_copy') or ()):
+                        if item and item not in dnc_items:
+                            dnc_items.append(item)
                 fp_title = str(raw_fp.get('title') or '').strip() or f"{bmap[bid]['name']}·{zh_label}（{book_title[:16]}）"
                 saved_dom_fp = save_craft_fingerprint(
                     conn,
@@ -1420,6 +1441,10 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
                         'target_functions': fp_funcs,
                         'function_notes': dict(raw_fp.get('function_notes') or {}),
                         'evidence_spans': ev_spans,
+                        **({'conditional_framework': cond_fw} if cond_fw else {}),
+                        **({'do_not_copy': dnc_items[:8]} if dnc_items else {}),
+                        **({'differentiation_hint': str(raw_fp.get('differentiation_hint') or '').strip()} if raw_fp.get('differentiation_hint') else {}),
+                        **({'golden_three_metrics': g3_metrics} if g3_metrics else {}),
                     },
                     status='approved',
                     target_functions=fp_funcs,

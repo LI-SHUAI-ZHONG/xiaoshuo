@@ -48,6 +48,11 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
         def log_message(self, format: str, *args: Any) -> None:
             return
 
+        def _send_error(self, status: int, exc_or_msg: Any) -> None:
+            from nw.studio.author_shell import translate_error
+            msg = str(exc_or_msg)
+            self._send_json(status, {'error': msg, 'author_error': translate_error(msg)})
+
         def _send_json(self, status: int, data: Any) -> None:
             raw = json.dumps(data, ensure_ascii=False).encode('utf-8')
             self.send_response(status)
@@ -175,11 +180,11 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
             except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                 self.close_connection = True
             except FileNotFoundError as exc:
-                self._send_json(404, {'error': str(exc)})
+                self._send_error(404, exc)
             except (ValueError, KeyError, TypeError, sqlite3.Error) as exc:
-                self._send_json(400, {'error': str(exc)})
+                self._send_error(400, exc)
             except Exception as exc:
-                self._send_json(500, {'error': f'内部错误: {exc}'})
+                self._send_error(500, f'内部错误: {exc}')
 
         def do_POST(self) -> None:
             if urlsplit(self.path).path in ('/api/repository/sync', '/api/runtime/reload'):
@@ -295,11 +300,11 @@ def create_studio_server(service: StudioService, host: str = '127.0.0.1', port: 
             except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                 self.close_connection = True
             except FileNotFoundError as exc:
-                self._send_json(404, {'error': str(exc)})
+                self._send_error(404, exc)
             except (ValueError, KeyError, TypeError, sqlite3.Error) as exc:
-                self._send_json(400, {'error': str(exc)})
+                self._send_error(400, exc)
             except Exception as exc:
-                self._send_json(500, {'error': f'内部错误: {exc}'})
+                self._send_error(500, f'内部错误: {exc}')
 
     class StudioServer(ThreadingHTTPServer):
         daemon_threads = True

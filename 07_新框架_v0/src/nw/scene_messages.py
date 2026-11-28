@@ -25,7 +25,8 @@ REVISE_PROMPT = (
 def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | None, contract: dict | None,
                    material: str, writing_keys: Iterable[str], length_feedback: list[str] | None = None,
                    *, genre_ids: list[str] | tuple[str, ...] | None = None,
-                   craft_specs: dict | None = None) -> tuple[list[dict], str]:
+                   craft_specs: dict | None = None,
+                   pre_review_note: str = '') -> tuple[list[dict], str]:
     data = {'context': package, 'draft': asdict(draft)}
     if review is not None:
         checks = review.get('material_checks', ())
@@ -90,6 +91,8 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         appended += ' ' + (ANTI_AI_REVIEW_GUIDE if purpose == 'review' else ANTI_AI_REVISE_GUIDE)
     if craft_guard := build_review_craft_guards(package, specs=craft_specs, max_chars=450):
         appended += ' ' + craft_guard
+    if purpose == 'review' and pre_review_note:
+        appended += ' ' + pre_review_note + ' 只依据正文证据、机检线索与已确认规范核验，不自由主观评价“文笔好坏”。'
     keys = check_source_keys(contract['checks']) if contract else writing_keys
     body = canonical(data)
     prompt = step_material_prompt(prompt, material, keys)

@@ -133,6 +133,9 @@ class StoryProvider:
         if project.get('previous'):
             prev = project['previous']
             items.append(ContextItem('previous:' + prev['scene_id'], prev['tail_text'], '同视角紧邻前场正文衔接'))
+        if project.get('memory_layers'):
+            items.append(ContextItem('memory-layers', canonical(project['memory_layers']),
+                                     '分层长程记忆（近章工作摘要 + 前卷情节压缩，严格 POV 隔离）'))
         if project.get('continuity'):
             items.append(ContextItem('prior-evidence', canonical(project['continuity']),
                                      '前文中支持本场人物所知的段落定位'))
@@ -256,6 +259,29 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     briefs = store.briefs()
     brief = briefs[-1] if briefs else None
     facts = [{key: value for key, value in asdict(f).items() if key != 'evidence'} for f in view.facts]
+    from nw.context.memory_orchestrator import orchestrate_scene_memory
+    active_promise_ids = tuple(
+        ref['card_id'] for ref in snapshot.get('settings', ())
+        if ref.get('card_id') and 'promise' in str(ref.get('card_id', '')).lower()
+    )
+    mem_pack = orchestrate_scene_memory(
+        store,
+        branch_id=scope.branch_id,
+        current_chapter=chapter.index,
+        pov_holder=view.holder,
+        scene_body=card['body'],
+        pov_facts=facts,
+        active_promise_ids=active_promise_ids,
+    )
+    facts = mem_pack['selected_facts']
+    memory_layers_payload = (
+        {
+            'recent_chapter_summaries': mem_pack['recent_chapter_summaries'],
+            'volume_summaries': mem_pack['volume_summaries'],
+            'omitted_distant_facts_count': mem_pack['omitted_distant_facts_count'],
+        }
+        if mem_pack['has_episodic_layers'] else None
+    )
     visible_brief = asdict(brief) if brief else None
     if visible_brief and 'length_policy' in card['body']:
         from nw.length_settings import effective_brief_text
@@ -455,6 +481,8 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         optional_parts.insert(0, ('voice_spec', voice_packet))
     if situation_card is not None:
         optional_parts.insert(0, ('situation_card', situation_card))
+    if memory_layers_payload is not None:
+        optional_parts.insert(0, ('memory_layers', memory_layers_payload))
     if adjacent_previous is not None:
         optional_parts.insert(0, ('previous', adjacent_previous))
     omitted = []
