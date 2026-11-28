@@ -142,7 +142,7 @@ def _setup_managed_project(tmp_path: Path):
 def test_schema_v12_tables_and_integrity(tmp_path: Path) -> None:
     with Store(tmp_path / 'fresh', create=True, test_mode=True) as store:
         assert store.connection.execute('PRAGMA user_version').fetchone()[0] == VERSION
-        assert VERSION == 12
+        assert VERSION >= 12
         tables = {
             r[0] for r in store.connection.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
         }

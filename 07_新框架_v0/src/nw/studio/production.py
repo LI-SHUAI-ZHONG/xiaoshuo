@@ -897,3 +897,149 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
             'package_items_count': len(work.package.get('items') or ()),
             'omitted_optional_groups': list(work.omitted_optional_groups),
         }
+
+    # ── InkOS-Fused Cockpit APIs: Multi-Branch Forecast, Fact-Frozen Deslop, Manuscript Import ──
+
+    def forecasts(self, ident: str) -> dict:
+        from nw.narrative_forecast import active_adopted_forecast_constraint, list_narrative_forecasts
+        novel = self.db.get(ident)
+        branch = novel.get('current_branch', 'main')
+        with self.open_store(novel) as store:
+            items = list_narrative_forecasts(store, branch_id=branch)
+            active_c = active_adopted_forecast_constraint(store, branch_id=branch)
+        return {
+            'novel_id': ident,
+            'branch_id': branch,
+            'forecasts': items,
+            'active_constraint': active_c,
+        }
+
+    def create_forecast(self, ident: str, body: dict) -> dict:
+        from nw.narrative_forecast import create_narrative_forecast
+        novel = self.db.get(ident)
+        branch = str(body.get('branch') or novel.get('current_branch') or 'main')
+        divergence = str(body.get('divergence') or '').strip()
+        branch_count = int(body.get('branch_count') or 3)
+        horizon = int(body.get('horizon') or 5)
+        offline_preview = bool(body.get('offline_preview', False))
+        tw = novel['wizard'].get('target_words') if isinstance(novel['wizard'].get('target_words'), int) else None
+        provider, model, params = None, '', {}
+        if not offline_preview:
+            config, provider = self._runtime()
+            model, params = config.model, dict(config.params)
+        with self.open_store(novel) as store:
+            fc = create_narrative_forecast(
+                store,
+                divergence=divergence,
+                branch_id=branch,
+                branch_count=branch_count,
+                horizon=horizon,
+                provider=provider,
+                model=model,
+                params=params,
+                offline_preview=offline_preview,
+                target_words=tw,
+            )
+        self.db.event(ident, 'forecast', f'完成剧情沙盘推演（{len(fc["branches"])} 条 × {fc["horizon"]} 章）：{divergence[:48]}', {'forecast_id': fc['id']})
+        return {'forecast': fc}
+
+    def select_forecast(self, ident: str, forecast_id: str, body: dict) -> dict:
+        from nw.narrative_forecast import select_forecast_branch
+        novel = self.db.get(ident)
+        choice_id = str(body.get('branch_choice_id') or body.get('branch_id') or '').strip()
+        mode = str(body.get('mode') or 'adopt_constraint').strip()
+        new_branch = str(body.get('new_branch_id') or '').strip()
+        with self.open_store(novel) as store:
+            fc = select_forecast_branch(
+                store, forecast_id, choice_id, mode=mode, new_branch_id=new_branch,
+            )
+        msg = (
+            f'已孵化沙盘真实候选分支：{fc["forked_branch_id"]}'
+            if mode == 'fork_branch' else f'已采纳沙盘分支「{choice_id}」作为下步策划约束'
+        )
+        self.db.event(ident, 'forecast', msg, {'forecast_id': fc['id'], 'mode': mode, 'branch_choice_id': choice_id})
+        return {'forecast': fc}
+
+    def analyze_deslop(self, ident: str, scene: str = '', draft_id: str = '') -> dict:
+        from nw.semantic_deslop import analyze_deslop_targets
+        novel = self.db.get(ident)
+        project = self.project(novel)
+        scene_row = next((r for r in project['scenes'] if r['id'] == scene), None) if scene else None
+        target_draft_id = draft_id or (scene_row['latest_draft_id'] if scene_row else '')
+        if not target_draft_id:
+            return {'scene_id': scene, 'draft_id': None, 'analysis': analyze_deslop_targets('')}
+        with self.open_store(novel) as store:
+            draft = store.get('draft', target_draft_id)
+            analysis = analyze_deslop_targets(draft.text)
+        return {'scene_id': draft.scene_id, 'draft_id': draft.id, 'analysis': analysis}
+
+    def run_deslop(self, ident: str, body: dict) -> dict:
+        from nw.llm.base import GenResult
+        from nw.models import Run
+        from nw.semantic_deslop import run_semantic_deslop
+        from nw.store import now
+        from nw.task_models import canonical
+
+        novel = self.db.get(ident)
+        scene_id = str(body.get('scene_id') or '').strip()
+        draft_id = str(body.get('draft_id') or '').strip()
+        apply_flag = bool(body.get('apply', False))
+        project = self.project(novel)
+        scene_row = next((r for r in project['scenes'] if r['id'] == scene_id), None) if scene_id else None
+        target_draft_id = draft_id or (scene_row['latest_draft_id'] if scene_row else '')
+        if not target_draft_id:
+            raise ValueError('当前场景暂无可润色的草稿')
+
+        if apply_flag and isinstance(body.get('polished_text'), str) and body['polished_text'].strip():
+            polished = body['polished_text']
+            with self.open_store(novel) as store:
+                src = store.get('draft', target_draft_id)
+                rid = f'deslop-{src.id[:8]}-{now().replace(":", "").replace("-", "")[:14]}'
+                store.add_run(Run(
+                    rid, src.scene_id, 'revise', 'author', 'semantic-deslop', '{}',
+                    canonical({'source': 'studio_manual_author', 'deslop_from': src.id}),
+                    canonical({'deslop': True}), '', 'error', '{}', now(), '',
+                ))
+                _, new_draft = store.finish_run(rid, GenResult(
+                    text=polished, finish_reason='complete', usage={'source': 'semantic_deslop'},
+                    request_id=rid, raw={'deslop_from': src.id},
+                ))
+            self.db.event(ident, 'deslop', f'已应用事实冻结去 AI 味润色至草稿 v{new_draft.version}', {'draft_id': new_draft.id})
+            return {'applied': True, 'draft_id': new_draft.id, 'version': new_draft.version}
+
+        config, provider = self._runtime()
+        targets = body.get('target_paragraphs') if isinstance(body.get('target_paragraphs'), list) else None
+        extra = str(body.get('extra_instruction') or '')
+        with self.open_store(novel) as store:
+            src = store.get('draft', target_draft_id)
+            res = run_semantic_deslop(
+                store, src.text, provider, config.model, dict(config.params),
+                target_paragraphs=targets, extra_instruction=extra,
+            )
+        return {'scene_id': src.scene_id, 'draft_id': src.id, **res}
+
+    def manuscript_imports(self, ident: str) -> dict:
+        from nw.manuscript_import import list_manuscript_imports
+        novel = self.db.get(ident)
+        with self.open_store(novel) as store:
+            return {'novel_id': ident, 'imports': list_manuscript_imports(store)}
+
+    def analyze_manuscript_import(self, ident: str, body: dict) -> dict:
+        from nw.manuscript_import import analyze_manuscript, save_manuscript_import
+        novel = self.db.get(ident)
+        raw_text = str(body.get('text') or '')
+        title = str(body.get('title') or novel.get('title') or '')
+        report = analyze_manuscript(raw_text, title=title)
+        with self.open_store(novel) as store:
+            saved = save_manuscript_import(store, report)
+        self.db.event(ident, 'manuscript_import', f'分析导入书稿：{saved["chapter_count"]} 章（冲突 {len(saved["conflicts"])} 处）', {'import_id': saved['id']})
+        return {'import': saved}
+
+    def apply_manuscript_import(self, ident: str, import_id: str, body: dict) -> dict:
+        from nw.manuscript_import import apply_manuscript_import_to_baseline
+        novel = self.db.get(ident)
+        resolutions = body.get('resolved_conflicts') if isinstance(body.get('resolved_conflicts'), dict) else {}
+        with self.open_store(novel) as store:
+            res = apply_manuscript_import_to_baseline(store, import_id, resolved_conflicts=resolutions)
+        self.db.event(ident, 'manuscript_import', f'已将 {res["chapters_imported"]} 章导入书稿写入正史基线', res)
+        return res

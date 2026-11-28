@@ -207,7 +207,11 @@ def _start_task(store: Store, request: TaskRequest, request_json: str, root: str
     except BudgetExceeded as exc:
         return TaskResult(request.id, 'BUDGET_EXCEEDED', reason=str(exc))
 
-    result = send_model(provider, messages, config.model, params)
+    result = send_model(
+        provider, messages, config.model, params,
+        allow_continuation=False,
+        max_empty_retries=(2 if provider.name != 'fake' else 0),
+    )
     validation, parsed, reason = 'UNREVIEWED', None, None
     status = outcome_for(result)
     if result.finish_reason == 'complete':

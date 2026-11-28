@@ -266,28 +266,64 @@ def compute_promise_rhythm_debt(
         'current_chapter': current_chapter,
     }) if snap_rows else None
 
-    # Derive last_touched_chapter directly from story operations (0 manual bookkeeping!)
-    last_touch: dict[str, int] = {}
+    # Derive last_advanced_chapter vs last_mentioned_chapter with strict `mention != advance` law
+    from nw.promise_arbiter import parse_promise_op_semantics
+    baseline_planted_ch: dict[str, int] = {}
+    for raw_bf in (baseline_for(store, head.branch_id).get('facts') or ()):
+        if raw_bf.get('predicate') == 'promise_stage' and raw_bf.get('entity_id'):
+            disc = raw_bf.get('disclosure_order') or (0, 0, 0)
+            bch = int(disc[0]) if isinstance(disc, (list, tuple)) and disc else 0
+            if bch > 0:
+                baseline_planted_ch[str(raw_bf['entity_id'])] = bch
+
+    last_advanced: dict[str, int] = {}
+    last_mentioned: dict[str, int] = {}
     for op in ops:
         if op.get('predicate') == 'promise_stage' or op.get('op') in ('introduce_promise', 'advance_promise'):
             ent = str(op.get('entity_id') or '')
             disc = op.get('disclosure_order') or (0, 0, 0)
             ch = int(disc[0]) if isinstance(disc, (list, tuple)) and disc else 0
-            if ent and ch > 0:
-                last_touch[ent] = max(ch, last_touch.get(ent, 0))
+            if not ent or ch <= 0:
+                continue
+            try:
+                sem = parse_promise_op_semantics(op)
+            except ValueError:
+                sem = {'advances_progress': True, 'is_mention_only': False}
+            if sem['advances_progress']:
+                last_advanced[ent] = max(ch, last_advanced.get(ent, 0))
+                last_mentioned[ent] = max(ch, last_mentioned.get(ent, 0))
+            elif sem.get('is_mention_only'):
+                last_mentioned[ent] = max(ch, last_mentioned.get(ent, 0))
 
     stalled: list[dict[str, Any]] = []
     enriched_items: list[dict[str, Any]] = []
+    superseded_items: list[str] = []
     cur_ch = int(current_chapter) if isinstance(current_chapter, int) and current_chapter > 0 else 0
     latest_ch_touched = False
 
     for row in snap_rows:
         cid = row['card_id']
         stage = row.get('accepted_stage')
-        lt = last_touch.get(cid) or row.get('planted_chapter') or 0
-        if cur_ch and lt == cur_ch:
+        if stage == 'superseded':
+            superseded_items.append(cid)
+            enriched_items.append({
+                **row,
+                'priority': 'archived',
+                'last_touched_chapter': last_advanced.get(cid) or row.get('planted_chapter') or baseline_planted_ch.get(cid) or None,
+                'last_advanced_chapter': last_advanced.get(cid) or row.get('planted_chapter') or baseline_planted_ch.get(cid) or None,
+                'last_mentioned_chapter': last_mentioned.get(cid) or None,
+                'mention_without_advance': False,
+                'stalled_chapters': 0,
+                'is_overdue': False,
+                'is_superseded': True,
+            })
+            continue
+        la = last_advanced.get(cid) or row.get('planted_chapter') or baseline_planted_ch.get(cid) or 0
+        lm = last_mentioned.get(cid) or la
+        if cur_ch and la == cur_ch:
             latest_ch_touched = True
-        gap = max(0, cur_ch - lt) if (cur_ch and lt) else 0
+        gap = max(0, cur_ch - la) if (cur_ch and la) else 0
+        mention_only_stale = bool(lm > la and stage in ('planted', 'awake', 'sleeping'))
         sched = row.get('schedule') or {}
         payoff_ch = sched.get('payoff_chapter')
         is_overdue = bool(cur_ch and isinstance(payoff_ch, int) and cur_ch > payoff_ch and stage != 'paid_off')
@@ -301,29 +337,38 @@ def compute_promise_rhythm_debt(
         enriched = {
             **row,
             'priority': priority,
-            'last_touched_chapter': lt or None,
+            'last_touched_chapter': la or None,
+            'last_advanced_chapter': la or None,
+            'last_mentioned_chapter': lm or None,
+            'mention_without_advance': mention_only_stale,
             'stalled_chapters': gap,
             'is_overdue': is_overdue,
+            'is_superseded': False,
         }
         enriched_items.append(enriched)
         if stage in ('planted', 'sleeping', 'awake') and cur_ch and gap >= stall_limit:
+            hint_extra = f'（第 {lm} 章仅顺口提及，未实质推进）' if mention_only_stale else ''
             stalled.append({
                 'promise': cid,
                 'title': row['title'][:96],
                 'priority': priority,
-                'last_touched_chapter': lt,
+                'last_touched_chapter': la,
+                'last_advanced_chapter': la,
+                'last_mentioned_chapter': lm,
+                'mention_without_advance': mention_only_stale,
                 'stalled_chapters': gap,
-                'reason': f'已连续 {gap} 章未推进或提醒（超过当前篇幅档位 {stall_limit} 章阈值）',
+                'reason': f'已连续 {gap} 章未实质推进（超过当前篇幅档位 {stall_limit} 章阈值）{hint_extra}',
             })
 
     overdue = (reminder or {}).get('overdue_warnings') or []
     due = (reminder or {}).get('due_this_scene') or []
     return {
         'items': enriched_items,
-        'lifecycle_counts': (reminder or {}).get('lifecycle_counts', {'unverified': 0, 'planted': 0, 'hinted': 0, 'paid_off': 0}),
+        'lifecycle_counts': (reminder or {}).get('lifecycle_counts', {'unverified': 0, 'planted': 0, 'hinted': 0, 'paid_off': 0, 'superseded': 0}),
         'due': due,
         'overdue': overdue,
         'stalled': stalled,
+        'superseded': superseded_items,
         'latest_chapter_touched_promise': latest_ch_touched,
         'rhythm_debt_count': len(overdue) + len(stalled),
     }

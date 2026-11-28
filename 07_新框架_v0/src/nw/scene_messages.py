@@ -13,7 +13,8 @@ from nw.task_models import canonical
 
 REVIEW_PROMPT = (
     '审查本场与约束、场景目标、POV所知和前文的一致性。只输出 JSON '
-    '{"recommendation":"pass或revise","notes":"具体意见","core_changes":[]}。'
+    '{"recommendation":"pass或revise","notes":"具体意见","core_changes":[]}；'
+    '需要修订时可附带可选字段 "repair_scope":"local或structural" 及 "target_paragraphs":[0基段落号] 以便精准局部手术修订。'
     '只有影响核心人物目标、世界规则、重要生死、视角形式或终局承诺的变化才填入 core_changes。'
 )
 REVISE_PROMPT = (
@@ -26,7 +27,8 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
                    material: str, writing_keys: Iterable[str], length_feedback: list[str] | None = None,
                    *, genre_ids: list[str] | tuple[str, ...] | None = None,
                    craft_specs: dict | None = None,
-                   pre_review_note: str = '') -> tuple[list[dict], str]:
+                   pre_review_note: str = '',
+                   revision_diff_note: str = '') -> tuple[list[dict], str]:
     data = {'context': package, 'draft': asdict(draft)}
     if review is not None:
         checks = review.get('material_checks', ())
@@ -93,6 +95,8 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         appended += ' ' + craft_guard
     if purpose == 'review' and pre_review_note:
         appended += ' ' + pre_review_note + ' 只依据正文证据、机检线索与已确认规范核验，不自由主观评价“文笔好坏”。'
+    if purpose == 'review' and revision_diff_note:
+        appended += '\n' + revision_diff_note + ' 请结合上述改前/改后差异核验是否已修复原问题，并检查是否存在未授权段落的越界破坏。'
     keys = check_source_keys(contract['checks']) if contract else writing_keys
     body = canonical(data)
     prompt = step_material_prompt(prompt, material, keys)

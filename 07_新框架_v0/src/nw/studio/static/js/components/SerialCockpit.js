@@ -303,3 +303,237 @@ export async function openSceneBriefingDrawer(novelId, sceneId) {
     fail(err);
   }
 }
+
+export async function openForecastSandboxDrawer(novelId, {onChanged = null} = {}) {
+  drawer('剧情多分支沙盘推演（非正史零污染）', loading());
+  try {
+    const data = await api.get(`/novels/${enc(novelId)}/forecasts`);
+    const list = data.forecasts || [];
+    const activeConstraint = data.active_constraint || null;
+    const statusLabel = s => ({active: '有效', stale: '已过期（正史推进）', adopted: '已采纳为规划约束', forked: '已孵化为候选分支'}[s] || s);
+
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:16px">
+      <div class="notice" style="margin:0;font-size:12px">
+        在关键卷/章转折点动笔前，一次性推演 2–5 条互不干扰的未来走势（含人物抉择、伏笔/关系连锁变化与风险预警）。推演绝不改写正史；正史推进后旧推演自动标为「已过期」。
+      </div>
+      ${activeConstraint ? `<div class="card stack" style="gap:6px;border-color:var(--accent)">
+        <div class="row spread"><strong>当前生效的沙盘规划约束：${esc(activeConstraint.label || activeConstraint.branch_id)}</strong><span class="tag green">已接入下轮策划</span></div>
+        <p style="margin:0;font-size:12px">${esc(activeConstraint.premise || '')}</p>
+      </div>` : ''}
+      <form id="createForecastForm" class="card stack" style="gap:10px">
+        <strong>发起新一轮剧情沙盘推演</strong>
+        <label class="field"><span>关键剧情分歧点（必填）</span><textarea name="divergence" rows="2" required placeholder="例如：第28章拍卖会结束，长老当众逼宫交出古玉，主角如何应对？"></textarea></label>
+        <div class="form-grid">
+          <label class="field"><span>分支数（2–5）</span><input type="number" name="branch_count" min="2" max="5" value="3"></label>
+          <label class="field"><span>前瞻步长（章）</span><input type="number" name="horizon" min="1" max="10" value="5"></label>
+        </div>
+        <div class="row wrap" style="gap:8px">
+          <button type="submit" class="button" data-fc-mode="model">模型深度推演</button>
+          <button type="button" class="secondary" id="offlineForecastBtn">0-Token 离线战略沙盘预览</button>
+        </div>
+      </form>
+      <div class="stack" style="gap:12px">
+        ${list.length ? list.map(fc => `<div class="card stack" style="gap:10px">
+          <div class="row spread wrap">
+            <strong>分歧点：${esc(fc.divergence)}</strong>
+            <div class="row" style="gap:6px">
+              <span class="tag ${fc.stale ? 'amber' : (fc.status === 'adopted' || fc.status === 'forked' ? 'green' : 'blue')}">${esc(statusLabel(fc.status))}</span>
+              <span class="tag">基准第 ${number(fc.base_chapter || 0)} 章 · 前瞻 ${number(fc.horizon || 5)} 章</span>
+            </div>
+          </div>
+          <div class="stack" style="gap:8px">
+            ${(fc.branches || []).map(br => `<div class="review-item stack" style="gap:6px">
+              <div class="row spread wrap">
+                <strong>${esc(br.label || br.branch_id)}</strong>
+                ${fc.selected_branch_id === br.branch_id ? '<span class="tag green">已选分支</span>' : ''}
+              </div>
+              <p style="margin:0;font-size:12px">${esc(br.premise || '')}</p>
+              ${(br.beats || []).length ? `<ul style="margin:0 0 0 18px;font-size:12px">${br.beats.slice(0, 5).map(bt => `<li>第${bt.chapter}章（${esc(bt.dominant_strand || 'quest')}）：${esc(bt.summary || '')}</li>`).join('')}</ul>` : ''}
+              ${(br.risks || []).length ? `<p class="muted" style="margin:0;font-size:11px">⚠ 风险预警：${esc(br.risks.join('；'))}</p>` : ''}
+              <div class="row wrap" style="gap:8px">
+                <button type="button" class="secondary" data-fc-adopt="${esc(fc.id)}" data-fc-branch="${esc(br.branch_id)}">采纳为下章策划约束</button>
+                <button type="button" class="ghost" data-fc-fork="${esc(fc.id)}" data-fc-branch="${esc(br.branch_id)}">一键孵化为真实候选分支</button>
+              </div>
+            </div>`).join('')}
+          </div>
+        </div>`).join('') : '<p class="muted" style="margin:0;font-size:12px">尚未发起剧情沙盘推演。</p>'}
+      </div>
+    </div>`;
+
+    const submitForecast = (offline, btn) => busy(btn, async () => {
+      const f = $('#createForecastForm');
+      const divergence = f.querySelector('[name=divergence]').value.trim();
+      if (!divergence) { toast('请填写剧情分歧点', true); return; }
+      await api.post(`/novels/${enc(novelId)}/forecasts`, {
+        divergence,
+        branch_count: Number(f.querySelector('[name=branch_count]').value || 3),
+        horizon: Number(f.querySelector('[name=horizon]').value || 5),
+        offline_preview: offline,
+      });
+      toast(offline ? '已生成 0-Token 离线沙盘对比方案' : '已完成多分支剧情沙盘推演');
+      await openForecastSandboxDrawer(novelId, {onChanged});
+    });
+    $('#createForecastForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      submitForecast(false, e.currentTarget.querySelector('[type=submit]'));
+    });
+    $('#offlineForecastBtn')?.addEventListener('click', e => submitForecast(true, e.currentTarget));
+    $$('[data-fc-adopt]').forEach(btn => {
+      btn.onclick = e => busy(e.currentTarget, async () => {
+        await api.post(`/novels/${enc(novelId)}/forecasts/${enc(btn.dataset.fcAdopt)}/select`, {
+          branch_choice_id: btn.dataset.fcBranch,
+          mode: 'adopt_constraint',
+        });
+        toast('已采纳为下几章规划约束（正史零污染）');
+        if (onChanged) await onChanged();
+        await openForecastSandboxDrawer(novelId, {onChanged});
+      });
+    });
+    $$('[data-fc-fork]').forEach(btn => {
+      btn.onclick = e => busy(e.currentTarget, async () => {
+        const res = await api.post(`/novels/${enc(novelId)}/forecasts/${enc(btn.dataset.fcFork)}/select`, {
+          branch_choice_id: btn.dataset.fcBranch,
+          mode: 'fork_branch',
+        });
+        toast(`已孵化真实候选分支：${res.forecast?.forked_branch_id || '已创建'}`);
+        if (onChanged) await onChanged();
+        await openForecastSandboxDrawer(novelId, {onChanged});
+      });
+    });
+  } catch (err) {
+    fail(err);
+  }
+}
+
+export async function openSemanticDeslopDrawer(novelId, sceneId, {onChanged = null} = {}) {
+  drawer('事实冻结型 · 语义去 AI 味精修（Deslop）', loading());
+  try {
+    const data = await api.get(`/novels/${enc(novelId)}/deslop?${query({scene: sceneId})}`);
+    const analysis = data.analysis || {};
+    const flagged = analysis.flagged_paragraphs || [];
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:14px">
+      <div class="notice" style="margin:0;font-size:12px">
+        只针对命中的局部段落执行宿主锁界 Spot-Fix 语义润色：<strong>未选中段落字节级零篡改，人物姓名、剧情因果与 POV 披露边界严格冻结</strong>，并自动注入本书活体语感基座与作者亲改微对照。
+      </div>
+      <div class="card stack" style="gap:8px">
+        <div class="row spread wrap">
+          <strong>0-Token 功能性 AI 味扫描结果</strong>
+          <span class="tag ${flagged.length ? 'amber' : 'green'}">${flagged.length ? `命中 ${flagged.length} 段 / ${analysis.total_slop_hits || 0} 处` : '未检出明显 AI 味'}</span>
+        </div>
+        ${flagged.length ? flagged.map(p => `<div class="review-item stack" style="gap:4px">
+          <div class="row spread"><strong>段落 P${p.paragraph}（风险分 ${p.score}）</strong><span class="tag amber">${p.hit_count} 处</span></div>
+          <p class="muted" style="margin:0;font-size:11px">${esc((p.hits || []).map(h => h.label).join('；'))}</p>
+          <p style="margin:0;font-size:12px">${esc(p.preview || '')}</p>
+        </div>`).join('') : '<p class="muted" style="margin:0;font-size:12px">当前草稿整体语感干净；如需手动指定段落润色，可在下方输入 0 基段落号。</p>'}
+      </div>
+      <form id="deslopForm" class="card stack" style="gap:10px">
+        <label class="field"><span>目标段落号（留空则自动选中上方最高风险段落，逗号分隔如 2,5）</span><input name="paragraphs" value="${esc((analysis.recommended_target_paragraphs || []).join(','))}"></label>
+        <label class="field"><span>补充润色意图（可选）</span><input name="extra_instruction" placeholder="例如：把情绪解释删掉，改用冷硬动作与停顿留白"></label>
+        <div class="row wrap" style="gap:8px">
+          <button type="submit" class="button">预览事实冻结去 AI 味润色</button>
+        </div>
+      </form>
+      <div id="deslopPreviewArea"></div>
+    </div>`;
+
+    $('#deslopForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      busy(f.querySelector('[type=submit]'), async () => {
+        const rawP = f.querySelector('[name=paragraphs]').value.trim();
+        const targets = rawP ? rawP.split(/[，,\s]+/).map(s => Number(s)).filter(n => Number.isInteger(n) && n >= 0) : null;
+        const extra = f.querySelector('[name=extra_instruction]').value.trim();
+        const res = await api.post(`/novels/${enc(novelId)}/deslop`, {
+          scene_id: sceneId,
+          target_paragraphs: targets,
+          extra_instruction: extra,
+          apply: false,
+        });
+        const pres = res.fact_preservation || {};
+        $('#deslopPreviewArea').innerHTML = `<div class="card stack" style="gap:8px">
+          <div class="row spread wrap">
+            <strong>润色结果预览</strong>
+            <div class="row" style="gap:6px">
+              ${res.protected_intact ? '<span class="tag green">保护段落 100% 零篡改</span>' : ''}
+              <span class="tag ${pres.passed !== false ? 'green' : 'amber'}">${pres.passed !== false ? '事实/实体零漂移通过' : '存在实体或篇幅提醒'}</span>
+              <span class="tag blue">AI味命中：${number(res.before_slop_hits || 0)} → ${number(res.after_slop_hits || 0)}</span>
+            </div>
+          </div>
+          ${(pres.issues || []).length ? `<div class="notice warning" style="margin:0;font-size:12px">${esc(pres.issues.join('；'))}</div>` : ''}
+          ${(res.applied_ranges || []).map(r => `<div class="review-item stack" style="gap:4px">
+            <strong>${esc(r.range_id)}（P${r.start_paragraph}..P${r.end_paragraph}）</strong>
+            <p class="muted" style="margin:0;font-size:12px">❌ 原段：${esc(r.before_preview || '')}</p>
+            <p style="margin:0;font-size:12px">✅ 润色：${esc(r.after_preview || '')}</p>
+          </div>`).join('')}
+          ${res.changed ? '<div><button type="button" class="button" id="applyDeslopBtn">确认应用为新草稿版本</button></div>' : `<p class="muted" style="margin:0;font-size:12px">${esc(res.message || '无改动')}</p>`}
+        </div>`;
+        $('#applyDeslopBtn')?.addEventListener('click', ev => busy(ev.currentTarget, async () => {
+          await api.post(`/novels/${enc(novelId)}/deslop`, {
+            scene_id: sceneId,
+            polished_text: res.polished_text,
+            apply: true,
+          });
+          toast('已将事实冻结去 AI 味版本保存为新草稿');
+          if (onChanged) await onChanged();
+        }));
+      });
+    });
+  } catch (err) {
+    fail(err);
+  }
+}
+
+export async function openManuscriptImportDrawer(novelId, {onChanged = null} = {}) {
+  drawer('导入已有半成品书稿 → 重构正史基线', loading());
+  try {
+    const data = await api.get(`/novels/${enc(novelId)}/manuscript-imports`);
+    const imports = data.imports || [];
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:14px">
+      <div class="notice" style="margin:0;font-size:12px">
+        已有写到第 10–60 章的 TXT/Markdown 半成品？直接粘贴导入：系统按「证据驱动重构铁律」自动切章、抽取角色现态与未回收伏笔；<strong>如遇前文自相矛盾，保留双边证据交你拍板，绝不静默二选一</strong>；确认后一键写入 SQLite 基线即可无缝续写下一章。
+      </div>
+      <form id="manuscriptImportForm" class="card stack" style="gap:10px">
+        <label class="field"><span>书稿标题（可选）</span><input name="title" placeholder="例如：已写前12章底稿"></label>
+        <label class="field"><span>粘贴已有章节正文（支持「第X章」「Chapter N」自动切分）</span><textarea name="text" rows="6" required placeholder="第一章 风雪入城&#10;正文...&#10;&#10;第二章 暗潮涌动&#10;正文..."></textarea></label>
+        <div><button type="submit" class="button">分析书稿结构与前文冲突</button></div>
+      </form>
+      <div class="stack" style="gap:10px">
+        ${imports.map(imp => `<div class="card stack" style="gap:8px">
+          <div class="row spread wrap">
+            <strong>${esc(imp.title)}</strong>
+            <div class="row" style="gap:6px">
+              <span class="tag ${imp.status === 'applied' ? 'green' : 'blue'}">${imp.status === 'applied' ? '已写入正史基线' : '待确认写入'}</span>
+              <span class="tag">${number(imp.chapter_count)} 章 · ${number(imp.total_chars || 0)} 字</span>
+            </div>
+          </div>
+          <p class="muted" style="margin:0;font-size:12px">识别角色：${esc((imp.characters || []).slice(0, 8).map(c => c.name).join('、') || '暂无')} · 潜在伏笔：${(imp.hooks || []).length} 条</p>
+          ${(imp.conflicts || []).length ? `<div class="notice warning" style="margin:0;font-size:12px"><strong>检测到 ${imp.conflicts.length} 处前文自相矛盾（请裁决后再入库）：</strong>${imp.conflicts.map(c => `<div style="margin-top:4px">• ${esc(c.summary)}</div>`).join('')}</div>` : ''}
+          ${imp.status !== 'applied' ? `<div><button type="button" class="secondary" data-apply-import="${esc(imp.id)}">确认写入 SQLite 正史基线</button></div>` : ''}
+        </div>`).join('') || '<p class="muted" style="margin:0;font-size:12px">暂无书稿导入记录。</p>'}
+      </div>
+    </div>`;
+
+    $('#manuscriptImportForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const f = e.currentTarget;
+      busy(f.querySelector('[type=submit]'), async () => {
+        await api.post(`/novels/${enc(novelId)}/manuscript-imports`, {
+          title: f.querySelector('[name=title]').value.trim(),
+          text: f.querySelector('[name=text]').value,
+        });
+        toast('书稿分析完成，请核对角色、伏笔与矛盾清单');
+        await openManuscriptImportDrawer(novelId, {onChanged});
+      });
+    });
+    $$('[data-apply-import]').forEach(btn => {
+      btn.onclick = e => busy(e.currentTarget, async () => {
+        const res = await api.post(`/novels/${enc(novelId)}/manuscript-imports/${enc(btn.dataset.applyImport)}/apply`, {});
+        toast(`已导入 ${res.chapters_imported} 章至正史基线，可直接续写第 ${res.next_chapter_index} 章`);
+        if (onChanged) await onChanged();
+        await openManuscriptImportDrawer(novelId, {onChanged});
+      });
+    });
+  } catch (err) {
+    fail(err);
+  }
+}

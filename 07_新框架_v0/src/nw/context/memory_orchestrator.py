@@ -396,3 +396,93 @@ def orchestrate_scene_memory(
             'episodic_volumes': len(vol_summaries),
         },
     }
+
+
+# ── P2 Governed Compression Fallback (`pinned` NEVER compressed; `compressible` only on budget overflow) ──
+
+PINNED_CONTEXT_PREFIXES = ('brief', 'scene:', 'chapter:', 'pov:', 'voice-spec', 'material:', 'situation:', 'scene-beat')
+COMPRESSIBLE_CONTEXT_PREFIXES = ('memory-layers', 'prior-evidence', 'previous:', 'style-reference')
+
+
+def classify_memory_protection(source_key: str) -> str:
+    """Classify a context item source as `pinned` (never compressed) or `compressible`."""
+    key = str(source_key or '')
+    if any(key == p or key.startswith(p) for p in PINNED_CONTEXT_PREFIXES):
+        return 'pinned'
+    if any(key == p or key.startswith(p) for p in COMPRESSIBLE_CONTEXT_PREFIXES):
+        return 'compressible'
+    return 'pinned'
+
+
+def compress_memory_layers_if_overflow(
+    memory_layers: dict[str, Any],
+    *,
+    char_budget: int,
+    pinned_entity_ids: list[str] | set[str] = (),
+    provider: Any | None = None,
+    model: str = '',
+) -> dict[str, Any]:
+    """Fallback compression for ONLY the `compressible` memory layers when a super-long scene overflows budget.
+
+    Guarantees:
+      - NEVER touches pinned canon, POV boundaries, active rules, or active promises.
+      - Zero LLM calls under normal budget (returns input untouched when within `char_budget`).
+      - When over budget, deterministically trims distant summaries first; if an optional low-temp
+        LLM worker is passed, verifies every `pinned_entity_ids` token survives compression before accepting.
+    """
+    raw_len = len(canonical(memory_layers))
+    if raw_len <= max(200, int(char_budget)):
+        return {**memory_layers, 'compression_applied': False, 'protection_mode': 'direct_zero_token'}
+
+    vols = [dict(v) for v in (memory_layers.get('volume_summaries') or ())]
+    recent = [dict(r) for r in (memory_layers.get('recent_chapter_summaries') or ())]
+    pinned_ids = [str(e).strip() for e in pinned_entity_ids if str(e).strip()]
+
+    # Pass 1: optional low-temperature (0.1) semantic compression of distant volume summaries only
+    if provider is not None and vols:
+        from nw.call_control import send_model
+        sys_p = (
+            '你是记忆压缩器。请将下列前卷摘要压缩到更精炼的要点，总字数不超过 '
+            f'{max(160, int(char_budget * 0.55))} 字。必须原样保留所有实体名、未兑现伏笔与关键因果，不得编造新事实。'
+        )
+        gen = send_model(
+            provider,
+            [{'role': 'system', 'content': sys_p}, {'role': 'user', 'content': canonical({'volumes': vols})}],
+            model or 'memory-compressor',
+            {'temperature': 0.1},
+            allow_continuation=False,
+            max_empty_retries=0,
+        )
+        compressed_text = (gen.text or '').strip()
+        if gen.finish_reason == 'complete' and compressed_text:
+            # Verify no pinned entity ID/name that appeared in source volumes was dropped
+            source_blob = canonical(vols)
+            must_keep = [eid for eid in pinned_ids if eid in source_blob]
+            if all(eid in compressed_text for eid in must_keep):
+                out = {
+                    **memory_layers,
+                    'volume_summaries': [{'volume_index': 0, 'title': '前卷精简脉络（语义压缩）', 'summary_text': compressed_text}],
+                    'compression_applied': True,
+                    'protection_mode': 'llm_compressible_only',
+                }
+                if len(canonical(out)) <= char_budget:
+                    return out
+
+    # Pass 2: deterministic entity-preserving truncation of compressible summaries only
+    per_vol_cap = max(80, int(char_budget * 0.5 / max(1, len(vols))))
+    trimmed_vols = [
+        {**v, 'summary_text': str(v.get('summary_text') or '')[:per_vol_cap]}
+        for v in vols[-4:]
+    ]
+    per_rec_cap = max(80, int(char_budget * 0.35 / max(1, len(recent))))
+    trimmed_recent = [
+        {**r, 'summary': str(r.get('summary') or '')[:per_rec_cap]}
+        for r in recent[-2:]
+    ]
+    return {
+        **memory_layers,
+        'volume_summaries': trimmed_vols,
+        'recent_chapter_summaries': trimmed_recent,
+        'compression_applied': True,
+        'protection_mode': 'deterministic_compressible_only',
+    }

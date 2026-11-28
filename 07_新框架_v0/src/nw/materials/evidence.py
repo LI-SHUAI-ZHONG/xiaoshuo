@@ -272,11 +272,19 @@ def review_result(run: Run, contract: dict | None, draft: Draft, comparison: Dra
     fields = {'recommendation', 'notes', 'core_changes'}
     if contract:
         fields.add('material_checks')
-    if (not isinstance(raw, dict) or set(raw) != fields or raw['recommendation'] not in ('pass', 'revise')
+    optional_fields = {'repair_scope', 'target_paragraphs'}
+    if (not isinstance(raw, dict) or not fields <= set(raw) or not set(raw) <= (fields | optional_fields)
+            or raw['recommendation'] not in ('pass', 'revise')
             or not isinstance(raw['notes'], str) or not isinstance(raw['core_changes'], list)
             or not all(_text(line) for line in raw['core_changes'])):
         message = 'review requires recommendation, notes and core changes'
         raise ValueError(f'MATERIAL_EVIDENCE: {message} and all required checks' if contract else message)
+    if 'repair_scope' in raw and raw['repair_scope'] not in ('local', 'structural'):
+        raise ValueError('review repair_scope must be local or structural')
+    if 'target_paragraphs' in raw:
+        tp = raw['target_paragraphs']
+        if not isinstance(tp, list) or not all(type(i) is int and i >= 0 for i in tp):
+            raise ValueError('review target_paragraphs must be a list of non-negative integers')
     if contract:
         checks = validate_review(raw['material_checks'], contract, draft, comparison)
         if any(check['status'] != 'pass' or check.get('layer_check', {}).get('status', 'pass') != 'pass' or any(

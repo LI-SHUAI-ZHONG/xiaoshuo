@@ -6,7 +6,17 @@ from nw.story_models import Fact
 from nw.task_models import content_sha256
 
 
-_ACCEPTED = ('planted', 'sleeping', 'awake', 'paid_off')
+_ACCEPTED = ('planted', 'sleeping', 'awake', 'paid_off', 'superseded')
+
+
+def _stage_value(val: object) -> str | None:
+    if isinstance(val, str) and val in _ACCEPTED:
+        return val
+    if isinstance(val, dict):
+        stage = val.get('stage') or val.get('status')
+        if isinstance(stage, str) and stage in _ACCEPTED:
+            return stage
+    return None
 _APPLIED_PLOTS = """SELECT a.proposal_id, a.decision_id,
     json_extract(a.mapping_json, '$.root.card_id') AS root_id,
     json_extract(a.mapping_json, '$.root.version') AS root_version,
@@ -68,12 +78,12 @@ def approved_promise_snapshot(store: Store, settings: list[dict], cards: list[di
     schedules = _schedule_rows(store, active, promises)
     confirmed = {fact.entity_id: fact for fact in facts if fact.entity_id in promises
                  and fact.predicate == 'promise_stage' and fact.holder == 'WORLD' and fact.claim == 'fact'
-                 and fact.evidence and fact.value in _ACCEPTED}
+                 and fact.evidence and _stage_value(fact.value) is not None}
     first_plant = {}
     for op in operations:
         ident = op['entity_id']
         if (ident in confirmed and op['predicate'] == 'promise_stage' and op['holder'] == 'WORLD'
-                and op['expected_old'] is None and op['new_value'] == 'planted' and op['evidence']):
+                and op['expected_old'] is None and _stage_value(op['new_value']) == 'planted' and op['evidence']):
             chapter = op['disclosure_order'][0]
             first_plant[ident] = min(chapter, first_plant.get(ident, chapter))
 
@@ -81,7 +91,7 @@ def approved_promise_snapshot(store: Store, settings: list[dict], cards: list[di
     for ident, card in sorted(promises.items()):
         fact = confirmed.get(ident)
         row = {'card_id': ident, 'version': card['version'], 'title': card['body']['title'],
-               'accepted_stage': fact.value if fact else None}
+               'accepted_stage': _stage_value(fact.value) if fact else None}
         if fact:
             row['state_evidence'] = list(fact.evidence)
             if ident in first_plant:
@@ -114,13 +124,17 @@ def continuation_reminder(products: dict, context: dict) -> dict | None:
     unverified = [ident for ident in local if ident not in prior]
     counts = {'unverified': len(unverified), 'planted': 0, 'hinted': 0, 'paid_off': 0}
     due, overdue, still_open, pending = [], [], [], []
-    resolved = []
+    resolved, superseded_list = [], []
     # Definitions mentioned by this plan must come first in bounded status lists.
     for ident in sorted(prior, key=lambda key: key not in local):
         row = prior[ident]
         accepted = row['accepted_stage']
         status = {'planted': 'planted', 'sleeping': 'hinted', 'awake': 'hinted',
-                  'paid_off': 'paid_off'}.get(accepted, 'unverified')
+                  'paid_off': 'paid_off', 'superseded': 'superseded'}.get(accepted, 'unverified')
+        if status == 'superseded':
+            counts['superseded'] = counts.get('superseded', 0) + 1
+            superseded_list.append(ident)
+            continue
         counts[status] += 1
         if status == 'paid_off':
             resolved.append(ident)
@@ -162,6 +176,6 @@ def continuation_reminder(products: dict, context: dict) -> dict | None:
 
     return {'lifecycle_counts': counts, 'due_this_scene': due[:6], 'overdue_warnings': overdue[:6],
             'still_open': still_open[:8], 'pending': pending[:8],
-            'resolved': resolved[:8], 'unverified': unverified[:8],
+            'resolved': resolved[:8], 'superseded': superseded_list[:8], 'unverified': unverified[:8],
             'rule': ('未核实的条目仍是作者计划。只有已接受正文或批准底稿中的状态证据能确认埋设与回收。'
                      '为本步到期的伏笔安排可见兑现或说明延期。人物只能通过当前获准的途径获知线索。')}

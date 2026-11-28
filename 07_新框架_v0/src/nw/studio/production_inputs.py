@@ -414,6 +414,16 @@ def governance(wizard: dict, *, library=None, store=None, scope: str = 'book') -
                 opp = build_foreshadowing_opportunity_brief(store)
                 if opp.get('prompt_hint'):
                     filtered.setdefault('plot_design', {})['foreshadowing_opportunities'] = opp['prompt_hint']
+            from nw.narrative_forecast import active_adopted_forecast_constraint
+            adopted_fc = active_adopted_forecast_constraint(store)
+            if adopted_fc:
+                filtered.setdefault('plot_design', {})['adopted_forecast_plan'] = {
+                    'divergence': adopted_fc.get('divergence', ''),
+                    'label': adopted_fc.get('label', ''),
+                    'premise': adopted_fc.get('premise', ''),
+                    'beats': (adopted_fc.get('beats') or ())[:5],
+                    'risks': (adopted_fc.get('risks') or ())[:3],
+                }
         except Exception:
             pass
     return filtered

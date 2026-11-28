@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 12
+VERSION = 13
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -390,5 +390,41 @@ PRAGMA user_version=12;
 COMMIT;
 """
 
+MIGRATE_V13 = """
+BEGIN IMMEDIATE;
+CREATE TABLE narrative_forecasts(
+ id TEXT PRIMARY KEY,
+ branch_id TEXT NOT NULL REFERENCES story_branches(id),
+ base_revision INTEGER NOT NULL,
+ base_chapter INTEGER NOT NULL DEFAULT 0,
+ divergence TEXT NOT NULL CHECK(length(trim(divergence))>0),
+ horizon INTEGER NOT NULL DEFAULT 5 CHECK(horizon>=1),
+ context_sha256 TEXT NOT NULL,
+ status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','stale','adopted','forked')),
+ branches_json TEXT NOT NULL CHECK(json_valid(branches_json)),
+ selected_branch_id TEXT,
+ selected_plan_json TEXT NOT NULL DEFAULT '{}' CHECK(json_valid(selected_plan_json)),
+ forked_branch_id TEXT,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL);
+CREATE INDEX narrative_forecasts_branch ON narrative_forecasts(branch_id,status,created_at);
+
+CREATE TABLE manuscript_imports(
+ id TEXT PRIMARY KEY,
+ title TEXT NOT NULL,
+ source_sha256 TEXT NOT NULL,
+ chapter_count INTEGER NOT NULL DEFAULT 0,
+ status TEXT NOT NULL DEFAULT 'analyzed' CHECK(status IN ('analyzed','applied')),
+ report_json TEXT NOT NULL CHECK(json_valid(report_json)),
+ conflicts_json TEXT NOT NULL DEFAULT '[]' CHECK(json_valid(conflicts_json)),
+ baseline_branch_id TEXT,
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL);
+
+PRAGMA user_version=13;
+COMMIT;
+"""
+
 MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6,
-              6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10, 10: MIGRATE_V11, 11: MIGRATE_V12}
+              6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10, 10: MIGRATE_V11, 11: MIGRATE_V12,
+              12: MIGRATE_V13}

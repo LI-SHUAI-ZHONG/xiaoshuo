@@ -199,7 +199,12 @@ def _new_run(store: Store, scene_id: str, provider: LLMProvider, model: str, par
         if legacy:
             _insert_manifest(store, InputManifest(manifest_id, kind, settings, content_sha256(context)), context, legacy=True)
         store._insert('run', run)
-    result = send_model(provider, messages, model, params)
+    live_provider = provider.name != 'fake'
+    result = send_model(
+        provider, messages, model, params,
+        allow_continuation=(live_provider and kind in ('write', 'revise')),
+        max_empty_retries=(2 if live_provider else 0),
+    )
     return store.finish_run(run.id, result, settle=lambda: _settle(store, hold, result.usage, outcome_for(result)))
 
 

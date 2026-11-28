@@ -2,6 +2,7 @@
 from typing import Any
 
 from nw.llm.base import GenResult
+from nw.llm.resilience import apply_think_stripping, sanitize_provider_params
 from nw.llm.transport import post
 
 
@@ -12,8 +13,9 @@ class OpenAICompatProvider:
         self.base_url, self.api_key, self.timeout = base_url.rstrip('/'), api_key, timeout
 
     def generate(self, messages: list[dict], **params: Any) -> GenResult:
+        clean_params = sanitize_provider_params(self.base_url, params)
         raw, error = post(self.base_url + '/chat/completions',
-                          {**params, 'messages': messages, 'stream': False}, self.timeout, self.api_key)
+                          {**clean_params, 'messages': messages, 'stream': False}, self.timeout, self.api_key)
         text, reason, usage = '', 'error', raw.get('usage', {})
         try:
             if not error:
@@ -31,4 +33,7 @@ class OpenAICompatProvider:
         request_id = raw.get('id')
         if request_id is not None and not isinstance(request_id, str):
             request_id, reason = None, 'error'
-        return GenResult(text, reason, usage if isinstance(usage, dict) else {}, request_id, raw)
+        result = GenResult(text, reason, usage if isinstance(usage, dict) else {}, request_id, raw)
+        if not error and result.finish_reason in ('complete', 'truncated') and result.text:
+            result, _ = apply_think_stripping(result)
+        return result

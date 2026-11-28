@@ -63,11 +63,24 @@ def model_settings(provider: LLMProvider, model: str, params: dict, prompt_versi
             'stream': False}
 
 
-def send_model(provider: LLMProvider, messages: list[dict], model: str, params: dict) -> GenResult:
-    try:
-        return provider.generate(messages, model=model, **params)
-    except Exception as exc:
-        return GenResult('', 'error', {}, None, {'error_type': type(exc).__name__})
+def send_model(provider: LLMProvider, messages: list[dict], model: str, params: dict, *,
+               allow_continuation: bool = False, max_empty_retries: int = 0) -> GenResult:
+    from nw.llm.resilience import resilient_generate
+
+    def _once(msgs: list[dict]) -> GenResult:
+        try:
+            return provider.generate(msgs, model=model, **params)
+        except Exception as exc:
+            return GenResult('', 'error', {}, None, {'error_type': type(exc).__name__})
+
+    if not allow_continuation and max_empty_retries <= 0:
+        return _once(messages)
+    return resilient_generate(
+        _once,
+        messages,
+        allow_continuation=allow_continuation,
+        max_empty_retries=max_empty_retries,
+    )
 
 
 def outcome_for(result: GenResult) -> str:

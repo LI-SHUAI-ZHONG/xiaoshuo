@@ -122,7 +122,10 @@ def _budget(store: Store, manifest_id: str, budget: Budget | str) -> str:
 
 
 def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMProvider,
-                  config: Config, budget: Budget | str, *, invoke: Callable[[str, TaskRequest, Callable[[dict], None]], TaskResult] | None = None) -> StateDelta:
+                  config: Config, budget: Budget | str, *,
+                  invoke: Callable[[str, TaskRequest, Callable[[dict], None]], TaskResult] | None = None,
+                  reconciliation_feedback: str = '',
+                  attempt_suffix: str = '') -> StateDelta:
     draft = store.get('draft', draft_id)
     if draft.status != 'complete':
         raise ValueError('State extraction requires a complete draft')
@@ -154,16 +157,26 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
         material_note += ' passage_status 为 pending 的原句只提出选项或后续安排，inference 是尚待证实的推断。要登记其结果已经兑现，另引实际发生的原句。'
     if any('judgment_owner' in span for span in package.get('reader_only_spans', [])):
         material_note += ' judgment_owner 为空表示原文没有点明判断者。旁听的解释只支持转述；要登记被解释者自己的信念或计划须另引其反应。'
+    reconcile_note = (
+        f'\n\n【状态结算自动对账反馈】上次状态提取与正文存在以下硬性差异，请严格以已过审正文原句为准重新投影，修正下列偏差：\n{reconciliation_feedback.strip()}'
+        if reconciliation_feedback and reconciliation_feedback.strip() else ''
+    )
+    promise_law_note = (
+        ' 伏笔/承诺变更须遵守：顺口提及不等于实质推进（可写 action_kind="mention"）；'
+        '仅新增线索、升级风险或改变结论才算实质推进（action_kind="advance"）；'
+        '数值资源变更须确保期初+正文增减=期末平账。'
+    )
     messages = [{'role': 'system', 'content': (
         '只输出 JSON {"operations":[]}。逐项提供 op、entity_id、predicate、holder、claim、story_order、'
         'disclosure_order、expected_old、new_value、evidence。证据用正文 Unicode 半开区间。'
-        '未发生的计划、人物说辞和误信不得写成 WORLD 事实。' +
+        '未发生的计划、人物说辞和误信不得写成 WORLD 事实。' + promise_law_note +
         ('按 reader_only_spans 给定的受众核对正文原句。听见某人的说法只证明听到了这句话。'
          '私人判断、听者所信与已经证实的事实分别记录。'
          if any('holders' in span for span in package.get('reader_only_spans', [])) else '') +
-        material_note + genre_note + material_prompt)},
+        material_note + genre_note + material_prompt + reconcile_note)},
         {'role': 'user', 'content': canonical(frozen_input)}]
-    extraction_id = f'delta-extract:{manifest_id}'
+    suffix = f':{attempt_suffix}' if attempt_suffix else ''
+    extraction_id = f'delta-extract:{manifest_id}{suffix}'
     extract_cfg, extract_prov = resolve_stage_runtime(config, provider, 'state_extract')
     fact_cfg, fact_prov = resolve_stage_runtime(config, provider, 'fact_review')
 
@@ -191,7 +204,7 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
         + (' 独立核对 material_hypotheses 中的目标和引用。方案、前次意见或标签均不能证明变化发生。'
            if material_note else '') + genre_note + material_prompt)},
         {'role': 'user', 'content': canonical(review_package)}]
-    review_manifest_id = f'delta-review-manifest:{manifest_id}'
+    review_manifest_id = f'delta-review-manifest:{manifest_id}{suffix}'
     if invoke is None or not store.connection.execute(
             'SELECT 1 FROM input_manifests WHERE id=?', (review_manifest_id,)).fetchone():
         params, _ = prepare_call(store, budget_id, fact_prov.name, fact_cfg.params, review_messages)
@@ -199,11 +212,12 @@ def prepare_delta(store: Store, draft_id: str, manifest_id: str, provider: LLMPr
             model_settings(fact_prov, fact_cfg.model, params, 'fact-review-v1'), content_sha256(review_package),
             branch_id=manifest['branch_id'], state_revision=manifest['state_revision'],
             story_order=manifest['story_order'], disclosure_order=position(manifest['disclosure_order'])), review_package)
-    review_id = f'delta-review:{manifest_id}'
+    review_id = f'delta-review:{manifest_id}{suffix}'
     review = dispatch('fact-review', TaskRequest(review_id, project_id, 'fact_review', review_manifest_id,
                                                   {'messages': review_messages}, budget_id),
                       lambda output: _findings(output['findings'], draft))
     if review.validation != 'VALID':
         raise ValueError(f'Fact review {review.status}/{review.validation}: {review.id}')
-    return save_delta(store, f'delta:{manifest_id}', draft.id, manifest_id, operations,
+    delta_id = f'delta:{manifest_id}{suffix}'
+    return save_delta(store, delta_id, draft.id, manifest_id, operations,
                       findings=review.parsed['findings'], extraction_task_id=result.id, review_task_id=review.id)

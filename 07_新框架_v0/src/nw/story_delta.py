@@ -139,6 +139,8 @@ def _operations(raw: list[dict], draft: Draft, manifest: dict) -> list[dict]:
             raise ValueError('State operation requires evidence')
         refs = [asdict(_evidence(item, draft)) for item in evidence]
         fact = parse_fact({**op, 'value': op['expected_old'] if removing else op['new_value']}, tuple(refs))
+        from nw.promise_arbiter import validate_promise_operation
+        validate_promise_operation(op)
         if fact.predicate.startswith(IDENTITY_STATUS_PREFIX):
             if op['expected_old'] is not None:
                 validate_identity_status(fact.predicate, fact.holder, op['expected_old'])
@@ -368,6 +370,9 @@ def check_delta(store: Store, delta: StateDelta, *, project: bool = True) -> lis
                          (position(op['disclosure_order']) <= disclosure_end if op['holder'] == 'READER' else
                           (op['story_order'], *position(op['disclosure_order'])) <= time_end)]
         replay(baseline_for(store, delta.branch_id), [*committed, *delta.operations])
+        from nw.promise_arbiter import check_numeric_resource_ledger
+        for ledger_finding in check_numeric_resource_ledger(delta.operations, draft.text, asdict(draft_ref(draft))):
+            checks.append(Finding(**ledger_finding))
     except ValueError as exc:
         checks.append(Finding('INVALID_DELTA', 'hard', asdict(draft_ref(draft)), [], str(exc),
                               '核对稿件、证据和旧值后新建候选变更', 'OPEN'))

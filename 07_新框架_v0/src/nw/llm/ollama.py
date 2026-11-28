@@ -2,6 +2,7 @@
 from typing import Any
 
 from nw.llm.base import GenResult
+from nw.llm.resilience import apply_think_stripping
 from nw.llm.transport import post
 
 
@@ -33,4 +34,7 @@ class OllamaProvider:
         except (KeyError, TypeError):
             reason = 'error'
         usage = {k: raw[k] for k in ('prompt_eval_count', 'eval_count') if k in raw}
-        return GenResult(text, reason, usage, None, raw)
+        result = GenResult(text, reason, usage, None, raw)
+        if not error and result.finish_reason in ('complete', 'truncated') and result.text:
+            result, _ = apply_think_stripping(result)
+        return result

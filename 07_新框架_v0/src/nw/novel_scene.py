@@ -112,7 +112,7 @@ def _verify_context(calls: JobCalls, key: str, scene: str, manifest: dict) -> No
 
 def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, review: dict | None,
                  *, contract: dict | None = None, length_feedback: list[str] | None = None,
-                 pre_review_note: str = '') -> dict:
+                 pre_review_note: str = '', revision_diff_note: str = '') -> dict:
     from nw.craft_specs import load_all_craft_specs
 
     package = frozen['package']
@@ -122,7 +122,8 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
                                        frozen.get('writing_source_keys', ()), length_feedback,
                                        genre_ids=frozen.get('genre_ids'),
                                        craft_specs=live_specs,
-                                       pre_review_note=pre_review_note)
+                                       pre_review_note=pre_review_note,
+                                       revision_diff_note=revision_diff_note)
     dependencies = [*frozen['manifest']['dependency_refs'], asdict(draft_ref(draft))]
     if contract and 'comparison' in contract and contract['comparison']['ref'] not in dependencies:
         dependencies.append(contract['comparison']['ref'])
@@ -136,25 +137,128 @@ def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, revi
             'target_draft': asdict(draft_ref(draft))}
 
 
-def _extract(calls: JobCalls, scene: str, draft: Draft, frozen: dict,
-             material_review_run: str | None, hypotheses: list[dict], reader_only: list[dict]) -> StateDelta:
+def _spot_fix_revise(calls: JobCalls, step_key: str, scene: str, frozen: dict, draft: Draft,
+                     plan: dict, instruction: str, verify: Callable[[], None]) -> tuple[Draft, dict] | None:
+    """Execute host-bounded Spot-Fix local revision and persist a first-class revised Draft.
+
+    Returns `(new_draft, splice_meta)` on success, or `None` if model JSON fails so caller
+    cleanly falls back to full-scene revise without breaking the job.
+    """
+    from nw.call_control import send_model
+    from nw.craft_specs import build_review_craft_guards, load_all_craft_specs
+    from nw.spot_fix import apply_spot_fix_edits, build_spot_fix_messages
+
     j = calls.journal
-    key = f'scene:{scene}:delta'
+    step = j.latest(step_key)
+    if step and step['status'] == 'DONE' and step['output'].get('draft_id'):
+        return j.store.get('draft', step['output']['draft_id']), step['output'].get('spot_fix') or {}
+
+    revise_calls = calls.for_stage('revise')
+    live_specs = load_all_craft_specs(j.store)
+    voice_guard = build_review_craft_guards(frozen['package'], specs=live_specs, max_chars=360)
+    spot_messages = build_spot_fix_messages(
+        draft.text,
+        plan,
+        instruction=instruction,
+        mode='spot-fix',
+        voice_guidance=voice_guard,
+    )
+    verify()
+    params = dict(revise_calls.config.params)
+    live = revise_calls.provider.name != 'fake'
+    gen = send_model(
+        revise_calls.provider,
+        spot_messages,
+        revise_calls.config.model,
+        params,
+        allow_continuation=False,
+        max_empty_retries=(2 if live else 0),
+    )
+    if gen.finish_reason != 'complete' or not gen.text.strip():
+        return None
+    try:
+        spliced = apply_spot_fix_edits(draft.text, plan, gen.text)
+    except (ValueError, RuntimeError):
+        return None
+
+    if step is None:
+        step = j.reserve(step_key, {'source_draft_id': draft.id, 'mode': 'spot-fix', 'ranges': plan['ranges']})
+    ident = call_id(j.id, step_key, step['attempt'])
+    dependencies = [*frozen['manifest']['dependency_refs'], asdict(draft_ref(draft))]
+    settings = _settings(revise_calls, 'novel-revise-v1', spot_messages)
+    manifest = replace(
+        InputManifest(**frozen['manifest']),
+        id=f'run:{ident}',
+        purpose='revise',
+        settings=settings,
+        dependency_refs=tuple(dependencies),
+    )
+    if manifest.selection is not None:
+        manifest = replace(manifest, selection={**manifest.selection, 'manifest_id': manifest.id})
+    if not j.store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (manifest.id,)).fetchone():
+        freeze_manifest(j.store, manifest, frozen['package'])
+    if j.store.connection.execute('SELECT id FROM runs WHERE id=?', (ident,)).fetchone() is None:
+        j.store.add_run(Run(
+            ident, scene, 'revise', revise_calls.provider.name, revise_calls.config.model,
+            canonical(settings['params']),
+            canonical({
+                **settings,
+                'messages': spot_messages,
+                'manifest_id': manifest.id,
+                'spot_fix': {
+                    'source_draft_id': draft.id,
+                    'applied_ranges': spliced['applied_ranges'],
+                    'protected_intact': spliced['protected_intact'],
+                },
+            }),
+            canonical(frozen['package']), '', 'error', '{}', now(), '',
+        ))
+        _, new_draft = j.store.finish_run(ident, GenResult(
+            text=spliced['text'],
+            finish_reason='complete',
+            usage=gen.usage,
+            request_id=gen.request_id,
+            raw={**(gen.raw if isinstance(gen.raw, dict) else {}), 'spot_fix': spliced},
+        ))
+    else:
+        row = j.store.connection.execute('SELECT id FROM drafts WHERE run_id=?', (ident,)).fetchone()
+        new_draft = j.store.get('draft', row['id']) if row else None
+    if new_draft is None:
+        return None
+    j.result(step_key, 'DONE', {
+        'run_id': ident,
+        'draft_id': new_draft.id,
+        'manifest_id': manifest.id,
+        'spot_fix': {
+            'applied_ranges': spliced['applied_ranges'],
+            'protected_intact': spliced['protected_intact'],
+            'delta_chars': spliced['delta_chars'],
+        },
+    })
+    return new_draft, spliced
+
+
+def _extract(calls: JobCalls, scene: str, draft: Draft, frozen: dict,
+             material_review_run: str | None, hypotheses: list[dict], reader_only: list[dict],
+             *, reconciliation_feedback: str = '', attempt_suffix: str = '') -> StateDelta:
+    j = calls.journal
+    suffix = f':{attempt_suffix}' if attempt_suffix else ''
+    key = f'scene:{scene}:delta{suffix}'
     row = j.latest(key)
     if row and row['status'] == 'DONE':
         return read_delta(j.store, row['output']['delta_id'])
     written = frozen['manifest']
-    ident = f'{j.id}:{key}'
-    scope = {'id': ident, 'branch_id': j.head.branch_id, 'base_revision': j.head.revision,
+    base_ident = f'{j.id}:scene:{scene}:delta'
+    scope = {'id': base_ident, 'branch_id': j.head.branch_id, 'base_revision': j.head.revision,
              'story_order': written['story_order'], 'candidate_delta_refs': written['candidate_delta_refs']}
     if row is None:
-        row = j.reserve(key, {'draft_id': draft.id, 'scope': scope})
+        row = j.reserve(key, {'draft_id': draft.id, 'scope': scope, 'reconciliation': bool(reconciliation_feedback)})
     elif row['input']['draft_id'] != draft.id:
         raise JobPaused('STALE', key, 'STALE_DRAFT', scene_id=scene)
     scope = row['input']['scope']
     extract_calls = calls.for_stage('state_extract')
     fact_calls = calls.for_stage('fact_review')
-    if not j.store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (ident,)).fetchone():
+    if not j.store.connection.execute('SELECT 1 FROM input_manifests WHERE id=?', (base_ident,)).fetchone():
         settings = _settings(extract_calls, 'state-extract-v1', [])
         freeze_delta_input(j.store, draft.id, scope, settings, material_review_run=material_review_run,
                            material_hypotheses=hypotheses, reader_only_spans=reader_only,
@@ -166,8 +270,13 @@ def _extract(calls: JobCalls, scene: str, draft: Draft, frozen: dict,
         return target_calls.task(task_key, lambda: request, validate,
                                  verify=lambda: _verify_context(calls, task_key, scene, frozen['manifest']))
 
-    delta = prepare_delta(j.store, draft.id, ident, calls.provider, calls.config, j.id, invoke=invoke)
-    j.result(key, 'DONE', {'delta_id': delta.id, 'sha256': delta.sha256, 'manifest_id': ident})
+    delta = prepare_delta(
+        j.store, draft.id, base_ident, calls.provider, calls.config, j.id,
+        invoke=invoke,
+        reconciliation_feedback=reconciliation_feedback,
+        attempt_suffix=attempt_suffix,
+    )
+    j.result(key, 'DONE', {'delta_id': delta.id, 'sha256': delta.sha256, 'manifest_id': base_ident})
     return delta
 
 
@@ -250,19 +359,51 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
         _verify_context(calls, j.current_step or prefix, scene, frozen['manifest'])
 
     from nw.pre_review_gate import format_pre_review_rewrite_feedback, run_pre_review_gate
+    from nw.spot_fix import compute_revision_diff, route_repair_scope
 
     pre_rewrote = False
+    episode_baseline_draft: Draft | None = prior_draft if round_no > 0 else None
+    last_authorized_paragraphs: list[int] | None = None
+    last_pre_report: dict | None = None
     while True:
         if round_no == 0:
             if manual_prior and draft is not None:
                 draft = _pin_manual_draft(calls, scene, draft, frozen)
             else:
                 _, draft, _ = calls.for_stage('write').run(f'{prefix}:write', scene, lambda: frozen, verify=verify)
+            episode_baseline_draft = draft
+            last_authorized_paragraphs = None
         else:
-            _, draft, _ = calls.for_stage('revise').run(
-                f'{prefix}:revise:{round_no}', scene,
-                lambda: _draft_input(calls, frozen, 'revise', draft, review or {},
-                                     length_feedback=(review or {}).get('length_feedback')), verify=verify)
+            spot_enabled = (
+                calls.for_stage('revise').provider.name != 'fake'
+                or getattr(calls.config, 'enable_spot_fix', False)
+            )
+            route = route_repair_scope(
+                review,
+                draft_text=draft.text,
+                pre_report=last_pre_report,
+                length_feedback=(review or {}).get('length_feedback'),
+            ) if spot_enabled else {'scope': 'structural', 'plan': None}
+            spot_result = None
+            if route['scope'] == 'local' and route.get('plan'):
+                plan = route['plan']
+                instruction = str((review or {}).get('notes') or '请修正指定局部区间的问题并保持上下文无缝衔接。')
+                spot_result = _spot_fix_revise(
+                    calls, f'{prefix}:spot-fix:{round_no}', scene, frozen, draft, plan, instruction, verify,
+                )
+            if spot_result is not None:
+                draft, _ = spot_result
+                last_authorized_paragraphs = [
+                    idx
+                    for r in route['plan']['ranges']
+                    for idx in range(r['start_paragraph'], r['end_paragraph'] + 1)
+                ]
+            else:
+                last_authorized_paragraphs = None
+                _, draft, _ = calls.for_stage('revise').run(
+                    f'{prefix}:revise:{round_no}', scene,
+                    lambda: _draft_input(calls, frozen, 'revise', draft, review or {},
+                                         length_feedback=(review or {}).get('length_feedback')), verify=verify)
         # Lens 0: 0-Token deterministic pre-review script gate (Scripts < Model < Author)
         pre_report = run_pre_review_gate(
             j.store, scene, draft.text,
@@ -272,6 +413,7 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
             disclosure=tuple(frozen['manifest']['disclosure_order']) if frozen['manifest'].get('disclosure_order') else None,
             manifest=frozen['manifest'],
         )
+        last_pre_report = pre_report
         pre_step_key = f'{prefix}:pre-review:{round_no}'
         if j.latest(pre_step_key) is None:
             j.reserve(pre_step_key, {'draft_id': draft.id})
@@ -286,13 +428,33 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
         if allow_auto_rewrite:
             pre_rewrote = True
             rewrite_note = format_pre_review_rewrite_feedback(pre_report)
-            _, draft, _ = calls.for_stage('revise').run(
-                f'{prefix}:pre-rewrite', scene,
-                lambda: _draft_input(calls, frozen, 'revise', draft, {
-                    'recommendation': 'revise',
-                    'notes': rewrite_note,
-                    'core_changes': [],
-                }), verify=verify)
+            pre_spot_ok = False
+            if calls.for_stage('revise').provider.name != 'fake' or getattr(calls.config, 'enable_spot_fix', False):
+                pre_route = route_repair_scope(
+                    {'notes': rewrite_note, 'repair_scope': 'local'},
+                    draft_text=draft.text,
+                    pre_report=pre_report,
+                )
+                if pre_route['scope'] == 'local' and pre_route.get('plan'):
+                    res = _spot_fix_revise(
+                        calls, f'{prefix}:pre-spot-fix', scene, frozen, draft, pre_route['plan'], rewrite_note, verify,
+                    )
+                    if res is not None:
+                        draft, _ = res
+                        pre_spot_ok = True
+                        last_authorized_paragraphs = [
+                            idx
+                            for r in pre_route['plan']['ranges']
+                            for idx in range(r['start_paragraph'], r['end_paragraph'] + 1)
+                        ]
+            if not pre_spot_ok:
+                _, draft, _ = calls.for_stage('revise').run(
+                    f'{prefix}:pre-rewrite', scene,
+                    lambda: _draft_input(calls, frozen, 'revise', draft, {
+                        'recommendation': 'revise',
+                        'notes': rewrite_note,
+                        'core_changes': [],
+                    }), verify=verify)
             pre_report = run_pre_review_gate(
                 j.store, scene, draft.text,
                 branch=j.head.branch_id,
@@ -301,6 +463,7 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
                 disclosure=tuple(frozen['manifest']['disclosure_order']) if frozen['manifest'].get('disclosure_order') else None,
                 manifest=frozen['manifest'],
             )
+            last_pre_report = pre_report
             j.result(pre_step_key, 'DONE', pre_report)
         length_feedback = scene_length_feedback(j.store, scene, frozen['manifest'], draft.text)
         contract, comparison = review_contract(j.store, draft, frozen['manifest'])
@@ -311,10 +474,24 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
             return result
 
         pre_note = pre_report.get('review_handoff_note', '') if calls.for_stage('review').provider.name != 'fake' else ''
+        diff_note = ''
+        if round_no >= 1 and episode_baseline_draft is not None and episode_baseline_draft.id != draft.id:
+            rev_diff = compute_revision_diff(
+                episode_baseline_draft.text,
+                draft.text,
+                authorized_paragraphs=last_authorized_paragraphs,
+            )
+            diff_step_key = f'{prefix}:revision-diff:{round_no}'
+            if j.latest(diff_step_key) is None:
+                j.reserve(diff_step_key, {'baseline_draft_id': episode_baseline_draft.id, 'draft_id': draft.id})
+            j.result(diff_step_key, 'DONE', rev_diff)
+            if calls.for_stage('review').provider.name != 'fake' or getattr(calls.config, 'enable_diff_review', False):
+                diff_note = rev_diff['summary_for_review']
         review_run, _, review = calls.for_stage('review').run(
             f'{prefix}:review:{round_no}', scene,
             lambda: _draft_input(calls, frozen, 'review', draft, None, contract=contract,
-                                 length_feedback=length_feedback, pre_review_note=pre_note),
+                                 length_feedback=length_feedback, pre_review_note=pre_note,
+                                 revision_diff_note=diff_note),
             assess, verify=verify)
         if review['core_changes']:
             _core_gate(calls, decide, f'{prefix}:core:{round_no}',
@@ -343,6 +520,40 @@ def scene_delta(calls: JobCalls, scene: str, chain: tuple[tuple[str, str], ...],
     key = f'{prefix}:check'
     j.check_active(key)
     findings = check_delta(j.store, delta)
+    # Fusion F1: Automatic 1-shot post-settlement state reconciliation (strictly preserves approved prose!)
+    can_reconcile = (
+        any(finding.severity == 'hard' for finding in findings)
+        and (calls.for_stage('state_extract').provider.name != 'fake' or getattr(calls.config, 'auto_reconcile_state', False))
+    )
+    if can_reconcile:
+        rec_key = f'{prefix}:reconcile'
+        hard_obs = [
+            f'- [{f.code}] {f.explanation}（建议：{f.suggested_action}）'
+            for f in findings if f.severity == 'hard'
+        ]
+        feedback = '\n'.join(hard_obs[:8])
+        if j.latest(rec_key) is None:
+            j.reserve(rec_key, {'original_delta_id': delta.id, 'hard_count': len(hard_obs)})
+        try:
+            reconciled_delta = _extract(
+                calls, scene, draft, frozen,
+                review_run.id if contract or ending else None,
+                hypotheses, reader_only,
+                reconciliation_feedback=feedback,
+                attempt_suffix='reconcile1',
+            )
+            reconciled_findings = check_delta(j.store, reconciled_delta)
+            rec_clean = not any(f.severity == 'hard' for f in reconciled_findings)
+            j.result(rec_key, 'DONE', {
+                'status': 'reconciled' if rec_clean else 'unresolved',
+                'delta_id': reconciled_delta.id,
+                'remaining_hard': sum(1 for f in reconciled_findings if f.severity == 'hard'),
+            })
+            if rec_clean:
+                delta = reconciled_delta
+                findings = reconciled_findings
+        except Exception as exc:
+            j.result(rec_key, 'FAILED', {'status': 'error', 'reason': str(exc)[:200]})
     material_checks = check_material_acceptance(j.store, draft, delta)
     if j.latest(key) is None:
         j.reserve(key, {'delta_id': delta.id, 'sha256': delta.sha256})

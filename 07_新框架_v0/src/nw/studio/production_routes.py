@@ -85,6 +85,12 @@ class ProductionRoutes:
                     data = app.doctor(ident, repair_cache=first(query, 'repair_cache') in ('1', 'true'))
                 elif action == 'briefing':
                     data = app.scene_briefing(ident, first(query, 'scene'))
+                elif action == 'forecasts':
+                    data = app.forecasts(ident)
+                elif action == 'deslop':
+                    data = app.analyze_deslop(ident, first(query, 'scene'), first(query, 'draft'))
+                elif action == 'manuscript-imports':
+                    data = app.manuscript_imports(ident)
                 elif action == 'continuation':
                     data = app.continuation(ident)
                 elif action == 'finish-check':
@@ -179,6 +185,12 @@ class ProductionRoutes:
                     data = app.record_soft_override(ident, body)
                 elif action == 'volume-summaries':
                     data = app.save_volume_summary_record(ident, body)
+                elif action == 'forecasts':
+                    data = app.create_forecast(ident, body)
+                elif action == 'deslop':
+                    data = app.run_deslop(ident, body)
+                elif action == 'manuscript-imports':
+                    data = app.analyze_manuscript_import(ident, body)
                 elif action == 'run':
                     data = app.run(ident, body)
                 elif action == 'retry':
@@ -204,6 +216,10 @@ class ProductionRoutes:
                     data = evo_actions[segs[3]](ident, body)
             elif len(segs) == 5 and action == 'overrides' and segs[4] == 'revoke':
                 data = app.revoke_soft_override(ident, segs[3])
+            elif len(segs) == 5 and action == 'forecasts' and segs[4] == 'select':
+                data = app.select_forecast(ident, segs[3], body)
+            elif len(segs) == 5 and action == 'manuscript-imports' and segs[4] == 'apply':
+                data = app.apply_manuscript_import(ident, segs[3], body)
             elif len(segs) == 4 and action == 'gates':
                 data = app.decide(ident, segs[3], body)
             elif len(segs) == 5 and action == 'gates' and segs[4] == 'refresh':
