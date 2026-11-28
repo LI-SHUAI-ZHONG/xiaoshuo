@@ -96,7 +96,12 @@ def _sort_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return sorted(items, key=lambda r: (_RELEVANCE_ORDER.get(r['relevance'], 1), r['id']))
 
 
-def setup_profile_for_types(types: list[str] | tuple[str, ...] | None = None, *, library: Any = None) -> dict[str, Any]:
+def setup_profile_for_types(
+    types: list[str] | tuple[str, ...] | None = None,
+    *,
+    library: Any = None,
+    target_words: int | None = None,
+) -> dict[str, Any]:
     """Build the clean, flat, genre-targeted setup profile for the 4-step Manual & AI Auto wizards."""
     normalized = catalog.canonical_types(list(types)) if types else []
     world_bp = world_profile_for_types(normalized)
@@ -182,20 +187,17 @@ def setup_profile_for_types(types: list[str] | tuple[str, ...] | None = None, *,
         except Exception:
             available_methods = []
 
-    # 7) Executable Voice Spec Setup (8 built-in voice bases + 4 orthogonal knobs + compatible decomposed fingerprints)
+    # 7) 4-Pillar Executable Craft Specs Setup (world / cast / plot_pacing / voice + cross-genre isolated fingerprints)
+    from nw.craft_specs import recommend_all_craft_setup
     from nw.voice_specs import (
         VOICE_KNOBS,
         default_voice_base_id,
         recommend_voice_bases,
     )
+    craft_specs_setup = recommend_all_craft_setup(normalized, target_words=target_words, library=library)
     ranked_voices = recommend_voice_bases(normalized)
     recommended_voice_id = default_voice_base_id(normalized)
-    available_fingerprints: list[dict[str, Any]] = []
-    if library is not None and hasattr(library, 'voice_fingerprints'):
-        try:
-            available_fingerprints = library.voice_fingerprints(types=normalized or None, status='approved')
-        except Exception:
-            available_fingerprints = []
+    available_fingerprints = list(craft_specs_setup['voice']['available_fingerprints'])
 
     voice_setup = {
         'recommended_base_id': recommended_voice_id,
@@ -215,7 +217,7 @@ def setup_profile_for_types(types: list[str] | tuple[str, ...] | None = None, *,
         'craft_focus': craft_bp.get('craft_profile', {}),
     }
 
-    ai_defaults = auto_select_genre_preferences(normalized, library=library)
+    ai_defaults = auto_select_genre_preferences(normalized, library=library, target_words=target_words)
     return {
         'version': 2,
         'types': normalized,
@@ -223,6 +225,7 @@ def setup_profile_for_types(types: list[str] | tuple[str, ...] | None = None, *,
         'genre_scope': genre_scope,
         'selection_limits': catalog.wizard_selection_limits(),
         'voice_setup': voice_setup,
+        'craft_specs_setup': craft_specs_setup,
         'sections': {
             'structures': structures,
             'mechanisms': mechanisms,
@@ -240,15 +243,18 @@ def auto_select_genre_preferences(
     types: list[str] | tuple[str, ...],
     *,
     library: Any = None,
+    target_words: int | None = None,
 ) -> dict[str, Any]:
     """Deterministically select clean, non-conflicting genre-aligned defaults for AI Auto mode."""
-    from nw.voice_specs import VOICE_BASE_MAP, default_voice_base_id
+    from nw.craft_specs import auto_select_craft_profiles
 
     normalized = catalog.canonical_types(list(types)) if types else []
+    craft_profiles = auto_select_craft_profiles(normalized, target_words=target_words, library=library)
     if not normalized:
         return {
             'structure_ids': [], 'mechanism_ids': [], 'tone_ids': [], 'style_ids': [],
-            'voice_profile': {'base_voice_id': 'VOICE_GENRE_HYBRID_BALANCED', 'knobs': {}, 'fingerprint_ids': []},
+            'voice_profile': craft_profiles['voice'],
+            'craft_profiles': craft_profiles,
         }
 
     struct_children = catalog.options('structure', 'structure.group.types', types=normalized)
@@ -276,27 +282,13 @@ def auto_select_genre_preferences(
     if 'STYLE_LIGHT' in picked_styles and 'STYLE_GRITTY' in picked_styles:
         picked_styles = [s for s in picked_styles if s != 'STYLE_GRITTY']
 
-    base_voice_id = default_voice_base_id(normalized)
-    base_meta = VOICE_BASE_MAP[base_voice_id]
-    matched_fp_ids: list[str] = []
-    if library is not None and hasattr(library, 'voice_fingerprints'):
-        try:
-            fps = library.voice_fingerprints(types=normalized, status='approved')
-            matched_fp_ids = [fp['id'] for fp in fps[:2] if fp.get('id')]
-        except Exception:
-            matched_fp_ids = []
-
     return {
         'structure_ids': picked_structs,
         'mechanism_ids': picked_mechs,
         'tone_ids': picked_tones,
         'style_ids': picked_styles,
-        'voice_profile': {
-            'base_voice_id': base_voice_id,
-            'base_voice_name': base_meta['name'],
-            'knobs': deepcopy(base_meta['default_knobs']),
-            'fingerprint_ids': matched_fp_ids,
-        },
+        'voice_profile': craft_profiles['voice'],
+        'craft_profiles': craft_profiles,
     }
 
 

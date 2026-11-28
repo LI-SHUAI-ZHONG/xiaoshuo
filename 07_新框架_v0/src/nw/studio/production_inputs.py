@@ -94,12 +94,17 @@ def freeze_wizard(body: dict, library: Any) -> dict:
                               f"与同类型可用参考方法，原创构思主角处境、核心矛盾、代价抉择与全书推进方向。")
             wizard['idea_origin'] = 'auto_brief'
         # Fill differentiating genre defaults when author left slots blank in AI Auto mode.
-        defaults = auto_select_genre_preferences(selected_types, library=library)
+        defaults = auto_select_genre_preferences(
+            selected_types, library=library,
+            target_words=raw.get('target_words') if isinstance(raw.get('target_words'), int) else None,
+        )
         for field_name in ('structure_ids', 'mechanism_ids', 'tone_ids', 'style_ids'):
             if not wizard.get(field_name) and defaults.get(field_name):
                 wizard[field_name] = defaults[field_name]
         if not raw.get('voice_profile') and defaults.get('voice_profile'):
             wizard['_auto_voice_profile'] = defaults['voice_profile']
+        if not raw.get('craft_profiles') and defaults.get('craft_profiles'):
+            wizard['_auto_craft_profiles'] = defaults['craft_profiles']
     chosen_keys = {'genre': {f'genre.{value}' for value in selected_types}}
     for slot, field in SLOTS.items():
         if slot == 'genre':
@@ -217,37 +222,77 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     if passages := recommendations(library, selected_types):
         wizard['passage_references'] = passages
     wizard['creation_plan'] = creation_plan.freeze(wizard, library, candidate_titles)
-    # Compile Book Voice Spec when author configured voice_profile or enabled creative_workflow.
+    # Compile 4-Pillar Book Craft Specs (world / cast / plot_pacing / voice) when provided or in creative_workflow.
+    raw_craft = raw.get('craft_profiles')
+    auto_craft = wizard.pop('_auto_craft_profiles', None)
     raw_voice = raw.get('voice_profile') or wizard.pop('_auto_voice_profile', None)
-    if raw_voice is not None or wizard.get('creative_workflow'):
-        from nw.voice_specs import VOICE_BASE_MAP, compile_book_voice_spec
-        if raw_voice is not None and not isinstance(raw_voice, dict):
-            raise ValueError('语感规范配置必须是对象')
-        vp = dict(raw_voice or {})
-        base_vid = vp.get('base_voice_id')
-        if base_vid is not None and base_vid != '' and base_vid not in VOICE_BASE_MAP:
-            raise ValueError(f'未知的语感规范基座: {base_vid}')
-        fp_ids = vp.get('fingerprint_ids') or []
-        if not isinstance(fp_ids, list) or len(fp_ids) > 5:
-            raise ValueError('语感指纹最多选择 5 项')
-        resolved_fps = []
-        if library is not None and hasattr(library, 'voice_fingerprints_by_ids') and fp_ids:
-            resolved_fps = library.voice_fingerprints_by_ids(fp_ids)
-        elif auto_builtin_mode and not fp_ids and library is not None and hasattr(library, 'voice_fingerprints'):
-            try:
-                resolved_fps = library.voice_fingerprints(types=selected_types, status='approved')[:2]
-            except Exception:
-                resolved_fps = []
-        wizard['voice_spec'] = compile_book_voice_spec(
-            selected_types,
-            base_voice_id=base_vid or None,
-            knobs=vp.get('knobs') if isinstance(vp.get('knobs'), dict) else None,
-            tone_ids=wizard.get('tone_ids', ()),
-            style_ids=wizard.get('style_ids', ()),
-            fingerprints=resolved_fps,
-            custom_notes=str(vp.get('custom_notes') or ''),
-            enabled=bool(vp.get('enabled', True)),
-        )
+    if raw_craft is not None and not isinstance(raw_craft, dict):
+        raise ValueError('四维基座配置 craft_profiles 必须是对象')
+    if raw_voice is not None and not isinstance(raw_voice, dict):
+        raise ValueError('语感规范配置必须是对象')
+    if raw_craft is not None or raw_voice is not None or wizard.get('creative_workflow'):
+        from nw.craft_specs import compile_craft_spec, domain_base_map
+        from nw.craft_specs_base import CRAFT_DOMAINS
+
+        merged_profiles: dict[str, dict[str, Any]] = {}
+        if isinstance(auto_craft, dict):
+            for dom, prof in auto_craft.items():
+                if dom in CRAFT_DOMAINS and isinstance(prof, dict):
+                    merged_profiles[dom] = dict(prof)
+        if isinstance(raw_craft, dict):
+            unknown_doms = set(raw_craft) - set(CRAFT_DOMAINS)
+            if unknown_doms:
+                raise ValueError(f'未知的基座域配置: {", ".join(sorted(unknown_doms))}')
+            for dom, prof in raw_craft.items():
+                if not isinstance(prof, dict):
+                    raise ValueError(f'基座配置 {dom} 必须是对象')
+                merged_profiles[dom] = dict(prof)
+        if isinstance(raw_voice, dict) and 'voice' not in (raw_craft or {}):
+            merged_profiles['voice'] = dict(raw_voice)
+
+        compiled_specs: dict[str, dict[str, Any]] = {}
+        for dom in CRAFT_DOMAINS:
+            # Compile all 4 domains when creative_workflow or craft_profiles is active;
+            # if ONLY legacy voice_profile was passed without creative_workflow, compile voice only.
+            if dom != 'voice' and raw_craft is None and not wizard.get('creative_workflow'):
+                continue
+            prof = merged_profiles.get(dom) or {}
+            base_id = prof.get('base_voice_id') if dom == 'voice' and 'base_voice_id' in prof else prof.get('base_id')
+            bmap = domain_base_map(dom)
+            if base_id is not None and base_id != '' and base_id not in bmap:
+                raise ValueError(f'未知的{dom}基座: {base_id}')
+            fp_ids = prof.get('fingerprint_ids') or []
+            if not isinstance(fp_ids, list) or len(fp_ids) > 5:
+                raise ValueError(f'{dom} 指纹最多选择 5 项')
+            resolved_fps: list[dict[str, Any]] = []
+            if library is not None and fp_ids:
+                if hasattr(library, 'craft_fingerprints_by_ids'):
+                    resolved_fps = library.craft_fingerprints_by_ids(fp_ids, domain=dom)
+                elif dom == 'voice' and hasattr(library, 'voice_fingerprints_by_ids'):
+                    resolved_fps = library.voice_fingerprints_by_ids(fp_ids)
+            elif auto_builtin_mode and not fp_ids and library is not None:
+                try:
+                    if hasattr(library, 'craft_fingerprints'):
+                        resolved_fps = library.craft_fingerprints(domain=dom, types=selected_types, status='approved')[:2]
+                    elif dom == 'voice' and hasattr(library, 'voice_fingerprints'):
+                        resolved_fps = library.voice_fingerprints(types=selected_types, status='approved')[:2]
+                except Exception:
+                    resolved_fps = []
+            compiled_specs[dom] = compile_craft_spec(
+                dom,
+                selected_types,
+                base_id=base_id or None,
+                knobs=prof.get('knobs') if isinstance(prof.get('knobs'), dict) else None,
+                fingerprints=resolved_fps,
+                custom_notes=str(prof.get('custom_notes') or ''),
+                enabled=bool(prof.get('enabled', True)),
+                target_words=wizard.get('target_words') if isinstance(wizard.get('target_words'), int) else None,
+                wizard=wizard,
+            )
+        if compiled_specs:
+            wizard['craft_specs'] = compiled_specs
+            if 'voice' in compiled_specs:
+                wizard['voice_spec'] = compiled_specs['voice']
     return wizard
 
 
@@ -279,7 +324,7 @@ def freeze_length_recommendation(wizard: dict, library) -> None:
 
 
 
-def governance(wizard: dict, *, library=None) -> dict:
+def governance(wizard: dict, *, library=None, store=None, scope: str = 'book') -> dict:
     result = {stage: {'author_preferences': {}} for stage in ORDER}
     for slot, field in SLOTS.items():
         values = wizard.get(field)
@@ -344,6 +389,13 @@ def governance(wizard: dict, *, library=None) -> dict:
         filtered.setdefault('plot_design', {})['length_recommendation'] = wizard['length_recommendation']
     if length or wizard.get('length_policy_updated') or wizard.get('auto_length'):
         filtered.setdefault('plot_design', {})['length_policy'] = length
+    from nw.craft_specs import build_stage_craft_spec_packet, load_all_craft_specs
+    craft_specs = load_all_craft_specs(store, wizard=wizard)
+    if any(isinstance(v, dict) and v.get('enabled', True) for v in craft_specs.values()):
+        for st in ('world_design', 'action_design', 'character_design', 'static_relations',
+                   'plot_design', 'event_design', 'scene_design'):
+            if packet := build_stage_craft_spec_packet(st, scope, craft_specs):
+                filtered.setdefault(st, {})['craft_spec'] = packet
     return filtered
 
 

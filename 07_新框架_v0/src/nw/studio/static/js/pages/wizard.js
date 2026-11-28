@@ -3,7 +3,7 @@ import {$, $$, esc, icon, modal, drawer, loading, fail, toast, busy, readable} f
 import {STEPS, stepsBar, FlatOptionSection, autoCapabilitiesHtml, selectionLimit, slotName} from '../components/WizardStep.js';
 import {METHOD_PREFERENCE_LIMIT, methodChoices} from './wizard-methods.js';
 import {lengthFields, lengthSummary, readLengthFields, readTierRecommendation} from '../components/LengthPlan.js';
-import {renderVoiceSpecPreview} from '../components/CraftTools.js';
+import {renderCraftSpecPreview, renderVoiceSpecPreview} from '../components/CraftTools.js';
 
 const fields = {tone:'tone_ids', style:'style_ids', narration:'narration_ids', world:'world_ids',
   character:'character_ids', structure:'structure_ids', hook:'mechanism_ids'};
@@ -38,6 +38,7 @@ export async function openWizard({mode, prefill} = {}) {
   let limits = {}, defaultBudget = {}, tierRecommendation = null;
   let setupProfile = null, handoffAudit = null;
   let selectedVoiceBase = '', voiceKnobs = null, selectedFingerprints = new Set(), voiceCustomNotes = '';
+  const craftState = {world: null, cast: null, plot_pacing: null, voice: null};
 
   const alive = () => token === session && dialog.open;
   const currentStep = () => STEPS[step] || STEPS[0];
@@ -53,6 +54,25 @@ export async function openWizard({mode, prefill} = {}) {
     if (!profile?.sections) return;
     for (const list of Object.values(profile.sections)) {
       for (const item of list || []) known.set(item.key, item);
+    }
+    const csetup = profile.craft_specs_setup || {};
+    for (const dom of ['world', 'cast', 'plot_pacing', 'voice']) {
+      const ds = csetup[dom];
+      if (!ds?.bases?.length) continue;
+      const cur = craftState[dom];
+      if (!cur || !ds.bases.some(b => b.id === cur.base_id)) {
+        const recId = ds.recommended_base_id || ds.bases[0].id;
+        const base = ds.bases.find(b => b.id === recId) || ds.bases[0];
+        craftState[dom] = {
+          base_id: base.id,
+          knobs: JSON.parse(JSON.stringify(base.default_knobs || {})),
+          fpIds: new Set(),
+          custom_notes: cur?.custom_notes || '',
+        };
+      } else {
+        const allowed = new Set((ds.available_fingerprints || []).map(f => f.id));
+        cur.fpIds = new Set([...cur.fpIds].filter(id => allowed.has(id)));
+      }
     }
     const vs = profile.voice_setup;
     if (vs?.voice_bases?.length) {
@@ -138,6 +158,30 @@ export async function openWizard({mode, prefill} = {}) {
       selectedFingerprints = new Set($$('#modalBody [name=wizardVoiceFp]:checked').map(el => el.value));
     }
     if ($('#wizardVoiceNotes')) voiceCustomNotes = $('#wizardVoiceNotes').value.trim();
+    for (const dom of ['world', 'cast', 'plot_pacing']) {
+      const box = $(`#modalBody [data-wiz-spec-block="${dom}"]`);
+      if (!box || !craftState[dom]) continue;
+      const baseSel = box.querySelector('[data-wiz-spec-base]');
+      if (baseSel) craftState[dom].base_id = baseSel.value;
+      const ds = setupProfile?.craft_specs_setup?.[dom];
+      const knobsMeta = ds?.knobs || {};
+      const nextKnobs = {};
+      for (const [k, meta] of Object.entries(knobsMeta)) {
+        if (meta.multi) {
+          nextKnobs[k] = [...box.querySelectorAll(`[data-wiz-spec-multi="${k}"]:checked`)].map(el => el.value);
+        } else {
+          const el = box.querySelector(`[data-wiz-spec-knob="${k}"]`);
+          if (el) nextKnobs[k] = el.value;
+        }
+      }
+      if (Object.keys(nextKnobs).length) craftState[dom].knobs = nextKnobs;
+      const fpBoxes = box.querySelectorAll('[data-wiz-spec-fp]');
+      if (fpBoxes.length) {
+        craftState[dom].fpIds = new Set([...box.querySelectorAll('[data-wiz-spec-fp]:checked')].map(el => el.value));
+      }
+      const noteEl = box.querySelector('[data-wiz-spec-notes]');
+      if (noteEl) craftState[dom].custom_notes = noteEl.value.trim();
+    }
   }
 
   async function paint() {
@@ -149,8 +193,9 @@ export async function openWizard({mode, prefill} = {}) {
     footer(true);
     try {
       const selectedTypes = types();
+      const profileQuery = {types: selectedTypes, ...(lengthPlan.target_words ? {target_words: lengthPlan.target_words} : {})};
       const [profileData, tierData, auditData] = await Promise.all([
-        selectedTypes.length ? api.get(`/wizard/setup-profile?${query({types:selectedTypes})}`) : null,
+        selectedTypes.length ? api.get(`/wizard/setup-profile?${query(profileQuery)}`) : null,
         selectedTypes.length && (auto || stepMeta.id === 'genre') ? readTierRecommendation(selectedTypes).catch(() => null) : null,
         selectedTypes.length && (auto || stepMeta.id === 'confirm') ? api.get(`/kb/handoff-audit?${query({types:selectedTypes, planning_hierarchy:1})}`).catch(() => null) : null,
       ]);
@@ -257,6 +302,7 @@ export async function openWizard({mode, prefill} = {}) {
       capture();
       selectedMain = button.dataset.main; selectedSub = '';
       selectedVoiceBase = ''; voiceKnobs = null;
+      craftState.world = null; craftState.cast = null; craftState.plot_pacing = null; craftState.voice = null;
       secondary = secondary.filter(id => id !== selectedMain && flatGenres().find(row => row.id === id)?.parent_id !== selectedMain);
       repainted();
     });
@@ -283,19 +329,25 @@ export async function openWizard({mode, prefill} = {}) {
 
   function paintAuto() {
     const corpusCount = setupProfile?.available_corpus_methods?.length || 0;
-    const fpCount = setupProfile?.voice_setup?.available_fingerprints?.length || 0;
+    const csetup = setupProfile?.craft_specs_setup || {};
+    const totalFps = ['world', 'cast', 'plot_pacing', 'voice']
+      .reduce((acc, d) => acc + (csetup[d]?.available_fingerprints?.length || 0), 0);
     const defaults = setupProfile?.ai_auto_defaults || {};
-    const voiceName = defaults.voice_profile?.base_voice_name || '';
-    const defaultLabels = ['structure_ids', 'mechanism_ids', 'tone_ids', 'style_ids']
-      .flatMap(f => (defaults[f] || []).map(id => [...known.values()].find(v => v.id === id)?.name || id));
+    const cp = defaults.craft_profiles || {};
+    const pillarSummary = [
+      cp.plot_pacing?.base_name ? `剧情节奏：${cp.plot_pacing.base_name}` : '',
+      cp.world?.base_name ? `世界：${cp.world.base_name}` : '',
+      cp.cast?.base_name ? `人物：${cp.cast.base_name}` : '',
+      (cp.voice?.base_name || defaults.voice_profile?.base_voice_name) ? `语感：${cp.voice?.base_name || defaults.voice_profile?.base_voice_name}` : '',
+    ].filter(Boolean);
     const ar = handoffAudit?.auto_readiness;
     const statusCard = selectedMain ? `<section class="card stack" id="wizardAutoReadiness" style="margin-bottom:14px">
       <div class="row spread wrap">
-        <strong>AI 自动运行引擎状态（内置工作流主驱 + 语感规范编译 + 拆解自动增强）</strong>
+        <strong>AI 自动运行引擎状态（四维可执行基座编译 + 内置工作流主驱 + 拆解自动增强）</strong>
         <span class="tag green">立即可启动 · 内置 15,375 条规则已就绪</span>
       </div>
-      <p class="muted">AI 将按所选类型自动编译<strong>语感规范卡${voiceName ? `（${esc(voiceName)}：6 维语言指令 + 防漂移红线 + 正反微对照）` : ''}</strong>与差异化架构${defaultLabels.length ? `（建议默认：<strong>${esc(defaultLabels.join(' / '))}</strong>）` : ''}，并自动叠加同类型已收录拆解方法（<strong>${corpusCount} 条</strong>）与语感指纹（<strong>${fpCount} 条</strong>）。</p>
-      ${corpusCount === 0 ? '<p class="muted">提示：若希望吸收某本同题材参考书的具体写法与语感指纹，随时可前往 <a class="text-link" href="#/staging" data-wizard-nav-link>预存库 → 精准步骤拆解</a>（约 7–10 次调用自动核验收录）。</p>' : ''}
+      <p class="muted">AI 将按所选题材与篇幅档位自动编译<strong>四维创作基座卡</strong>${pillarSummary.length ? `（<strong>${esc(pillarSummary.join(' ｜ '))}</strong>）` : ''}，按步骤精准分流注入 03/04/05/06/15/16（15 步写手保持轻量），并自动叠加同类型已收录拆解方法（<strong>${corpusCount} 条</strong>）与四轨指纹（<strong>${totalFps} 条</strong>）。</p>
+      ${corpusCount === 0 ? '<p class="muted">提示：若希望吸收某本同题材参考书的世界/人物/节奏/语感手法，随时可前往 <a class="text-link" href="#/staging" data-wizard-nav-link>预存库 → 精准步骤拆解</a>（约 7–10 次调用，4 轨自动核验收录）。</p>' : ''}
       ${ar?.checked && ar.ready ? `<p class="muted">同类型 7 大板块参考方法已齐备（${ar.ready_count}/${ar.total_boards}），将自动启用完整参考方法路线。</p>` : ''}
     </section>` : '';
 
@@ -330,17 +382,104 @@ export async function openWizard({mode, prefill} = {}) {
     bindGenrePicker();
   }
 
+  function renderWizardSpecBlock(domain, {openByDefault = false, heading = '', stageHint = ''} = {}) {
+    const ds = setupProfile?.craft_specs_setup?.[domain];
+    const st = craftState[domain];
+    if (!ds?.bases?.length || !st) return '';
+    const bases = ds.bases;
+    const activeBase = bases.find(b => b.id === st.base_id) || bases[0];
+    const knobsMeta = ds.knobs || {};
+    const curKnobs = st.knobs || activeBase.default_knobs || {};
+    const fps = ds.available_fingerprints || [];
+    const pickedFps = fps.filter(f => st.fpIds.has(f.id));
+    const singleKeys = Object.keys(knobsMeta).filter(k => !knobsMeta[k]?.multi);
+    const multiKey = Object.keys(knobsMeta).find(k => knobsMeta[k]?.multi) || '';
+
+    const innerHtml = `<div class="stack" data-wiz-spec-block="${esc(domain)}" style="gap:10px;margin-top:${openByDefault ? '0' : '10px'}">
+      <label class="field">
+        <span>选择底层基座（已按 <strong>${esc(names())}</strong> 智能排序）</span>
+        <select data-wiz-spec-base="${esc(domain)}">
+          ${bases.map(b => `<option value="${esc(b.id)}" ${b.id === activeBase.id ? 'selected' : ''}>${esc(b.name)} · ${esc(b.relevance_label || '')}</option>`).join('')}
+        </select>
+      </label>
+      ${renderCraftSpecPreview(domain, activeBase, {
+        scaleProfile: domain === 'plot_pacing' ? ds.scale_profile : null,
+        fps: pickedFps,
+        compact: !openByDefault,
+      })}
+      <div class="form-grid">
+        ${singleKeys.map(k => {
+          const meta = knobsMeta[k];
+          return `<label class="field"><span>${esc(meta.label)}</span><select data-wiz-spec-knob="${esc(k)}">
+            ${(meta.options || []).map(o => `<option value="${esc(o.id)}" ${o.id === curKnobs[k] ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
+          </select></label>`;
+        }).join('')}
+      </div>
+      ${multiKey && knobsMeta[multiKey] ? `<div><span class="muted" style="font-size:12px">${esc(knobsMeta[multiKey].label)}</span>
+        <div class="row wrap" style="gap:10px;margin-top:6px">
+          ${(knobsMeta[multiKey].options || []).map(o => `<label class="check-row" style="margin:0"><input type="checkbox" data-wiz-spec-multi="${esc(multiKey)}" value="${esc(o.id)}" ${(curKnobs[multiKey] || []).includes(o.id) ? 'checked' : ''}> <span>${esc(o.label)}</span></label>`).join('')}
+        </div></div>` : ''}
+      <div>
+        <div class="row spread wrap" style="margin-bottom:4px">
+          <strong style="font-size:12px">可选 · 叠加同题材拆解指纹（自动屏蔽跨题材串味）</strong>
+          <span class="tag">${fps.length ? `${fps.length} 条可用` : '暂无（内置基座已就绪）'}</span>
+        </div>
+        ${fps.length ? fps.map(fp => `<label class="check-row"><input type="checkbox" data-wiz-spec-fp="${esc(domain)}" value="${esc(fp.id)}" ${st.fpIds.has(fp.id) ? 'checked' : ''}> <span><strong>${esc(fp.title)}</strong> <small class="muted">(${esc(fp.base_name || '')} · ${(fp.body?.techniques || []).length} 条手法)</small></span></label>`).join('')
+          : '<p class="muted" style="margin:0;font-size:12px">在预存库运行「精准步骤拆解」后将自动沉淀本维同题材指纹。</p>'}
+      </div>
+      <label class="field"><span>本维补充细则（选填）</span><input data-wiz-spec-notes="${esc(domain)}" maxlength="800" value="${esc(st.custom_notes || '')}" placeholder="选填补充边界或专属要求…"></label>
+    </div>`;
+
+    if (openByDefault) {
+      return `<section class="method-section stack" style="gap:12px" aria-label="${esc(heading)}">
+        <div class="row spread wrap">
+          <h3>${esc(heading)}</h3>
+          <span class="tag green">${esc(stageHint)}</span>
+        </div>
+        ${innerHtml}
+      </section>`;
+    }
+    return `<details class="details" style="margin-top:12px">
+      <summary><strong>${esc(heading)}</strong> · 已自动推荐「<strong>${esc(activeBase.name)}</strong>」${pickedFps.length ? ` + ${pickedFps.length} 条指纹` : ''} <span class="muted">（点此展开换基座或调旋钮 · ${esc(stageHint)}）</span></summary>
+      ${innerHtml}
+    </details>`;
+  }
+
   function paintArchitecture() {
     const sections = setupProfile?.sections || {};
     const scope = setupProfile?.genre_scope || {};
     const plotFocus = scope.plot_focus || {};
     $('#modalBody').innerHTML = stepsBar(step) + `
-      <div class="row spread wrap"><h2>故事架构、卖点与特色机制</h2><span class="tag blue">直接驱动 03 世界 / 06 大纲 / 07 事件</span></div>
-      <p class="wizard-description">基于 <strong>${esc(names())}</strong> —— 只需点选决定本作特色的结构与核心推进机制；主角/配角体系、人物关系网、基础世界观、黄金三章与伏笔回收已由引擎自动保障，无需手动勾选。</p>
+      <div class="row spread wrap"><h2>剧情节奏、世界规则与人物群像基座</h2><span class="tag blue">按步骤分流驱动 03 世界 / 04–05 人物 / 06–09 剧情节奏</span></div>
+      <p class="wizard-description">基于 <strong>${esc(names())}</strong> —— 已为你自动配齐 3 张可执行基座卡（只管力学边界与节奏标尺，绝不套路化具体桥段）。默认展开核心的<strong>剧情引擎与篇幅节奏基座</strong>，世界与人物基座点开即可微调。</p>
       ${plotFocus.arc_pattern ? `<div class="notice"><strong>本类型架构提示</strong>：${esc(plotFocus.arc_pattern)}${plotFocus.hook_foreshadow_pattern ? ` ｜ <strong>钩子重点</strong>：${esc(plotFocus.hook_foreshadow_pattern)}` : ''}</div>` : ''}
-      ${FlatOptionSection({id:'structures', title:'1. 叙事结构框架（直接点选，单/多视角互斥）', hint:`最多选 ${limitFor('structure')} 项；不选则由大纲步骤按本类型默认推进。`, items:sections.structures || [], selectedForSlot:selections, limitForSlot:limitFor})}
-      ${FlatOptionSection({id:'mechanisms', title:'2. 核心推进机制与卖点（直接点选）', hint:`最多选 ${limitFor('hook')} 项；本类型核心卖点已置顶。`, items:sections.mechanisms || [], selectedForSlot:selections, limitForSlot:limitFor})}
-      ${FlatOptionSection({id:'special_mechanisms', title:'3. 特殊世界 / 金手指 / 危机机制（系统、血脉、无限流、副本等）', hint:'仅当故事明确带有特殊顶层机制或金手指时勾选；常规世界观与人物能力由引擎按类型自动生成。', items:sections.special_mechanisms || [], selectedForSlot:selections, limitForSlot:limitFor, collapsedAll:true})}`;
+      ${renderWizardSpecBlock('plot_pacing', {openByDefault:true, heading:'1. 剧情引擎、篇幅联动节奏与钩子基座（内置 8 套可执行引擎）', stageHint:'06 书卷章纲 / 07 事件 / 09 场景 / 15 本场2行节拍'})}
+      ${renderWizardSpecBlock('world', {openByDefault:false, heading:'2. 世界规则底座（内置 7 套运转力学）', stageHint:'03 世界定稿 / 08 行动门槛'})}
+      ${renderWizardSpecBlock('cast', {openByDefault:false, heading:'3. 人物群像力学底座（内置 7 套关系与阵容架构）', stageHint:'04 人物定稿 / 05 关系张力'})}
+      <details class="details" style="margin-top:16px">
+        <summary><strong>4. 进阶补充 · 传统叙事结构 / 核心卖点 / 特殊世界与危机标签（选填，已自动转译并入基座编译）</strong></summary>
+        <div class="stack" style="margin-top:12px">
+          ${FlatOptionSection({id:'structures', title:'叙事结构框架（直接点选，单/多视角互斥）', hint:`最多选 ${limitFor('structure')} 项；不选则由剧情基座按本类型推进。`, items:sections.structures || [], selectedForSlot:selections, limitForSlot:limitFor})}
+          ${FlatOptionSection({id:'mechanisms', title:'核心推进机制与卖点（直接点选）', hint:`最多选 ${limitFor('hook')} 项；将自动转译为可执行推进指令。`, items:sections.mechanisms || [], selectedForSlot:selections, limitForSlot:limitFor})}
+          ${FlatOptionSection({id:'special_mechanisms', title:'特殊世界 / 金手指 / 危机机制（系统、血脉、无限流、副本等）', hint:'仅当故事明确带有特殊顶层机制或金手指时勾选；常规世界观与人物能力由引擎按类型自动生成。', items:sections.special_mechanisms || [], selectedForSlot:selections, limitForSlot:limitFor, collapsedAll:true})}
+        </div>
+      </details>`;
+
+    $$('#modalBody [data-wiz-spec-base]').forEach(sel => sel.addEventListener('change', e => {
+      const dom = sel.dataset.wizSpecBase;
+      capture();
+      const ds = setupProfile?.craft_specs_setup?.[dom];
+      const picked = ds?.bases?.find(b => b.id === e.target.value);
+      if (craftState[dom] && picked) {
+        craftState[dom].base_id = picked.id;
+        craftState[dom].knobs = JSON.parse(JSON.stringify(picked.default_knobs || {}));
+      }
+      render();
+    }));
+    $$('#modalBody [data-wiz-spec-fp]').forEach(cb => cb.addEventListener('change', () => {
+      capture();
+      render();
+    }));
   }
 
   function paintCraftAndMethods() {
@@ -446,8 +585,14 @@ export async function openWizard({mode, prefill} = {}) {
     ].map(([label, keys]) => `<dt>${label}</dt><dd>${esc(keys.map(k => known.get(k)?.name || k).join('、') || '按本类型工作流自动展开')}</dd>`).join('');
 
     const activeVoice = (setupProfile?.voice_setup?.voice_bases || []).find(b => b.id === selectedVoiceBase);
+    const pillarName = (dom, fallback) => {
+      const ds = setupProfile?.craft_specs_setup?.[dom];
+      const st = craftState[dom];
+      const b = ds?.bases?.find(x => x.id === st?.base_id);
+      return b ? `${b.name}${st.fpIds.size ? `（+${st.fpIds.size} 指纹）` : ''}` : fallback;
+    };
     const voiceSummaryText = activeVoice
-      ? `${activeVoice.name}${selectedFingerprints.size ? `（叠加 ${selectedFingerprints.size} 项同题材语感指纹）` : ''}`
+      ? `${activeVoice.name}${selectedFingerprints.size ? `（+${selectedFingerprints.size} 指纹）` : ''}`
       : '按本类型自动编译语感规范卡';
     const currentVersions = Object.fromEntries((setupProfile?.available_corpus_methods || []).map(m => [m.id, m.version]));
     $('#modalBody').innerHTML = stepsBar(step) + `<div class="wizard-confirm">
@@ -455,6 +600,9 @@ export async function openWizard({mode, prefill} = {}) {
       <div class="card"><dl class="selection-summary">
         <dt>题材边界</dt><dd>${esc(names())}</dd>
         ${lengthSummary(lengthPlan, tierRecommendation?.tiers)}
+        <dt>剧情与节奏基座</dt><dd><strong>${esc(pillarName('plot_pacing', '按题材与篇幅自动编译'))}</strong></dd>
+        <dt>世界规则基座</dt><dd><strong>${esc(pillarName('world', '按题材自动编译'))}</strong></dd>
+        <dt>人物群像基座</dt><dd><strong>${esc(pillarName('cast', '按题材自动编译'))}</strong></dd>
         <dt>本书语感规范卡</dt><dd><strong>${esc(voiceSummaryText)}</strong></dd>
         ${pickedRows}
         <dt>基础写作能力</dt><dd>已自动启用（主角/配角防工具化、关系网、黄金三章/伏笔回收、受限 POV、独立审稿）</dd>
@@ -556,12 +704,35 @@ export async function openWizard({mode, prefill} = {}) {
     if (submitting) return;
     capture();
     if (!idea) { $('#wizardIdea')?.focus(); toast('请先填写一句话故事构想', true); return; }
+    const craftProfilesPayload = {};
+    for (const dom of ['world', 'cast', 'plot_pacing']) {
+      if (craftState[dom]?.base_id) {
+        craftProfilesPayload[dom] = {
+          enabled: true,
+          base_id: craftState[dom].base_id,
+          knobs: craftState[dom].knobs || {},
+          fingerprint_ids: [...craftState[dom].fpIds],
+          custom_notes: craftState[dom].custom_notes || '',
+        };
+      }
+    }
+    if (selectedVoiceBase) {
+      craftProfilesPayload.voice = {
+        enabled: true,
+        base_voice_id: selectedVoiceBase,
+        base_id: selectedVoiceBase,
+        knobs: voiceKnobs || {},
+        fingerprint_ids: [...selectedFingerprints],
+        custom_notes: voiceCustomNotes,
+      };
+    }
     const payload = {
       title:title || '未命名小说', idea, constraints, genre_ids:types(),
       design_mode:'manual',
       method_policy_mode:'builtin_enhanced',
       direction_review: $('#wizardDirectionReview')?.checked ?? true,
       method_preferences:[...selectedMethods.values()].map(({id, version, slot}) => ({id, version, slot})),
+      ...(Object.keys(craftProfilesPayload).length ? {craft_profiles: craftProfilesPayload} : {}),
       ...(selectedVoiceBase ? {
         voice_profile: {
           enabled: true,

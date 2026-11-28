@@ -8,10 +8,10 @@ export const phaseName={
 };
 
 const DEFAULT_TRACKS=[
-  {id:'genre_world_rules',name:'题材特色世界机制与代价边界',steps:'03 世界定稿 / 08 行动博弈'},
-  {id:'character_conflict',name:'核心人物弧光、反派阻力与关系张力',steps:'04 人物定稿 / 05 关系张力'},
-  {id:'opening_plot_hooks',name:'开篇承诺、主线推进与钩子伏笔',steps:'06 故事大纲 / 07 事件链'},
-  {id:'scene_prose_craft',name:'受限视角、动作节拍与段落文风（同步自动收录同题材语感指纹）',steps:'09 场景 / 12 锚点 / 13 表达 / 15 写作 · 语感规范库'},
+  {id:'genre_world_rules',name:'题材特色世界机制与代价边界（自动收录同题材世界规则指纹）',steps:'03 世界定稿 / 08 行动博弈 · 世界基座库'},
+  {id:'character_conflict',name:'核心人物弧光、反派阻力与关系张力（自动收录同题材人物群像指纹）',steps:'04 人物定稿 / 05 关系张力 · 人物基座库'},
+  {id:'opening_plot_hooks',name:'开篇承诺、主线推进与钩子伏笔（自动收录同题材剧情节奏指纹）',steps:'06 书卷章纲 / 07 事件链 · 剧情节奏库'},
+  {id:'scene_prose_craft',name:'受限视角、动作节拍与段落文风（自动收录同题材语感指纹）',steps:'09 场景 / 12 锚点 / 13 表达 / 15 写作 · 语感规范库'},
 ];
 
 export function openCorpusRun({book,record,catalog,reload,kind='targeted'}){

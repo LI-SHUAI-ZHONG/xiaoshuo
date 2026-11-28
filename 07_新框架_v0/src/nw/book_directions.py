@@ -203,6 +203,10 @@ def prepare_direction_task(calls: JobCalls, key: str) -> TaskRequest:
                'contract': {field: {'name': label, 'max_chars': limit} for field, (label, limit) in active_fields.items()}}
     if creative:
         package['creative_workflow'] = True
+    from nw.craft_specs import build_direction_specs_summary, load_all_craft_specs
+    specs_summary = build_direction_specs_summary(load_all_craft_specs(store))
+    if specs_summary:
+        package['craft_specs_summary'] = specs_summary
     if feedback := _previous_rejection(j):
         package['previous_rejection'] = feedback
     prompt = PROMPT + (
@@ -210,7 +214,7 @@ def prepare_direction_task(calls: JobCalls, key: str) -> TaskRequest:
         '开篇切入瞬间与黄金三章钩子（opening_hook）、从开端到结局的阶段因果路线（story_arcs）、'
         '主角起点盲点→选择→代价→蜕变弧光（protagonist_arc），以及后续世界与人物步骤必须落实的设计条件（design_needs）。'
         if creative else ''
-    )
+    ) + ('\n' + specs_summary if specs_summary else '')
     messages = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': canonical(package)}]
     params, _ = prepare_call(store, j.id, calls.provider.name, calls.config.params, messages,
                              context_window_tokens=calls.config.context_window_tokens)

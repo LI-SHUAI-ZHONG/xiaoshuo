@@ -108,11 +108,15 @@ def _verify_context(calls: JobCalls, key: str, scene: str, manifest: dict) -> No
 
 def _draft_input(calls: JobCalls, frozen: dict, purpose: str, draft: Draft, review: dict | None,
                  *, contract: dict | None = None, length_feedback: list[str] | None = None) -> dict:
+    from nw.craft_specs import load_all_craft_specs
+
     package = frozen['package']
     material = frozen.get('review_material' if purpose == 'review' else 'writing_material', '')
+    live_specs = load_all_craft_specs(calls.journal.store)
     messages, version = draft_messages(package, purpose, draft, review, contract, material,
                                        frozen.get('writing_source_keys', ()), length_feedback,
-                                       genre_ids=frozen.get('genre_ids'))
+                                       genre_ids=frozen.get('genre_ids'),
+                                       craft_specs=live_specs)
     dependencies = [*frozen['manifest']['dependency_refs'], asdict(draft_ref(draft))]
     if contract and 'comparison' in contract and contract['comparison']['ref'] not in dependencies:
         dependencies.append(contract['comparison']['ref'])

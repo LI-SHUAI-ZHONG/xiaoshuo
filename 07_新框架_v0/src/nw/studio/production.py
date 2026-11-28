@@ -76,13 +76,18 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                 project = store.init_project(wizard['title'])
                 self.db.update(ident, project_id=project.id)
                 store.add_brief(brief_text(wizard), wizard['constraints'])
-                if isinstance(wizard.get('voice_spec'), dict):
+                if isinstance(wizard.get('craft_specs'), dict):
+                    from nw.craft_specs import save_craft_spec
+                    for dom, sp in wizard['craft_specs'].items():
+                        if isinstance(sp, dict):
+                            save_craft_spec(store, dom, sp)
+                elif isinstance(wizard.get('voice_spec'), dict):
                     from nw.voice_specs import save_book_voice_spec
                     save_book_voice_spec(store, wizard['voice_spec'])
                 adopt_story(store, {'as_of_story_order': 0, 'disclosure_order': [0, 0, 0],
                     'coverage': {'entities': [], 'predicates': []}, 'facts': [], 'card_refs': []}, {})
                 job = start_job(store, JobRequest('design', design_scope='book', budget=budget,
-                                                 governance_inputs=governance(wizard, library=self.library),
+                                                 governance_inputs=governance(wizard, library=self.library, store=store, scope='book'),
                                                  production_method_policy=wizard.get('production_methods',{}),
                                                  direction_review=wizard.get('direction_review', False),
                                                  planning_hierarchy=wizard.get('planning_hierarchy', False),
@@ -192,7 +197,7 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                          design_scope=str(scope) if mode == 'design' else 'chapter',
                          parent_id=parent_id,
                          scene_ids=selected, budget=budget,
-                         governance_inputs=governance(novel['wizard'], library=self.library) if mode == 'design' else {},
+                         governance_inputs=governance(novel['wizard'], library=self.library, store=store, scope=str(scope)) if mode == 'design' else {},
                          production_method_policy=novel['wizard'].get('production_methods',{}) if mode=='design' else {},
                          direction_review=direction_review,
                          direction_retry_of=self._rejected_direction_job(store, novel) if direction_review else None,
@@ -487,6 +492,87 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                  'fingerprint_ids': spec['fingerprint_ids'], 'sha256': spec['sha256']},
             )
             return self.voice_spec(ident)
+
+    def craft_specs(self, ident: str) -> dict:
+        from nw.craft_specs import (
+            compile_craft_spec,
+            load_all_craft_specs,
+            recommend_all_craft_setup,
+        )
+        from nw.craft_specs_base import CRAFT_DOMAINS
+        from nw.writing_craft import style_reference_overview
+
+        novel = self.db.get(ident)
+        wiz = novel['wizard']
+        genre_ids = wiz.get('genre_ids') or []
+        target_words = wiz.get('target_words') if isinstance(wiz.get('target_words'), int) else None
+        setup = recommend_all_craft_setup(genre_ids, target_words=target_words, library=self.library)
+        with self.open_store(novel) as store:
+            loaded = load_all_craft_specs(store, wizard=wiz)
+            style_ov = style_reference_overview(store, branch=novel.get('current_branch', 'main'))
+        specs: dict[str, dict] = {}
+        for dom in CRAFT_DOMAINS:
+            if isinstance(loaded.get(dom), dict):
+                specs[dom] = loaded[dom]
+            else:
+                fps = setup[dom]['available_fingerprints'][:1]
+                specs[dom] = compile_craft_spec(
+                    dom, genre_ids, fingerprints=fps, enabled=False, target_words=target_words, wizard=wiz,
+                )
+        return {
+            'novel_id': ident,
+            'genre_ids': genre_ids,
+            'target_words': target_words,
+            'domains': list(CRAFT_DOMAINS),
+            'specs': specs,
+            'setup': setup,
+            'style_reference': style_ov,
+        }
+
+    def save_craft_spec(self, ident: str, domain: str, body: dict) -> dict:
+        from nw.craft_specs import compile_craft_spec, domain_base_map, save_craft_spec as _save_spec
+        from nw.craft_specs_base import CRAFT_DOMAINS, DOMAIN_META
+
+        if domain not in CRAFT_DOMAINS:
+            raise ValueError(f'未知的基座域: {domain}')
+        if not isinstance(body, dict):
+            raise ValueError('基座配置必须是对象')
+        with self._lock:
+            novel = self.db.get(ident)
+            if novel['status'] == 'done':
+                raise ValueError('已完稿作品不能修改本书基座规范')
+            wiz = novel['wizard']
+            genre_ids = wiz.get('genre_ids') or []
+            bmap = domain_base_map(domain)
+            base_id = str(body.get('base_id') or body.get('base_voice_id') or '').strip()
+            if base_id and base_id not in bmap:
+                raise ValueError(f'未知的{DOMAIN_META[domain]["name"]}: {base_id}')
+            fp_ids = body.get('fingerprint_ids') or []
+            if not isinstance(fp_ids, list) or len(fp_ids) > 5:
+                raise ValueError('指纹最多叠加 5 项')
+            fps = self.library.craft_fingerprints_by_ids(fp_ids, domain=domain) if fp_ids else []
+            target_words = wiz.get('target_words') if isinstance(wiz.get('target_words'), int) else None
+            spec = compile_craft_spec(
+                domain,
+                genre_ids,
+                base_id=base_id or None,
+                knobs=body.get('knobs') if isinstance(body.get('knobs'), dict) else None,
+                fingerprints=fps,
+                custom_notes=str(body.get('custom_notes') or ''),
+                enabled=bool(body.get('enabled', True)),
+                target_words=target_words,
+                wizard=wiz,
+            )
+            with self.open_store(novel) as store:
+                _save_spec(store, domain, spec)
+            spec_name = spec.get('base_name') or spec.get('base_voice_name') or base_id
+            self.db.event(
+                ident, f'craft_spec:{domain}',
+                f"更新{DOMAIN_META[domain]['name']}：{spec_name}（{'启用' if spec['enabled'] else '暂停'}，叠加 {len(spec.get('fingerprints') or ())} 项指纹）",
+                {'domain': domain, 'base_id': spec.get('base_id') or spec.get('base_voice_id'),
+                 'enabled': spec['enabled'], 'fingerprint_ids': spec.get('fingerprint_ids', []), 'sha256': spec.get('sha256', '')},
+            )
+            return self.craft_specs(ident)
 
     def save_style_reference(self, ident: str, body: dict) -> dict:
         from nw.writing_craft import save_style_reference, style_reference_overview

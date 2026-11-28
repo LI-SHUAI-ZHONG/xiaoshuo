@@ -124,6 +124,9 @@ class StoryProvider:
         if project.get('voice_spec'):
             items.append(ContextItem('voice-spec', canonical(project['voice_spec']),
                                      '本书语感规范卡（6维可执行语言指令 + 防漂移红线 + 本场正反微对照）'))
+        if project.get('scene_beat'):
+            items.append(ContextItem('scene-beat', canonical(project['scene_beat']),
+                                     '本场节奏节拍与章末钩子提示（精简2-3行，不塞宏观大纲）'))
         if project.get('style_reference'):
             items.append(ContextItem('style-reference', canonical(project['style_reference']),
                                      '写前语感参照（只学行文呼吸、对白脾气与节奏，严禁照搬人名设定）'))
@@ -312,6 +315,7 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         source_keys.update(row['source']['key'] for row in design['materials'] if row['source']['id'] in ids)
         source_keys.update(check_source_keys(scene_checks(design, scoped=True)) & _WRITING_SCOPE_KEYS)
     from nw.context.registry import get_provider
+    from nw.plot_pacing_specs import build_writer_scene_beat_hint, load_plot_pacing_spec
     from nw.voice_specs import build_writer_voice_packet, infer_scene_function, load_book_voice_spec
     from nw.writing_craft import (
         PRE_WRITE_CRAFT_GUIDE,
@@ -333,6 +337,19 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
             scene_function=infer_scene_function(scene_body_filtered, chapter_index=chapter.index, scene_index=scene.index),
         )
         if book_voice_spec else None
+    )
+    book_plot_spec = load_plot_pacing_spec(store)
+    is_ch_end = bool((inputs.get('chapter_length_progress') or {}).get('chapter_end'))
+    if not is_ch_end:
+        ch_scene_indices = [s.index for s in store.list('scene') if s.chapter_id == chapter.id]
+        if ch_scene_indices:
+            is_ch_end = (scene.index == max(ch_scene_indices))
+    scene_beat_hint = (
+        build_writer_scene_beat_hint(
+            book_plot_spec, scene_body_filtered,
+            chapter_index=chapter.index, scene_index=scene.index, is_chapter_end=is_ch_end,
+        )
+        if book_plot_spec else None
     )
 
     if inputs.get('chapter_length_progress', {}).get('length_mode') == 'tiered':
@@ -432,6 +449,8 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     optional_parts: list[tuple[str, Any]] = [('continuity', continuity), ('reader', already_disclosed)]
     if style_ref is not None:
         optional_parts.insert(0, ('style_reference', style_ref))
+    if scene_beat_hint is not None:
+        optional_parts.insert(0, ('scene_beat', scene_beat_hint))
     if voice_packet is not None:
         optional_parts.insert(0, ('voice_spec', voice_packet))
     if situation_card is not None:

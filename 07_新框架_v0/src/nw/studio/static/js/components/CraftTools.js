@@ -94,101 +94,160 @@ export function renderColdReadInspectorSection(coldRead, hasScene) {
   </section>`;
 }
 
-const DIM_LABELS = {
-  register: '语体寄存器',
-  cadence: '句式呼吸',
-  psychic_distance: '内心贴近度',
-  dialogue_texture: '对白质地',
-  imagery_budget: '描写克制度',
-  pacing_payoff: '节奏与落点',
+const DOMAIN_TABS = [
+  {id:'plot_pacing', label:'剧情节奏与钩子', stages:'06 书卷章纲 / 07 事件 / 09 场景 / 15 本场2行节拍 / 16 审稿', contrastTitle:'脱剧情大纲/节奏正反微对照（校准 06 推演坐标）', badLabel:'❌ 注水/套路大纲', goodLabel:'✅ 强因果节奏大纲'},
+  {id:'world', label:'世界规则底座', stages:'03 世界定稿 / 08 行动门槛 / 16 规则审稿（不塞入 15 写手）', contrastTitle:'脱剧情世界卡正反微对照（校准 03 造卡边界）', badLabel:'❌ 空壳设定/说明书', goodLabel:'✅ 可运行硬边界卡'},
+  {id:'cast', label:'人物群像力学', stages:'04 人物定稿 / 05 关系张力 / 16 角色审稿（不塞入 15 写手）', contrastTitle:'脱剧情人物关系正反微对照（校准 04/05 造卡深度）', badLabel:'❌ 工具人/扁平卡', goodLabel:'✅ 带盲点与利害活人卡'},
+  {id:'voice', label:'语感规范与参照', stages:'13 表达设计 / 15 正文写作 / 16 语感审稿', contrastTitle:'脱剧情 50 字正反微对照（校准 15 写手采样坐标 · 0 抄袭风险）', badLabel:'❌ 僵硬 AI 腔', goodLabel:'✅ 目标语感'},
+];
+
+const DOMAIN_DIM_LABELS = {
+  world: {
+    premise_law: '底层铁律',
+    scarcity_cost: '稀缺与代价',
+    institution_gate: '制度制约',
+    background_clock: '后台时钟',
+    exposition_policy: '渗入纪律',
+    genre_firewall: '题材防污染墙',
+  },
+  cast: {
+    protagonist_drive: '主角驱动与盲点',
+    antagonist_logic: '反派不降智逻辑',
+    supporting_roster: '配角复用纪律',
+    relation_asymmetry: '关系不对称',
+    independent_side_ties: '配角独立互动',
+    arc_conversion: '弧光代价转化',
+  },
+  plot_pacing: {
+    drive_loop: '核心驱动循环',
+    golden_three: '黄金三章密度',
+    pacing_cadence: '篇幅联动节奏',
+    hook_contract: '章末钩子纪律',
+    foreshadow_payoff: '伏笔与反转兑现',
+    aftermath_carry: '高潮余波承接',
+  },
+  voice: {
+    register: '语体寄存器',
+    cadence: '句式呼吸',
+    psychic_distance: '内心贴近度',
+    dialogue_texture: '对白质地',
+    imagery_budget: '描写克制度',
+    pacing_payoff: '节奏与落点',
+  },
 };
 
-export function renderVoiceSpecPreview(base, knobs, fps = []) {
+export function renderCraftSpecPreview(domain, base, {scaleProfile = null, fps = [], compact = false} = {}) {
   if (!base) return '';
+  const tabMeta = DOMAIN_TABS.find(t => t.id === domain) || DOMAIN_TABS[3];
+  const dimLabels = DOMAIN_DIM_LABELS[domain] || DOMAIN_DIM_LABELS.voice;
   const dims = base.dimensions || {};
-  const contrasts = (base.micro_contrasts || []).slice(0, 2);
-  const redlines = base.drift_redlines || [];
+  const contrasts = (base.micro_contrasts || []).slice(0, compact ? 1 : 2);
+  const redlines = base.anti_drift_redlines || base.drift_redlines || [];
+  const scaleBanner = (domain === 'plot_pacing' && scaleProfile)
+    ? `<div class="notice" style="margin:0;font-size:12px"><strong>篇幅联动节奏标尺（${esc(scaleProfile.tier_label || '')}）：</strong>${esc(scaleProfile.recommended_volumes || '')} · 小高潮每 ${esc((scaleProfile.small_climax_every_chapters || [5, 8]).join('–'))} 章 · 配比 ${esc(scaleProfile.chapter_weight_ratio || '')}${scaleProfile.stage_escalation_rule ? `<br><span class="muted">${esc(scaleProfile.stage_escalation_rule)}</span>` : ''}</div>`
+    : '';
   return `<div class="card stack" style="gap:10px;background:var(--bg-soft, var(--bg-panel))">
     <div class="row spread wrap">
       <strong>${esc(base.name)}</strong>
-      <span class="tag green">${esc(base.relevance_label || '可执行语感规范')}</span>
+      <span class="tag green">${esc(base.relevance_label || '可执行规范')}</span>
     </div>
     <p class="muted" style="margin:0;font-size:12px">${esc(base.tagline || '')}</p>
+    ${scaleBanner}
     <div class="stack" style="gap:4px;font-size:12px">
-      ${Object.entries(DIM_LABELS).map(([k, lbl]) => dims[k] ? `<p style="margin:0"><strong>${esc(lbl)}：</strong>${esc(dims[k])}</p>` : '').join('')}
+      ${Object.entries(dimLabels).map(([k, lbl]) => dims[k] ? `<p style="margin:0"><strong>${esc(lbl)}：</strong>${esc(dims[k])}</p>` : '').join('')}
     </div>
-    ${redlines.length ? `<div style="font-size:12px"><strong>专属防 AI 漂移红线（同步用于 16 步审稿）：</strong><ul style="margin:4px 0 0 18px">${redlines.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : ''}
-    ${contrasts.length ? `<details class="details" open>
-      <summary><strong>脱剧情 50 字正反微对照（给 15 步写手校准采样坐标 · 0 抄袭风险）</strong></summary>
+    ${redlines.length ? `<div style="font-size:12px"><strong>专属防崩坏/防漂移红线（同步用于 16 步审稿）：</strong><ul style="margin:4px 0 0 18px">${redlines.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : ''}
+    ${contrasts.length ? `<details class="details" ${compact ? '' : 'open'}>
+      <summary><strong>${esc(tabMeta.contrastTitle)}</strong></summary>
       <div class="stack" style="gap:8px;margin-top:8px">
         ${contrasts.map(c => `<div class="method-section" style="font-size:12px">
           <strong>${esc(c.label)}</strong>
-          <p style="margin:4px 0;color:var(--danger)">❌ 僵硬 AI 腔：${esc(c.bad_ai)}</p>
-          <p style="margin:4px 0">✅ 目标语感：${esc(c.target_voice)}</p>
+          <p style="margin:4px 0;color:var(--danger)">${esc(tabMeta.badLabel)}：${esc(c.bad_ai)}</p>
+          <p style="margin:4px 0">${esc(tabMeta.goodLabel)}：${esc(c.target_craft || c.target_voice || '')}</p>
           <p class="muted" style="margin:2px 0 0">要点：${esc(c.why)}</p>
         </div>`).join('')}
       </div>
     </details>` : ''}
-    ${fps.length ? `<p class="muted" style="margin:0;font-size:12px">已叠加同题材拆解语感指纹：${fps.map(f => esc(f.title)).join('、')}</p>` : ''}
+    ${fps.length ? `<p class="muted" style="margin:0;font-size:12px">已叠加同题材拆解指纹：${fps.map(f => esc(f.title)).join('、')}</p>` : ''}
   </div>`;
 }
 
-export async function openVoiceSpecDrawer(novelId, {onSaved} = {}) {
-  drawer('本书语感规范卡与写前参照（15 写作 · 16 审稿同源边界）', loading());
-  try {
-    const data = await api.get(`/novels/${enc(novelId)}/voice-spec`);
-    const spec = data.voice_spec || {};
-    const bases = data.voice_bases || [];
-    const knobsMeta = data.knobs || {};
-    const fps = data.available_fingerprints || [];
+export function renderVoiceSpecPreview(base, knobs, fps = []) {
+  return renderCraftSpecPreview('voice', base, {fps});
+}
+
+export async function openCraftSpecsDrawer(novelId, {initialDomain = 'plot_pacing', onSaved} = {}) {
+  drawer('本书四维创作基座卡（世界 · 人物 · 剧情节奏 · 语感）', loading());
+  let activeDomain = DOMAIN_TABS.some(t => t.id === initialDomain) ? initialDomain : 'plot_pacing';
+  let data = null;
+
+  const paintTab = () => {
+    const tabMeta = DOMAIN_TABS.find(t => t.id === activeDomain) || DOMAIN_TABS[0];
+    const spec = (data.specs || {})[activeDomain] || {};
+    const domSetup = (data.setup || {})[activeDomain] || {};
+    const bases = domSetup.bases || [];
+    const knobsMeta = domSetup.knobs || {};
+    const fps = domSetup.available_fingerprints || [];
     const styleData = data.style_reference || {};
-    const activeBaseId = spec.base_voice_id || bases[0]?.id || 'VOICE_GENRE_HYBRID_BALANCED';
+    const activeBaseId = spec.base_id || spec.base_voice_id || bases[0]?.id || '';
     const activeKnobs = spec.knobs || {};
     const activeFpIds = new Set(spec.fingerprint_ids || []);
+    const singleKnobKeys = Object.keys(knobsMeta).filter(k => !knobsMeta[k]?.multi);
+    const multiKnobKey = Object.keys(knobsMeta).find(k => knobsMeta[k]?.multi) || '';
+
     const acceptedInfo = styleData.can_use_auto_book_prose
       ? `本书已有已接受章节（第 ${(styleData.accepted_chapters || []).join('、')} 章），可随时切为「沿用本书已采用正文语感」。`
       : '本书尚未接受第 1 章正文，默认以「本书语感规范卡」精准控腔即可，无需强求外部样章。';
 
-    $('#drawerBody').innerHTML = `<div class="stack" style="gap:18px">
-      <form id="voiceSpecForm" class="stack" style="gap:12px">
-        <div class="notice"><strong>精确有边界的语感规范主驱：</strong>用「6 维可执行语言学指令 + 专属防 AI 漂移红线 + 按本场功能匹配的 50 字 ❌/✅ 脱剧情微对照」控制 15 步写手采样，并同步送入 16 步审稿验收，既不依赖外部整章样章，也杜绝多题材串味。</div>
-        <label class="check-row"><input type="checkbox" name="enabled" id="voiceSpecEnabled" ${spec.enabled !== false ? 'checked' : ''}> <strong>启用本书语感规范卡（推荐）</strong></label>
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:16px">
+      <div class="row wrap" style="gap:6px" id="craftSpecTabBar">
+        ${DOMAIN_TABS.map(t => {
+          const sp = (data.specs || {})[t.id];
+          const on = t.id === activeDomain;
+          return `<button type="button" class="${on ? 'button' : 'secondary'}" data-spec-tab="${esc(t.id)}">${esc(t.label)}${sp?.enabled ? ' · 启' : ''}</button>`;
+        }).join('')}
+      </div>
+      <div class="notice" style="margin:0;font-size:12px">
+        <strong>生效步骤：</strong>${esc(tabMeta.stages)}。<br>
+        <strong>优先级铁律：</strong>作者硬约束与已批准上游卡片 &gt; 本基座规范 &gt; 通用默认规则。随时调整只影响后续新建或重设计卷章，不篡改已定稿正文。
+      </div>
+      <form id="craftSpecForm" class="stack" style="gap:12px">
+        <label class="check-row"><input type="checkbox" name="enabled" id="craftSpecEnabled" ${spec.enabled !== false ? 'checked' : ''}> <strong>启用「${esc(tabMeta.label)}」（推荐）</strong></label>
         <label class="field">
-          <span>1. 内置语感规范基座（已按本书题材推荐排序）</span>
-          <select name="base_voice_id" id="voiceBaseSelect">
+          <span>1. 内置可执行基座（已按本书题材推荐排序）</span>
+          <select name="base_id" id="craftBaseSelect">
             ${bases.map(b => `<option value="${esc(b.id)}" ${b.id === activeBaseId ? 'selected' : ''}>${esc(b.name)} · ${esc(b.relevance_label || '')}</option>`).join('')}
           </select>
         </label>
-        <div id="voiceBasePreviewBox"></div>
+        <div id="craftBasePreviewBox"></div>
         <div class="form-grid">
-          ${['register', 'cadence', 'dialogue_mind'].map(k => {
+          ${singleKnobKeys.map(k => {
             const meta = knobsMeta[k];
-            if (!meta) return '';
             const cur = activeKnobs[k] || '';
-            return `<label class="field"><span>${esc(meta.label)}</span><select name="knob_${k}" id="knob_${k}">
+            return `<label class="field"><span>${esc(meta.label)}</span><select name="knob_${esc(k)}" id="craftKnob_${esc(k)}">
               ${(meta.options || []).map(o => `<option value="${esc(o.id)}" ${o.id === cur ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
             </select></label>`;
           }).join('')}
         </div>
-        ${knobsMeta.anti_drift_bans ? `<fieldset class="method-section"><legend>${esc(knobsMeta.anti_drift_bans.label)}</legend>
+        ${multiKnobKey && knobsMeta[multiKnobKey] ? `<fieldset class="method-section"><legend>${esc(knobsMeta[multiKnobKey].label)}</legend>
           <div class="row wrap" style="gap:10px">
-            ${(knobsMeta.anti_drift_bans.options || []).map(o => `<label class="check-row" style="margin:0"><input type="checkbox" name="anti_drift_bans" value="${esc(o.id)}" ${(activeKnobs.anti_drift_bans || []).includes(o.id) ? 'checked' : ''}> <span>${esc(o.label)}</span></label>`).join('')}
+            ${(knobsMeta[multiKnobKey].options || []).map(o => `<label class="check-row" style="margin:0"><input type="checkbox" name="craftMultiKnob" value="${esc(o.id)}" ${(activeKnobs[multiKnobKey] || []).includes(o.id) ? 'checked' : ''}> <span>${esc(o.label)}</span></label>`).join('')}
           </div>
         </fieldset>` : ''}
         <fieldset class="method-section">
-          <legend>2. 可选 · 叠加同题材已拆解收录的语感指纹（${fps.length} 条兼容，已自动隔离跨题材污染）</legend>
-          ${fps.length ? fps.map(fp => `<label class="check-row"><input type="checkbox" name="fingerprint_ids" value="${esc(fp.id)}" ${activeFpIds.has(fp.id) ? 'checked' : ''}> <span><strong>${esc(fp.title)}</strong> <small class="muted">(${esc(fp.base_voice_name || '')} · ${(fp.body?.techniques || []).length} 条手法)</small></span></label>`).join('')
-            : '<p class="muted" style="margin:4px 0 0;font-size:12px">当前题材尚无已拆解收录的参考书语感指纹；内置语感规范卡已可直接高质量驱动写作。需要吸收特定名家语感时，在预存库运行「精准步骤拆解（含第 4 轨）」即可自动收录。</p>'}
+          <legend>2. 可选 · 叠加同题材拆解收录的脱剧情指纹（${fps.length} 条兼容，已自动隔离跨题材污染）</legend>
+          ${fps.length ? fps.map(fp => `<label class="check-row"><input type="checkbox" name="fingerprint_ids" value="${esc(fp.id)}" ${activeFpIds.has(fp.id) ? 'checked' : ''}> <span><strong>${esc(fp.title)}</strong> <small class="muted">(${esc(fp.base_name || fp.base_voice_name || '')} · ${(fp.body?.techniques || []).length} 条手法)</small></span></label>`).join('')
+            : '<p class="muted" style="margin:4px 0 0;font-size:12px">当前题材该维尚无已拆解收录的参考书指纹；内置基座已可直接高质量驱动制作。在预存库运行「精准步骤拆解」后 4 条轨道均会自动沉淀同题材指纹。</p>'}
         </fieldset>
         <label class="field">
-          <span>3. 本书补充语感细则（选填）</span>
-          <textarea name="custom_notes" rows="2" placeholder="如：主角面对长辈时收起锋芒，独处时内心吐槽更直白；禁用“冷笑一声”。">${esc(spec.custom_notes || '')}</textarea>
+          <span>3. 本书补充细则（选填）</span>
+          <textarea name="custom_notes" rows="2" placeholder="针对本书这一维的专属要求或补充边界…">${esc(spec.custom_notes || '')}</textarea>
         </label>
         <div class="row wrap" style="gap:8px">
-          <button type="submit" class="button">保存并编译本书语感规范卡</button>
+          <button type="submit" class="button">保存并编译「${esc(tabMeta.label)}」</button>
         </div>
       </form>
-      <details class="details" ${styleData.enabled ? 'open' : ''}>
+      ${activeDomain === 'voice' ? `<details class="details" ${styleData.enabled ? 'open' : ''}>
         <summary><strong>可选 · 附加写前语感样段参照（${styleData.enabled ? '已启用' : '未启用'}）</strong></summary>
         <form id="styleReferenceForm" class="stack" style="margin-top:12px">
           <label class="field">
@@ -219,88 +278,111 @@ export async function openVoiceSpecDrawer(novelId, {onSaved} = {}) {
             <button type="button" class="ghost" id="disableStyleRefBtn">关闭样段参照</button>
           </div>
         </form>
-      </details>
+      </details>` : ''}
     </div>`;
 
+    $$('#craftSpecTabBar [data-spec-tab]').forEach(btn => {
+      btn.onclick = () => { activeDomain = btn.dataset.specTab; paintTab(); };
+    });
+
     const paintPreview = () => {
-      const bid = $('#voiceBaseSelect').value;
+      const bid = $('#craftBaseSelect').value;
       const base = bases.find(b => b.id === bid) || bases[0];
-      const pickedFps = fps.filter(fp => $$('#voiceSpecForm [name=fingerprint_ids]:checked').some(el => el.value === fp.id));
-      $('#voiceBasePreviewBox').innerHTML = renderVoiceSpecPreview(base, null, pickedFps);
+      const pickedFps = fps.filter(fp => $$('#craftSpecForm [name=fingerprint_ids]:checked').some(el => el.value === fp.id));
+      $('#craftBasePreviewBox').innerHTML = renderCraftSpecPreview(activeDomain, base, {
+        scaleProfile: activeDomain === 'plot_pacing' ? (spec.scale_profile || domSetup.scale_profile) : null,
+        fps: pickedFps,
+      });
     };
-    $('#voiceBaseSelect').onchange = () => {
-      const base = bases.find(b => b.id === $('#voiceBaseSelect').value);
+    $('#craftBaseSelect').onchange = () => {
+      const base = bases.find(b => b.id === $('#craftBaseSelect').value);
       if (base?.default_knobs) {
-        for (const k of ['register', 'cadence', 'dialogue_mind']) {
-          const el = $(`#knob_${k}`);
+        for (const k of singleKnobKeys) {
+          const el = $(`#craftKnob_${k}`);
           if (el && base.default_knobs[k]) el.value = base.default_knobs[k];
         }
-        const defs = new Set(base.default_knobs.anti_drift_bans || []);
-        $$('#voiceSpecForm [name=anti_drift_bans]').forEach(cb => { cb.checked = defs.has(cb.value); });
+        if (multiKnobKey) {
+          const defs = new Set(base.default_knobs[multiKnobKey] || []);
+          $$('#craftSpecForm [name=craftMultiKnob]').forEach(cb => { cb.checked = defs.has(cb.value); });
+        }
       }
       paintPreview();
     };
-    $$('#voiceSpecForm [name=fingerprint_ids]').forEach(cb => { cb.onchange = paintPreview; });
+    $$('#craftSpecForm [name=fingerprint_ids]').forEach(cb => { cb.onchange = paintPreview; });
     paintPreview();
 
-    $('#voiceSpecForm').onsubmit = e => {
+    $('#craftSpecForm').onsubmit = e => {
       e.preventDefault();
       const fd = new FormData(e.target);
+      const knobsPayload = {};
+      for (const k of singleKnobKeys) {
+        knobsPayload[k] = $(`#craftKnob_${k}`)?.value || '';
+      }
+      if (multiKnobKey) {
+        knobsPayload[multiKnobKey] = $$('#craftSpecForm [name=craftMultiKnob]:checked').map(el => el.value);
+      }
       const payload = {
-        enabled: $('#voiceSpecEnabled').checked,
-        base_voice_id: $('#voiceBaseSelect').value,
-        knobs: {
-          register: $('#knob_register')?.value || '',
-          cadence: $('#knob_cadence')?.value || '',
-          dialogue_mind: $('#knob_dialogue_mind')?.value || '',
-          anti_drift_bans: $$('#voiceSpecForm [name=anti_drift_bans]:checked').map(el => el.value),
-        },
-        fingerprint_ids: $$('#voiceSpecForm [name=fingerprint_ids]:checked').map(el => el.value),
+        enabled: $('#craftSpecEnabled').checked,
+        base_id: $('#craftBaseSelect').value,
+        knobs: knobsPayload,
+        fingerprint_ids: $$('#craftSpecForm [name=fingerprint_ids]:checked').map(el => el.value),
         custom_notes: String(fd.get('custom_notes') || ''),
       };
       busy(e.target.querySelector('[type=submit]'), async () => {
-        await api.post(`/novels/${enc(novelId)}/voice-spec`, payload);
-        $('#drawer')?.close?.();
-        toast('本书语感规范卡已编译保存，15 步写作与 16 步审稿将自动同步生效');
+        data = await api.post(`/novels/${enc(novelId)}/craft-specs/${enc(activeDomain)}`, payload);
+        toast(`「${tabMeta.label}」已编译保存，后续对应步骤与 16 步审稿将自动生效`);
+        paintTab();
         if (onSaved) await onSaved();
       }).catch(fail);
     };
 
-    const syncVisibility = () => {
-      const m = $('#styleRefMode').value;
-      $('#styleSampleFields').style.display = m === 'author_sample' ? '' : 'none';
-    };
-    $('#styleRefMode').onchange = syncVisibility;
-    syncVisibility();
+    if (activeDomain === 'voice' && $('#styleRefMode')) {
+      const syncVisibility = () => {
+        const m = $('#styleRefMode').value;
+        $('#styleSampleFields').style.display = m === 'author_sample' ? '' : 'none';
+      };
+      $('#styleRefMode').onchange = syncVisibility;
+      syncVisibility();
 
-    const submitSample = async (btn, payload) => {
-      await busy(btn, async () => {
-        await api.post(`/novels/${enc(novelId)}/style-reference`, payload);
-        $('#drawer')?.close?.();
-        toast(payload.mode === 'off' ? '已关闭附加样段参照' : '附加样段参照已保存');
-        if (onSaved) await onSaved();
-      });
-    };
-    $('#disableStyleRefBtn').onclick = e => submitSample(e.currentTarget, {
-      enabled: false, mode: 'off', title: '', source_note: '', excerpt: '', style_notes: '',
-    }).catch(fail);
-    $('#styleReferenceForm').onsubmit = e => {
-      e.preventDefault();
-      const fd = new FormData(e.target);
-      const mode = String(fd.get('mode') || 'off');
-      submitSample(e.target.querySelector('[type=submit]'), {
-        enabled: mode !== 'off',
-        mode,
-        title: String(fd.get('title') || ''),
-        source_note: String(fd.get('source_note') || ''),
-        excerpt: String(fd.get('excerpt') || ''),
-        style_notes: String(fd.get('style_notes') || ''),
+      const submitSample = async (btn, payload) => {
+        await busy(btn, async () => {
+          await api.post(`/novels/${enc(novelId)}/style-reference`, payload);
+          data = await api.get(`/novels/${enc(novelId)}/craft-specs`);
+          toast(payload.mode === 'off' ? '已关闭附加样段参照' : '附加样段参照已保存');
+          paintTab();
+          if (onSaved) await onSaved();
+        });
+      };
+      $('#disableStyleRefBtn').onclick = e => submitSample(e.currentTarget, {
+        enabled: false, mode: 'off', title: '', source_note: '', excerpt: '', style_notes: '',
       }).catch(fail);
-    };
+      $('#styleReferenceForm').onsubmit = e => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const mode = String(fd.get('mode') || 'off');
+        submitSample(e.target.querySelector('[type=submit]'), {
+          enabled: mode !== 'off',
+          mode,
+          title: String(fd.get('title') || ''),
+          source_note: String(fd.get('source_note') || ''),
+          excerpt: String(fd.get('excerpt') || ''),
+          style_notes: String(fd.get('style_notes') || ''),
+        }).catch(fail);
+      };
+    }
+  };
+
+  try {
+    data = await api.get(`/novels/${enc(novelId)}/craft-specs`);
+    paintTab();
   } catch (error) {
     $('#drawerBody').innerHTML = `<p class="error">${esc(error.message)}</p>`;
     fail(error);
   }
+}
+
+export function openVoiceSpecDrawer(novelId, opts = {}) {
+  return openCraftSpecsDrawer(novelId, {initialDomain: 'voice', ...opts});
 }
 
 export const openStyleReferenceDrawer = openVoiceSpecDrawer;

@@ -1834,6 +1834,9 @@ def _perform_stage(store: Store,request: TaskRequest,package: dict,provider: LLM
             if context.get('creative_handoff'):
                 payload['creative_handoff'] = context['creative_handoff']
             suffix += plot_instructions(package['scope'], context.get('creative_handoff'))
+        if craft_spec := (payload.get('author_input') or {}).get('craft_spec'):
+            if isinstance(craft_spec, dict) and craft_spec.get('prompt_block'):
+                suffix += '\n' + str(craft_spec['prompt_block'])
         if stage_provider.name!='ollama':
             payload['output_contract']=output_contract(stage,products,sources)
             if stage == 'plot_design' and context.get('creative_workflow_policy'):

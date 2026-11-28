@@ -42,7 +42,9 @@ class ProductionRoutes:
         elif segs == ['wizard', 'setup-profile']:
             from nw.studio.wizard_setup import setup_profile_for_types
             types = [t for t in first(query, 'types').split(',') if t]
-            data = setup_profile_for_types(types or None, library=lib)
+            tw_raw = first(query, 'target_words')
+            tw_val = int(tw_raw) if tw_raw.isdigit() else None
+            data = setup_profile_for_types(types or None, library=lib, target_words=tw_val)
         elif segs == ['novel-cache']:
             data = app.novel_cache()
         elif segs == ['novels']:
@@ -67,6 +69,8 @@ class ProductionRoutes:
                     data = app.quality(ident, first(query, 'scene'))
                 elif action == 'voice-spec':
                     data = app.voice_spec(ident)
+                elif action == 'craft-specs':
+                    data = app.craft_specs(ident)
                 elif action == 'style-reference':
                     data = app.style_reference(ident)
                 elif action == 'cold-reads':
@@ -110,6 +114,22 @@ class ProductionRoutes:
                 'voice_bases': recommend_voice_bases(types or None),
                 'knobs': VOICE_KNOBS,
             }
+        elif segs == ['kb', 'craft-fingerprints']:
+            from nw.craft_specs import recommend_all_craft_setup
+            types = [t for t in first(query, 'types').split(',') if t]
+            dom = first(query, 'domain') or None
+            tw_raw = first(query, 'target_words')
+            tw_val = int(tw_raw) if tw_raw.isdigit() else None
+            data = {
+                'domain': dom,
+                'fingerprints': lib.craft_fingerprints(
+                    domain=dom,
+                    types=types or None,
+                    status=first(query, 'status', 'approved'),
+                    include_incompatible=first(query, 'all') in ('1', 'true'),
+                ),
+                'setup': recommend_all_craft_setup(types or None, target_words=tw_val, library=lib),
+            }
         if data is None:
             return False
         handler._send_json(200, data)
@@ -138,6 +158,9 @@ class ProductionRoutes:
                     data = app.configure_methods(ident,body)
                 elif action == 'voice-spec':
                     data = app.save_voice_spec(ident, body)
+                elif action == 'craft-specs':
+                    dom = str(body.get('domain') or '').strip() if isinstance(body, dict) else ''
+                    data = app.save_craft_spec(ident, dom, body)
                 elif action == 'style-reference':
                     data = app.save_style_reference(ident, body)
                 elif action == 'cold-reads':
@@ -152,6 +175,8 @@ class ProductionRoutes:
                     data = app.cancel(ident)
                 elif action == 'finish':
                     data = app.finish(ident)
+            elif len(segs) == 4 and action == 'craft-specs':
+                data = app.save_craft_spec(ident, segs[3], body)
             elif len(segs) == 4 and action == 'gates':
                 data = app.decide(ident, segs[3], body)
             elif len(segs) == 5 and action == 'gates' and segs[4] == 'refresh':

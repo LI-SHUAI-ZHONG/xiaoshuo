@@ -18,6 +18,11 @@ from nw.studio.method_store import MethodMixin
 from nw.studio.corpus_schema import SCHEMA as CORPUS_SCHEMA
 from nw.studio.corpus_store import CorpusMixin
 from nw.studio.corpus_jobs import CorpusJobsMixin, recover_corpus_jobs
+from nw.craft_specs_base import (
+    CRAFT_FINGERPRINT_SCHEMA,
+    get_craft_fingerprints_by_ids as _get_craft_fingerprints_by_ids,
+    list_craft_fingerprints as _list_craft_fingerprints,
+)
 from nw.voice_specs import (
     VOICE_FINGERPRINT_SCHEMA,
     get_voice_fingerprints_by_ids,
@@ -83,6 +88,7 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
             conn.executescript(METHOD_SCHEMA)
             conn.executescript(CORPUS_SCHEMA)
             conn.executescript(VOICE_FINGERPRINT_SCHEMA)
+            conn.executescript(CRAFT_FINGERPRINT_SCHEMA)
         migrate_legacy(self)
         recover_corpus_jobs(self)
         from nw.studio.staging_model import recover_decompositions
@@ -184,3 +190,32 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
     def voice_fingerprints_by_ids(self, ids: list[str] | tuple[str, ...]) -> list[dict]:
         with self.connect() as conn:
             return get_voice_fingerprints_by_ids(conn, ids)
+
+    def craft_fingerprints(
+        self,
+        *,
+        domain: str | None = None,
+        types: list[str] | tuple[str, ...] | None = None,
+        status: str = 'approved',
+        include_incompatible: bool = False,
+    ) -> list[dict]:
+        from nw.craft_specs import all_base_name_map
+        with self.connect() as conn:
+            return _list_craft_fingerprints(
+                conn,
+                domain=domain,
+                types=types,
+                status=status,
+                include_incompatible=include_incompatible,
+                base_names=all_base_name_map(),
+            )
+
+    def craft_fingerprints_by_ids(
+        self,
+        ids: list[str] | tuple[str, ...],
+        *,
+        domain: str | None = None,
+    ) -> list[dict]:
+        from nw.craft_specs import all_base_name_map
+        with self.connect() as conn:
+            return _get_craft_fingerprints_by_ids(conn, ids, domain=domain, base_names=all_base_name_map())

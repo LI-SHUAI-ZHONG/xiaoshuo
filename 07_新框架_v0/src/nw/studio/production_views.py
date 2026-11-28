@@ -610,6 +610,7 @@ class ProductionViews:
                 result['metrics'] = {'draft_versions': len(drafts), 'review_rounds': sum(run.kind == 'review' for run in runs),
                                      'words': count_words(draft_obj.text) if draft_obj else 0,
                                      'model_calls': sum(run.provider != 'author' for run in runs)}
+            from nw.craft_specs import load_all_craft_specs, summarize_craft_specs
             from nw.writing_craft import style_reference_overview
             from nw.voice_specs import load_book_voice_spec
             style_ov = style_reference_overview(store, branch=novel.get('current_branch', 'main'))
@@ -620,7 +621,9 @@ class ProductionViews:
                 'excerpt_chars': len(style_ov.get('excerpt') or ''),
                 'can_use_auto_book_prose': style_ov['can_use_auto_book_prose'],
             }
-            vspec = load_book_voice_spec(store)
+            all_specs = load_all_craft_specs(store, wizard=novel['wizard'])
+            result['craft_specs'] = summarize_craft_specs(all_specs)
+            vspec = all_specs.get('voice') or load_book_voice_spec(store)
             result['voice_spec'] = (
                 {
                     'enabled': bool(vspec.get('enabled', True)),

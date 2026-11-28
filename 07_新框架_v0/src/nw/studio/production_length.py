@@ -157,4 +157,31 @@ def change_length(app, ident: str, body: dict) -> dict:
             db.execute('INSERT INTO timeline_events(novel_id,ts,kind,summary,ref_json) VALUES(?,?,?,?,?)',
                        (ident, timestamp, 'length', '更新后续制作的篇幅与预算', canonical({
                            'before': previous, 'after': current, 'budget': wizard.get('call_budget', {})})))
+    # Sync plot_pacing_spec.json scale_profile automatically if target_words changed on this book.
+    if 'target_words' in changes:
+        try:
+            novel = app.db.get(ident)
+            with app.open_store(novel) as store:
+                from nw.plot_pacing_specs import compile_plot_pacing_spec, load_plot_pacing_spec, save_plot_pacing_spec
+                existing_plot = load_plot_pacing_spec(store)
+                if isinstance(existing_plot, dict):
+                    tw = novel['wizard'].get('target_words')
+                    fps = (
+                        app.library.craft_fingerprints_by_ids(existing_plot.get('fingerprint_ids') or [], domain='plot_pacing')
+                        if existing_plot.get('fingerprint_ids') else []
+                    )
+                    recompiled = compile_plot_pacing_spec(
+                        existing_plot.get('genre_ids') or novel['wizard'].get('genre_ids') or [],
+                        base_id=existing_plot.get('base_id'),
+                        target_words=tw if isinstance(tw, int) else None,
+                        knobs=existing_plot.get('knobs'),
+                        structure_ids=novel['wizard'].get('structure_ids') or (),
+                        mechanism_ids=novel['wizard'].get('mechanism_ids') or (),
+                        fingerprints=fps,
+                        custom_notes=existing_plot.get('custom_notes', ''),
+                        enabled=bool(existing_plot.get('enabled', True)),
+                    )
+                    save_plot_pacing_spec(store, recompiled)
+        except Exception:
+            pass
     return {'length_plan': app.detail(ident)['length_plan']}

@@ -320,17 +320,52 @@ def _extract_messages(span: dict[str, Any], chapter_text: str, tracks: list[str]
         {'track': tid, 'name': TARGETED_TRACKS[tid]['name'], 'focus': TARGETED_TRACKS[tid]['description']}
         for tid in tracks
     ]
-    voice_block = (
-        ',\n  "voice_signals": {\n'
-        '    "scene_function": "opening_hook | confrontation | action_reveal | emotional_shock | dialogue_daily",\n'
-        '    "register": "本章用词文白度与语体特征（<=60字，不含原作专有名词）",\n'
-        '    "cadence": "本章句长呼吸与快慢切换特征（<=60字）",\n'
-        '    "dialogue_texture": "本章对白脾气、潜台词与语气特征（<=60字）",\n'
-        '    "psychic_distance": "本章内心贴近度与情绪表达方式（<=60字）",\n'
-        '    "quote": "最能代表本章语感呼吸的1句连续原文短摘录（15-120字，一字不改）"\n'
-        '  }\n'
-        if 'scene_prose_craft' in tracks else '\n'
-    )
+    extra_blocks: list[str] = []
+    if 'genre_world_rules' in tracks:
+        extra_blocks.append(
+            '  "world_signals": {\n'
+            '    "card_function": "rule_limit | resource_cost | opening_reveal",\n'
+            '    "premise_law": "本章体现的世界硬规则与不可违背前提（<=60字，不含原作专有名词）",\n'
+            '    "scarcity_cost": "本章体现的资源稀缺或能力代价（<=60字）",\n'
+            '    "institution_gate": "制度/权力/法则如何制约人物行动（<=60字）",\n'
+            '    "exposition_policy": "世界规则是如何自然渗入正文的（<=60字）",\n'
+            '    "quote": "最能代表本章世界约束的1句连续原文短摘录（15-120字，一字不改）"\n'
+            '  }'
+        )
+    if 'character_conflict' in tracks:
+        extra_blocks.append(
+            '  "cast_signals": {\n'
+            '    "card_function": "protagonist_arc | antagonist_logic | supporting_relation",\n'
+            '    "protagonist_drive": "本章体现的主角动机或盲点外化做法（<=60字，不含人名）",\n'
+            '    "antagonist_logic": "对手/阻力方的独立利益与不降智应对（<=60字）",\n'
+            '    "relation_asymmetry": "人物间权力差/信息差/情感债务布局（<=60字）",\n'
+            '    "supporting_roster": "配角去工具化或声线区分手法（<=60字）",\n'
+            '    "quote": "最能代表本章人物张力的1句连续原文短摘录（15-120字，一字不改）"\n'
+            '  }'
+        )
+    if 'opening_plot_hooks' in tracks:
+        extra_blocks.append(
+            '  "plot_signals": {\n'
+            '    "plan_function": "golden_three | chapter_split_rhythm | hook_aftermath",\n'
+            '    "drive_loop": "本章冲突驱动循环与局势位移方式（<=60字，不含原作情节）",\n'
+            '    "hook_contract": "本章回应前钩与章末抛新钩的做法（<=60字）",\n'
+            '    "pacing_cadence": "本章属重/中/轻哪类节拍及信息密度特点（<=60字）",\n'
+            '    "aftermath_carry": "本章成果或代价如何带入下章局面（<=60字）",\n'
+            '    "quote": "最能代表本章推进或章尾钩子的1句连续原文短摘录（15-120字，一字不改）"\n'
+            '  }'
+        )
+    if 'scene_prose_craft' in tracks:
+        extra_blocks.append(
+            '  "voice_signals": {\n'
+            '    "scene_function": "opening_hook | confrontation | action_reveal | emotional_shock | dialogue_daily",\n'
+            '    "register": "本章用词文白度与语体特征（<=60字，不含原作专有名词）",\n'
+            '    "cadence": "本章句长呼吸与快慢切换特征（<=60字）",\n'
+            '    "dialogue_texture": "本章对白脾气、潜台词与语气特征（<=60字）",\n'
+            '    "psychic_distance": "本章内心贴近度与情绪表达方式（<=60字）",\n'
+            '    "quote": "最能代表本章语感呼吸的1句连续原文短摘录（15-120字，一字不改）"\n'
+            '  }'
+        )
+    voice_block = (',\n' + ',\n'.join(extra_blocks) + '\n') if extra_blocks else '\n'
     system = (
         '你是小说写作工作流的参考书精准拆解员。只返回一个合法 JSON 对象，不要输出任何额外解释。\n'
         '你的目标不是抄写剧情梗概，而是从本章原文中提取可直接复用于后续写作步骤（世界/人物/剧情/场景表达）的【具体做法与原文依据】。\n'
@@ -425,34 +460,46 @@ def _validate_extract(raw: dict[str, Any], content: str, span: dict[str, Any], a
             'boundary': boundary or '仅适用于同类型及相近冲突场景，不得生搬原作情节。',
             'quotes': verified_quotes,
         })
-    voice_signal: dict[str, Any] | None = None
-    raw_vs = raw.get('voice_signals')
-    if isinstance(raw_vs, dict):
-        vs_loc = _locate_quote(content, span['start'], span['end'], str(raw_vs.get('quote') or ''))
-        vs_fields = {
-            k: str(raw_vs.get(k) or '').strip()[:160]
-            for k in ('scene_function', 'register', 'cadence', 'dialogue_texture', 'psychic_distance')
-            if str(raw_vs.get(k) or '').strip()
+    def _extract_signal(raw_key: str, allowed_keys: tuple[str, ...]) -> dict[str, Any] | None:
+        raw_sig = raw.get(raw_key)
+        if not isinstance(raw_sig, dict):
+            return None
+        sig_loc = _locate_quote(content, span['start'], span['end'], str(raw_sig.get('quote') or ''))
+        sig_fields = {
+            k: str(raw_sig.get(k) or '').strip()[:160]
+            for k in allowed_keys
+            if str(raw_sig.get(k) or '').strip()
         }
-        if vs_fields or vs_loc:
-            voice_signal = {
-                'unit_id': span['unit_id'],
-                'chapter_index': span['story_chapter_index'],
-                **vs_fields,
-                **({'start': vs_loc[0], 'end': vs_loc[1], 'quote': content[vs_loc[0]:vs_loc[1]]} if vs_loc else {}),
-            }
+        if not sig_fields and not sig_loc:
+            return None
+        return {
+            'unit_id': span['unit_id'],
+            'chapter_index': span['story_chapter_index'],
+            **sig_fields,
+            **({'start': sig_loc[0], 'end': sig_loc[1], 'quote': content[sig_loc[0]:sig_loc[1]]} if sig_loc else {}),
+        }
+
+    extracted_signals: dict[str, Any] = {}
+    for sig_key, raw_key, allowed_keys in (
+        ('world_signal', 'world_signals', ('card_function', 'premise_law', 'scarcity_cost', 'institution_gate', 'exposition_policy')),
+        ('cast_signal', 'cast_signals', ('card_function', 'protagonist_drive', 'antagonist_logic', 'relation_asymmetry', 'supporting_roster')),
+        ('plot_signal', 'plot_signals', ('plan_function', 'drive_loop', 'hook_contract', 'pacing_cadence', 'aftermath_carry')),
+        ('voice_signal', 'voice_signals', ('scene_function', 'register', 'cadence', 'dialogue_texture', 'psychic_distance')),
+    ):
+        sig = _extract_signal(raw_key, allowed_keys)
+        if sig is not None:
+            extracted_signals[sig_key] = sig
 
     if not obs_out and not chars_out:
         # Allow empty chapter observation only with explicit summary, never stall on a single transition chapter.
         return {'unit_id': span['unit_id'], 'chapter_summary': summary or '本章过渡片段，未提炼出独立可复用方法',
-                'key_characters': [], 'observations': [],
-                **({'voice_signal': voice_signal} if voice_signal else {})}
+                'key_characters': [], 'observations': [], **extracted_signals}
     return {
         'unit_id': span['unit_id'],
         'chapter_summary': summary or obs_out[0]['what_happened'][:80],
         'key_characters': chars_out,
         'observations': obs_out,
-        **({'voice_signal': voice_signal} if voice_signal else {}),
+        **extracted_signals,
     }
 
 
@@ -462,8 +509,13 @@ def _synthesize_messages(
     extent_status: str,
     tracks: list[str],
     voice_signals: list[dict[str, Any]] | None = None,
+    domain_signals: dict[str, list[dict[str, Any]]] | None = None,
 ) -> list[dict[str, str]]:
+    from nw.cast_specs import CAST_BASES
+    from nw.plot_pacing_specs import PLOT_BASES
     from nw.voice_specs import VOICE_BASES
+    from nw.world_specs import WORLD_BASES
+
     indexed = []
     for idx, obs in enumerate(observations, start=1):
         indexed.append({
@@ -476,18 +528,53 @@ def _synthesize_messages(
             'reusable_pattern': obs['reusable_pattern'],
             'boundary': obs['boundary'],
         })
-    voice_fp_schema = (
-        ',\n  "voice_fingerprint": {\n'
-        '    "title": "脱剧情语感指纹标题（<=32字，不含书名与原作人名）",\n'
-        '    "base_voice_id": "从下方 voice_base_ids 中选最贴合的 1 项",\n'
-        '    "scene_functions": ["opening_hook", "confrontation"],\n'
-        '    "dimensions": {"register": "文白与用词特征", "cadence": "句式长短切换特征", "psychic_distance": "内心贴近方式", "dialogue_texture": "对白脾气特征", "imagery_budget": "细节描写取舍", "pacing_payoff": "节奏与章尾落点"},\n'
-        '    "techniques": ["可复用脱剧情语言手法1（<=140字）", "可复用脱剧情语言手法2"],\n'
-        '    "drift_guards": ["仿此语感时要防哪种跑偏（<=100字）"],\n'
-        '    "scene_function_notes": {"confrontation": "对抗/试探戏的语感要点", "opening_hook": "开场戏的语感要点"}\n'
-        '  }\n'
-        if 'scene_prose_craft' in tracks else '\n'
-    )
+    fp_schemas: list[str] = []
+    if 'genre_world_rules' in tracks:
+        fp_schemas.append(
+            '  "world_fingerprint": {\n'
+            '    "title": "脱剧情世界规则指纹标题（<=32字，不含书名与专有名词）",\n'
+            '    "base_id": "从 world_base_ids 中选最贴合的 1 项",\n'
+            '    "target_functions": ["rule_limit", "resource_cost"],\n'
+            '    "dimensions": {"premise_law": "底层运转规律", "scarcity_cost": "稀缺与代价法", "institution_gate": "制度制约法", "exposition_policy": "设定渗入法"},\n'
+            '    "techniques": ["可复用脱剧情世界规则设计手法1（<=140字）"],\n'
+            '    "drift_guards": ["仿此世界力学时要防哪种崩坏（<=100字）"]\n'
+            '  }'
+        )
+    if 'character_conflict' in tracks:
+        fp_schemas.append(
+            '  "cast_fingerprint": {\n'
+            '    "title": "脱剧情人物群像指纹标题（<=32字，不含书名与原作人名）",\n'
+            '    "base_id": "从 cast_base_ids 中选最贴合的 1 项",\n'
+            '    "target_functions": ["protagonist_arc", "antagonist_logic", "supporting_relation"],\n'
+            '    "dimensions": {"protagonist_drive": "主角驱动/盲点手法", "antagonist_logic": "反派不降智写法", "relation_asymmetry": "关系张力布局", "supporting_roster": "配角复用防工具化法"},\n'
+            '    "techniques": ["可复用脱剧情人物关系设计手法1（<=140字）"],\n'
+            '    "drift_guards": ["仿此人物力学时要防哪种跑偏（<=100字）"]\n'
+            '  }'
+        )
+    if 'opening_plot_hooks' in tracks:
+        fp_schemas.append(
+            '  "plot_pacing_fingerprint": {\n'
+            '    "title": "脱剧情节奏钩子指纹标题（<=32字，不含书名与原作情节）",\n'
+            '    "base_id": "从 plot_base_ids 中选最贴合的 1 项",\n'
+            '    "target_functions": ["golden_three", "chapter_split_rhythm", "hook_aftermath"],\n'
+            '    "dimensions": {"drive_loop": "推进循环特点", "golden_three": "开篇起势法", "pacing_cadence": "轻重节奏切换", "hook_contract": "章尾留钩与回应法", "aftermath_carry": "余波承接法"},\n'
+            '    "techniques": ["可复用脱剧情剧情推进/钩子手法1（<=140字）"],\n'
+            '    "drift_guards": ["仿此节奏时要防哪种跑偏（<=100字）"]\n'
+            '  }'
+        )
+    if 'scene_prose_craft' in tracks:
+        fp_schemas.append(
+            '  "voice_fingerprint": {\n'
+            '    "title": "脱剧情语感指纹标题（<=32字，不含书名与原作人名）",\n'
+            '    "base_voice_id": "从下方 voice_base_ids 中选最贴合的 1 项",\n'
+            '    "scene_functions": ["opening_hook", "confrontation"],\n'
+            '    "dimensions": {"register": "文白与用词特征", "cadence": "句式长短切换特征", "psychic_distance": "内心贴近方式", "dialogue_texture": "对白脾气特征", "imagery_budget": "细节描写取舍", "pacing_payoff": "节奏与章尾落点"},\n'
+            '    "techniques": ["可复用脱剧情语言手法1（<=140字）", "可复用脱剧情语言手法2"],\n'
+            '    "drift_guards": ["仿此语感时要防哪种跑偏（<=100字）"],\n'
+            '    "scene_function_notes": {"confrontation": "对抗/试探戏的语感要点", "opening_hook": "开场戏的语感要点"}\n'
+            '  }'
+        )
+    voice_fp_schema = (',\n' + ',\n'.join(fp_schemas) + '\n') if fp_schemas else '\n'
     system = (
         '你是小说工作流方法总编。请将以下带有原作铁证的章节观察，合并提炼为可直接接入下游制作步骤的【高质量可复用创作方法】。\n'
         '只返回一个合法 JSON 对象：{"book_overview": {...}, "methods": [...]}\n'
@@ -527,6 +614,28 @@ def _synthesize_messages(
         'tracks_allowed_tasks': {t: TARGETED_TRACKS[t]['allowed_tasks'] for t in tracks if t in TARGETED_TRACKS},
         'observations': indexed,
     }
+    dsig = domain_signals or {}
+    if 'genre_world_rules' in tracks:
+        user['world_base_ids'] = [{'id': b['id'], 'name': b['name']} for b in WORLD_BASES]
+        if dsig.get('world'):
+            user['observed_world_signals'] = [
+                {k: v for k, v in row.items() if k in ('chapter_index', 'card_function', 'premise_law', 'scarcity_cost', 'institution_gate', 'exposition_policy')}
+                for row in dsig['world'][:8]
+            ]
+    if 'character_conflict' in tracks:
+        user['cast_base_ids'] = [{'id': b['id'], 'name': b['name']} for b in CAST_BASES]
+        if dsig.get('cast'):
+            user['observed_cast_signals'] = [
+                {k: v for k, v in row.items() if k in ('chapter_index', 'card_function', 'protagonist_drive', 'antagonist_logic', 'relation_asymmetry', 'supporting_roster')}
+                for row in dsig['cast'][:8]
+            ]
+    if 'opening_plot_hooks' in tracks:
+        user['plot_base_ids'] = [{'id': b['id'], 'name': b['name']} for b in PLOT_BASES]
+        if dsig.get('plot_pacing'):
+            user['observed_plot_signals'] = [
+                {k: v for k, v in row.items() if k in ('chapter_index', 'plan_function', 'drive_loop', 'hook_contract', 'pacing_cadence', 'aftermath_carry')}
+                for row in dsig['plot_pacing'][:8]
+            ]
     if 'scene_prose_craft' in tracks:
         user['voice_base_ids'] = [{'id': b['id'], 'name': b['name']} for b in VOICE_BASES]
         if voice_signals:
@@ -566,8 +675,9 @@ def _validate_synthesis(raw: dict[str, Any], obs_count: int) -> dict[str, Any]:
             'evidence_required': str(row.get('evidence_required') or '').strip()[:400],
         })
     result: dict[str, Any] = {'book_overview': overview, 'methods': methods}
-    if isinstance(raw.get('voice_fingerprint'), dict):
-        result['voice_fingerprint'] = raw['voice_fingerprint']
+    for fp_key in ('world_fingerprint', 'cast_fingerprint', 'plot_pacing_fingerprint', 'voice_fingerprint'):
+        if isinstance(raw.get(fp_key), dict):
+            result[fp_key] = raw[fp_key]
     return result
 
 
@@ -1133,6 +1243,11 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
         raise ValueError('抽样章节中未提取到带原文引文的有效写作方法观察；请尝试扩大抽样章数或指定核心冲突章节区间')
 
     voice_signals = [rec['voice_signal'] for rec in state['extracted'] if isinstance(rec.get('voice_signal'), dict)]
+    domain_signals = {
+        'world': [rec['world_signal'] for rec in state['extracted'] if isinstance(rec.get('world_signal'), dict)],
+        'cast': [rec['cast_signal'] for rec in state['extracted'] if isinstance(rec.get('cast_signal'), dict)],
+        'plot_pacing': [rec['plot_signal'] for rec in state['extracted'] if isinstance(rec.get('plot_signal'), dict)],
+    }
     if not state.get('synthesis_done'):
         def _val_synth(raw: dict) -> dict:
             return _validate_synthesis(raw, len(all_obs))
@@ -1140,7 +1255,10 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
         synthesis, _ = model_call(
             service, job['id'], config, provider,
             key='targeted_synthesize:0', phase='synthesize',
-            messages=_synthesize_messages(all_obs, confirmed_types, opts['extent'], tracks, voice_signals=voice_signals),
+            messages=_synthesize_messages(
+                all_obs, confirmed_types, opts['extent'], tracks,
+                voice_signals=voice_signals, domain_signals=domain_signals,
+            ),
             validator=_val_synth,
             auto_retry_transient=True,
         )
@@ -1232,13 +1350,98 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
                     )
                 approved_methods.append({**item, 'auto_approved': True})
             state['published_methods'] = approved_methods
-            # Auto-collect a plot-free, genre-bounded Voice Fingerprint Card whenever Track 4 produced verified prose observations.
+            # Auto-collect plot-free, genre-bounded Craft Fingerprint Cards across all 4 active tracks!
+            book_row = conn.execute('SELECT title FROM staging_books WHERE id=?', (job['book_id'],)).fetchone()
+            book_title = str(book_row['title'] if book_row else '参考作品')
+            published_craft_fps: dict[str, dict[str, Any]] = {}
+
+            from nw.craft_specs import all_base_name_map, default_domain_base_id, domain_base_map
+            from nw.craft_specs_base import save_craft_fingerprint
+
+            base_names = all_base_name_map()
+            track_domain_specs = (
+                ('genre_world_rules', 'world', 'world_fingerprint', '世界规则指纹',
+                 ('premise_law', 'scarcity_cost', 'institution_gate', 'exposition_policy'), 'card_function'),
+                ('character_conflict', 'cast', 'cast_fingerprint', '人物群像指纹',
+                 ('protagonist_drive', 'antagonist_logic', 'relation_asymmetry', 'supporting_roster'), 'card_function'),
+                ('opening_plot_hooks', 'plot_pacing', 'plot_pacing_fingerprint', '剧情节奏指纹',
+                 ('drive_loop', 'hook_contract', 'pacing_cadence', 'aftermath_carry'), 'plan_function'),
+            )
+            for track_id, dom, synth_key, zh_label, sig_dim_keys, fn_key in track_domain_specs:
+                t_obs = [obs for obs in all_obs if obs.get('track') == track_id]
+                t_sigs = domain_signals.get(dom) or []
+                t_synth = (state.get('synthesis') or {}).get(synth_key)
+                if track_id not in tracks or not (t_obs or t_sigs or isinstance(t_synth, dict)):
+                    continue
+                raw_fp = t_synth if isinstance(t_synth, dict) else {}
+                bmap = domain_base_map(dom)
+                bid = str(raw_fp.get('base_id') or '')
+                if bid not in bmap:
+                    bid = default_domain_base_id(dom, confirmed_types)
+                dims = dict(raw_fp.get('dimensions') or {})
+                for sig in t_sigs:
+                    for dk in sig_dim_keys:
+                        if not dims.get(dk) and sig.get(dk):
+                            dims[dk] = sig[dk]
+                techniques = [str(x).strip() for x in (raw_fp.get('techniques') or ()) if str(x).strip()]
+                if not techniques:
+                    techniques = [obs['reusable_pattern'][:180] for obs in t_obs[:3] if obs.get('reusable_pattern')]
+                drift_guards = [str(x).strip() for x in (raw_fp.get('drift_guards') or ()) if str(x).strip()]
+                if not drift_guards:
+                    drift_guards = [obs['boundary'][:160] for obs in t_obs[:2] if obs.get('boundary')]
+                ev_spans = []
+                for sig in t_sigs[:3]:
+                    if sig.get('quote') and 'start' in sig and 'end' in sig:
+                        ev_spans.append({k: sig[k] for k in ('unit_id', 'chapter_index', 'start', 'end', 'quote') if k in sig})
+                for obs in t_obs[:3]:
+                    for q in (obs.get('quotes') or ())[:1]:
+                        if len(ev_spans) < 4:
+                            ev_spans.append({
+                                'unit_id': obs['unit_id'], 'chapter_index': obs['chapter_index'],
+                                'start': q['start'], 'end': q['end'], 'quote': q['quote'],
+                            })
+                fp_funcs = list(raw_fp.get('target_functions') or [])
+                for sig in t_sigs:
+                    if sig.get(fn_key) and sig[fn_key] not in fp_funcs:
+                        fp_funcs.append(sig[fn_key])
+                fp_title = str(raw_fp.get('title') or '').strip() or f"{bmap[bid]['name']}·{zh_label}（{book_title[:16]}）"
+                saved_dom_fp = save_craft_fingerprint(
+                    conn,
+                    domain=dom,
+                    book_id=job['book_id'],
+                    structure_version=version,
+                    title=fp_title,
+                    base_id=bid,
+                    type_tags=confirmed_types,
+                    body={
+                        'dimensions': dims,
+                        'techniques': techniques,
+                        'drift_guards': drift_guards,
+                        'target_functions': fp_funcs,
+                        'function_notes': dict(raw_fp.get('function_notes') or {}),
+                        'evidence_spans': ev_spans,
+                    },
+                    status='approved',
+                    target_functions=fp_funcs,
+                    ts=now,
+                    base_names=base_names,
+                )
+                published_craft_fps[dom] = {
+                    'id': saved_dom_fp['id'],
+                    'domain': dom,
+                    'title': saved_dom_fp['title'],
+                    'base_id': saved_dom_fp['base_id'],
+                    'base_name': saved_dom_fp['base_name'],
+                    'type_tags': saved_dom_fp['type_tags'],
+                    'excluded_types': saved_dom_fp['excluded_types'],
+                    'techniques_count': len(saved_dom_fp['body'].get('techniques') or ()),
+                }
+
+            # Track 4: keep legacy voice_fingerprints persistence 100% intact and mirror summary in published_craft_fingerprints
             prose_obs = [obs for obs in all_obs if obs.get('track') == 'scene_prose_craft']
             synth_fp = (state.get('synthesis') or {}).get('voice_fingerprint')
             if 'scene_prose_craft' in tracks and (prose_obs or voice_signals or isinstance(synth_fp, dict)):
                 from nw.voice_specs import VOICE_BASE_MAP, default_voice_base_id, save_voice_fingerprint
-                book_row = conn.execute('SELECT title FROM staging_books WHERE id=?', (job['book_id'],)).fetchone()
-                book_title = str(book_row['title'] if book_row else '参考作品')
                 raw_fp = synth_fp if isinstance(synth_fp, dict) else {}
                 base_id = str(raw_fp.get('base_voice_id') or '')
                 if base_id not in VOICE_BASE_MAP:
@@ -1289,15 +1492,22 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
                     scene_functions=fp_funcs,
                     ts=now,
                 )
-                state['published_voice_fingerprint'] = {
+                voice_summary = {
                     'id': saved_fp['id'],
+                    'domain': 'voice',
                     'title': saved_fp['title'],
+                    'base_id': saved_fp['base_voice_id'],
+                    'base_name': saved_fp['base_voice_name'],
                     'base_voice_id': saved_fp['base_voice_id'],
                     'base_voice_name': saved_fp['base_voice_name'],
                     'type_tags': saved_fp['type_tags'],
                     'excluded_types': saved_fp['excluded_types'],
                     'techniques_count': len(saved_fp['body'].get('techniques') or ()),
                 }
+                state['published_voice_fingerprint'] = voice_summary
+                published_craft_fps['voice'] = voice_summary
+            if published_craft_fps:
+                state['published_craft_fingerprints'] = published_craft_fps
             conn.execute(
                 "UPDATE corpus_jobs SET status='completed',phase='publish',state_json=?,error='',updated_at=? WHERE id=?",
                 (encode(state), now, job['id']),
