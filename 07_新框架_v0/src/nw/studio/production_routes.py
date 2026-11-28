@@ -123,6 +123,13 @@ class ProductionRoutes:
             data = lib.get_book_anatomy(segs[1])
         elif segs == ['radar']:
             data = lib.radar_overview(platform=first(query, 'platform'))
+        elif segs == ['radar', 'playbooks']:
+            types = [t for t in first(query, 'types').split(',') if t]
+            data = lib.radar_playbooks(
+                scale=first(query, 'scale', 'long'),
+                experience=first(query, 'experience', 'beginner'),
+                types=types or None,
+            )
         elif len(segs) == 3 and segs[:2] == ['radar', 'snapshots']:
             data = lib.radar_snapshot_detail(segs[2])
         elif len(segs) == 3 and segs[:2] == ['kb', 'types']:

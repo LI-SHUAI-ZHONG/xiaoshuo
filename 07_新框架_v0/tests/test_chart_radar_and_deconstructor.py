@@ -500,3 +500,84 @@ def test_studio_radar_and_anatomy_http_routes(tmp_path: Path) -> None:
     assert routes.post(h_anat_post, ['staging', book['id'], 'anatomy'], {'use_llm': False, 'harvest_excerpts': True})
     assert h_anat_post.status == 200 and len(h_anat_post.payload['harvested_excerpts']) >= 1
     assert len(h_anat_post.payload['backfilled_topics']) >= 1
+
+
+# ── 10. Verified 2025-2026 Multi-Platform Monetization & Chart Playbooks ──────
+
+def test_platform_playbooks_recommendations_preflight_and_radar_route(tmp_path: Path) -> None:
+    from nw.platform_playbooks import (
+        PLATFORM_PLAYBOOKS,
+        get_platform_playbook,
+        list_platform_playbooks,
+        recommend_monetization_platforms,
+    )
+    from nw.publish_preflight import PLATFORM_SPECS, validate_publish_package
+
+    # Must cover all 6 major monetizable platforms with full ladders & rank list rules
+    expected_ids = {'fanqie', 'qidian', 'qimao', 'jjwxc', 'zhihu_yanyan', 'ciweimao'}
+    assert expected_ids.issubset(set(PLATFORM_PLAYBOOKS.keys()))
+    assert expected_ids.issubset(set(PLATFORM_SPECS.keys()))
+    for pb in list_platform_playbooks():
+        assert pb['monetization']['model']
+        assert pb['signing']['threshold']
+        assert len(pb['progression_ladder']) >= 3
+        assert len(pb['rank_lists']) >= 2
+        assert len(pb['craft_requirements']['redlines']) >= 2
+
+    assert get_platform_playbook('知乎盐言')['id'] == 'zhihu_yanyan'
+    assert get_platform_playbook('番茄')['id'] == 'fanqie'
+
+    # Short-fiction beginner -> 知乎盐言 & 番茄短故事 top 2
+    short_recs = recommend_monetization_platforms(scale='short', experience='beginner')
+    assert {r['platform_id'] for r in short_recs[:2]} == {'zhihu_yanyan', 'fanqie'}
+
+    # Long-fiction beginner -> 七猫保底/训练营 #1, with 2026 Fanqie完本签约 caution
+    long_beg = recommend_monetization_platforms(scale='long', experience='beginner')
+    assert long_beg[0]['platform_id'] == 'qimao'
+    fq_rec = next(r for r in long_beg if r['platform_id'] == 'fanqie')
+    assert any('完本签约' in c for c in fq_rec['cautions'])
+
+    # Experienced xuanhuan author -> Qidian & Fanqie near top
+    exp_recs = recommend_monetization_platforms(scale='long', experience='experienced', genre_ids=['GENRE_XUANHUAN'])
+    assert {'qidian', 'fanqie'} & {r['platform_id'] for r in exp_recs[:2]}
+
+    # Preflight enforces Zhihu Yanyan redline (no BL/纯爱) & attaches playbook_summary
+    bad_zhihu = validate_publish_package(
+        'zhihu_yanyan',
+        title='大婚当夜我在牌位前掀桌了',
+        synopsis='这是一篇三万字强反转短篇故事，讲述女主在婚礼当天识破未婚夫与白月光阴谋并当场反杀夺回全部家族资产。',
+        tags=['纯爱', '反转'],
+        category='古代言情',
+    )
+    assert bad_zhihu['passed'] is False
+    assert any(i['code'] == 'PLATFORM_REDLINE_ZHIHU' for i in bad_zhihu['blocking_issues'])
+    assert bad_zhihu['playbook_summary']['monetization_model']
+
+    ok_cwm = validate_publish_package(
+        'ciweimao',
+        title='东京怪谈观察日记',
+        synopsis='穿越平行世界东京，拥有规则怪谈解析面板的普通高中生靠吐槽与推理解决异闻的轻小说冒险日常。',
+        tags=['轻小说', '脑洞'],
+        category='二次元',
+    )
+    assert ok_cwm['passed'] is True
+    assert '60%' in ok_cwm['playbook_summary']['revenue_split']
+
+    # Studio HTTP route GET /radar/playbooks + monetization_hint inside Topic Decisions
+    lib = LibraryService(tmp_path / 'library')
+    routes = ProductionRoutes(_StubProduction(), lib)
+    h_pb = _StubHandler()
+    assert routes.get(h_pb, ['radar', 'playbooks'], {'scale': ['short'], 'experience': ['beginner']})
+    assert h_pb.status == 200
+    assert len(h_pb.payload['playbooks']) == 6
+    assert h_pb.payload['recommendations'][0]['platform_id'] == 'zhihu_yanyan'
+
+    h_imp = _StubHandler()
+    assert routes.post(h_imp, ['radar', 'import'], {
+        'platform': '番茄', 'list_name': '黑马新书榜', 'format': 'csv',
+        'text': '排名,书名,作者,题材,字数,在读,标签\n1,规则怪谈之书,星海,悬疑脑洞,22万,15万,规则怪谈、智斗\n',
+    })
+    h_top = _StubHandler()
+    assert routes.post(h_top, ['radar', 'topics'], {'use_llm': False, 'max_topics': 1})
+    assert '番茄小说变现指引' in h_top.payload['topics'][0]['validation_action']
+

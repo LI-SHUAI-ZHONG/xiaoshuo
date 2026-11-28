@@ -328,15 +328,30 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
     # ---------- Chart Radar & Market Intelligence ----------
 
     def radar_overview(self, *, platform: str = '') -> dict:
+        from nw.platform_playbooks import list_platform_playbooks, recommend_monetization_platforms
         with self.connect() as conn:
             snapshots = _list_chart_snapshots(conn, platform=platform, limit=40)
             aggregation = _aggregate_chart_snapshots(conn, platform=platform) if snapshots else {'snapshot_count': 0, 'skipped_duplicates': [], 'platforms': []}
             topics = _list_topic_decisions(conn, limit=30)
         return {
             'platforms': list(RADAR_PLATFORMS.values()),
+            'playbooks': list_platform_playbooks(),
+            'beginner_recommendations': recommend_monetization_platforms(scale='long', experience='beginner'),
             'snapshots': snapshots,
             'aggregation': aggregation,
             'topics': topics,
+        }
+
+    def radar_playbooks(self, *, scale: str = 'long', experience: str = 'beginner', types: list[str] | None = None) -> dict:
+        from nw.platform_playbooks import PLAYBOOK_UPDATED_PERIOD, list_platform_playbooks, recommend_monetization_platforms
+        return {
+            'updated_period': PLAYBOOK_UPDATED_PERIOD,
+            'playbooks': list_platform_playbooks(),
+            'recommendations': recommend_monetization_platforms(
+                scale=scale or 'long',
+                experience=experience or 'beginner',
+                genre_ids=types,
+            ),
         }
 
     def radar_snapshot_detail(self, snapshot_id: str) -> dict:

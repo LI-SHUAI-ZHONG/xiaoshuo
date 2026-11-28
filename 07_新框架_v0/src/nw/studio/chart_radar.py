@@ -30,6 +30,7 @@ from uuid import uuid4
 
 from nw.call_control import send_model
 from nw.llm.base import LLMProvider
+from nw.platform_playbooks import get_platform_playbook, list_platform_playbooks, platform_monetization_brief
 from nw.studio import catalog
 from nw.studio.library_util import encode, timestamp
 
@@ -158,10 +159,18 @@ PLATFORMS: dict[str, dict[str, Any]] = {
             {'id': 'subscribe', 'label': '订阅榜'},
         ],
     },
+    'zhihu_yanyan': {
+        'id': 'zhihu_yanyan',
+        'name': '知乎盐言',
+        'full_name': '知乎盐言故事（盐选短篇 / 中篇）',
+        'primary_metric': '赞同',
+        'sparse_threshold': 10,
+        'live_lists': [],
+    },
     'short': {
         'id': 'short',
         'name': '短篇榜单',
-        'full_name': '知乎盐言 / 点众 / 黑岩 / 番茄短故事',
+        'full_name': '番茄短故事 / 点众 / 黑岩等综合短篇榜',
         'primary_metric': '热度',
         'sparse_threshold': 10,
         'live_lists': [],
@@ -174,8 +183,8 @@ _PLATFORM_ALIAS_MAP: dict[str, str] = {
     '七猫': 'qimao', '七猫免费小说': 'qimao', '七猫小说': 'qimao', 'qimao': 'qimao',
     '晋江': 'jjwxc', '晋江文学城': 'jjwxc', 'jjwxc': 'jjwxc',
     '刺猬猫': 'ciweimao', '刺猬猫阅读': 'ciweimao', 'ciweimao': 'ciweimao',
-    '知乎': 'short', '知乎盐言': 'short', '盐言': 'short', '点众': 'short', '黑岩': 'short',
-    '番茄短篇': 'short', '番茄短故事': 'short', '短篇': 'short', 'short': 'short',
+    '知乎': 'zhihu_yanyan', '知乎盐言': 'zhihu_yanyan', '知乎盐言故事': 'zhihu_yanyan', '盐言': 'zhihu_yanyan', 'zhihu_yanyan': 'zhihu_yanyan',
+    '点众': 'short', '黑岩': 'short', '番茄短篇': 'short', '番茄短故事': 'short', '短篇': 'short', 'short': 'short',
 }
 
 _METRIC_PRIORITY = ('在读', '热度', '收藏', '赞同', '点赞', '阅读', '月票', '总推荐', '榜单值', '营养液', '积分', '评分')
@@ -1634,7 +1643,10 @@ def generate_topic_decisions(
                 'feasibility': feasibility,
                 'feasibility_reason': feas_reason,
                 'risks': f'若直接沿用榜上头部老书模板极易同质化；须避开空洞开篇设定说明与前 3 章无兑现风险。',
-                'validation_action': '先挑下方 1–2 本对标新书送入「预存库」做黄金三章与情绪模块拆解，再试写前 3 章测追读留存。',
+                'validation_action': (
+                    '先挑下方 1–2 本对标新书送入「预存库」做黄金三章与情绪模块拆解，再试写前 3 章测追读留存。'
+                    + (f' {platform_monetization_brief(p["platform"])}' if platform_monetization_brief(p['platform']) else '')
+                )[:380],
                 'benchmark_books': benchmarks,
             })
 
@@ -1689,7 +1701,7 @@ def generate_topic_decisions(
                 cand['primary_genre_id'], encode(cand['genre_tags']), cand['target_reader'][:180],
                 cand['core_hook'][:300], cand['why_it_works'][:400], cand['differentiation'][:300],
                 cand['feasibility'], cand['feasibility_reason'][:300], cand['risks'][:260],
-                cand['validation_action'][:260], encode(cand['benchmark_books']), ts, ts,
+                cand['validation_action'][:380], encode(cand['benchmark_books']), ts, ts,
             ),
         )
         row = conn.execute('SELECT * FROM topic_decisions WHERE id=?', (tid,)).fetchone()

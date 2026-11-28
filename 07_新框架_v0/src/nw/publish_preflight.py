@@ -18,6 +18,7 @@ import re
 from typing import Any
 
 from nw.craft_evolution import _accepted_chapter_texts
+from nw.platform_playbooks import get_platform_playbook
 from nw.pre_review_gate import run_pre_review_gate
 from nw.prose_normalizer import normalize_prose_punctuation
 from nw.store import Store
@@ -36,7 +37,7 @@ PLATFORM_SPECS: dict[str, dict[str, Any]] = {
         'max_tags': 5,
         'chapter_min_chars': 1800,
         'chapter_max_chars': 4000,
-        'signing_notes': '番茄书名严控 15 字内（半角算半字），禁空格/表情/促销括号，正文避免作者题外话与拼音代写。',
+        'signing_notes': '番茄书名严控 15 字内（半角算半字），禁空格/表情/促销括号；2026年10月起 Lv.0/Lv.1 新人长篇需完本签约（15–30万字），短故事 0.5–3万字完本可投，日更≥4000字且分成达标享全勤。',
     },
     'qidian': {
         'id': 'qidian',
@@ -50,7 +51,7 @@ PLATFORM_SPECS: dict[str, dict[str, Any]] = {
         'max_tags': 4,
         'chapter_min_chars': 2000,
         'chapter_max_chars': 5000,
-        'signing_notes': '起点重视开篇三章节奏与书名简洁辨识度，书名不超过 15 字，简介突出核心设定与卖点。',
+        'signing_notes': '起点建议 6000 字+大纲走编辑内投，签约后 5 天内满 2 万字入库，6 万字分类试水推 PK 追读，约 20 万字/40天上架；全月日更≥4000–6000字不可断更防掉智能推档位。',
     },
     'qimao': {
         'id': 'qimao',
@@ -64,7 +65,7 @@ PLATFORM_SPECS: dict[str, dict[str, Any]] = {
         'max_tags': 5,
         'chapter_min_chars': 1800,
         'chapter_max_chars': 3500,
-        'signing_notes': '七猫偏好直白高辨识书名与紧凑手机端短段，简介不超过 400 字，避免大段设定说明。',
+        'signing_notes': '七猫支持千字保底+超保底五五分成或纯分成（3万字训练营可切入），日更≥4000字享全勤（月封顶20万字、可请假1天；纯分成完结须≥20万字且不烂尾），简介严控 400 字内。',
     },
     'jjwxc': {
         'id': 'jjwxc',
@@ -78,9 +79,39 @@ PLATFORM_SPECS: dict[str, dict[str, Any]] = {
         'max_tags': 6,
         'chapter_min_chars': 2000,
         'chapter_max_chars': 5000,
-        'signing_notes': '晋江书名不超过 14 字，禁特殊装饰符号与表情，文案可包含立意与排雷但禁违规外链。',
+        'signing_notes': '晋江书名≤14字（不折半角），签人制5年起（1万字自荐申签），言情~300收/纯爱~300-500收顺V，版权分成8:2作者占大头；注意新晋作者榜同实名限次，入V第3–4天上夹子定生死。',
+    },
+    'zhihu_yanyan': {
+        'id': 'zhihu_yanyan',
+        'name': '知乎盐言故事',
+        'max_title_units': 30.0,
+        'min_title_units': 4.0,
+        'half_width_ascii': True,
+        'allow_title_spaces': True,
+        'synopsis_min_chars': 30,
+        'synopsis_max_chars': 600,
+        'max_tags': 5,
+        'chapter_min_chars': 1500,
+        'chapter_max_chars': 6000,
+        'signing_notes': '盐言故事单本独家签（不绑人），短篇建议 1万–3万字完结投稿（5:5盐选分成+短剧孵化），前300–500字导语钩子决定免转付转化；硬红线：严禁耽美/纯爱及未成年恋爱！',
+    },
+    'ciweimao': {
+        'id': 'ciweimao',
+        'name': '刺猬猫阅读',
+        'max_title_units': 15.0,
+        'min_title_units': 2.0,
+        'half_width_ascii': True,
+        'allow_title_spaces': False,
+        'synopsis_min_chars': 20,
+        'synopsis_max_chars': 500,
+        'max_tags': 5,
+        'chapter_min_chars': 2000,
+        'chapter_max_chars': 4500,
+        'signing_notes': '刺猬猫二次元垂直付费 6:4 分成（作者60%），约3万字内投ABCD签、12万字上架；2026年12月起新版全勤为月更12万/日更4000挂钩订阅15%–25%提成。',
     },
 }
+
+_ZHIHU_BANNED_GENRE_RE = re.compile(r'(?:耽美|纯爱|双男主|BL|未成年恋爱|早恋)', re.IGNORECASE)
 
 _FORBIDDEN_TITLE_SYMBOLS_RE = re.compile(r'[【】\[\]《》<>★☆♥❤●◆■▲▼※@#\$%\^&\*\+=\\|/~`]')
 _EMOJI_RE = re.compile(r'[\U0001F300-\U0001FAFF\u2600-\u27BF]')
@@ -125,7 +156,7 @@ def validate_publish_package(
     """Validate book metadata (title, synopsis, tags, category) against platform publish specs."""
     pid = str(platform or 'fanqie').strip().lower()
     if pid not in PLATFORM_SPECS:
-        raise ValueError(f'不支持的发布平台: {platform}（支持 fanqie / qidian / qimao / jjwxc）')
+        raise ValueError(f'不支持的发布平台: {platform}（支持 fanqie / qidian / qimao / jjwxc / zhihu_yanyan / ciweimao）')
     spec = PLATFORM_SPECS[pid]
     raw_title = str(title or '')
     clean_title = raw_title.strip()
@@ -208,6 +239,27 @@ def validate_publish_package(
             'message': '尚未指定目标频道/大类分类。',
         })
 
+    if pid == 'zhihu_yanyan':
+        meta_blob = ' '.join([clean_title, clean_syn, str(category or ''), *clean_tags])
+        if bm := _ZHIHU_BANNED_GENRE_RE.search(meta_blob):
+            blocking.append({
+                'field': 'category', 'code': 'PLATFORM_REDLINE_ZHIHU',
+                'message': f'命中知乎盐言故事内容硬红线「{bm.group(0)}」（官方严禁耽美/纯爱及未成年恋爱题材），请改投晋江或调整设定。',
+            })
+
+    pb = get_platform_playbook(pid) or {}
+    playbook_summary = {
+        'tier': pb.get('tier', ''),
+        'monetization_model': (pb.get('monetization') or {}).get('model', ''),
+        'revenue_split': (pb.get('monetization') or {}).get('revenue_split', ''),
+        'full_attendance': (pb.get('monetization') or {}).get('full_attendance', ''),
+        'signing_threshold': (pb.get('signing') or {}).get('threshold', ''),
+        'recent_2026_alert': (pb.get('signing') or {}).get('recent_2026_alert', ''),
+        'daily_words': (pb.get('craft_requirements') or {}).get('daily_words', ''),
+        'redlines': list((pb.get('craft_requirements') or {}).get('redlines') or ()),
+        'progression_ladder': list(pb.get('progression_ladder') or ()),
+    }
+
     return {
         'passed': len(blocking) == 0,
         'platform': pid,
@@ -219,6 +271,7 @@ def validate_publish_package(
         'tag_count': len(clean_tags),
         'max_tags': spec['max_tags'],
         'signing_notes': spec['signing_notes'],
+        'playbook_summary': playbook_summary,
         'blocking_issues': blocking,
         'warnings': warnings,
     }

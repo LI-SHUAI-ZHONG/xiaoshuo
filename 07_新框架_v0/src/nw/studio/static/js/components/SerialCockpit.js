@@ -690,6 +690,16 @@ export async function openPublishPreflightDrawer(novelId, {onChanged = null} = {
           ${(meta.blocking_issues || []).map(it => `<div class="notice warning" style="margin:0;font-size:12px">⛔ ${esc(it.message)}</div>`).join('')}
           ${(meta.warnings || []).map(it => `<div class="notice" style="margin:0;font-size:12px">⚠️ ${esc(it.message)}</div>`).join('')}
           ${!(meta.blocking_issues || []).length && !(meta.warnings || []).length ? '<p class="muted" style="margin:0;font-size:12px">✅ 书名、简介与标签全部通过平台规范。</p>' : ''}
+          ${meta.playbook_summary && meta.playbook_summary.monetization_model ? `<details class="details" style="margin-top:4px">
+            <summary>查看「${esc(meta.platform_name || '')}」变现分成、签约与晋级规则</summary>
+            <div class="stack" style="gap:6px;margin-top:8px;font-size:12px">
+              ${meta.playbook_summary.recent_2026_alert ? `<p class="notice" style="margin:0">${esc(meta.playbook_summary.recent_2026_alert)}</p>` : ''}
+              <p style="margin:0"><strong>变现模式：</strong>${esc(meta.playbook_summary.monetization_model)}</p>
+              <p style="margin:0"><strong>签约门槛：</strong>${esc(meta.playbook_summary.signing_threshold || '')}</p>
+              <p style="margin:0"><strong>全勤要求：</strong>${esc(meta.playbook_summary.full_attendance || '')}（${esc(meta.playbook_summary.daily_words || '')}）</p>
+              <a class="text-link" href="#/radar?tab=playbooks">打开 6 大平台完整榜单与变现规则库 →</a>
+            </div>
+          </details>` : ''}
         </div>
 
         <div class="card stack" style="gap:8px">

@@ -8,18 +8,20 @@ const VERIFY_CLASS={verified:'green',pending_deconstruction:'amber',unconfirmed:
 
 export async function render(ctx){
   let data=null;
-  let tab=['collect','aggregate','topics'].includes(ctx.params.get('tab'))?ctx.params.get('tab'):'collect';
+  let tab=['collect','aggregate','topics','playbooks'].includes(ctx.params.get('tab'))?ctx.params.get('tab'):'collect';
   let platformFilter=ctx.params.get('platform')||'';
   let diffResult=null;
   let fetchNote='';
+  let recScale='long',recExp='beginner',recGenre='',recList=null;
 
   ctx.sidebar('扫榜雷达与选题决策',[
     ['radar?tab=collect','扫榜采集与导入','spark'],
     ['radar?tab=aggregate','跨榜聚合与趋势差分','layers'],
     ['radar?tab=topics','选题决策与拆解验证','book'],
+    ['radar?tab=playbooks','赚钱平台与榜单规则','shield'],
     ['staging','进入预存库拆书','inbox'],
     ['atlas','对照类型图鉴','atlas'],
-  ],'<strong>扫榜 → 拆书 → 创作闭环</strong>仅走公开网页/JSON 接口，严格不绕过任何验证码或风控；遇到风控可直接复制榜单文本或上传 Markdown / CSV / JSON 一键导入。');
+  ],'<strong>扫榜 → 拆书 → 创作变现闭环</strong>内置 6 大主流变现平台（番茄/起点/七猫/晋江/知乎盐言/刺猬猫）最新签约、全勤、晋级与榜单规则；采集仅走公开接口，遇风控自动引导粘贴导入。');
 
   async function load(){
     const q=platformFilter?`?platform=${enc(platformFilter)}`:'';
@@ -57,7 +59,7 @@ export async function render(ctx){
       </div>
 
       <div class="tabs corpus-tabs">
-        ${[['collect','扫榜采集与万能导入'],['aggregate','跨榜聚合与趋势差分'],['topics','选题决策与拆解验证']].map(([id,label])=>
+        ${[['collect','扫榜采集与万能导入'],['aggregate','跨榜聚合与趋势差分'],['topics','选题决策与拆解验证'],['playbooks','赚钱平台与榜单规则库（6大平台）']].map(([id,label])=>
           `<button data-radar-tab="${id}" class="${tab===id?'active':''}">${label}</button>`
         ).join('')}
       </div>
@@ -79,6 +81,7 @@ export async function render(ctx){
   function paintTab(){
     if(tab==='collect') paintCollect();
     else if(tab==='aggregate') paintAggregate();
+    else if(tab==='playbooks') paintPlaybooks();
     else paintTopics();
   }
 
@@ -432,6 +435,159 @@ export async function render(ctx){
     });
     $('#btnGenTopicsZero').onclick=e=>triggerGen(false,e.currentTarget);
     $('#btnGenTopicsLlm').onclick=e=>triggerGen(true,e.currentTarget);
+  }
+
+  function paintPlaybooks(){
+    const playbooks=data.playbooks||[];
+    const recs=recList||data.beginner_recommendations||[];
+    const friendlyTag=f=>f==='high'?'<span class="tag green">新人高友好</span>':f==='medium'?'<span class="tag amber">中（需避坑）</span>':'<span class="tag">内卷高门槛</span>';
+
+    $('#radarTabBody').innerHTML=`<div class="stack">
+      <section class="card stack">
+        <div class="row spread wrap">
+          <div>
+            <h3>按我的情况推荐最适合赚钱的发书平台（2025–2026 规则版）</h3>
+            <p class="muted">综合签约门槛、2026 最新政策变化（如番茄新人完本签约、刺猬猫全勤改版）、全勤兜底与题材匹配度智能排序。</p>
+          </div>
+          <span class="tag blue">覆盖 6 大主流变现平台</span>
+        </div>
+        <form id="playbookRecForm" class="row wrap">
+          <label class="field"><span>计划篇幅</span>
+            <select name="scale">
+              <option value="long" ${recScale==='long'?'selected':''}>长篇连载（20万–200万字）</option>
+              <option value="short" ${recScale==='short'?'selected':''}>短篇快变现（0.5万–3万字完本）</option>
+            </select>
+          </label>
+          <label class="field"><span>当前经验</span>
+            <select name="experience">
+              <option value="beginner" ${recExp==='beginner'?'selected':''}>新手 / 首本变现（稳健低试错优先）</option>
+              <option value="experienced" ${recExp==='experienced'?'selected':''}>有完本经验 / Lv.2+（高流量与高订阅上限优先）</option>
+            </select>
+          </label>
+          <label class="field"><span>主攻题材（可选）</span>
+            <select name="genre">
+              <option value="">不限题材</option>
+              <option value="GENRE_DUSHI" ${recGenre==='GENRE_DUSHI'?'selected':''}>都市 / 脑洞</option>
+              <option value="GENRE_XUANHUAN" ${recGenre==='GENRE_XUANHUAN'?'selected':''}>玄幻 / 奇幻</option>
+              <option value="GENRE_XIANXIA" ${recGenre==='GENRE_XIANXIA'?'selected':''}>仙侠 / 修真</option>
+              <option value="GENRE_YANQING" ${recGenre==='GENRE_YANQING'?'selected':''}>言情 / 女频</option>
+              <option value="GENRE_XUANYI" ${recGenre==='GENRE_XUANYI'?'selected':''}>悬疑 / 规则怪谈</option>
+              <option value="GENRE_LISHI" ${recGenre==='GENRE_LISHI'?'selected':''}>历史 / 架空</option>
+              <option value="GENRE_QINGXIAOSHUO" ${recGenre==='GENRE_QINGXIAOSHUO'?'selected':''}>轻小说 / 二次元</option>
+              <option value="GENRE_XIANSHI" ${recGenre==='GENRE_XIANSHI'?'selected':''}>现实 / 婚姻家庭</option>
+            </select>
+          </label>
+          <button class="button" type="submit" style="align-self:flex-end">匹配推荐平台</button>
+        </form>
+        <div class="grid two">
+          ${recs.slice(0,4).map((r,idx)=>`<article class="card stack">
+            <div class="row spread wrap">
+              <strong>#${idx+1} ${esc(r.platform_name)}</strong>
+              <span class="tag ${r.fit_score>=80?'green':r.fit_score>=60?'blue':'amber'}">匹配度 ${r.fit_score}</span>
+            </div>
+            <p class="muted" style="margin:0">${esc(r.monetization_model)}</p>
+            <p style="margin:0"><strong>推荐理由：</strong>${esc((r.fit_reasons||[]).join('；')||'符合综合变现需求')}</p>
+            <p class="muted" style="margin:0"><strong>关键提醒：</strong>${esc((r.cautions||[]).join('；'))}</p>
+            <p class="faint" style="margin:0">日更要求：${esc(r.daily_words)}</p>
+          </article>`).join('')}
+        </div>
+      </section>
+
+      <section class="card stack">
+        <h3>6 大热门赚钱平台横向对比总表</h3>
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>平台</th><th>定位与新人友好</th><th>核心赚钱模式</th><th>签约门槛</th><th>全勤规则</th><th>日更与单章建议</th></tr></thead>
+          <tbody>${playbooks.map(pb=>`<tr>
+            <td><strong>${esc(pb.name)}</strong><br><small class="muted">${esc(pb.tier)}</small></td>
+            <td>${friendlyTag(pb.beginner_friendly)}<br><small class="muted">${esc(pb.audience_focus)}</small></td>
+            <td>${esc(pb.monetization.model)}</td>
+            <td>${esc(pb.signing.threshold)}</td>
+            <td>${esc(pb.monetization.full_attendance)}</td>
+            <td>${esc(pb.craft_requirements.daily_words)}<br><small class="muted">${esc(pb.craft_requirements.chapter_words)}</small></td>
+          </tr>`).join('')}</tbody>
+        </table></div>
+      </section>
+
+      ${playbooks.map(pb=>`<section class="card stack">
+        <div class="row spread wrap">
+          <div>
+            <h3>${esc(pb.full_name)}</h3>
+            <div class="row wrap" style="margin-top:4px">
+              <span class="tag blue">${esc(pb.tier)}</span>
+              ${friendlyTag(pb.beginner_friendly)}
+              <span class="tag">合约性质：${esc(pb.signing.contract_binding)}</span>
+            </div>
+          </div>
+          <div class="row wrap">
+            ${pb.craft_requirements.hot_genres?.[0]?`<button type="button" class="button" data-new-novel="manual" data-prefill="${esc(pb.craft_requirements.hot_genres[0])}">按该平台强势题材开新书</button>`:''}
+            <button type="button" class="secondary" data-jump-collect="${esc(pb.id)}">去采/导该平台榜单</button>
+          </div>
+        </div>
+        <p class="notice">${esc(pb.signing.recent_2026_alert)}</p>
+        <div class="grid two">
+          <div>
+            <h4>赚钱与分成机制</h4>
+            <p><strong>收益模式：</strong>${esc(pb.monetization.model)}</p>
+            <p><strong>分成细则：</strong>${esc(pb.monetization.revenue_split)}</p>
+            <p><strong>全勤政策：</strong>${esc(pb.monetization.full_attendance)}</p>
+            <p><strong>衍生加分渠道：</strong>${(pb.monetization.bonus_channels||[]).map(c=>`<span class="tag">${esc(c)}</span>`).join(' ')}</p>
+          </div>
+          <div>
+            <h4>签约与写作硬规范</h4>
+            <p><strong>签约通道：</strong>${esc(pb.signing.mode)} — ${esc(pb.signing.threshold)}</p>
+            <p><strong>黄金三章 / 导语重点：</strong>${esc(pb.craft_requirements.golden_three_focus)}</p>
+            <p class="error"><strong>平台硬红线：</strong></p>
+            <ul>${(pb.craft_requirements.redlines||[]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <details class="details" open>
+          <summary>推荐晋级阶梯（${(pb.progression_ladder||[]).length} 个关键节点）</summary>
+          <div class="table-wrap" style="margin-top:8px"><table class="data-table">
+            <thead><tr><th>阶段</th><th>字数 / 时间窗口</th><th>核心考核指标</th><th>实战策略</th></tr></thead>
+            <tbody>${(pb.progression_ladder||[]).map(st=>`<tr>
+              <td><strong>${esc(st.stage)}</strong></td>
+              <td>${esc(st.words_or_time)}</td>
+              <td>${esc(st.core_metrics)}</td>
+              <td>${esc(st.action_tip)}</td>
+            </tr>`).join('')}</tbody>
+          </table></div>
+        </details>
+        <details class="details">
+          <summary>主要榜单规则与冲榜策略（${(pb.rank_lists||[]).length} 个榜单）</summary>
+          <div class="table-wrap" style="margin-top:8px"><table class="data-table">
+            <thead><tr><th>榜单名称</th><th>榜单定位</th><th>核心驱动指标</th><th>上榜窗口</th><th>冲榜实操建议</th></tr></thead>
+            <tbody>${(pb.rank_lists||[]).map(rl=>`<tr>
+              <td><strong>${esc(rl.name)}</strong></td>
+              <td>${esc(rl.category)}</td>
+              <td>${esc(rl.driver_metrics)}</td>
+              <td>${esc(rl.window)}</td>
+              <td>${esc(rl.strategy)}</td>
+            </tr>`).join('')}</tbody>
+          </table></div>
+        </details>
+      </section>`).join('')}
+      <p class="faint">注：以上规则基于 2025–2026 各平台公开作家政策整理，具体分成比例与当期激励请以对应平台官方作家后台合同及最新公告为准。</p>
+    </div>`;
+
+    $('#playbookRecForm').onsubmit=e=>{
+      e.preventDefault();
+      busy(e.target.querySelector('button[type=submit]'),async()=>{
+        const fd=new FormData(e.target);
+        recScale=fd.get('scale');
+        recExp=fd.get('experience');
+        recGenre=fd.get('genre');
+        const q=new URLSearchParams({scale:recScale,experience:recExp,...(recGenre?{types:recGenre}:{})});
+        const res=await api.get(`/radar/playbooks?${q.toString()}`,ctx.signal);
+        recList=res.recommendations||[];
+        paintPlaybooks();
+      });
+    };
+
+    $$('[data-jump-collect]').forEach(btn=>btn.onclick=()=>{
+      tab='collect';
+      $$('[data-radar-tab]').forEach(t=>t.classList.toggle('active',t.dataset.radarTab===tab));
+      paintTab();
+    });
   }
 
   ctx.content.innerHTML=loading();
