@@ -119,6 +119,12 @@ class ProductionRoutes:
             data = lib.list_staging(first(query, 'status'))
         elif len(segs) == 2 and segs[0] == 'staging':
             data = lib.get_staging(segs[1])
+        elif len(segs) == 3 and segs[0] == 'staging' and segs[2] == 'anatomy':
+            data = lib.get_book_anatomy(segs[1])
+        elif segs == ['radar']:
+            data = lib.radar_overview(platform=first(query, 'platform'))
+        elif len(segs) == 3 and segs[:2] == ['radar', 'snapshots']:
+            data = lib.radar_snapshot_detail(segs[2])
         elif len(segs) == 3 and segs[:2] == ['kb', 'types']:
             data = lib.get_type(segs[2])
         elif segs == ['kb', 'items']:
@@ -260,11 +266,31 @@ class ProductionRoutes:
         elif segs == ['staging']:
             data, status = lib.import_book(body), 201
         elif len(segs) == 3 and segs[0] == 'staging':
-            if segs[2]=='verify' or (segs[2]=='decompose' and 'items' in body):
+            if segs[2] == 'anatomy':
+                if body.get('use_llm'):
+                    cfg, prov = app._runtime()
+                    data = lib.run_book_anatomy(segs[1], body, provider=prov, model=cfg.model, params=dict(cfg.params))
+                else:
+                    data = lib.run_book_anatomy(segs[1], body)
+            elif segs[2]=='verify' or (segs[2]=='decompose' and 'items' in body):
                 raise ValueError('历史局部条目只读。新分析和复核请打开本书的多层结构拆解。')
-            actions = {'review': lib.review_book, 'decompose': lib.decompose_book, 'reclassify': lib.reclassify_book}
-            if segs[2] in actions:
-                data = actions[segs[2]](segs[1], body)
+            else:
+                actions = {'review': lib.review_book, 'decompose': lib.decompose_book, 'reclassify': lib.reclassify_book}
+                if segs[2] in actions:
+                    data = actions[segs[2]](segs[1], body)
+        elif len(segs) == 2 and segs[0] == 'radar':
+            if segs[1] == 'fetch':
+                data = lib.radar_fetch_live(body)
+            elif segs[1] == 'import':
+                data, status = lib.radar_import_chart(body), 201
+            elif segs[1] == 'diff':
+                data = lib.radar_diff_snapshots(body)
+            elif segs[1] == 'topics':
+                if body.get('use_llm'):
+                    cfg, prov = app._runtime()
+                    data = lib.radar_generate_topics(body, provider=prov, model=cfg.model, params=dict(cfg.params))
+                else:
+                    data = lib.radar_generate_topics(body)
         elif len(segs) == 3 and segs[:2] == ['kb', 'types']:
             data = lib.save_type(segs[2], body)
         elif len(segs) == 3 and segs[:2] == ['kb', 'upgrades']:

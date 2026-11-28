@@ -1362,8 +1362,9 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
                 approved_methods.append({**item, 'auto_approved': True})
             state['published_methods'] = approved_methods
             # Auto-collect plot-free, genre-bounded Craft Fingerprint Cards across all 4 active tracks!
-            book_row = conn.execute('SELECT title FROM staging_books WHERE id=?', (job['book_id'],)).fetchone()
+            book_row = conn.execute('SELECT title, chapters_json FROM staging_books WHERE id=?', (job['book_id'],)).fetchone()
             book_title = str(book_row['title'] if book_row else '参考作品')
+            book_chapters_raw = str(book_row['chapters_json'] if book_row else '[]')
             published_craft_fps: dict[str, dict[str, Any]] = {}
 
             from nw.craft_specs import all_base_name_map, default_domain_base_id, domain_base_map
@@ -1533,6 +1534,23 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
                 published_craft_fps['voice'] = voice_summary
             if published_craft_fps:
                 state['published_craft_fingerprints'] = published_craft_fps
+            # Auto-run 0-token Golden-3 quantitative exam, 3-check verified excerpt harvesting,
+            # and Market Radar Topic Decision backfill so Scan -> Deconstruct -> Write closes end-to-end!
+            try:
+                from nw.studio.book_deconstructor import run_book_deconstruct_pack
+                decon = run_book_deconstruct_pack(
+                    conn,
+                    book_id=job['book_id'],
+                    book_title=book_title,
+                    raw_text=content,
+                    chapters=json.loads(book_chapters_raw or '[]'),
+                    confirmed_types=confirmed_types,
+                    harvest_excerpts=True,
+                )
+                state['harvested_excerpts_count'] = len(decon.get('harvested_excerpts') or ())
+                state['backfilled_topics_count'] = len(decon.get('backfilled_topics') or ())
+            except Exception:
+                pass
             conn.execute(
                 "UPDATE corpus_jobs SET status='completed',phase='publish',state_json=?,error='',updated_at=? WHERE id=?",
                 (encode(state), now, job['id']),

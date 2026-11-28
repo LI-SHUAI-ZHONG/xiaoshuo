@@ -42,6 +42,24 @@ from nw.verified_excerpts import (
     list_verified_excerpts as _list_verified_excerpts,
     save_verified_excerpt as _save_verified_excerpt,
 )
+from nw.studio.chart_radar import (
+    CHART_RADAR_SCHEMA,
+    PLATFORMS as RADAR_PLATFORMS,
+    aggregate_chart_snapshots as _aggregate_chart_snapshots,
+    diff_chart_snapshots as _diff_chart_snapshots,
+    fetch_live_chart as _fetch_live_chart,
+    generate_topic_decisions as _generate_topic_decisions,
+    get_chart_snapshot as _get_chart_snapshot,
+    list_chart_snapshots as _list_chart_snapshots,
+    list_topic_decisions as _list_topic_decisions,
+    parse_chart_import as _parse_chart_import,
+    save_chart_snapshot as _save_chart_snapshot,
+)
+from nw.studio.book_deconstructor import (
+    BOOK_DECONSTRUCT_SCHEMA,
+    get_book_deconstruct_artifact as _get_book_deconstruct_artifact,
+    run_book_deconstruct_pack as _run_book_deconstruct_pack,
+)
 
 
 SCHEMA = '''
@@ -105,6 +123,8 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
             conn.executescript(CRAFT_FINGERPRINT_SCHEMA)
             conn.executescript(GLOBAL_AUTHOR_MEMORY_SCHEMA)
             conn.executescript(VERIFIED_EXCERPT_SCHEMA)
+            conn.executescript(CHART_RADAR_SCHEMA)
+            conn.executescript(BOOK_DECONSTRUCT_SCHEMA)
         migrate_legacy(self)
         recover_corpus_jobs(self)
         from nw.studio.staging_model import recover_decompositions
@@ -304,3 +324,104 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
     ) -> dict | None:
         with self.connect() as conn:
             return _build_writer_verified_excerpts_packet(conn, type_tags=types, scene_function=scene_function, limit=limit)
+
+    # ---------- Chart Radar & Market Intelligence ----------
+
+    def radar_overview(self, *, platform: str = '') -> dict:
+        with self.connect() as conn:
+            snapshots = _list_chart_snapshots(conn, platform=platform, limit=40)
+            aggregation = _aggregate_chart_snapshots(conn, platform=platform) if snapshots else {'snapshot_count': 0, 'skipped_duplicates': [], 'platforms': []}
+            topics = _list_topic_decisions(conn, limit=30)
+        return {
+            'platforms': list(RADAR_PLATFORMS.values()),
+            'snapshots': snapshots,
+            'aggregation': aggregation,
+            'topics': topics,
+        }
+
+    def radar_snapshot_detail(self, snapshot_id: str) -> dict:
+        with self.connect() as conn:
+            return _get_chart_snapshot(conn, snapshot_id)
+
+    def radar_fetch_live(self, body: dict) -> dict:
+        platform = str(body.get('platform') or 'qidian').strip()
+        rank_type = str(body.get('rank_type') or '').strip()
+        pages = int(body.get('pages') or 2)
+        fetched = _fetch_live_chart(platform, rank_type, pages=pages)
+        if not fetched.get('ok'):
+            return {'fetched': fetched, 'saved': None}
+        with self.connect() as conn:
+            saved = _save_chart_snapshot(conn, fetched)
+        return {'fetched': {'ok': True, 'entry_count': len(fetched['entries'])}, 'saved': saved}
+
+    def radar_import_chart(self, body: dict) -> dict:
+        parsed = _parse_chart_import(
+            str(body.get('text') or ''),
+            platform=str(body.get('platform') or ''),
+            list_name=str(body.get('list_name') or ''),
+            fmt=str(body.get('format') or 'auto'),
+        )
+        with self.connect() as conn:
+            saved = _save_chart_snapshot(conn, parsed, captured_date=str(body.get('captured_date') or ''))
+        return {'saved': saved}
+
+    def radar_diff_snapshots(self, body: dict) -> dict:
+        cur_ids = [str(x) for x in (body.get('current_snapshot_ids') or ()) if str(x).strip()]
+        base_ids = [str(x) for x in (body.get('baseline_snapshot_ids') or ()) if str(x).strip()]
+        if not cur_ids or not base_ids:
+            raise ValueError('趋势对比必须同时指定当前快照与基线快照')
+        with self.connect() as conn:
+            return _diff_chart_snapshots(conn, current_snapshot_ids=cur_ids, baseline_snapshot_ids=base_ids)
+
+    def radar_generate_topics(self, body: dict, *, provider: object | None = None, model: str = '', params: dict | None = None) -> dict:
+        snap_ids = [str(x) for x in (body.get('snapshot_ids') or ()) if str(x).strip()] or None
+        with self.connect() as conn:
+            return _generate_topic_decisions(
+                conn,
+                snapshot_ids=snap_ids,
+                platform=str(body.get('platform') or ''),
+                author_focus=str(body.get('author_focus') or ''),
+                provider=provider if bool(body.get('use_llm')) else None,
+                model=model,
+                params=params,
+                max_topics=int(body.get('max_topics') or 3),
+            )
+
+    # ---------- Enhanced Book Deconstruction Pack ----------
+
+    def get_book_anatomy(self, book_id: str) -> dict:
+        row = self._staging_row(book_id)
+        with self.connect() as conn:
+            art = _get_book_deconstruct_artifact(conn, book_id)
+            if art is None:
+                text = self._book_text(row)
+                art = _run_book_deconstruct_pack(
+                    conn,
+                    book_id=book_id,
+                    book_title=row['title'],
+                    raw_text=text,
+                    chapters=json.loads(row['chapters_json'] or '[]'),
+                    confirmed_types=json.loads(row['confirmed_types_json'] or '[]'),
+                    harvest_excerpts=False,
+                    backfill_topics=False,
+                )
+        return art
+
+    def run_book_anatomy(self, book_id: str, body: dict, *, provider: object | None = None, model: str = '', params: dict | None = None) -> dict:
+        row = self._staging_row(book_id)
+        text = self._book_text(row)
+        use_llm = bool(body.get('use_llm', False))
+        harvest = bool(body.get('harvest_excerpts', True))
+        with self.connect() as conn:
+            return _run_book_deconstruct_pack(
+                conn,
+                book_id=book_id,
+                book_title=row['title'],
+                raw_text=text,
+                chapters=json.loads(row['chapters_json'] or '[]'),
+                confirmed_types=json.loads(row['confirmed_types_json'] or '[]'),
+                harvest_excerpts=harvest,
+                provider=(provider if use_llm else None),
+                model=model,
+                params=params,
+            )

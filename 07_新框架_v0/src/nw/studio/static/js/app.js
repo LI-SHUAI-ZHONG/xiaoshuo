@@ -3,7 +3,7 @@ import {referenceReviews} from './reference-reviews.js';
 import {moveToNovelCache} from './components/NovelCache.js';
 import {store,state,persist} from './store.js';
 import {$,$$,esc,icon,empty,loading,busy,fail,toast,modal,drawer,date,number} from './ui.js';
-const NAV=[['home','首页','home'],['studio','制作台','pen'],['library','成品仓库','library'],['atlas','类型图鉴','atlas'],['kb','知识库','brain'],['staging','预存库','inbox'],['settings','设置','settings']];
+const NAV=[['home','首页','home'],['studio','制作台','pen'],['library','成品仓库','library'],['atlas','类型图鉴','atlas'],['kb','知识库','brain'],['staging','预存库','inbox'],['radar','扫榜雷达','spark'],['settings','设置','settings']];
 const content=$('#contentArea'); let generation=0, controller=null, cleanup=null;
 document.documentElement.dataset.theme=store.theme;
 document.documentElement.style.setProperty('--sidebar-width',`${Math.max(240,Math.min(320,store.sidebarWidth))}px`);
@@ -48,7 +48,7 @@ document.addEventListener('click',event=>{const target=event.target.closest('but
   if(target.matches('[data-new-novel]')){event.preventDefault();import('./pages/wizard.js').then(m=>m.openWizard({mode:target.dataset.newNovel,prefill:target.dataset.prefill||undefined})).catch(fail);}
   if(target.matches('[data-close-inspector]')){persist({inspector:false});$('#inspector').hidden=true;}
 });
-document.addEventListener('keydown',event=>{if(event.ctrlKey || event.metaKey){const key=event.key.toLowerCase();if(['k','j','b','1','2','3','4','5','6','7'].includes(key)){event.preventDefault();if(key==='k')openSearch();else if(key==='j')togglePanel();else if(key==='b')toggleSidebar();else location.hash=`#/${NAV[Number(key)-1][0]}`;}}});
+document.addEventListener('keydown',event=>{if(event.ctrlKey || event.metaKey){const key=event.key.toLowerCase();if(['k','j','b','1','2','3','4','5','6','7','8'].includes(key)){event.preventDefault();if(key==='k')openSearch();else if(key==='j')togglePanel();else if(key==='b')toggleSidebar();else if(NAV[Number(key)-1])location.hash=`#/${NAV[Number(key)-1][0]}`;}}});
 $('#sidebarResize').addEventListener('pointerdown',event=>{const handle=event.currentTarget;handle.setPointerCapture(event.pointerId);const move=e=>{const width=Math.max(240,Math.min(320,e.clientX-48));document.documentElement.style.setProperty('--sidebar-width',`${width}px`);persist({sidebarWidth:width});};const end=()=>{handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',end);};handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',end,{once:true});});
 $('#sidebarResize').onkeydown=e=>{if(['ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();persist({sidebarWidth:Math.max(240,Math.min(320,store.sidebarWidth+(e.key==='ArrowRight'?8:-8)))});document.documentElement.style.setProperty('--sidebar-width',`${store.sidebarWidth}px`);}};
 const sidebarScrim=document.createElement('button');sidebarScrim.className='sidebar-scrim';sidebarScrim.setAttribute('aria-label','收起侧栏');sidebarScrim.hidden=true;document.body.append(sidebarScrim);sidebarScrim.onclick=()=>toggleSidebar();

@@ -8,7 +8,7 @@ export async function renderCorpus(ctx,book){
   const root=`/staging/${enc(book.id)}/corpus`;
   const latestCatalog=await api.get('/corpus/catalog',ctx.signal);if(!ctx.alive())return;
   const requestedTab=ctx.params.get('tab');
-  let record,catalog,tab=['overview','distribution',...Object.keys(sectionNames)].includes(requestedTab)?requestedTab:'overview';
+  let record,catalog,tab=['overview','anatomy','distribution',...Object.keys(sectionNames)].includes(requestedTab)?requestedTab:'overview';
   let page=0,search='',unitFilter='',domainFilter='',timer,stopped=false,shownJob='',jobDetail=null;
   ctx.onCleanup(()=>{stopped=true;clearTimeout(timer);});
   const history=book.items?.length;
@@ -62,7 +62,7 @@ export async function renderCorpus(ctx,book){
       ${!latest?'<p class="notice">正在查看历史版本。切换最新版本后编辑；提炼使用当前批准版本。</p>':''}
       <div id="corpusJobPanel"></div>
       ${record.initialized?`<details class="details" ${errors.length?'open':''}><summary>结构核对：${errors.length} 项阻断 · ${warnings.length} 项待核</summary>${record.issues.map(i=>`<p class="${i.severity==='error'?'error':'muted'}">${esc(i.message)}</p>`).join('')||'<p class="muted">结构与引用检查没有发现阻断；这不是文学质量评分。</p>'}</details>`:''}
-      <div class="tabs corpus-tabs">${[['overview','全书总览'],['distribution','逐章进展、人物与线索分布'],...Object.entries(sectionNames)].map(([id,name])=>`<button data-corpus-tab="${id}" class="${tab===id?'active':''}">${name}</button>`).join('')}</div>
+      <div class="tabs corpus-tabs">${[['overview','全书总览'],['anatomy','黄金三章体检与情绪模块'],['distribution','逐章进展、人物与线索分布'],...Object.entries(sectionNames)].map(([id,name])=>`<button data-corpus-tab="${id}" class="${tab===id?'active':''}">${name}</button>`).join('')}</div>
       <div id="corpusSection"></div></div>`;
     $$('[data-corpus-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.corpusTab;page=0;search='';unitFilter='';domainFilter='';paintSection(canEdit);$$('[data-corpus-tab]').forEach(t=>t.classList.toggle('active',t===b));});
     $('#startTargetedCorpus')?.addEventListener('click',()=>openCorpusRun({book,record,catalog:latestCatalog,reload:loadLatest,kind:'targeted'}));
@@ -90,6 +90,10 @@ export async function renderCorpus(ctx,book){
     paintSection(canEdit);
   }
   function paintSection(canEdit){
+    if(tab==='anatomy'){
+      paintAnatomy().catch(fail);
+      return;
+    }
     if(tab==='distribution'){
       const stats=record.statistics;
       const threads=new Map(record.body.threads.map(t=>[t.id,t]));
@@ -172,6 +176,114 @@ export async function renderCorpus(ctx,book){
     }catch(error){
       if(card.isConnected)card.innerHTML=`<h3>下游步骤接收与入库核验</h3><p class="error">体检读取失败：${esc(error.message)}</p>`;
     }
+  }
+  async function paintAnatomy(){
+    const box=$('#corpusSection');
+    if(!box||stopped||!ctx.alive())return;
+    box.innerHTML=loading();
+    const art=await api.get(`/staging/${enc(book.id)}/anatomy`,ctx.signal);
+    if(stopped||!ctx.alive()||!box.isConnected)return;
+    const q=art.quantitative||{};
+    const g3s=q.golden_three_summary||{};
+    const p=g3s.paragraphs||{};
+    const d=g3s.dialogue||{};
+    const pu=g3s.punctuation||{};
+    const pb=g3s.prose_balance||{};
+    const g3=art.golden_three||{};
+    const rh=art.rhythm_registry||{};
+    const ems=art.emotion_modules||[];
+    const harvested=art.harvested_excerpts||[];
+    const backfilled=art.backfilled_topic_ids||art.backfilled_topics||[];
+    const pct=v=>v!=null?`${Math.round(Number(v)*1000)/10}%`:'—';
+
+    box.innerHTML=`<div class="stack">
+      <section class="card stack">
+        <div class="row spread wrap">
+          <div>
+            <h3>黄金三章量化体检 & 可复用情绪模块</h3>
+            <p class="muted">体量识别：<strong>${q.book_scale==='short'?'短篇 (<2.5万字)':'长篇网文'}</strong> · 正文 ${q.story_chapters_count||0} 章（跳过杂项 ${q.skipped_paratext_count||0}） · 总可见字数 ${q.total_visible_chars||0}</p>
+          </div>
+          <div class="row wrap">
+            <button class="secondary" id="runAnatomyZero">0-Token 体检 + 自动采摘实文范例</button>
+            <button class="button" id="runAnatomyLlm">AI 黄金三章深拆 + EM情绪模块</button>
+          </div>
+        </div>
+        <div class="row wrap">
+          <span class="tag blue">黄金三章卡点率 ${esc(q.golden_three_cliffhanger_rate||'0/0')}</span>
+          <span class="tag">金手指信号：${q.golden_finger_signal_chapter?`第 ${q.golden_finger_signal_chapter} 章`:'未检测到明显系统亮牌'}</span>
+          <span class="tag green">已采摘三检实文范例 ${harvested.length} 段</span>
+          ${backfilled.length?`<a class="tag green" href="#/radar?tab=topics">已回填验证 ${backfilled.length} 条雷达选题 →</a>`:''}
+        </div>
+        ${(q.benchmark_deviations||[]).length?`<div class="notice warning"><strong>商业常模偏离提示</strong><ul>${q.benchmark_deviations.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'<p class="muted">黄金三章竖屏节奏与对话比例处于常见商业常模区间。</p>'}
+        ${q.short_lead&&q.short_lead.placement!=='none'?`<p class="notice"><strong>短篇导语检测：</strong>检测到首章内嵌导语（${q.short_lead.chars} 字，分隔符 <code>${esc(q.short_lead.separator)}</code>）。</p>`:''}
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>竖屏段落指标</th><th>对话与视角</th><th>标点张力（每千字）</th><th>15万章实证文风平衡</th></tr></thead>
+          <tbody><tr>
+            <td>中位段长 <strong>${p.median_chars??'—'} 字</strong>（均值 ${p.mean_chars??'—'}）<br>≤30字短段 ${pct(p.short_30_ratio)} · >80字长段 ${pct(p.over_80_ratio)}<br>单句成段率 ${pct(p.single_sentence_rate)} · 首段 ${p.first_para_chars??'—'} 字</td>
+            <td>对话占比 <strong>${pct(d.ratio)}</strong>（≤15字短句 ${pct(d.short_15_ratio)}）<br>首对话位置：${d.first_dialogue_char!=null?`第 ${d.first_dialogue_char} 字`:'无'}<br>引号规范：${esc(d.quote_style||'—')} · ${esc(g3s.pov?.label||'—')}</td>
+            <td>感叹/问号 <strong>${pu.exclaim_question_per_1k??'—'}</strong><br>叙述破折号 ${pu.narration_em_dash_per_1k??'—'}<br>省略号 ${pu.ellipsis_per_1k??'—'}</td>
+            <td>动作/感官句占比 <strong>${pct(pb.body_action_sentence_ratio)}</strong><br>心理/因果句占比 ${pct(pb.causal_thought_sentence_ratio)}<br>口语衔接词 ${pb.colloquial_connective_per_1k??'—'}/千字 · 叙述句中位 ${pb.narration_sentence_median??'—'} 字</td>
+          </tr></tbody>
+        </table></div>
+      </section>
+
+      <section class="card stack">
+        <div class="row spread wrap">
+          <h3>黄金三章逐章解剖</h3>
+          <span class="tag">${g3.mode==='llm_deep'?'AI 深拆':'0-Token 量化基线'}</span>
+        </div>
+        ${g3.overall_verdict?`<p>${esc(g3.overall_verdict)}</p>`:''}
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>章次</th><th>开篇手法 / 核心事件</th><th>爽点或数据摘要</th><th>章尾卡点</th><th>可复用写法</th></tr></thead>
+          <tbody>${(g3.chapters||[]).map(c=>`<tr>
+            <td><strong>第 ${c.chapter} 章</strong>${c.title?`<br><small class="muted">${esc(c.title)}</small>`:''}</td>
+            <td>${esc(c.hook_method||'—')}${c.core_event?`<br><small>${esc(c.core_event)}</small>`:''}</td>
+            <td>${esc(c.payoff_type||(c.chars?`${c.chars}字 · 段中位${c.median_para_chars}字 · 对话${pct(c.dialogue_ratio)}`:'—'))}</td>
+            <td>${esc(c.cliffhanger||'—')}</td>
+            <td>${esc(c.transferable||'—')}</td>
+          </tr>`).join('')||'<tr><td colspan="5" class="muted">暂无前三章记录</td></tr>'}</tbody>
+        </table></div>
+      </section>
+
+      <section class="card stack">
+        <div class="row spread wrap">
+          <h3>爽点循环台账（RH）与情绪触发点（TR）</h3>
+          <span class="tag">${esc(rh.story_framework||'待深拆')}</span>
+        </div>
+        <p class="muted">${esc(rh.core_engine||'点击「AI 黄金三章深拆 + EM情绪模块」自动抽取完整 RH 爽点循环与 TR 情绪触发台账。')}</p>
+        ${(rh.rh_loops||[]).length?`<h4>RH 爽点循环</h4><div class="table-wrap"><table class="data-table">
+          <thead><tr><th>编号</th><th>章节</th><th>铺垫压抑</th><th>释放兑现</th><th>反应层级</th><th>新钩子与升级</th></tr></thead>
+          <tbody>${rh.rh_loops.map(r=>`<tr><td><strong>${esc(r.id)}</strong></td><td>${esc(r.chapters||'')}</td><td>${esc(r.setup||'')}</td><td>${esc(r.release||'')}</td><td>${esc(r.reaction||'')}</td><td>${esc(r.next_hook||'')} ${r.escalation?`（${esc(r.escalation)}）`:''}</td></tr>`).join('')}</tbody>
+        </table></div>`:''}
+        ${(rh.tr_triggers||[]).length?`<h4>TR 情绪触发点</h4><div class="table-wrap"><table class="data-table">
+          <thead><tr><th>编号</th><th>章</th><th>触发事件</th><th>目标情绪</th><th>爆发与余波</th><th>复用要点</th></tr></thead>
+          <tbody>${rh.tr_triggers.map(t=>`<tr><td><strong>${esc(t.id)}</strong></td><td>${esc(String(t.chapter||''))}</td><td>${esc(t.event||'')}</td><td><span class="tag blue">${esc(t.target_emotion||'')}</span></td><td>${esc(t.peak||'')} → ${esc(t.aftermath||'')}</td><td>${esc(t.reuse_tip||'')}</td></tr>`).join('')}</tbody>
+        </table></div>`:''}
+      </section>
+
+      <section class="card stack">
+        <h3>脱剧情可复用情绪模块卡（EM-*）</h3>
+        ${ems.length?`<div class="grid two">${ems.map(em=>`<article class="card stack">
+          <div class="row spread wrap"><strong>${esc(em.id||'EM')} · ${esc(em.name||'情绪模块')}</strong>${em.related_rhythm?`<span class="tag">${esc(em.related_rhythm)}</span>`:''}</div>
+          <p><strong>读者想看什么：</strong>${esc(em.reader_want||'')}</p>
+          <p><strong>情绪链：</strong>${esc(em.emotion_chain||'')}</p>
+          <p><strong>核心戏剧单元：</strong>${esc(em.dramatic_unit||'')}</p>
+          ${(em.replaceable_slots||[]).length?`<p class="muted"><strong>可替换功能位：</strong>${esc(em.replaceable_slots.join(' / '))}</p>`:''}
+          ${(em.do_not_copy||[]).length?`<p class="error"><strong>严禁照搬：</strong>${esc(em.do_not_copy.join('；'))}</p>`:''}
+          ${em.failure_conditions?`<p class="muted"><strong>失效条件：</strong>${esc(em.failure_conditions)}</p>`:''}
+        </article>`).join('')}</div>`:'<p class="muted">尚未生成脱剧情情绪模块卡。点击右上角「AI 黄金三章深拆 + EM情绪模块」即可抽取（只留结构与情绪链，不带原书专名）。</p>'}
+      </section>
+    </div>`;
+
+    const triggerAnatomy=(useLlm,btn)=>busy(btn,async()=>{
+      const res=await api.post(`/staging/${enc(book.id)}/anatomy`,{use_llm:useLlm,harvest_excerpts:true});
+      toast(useLlm
+        ?`AI 深拆完成：采摘 ${res.harvested_excerpts?.length||0} 段实文范例，提炼 ${res.emotion_modules?.length||0} 张情绪模块`
+        :`0-Token 体检完成：自动采摘 ${res.harvested_excerpts?.length||0} 段三检实文范例`);
+      await paintAnatomy();
+    });
+    $('#runAnatomyZero').onclick=e=>triggerAnatomy(false,e.currentTarget);
+    $('#runAnatomyLlm').onclick=e=>triggerAnatomy(true,e.currentTarget);
   }
   async function paintJobs(){
     if(stopped||!ctx.alive()||!$('#corpusJobPanel'))return;
