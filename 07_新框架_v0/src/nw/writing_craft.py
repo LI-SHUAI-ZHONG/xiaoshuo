@@ -183,7 +183,7 @@ def package_uses_craft_layers(package: dict[str, Any] | None) -> bool:
         if not isinstance(item, dict):
             continue
         src = str(item.get('source') or '')
-        if src.startswith(('situation:', 'style-reference', 'material:')):
+        if src.startswith(('situation:', 'style-reference', 'voice-spec', 'material:')):
             return True
     return False
 

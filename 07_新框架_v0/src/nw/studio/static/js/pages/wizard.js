@@ -3,6 +3,7 @@ import {$, $$, esc, icon, modal, drawer, loading, fail, toast, busy, readable} f
 import {STEPS, stepsBar, FlatOptionSection, autoCapabilitiesHtml, selectionLimit, slotName} from '../components/WizardStep.js';
 import {METHOD_PREFERENCE_LIMIT, methodChoices} from './wizard-methods.js';
 import {lengthFields, lengthSummary, readLengthFields, readTierRecommendation} from '../components/LengthPlan.js';
+import {renderVoiceSpecPreview} from '../components/CraftTools.js';
 
 const fields = {tone:'tone_ids', style:'style_ids', narration:'narration_ids', world:'world_ids',
   character:'character_ids', structure:'structure_ids', hook:'mechanism_ids'};
@@ -36,6 +37,7 @@ export async function openWizard({mode, prefill} = {}) {
   let directionReview = true, strictCorpusAuto = false, submitting = false;
   let limits = {}, defaultBudget = {}, tierRecommendation = null;
   let setupProfile = null, handoffAudit = null;
+  let selectedVoiceBase = '', voiceKnobs = null, selectedFingerprints = new Set(), voiceCustomNotes = '';
 
   const alive = () => token === session && dialog.open;
   const currentStep = () => STEPS[step] || STEPS[0];
@@ -51,6 +53,19 @@ export async function openWizard({mode, prefill} = {}) {
     if (!profile?.sections) return;
     for (const list of Object.values(profile.sections)) {
       for (const item of list || []) known.set(item.key, item);
+    }
+    const vs = profile.voice_setup;
+    if (vs?.voice_bases?.length) {
+      if (!selectedVoiceBase || !vs.voice_bases.some(b => b.id === selectedVoiceBase)) {
+        selectedVoiceBase = vs.recommended_base_id || vs.voice_bases[0].id;
+        const base = vs.voice_bases.find(b => b.id === selectedVoiceBase) || vs.voice_bases[0];
+        voiceKnobs = JSON.parse(JSON.stringify(base.default_knobs || {}));
+      } else if (!voiceKnobs) {
+        const base = vs.voice_bases.find(b => b.id === selectedVoiceBase) || vs.voice_bases[0];
+        voiceKnobs = JSON.parse(JSON.stringify(base.default_knobs || {}));
+      }
+      const allowedFpIds = new Set((vs.available_fingerprints || []).map(f => f.id));
+      selectedFingerprints = new Set([...selectedFingerprints].filter(id => allowedFpIds.has(id)));
     }
   }
 
@@ -110,6 +125,19 @@ export async function openWizard({mode, prefill} = {}) {
     if ($('#wizardDirectionReview')) directionReview = $('#wizardDirectionReview').checked;
     if ($('#wizardStrictCorpusAuto')) strictCorpusAuto = $('#wizardStrictCorpusAuto').checked;
     if ($('#modalBody [data-tier-mode]')) lengthPlan = readLengthFields($('#modalBody'));
+    if ($('#wizardVoiceBase')) selectedVoiceBase = $('#wizardVoiceBase').value;
+    if ($('#wizardKnob_register')) {
+      voiceKnobs = {
+        register: $('#wizardKnob_register')?.value || '',
+        cadence: $('#wizardKnob_cadence')?.value || '',
+        dialogue_mind: $('#wizardKnob_dialogue_mind')?.value || '',
+        anti_drift_bans: $$('#modalBody [name=wizardAntiDriftBans]:checked').map(el => el.value),
+      };
+    }
+    if ($$('#modalBody [name=wizardVoiceFp]').length) {
+      selectedFingerprints = new Set($$('#modalBody [name=wizardVoiceFp]:checked').map(el => el.value));
+    }
+    if ($('#wizardVoiceNotes')) voiceCustomNotes = $('#wizardVoiceNotes').value.trim();
   }
 
   async function paint() {
@@ -228,6 +256,7 @@ export async function openWizard({mode, prefill} = {}) {
       if (button.dataset.main === selectedMain) return;
       capture();
       selectedMain = button.dataset.main; selectedSub = '';
+      selectedVoiceBase = ''; voiceKnobs = null;
       secondary = secondary.filter(id => id !== selectedMain && flatGenres().find(row => row.id === id)?.parent_id !== selectedMain);
       repainted();
     });
@@ -254,17 +283,19 @@ export async function openWizard({mode, prefill} = {}) {
 
   function paintAuto() {
     const corpusCount = setupProfile?.available_corpus_methods?.length || 0;
+    const fpCount = setupProfile?.voice_setup?.available_fingerprints?.length || 0;
     const defaults = setupProfile?.ai_auto_defaults || {};
+    const voiceName = defaults.voice_profile?.base_voice_name || '';
     const defaultLabels = ['structure_ids', 'mechanism_ids', 'tone_ids', 'style_ids']
       .flatMap(f => (defaults[f] || []).map(id => [...known.values()].find(v => v.id === id)?.name || id));
     const ar = handoffAudit?.auto_readiness;
     const statusCard = selectedMain ? `<section class="card stack" id="wizardAutoReadiness" style="margin-bottom:14px">
       <div class="row spread wrap">
-        <strong>AI 自动运行引擎状态（内置工作流主驱 + 拆解方法自动增强）</strong>
+        <strong>AI 自动运行引擎状态（内置工作流主驱 + 语感规范编译 + 拆解自动增强）</strong>
         <span class="tag green">立即可启动 · 内置 15,375 条规则已就绪</span>
       </div>
-      <p class="muted">AI 将按所选类型自动配齐差异化架构与文风${defaultLabels.length ? `（建议默认：<strong>${esc(defaultLabels.join(' / '))}</strong>）` : ''}，并自动挂载当前资料库中可用的同类型拆解方法（当前 <strong>${corpusCount} 条</strong>可用；无拆解书时依然可基于内置工作流高质量开写）。</p>
-      ${corpusCount === 0 ? '<p class="muted">提示：若希望融入某本参考小说的具体写法，随时可前往 <a class="text-link" href="#/staging" data-wizard-nav-link>预存库 → 精准步骤拆解</a>（约 7–10 次调用自动核验入库）。</p>' : ''}
+      <p class="muted">AI 将按所选类型自动编译<strong>语感规范卡${voiceName ? `（${esc(voiceName)}：6 维语言指令 + 防漂移红线 + 正反微对照）` : ''}</strong>与差异化架构${defaultLabels.length ? `（建议默认：<strong>${esc(defaultLabels.join(' / '))}</strong>）` : ''}，并自动叠加同类型已收录拆解方法（<strong>${corpusCount} 条</strong>）与语感指纹（<strong>${fpCount} 条</strong>）。</p>
+      ${corpusCount === 0 ? '<p class="muted">提示：若希望吸收某本同题材参考书的具体写法与语感指纹，随时可前往 <a class="text-link" href="#/staging" data-wizard-nav-link>预存库 → 精准步骤拆解</a>（约 7–10 次调用自动核验收录）。</p>' : ''}
       ${ar?.checked && ar.ready ? `<p class="muted">同类型 7 大板块参考方法已齐备（${ar.ready_count}/${ar.total_boards}），将自动启用完整参考方法路线。</p>` : ''}
     </section>` : '';
 
@@ -316,8 +347,51 @@ export async function openWizard({mode, prefill} = {}) {
     const sections = setupProfile?.sections || {};
     const craftFocus = setupProfile?.genre_scope?.craft_focus || {};
     const methods = setupProfile?.available_corpus_methods || [];
+    const vs = setupProfile?.voice_setup || {};
+    const voiceBases = vs.voice_bases || [];
+    const knobsMeta = vs.knobs || {};
+    const fingerprints = vs.available_fingerprints || [];
+    const activeBase = voiceBases.find(b => b.id === selectedVoiceBase) || voiceBases[0] || null;
+    const curKnobs = voiceKnobs || activeBase?.default_knobs || {};
+
+    const voiceSpecHtml = voiceBases.length ? `<section class="method-section stack" id="wizardVoiceSpecSection" style="gap:12px" aria-label="本书语感规范卡">
+      <div class="row spread wrap">
+        <h3>1. 本书语感规范基座（内置 9 套可执行规范 · 替代空洞形容词）</h3>
+        <span class="tag green">6 维语言规则 + 防漂移红线 + 50 字正反微对照</span>
+      </div>
+      <label class="field">
+        <span>选择底层语感基座（已按 <strong>${esc(names())}</strong> 智能排序）</span>
+        <select id="wizardVoiceBase">
+          ${voiceBases.map(b => `<option value="${esc(b.id)}" ${b.id === activeBase?.id ? 'selected' : ''}>${esc(b.name)} · ${esc(b.relevance_label || '')}</option>`).join('')}
+        </select>
+      </label>
+      <div id="wizardVoicePreview">${renderVoiceSpecPreview(activeBase, curKnobs, fingerprints.filter(f => selectedFingerprints.has(f.id)))}</div>
+      <div class="form-grid">
+        ${['register', 'cadence', 'dialogue_mind'].map(k => {
+          const meta = knobsMeta[k];
+          if (!meta) return '';
+          return `<label class="field"><span>${esc(meta.label)}</span><select id="wizardKnob_${k}">
+            ${(meta.options || []).map(o => `<option value="${esc(o.id)}" ${o.id === curKnobs[k] ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
+          </select></label>`;
+        }).join('')}
+      </div>
+      ${knobsMeta.anti_drift_bans ? `<div><span class="muted" style="font-size:12px">${esc(knobsMeta.anti_drift_bans.label)}</span>
+        <div class="row wrap" style="gap:10px;margin-top:6px">
+          ${(knobsMeta.anti_drift_bans.options || []).map(o => `<label class="check-row" style="margin:0"><input type="checkbox" name="wizardAntiDriftBans" value="${esc(o.id)}" ${(curKnobs.anti_drift_bans || []).includes(o.id) ? 'checked' : ''}> <span>${esc(o.label)}</span></label>`).join('')}
+        </div></div>` : ''}
+      <div>
+        <div class="row spread wrap" style="margin-bottom:6px">
+          <strong style="font-size:13px">2. 可选 · 叠加同题材已拆解收录的语感指纹（自动屏蔽跨题材串味）</strong>
+          <span class="tag">${fingerprints.length ? `${fingerprints.length} 条同题材可用` : '暂无（内置规范已就绪）'}</span>
+        </div>
+        ${fingerprints.length ? fingerprints.map(fp => `<label class="check-row"><input type="checkbox" name="wizardVoiceFp" value="${esc(fp.id)}" ${selectedFingerprints.has(fp.id) ? 'checked' : ''}> <span><strong>${esc(fp.title)}</strong> <small class="muted">(${esc(fp.base_voice_name || '')} · ${(fp.body?.techniques || []).length} 条脱剧情语言手法)</small></span></label>`).join('')
+          : '<p class="muted" style="margin:0;font-size:12px">当前题材尚无拆解收录的语感指纹。拆解同题材小说时勾选第 4 轨即自动按题材收录，绝不串味，也无需整章抄样章。</p>'}
+      </div>
+      <label class="field"><span>补充语感细则（选填）</span><input id="wizardVoiceNotes" maxlength="800" value="${esc(voiceCustomNotes)}" placeholder="例如：主角在长辈面前克制有礼，独处时内心盘算更直白犀利…"></label>
+    </section>` : '';
+
     const methodsHtml = `<section class="method-section" style="margin-top:18px" aria-label="可选参考书拆解方法">
-      <div class="row spread wrap"><h3>4. 可选 · 挂载同类型参考书拆解方法</h3><span class="tag">${methods.length ? `${methods.length} 条可用` : '暂无（不影响开写）'}</span></div>
+      <div class="row spread wrap"><h3>3. 可选 · 挂载同类型参考书拆解方法</h3><span class="tag">${methods.length ? `${methods.length} 条可用` : '暂无（不影响开写）'}</span></div>
       ${methods.length ? `<p class="muted">勾选后将把对应参考写法精准绑定到下游制作步骤（完全可选，最多 ${METHOD_PREFERENCE_LIMIT} 条）。</p>
         <div class="rec-grid">${methods.map(m => {
           const active = selectedMethods.has(m.id);
@@ -333,13 +407,32 @@ export async function openWizard({mode, prefill} = {}) {
     </section>`;
 
     $('#modalBody').innerHTML = stepsBar(step) + `
-      <div class="row spread wrap"><h2>叙事视角、语气文风与参考写法</h2><span class="tag blue">直接驱动 09 场景 / 13 表达 / 15 写作</span></div>
-      <p class="wizard-description">基于 <strong>${esc(names())}</strong> —— 选定本作的叙述人称、语气基调与语言质感；身体动作锚点、潜台词对白、受限 POV 防越界与审稿红线均自动生效。</p>
+      <div class="row spread wrap"><h2>语感规范、叙事视角与参考写法</h2><span class="tag blue">直接驱动 09 场景 / 13 表达 / 15 写作 / 16 审稿</span></div>
+      <p class="wizard-description">基于 <strong>${esc(names())}</strong> —— 先选定精确有边界的<strong>本书语感规范卡</strong>（内置 6 维语言力学 + 50 字正反微对照），再按需微调视角与挂载参考拆解方法。</p>
       ${craftFocus.expression_focus ? `<div class="notice"><strong>本类型表达重点</strong>：${esc(craftFocus.expression_focus)}</div>` : ''}
-      ${FlatOptionSection({id:'tones', title:'1. 语气基调（10 类直选）', hint:`最多选 ${limitFor('tone')} 项，本类型核心语气已置顶。`, items:sections.tones || [], selectedForSlot:selections, limitForSlot:limitFor})}
-      ${FlatOptionSection({id:'styles', title:'2. 文风与语言质感（20 类直选）', hint:`最多选 ${limitFor('style')} 项；若同时选竞争文风，表达步骤会自动分配到不同场景节拍。`, items:sections.styles || [], selectedForSlot:selections, limitForSlot:limitFor})}
-      ${FlatOptionSection({id:'viewpoint', title:'3. 叙事人称、距离与时序偏好', hint:'仅在需要明确指定人称形态（第一/第三人称有限）、不可靠叙述或插叙/倒叙时勾选。', items:sections.viewpoint_choices || [], selectedForSlot:selections, limitForSlot:limitFor, collapsedAll:true})}
-      ${methodsHtml}`;
+      ${voiceSpecHtml}
+      ${methodsHtml}
+      <details class="details" style="margin-top:16px">
+        <summary><strong>4. 进阶细项 · 叙事人称/时序与传统语气/文风标签（选填，已自动并入语感规范编译）</strong></summary>
+        <div class="stack" style="margin-top:12px">
+          ${FlatOptionSection({id:'viewpoint', title:'叙事人称、距离与时序偏好', hint:'需要明确指定第一/第三人称有限、不可靠叙述或插叙/倒叙时勾选。', items:sections.viewpoint_choices || [], selectedForSlot:selections, limitForSlot:limitFor})}
+          ${FlatOptionSection({id:'tones', title:'补充语气基调（10 类）', hint:`最多选 ${limitFor('tone')} 项，将自动转译为可执行语言指令并入语感规范。`, items:sections.tones || [], selectedForSlot:selections, limitForSlot:limitFor})}
+          ${FlatOptionSection({id:'styles', title:'补充文风标签（20 类）', hint:`最多选 ${limitFor('style')} 项，将自动转译为可执行写作聚焦点。`, items:sections.styles || [], selectedForSlot:selections, limitForSlot:limitFor})}
+        </div>
+      </details>`;
+
+    $('#wizardVoiceBase')?.addEventListener('change', e => {
+      selectedVoiceBase = e.target.value;
+      const picked = voiceBases.find(b => b.id === selectedVoiceBase);
+      if (picked?.default_knobs) {
+        voiceKnobs = JSON.parse(JSON.stringify(picked.default_knobs));
+      }
+      render();
+    });
+    $$('#modalBody [name=wizardVoiceFp]').forEach(cb => cb.addEventListener('change', () => {
+      capture();
+      render();
+    }));
   }
 
   function paintConfirm() {
@@ -352,12 +445,17 @@ export async function openWizard({mode, prefill} = {}) {
       ['文风质感', selections('style')],
     ].map(([label, keys]) => `<dt>${label}</dt><dd>${esc(keys.map(k => known.get(k)?.name || k).join('、') || '按本类型工作流自动展开')}</dd>`).join('');
 
+    const activeVoice = (setupProfile?.voice_setup?.voice_bases || []).find(b => b.id === selectedVoiceBase);
+    const voiceSummaryText = activeVoice
+      ? `${activeVoice.name}${selectedFingerprints.size ? `（叠加 ${selectedFingerprints.size} 项同题材语感指纹）` : ''}`
+      : '按本类型自动编译语感规范卡';
     const currentVersions = Object.fromEntries((setupProfile?.available_corpus_methods || []).map(m => [m.id, m.version]));
     $('#modalBody').innerHTML = stepsBar(step) + `<div class="wizard-confirm">
       <h2>填写故事构想并确认开写</h2>
       <div class="card"><dl class="selection-summary">
         <dt>题材边界</dt><dd>${esc(names())}</dd>
         ${lengthSummary(lengthPlan, tierRecommendation?.tiers)}
+        <dt>本书语感规范卡</dt><dd><strong>${esc(voiceSummaryText)}</strong></dd>
         ${pickedRows}
         <dt>基础写作能力</dt><dd>已自动启用（主角/配角防工具化、关系网、黄金三章/伏笔回收、受限 POV、独立审稿）</dd>
       </dl></div>
@@ -464,6 +562,15 @@ export async function openWizard({mode, prefill} = {}) {
       method_policy_mode:'builtin_enhanced',
       direction_review: $('#wizardDirectionReview')?.checked ?? true,
       method_preferences:[...selectedMethods.values()].map(({id, version, slot}) => ({id, version, slot})),
+      ...(selectedVoiceBase ? {
+        voice_profile: {
+          enabled: true,
+          base_voice_id: selectedVoiceBase,
+          knobs: voiceKnobs || {},
+          fingerprint_ids: [...selectedFingerprints],
+          custom_notes: voiceCustomNotes,
+        },
+      } : {}),
       choices:types().map(id => ({slot:'genre', option_key:'genre.' + id})),
       auto_length:true,
       ...Object.fromEntries(Object.entries(lengthPlan).filter(([,value]) => value != null)),

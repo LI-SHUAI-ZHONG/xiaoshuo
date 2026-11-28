@@ -320,6 +320,17 @@ def _extract_messages(span: dict[str, Any], chapter_text: str, tracks: list[str]
         {'track': tid, 'name': TARGETED_TRACKS[tid]['name'], 'focus': TARGETED_TRACKS[tid]['description']}
         for tid in tracks
     ]
+    voice_block = (
+        ',\n  "voice_signals": {\n'
+        '    "scene_function": "opening_hook | confrontation | action_reveal | emotional_shock | dialogue_daily",\n'
+        '    "register": "本章用词文白度与语体特征（<=60字，不含原作专有名词）",\n'
+        '    "cadence": "本章句长呼吸与快慢切换特征（<=60字）",\n'
+        '    "dialogue_texture": "本章对白脾气、潜台词与语气特征（<=60字）",\n'
+        '    "psychic_distance": "本章内心贴近度与情绪表达方式（<=60字）",\n'
+        '    "quote": "最能代表本章语感呼吸的1句连续原文短摘录（15-120字，一字不改）"\n'
+        '  }\n'
+        if 'scene_prose_craft' in tracks else '\n'
+    )
     system = (
         '你是小说写作工作流的参考书精准拆解员。只返回一个合法 JSON 对象，不要输出任何额外解释。\n'
         '你的目标不是抄写剧情梗概，而是从本章原文中提取可直接复用于后续写作步骤（世界/人物/剧情/场景表达）的【具体做法与原文依据】。\n'
@@ -342,8 +353,7 @@ def _extract_messages(span: dict[str, Any], chapter_text: str, tracks: list[str]
         '      "boundary": "适用条件与不适用边界（<=120字）",\n'
         '      "quotes": ["连续照录自本章的原文短摘录1"]\n'
         '    }\n'
-        '  ]\n'
-        '}'
+        '  ]' + voice_block + '}'
     )
     user = {
         'chapter_index': span['story_chapter_index'],
@@ -415,15 +425,34 @@ def _validate_extract(raw: dict[str, Any], content: str, span: dict[str, Any], a
             'boundary': boundary or '仅适用于同类型及相近冲突场景，不得生搬原作情节。',
             'quotes': verified_quotes,
         })
+    voice_signal: dict[str, Any] | None = None
+    raw_vs = raw.get('voice_signals')
+    if isinstance(raw_vs, dict):
+        vs_loc = _locate_quote(content, span['start'], span['end'], str(raw_vs.get('quote') or ''))
+        vs_fields = {
+            k: str(raw_vs.get(k) or '').strip()[:160]
+            for k in ('scene_function', 'register', 'cadence', 'dialogue_texture', 'psychic_distance')
+            if str(raw_vs.get(k) or '').strip()
+        }
+        if vs_fields or vs_loc:
+            voice_signal = {
+                'unit_id': span['unit_id'],
+                'chapter_index': span['story_chapter_index'],
+                **vs_fields,
+                **({'start': vs_loc[0], 'end': vs_loc[1], 'quote': content[vs_loc[0]:vs_loc[1]]} if vs_loc else {}),
+            }
+
     if not obs_out and not chars_out:
         # Allow empty chapter observation only with explicit summary, never stall on a single transition chapter.
         return {'unit_id': span['unit_id'], 'chapter_summary': summary or '本章过渡片段，未提炼出独立可复用方法',
-                'key_characters': [], 'observations': []}
+                'key_characters': [], 'observations': [],
+                **({'voice_signal': voice_signal} if voice_signal else {})}
     return {
         'unit_id': span['unit_id'],
         'chapter_summary': summary or obs_out[0]['what_happened'][:80],
         'key_characters': chars_out,
         'observations': obs_out,
+        **({'voice_signal': voice_signal} if voice_signal else {}),
     }
 
 
@@ -432,7 +461,9 @@ def _synthesize_messages(
     confirmed_types: list[str],
     extent_status: str,
     tracks: list[str],
+    voice_signals: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, str]]:
+    from nw.voice_specs import VOICE_BASES
     indexed = []
     for idx, obs in enumerate(observations, start=1):
         indexed.append({
@@ -445,12 +476,24 @@ def _synthesize_messages(
             'reusable_pattern': obs['reusable_pattern'],
             'boundary': obs['boundary'],
         })
+    voice_fp_schema = (
+        ',\n  "voice_fingerprint": {\n'
+        '    "title": "脱剧情语感指纹标题（<=32字，不含书名与原作人名）",\n'
+        '    "base_voice_id": "从下方 voice_base_ids 中选最贴合的 1 项",\n'
+        '    "scene_functions": ["opening_hook", "confrontation"],\n'
+        '    "dimensions": {"register": "文白与用词特征", "cadence": "句式长短切换特征", "psychic_distance": "内心贴近方式", "dialogue_texture": "对白脾气特征", "imagery_budget": "细节描写取舍", "pacing_payoff": "节奏与章尾落点"},\n'
+        '    "techniques": ["可复用脱剧情语言手法1（<=140字）", "可复用脱剧情语言手法2"],\n'
+        '    "drift_guards": ["仿此语感时要防哪种跑偏（<=100字）"],\n'
+        '    "scene_function_notes": {"confrontation": "对抗/试探戏的语感要点", "opening_hook": "开场戏的语感要点"}\n'
+        '  }\n'
+        if 'scene_prose_craft' in tracks else '\n'
+    )
     system = (
         '你是小说工作流方法总编。请将以下带有原作铁证的章节观察，合并提炼为可直接接入下游制作步骤的【高质量可复用创作方法】。\n'
         '只返回一个合法 JSON 对象：{"book_overview": {...}, "methods": [...]}\n'
         '硬规则：\n'
         '1. 每个已观察到的维度（track）提炼 1–3 条最精华、不重复的方法（总数不超过 12 条）。\n'
-        '2. 严禁把原作人名、地名、功法名、具体情节写进方法标题、适用条件、操作步骤或验收标准；全部转化为新小说可执行的通用写法！\n'
+        '2. 严禁把原作人名、地名、功法名、具体情节写进方法标题、适用条件、操作步骤、验收标准或语感指纹；全部转化为新小说可执行的通用写法！\n'
         '3. 每条方法必须通过 obs_ids 引用至少 1 条输入观察编号（只引同一 track 的 obs_id）。\n'
         '4. 方法的 applicability（适用范围）、non_applicability（不适用边界）、operation（具体操作步骤）、'
         'output_desc（本步应产出什么）、acceptance_check（审稿如何核验正文真正写出效果）必须具体可操作。\n'
@@ -476,15 +519,21 @@ def _synthesize_messages(
         '      "acceptance_check": "独立审稿在正文中核验的客观标准（<=120字）",\n'
         '      "evidence_required": "正文必须出现的具体可引用表现（<=100字）"\n'
         '    }\n'
-        '  ]\n'
-        '}'
+        '  ]' + voice_fp_schema + '}'
     )
-    user = {
+    user: dict[str, Any] = {
         'confirmed_types': confirmed_types,
         'source_extent': extent_status,
         'tracks_allowed_tasks': {t: TARGETED_TRACKS[t]['allowed_tasks'] for t in tracks if t in TARGETED_TRACKS},
         'observations': indexed,
     }
+    if 'scene_prose_craft' in tracks:
+        user['voice_base_ids'] = [{'id': b['id'], 'name': b['name']} for b in VOICE_BASES]
+        if voice_signals:
+            user['observed_voice_signals'] = [
+                {k: v for k, v in row.items() if k in ('chapter_index', 'scene_function', 'register', 'cadence', 'dialogue_texture', 'psychic_distance')}
+                for row in voice_signals[:8]
+            ]
     return [{'role': 'system', 'content': system}, {'role': 'user', 'content': encode(user)}]
 
 
@@ -516,7 +565,10 @@ def _validate_synthesis(raw: dict[str, Any], obs_count: int) -> dict[str, Any]:
             'acceptance_check': str(row.get('acceptance_check') or '').strip()[:400],
             'evidence_required': str(row.get('evidence_required') or '').strip()[:400],
         })
-    return {'book_overview': overview, 'methods': methods}
+    result: dict[str, Any] = {'book_overview': overview, 'methods': methods}
+    if isinstance(raw.get('voice_fingerprint'), dict):
+        result['voice_fingerprint'] = raw['voice_fingerprint']
+    return result
 
 
 def _task_contract_wiring(task: str, track_id: str, extent_status: str) -> dict[str, Any]:
@@ -1080,6 +1132,7 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
     if not all_obs:
         raise ValueError('抽样章节中未提取到带原文引文的有效写作方法观察；请尝试扩大抽样章数或指定核心冲突章节区间')
 
+    voice_signals = [rec['voice_signal'] for rec in state['extracted'] if isinstance(rec.get('voice_signal'), dict)]
     if not state.get('synthesis_done'):
         def _val_synth(raw: dict) -> dict:
             return _validate_synthesis(raw, len(all_obs))
@@ -1087,7 +1140,7 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
         synthesis, _ = model_call(
             service, job['id'], config, provider,
             key='targeted_synthesize:0', phase='synthesize',
-            messages=_synthesize_messages(all_obs, confirmed_types, opts['extent'], tracks),
+            messages=_synthesize_messages(all_obs, confirmed_types, opts['extent'], tracks, voice_signals=voice_signals),
             validator=_val_synth,
             auto_retry_transient=True,
         )
@@ -1179,6 +1232,72 @@ def run_targeted_job(service: object, job: dict[str, Any], state: dict[str, Any]
                     )
                 approved_methods.append({**item, 'auto_approved': True})
             state['published_methods'] = approved_methods
+            # Auto-collect a plot-free, genre-bounded Voice Fingerprint Card whenever Track 4 produced verified prose observations.
+            prose_obs = [obs for obs in all_obs if obs.get('track') == 'scene_prose_craft']
+            synth_fp = (state.get('synthesis') or {}).get('voice_fingerprint')
+            if 'scene_prose_craft' in tracks and (prose_obs or voice_signals or isinstance(synth_fp, dict)):
+                from nw.voice_specs import VOICE_BASE_MAP, default_voice_base_id, save_voice_fingerprint
+                book_row = conn.execute('SELECT title FROM staging_books WHERE id=?', (job['book_id'],)).fetchone()
+                book_title = str(book_row['title'] if book_row else '参考作品')
+                raw_fp = synth_fp if isinstance(synth_fp, dict) else {}
+                base_id = str(raw_fp.get('base_voice_id') or '')
+                if base_id not in VOICE_BASE_MAP:
+                    base_id = default_voice_base_id(confirmed_types)
+                dims = dict(raw_fp.get('dimensions') or {})
+                for vs in voice_signals:
+                    for dk in ('register', 'cadence', 'dialogue_texture', 'psychic_distance'):
+                        if not dims.get(dk) and vs.get(dk):
+                            dims[dk] = vs[dk]
+                techniques = [str(x).strip() for x in (raw_fp.get('techniques') or ()) if str(x).strip()]
+                if not techniques:
+                    techniques = [obs['reusable_pattern'][:180] for obs in prose_obs[:3] if obs.get('reusable_pattern')]
+                drift_guards = [str(x).strip() for x in (raw_fp.get('drift_guards') or ()) if str(x).strip()]
+                if not drift_guards:
+                    drift_guards = [obs['boundary'][:160] for obs in prose_obs[:2] if obs.get('boundary')]
+                ev_spans = []
+                for vs in voice_signals[:3]:
+                    if vs.get('quote') and 'start' in vs and 'end' in vs:
+                        ev_spans.append({k: vs[k] for k in ('unit_id', 'chapter_index', 'start', 'end', 'quote') if k in vs})
+                for obs in prose_obs[:3]:
+                    for q in (obs.get('quotes') or ())[:1]:
+                        if len(ev_spans) < 4:
+                            ev_spans.append({
+                                'unit_id': obs['unit_id'], 'chapter_index': obs['chapter_index'],
+                                'start': q['start'], 'end': q['end'], 'quote': q['quote'],
+                            })
+                fp_funcs = list(raw_fp.get('scene_functions') or [])
+                for vs in voice_signals:
+                    if vs.get('scene_function') and vs['scene_function'] not in fp_funcs:
+                        fp_funcs.append(vs['scene_function'])
+                fp_title = str(raw_fp.get('title') or '').strip() or f"{VOICE_BASE_MAP[base_id]['name']}·语感指纹（{book_title[:16]}）"
+                saved_fp = save_voice_fingerprint(
+                    conn,
+                    book_id=job['book_id'],
+                    structure_version=version,
+                    title=fp_title,
+                    base_voice_id=base_id,
+                    type_tags=confirmed_types,
+                    body={
+                        'dimensions': dims,
+                        'techniques': techniques,
+                        'drift_guards': drift_guards,
+                        'scene_functions': fp_funcs,
+                        'scene_function_notes': dict(raw_fp.get('scene_function_notes') or {}),
+                        'evidence_spans': ev_spans,
+                    },
+                    status='approved',
+                    scene_functions=fp_funcs,
+                    ts=now,
+                )
+                state['published_voice_fingerprint'] = {
+                    'id': saved_fp['id'],
+                    'title': saved_fp['title'],
+                    'base_voice_id': saved_fp['base_voice_id'],
+                    'base_voice_name': saved_fp['base_voice_name'],
+                    'type_tags': saved_fp['type_tags'],
+                    'excluded_types': saved_fp['excluded_types'],
+                    'techniques_count': len(saved_fp['body'].get('techniques') or ()),
+                }
             conn.execute(
                 "UPDATE corpus_jobs SET status='completed',phase='publish',state_json=?,error='',updated_at=? WHERE id=?",
                 (encode(state), now, job['id']),

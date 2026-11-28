@@ -18,6 +18,11 @@ from nw.studio.method_store import MethodMixin
 from nw.studio.corpus_schema import SCHEMA as CORPUS_SCHEMA
 from nw.studio.corpus_store import CorpusMixin
 from nw.studio.corpus_jobs import CorpusJobsMixin, recover_corpus_jobs
+from nw.voice_specs import (
+    VOICE_FINGERPRINT_SCHEMA,
+    get_voice_fingerprints_by_ids,
+    list_voice_fingerprints as _list_voice_fingerprints,
+)
 
 
 SCHEMA = '''
@@ -77,6 +82,7 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
                 conn.execute('ALTER TABLE staging_books ADD COLUMN decomposition_requested INTEGER NOT NULL DEFAULT 1')
             conn.executescript(METHOD_SCHEMA)
             conn.executescript(CORPUS_SCHEMA)
+            conn.executescript(VOICE_FINGERPRINT_SCHEMA)
         migrate_legacy(self)
         recover_corpus_jobs(self)
         from nw.studio.staging_model import recover_decompositions
@@ -162,3 +168,19 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
             result[public] = json.loads(result.pop(stored))
         result.pop('file_path', None)
         return result
+
+    def voice_fingerprints(
+        self,
+        *,
+        types: list[str] | tuple[str, ...] | None = None,
+        status: str = 'approved',
+        include_incompatible: bool = False,
+    ) -> list[dict]:
+        with self.connect() as conn:
+            return _list_voice_fingerprints(
+                conn, types=types, status=status, include_incompatible=include_incompatible,
+            )
+
+    def voice_fingerprints_by_ids(self, ids: list[str] | tuple[str, ...]) -> list[dict]:
+        with self.connect() as conn:
+            return get_voice_fingerprints_by_ids(conn, ids)

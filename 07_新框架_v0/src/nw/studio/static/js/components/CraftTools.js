@@ -94,44 +94,177 @@ export function renderColdReadInspectorSection(coldRead, hasScene) {
   </section>`;
 }
 
-export async function openStyleReferenceDrawer(novelId, {onSaved} = {}) {
-  drawer('写前语感参照（15 步起草定调锚点）', loading());
-  try {
-    const data = await api.get(`/novels/${enc(novelId)}/style-reference`);
-    const acceptedInfo = data.can_use_auto_book_prose
-      ? `本书已有已接受章节（第 ${data.accepted_chapters.join('、')} 章），可随时切为「沿用本书已采用正文语感」。`
-      : '本书尚未接受第 1 章正文，开篇黄金三章建议先用「作者参照样段」定准腔调。';
+const DIM_LABELS = {
+  register: '语体寄存器',
+  cadence: '句式呼吸',
+  psychic_distance: '内心贴近度',
+  dialogue_texture: '对白质地',
+  imagery_budget: '描写克制度',
+  pacing_payoff: '节奏与落点',
+};
 
-    $('#drawerBody').innerHTML = `<form id="styleReferenceForm" class="stack">
-      <div class="notice"><strong>为什么写前参照比堆规则更管用：</strong>动笔前紧贴一段高水准样段定调，能立刻对齐句式呼吸、长短句节奏与对白脾气。系统严守「只学腔调、严禁照搬人名/设定/情节或原句」，且作为预算感知项在窗口紧张时自动让位。</div>
-      <label class="field">
-        <span>参照模式</span>
-        <select name="mode" id="styleRefMode">
-          <option value="off" ${data.mode === 'off' ? 'selected' : ''}>${esc(MODE_LABEL.off)}</option>
-          <option value="author_sample" ${data.mode === 'author_sample' ? 'selected' : ''}>${esc(MODE_LABEL.author_sample)}</option>
-          <option value="auto_book_prose" ${data.mode === 'auto_book_prose' ? 'selected' : ''}>${esc(MODE_LABEL.auto_book_prose)}</option>
-        </select>
-        <small class="muted">${esc(acceptedInfo)}</small>
-      </label>
-      <div id="styleSampleFields" class="stack" style="gap:12px">
-        <div class="form-grid">
-          <label class="field"><span>样段标题（可选）</span><input name="title" value="${esc(data.title || '')}" placeholder="如：作者自写试笔第一章 / 语感参照"></label>
-          <label class="field"><span>来源备注（可选）</span><input name="source_note" value="${esc(data.source_note || '')}" placeholder="如：作者自写 / 选定同类腔调参照"></label>
-        </div>
+export function renderVoiceSpecPreview(base, knobs, fps = []) {
+  if (!base) return '';
+  const dims = base.dimensions || {};
+  const contrasts = (base.micro_contrasts || []).slice(0, 2);
+  const redlines = base.drift_redlines || [];
+  return `<div class="card stack" style="gap:10px;background:var(--bg-soft, var(--bg-panel))">
+    <div class="row spread wrap">
+      <strong>${esc(base.name)}</strong>
+      <span class="tag green">${esc(base.relevance_label || '可执行语感规范')}</span>
+    </div>
+    <p class="muted" style="margin:0;font-size:12px">${esc(base.tagline || '')}</p>
+    <div class="stack" style="gap:4px;font-size:12px">
+      ${Object.entries(DIM_LABELS).map(([k, lbl]) => dims[k] ? `<p style="margin:0"><strong>${esc(lbl)}：</strong>${esc(dims[k])}</p>` : '').join('')}
+    </div>
+    ${redlines.length ? `<div style="font-size:12px"><strong>专属防 AI 漂移红线（同步用于 16 步审稿）：</strong><ul style="margin:4px 0 0 18px">${redlines.map(r => `<li>${esc(r)}</li>`).join('')}</ul></div>` : ''}
+    ${contrasts.length ? `<details class="details" open>
+      <summary><strong>脱剧情 50 字正反微对照（给 15 步写手校准采样坐标 · 0 抄袭风险）</strong></summary>
+      <div class="stack" style="gap:8px;margin-top:8px">
+        ${contrasts.map(c => `<div class="method-section" style="font-size:12px">
+          <strong>${esc(c.label)}</strong>
+          <p style="margin:4px 0;color:var(--danger)">❌ 僵硬 AI 腔：${esc(c.bad_ai)}</p>
+          <p style="margin:4px 0">✅ 目标语感：${esc(c.target_voice)}</p>
+          <p class="muted" style="margin:2px 0 0">要点：${esc(c.why)}</p>
+        </div>`).join('')}
+      </div>
+    </details>` : ''}
+    ${fps.length ? `<p class="muted" style="margin:0;font-size:12px">已叠加同题材拆解语感指纹：${fps.map(f => esc(f.title)).join('、')}</p>` : ''}
+  </div>`;
+}
+
+export async function openVoiceSpecDrawer(novelId, {onSaved} = {}) {
+  drawer('本书语感规范卡与写前参照（15 写作 · 16 审稿同源边界）', loading());
+  try {
+    const data = await api.get(`/novels/${enc(novelId)}/voice-spec`);
+    const spec = data.voice_spec || {};
+    const bases = data.voice_bases || [];
+    const knobsMeta = data.knobs || {};
+    const fps = data.available_fingerprints || [];
+    const styleData = data.style_reference || {};
+    const activeBaseId = spec.base_voice_id || bases[0]?.id || 'VOICE_GENRE_HYBRID_BALANCED';
+    const activeKnobs = spec.knobs || {};
+    const activeFpIds = new Set(spec.fingerprint_ids || []);
+    const acceptedInfo = styleData.can_use_auto_book_prose
+      ? `本书已有已接受章节（第 ${(styleData.accepted_chapters || []).join('、')} 章），可随时切为「沿用本书已采用正文语感」。`
+      : '本书尚未接受第 1 章正文，默认以「本书语感规范卡」精准控腔即可，无需强求外部样章。';
+
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:18px">
+      <form id="voiceSpecForm" class="stack" style="gap:12px">
+        <div class="notice"><strong>精确有边界的语感规范主驱：</strong>用「6 维可执行语言学指令 + 专属防 AI 漂移红线 + 按本场功能匹配的 50 字 ❌/✅ 脱剧情微对照」控制 15 步写手采样，并同步送入 16 步审稿验收，既不依赖外部整章样章，也杜绝多题材串味。</div>
+        <label class="check-row"><input type="checkbox" name="enabled" id="voiceSpecEnabled" ${spec.enabled !== false ? 'checked' : ''}> <strong>启用本书语感规范卡（推荐）</strong></label>
         <label class="field">
-          <span>参照样段正文（最多 ${number(data.max_excerpt_chars || 4000)} 字，实际写前挂载前 ${number(data.prompt_excerpt_chars || 2200)} 字）</span>
-          <textarea name="excerpt" rows="8" placeholder="粘贴 1–3 段或一章最代表你想要的叙述口吻、句式呼吸与对白脾气的正文…">${esc(data.excerpt || '')}</textarea>
+          <span>1. 内置语感规范基座（已按本书题材推荐排序）</span>
+          <select name="base_voice_id" id="voiceBaseSelect">
+            ${bases.map(b => `<option value="${esc(b.id)}" ${b.id === activeBaseId ? 'selected' : ''}>${esc(b.name)} · ${esc(b.relevance_label || '')}</option>`).join('')}
+          </select>
         </label>
-      </div>
-      <label class="field">
-        <span>本书语感与写法要点（可选，无论哪种开启模式都会作为写前提示）</span>
-        <textarea name="style_notes" rows="3" placeholder="例如：句子按意思一路说完不切碎；人物心里想法直白鲜活；对白带各人脾气；不强行堆四字成语。">${esc(data.style_notes || '')}</textarea>
-      </label>
-      <div class="row wrap" style="gap:8px">
-        <button type="submit" class="button">保存写前语感参照</button>
-        <button type="button" class="ghost" id="disableStyleRefBtn">关闭参照</button>
-      </div>
-    </form>`;
+        <div id="voiceBasePreviewBox"></div>
+        <div class="form-grid">
+          ${['register', 'cadence', 'dialogue_mind'].map(k => {
+            const meta = knobsMeta[k];
+            if (!meta) return '';
+            const cur = activeKnobs[k] || '';
+            return `<label class="field"><span>${esc(meta.label)}</span><select name="knob_${k}" id="knob_${k}">
+              ${(meta.options || []).map(o => `<option value="${esc(o.id)}" ${o.id === cur ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}
+            </select></label>`;
+          }).join('')}
+        </div>
+        ${knobsMeta.anti_drift_bans ? `<fieldset class="method-section"><legend>${esc(knobsMeta.anti_drift_bans.label)}</legend>
+          <div class="row wrap" style="gap:10px">
+            ${(knobsMeta.anti_drift_bans.options || []).map(o => `<label class="check-row" style="margin:0"><input type="checkbox" name="anti_drift_bans" value="${esc(o.id)}" ${(activeKnobs.anti_drift_bans || []).includes(o.id) ? 'checked' : ''}> <span>${esc(o.label)}</span></label>`).join('')}
+          </div>
+        </fieldset>` : ''}
+        <fieldset class="method-section">
+          <legend>2. 可选 · 叠加同题材已拆解收录的语感指纹（${fps.length} 条兼容，已自动隔离跨题材污染）</legend>
+          ${fps.length ? fps.map(fp => `<label class="check-row"><input type="checkbox" name="fingerprint_ids" value="${esc(fp.id)}" ${activeFpIds.has(fp.id) ? 'checked' : ''}> <span><strong>${esc(fp.title)}</strong> <small class="muted">(${esc(fp.base_voice_name || '')} · ${(fp.body?.techniques || []).length} 条手法)</small></span></label>`).join('')
+            : '<p class="muted" style="margin:4px 0 0;font-size:12px">当前题材尚无已拆解收录的参考书语感指纹；内置语感规范卡已可直接高质量驱动写作。需要吸收特定名家语感时，在预存库运行「精准步骤拆解（含第 4 轨）」即可自动收录。</p>'}
+        </fieldset>
+        <label class="field">
+          <span>3. 本书补充语感细则（选填）</span>
+          <textarea name="custom_notes" rows="2" placeholder="如：主角面对长辈时收起锋芒，独处时内心吐槽更直白；禁用“冷笑一声”。">${esc(spec.custom_notes || '')}</textarea>
+        </label>
+        <div class="row wrap" style="gap:8px">
+          <button type="submit" class="button">保存并编译本书语感规范卡</button>
+        </div>
+      </form>
+      <details class="details" ${styleData.enabled ? 'open' : ''}>
+        <summary><strong>可选 · 附加写前语感样段参照（${styleData.enabled ? '已启用' : '未启用'}）</strong></summary>
+        <form id="styleReferenceForm" class="stack" style="margin-top:12px">
+          <label class="field">
+            <span>样段参照模式</span>
+            <select name="mode" id="styleRefMode">
+              <option value="off" ${styleData.mode === 'off' ? 'selected' : ''}>${esc(MODE_LABEL.off)}</option>
+              <option value="author_sample" ${styleData.mode === 'author_sample' ? 'selected' : ''}>${esc(MODE_LABEL.author_sample)}</option>
+              <option value="auto_book_prose" ${styleData.mode === 'auto_book_prose' ? 'selected' : ''}>${esc(MODE_LABEL.auto_book_prose)}</option>
+            </select>
+            <small class="muted">${esc(acceptedInfo)}</small>
+          </label>
+          <div id="styleSampleFields" class="stack" style="gap:10px">
+            <div class="form-grid">
+              <label class="field"><span>样段标题（可选）</span><input name="title" value="${esc(styleData.title || '')}" placeholder="如：作者自写试笔第一章"></label>
+              <label class="field"><span>来源备注（可选）</span><input name="source_note" value="${esc(styleData.source_note || '')}" placeholder="如：作者自写"></label>
+            </div>
+            <label class="field">
+              <span>参照样段正文（最多 ${number(styleData.max_excerpt_chars || 4000)} 字，严禁照搬剧情人名）</span>
+              <textarea name="excerpt" rows="6" placeholder="可选粘贴 1–2 段代表目标语感的自写正文…">${esc(styleData.excerpt || '')}</textarea>
+            </label>
+          </div>
+          <label class="field">
+            <span>样段补充说明（可选）</span>
+            <textarea name="style_notes" rows="2">${esc(styleData.style_notes || '')}</textarea>
+          </label>
+          <div class="row wrap" style="gap:8px">
+            <button type="submit" class="secondary">保存附加样段参照</button>
+            <button type="button" class="ghost" id="disableStyleRefBtn">关闭样段参照</button>
+          </div>
+        </form>
+      </details>
+    </div>`;
+
+    const paintPreview = () => {
+      const bid = $('#voiceBaseSelect').value;
+      const base = bases.find(b => b.id === bid) || bases[0];
+      const pickedFps = fps.filter(fp => $$('#voiceSpecForm [name=fingerprint_ids]:checked').some(el => el.value === fp.id));
+      $('#voiceBasePreviewBox').innerHTML = renderVoiceSpecPreview(base, null, pickedFps);
+    };
+    $('#voiceBaseSelect').onchange = () => {
+      const base = bases.find(b => b.id === $('#voiceBaseSelect').value);
+      if (base?.default_knobs) {
+        for (const k of ['register', 'cadence', 'dialogue_mind']) {
+          const el = $(`#knob_${k}`);
+          if (el && base.default_knobs[k]) el.value = base.default_knobs[k];
+        }
+        const defs = new Set(base.default_knobs.anti_drift_bans || []);
+        $$('#voiceSpecForm [name=anti_drift_bans]').forEach(cb => { cb.checked = defs.has(cb.value); });
+      }
+      paintPreview();
+    };
+    $$('#voiceSpecForm [name=fingerprint_ids]').forEach(cb => { cb.onchange = paintPreview; });
+    paintPreview();
+
+    $('#voiceSpecForm').onsubmit = e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const payload = {
+        enabled: $('#voiceSpecEnabled').checked,
+        base_voice_id: $('#voiceBaseSelect').value,
+        knobs: {
+          register: $('#knob_register')?.value || '',
+          cadence: $('#knob_cadence')?.value || '',
+          dialogue_mind: $('#knob_dialogue_mind')?.value || '',
+          anti_drift_bans: $$('#voiceSpecForm [name=anti_drift_bans]:checked').map(el => el.value),
+        },
+        fingerprint_ids: $$('#voiceSpecForm [name=fingerprint_ids]:checked').map(el => el.value),
+        custom_notes: String(fd.get('custom_notes') || ''),
+      };
+      busy(e.target.querySelector('[type=submit]'), async () => {
+        await api.post(`/novels/${enc(novelId)}/voice-spec`, payload);
+        $('#drawer')?.close?.();
+        toast('本书语感规范卡已编译保存，15 步写作与 16 步审稿将自动同步生效');
+        if (onSaved) await onSaved();
+      }).catch(fail);
+    };
 
     const syncVisibility = () => {
       const m = $('#styleRefMode').value;
@@ -140,24 +273,22 @@ export async function openStyleReferenceDrawer(novelId, {onSaved} = {}) {
     $('#styleRefMode').onchange = syncVisibility;
     syncVisibility();
 
-    const submitPayload = async (btn, payload) => {
+    const submitSample = async (btn, payload) => {
       await busy(btn, async () => {
         await api.post(`/novels/${enc(novelId)}/style-reference`, payload);
         $('#drawer')?.close?.();
-        toast(payload.mode === 'off' ? '已关闭写前语感参照' : '写前语感参照已保存，将在下次起草/工作包重算时生效');
+        toast(payload.mode === 'off' ? '已关闭附加样段参照' : '附加样段参照已保存');
         if (onSaved) await onSaved();
       });
     };
-
-    $('#disableStyleRefBtn').onclick = e => submitPayload(e.currentTarget, {
+    $('#disableStyleRefBtn').onclick = e => submitSample(e.currentTarget, {
       enabled: false, mode: 'off', title: '', source_note: '', excerpt: '', style_notes: '',
     }).catch(fail);
-
     $('#styleReferenceForm').onsubmit = e => {
       e.preventDefault();
       const fd = new FormData(e.target);
       const mode = String(fd.get('mode') || 'off');
-      submitPayload(e.target.querySelector('[type=submit]'), {
+      submitSample(e.target.querySelector('[type=submit]'), {
         enabled: mode !== 'off',
         mode,
         title: String(fd.get('title') || ''),
@@ -171,6 +302,8 @@ export async function openStyleReferenceDrawer(novelId, {onSaved} = {}) {
     fail(error);
   }
 }
+
+export const openStyleReferenceDrawer = openVoiceSpecDrawer;
 
 export async function openColdReadDrawer(novelId, {sceneId = '', chapterIndex = null, branch = 'main', onCompleted} = {}) {
   drawer('陌生读者冷读（零大纲 · 零设定盲态诊断）', loading());

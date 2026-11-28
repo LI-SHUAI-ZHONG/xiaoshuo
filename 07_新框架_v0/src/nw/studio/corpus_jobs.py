@@ -126,7 +126,7 @@ class CorpusJobsMixin:
         result=dict(row);state=json.loads(result.pop('state_json'));result['options']=json.loads(result.pop('options_json'))
         result['runtime']=json.loads(result.pop('runtime_json'));result['calls']=calls
         result['structure_schema_version']=state['document'].get('schema_version',1)
-        result['progress']={k:state.get(k) for k in ('survey_cursor','overview_cursor','detail_cursor','domain_index','relation_cursor','method_cursor','extract_cursor','synthesis_done','published_version','published_methods')}
+        result['progress']={k:state.get(k) for k in ('survey_cursor','overview_cursor','detail_cursor','domain_index','relation_cursor','method_cursor','extract_cursor','synthesis_done','published_version','published_methods','published_voice_fingerprint')}
         result['coverage']=state.get('coverage',{});result['calls_used']=len(calls)
         return result
 

@@ -94,10 +94,12 @@ def freeze_wizard(body: dict, library: Any) -> dict:
                               f"与同类型可用参考方法，原创构思主角处境、核心矛盾、代价抉择与全书推进方向。")
             wizard['idea_origin'] = 'auto_brief'
         # Fill differentiating genre defaults when author left slots blank in AI Auto mode.
-        defaults = auto_select_genre_preferences(selected_types)
-        for field_name, vals in defaults.items():
-            if not wizard.get(field_name):
-                wizard[field_name] = vals
+        defaults = auto_select_genre_preferences(selected_types, library=library)
+        for field_name in ('structure_ids', 'mechanism_ids', 'tone_ids', 'style_ids'):
+            if not wizard.get(field_name) and defaults.get(field_name):
+                wizard[field_name] = defaults[field_name]
+        if not raw.get('voice_profile') and defaults.get('voice_profile'):
+            wizard['_auto_voice_profile'] = defaults['voice_profile']
     chosen_keys = {'genre': {f'genre.{value}' for value in selected_types}}
     for slot, field in SLOTS.items():
         if slot == 'genre':
@@ -215,6 +217,37 @@ def freeze_wizard(body: dict, library: Any) -> dict:
     if passages := recommendations(library, selected_types):
         wizard['passage_references'] = passages
     wizard['creation_plan'] = creation_plan.freeze(wizard, library, candidate_titles)
+    # Compile Book Voice Spec when author configured voice_profile or enabled creative_workflow.
+    raw_voice = raw.get('voice_profile') or wizard.pop('_auto_voice_profile', None)
+    if raw_voice is not None or wizard.get('creative_workflow'):
+        from nw.voice_specs import VOICE_BASE_MAP, compile_book_voice_spec
+        if raw_voice is not None and not isinstance(raw_voice, dict):
+            raise ValueError('语感规范配置必须是对象')
+        vp = dict(raw_voice or {})
+        base_vid = vp.get('base_voice_id')
+        if base_vid is not None and base_vid != '' and base_vid not in VOICE_BASE_MAP:
+            raise ValueError(f'未知的语感规范基座: {base_vid}')
+        fp_ids = vp.get('fingerprint_ids') or []
+        if not isinstance(fp_ids, list) or len(fp_ids) > 5:
+            raise ValueError('语感指纹最多选择 5 项')
+        resolved_fps = []
+        if library is not None and hasattr(library, 'voice_fingerprints_by_ids') and fp_ids:
+            resolved_fps = library.voice_fingerprints_by_ids(fp_ids)
+        elif auto_builtin_mode and not fp_ids and library is not None and hasattr(library, 'voice_fingerprints'):
+            try:
+                resolved_fps = library.voice_fingerprints(types=selected_types, status='approved')[:2]
+            except Exception:
+                resolved_fps = []
+        wizard['voice_spec'] = compile_book_voice_spec(
+            selected_types,
+            base_voice_id=base_vid or None,
+            knobs=vp.get('knobs') if isinstance(vp.get('knobs'), dict) else None,
+            tone_ids=wizard.get('tone_ids', ()),
+            style_ids=wizard.get('style_ids', ()),
+            fingerprints=resolved_fps,
+            custom_notes=str(vp.get('custom_notes') or ''),
+            enabled=bool(vp.get('enabled', True)),
+        )
     return wizard
 
 

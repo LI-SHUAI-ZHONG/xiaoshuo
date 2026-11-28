@@ -182,7 +182,29 @@ def setup_profile_for_types(types: list[str] | tuple[str, ...] | None = None, *,
         except Exception:
             available_methods = []
 
-    # 7) Genre scope summary for downstream creation_plan injection
+    # 7) Executable Voice Spec Setup (8 built-in voice bases + 4 orthogonal knobs + compatible decomposed fingerprints)
+    from nw.voice_specs import (
+        VOICE_KNOBS,
+        default_voice_base_id,
+        recommend_voice_bases,
+    )
+    ranked_voices = recommend_voice_bases(normalized)
+    recommended_voice_id = default_voice_base_id(normalized)
+    available_fingerprints: list[dict[str, Any]] = []
+    if library is not None and hasattr(library, 'voice_fingerprints'):
+        try:
+            available_fingerprints = library.voice_fingerprints(types=normalized or None, status='approved')
+        except Exception:
+            available_fingerprints = []
+
+    voice_setup = {
+        'recommended_base_id': recommended_voice_id,
+        'voice_bases': ranked_voices,
+        'knobs': deepcopy(VOICE_KNOBS),
+        'available_fingerprints': available_fingerprints,
+    }
+
+    # 8) Genre scope summary for downstream creation_plan injection
     world_oos = [c['short_name'] for c in world_bp.get('categories', ()) if c['relevance'] == 'out_of_scope']
     genre_scope = {
         'type_ids': normalized,
@@ -193,12 +215,14 @@ def setup_profile_for_types(types: list[str] | tuple[str, ...] | None = None, *,
         'craft_focus': craft_bp.get('craft_profile', {}),
     }
 
+    ai_defaults = auto_select_genre_preferences(normalized, library=library)
     return {
         'version': 2,
         'types': normalized,
         'auto_enforced_capabilities': list(deepcopy(AUTO_ENFORCED_CAPABILITIES)),
         'genre_scope': genre_scope,
         'selection_limits': catalog.wizard_selection_limits(),
+        'voice_setup': voice_setup,
         'sections': {
             'structures': structures,
             'mechanisms': mechanisms,
@@ -208,15 +232,24 @@ def setup_profile_for_types(types: list[str] | tuple[str, ...] | None = None, *,
             'styles': styles,
         },
         'available_corpus_methods': available_methods,
-        'ai_auto_defaults': auto_select_genre_preferences(normalized),
+        'ai_auto_defaults': ai_defaults,
     }
 
 
-def auto_select_genre_preferences(types: list[str] | tuple[str, ...]) -> dict[str, list[str]]:
+def auto_select_genre_preferences(
+    types: list[str] | tuple[str, ...],
+    *,
+    library: Any = None,
+) -> dict[str, Any]:
     """Deterministically select clean, non-conflicting genre-aligned defaults for AI Auto mode."""
+    from nw.voice_specs import VOICE_BASE_MAP, default_voice_base_id
+
     normalized = catalog.canonical_types(list(types)) if types else []
     if not normalized:
-        return {'structure_ids': [], 'mechanism_ids': [], 'tone_ids': [], 'style_ids': []}
+        return {
+            'structure_ids': [], 'mechanism_ids': [], 'tone_ids': [], 'style_ids': [],
+            'voice_profile': {'base_voice_id': 'VOICE_GENRE_HYBRID_BALANCED', 'knobs': {}, 'fingerprint_ids': []},
+        }
 
     struct_children = catalog.options('structure', 'structure.group.types', types=normalized)
     primary_structs = [r['id'] for r in struct_children if r.get('relevance') == 'primary']
@@ -243,11 +276,27 @@ def auto_select_genre_preferences(types: list[str] | tuple[str, ...]) -> dict[st
     if 'STYLE_LIGHT' in picked_styles and 'STYLE_GRITTY' in picked_styles:
         picked_styles = [s for s in picked_styles if s != 'STYLE_GRITTY']
 
+    base_voice_id = default_voice_base_id(normalized)
+    base_meta = VOICE_BASE_MAP[base_voice_id]
+    matched_fp_ids: list[str] = []
+    if library is not None and hasattr(library, 'voice_fingerprints'):
+        try:
+            fps = library.voice_fingerprints(types=normalized, status='approved')
+            matched_fp_ids = [fp['id'] for fp in fps[:2] if fp.get('id')]
+        except Exception:
+            matched_fp_ids = []
+
     return {
         'structure_ids': picked_structs,
         'mechanism_ids': picked_mechs,
         'tone_ids': picked_tones,
         'style_ids': picked_styles,
+        'voice_profile': {
+            'base_voice_id': base_voice_id,
+            'base_voice_name': base_meta['name'],
+            'knobs': deepcopy(base_meta['default_knobs']),
+            'fingerprint_ids': matched_fp_ids,
+        },
     }
 
 

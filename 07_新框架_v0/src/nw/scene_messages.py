@@ -83,9 +83,12 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         note = review_genre_guidance(genre_ids) if purpose == 'review' else writing_genre_guidance(genre_ids)
         if note:
             appended += ' ' + note
+    from nw.voice_specs import build_review_voice_guard_from_package
     from nw.writing_craft import ANTI_AI_REVIEW_GUIDE, ANTI_AI_REVISE_GUIDE, package_uses_craft_layers
     if contract is not None or bool(genre_ids) or package_uses_craft_layers(package):
         appended += ' ' + (ANTI_AI_REVIEW_GUIDE if purpose == 'review' else ANTI_AI_REVISE_GUIDE)
+    if voice_guard := build_review_voice_guard_from_package(package):
+        appended += ' ' + voice_guard
     keys = check_source_keys(contract['checks']) if contract else writing_keys
     body = canonical(data)
     prompt = step_material_prompt(prompt, material, keys)

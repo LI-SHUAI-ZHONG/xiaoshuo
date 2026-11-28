@@ -65,6 +65,8 @@ class ProductionRoutes:
                     data = app.timeline(ident)
                 elif action == 'quality':
                     data = app.quality(ident, first(query, 'scene'))
+                elif action == 'voice-spec':
+                    data = app.voice_spec(ident)
                 elif action == 'style-reference':
                     data = app.style_reference(ident)
                 elif action == 'cold-reads':
@@ -96,6 +98,18 @@ class ProductionRoutes:
             data = lib.items(first(query, 'slot'), first(query, 'types').split(',') if first(query, 'types') else [])
         elif segs == ['kb', 'upgrades']:
             data = lib.upgrades(first(query, 'status'))
+        elif segs == ['kb', 'voice-fingerprints']:
+            from nw.voice_specs import VOICE_KNOBS, recommend_voice_bases
+            types = [t for t in first(query, 'types').split(',') if t]
+            data = {
+                'fingerprints': lib.voice_fingerprints(
+                    types=types or None,
+                    status=first(query, 'status', 'approved'),
+                    include_incompatible=first(query, 'all') in ('1', 'true'),
+                ),
+                'voice_bases': recommend_voice_bases(types or None),
+                'knobs': VOICE_KNOBS,
+            }
         if data is None:
             return False
         handler._send_json(200, data)
@@ -122,6 +136,8 @@ class ProductionRoutes:
                     data = app.configure_length(ident, body)
                 elif action == 'methods':
                     data = app.configure_methods(ident,body)
+                elif action == 'voice-spec':
+                    data = app.save_voice_spec(ident, body)
                 elif action == 'style-reference':
                     data = app.save_style_reference(ident, body)
                 elif action == 'cold-reads':

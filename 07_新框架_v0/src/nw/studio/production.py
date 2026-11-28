@@ -76,6 +76,9 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
                 project = store.init_project(wizard['title'])
                 self.db.update(ident, project_id=project.id)
                 store.add_brief(brief_text(wizard), wizard['constraints'])
+                if isinstance(wizard.get('voice_spec'), dict):
+                    from nw.voice_specs import save_book_voice_spec
+                    save_book_voice_spec(store, wizard['voice_spec'])
                 adopt_story(store, {'as_of_story_order': 0, 'disclosure_order': [0, 0, 0],
                     'coverage': {'entities': [], 'predicates': []}, 'facts': [], 'card_refs': []}, {})
                 job = start_job(store, JobRequest('design', design_scope='book', budget=budget,
@@ -416,6 +419,74 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
         novel = self.db.get(ident)
         with self.open_store(novel) as store:
             return style_reference_overview(store, branch=novel.get('current_branch', 'main'))
+
+    def voice_spec(self, ident: str) -> dict:
+        from nw.voice_specs import (
+            VOICE_KNOBS,
+            compile_book_voice_spec,
+            load_book_voice_spec,
+            recommend_voice_bases,
+        )
+        from nw.writing_craft import style_reference_overview
+        novel = self.db.get(ident)
+        genre_ids = novel['wizard'].get('genre_ids') or []
+        available_fps = self.library.voice_fingerprints(types=genre_ids or None, status='approved')
+        with self.open_store(novel) as store:
+            spec = load_book_voice_spec(store)
+            if spec is None:
+                spec = novel['wizard'].get('voice_spec') or compile_book_voice_spec(
+                    genre_ids,
+                    tone_ids=novel['wizard'].get('tone_ids') or (),
+                    style_ids=novel['wizard'].get('style_ids') or (),
+                    fingerprints=available_fps[:1],
+                    enabled=False,
+                )
+            style_ov = style_reference_overview(store, branch=novel.get('current_branch', 'main'))
+        return {
+            'novel_id': ident,
+            'genre_ids': genre_ids,
+            'voice_spec': spec,
+            'voice_bases': recommend_voice_bases(genre_ids),
+            'knobs': VOICE_KNOBS,
+            'available_fingerprints': available_fps,
+            'style_reference': style_ov,
+        }
+
+    def save_voice_spec(self, ident: str, body: dict) -> dict:
+        from nw.voice_specs import VOICE_BASE_MAP, compile_book_voice_spec, save_book_voice_spec
+        if not isinstance(body, dict):
+            raise ValueError('语感规范配置必须是对象')
+        with self._lock:
+            novel = self.db.get(ident)
+            if novel['status'] == 'done':
+                raise ValueError('已完稿作品不能修改本书语感规范')
+            genre_ids = novel['wizard'].get('genre_ids') or []
+            base_id = str(body.get('base_voice_id') or '').strip()
+            if base_id and base_id not in VOICE_BASE_MAP:
+                raise ValueError(f'未知的语感规范基座: {base_id}')
+            fp_ids = body.get('fingerprint_ids') or []
+            if not isinstance(fp_ids, list) or len(fp_ids) > 5:
+                raise ValueError('语感指纹最多叠加 5 项')
+            fps = self.library.voice_fingerprints_by_ids(fp_ids) if fp_ids else []
+            spec = compile_book_voice_spec(
+                genre_ids,
+                base_voice_id=base_id or None,
+                knobs=body.get('knobs') if isinstance(body.get('knobs'), dict) else None,
+                tone_ids=novel['wizard'].get('tone_ids') or (),
+                style_ids=novel['wizard'].get('style_ids') or (),
+                fingerprints=fps,
+                custom_notes=str(body.get('custom_notes') or ''),
+                enabled=bool(body.get('enabled', True)),
+            )
+            with self.open_store(novel) as store:
+                save_book_voice_spec(store, spec)
+            self.db.event(
+                ident, 'voice_spec',
+                f"更新本书语感规范：{spec['base_voice_name']}（{'启用' if spec['enabled'] else '暂停'}，叠加 {len(spec['fingerprints'])} 项语感指纹）",
+                {'base_voice_id': spec['base_voice_id'], 'enabled': spec['enabled'],
+                 'fingerprint_ids': spec['fingerprint_ids'], 'sha256': spec['sha256']},
+            )
+            return self.voice_spec(ident)
 
     def save_style_reference(self, ident: str, body: dict) -> dict:
         from nw.writing_craft import save_style_reference, style_reference_overview

@@ -611,6 +611,7 @@ class ProductionViews:
                                      'words': count_words(draft_obj.text) if draft_obj else 0,
                                      'model_calls': sum(run.provider != 'author' for run in runs)}
             from nw.writing_craft import style_reference_overview
+            from nw.voice_specs import load_book_voice_spec
             style_ov = style_reference_overview(store, branch=novel.get('current_branch', 'main'))
             result['style_reference'] = {
                 'enabled': style_ov['enabled'],
@@ -619,6 +620,17 @@ class ProductionViews:
                 'excerpt_chars': len(style_ov.get('excerpt') or ''),
                 'can_use_auto_book_prose': style_ov['can_use_auto_book_prose'],
             }
+            vspec = load_book_voice_spec(store)
+            result['voice_spec'] = (
+                {
+                    'enabled': bool(vspec.get('enabled', True)),
+                    'base_voice_id': vspec.get('base_voice_id', ''),
+                    'base_voice_name': vspec.get('base_voice_name', ''),
+                    'fingerprint_count': len(vspec.get('fingerprints') or ()),
+                    'drift_redlines_count': len(vspec.get('drift_redlines') or ()),
+                }
+                if vspec else None
+            )
         return result
 
     @staticmethod

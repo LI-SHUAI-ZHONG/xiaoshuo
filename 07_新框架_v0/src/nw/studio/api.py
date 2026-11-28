@@ -940,6 +940,7 @@ class StudioService:
                 'prompt': work.prompt,
                 'writing_source_keys': list(work.writing_source_keys),
                 'has_situation_card': any(item['source'].startswith('situation:') for item in work.package.get('items', ())),
+                'has_voice_spec': any(item['source'] == 'voice-spec' for item in work.package.get('items', ())),
                 'has_style_reference': any(item['source'] == 'style-reference' for item in work.package.get('items', ())),
                 'items': items_breakdown,
                 'selection': work.selection,

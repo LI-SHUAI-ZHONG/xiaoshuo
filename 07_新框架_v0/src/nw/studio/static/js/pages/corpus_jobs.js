@@ -11,7 +11,7 @@ const DEFAULT_TRACKS=[
   {id:'genre_world_rules',name:'题材特色世界机制与代价边界',steps:'03 世界定稿 / 08 行动博弈'},
   {id:'character_conflict',name:'核心人物弧光、反派阻力与关系张力',steps:'04 人物定稿 / 05 关系张力'},
   {id:'opening_plot_hooks',name:'开篇承诺、主线推进与钩子伏笔',steps:'06 故事大纲 / 07 事件链'},
-  {id:'scene_prose_craft',name:'受限视角、动作节拍与段落文风',steps:'09 场景 / 12 锚点 / 13 表达 / 15 写作'},
+  {id:'scene_prose_craft',name:'受限视角、动作节拍与段落文风（同步自动收录同题材语感指纹）',steps:'09 场景 / 12 锚点 / 13 表达 / 15 写作 · 语感规范库'},
 ];
 
 export function openCorpusRun({book,record,catalog,reload,kind='targeted'}){
