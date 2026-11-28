@@ -45,6 +45,8 @@ class ProductionRoutes:
             tw_raw = first(query, 'target_words')
             tw_val = int(tw_raw) if tw_raw.isdigit() else None
             data = setup_profile_for_types(types or None, library=lib, target_words=tw_val)
+        elif segs == ['wizard', 'preferences']:
+            data = app.wizard_preferences()
         elif segs == ['novel-cache']:
             data = app.novel_cache()
         elif segs == ['novels']:
@@ -98,6 +100,13 @@ class ProductionRoutes:
                         'platform': first(query, 'platform', 'fanqie'),
                         'quote_mode': first(query, 'quote_mode', 'keep'),
                     })
+                elif action == 'book-audit':
+                    mw = first(query, 'min_words')
+                    data = app.book_audit(ident, min_words=(int(mw) if mw.isdigit() else 1800))
+                elif action == 'fact-ledger':
+                    data = app.fact_ledger(ident, category=first(query, 'category'), status=first(query, 'status'))
+                elif action == 'calibration-anchor':
+                    data = app.calibration_anchor(ident)
                 elif action == 'continuation':
                     data = app.continuation(ident)
                 elif action == 'finish-check':
@@ -227,6 +236,10 @@ class ProductionRoutes:
                     data = app.publish_preflight(ident, body)
                 elif action == 'ab-judge':
                     data = app.run_ab_blind_judge(ident, body)
+                elif action == 'fact-ledger':
+                    data = app.save_fact_ledger_entry(ident, body)
+                elif action == 'calibration-anchor':
+                    data = app.save_calibration_anchor(ident, body)
                 elif action == 'run':
                     data = app.run(ident, body)
                 elif action == 'retry':
@@ -256,6 +269,8 @@ class ProductionRoutes:
                 data = app.select_forecast(ident, segs[3], body)
             elif len(segs) == 5 and action == 'manuscript-imports' and segs[4] == 'apply':
                 data = app.apply_manuscript_import(ident, segs[3], body)
+            elif len(segs) == 5 and action == 'fact-ledger' and segs[4] == 'delete':
+                data = app.delete_fact_ledger_entry(ident, segs[3])
             elif len(segs) == 4 and action == 'gates':
                 data = app.decide(ident, segs[3], body)
             elif len(segs) == 5 and action == 'gates' and segs[4] == 'refresh':
@@ -298,6 +313,12 @@ class ProductionRoutes:
                     data = lib.radar_generate_topics(body, provider=prov, model=cfg.model, params=dict(cfg.params))
                 else:
                     data = lib.radar_generate_topics(body)
+            elif segs[1] == 'title-workshop':
+                if body.get('use_llm'):
+                    cfg, prov = app._runtime()
+                    data = lib.radar_title_workshop(body, provider=prov, model=cfg.model, params=dict(cfg.params))
+                else:
+                    data = lib.radar_title_workshop(body)
         elif len(segs) == 3 and segs[:2] == ['kb', 'types']:
             data = lib.save_type(segs[2], body)
         elif len(segs) == 3 and segs[:2] == ['kb', 'upgrades']:

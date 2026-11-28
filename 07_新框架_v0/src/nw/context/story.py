@@ -130,6 +130,12 @@ class StoryProvider:
         if project.get('style_reference'):
             items.append(ContextItem('style-reference', canonical(project['style_reference']),
                                      '写前语感参照（只学行文呼吸、对白脾气与节奏，严禁照搬人名设定）'))
+        if project.get('calibration_anchor'):
+            items.append(ContextItem('calibration-anchor', canonical(project['calibration_anchor']),
+                                     '本书第1章文风自校准锚段（保持全书自身叙事声线不漂移）'))
+        if project.get('fact_ledger'):
+            items.append(ContextItem('fact-ledger', canonical(project['fact_ledger']),
+                                     '设定名词与硬数字事实词典（先登记后引用、新名词首现给线索、到期必兑）'))
         if project.get('author_memory'):
             items.append(ContextItem('author-memory', canonical(project['author_memory']),
                                      '作者跨书与本书显式创作偏好（2KB预算截断透明提示）'))
@@ -482,6 +488,20 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
     optional_parts: list[tuple[str, Any]] = [('continuity', continuity), ('reader', already_disclosed)]
     if style_ref is not None:
         optional_parts.insert(0, ('style_reference', style_ref))
+    try:
+        from nw.craft_evolution import load_book_calibration_anchor
+        cal_anchor = load_book_calibration_anchor(store)
+        if cal_anchor and chapter.index > int(cal_anchor.get('chapter_index') or 1):
+            optional_parts.insert(0, ('calibration_anchor', cal_anchor))
+    except Exception:
+        pass
+    try:
+        from nw.fact_ledger import build_writer_fact_ledger_packet
+        fl_packet = build_writer_fact_ledger_packet(store, branch_id=scope.branch_id, chapter_index=chapter.index)
+        if fl_packet:
+            optional_parts.insert(0, ('fact_ledger', fl_packet))
+    except Exception:
+        pass
     if library_conn is not None:
         try:
             from nw.verified_excerpts import build_writer_verified_excerpts_packet

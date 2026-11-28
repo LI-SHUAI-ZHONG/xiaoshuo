@@ -1012,6 +1012,10 @@ def run_pre_review_gate(
                 tier='advisory',
             ))
 
+    # 5b. Zero-Token Self-Stated Count Auditor (Fusion O: catches "只有八个字：'十一字引文'" / list count bugs!)
+    if stripped:
+        _scan_self_stated_counts(stripped, issues)
+
     # 6. Optional word budget check via existing scene_length_feedback
     if store is not None and scene_id and manifest and stripped:
         try:
@@ -1068,6 +1072,64 @@ def run_pre_review_gate(
         'metrics': stats,
         'review_handoff_note': '\n'.join(handoff_lines),
     }
+
+
+_CN_SMALL_NUM: dict[str, int] = {
+    '一': 1, '二': 2, '两': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
+    '十一': 11, '十二': 12, '十三': 13, '十四': 14, '十五': 15, '十六': 16, '十七': 17, '十八': 18, '十九': 19, '二十': 20,
+}
+_STATED_CHAR_QUOTE_RE = re.compile(
+    r'(?:只有|仅有|不过|写着|刻着|共|一共|短短)([一二两三四五六七八九十]{1,2}|\d{1,2})个?字[：:，,、\s]*[“「『"]([^”」』"\n]{1,60})[”」』"]'
+)
+_STATED_LIST_ITEMS_RE = re.compile(
+    r'(?:有|摆着|放着|藏着|列出|分作|一共|共)([二两三四五六七八九十]|\d)([件样条个枚项种张本把])[^。\n：:]{0,10}[：:]([^。\n！？!?;；]{4,120})'
+)
+
+
+def _parse_small_cn_int(token: str) -> int | None:
+    t = str(token or '').strip()
+    if t.isdigit():
+        val = int(t)
+        return val if 1 <= val <= 30 else None
+    return _CN_SMALL_NUM.get(t)
+
+
+def _scan_self_stated_counts(stripped: str, issues: list[dict[str, Any]]) -> None:
+    """Deterministically verify self-stated character counts and enumerated item counts in prose."""
+    for m in _STATED_CHAR_QUOTE_RE.finditer(stripped):
+        stated = _parse_small_cn_int(m.group(1))
+        if stated is None:
+            continue
+        actual_chars = len(re.findall(r'[\u4e00-\u9fffA-Za-z0-9]', m.group(2)))
+        if actual_chars > 0 and actual_chars != stated:
+            issues.append(_issue(
+                'PRE_SELF_STATED_CHAR_COUNT_MISMATCH', 'fact_consistency', 'hard',
+                f'自报字数与引文实测不符：正文写「{m.group(1)}个字」，引文「{m.group(2)}」实测 {actual_chars} 字。',
+                quote=_snippet(stripped, m.start(), m.end()),
+                location=_paragraph_index_at(stripped, m.start()),
+                fix_hint=f'将自报数字改为「{actual_chars}」字，或把引文精修为正好 {stated} 字。',
+                overridable=True,
+                tier='review_required',
+            ))
+
+    for m in _STATED_LIST_ITEMS_RE.finditer(stripped):
+        stated = _parse_small_cn_int(m.group(1))
+        if stated is None or stated < 2:
+            continue
+        body = m.group(3).strip()
+        if '、' not in body:
+            continue
+        parts = [p.strip() for p in re.split(r'[、]|(?:以及|还有|和|与)', body) if p.strip()]
+        if len(parts) >= 2 and len(parts) != stated:
+            issues.append(_issue(
+                'PRE_SELF_STATED_LIST_COUNT_MISMATCH', 'fact_consistency', 'warning',
+                f'自报列举数量与实测不符：正文写「{m.group(1)}{m.group(2)}」，冒号后实列 {len(parts)} 项。',
+                quote=_snippet(stripped, m.start(), m.end()),
+                location=_paragraph_index_at(stripped, m.start()),
+                fix_hint=f'核对列举项并使自报数量与实际列举项（{len(parts)} 项）严格一致。',
+                overridable=True,
+                tier='review_required',
+            ))
 
 
 def format_pre_review_rewrite_feedback(report: dict[str, Any]) -> str:

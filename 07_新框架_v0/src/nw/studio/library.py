@@ -402,6 +402,29 @@ class LibraryService(StagingMixin, KnowledgeMixin, RecommendationMixin, MethodMi
                 max_topics=int(body.get('max_topics') or 3),
             )
 
+    def radar_title_workshop(self, body: dict, *, provider: object | None = None, model: str = '', params: dict | None = None) -> dict:
+        from nw.expansion_advisor import generate_title_candidates
+        platform = str(body.get('platform') or 'fanqie').strip().lower()
+        bigrams: list[str] = []
+        try:
+            with self.connect() as conn:
+                agg = _aggregate_chart_snapshots(conn, platform=platform)
+                for p in agg.get('platforms') or ():
+                    bigrams.extend(b['gram'] for b in (p.get('title_bigrams') or ())[:10])
+        except Exception:
+            pass
+        return generate_title_candidates(
+            genre_name=str(body.get('genre_name') or ''),
+            idea=str(body.get('idea') or ''),
+            protagonist=str(body.get('protagonist') or ''),
+            conflict=str(body.get('conflict') or ''),
+            platform=platform,
+            radar_bigrams=bigrams,
+            provider=(provider if bool(body.get('use_llm')) else None),
+            model=model,
+            params=params,
+        )
+
     # ---------- Enhanced Book Deconstruction Pack ----------
 
     def get_book_anatomy(self, book_id: str) -> dict:

@@ -338,6 +338,12 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
             novel = self.db.get(ident)
             branch = str(body.get('branch') or novel.get('current_branch') or 'main')
             result = self.studio.accept_scene_delta(novel['project_dir'], {**body, 'scene_id': scene_id, 'branch': branch})
+            try:
+                from nw.craft_evolution import auto_extract_chapter1_calibration_anchor
+                with self.open_store(novel) as store:
+                    auto_extract_chapter1_calibration_anchor(store, branch=branch, force=False)
+            except Exception:
+                pass
             self.db.event(ident, 'confirmation', str(body.get('reason') or '客户端审核通过并接收本场正文与状态增量'),
                           {'scene_id': scene_id, 'branch': branch, **result})
             self.sync_history(ident)
@@ -1208,3 +1214,101 @@ class ProductionService(NovelCacheMixin, ProductionMethodMixin, BranchMixin, Pro
         )
         self.db.event(ident, 'ab_judge', f'完成双向换位双盲评审：{result["winner_label"]}', {'scene_id': scene_id, 'winner': result['winner']})
         return result
+
+    # ---------- Fusion M-Q: Whole-Book Mechanical Audit, Fact Ledger, Calibration Anchor & Wizard Preferences ----------
+
+    def book_audit(self, ident: str, *, min_words: int = 1800) -> dict:
+        from nw.book_audit import run_whole_book_audit
+        from nw.craft_evolution import load_book_calibration_anchor
+        novel = self.db.get(ident)
+        branch = str(novel.get('current_branch') or 'main')
+        with self.open_store(novel) as store:
+            report = run_whole_book_audit(store, branch=branch, min_chapter_words=max(0, int(min_words)))
+            anchor = load_book_calibration_anchor(store)
+        return {'novel_id': ident, 'calibration_anchor': anchor, **report}
+
+    def fact_ledger(self, ident: str, *, category: str = '', status: str = '') -> dict:
+        from nw.fact_ledger import CATEGORY_LABELS, list_fact_entries
+        novel = self.db.get(ident)
+        branch = str(novel.get('current_branch') or 'main')
+        with self.open_store(novel) as store:
+            entries = list_fact_entries(store, branch_id=branch, category=category, status=status)
+        return {'novel_id': ident, 'branch_id': branch, 'categories': CATEGORY_LABELS, 'entries': entries}
+
+    def save_fact_ledger_entry(self, ident: str, body: dict) -> dict:
+        from nw.fact_ledger import upsert_fact_entry
+        novel = self.db.get(ident)
+        branch = str(body.get('branch_id') or novel.get('current_branch') or 'main')
+        with self.open_store(novel) as store:
+            saved = upsert_fact_entry(
+                store,
+                entry_id=str(body.get('id') or ''),
+                name=str(body.get('name') or ''),
+                category=str(body.get('category') or 'term'),
+                first_chapter=int(body.get('first_chapter') or 1),
+                reader_known=str(body.get('reader_known') or ''),
+                full_truth=str(body.get('full_truth') or ''),
+                planned_reveal_chapter=(int(body['planned_reveal_chapter']) if body.get('planned_reveal_chapter') not in (None, '') else None),
+                status=str(body.get('status') or 'active'),
+                branch_id=branch,
+                source_scene_id=str(body.get('source_scene_id') or ''),
+            )
+        return {'novel_id': ident, 'entry': saved}
+
+    def delete_fact_ledger_entry(self, ident: str, entry_id: str) -> dict:
+        from nw.fact_ledger import delete_fact_entry
+        novel = self.db.get(ident)
+        with self.open_store(novel) as store:
+            return {'novel_id': ident, **delete_fact_entry(store, entry_id)}
+
+    def calibration_anchor(self, ident: str) -> dict:
+        from nw.craft_evolution import load_book_calibration_anchor
+        novel = self.db.get(ident)
+        with self.open_store(novel) as store:
+            return {'novel_id': ident, 'anchor': load_book_calibration_anchor(store)}
+
+    def save_calibration_anchor(self, ident: str, body: dict | None = None) -> dict:
+        from nw.craft_evolution import auto_extract_chapter1_calibration_anchor, save_book_calibration_anchor
+        novel = self.db.get(ident)
+        branch = str(novel.get('current_branch') or 'main')
+        payload = body if isinstance(body, dict) else {}
+        with self.open_store(novel) as store:
+            if str(payload.get('excerpt') or '').strip():
+                saved = save_book_calibration_anchor(
+                    store, str(payload['excerpt']),
+                    chapter_index=int(payload.get('chapter_index') or 1),
+                    source='author_pinned',
+                )
+            else:
+                saved = auto_extract_chapter1_calibration_anchor(store, branch=branch, force=True)
+                if saved is None:
+                    raise ValueError('当前尚无可用于提取校准锚段的已接受正文（请至少完成并接受第 1 章正文）')
+        return {'novel_id': ident, 'anchor': saved}
+
+    def wizard_preferences(self) -> dict:
+        """Aggregate cross-project global author memory & recent creation history for Wizard ⭐ prefill."""
+        from collections import Counter
+        novels = self.db.list()
+        genre_counter: Counter[str] = Counter()
+        mode_counter: Counter[str] = Counter()
+        history: list[dict] = []
+        for n in novels[:30]:
+            wiz = n.get('wizard') or {}
+            gids = wiz.get('genre_ids') or []
+            if isinstance(gids, list):
+                for g in gids[:2]:
+                    if g:
+                        genre_counter[str(g)] += 1
+            if wiz.get('length_mode'):
+                mode_counter[str(wiz['length_mode'])] += 1
+            history.append({'id': n.get('id'), 'title': n.get('title'), 'genre_ids': gids[:2], 'status': n.get('status')})
+        global_mem = self.library.list_global_author_memory(status='active')
+        taboos = [m['assertion'] for m in global_mem if m.get('kind') == 'taboo'][:6]
+        prose_prefs = [m['assertion'] for m in global_mem if m.get('kind') != 'taboo'][:6]
+        return {
+            'favorite_genre_ids': [g for g, _ in genre_counter.most_common(5)],
+            'preferred_length_mode': mode_counter.most_common(1)[0][0] if mode_counter else 'tiered',
+            'taboos': taboos,
+            'prose_preferences': prose_prefs,
+            'recent_novels': history[:6],
+        }

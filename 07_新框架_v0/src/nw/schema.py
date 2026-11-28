@@ -1,6 +1,6 @@
 """SQLite schema and incremental migrations."""
 
-VERSION = 14
+VERSION = 15
 MIGRATE_V4 = """
 BEGIN IMMEDIATE;
 CREATE TABLE ab_experiments(
@@ -444,6 +444,27 @@ PRAGMA user_version=14;
 COMMIT;
 """
 
+MIGRATE_V15 = """
+BEGIN IMMEDIATE;
+CREATE TABLE fact_ledger(
+ id TEXT PRIMARY KEY,
+ branch_id TEXT NOT NULL DEFAULT 'main',
+ category TEXT NOT NULL DEFAULT 'term' CHECK(category IN ('term','number','timeline','foreshadow')),
+ name TEXT NOT NULL CHECK(length(trim(name))>0),
+ first_chapter INTEGER NOT NULL DEFAULT 1 CHECK(first_chapter>=0),
+ reader_known TEXT NOT NULL DEFAULT '',
+ full_truth TEXT NOT NULL DEFAULT '',
+ planned_reveal_chapter INTEGER,
+ status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','revealed','retired')),
+ source_scene_id TEXT NOT NULL DEFAULT '',
+ created_at TEXT NOT NULL,
+ updated_at TEXT NOT NULL);
+CREATE INDEX fact_ledger_branch ON fact_ledger(branch_id,status,category,first_chapter);
+
+PRAGMA user_version=15;
+COMMIT;
+"""
+
 MIGRATIONS = {0: SCHEMA, 1: MIGRATE_V2, 2: MIGRATE_V3, 3: MIGRATE_V4, 4: MIGRATE_V5, 5: MIGRATE_V6,
               6: MIGRATE_V7, 7: MIGRATE_V8, 8: MIGRATE_V9, 9: MIGRATE_V10, 10: MIGRATE_V11, 11: MIGRATE_V12,
-              12: MIGRATE_V13, 13: MIGRATE_V14}
+              12: MIGRATE_V13, 13: MIGRATE_V14, 14: MIGRATE_V15}

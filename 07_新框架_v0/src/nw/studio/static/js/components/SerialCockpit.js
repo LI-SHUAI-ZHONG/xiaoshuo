@@ -809,3 +809,158 @@ export async function openAbBlindJudgeDrawer(novelId, sceneId, {onChanged = null
     fail(err);
   }
 }
+
+
+export async function openBookAuditDrawer(novelId, {onChanged = null} = {}) {
+  drawer('全书 12 维 0-Token 机械审读报告', loading());
+  try {
+    const rep = await api.get(`/novels/${enc(novelId)}/book-audit`);
+    const st = rep.stats || {};
+    const checks = rep.checks || [];
+    const findings = rep.findings || [];
+    const members = rep.presence?.members || [];
+    const chs = rep.presence?.chapters || [];
+    const cps = rep.catchphrases || [];
+    const repeats = rep.repeats || [];
+    const anchor = rep.calibration_anchor;
+
+    const lvlBadge = lvl => lvl === 'pass'
+      ? '<span class="tag green">通过</span>'
+      : lvl === 'fix'
+        ? '<span class="tag" style="color:var(--danger);border-color:var(--danger)">需修</span>'
+        : lvl === 'advise'
+          ? '<span class="tag amber">建议核查</span>'
+          : lvl === 'skip'
+            ? '<span class="tag">跳过</span>'
+            : '<span class="tag blue">留意</span>';
+
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:14px">
+      <div class="card stack" style="gap:8px">
+        <div class="row spread wrap">
+          <strong>全书机械体检总览（${number(st.chapters || 0)} 章 · ${number(st.total_words || 0)} 字）</strong>
+          <div class="row wrap" style="gap:6px">
+            <span class="tag">中位 ${number(st.median_words || 0)} 字/章</span>
+            <span class="tag blue">对白占比 ${st.dialogue_pct || 0}%</span>
+            <span class="tag ${st.findings?.fix ? 'amber' : 'green'}">需修 ${st.findings?.fix || 0} · 建议 ${st.findings?.advise || 0}</span>
+          </div>
+        </div>
+        <div class="row wrap" style="gap:6px">
+          ${checks.map(c => `<span class="tag">${esc(c.name)} ${lvlBadge(c.level)}${c.count ? ` (${c.count})` : ''}</span>`).join('')}
+        </div>
+      </div>
+
+      <div class="card stack" style="gap:8px">
+        <div class="row spread wrap">
+          <strong>本书第 1 章文风自校准锚段（语态尾置注入）</strong>
+          <button type="button" class="secondary" id="btnAutoCalibrateAnchor">重新从第 1 章自动提炼锚段</button>
+        </div>
+        ${anchor
+          ? `<p class="muted" style="margin:0;font-size:12px">来源：第 ${anchor.chapter_index} 章（${anchor.chars} 字）· 后续写作将把此段与前文尾段置放于 Prompt 最末尾以稳住语态。</p><blockquote style="margin:0;padding:8px 12px;border-left:3px solid var(--accent);font-size:12px;white-space:pre-wrap">${esc(anchor.excerpt.slice(0, 360))}${anchor.excerpt.length > 360 ? '…' : ''}</blockquote>`
+          : '<p class="muted" style="margin:0;font-size:12px">尚未提取本书第 1 章校准锚段；接受第 1 章正文后将自动提取，也可点右上角按钮手动提取。</p>'}
+      </div>
+
+      <div class="card stack" style="gap:8px">
+        <strong>发现明细（${findings.length} 项）</strong>
+        ${findings.length ? findings.slice(0, 20).map(f => `<div class="review-item">
+          <div class="row spread wrap"><strong>${esc(f.title)}</strong>${lvlBadge(f.severity)}</div>
+          <p class="muted" style="margin:4px 0 0;font-size:12px">${esc(f.detail)}</p>
+        </div>`).join('') : '<p class="muted" style="margin:0;font-size:12px">✅ 12 项机械指标全部干净，未发现跨章断档、引号失衡或重度短语复读。</p>'}
+      </div>
+
+      ${members.length ? `<div class="card stack" style="gap:8px">
+        <strong>角色全书在场矩阵（${members.length} 人）</strong>
+        <div class="table-wrap"><table class="data-table">
+          <thead><tr><th>角色</th><th>定位</th><th>总提及</th><th>出场章数</th><th>逐章频次（第${chs[0] || 1}–${chs.at(-1) || 1}章）</th></tr></thead>
+          <tbody>${members.map(m => `<tr><td><strong>${esc(m.name)}</strong></td><td>${esc(m.role)}</td><td>${m.total}</td><td>${m.appearances}/${chs.length}</td><td><small class="muted">${(m.counts || []).join(' · ')}</small></td></tr>`).join('')}</tbody>
+        </table></div>
+      </div>` : ''}
+
+      ${cps.length ? `<div class="card stack" style="gap:8px">
+        <strong>口头禅声部落实核对（支持跨插入语拼接）</strong>
+        <div class="row wrap" style="gap:6px">${cps.map(r => `<span class="tag ${r.total === 0 ? 'amber' : 'green'}">${esc(r.name)}「${esc(r.phrase)}」：${r.total} 次</span>`).join('')}</div>
+      </div>` : ''}
+
+      ${repeats.length ? `<div class="card stack" style="gap:8px">
+        <strong>全书高频重复短语（O(N) 扫描 Top 12）</strong>
+        <div class="row wrap" style="gap:6px">${repeats.map(r => `<span class="tag ${r.count >= 8 ? 'amber' : ''}">「${esc(r.phrase)}」×${r.count}</span>`).join('')}</div>
+      </div>` : ''}
+    </div>`;
+
+    $('#btnAutoCalibrateAnchor')?.addEventListener('click', e => busy(e.currentTarget, async () => {
+      await api.post(`/novels/${enc(novelId)}/calibration-anchor`, {});
+      toast('已从第 1 章重新提取文风自校准锚段');
+      await openBookAuditDrawer(novelId, {onChanged});
+    }));
+  } catch (err) {
+    fail(err);
+  }
+}
+
+export async function openFactLedgerDrawer(novelId, {onChanged = null} = {}) {
+  drawer('设定名词与硬数字事实词典（先登记后动笔）', loading());
+  try {
+    const data = await api.get(`/novels/${enc(novelId)}/fact-ledger`);
+    const entries = data.entries || [];
+    const cats = data.categories || {term: '设定名词', number: '硬数字事实', timeline: '时间线锚点', foreshadow: '伏笔/母题'};
+
+    $('#drawerBody').innerHTML = `<div class="stack" style="gap:14px">
+      <div class="notice" style="margin:0;font-size:12px">
+        <strong>先登记后引用 · 防穿帮与防提前剧透：</strong>写入此处的新名词会在首现章强制要求附带上下文线索；硬数字与时间线会注入写前简报防现场编数；到达「计划揭示章」前绝不向写手泄露「完整真相」。
+      </div>
+
+      <form id="factLedgerForm" class="card stack" style="gap:8px">
+        <strong>新增 / 更新词典条目</strong>
+        <div class="row wrap" style="gap:8px">
+          <label class="field" style="flex:1"><span>类别</span><select name="category">${Object.entries(cats).map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join('')}</select></label>
+          <label class="field" style="flex:2"><span>名词 / 事实项名称</span><input name="name" required placeholder="例如：蓝晶 / 主角年龄 / 北凉灭国年限"></label>
+          <label class="field" style="flex:1"><span>首现章</span><input name="first_chapter" type="number" min="0" value="1"></label>
+          <label class="field" style="flex:1"><span>计划揭示章</span><input name="planned_reveal_chapter" type="number" min="1" placeholder="选填"></label>
+        </div>
+        <label class="field"><span>读者当前已知（写手可见边界）</span><input name="reader_known" required placeholder="例如：贵重黑市晶体 / 二十岁 / 十一年前"></label>
+        <label class="field"><span>完整真相（未到揭示章前对写手保密，选填）</span><input name="full_truth" placeholder="例如：实际是储存记忆的容器"></label>
+        <div><button type="submit" class="button">登记入词典</button></div>
+      </form>
+
+      <div class="card stack" style="gap:8px">
+        <strong>已登记条目（${entries.length}）</strong>
+        ${entries.length ? `<div class="table-wrap"><table class="data-table">
+          <thead><tr><th>类别</th><th>条目名</th><th>首现</th><th>读者已知</th><th>完整真相 / 揭示章</th><th>操作</th></tr></thead>
+          <tbody>${entries.map(e => `<tr>
+            <td><span class="tag">${esc(e.category_label)}</span></td>
+            <td><strong>${esc(e.name)}</strong></td>
+            <td>第${e.first_chapter}章</td>
+            <td>${esc(e.reader_known)}</td>
+            <td>${e.full_truth ? esc(e.full_truth) : '—'}${e.planned_reveal_chapter ? ` <span class="tag blue">第${e.planned_reveal_chapter}章兑现</span>` : ''}</td>
+            <td><button type="button" class="ghost" data-del-fact="${esc(e.id)}">删除</button></td>
+          </tr>`).join('')}</tbody>
+        </table></div>` : '<p class="muted" style="margin:0;font-size:12px">尚无词典条目。建议先登记关键年龄、时间线、金额与核心世界名词。</p>'}
+      </div>
+    </div>`;
+
+    $('#factLedgerForm').onsubmit = e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      busy(e.target.querySelector('[type=submit]'), async () => {
+        await api.post(`/novels/${enc(novelId)}/fact-ledger`, {
+          category: fd.get('category'),
+          name: fd.get('name'),
+          first_chapter: Number(fd.get('first_chapter') || 1),
+          planned_reveal_chapter: fd.get('planned_reveal_chapter') ? Number(fd.get('planned_reveal_chapter')) : null,
+          reader_known: fd.get('reader_known'),
+          full_truth: fd.get('full_truth'),
+        });
+        toast('已登记入设定与事实词典');
+        if (onChanged) await onChanged();
+        await openFactLedgerDrawer(novelId, {onChanged});
+      });
+    };
+
+    $$('[data-del-fact]').forEach(btn => btn.onclick = () => busy(btn, async () => {
+      await api.post(`/novels/${enc(novelId)}/fact-ledger/${enc(btn.dataset.delFact)}/delete`, {});
+      toast('已删除词典条目');
+      await openFactLedgerDrawer(novelId, {onChanged});
+    }));
+  } catch (err) {
+    fail(err);
+  }
+}

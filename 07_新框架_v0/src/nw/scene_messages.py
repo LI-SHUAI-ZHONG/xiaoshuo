@@ -58,6 +58,10 @@ def draft_messages(package: dict, purpose: str, draft: Draft, review: dict | Non
         data['length_feedback'] = length_feedback
     prompt, version = (REVIEW_PROMPT, 'novel-review-v1') if purpose == 'review' else (REVISE_PROMPT, 'novel-revise-v1')
     appended = ''
+    if purpose == 'revise' and length_feedback and any(k in ' '.join(length_feedback) for k in ('不足', '低于', '偏短', '少')):
+        from nw.expansion_advisor import diagnose_and_advise_expansion
+        exp = diagnose_and_advise_expansion(draft.text)
+        appended += '\n' + exp['prompt_block']
     if contract is not None:
         data['material_review'] = contract
         appended = ' ' + MATERIAL_REVIEW_PROMPT

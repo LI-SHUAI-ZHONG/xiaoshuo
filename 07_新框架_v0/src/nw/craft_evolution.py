@@ -258,24 +258,35 @@ def promote_pattern_to_craft_spec(
 
 
 def _accepted_chapter_texts(store: Store, branch: str = 'main') -> dict[int, str]:
-    """Collect accepted prose concatenated by chapter index on the selected branch."""
-    if not store.managed_story():
-        return {}
-    head = current_head(store, branch)
-    snapshot = revision_state(store, head)
-    slots = snapshot.get('slots') or {}
+    """Collect accepted prose concatenated by chapter index on the selected branch (or legacy accepted table)."""
     chapters = {c.id: c.index for c in store.list('chapter')}
     by_ch: dict[int, list[tuple[int, str]]] = {}
-    for sc in store.list('scene'):
-        slot = slots.get(sc.id)
-        if not slot or not slot.get('draft_id'):
-            continue
-        ch_idx = chapters.get(sc.chapter_id)
-        if ch_idx is None:
-            continue
-        draft = store.get('draft', slot['draft_id'])
-        if (draft.text or '').strip():
-            by_ch.setdefault(ch_idx, []).append((sc.index, draft.text.strip()))
+    if store.managed_story():
+        head = current_head(store, branch)
+        snapshot = revision_state(store, head)
+        slots = snapshot.get('slots') or {}
+        for sc in store.list('scene'):
+            slot = slots.get(sc.id)
+            if not slot or not slot.get('draft_id'):
+                continue
+            ch_idx = chapters.get(sc.chapter_id)
+            if ch_idx is None:
+                continue
+            draft = store.get('draft', slot['draft_id'])
+            if (draft.text or '').strip():
+                by_ch.setdefault(ch_idx, []).append((sc.index, draft.text.strip()))
+    else:
+        accepted_map = {a.scene_id: a.draft_id for a in store.list('accepted')}
+        for sc in store.list('scene'):
+            draft_id = accepted_map.get(sc.id)
+            if not draft_id:
+                continue
+            ch_idx = chapters.get(sc.chapter_id)
+            if ch_idx is None:
+                continue
+            draft = store.get('draft', draft_id)
+            if (draft.text or '').strip():
+                by_ch.setdefault(ch_idx, []).append((sc.index, draft.text.strip()))
     return {
         ch_idx: '\n\n'.join(text for _, text in sorted(parts, key=lambda r: r[0]))
         for ch_idx, parts in sorted(by_ch.items())
@@ -467,3 +478,104 @@ def check_style_drift(
         'drifts': drifts,
         'summary': summary,
     }
+
+
+# ── Fusion N: Automatic Chapter-1 Self-Calibration Anchor ─────────────────────
+
+CALIBRATION_ANCHOR_FILENAME = 'book_calibration_anchor.json'
+
+
+def load_book_calibration_anchor(store: Store) -> dict[str, Any] | None:
+    path = store.directory / CALIBRATION_ANCHOR_FILENAME
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding='utf-8'))
+        if isinstance(data, dict) and str(data.get('excerpt') or '').strip():
+            return data
+    except (OSError, ValueError):
+        pass
+    return None
+
+
+def save_book_calibration_anchor(
+    store: Store,
+    excerpt: str,
+    *,
+    chapter_index: int = 1,
+    source: str = 'author_pinned',
+) -> dict[str, Any]:
+    clean = str(excerpt or '').strip()[:1000]
+    if len(clean) < 80:
+        raise ValueError('文风校准锚段至少需要 80 字实文正文')
+    payload = {
+        'chapter_index': max(1, int(chapter_index or 1)),
+        'source': str(source or 'author_pinned'),
+        'excerpt': clean,
+        'chars': len(clean),
+        'updated_at': now(),
+    }
+    (store.directory / CALIBRATION_ANCHOR_FILENAME).write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2), encoding='utf-8',
+    )
+    return payload
+
+
+def auto_extract_chapter1_calibration_anchor(
+    store: Store,
+    *,
+    branch: str = 'main',
+    force: bool = False,
+) -> dict[str, Any] | None:
+    """Automatically extract 1–2 cleanest high-tension paragraphs (400–900 chars) from Chapter 1
+    as the book's own living voice calibration anchor for Chapters 2..N!
+    """
+    existing = load_book_calibration_anchor(store)
+    if existing is not None and not force:
+        return existing
+    ch_texts = _accepted_chapter_texts(store, branch)
+    if not ch_texts:
+        return None
+    first_ch = min(ch_texts.keys())
+    text = (ch_texts[first_ch] or '').strip()
+    if len(text) < 150:
+        return None
+
+    from nw.pre_review_gate import run_pre_review_gate
+
+    paras = [p.strip() for p in re.split(r'\n+', text) if len(p.strip()) >= 25]
+    if not paras:
+        return None
+
+    # Build contiguous windows of 300-850 chars and pick the cleanest (0 hard/review_required alerts + rich dialogue/action)
+    best_win = ''
+    best_score = -10**9
+    for start in range(len(paras)):
+        buf: list[str] = []
+        tot = 0
+        for end in range(start, len(paras)):
+            buf.append(paras[end])
+            tot += len(paras[end])
+            if tot >= 380:
+                break
+        cand = '\n'.join(buf).strip()
+        if len(cand) < 140 or len(cand) > 950:
+            continue
+        gate = run_pre_review_gate(None, '', cand)
+        stats = gate['metrics']
+        score = (
+            100
+            - gate['hard_count'] * 60
+            - gate['review_required_count'] * 30
+            - gate['warning_count'] * 8
+            + (20 if 0.12 <= stats['dialogue_ratio'] <= 0.55 else 0)
+            + (15 if start == 0 else 0)  # Prefer opening hook window if equally clean
+        )
+        if score > best_score:
+            best_score = score
+            best_win = cand
+
+    chosen = best_win or text[:750].strip()
+    if len(chosen) < 80:
+        return None
+    return save_book_calibration_anchor(store, chosen, chapter_index=first_ch, source='chapter1_auto')

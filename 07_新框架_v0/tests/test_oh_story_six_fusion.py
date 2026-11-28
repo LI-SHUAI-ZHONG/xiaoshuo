@@ -140,9 +140,9 @@ def _setup_managed_book_with_chapters(tmp_path: Path, chapter_texts: dict[int, s
 # ── Schema v14 & Library DB Integrity ──
 
 def test_schema_v14_and_library_tables(tmp_path: Path) -> None:
-    assert VERSION == 14
+    assert VERSION >= 14
     with Store(tmp_path / 'fresh', create=True, test_mode=True) as store:
-        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == 14
+        assert store.connection.execute('PRAGMA user_version').fetchone()[0] == VERSION
         tables = {r[0] for r in store.connection.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()}
         assert 'book_author_memory' in tables
         assert [r[0] for r in store.connection.execute('PRAGMA integrity_check')] == ['ok']

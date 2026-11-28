@@ -605,6 +605,19 @@ def compute_scale_profile(
             'golden_three_target': '第 1 章入核心冲突，第 3 章前兑现首个可见小爽点/反转并立长期主线钩',
             'stage_escalation_rule': '批准书纲定档后自动重算精准卷数与阶梯梯度；前卷严禁透支全书天花板。',
         }
+    elif tw <= 35_000:
+        base = {
+            'tier_id': 'micro_short',
+            'tier_label': '0.5–3 万字短篇快变现档（知乎盐言 / 番茄短故事）',
+            'target_words': tw,
+            'estimated_chapters': '约 4–10 节（单节 1,500–3,500 字，全文一次完结投稿）',
+            'recommended_volumes': '1 卷短篇闭环（免多卷冗余）',
+            'small_climax_every_chapters': [1, 2],
+            'major_arc_every_chapters': [4, 10],
+            'chapter_weight_ratio': '重6 : 中4 : 轻0 : 过渡0',
+            'golden_three_target': '前 300–500 字抛强导语钩子（可用……分隔进正文），约 2,500–4,000 字处埋免转付付费卡点，每 3,000 字一次反转直至爽快闭环',
+            'stage_escalation_rule': '零冗余铺垫，单主线极致情绪推进，跳过多卷世界观科普，结尾干脆收束并反杀闭环。',
+        }
     elif tw <= 399_999:
         base = {
             'tier_label': '30 万字紧凑档',
@@ -887,8 +900,11 @@ def build_writer_scene_beat_hint(
     if chapter_index <= 3 and scene_index == 1:
         lines.append('黄金三章起势：直接进眼前受阻处境与异常，零背景说明书。')
     if is_chapter_end:
-        hk_label = hook_opt['label'] if hook_opt else '具体未了局面'
-        lines.append(f'章尾落点：{hk_label}——完整收束当前节拍后落在新局势上，严禁半句强行断章或清零本场成果。')
+        from nw.expansion_advisor import recommend_chapter_opener_and_hook
+        scale_id = str((spec.get('scale_profile') or {}).get('tier_id') or 'long')
+        rec = recommend_chapter_opener_and_hook(chapter_index, scale=scale_id)
+        hk_label = hook_opt['label'] if hook_opt else rec['hook']['name']
+        lines.append(f'章尾落点：{hk_label}/{rec["hook"]["name"]}（强度{rec["wave_intensity"]}/5）——完整收束后独立短段留钩，禁半句硬断。')
     else:
         lines.append('离场承接：带着本场真实得失与未了压力顺畅转入下场。')
     return {

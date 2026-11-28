@@ -8,6 +8,9 @@ WORD_FIELDS = ('target_words', 'chapter_target_words', 'scene_target_words')
 LENGTH_FIELDS = (*WORD_FIELDS, 'chapter_count', 'volume_count', 'word_tolerance_pct', 'length_mode')
 LEGACY_QUOTAS = ('chapter_count', 'chapter_target_words', 'scene_target_words', 'word_tolerance_pct')
 CHAPTER_MIN_WORDS, CHAPTER_MAX_WORDS = 2000, 2500
+MICRO_SHORT_MIN_WORDS, MICRO_SHORT_MAX_WORDS = 5_000, 30_000
+MICRO_SHORT_DEFAULT_WORDS = 15_000
+MICRO_SHORT_CHAPTER_MIN, MICRO_SHORT_CHAPTER_MAX = 1_500, 3_500
 # At a midpoint the larger tier starts. The outside tiers extend half of their adjacent gap.
 _TIER_RANGES = {
     300_000: (200_000, 399_999),
@@ -33,11 +36,19 @@ def nearest_word_tier(actual_words: int) -> int | None:
 
 
 def validate_length_mode(values: Mapping) -> None:
-    if values.get('length_mode') == 'tiered':
+    mode = values.get('length_mode')
+    if mode == 'tiered':
         if values.get('target_words') is not None:
             book_word_range(values['target_words'])
         if any(values.get(k) is not None for k in LEGACY_QUOTAS):
             raise ValueError('档位篇幅按每章 2000–2500 字自然收束，章数由剧情决定，请移除旧的固定配额')
+    elif mode == 'micro_short':
+        tw = values.get('target_words')
+        if tw is not None and not (MICRO_SHORT_MIN_WORDS <= tw <= MICRO_SHORT_MAX_WORDS):
+            raise ValueError(f'短篇快变现模式目标总字数须在 {MICRO_SHORT_MIN_WORDS}–{MICRO_SHORT_MAX_WORDS} 字之间（适配知乎盐言 / 番茄短故事）')
+        cc = values.get('chapter_count')
+        if cc is not None and not (3 <= cc <= 15):
+            raise ValueError('短篇快变现模式节数建议在 3–15 节之间')
 
 
 def length_fields(values: Mapping) -> dict:
@@ -51,7 +62,7 @@ def parse_length_changes(raw: dict) -> dict:
             continue
         value = raw[key]
         if key == 'length_mode':
-            if value != 'tiered':
+            if value not in ('tiered', 'micro_short'):
                 raise ValueError('无效的篇幅模式')
             changes[key] = value
             continue

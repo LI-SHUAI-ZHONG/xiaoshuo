@@ -54,19 +54,23 @@ function recommendationText(data) {
 }
 
 function tierOptions(plan, data) {
+  const isMicro = plan.length_mode === 'micro_short';
   const options = (data?.tiers || fallbackTiers).map(tier => {
     const target = tier.target_words, recommended = target === data?.recommended_tier;
     const range = interval(tier.min_words, tier.max_words);
     return `<label class="length-tier"><input type="radio" name="bookTier" value="${target}"
-      ${plan.target_words === target ? 'checked' : ''}><span><strong>${tierName(target)}</strong>
+      ${!isMicro && plan.target_words === target ? 'checked' : ''}><span><strong>${tierName(target)}</strong>
       ${recommended ? '<small class="length-recommended">推荐</small>' : ''}
       ${range ? `<small class="length-range">${esc(range)}</small>` : ''}</span></label>`;
   }).join('');
-  return `<fieldset class="length-tiers" data-tier-mode><legend>小说总字数档位</legend>
-    <div class="length-tier-grid">${options}
-      <label class="length-tier"><input type="radio" name="bookTier" value="" ${!plan.target_words ? 'checked' : ''}>
+  return `<fieldset class="length-tiers" data-tier-mode><legend>小说总字数档位（含万字短篇快变现模式）</legend>
+    <div class="length-tier-grid">
+      <label class="length-tier"><input type="radio" name="bookTier" value="micro_short" ${isMicro ? 'checked' : ''}>
+        <span><strong>1.5 万字短篇</strong><small class="length-recommended">快变现</small><small class="length-range">0.5–3万字 · 知乎盐言/番茄短故事</small></span></label>
+      ${options}
+      <label class="length-tier"><input type="radio" name="bookTier" value="" ${!isMicro && !plan.target_words ? 'checked' : ''}>
         <span><strong>由 AI 提出</strong><small class="length-range">在书纲中选择档位</small></span></label>
-    </div><p class="muted" data-tier-evidence aria-live="polite">${esc(recommendationText(data))}</p></fieldset>`;
+    </div><p class="muted" data-tier-evidence aria-live="polite">${isMicro ? '短篇快变现模式：4–10 节一次完结，前 300–500 字强导语钩子 + 约 3000 字免转付卡点，零多卷冗余。' : esc(recommendationText(data))}</p></fieldset>`;
 }
 
 function numberFields(plan, visibleFields) {
@@ -80,10 +84,10 @@ function numberFields(plan, visibleFields) {
 }
 
 export function lengthFields(plan, recommendation, defaults = {}) {
-  const tiered = plan.length_mode === 'tiered';
+  const tiered = plan.length_mode === 'tiered' || plan.length_mode === 'micro_short';
   const controls = tiered ? `${tierOptions(plan, recommendation)}
-    <p class="length-chapter-rule"><strong>单章 ${chapterRange}</strong> · ${chapterEnding}</p>
-    ${numberFields(plan, fields.filter(f => f.key === 'volume_count'))}` : numberFields(plan, fields);
+    <p class="length-chapter-rule"><strong>${plan.length_mode === 'micro_short' ? '单节 1,500–3,500 字（短篇快变现）' : `单章 ${chapterRange}`}</strong> · ${chapterEnding}</p>
+    ${plan.length_mode === 'micro_short' ? '' : numberFields(plan, fields.filter(f => f.key === 'volume_count'))}` : numberFields(plan, fields);
   return `${controls}<details class="details"><summary>高级 · 模型调用预算</summary>
     <div class="form-grid">${limits.map(({key,label,min,max,fallback}) =>
       `<label class="field"><span>${label}</span><input name="${key}" type="number" step="1"
@@ -97,13 +101,20 @@ export function readLengthFields(root) {
   const read = input => [input.name, input.value === '' ? null : Number(input.value)];
   const plan = Object.fromEntries([...root.querySelectorAll('[data-length-field]')].map(read));
   const tier = root.querySelector('[data-tier-mode] input:checked');
-  if (tier) Object.assign(plan, {length_mode:'tiered', target_words:tier.value ? Number(tier.value) : null});
+  if (tier) {
+    if (tier.value === 'micro_short') Object.assign(plan, {length_mode:'micro_short', target_words:15000, chapter_count:6});
+    else Object.assign(plan, {length_mode:'tiered', target_words:tier.value ? Number(tier.value) : null});
+  }
   const budget = Object.fromEntries([...root.querySelectorAll('[data-budget-field]')].map(read)
     .filter(([,value]) => value != null));
   return {...plan, budget:Object.keys(budget).length ? budget : null};
 }
 
 export function lengthSummary(plan = {}, tiers = []) {
+  if (plan.length_mode === 'micro_short') {
+    return `<dt>篇幅模式</dt><dd><strong>短篇快变现（${number(plan.target_words || 15000)} 字 · 知乎盐言 / 番茄短故事）</strong></dd>
+      <dt>短篇节拍</dt><dd>前 300–500 字强导语钩子 + 约 3,000 字免转付卡点 + 4–10 节反转闭环</dd>`;
+  }
   const tiered = plan.length_mode === 'tiered';
   const visible = tiered ? fields.filter(f => f.key === 'volume_count') : fields;
   const words = visible.filter(({key}) => plan[key] != null && plan[key] !== '' &&

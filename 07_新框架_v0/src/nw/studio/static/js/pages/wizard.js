@@ -36,7 +36,7 @@ export async function openWizard({mode, prefill} = {}) {
   let title = '', idea = '', constraints = '', lengthPlan = {length_mode:'tiered'};
   let directionReview = true, strictCorpusAuto = false, submitting = false;
   let limits = {}, defaultBudget = {}, tierRecommendation = null;
-  let setupProfile = null, handoffAudit = null;
+  let setupProfile = null, handoffAudit = null, wizardPrefs = null, titleWorkshopRes = null, titlePlatform = 'fanqie';
   let selectedVoiceBase = '', voiceKnobs = null, selectedFingerprints = new Set(), voiceCustomNotes = '';
   const craftState = {world: null, cast: null, plot_pacing: null, voice: null};
 
@@ -610,15 +610,66 @@ export async function openWizard({mode, prefill} = {}) {
       ${methodChoices(selectedMethods, currentVersions)}
       <div class="divider"></div>
       <div class="stack">
-        <label class="field"><span>小说书名</span><input id="wizardTitle" maxlength="120" placeholder="给故事起一个暂定书名" value="${esc(title)}"></label>
+        <label class="field"><span>小说书名</span><input id="wizardTitle" maxlength="120" placeholder="给故事起一个暂定书名（或用下方商业标题工坊一键生成）" value="${esc(title)}"></label>
+        <details class="details" ${titleWorkshopRes ? 'open' : ''}>
+          <summary><strong>商业标题工坊（5 种互斥技法 · 实时校验 6 大平台字数与禁词）</strong></summary>
+          <div class="stack" style="margin-top:10px;gap:8px">
+            <div class="row wrap" style="gap:8px">
+              <label class="field" style="flex:1"><span>目标发书平台</span>
+                <select id="wizardTitlePlatform">
+                  <option value="fanqie" ${titlePlatform==='fanqie'?'selected':''}>番茄小说（≤15字）</option>
+                  <option value="qidian" ${titlePlatform==='qidian'?'selected':''}>起点读书（≤15字）</option>
+                  <option value="qimao" ${titlePlatform==='qimao'?'selected':''}>七猫免费小说（≤15字）</option>
+                  <option value="jjwxc" ${titlePlatform==='jjwxc'?'selected':''}>晋江文学城（≤14字）</option>
+                  <option value="zhihu_yanyan" ${titlePlatform==='zhihu_yanyan'?'selected':''}>知乎盐言故事（≤30字）</option>
+                  <option value="ciweimao" ${titlePlatform==='ciweimao'?'selected':''}>刺猬猫阅读（≤15字）</option>
+                </select>
+              </label>
+              <button type="button" class="secondary" id="btnTitleZero" style="align-self:flex-end">0-Token 生成 5 候选</button>
+              <button type="button" class="button" id="btnTitleLlm" style="align-self:flex-end">AI 商业起名</button>
+            </div>
+            ${titleWorkshopRes ? `<div class="stack" style="gap:6px">${(titleWorkshopRes.candidates || []).map((c, idx) => `<div class="review-item row spread wrap">
+              <div>
+                <strong>《${esc(c.title)}》</strong> <span class="tag">${esc(c.technique)}</span>
+                <span class="tag ${c.passed ? 'green' : 'amber'}">${c.weighted_length}/${c.max_length}字</span>
+                ${(c.radar_hot_hits || []).length ? `<span class="tag blue">命中榜热词：${esc(c.radar_hot_hits.join('/'))}</span>` : ''}
+                <p class="muted" style="margin:3px 0 0;font-size:12px">${esc(c.reason)}${(c.issues || []).length ? ` · ⚠️ ${esc(c.issues.join('；'))}` : ''}</p>
+              </div>
+              <button type="button" class="secondary" data-pick-title="${idx}">选用</button>
+            </div>`).join('')}</div>` : '<p class="muted" style="margin:0;font-size:12px">先在下方写一句故事构想，再点按钮即可按目标平台红线生成 5 个风格各异的合规书名。</p>'}
+          </div>
+        </details>
         <label class="field"><span>一句话故事构想 <span class="error">*</span></span><textarea id="wizardIdea" rows="4" maxlength="12000" required placeholder="谁，在什么处境下，为了什么目标，必须做出怎样的选择？">${esc(idea)}</textarea></label>
-        <label class="field"><span>硬约束（选填）</span><textarea id="wizardConstraints" rows="3" maxlength="12000" placeholder="必须保留的设定、不能发生的情节、阅读对象…">${esc(constraints)}</textarea></label>
+        <label class="field"><span>硬约束（选填${wizardPrefs?.taboos?.length ? ' · 已读取你的全局忌讳记忆' : ''}）</span><textarea id="wizardConstraints" rows="3" maxlength="12000" placeholder="必须保留的设定、不能发生的情节、阅读对象…">${esc(constraints)}</textarea></label>
         <label class="check-row"><input type="checkbox" id="wizardDirectionReview" ${directionReview ? 'checked' : ''}> 先生成 2–3 份全书方向与故事大纲供对比选择（若已在构想中写明完整方向，取消勾选则直接展开设定与全书大纲）</label>
         <div class="notice">
           <p><strong>实际创作工作流（默认启用 · 内置规则主驱）</strong>：立项选定的题材边界与写法偏好由程序自动冻结并继承至卷纲与每一章，不再重复空转「类型判定 / 类型适配」；也不会因缺少参考书拆解而卡死，直接推进<strong>全书方向与故事大纲 → 世界与人物定稿 → 卷纲逐章切分 → 章细纲与场景包 → 正文写审接受</strong>。</p>
         </div>
       </div>
     </div>`;
+
+    const runTitleWorkshop = (useLlm, btn) => busy(btn, async () => {
+      capture();
+      titlePlatform = $('#wizardTitlePlatform')?.value || 'fanqie';
+      titleWorkshopRes = await api.post('/radar/title-workshop', {
+        platform: titlePlatform,
+        genre_name: names(),
+        idea: idea || names(),
+        use_llm: useLlm,
+      });
+      paintConfirm();
+    });
+    $('#wizardTitlePlatform')?.addEventListener('change', e => { titlePlatform = e.target.value; });
+    $('#btnTitleZero')?.addEventListener('click', e => runTitleWorkshop(false, e.currentTarget));
+    $('#btnTitleLlm')?.addEventListener('click', e => runTitleWorkshop(true, e.currentTarget));
+    $$('#modalBody [data-pick-title]').forEach(btn => btn.onclick = () => {
+      const picked = titleWorkshopRes?.candidates?.[Number(btn.dataset.pickTitle)];
+      if (picked?.title) {
+        title = picked.title;
+        if ($('#wizardTitle')) $('#wizardTitle').value = title;
+        toast(`已选用书名：《${title}》`);
+      }
+    });
   }
 
   function compatibilityText() {
@@ -759,13 +810,24 @@ export async function openWizard({mode, prefill} = {}) {
   }
 
   try {
-    const data = await api.get('/genres');
+    const [data, prefs] = await Promise.all([
+      api.get('/genres'),
+      api.get('/wizard/preferences').catch(() => null),
+    ]);
     if (!alive()) return;
+    wizardPrefs = prefs;
+    if (!constraints && prefs?.taboos?.length) {
+      constraints = prefs.taboos.map(t => `全局忌讳：${t}`).join('\n');
+    }
+    if (lengthPlan.length_mode === 'tiered' && !lengthPlan.target_words && prefs?.preferred_length_mode === 'micro_short') {
+      lengthPlan = {length_mode: 'micro_short', target_words: 15000, chapter_count: 6};
+    }
     genres = data.genres || [];
     combinations = data.combinations || [];
     limits = data.selection_limits;
     defaultBudget = data.default_budget;
-    const genre = flatGenres().find(row => row.id === prefill);
+    const prefGenreId = prefill || prefs?.favorite_genre_ids?.[0] || '';
+    const genre = flatGenres().find(row => row.id === prefGenreId);
     selectedMain = genre?.parent_id || genre?.id || (auto ? '' : genres[0]?.id) || '';
     selectedSub = genre?.parent_id ? genre.id : '';
     repainted();

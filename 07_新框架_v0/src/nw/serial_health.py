@@ -505,13 +505,25 @@ def build_serial_health_board(
     elif skip_total >= 4:
         cr_alerts.append(f'近 5 次盲态冷读累计出现 {skip_total} 处“想划走”区段，建议提高信息与冲突密度。')
 
-    corrections = [*promise_alerts, *strand_alerts, *hook_alerts, *cr_alerts][:5]
+    # 5. Zero-Token Whole-Book Mechanical Audit steering integration (Fusion M)
+    book_audit_alerts: list[str] = []
+    book_audit_summary: dict[str, Any] = {}
+    try:
+        from nw.book_audit import build_book_audit_steering_lines, run_whole_book_audit
+        audit = run_whole_book_audit(store, branch=branch)
+        book_audit_alerts = build_book_audit_steering_lines(audit, limit=2)
+        book_audit_summary = audit['stats']
+    except Exception:
+        pass
+
+    corrections = [*promise_alerts, *strand_alerts, *hook_alerts, *cr_alerts, *book_audit_alerts][:6]
     debt_score = (
         len(promise_debt['overdue']) * 3
         + len(promise_debt['stalled']) * 2
         + (2 if weak_streak >= 3 else 0)
         + len(strand_alerts)
         + len(cr_alerts)
+        + len(book_audit_alerts)
     )
     status = 'alert' if debt_score >= 4 else ('watch' if debt_score >= 1 else 'healthy')
 
@@ -540,6 +552,8 @@ def build_serial_health_board(
             'recent_skip_zones': skip_total,
             'alerts': cr_alerts,
         },
+        'book_audit_summary': book_audit_summary,
+        'book_audit_alerts': book_audit_alerts,
         'rhythm_debt_score': debt_score,
         'status': status,
         'next_chapter_corrections': corrections,

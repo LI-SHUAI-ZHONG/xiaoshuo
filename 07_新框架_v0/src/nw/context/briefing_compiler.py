@@ -93,6 +93,8 @@ def compile_writer_briefing(
     voice_data: dict[str, Any] | None = None
     scene_beat_data: dict[str, Any] | None = None
     style_ref_data: dict[str, Any] | None = None
+    calibration_anchor_data: dict[str, Any] | None = None
+    fact_ledger_data: dict[str, Any] | None = None
     author_memory_data: dict[str, Any] | None = None
     verified_excerpts_data: dict[str, Any] | None = None
     previous_prose = ''
@@ -130,6 +132,10 @@ def compile_writer_briefing(
             scene_beat_data = parsed
         elif src == 'style-reference' and isinstance(parsed, dict):
             style_ref_data = parsed
+        elif src == 'calibration-anchor' and isinstance(parsed, dict):
+            calibration_anchor_data = parsed
+        elif src == 'fact-ledger' and isinstance(parsed, dict):
+            fact_ledger_data = parsed
         elif src == 'author-memory' and isinstance(parsed, dict):
             author_memory_data = parsed
         elif src == 'verified-excerpts' and isinstance(parsed, dict):
@@ -244,6 +250,11 @@ def compile_writer_briefing(
         for f in reader_facts[:10]:
             ent = _human_entity_label(str(f.get('entity_id') or ''), name_map)
             s2.append(f'  · {ent} · {f.get("predicate")} = {_format_value(f.get("value"), 120)}')
+    if fact_ledger_data and fact_ledger_data.get('lines'):
+        s2.append('- 设定名词与硬数字事实词典（先登记后引用，严禁现场改数或提前剧透）：')
+        for fln in (fact_ledger_data.get('lines') or ())[:12]:
+            if str(fln or '').strip():
+                s2.append(f'  · {str(fln).strip()[:220]}')
     if len(s2) == 1:
         s2.append(f'- 本场严格坚守 {pov_name} 当前视角可见范围，不越界写出他尚未获知的幕后真相。')
 
@@ -321,8 +332,6 @@ def compile_writer_briefing(
         ):
             if scene_beat_data.get(k):
                 s4.append(f'- {lbl}：{str(scene_beat_data[k]).strip()[:180]}')
-    if style_ref_data and style_ref_data.get('excerpt'):
-        s4.append(f'- 写前语感参照（只学呼吸与口吻，严禁照搬设定/人名）：\n  {str(style_ref_data["excerpt"]).strip()[:500]}')
     if author_memory_data and author_memory_data.get('lines'):
         s4.append('- 作者显式创作偏好（2KB 预算内最高优先级规则）：')
         for ln in (author_memory_data.get('lines') or ())[:16]:
@@ -331,19 +340,9 @@ def compile_writer_briefing(
                 s4.append(f'  {cleaned_ln}')
         if author_memory_data.get('omission_notice'):
             s4.append(f'  （注：{str(author_memory_data["omission_notice"]).strip()[:240]}）')
-    if verified_excerpts_data and verified_excerpts_data.get('excerpts'):
-        s4.append('- 三检实文匿名范例（只学行文呼吸与节奏，严禁照搬桥段）：')
-        for ex in (verified_excerpts_data.get('excerpts') or ())[:2]:
-            if not isinstance(ex, dict) or not ex.get('text'):
-                continue
-            learn = str(ex.get('learn_what') or '').strip()
-            s4.append(f'  · [{ex.get("scene_function") or "实文示范"}] {learn}')
-            s4.append(f'    {str(ex["text"]).strip()[:360]}')
 
-    # ── Section 5: 前文紧邻承接、近期脉络与本场写法约束 ──
+    # ── Section 5: 前文紧邻承接与近期脉络（摘要与绑定演出要求；实文语态锚定置放第六节末尾） ──
     s5: list[str] = ['## 五、前文紧邻承接与近期脉络']
-    if previous_prose:
-        s5.append(f'- 紧邻前场正文衔接：\n{previous_prose[-1200:]}')
     if tiered_memory_data:
         rec_sum = tiered_memory_data.get('recent_chapter_summaries') or []
         if rec_sum:
@@ -383,8 +382,36 @@ def compile_writer_briefing(
             if txt:
                 s5.append(f'  · {txt}')
 
-    sections = [s1, s2, s3, s4, s5]
+    # ── Section 6 (Fusion N: Prose-Last Priming — ALWAYS ends with live narrative prose!) ──
+    s6: list[str] = ['## 六、动笔前语态锚定与紧邻正文衔接（最后阅读）']
+    if calibration_anchor_data and calibration_anchor_data.get('excerpt'):
+        s6.append(
+            f'【本书第{calibration_anchor_data.get("chapter_index", 1)}章文风自校准锚段（延续本作自身叙事声线与节奏）】\n'
+            + str(calibration_anchor_data['excerpt']).strip()[:900]
+        )
+    elif style_ref_data and style_ref_data.get('excerpt'):
+        s6.append(
+            '【写前语感参照（只学呼吸与口吻，严禁照搬设定/人名）】\n'
+            + str(style_ref_data['excerpt']).strip()[:500]
+        )
+    if verified_excerpts_data and verified_excerpts_data.get('excerpts'):
+        for ex in (verified_excerpts_data.get('excerpts') or ())[:2]:
+            if not isinstance(ex, dict) or not ex.get('text'):
+                continue
+            learn = str(ex.get('learn_what') or '').strip()
+            s6.append(f'【三检实文匿名范例·{ex.get("scene_function") or "实文示范"}（{learn}）】\n{str(ex["text"]).strip()[:360]}')
+    if previous_prose:
+        s6.append(f'【紧邻前文尾段（请直接顺着这段的语态、呼吸与情绪落点往下续写）】\n{previous_prose[-900:]}')
+
+    sections = [s1, s2, s3, s4, s5, s6]
     rendered = '\n\n'.join('\n'.join(sec) for sec in sections if len(sec) > 1 or sec is s1)
     if char_limit and len(rendered) > char_limit:
-        rendered = rendered[:max(200, char_limit - 18)].rstrip() + '\n（后续次要参考已按预算截断）'
+        # Preserve the prose-last tail block even under tight char_limit truncation!
+        prose_tail = '\n'.join(s6) if len(s6) > 1 else ''
+        if prose_tail and len(prose_tail) < char_limit // 2:
+            head_budget = max(200, char_limit - len(prose_tail) - 36)
+            head_text = '\n\n'.join('\n'.join(sec) for sec in sections[:-1] if len(sec) > 1 or sec is s1)
+            rendered = head_text[:head_budget].rstrip() + '\n（部分次要说明已按预算省略）\n\n' + prose_tail
+        else:
+            rendered = rendered[:max(200, char_limit - 18)].rstrip() + '\n（后续次要参考已按预算截断）'
     return rendered
