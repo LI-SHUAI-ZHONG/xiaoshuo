@@ -182,6 +182,10 @@ class ProductionViews:
                     can_plan_volume = route['scope'] != 'book'
                     if not any(s['story_approved_on_branch'] and not s['accepted_draft_id'] for s in project['scenes']):
                         upcoming = route
+            continuation = None
+            if include_logs:
+                from nw.studio.continuation_views import continuation_signal
+                continuation = continuation_signal(self, novel, project, store, job, upcoming)
             reviews = {scene['id']: self.review_for_draft(store, scene['id'], scene['latest_draft_id'])
                        for scene in project['scenes'] if scene['latest_draft_id']}
             words = 0
@@ -251,7 +255,7 @@ class ProductionViews:
                                         scene['accepted_draft_id'] == scene['latest_draft_id'])
                 current = bool(job and scene['id'] in str(job.get('step')) and job['status'] == 'RUNNING')
                 children.append({'id': scene['id'], 'scene_id': scene['id'],
-                    'label': f"场{scene['index']} · {scene['card'].get('title', '场景')}",
+                    'label': f"场{scene['index']} · {scene.get('title') or scene['card'].get('title') or '场景'}",
                     'status': 'done' if accepted_current else 'running' if current else 'pending',
                     'draft_id': scene['latest_draft_id'], 'accepted_draft_id': scene['accepted_draft_id'],
                     'segments': {'write': bool(scene['latest_draft_id']), 'review': reviewed,
@@ -290,9 +294,26 @@ class ProductionViews:
                 'main_revision': next((row['head_revision'] for row in project['branches'] if row['id'] == 'main'), None),
                 'current_step': current_step, 'blocked_design': blocked_design, 'progress': percentage, 'tree': tree,
                 'next_design': upcoming, 'can_plan_volume': can_plan_volume,
+                **({'continuation': continuation} if continuation is not None else {}),
                 'gates': self.gates(ident)['gates'], 'words': words, 'connection': True,
                 'reason': novel['reason'] or (job.get('reason') if job else None),
                 'logs': logs[-100:]}
+
+    def continuation(self, ident: str) -> dict:
+        from nw.studio.continuation_views import continuation_overview
+        return continuation_overview(self, ident)
+
+    def save_chapter_summary(self, ident: str, chapter_idx: int, body: dict) -> dict:
+        from nw.studio.continuation_views import save_chapter_summary_record
+        return save_chapter_summary_record(self, ident, chapter_idx, body)
+
+    def save_chapter_review(self, ident: str, chapter_idx: int, kind: str, body: dict) -> dict:
+        from nw.studio.continuation_views import save_chapter_review_record
+        return save_chapter_review_record(self, ident, chapter_idx, kind, body)
+
+    def finish_check(self, ident: str) -> dict:
+        from nw.studio.continuation_views import finish_readiness
+        return finish_readiness(self, ident)
 
     def sync_history(self, ident: str) -> None:
         novel = self.db.get(ident)
@@ -461,6 +482,9 @@ class ProductionViews:
                     'anchor_beats_count': len(anchor_beats),
                     'expression_guidance_count': len(expr_guidance),
                     'method_guidance_count': len(bind_guidance),
+                    'anchor_beats': list(anchor_beats[:8]),
+                    'expression_guidance': list(expr_guidance[:8]),
+                    'method_guidance': list(bind_guidance[:8]),
                     'writer_review_focus': cprof['craft_profile']['writer_review_focus'],
                     'acceptance_focus': cprof['craft_profile']['acceptance_focus'],
                 }

@@ -10,5 +10,4 @@ MATERIAL = r"""#### 社会派悬疑子类型
 14483|SUB_SHEHUI_04|社会案件：GENRE_SHEHUI的子类型
 14508|SUB_SHEHUI_05|社会群像：GENRE_SHEHUI的子类型
 【本步用法】
-核对作者指定的社会派悬疑子类型。「社会派悬疑」在本组为 SUB_SHEHUI_01，另有同名主类型 GENRE_SHEHUI。按作者要求记录采用的层级和范围。
-"""
+核对作者指定的社会派悬疑子类型。「社会派悬疑」在本组为 SUB_SHEHUI_01，另有同名主类型 GENRE_SHEHUI。按作者要求记录采用的层级和范围。"""

@@ -19,5 +19,4 @@ MATERIAL = r"""#### 灵异子类型
 9258|SUB_LINGYI_13|污染类：GENRE_LINGYI的子类型
 9283|SUB_LINGYI_14|收容类：GENRE_LINGYI的子类型
 【本步用法】
-核对作者指定的灵异子类型和父级。「都市灵异」在本组为 SUB_LINGYI_04，在都市下为 SUB_DUSHI_20，按作品采用范围区分；未明确时把待定身份写入 boundaries。
-"""
+核对作者指定的灵异子类型和父级。「都市灵异」在本组为 SUB_LINGYI_04，在都市下为 SUB_DUSHI_20，按作品采用范围区分；未明确时把待定身份写入 boundaries。"""

@@ -343,19 +343,34 @@ export async function renderPrerequisites(ctx) {
   const designStages = Object.entries(stageNames).filter(([id]) => !['writer', 'review', 'acceptance'].includes(id));
   root.innerHTML = `<section id="stepBlueprintPanel" class="stack" style="margin-bottom:28px">${loading()}</section>
   <div class="divider"></div>
-  <section class="stack">
-    <div class="section-head"><h2>工作流单步前置干跑台账</h2><span class="muted">对照当前工作空间资料库核对前置规则与待核原义</span></div>
+  <section class="stack" id="jointMaterialSandbox">
+    <div class="section-head">
+      <h2>工作流 14 步联合资料干跑沙盘与前置台账</h2>
+      <span class="muted">演练本步真实召回的资料条目、主驱动/硬边界/表达锚点分工、跨步防遗忘守卫与网络前置规则</span>
+    </div>
     <div class="row wrap">
       <label class="field"><span>规划层级</span><select id="prerequisiteScope">
-        <option value="book">全书（book）</option><option value="volume">卷纲（volume）</option><option value="chapter">章场（chapter）</option>
+        <option value="book">全书（book）</option><option value="volume">卷纲（volume）</option><option value="chapter" selected>章场（chapter）</option>
       </select></label>
       <label class="field"><span>制作步骤</span><select id="prerequisiteStage">
         ${designStages.map(([id, label]) => `<option value="${esc(id)}" ${id === 'world_design' ? 'selected' : ''}>${esc(label)}</option>`).join('')}
       </select></label>
-      <label class="field"><span>原义状态</span><select id="prerequisiteStatus">
-        <option value="all">全部条目</option><option value="unresolved">待核原义</option>
+      <label class="field"><span>前置规则筛选</span><select id="prerequisiteStatus">
+        <option value="all">全部条目</option><option value="unresolved">仅待核原义</option>
       </select></label>
     </div>
+    <div class="form-grid">
+      <label class="field"><span>演练故事构想（选填，留空使用内置悬疑样本）</span>
+        <input id="sandboxBriefText" placeholder="例如：边境驿站孤证追凶，风雪封山三日内查明失踪密使与军饷账册…">
+      </label>
+      <label class="field"><span>作者硬约束（选填）</span>
+        <input id="sandboxConstraints" placeholder="例如：单章单POV；禁止机械降神；每次试错必须付出社会关系代价…">
+      </label>
+    </div>
+    <div class="row wrap">
+      <button class="secondary" type="button" id="runMaterialSandbox">干跑模拟本步资料召回与角色分工</button>
+    </div>
+    <div id="pipelineRuntimeBlueprint"></div>
     <div id="prerequisiteResults" aria-live="polite"></div>
   </section>`;
 
@@ -363,6 +378,10 @@ export async function renderPrerequisites(ctx) {
   const scopeSelect = $('#prerequisiteScope', root);
   const select = $('#prerequisiteStage', root);
   const filter = $('#prerequisiteStatus', root);
+  const briefInput = $('#sandboxBriefText', root);
+  const constraintsInput = $('#sandboxConstraints', root);
+  const runBtn = $('#runMaterialSandbox', root);
+  const runtimeBox = $('#pipelineRuntimeBlueprint', root);
   const target = $('#prerequisiteResults', root);
   let sequence = 0;
 
@@ -474,6 +493,28 @@ export async function renderPrerequisites(ctx) {
     }
   }
 
+  function renderJointPlan(jp) {
+    if (!jp) return '<p class="muted">当前步骤召回单条或零条资料，无需多资料冲突协调。</p>';
+    const bucket = (title, cls, arr) => `<div class="method-section">
+      <div class="row spread wrap"><strong>${title}</strong><span class="tag ${cls}">${(arr || []).length} 条</span></div>
+      <div class="row wrap" style="margin-top:6px;gap:6px">${(arr || []).length ? arr.map(k => `<span class="tag">${esc(k)}</span>`).join('') : '<span class="muted">无</span>'}</div>
+    </div>`;
+    return `<div class="card stack" id="jointRolePlanCard">
+      <div class="row spread wrap">
+        <strong>多资料联合分工方案（共协调 ${jp.total_sources || 0} 条资料）</strong>
+        <span class="tag blue">优先级裁决生效</span>
+      </div>
+      <p class="muted" style="margin:0;font-size:12px"><strong>裁决铁律：</strong>${esc(jp.priority || '')}</p>
+      <div class="stack" style="gap:8px">
+        ${bucket('主驱动（Drivers · 直接负责本步核心目标生成）', 'green', jp.drivers)}
+        ${bucket('硬边界与禁区（Boundaries · 仅作合法性与前置约束，禁止喧宾夺主）', 'amber', jp.boundaries)}
+        ${bucket('具象锚点与表达辅助（Anchors & Expression · 落场与语言边界）', 'blue', jp.anchors_and_expression)}
+        ${(jp.needs_instantiation_or_clause_guard || []).length ? bucket('需逐子句核对或本轮实例化的参考条', '', jp.needs_instantiation_or_clause_guard) : ''}
+      </div>
+      ${jp.creative_autonomy_rule ? `<div class="notice" style="font-size:12px"><strong>创作弹性与反套路守则：</strong>${esc(jp.creative_autonomy_rule)}</div>` : ''}
+    </div>`;
+  }
+
   async function read() {
     const current = ++sequence;
     const stage = select.value;
@@ -481,25 +522,102 @@ export async function renderPrerequisites(ctx) {
     filter.disabled = true;
     target.innerHTML = loading();
     try {
-      const data = await api.post('/pipeline/simulate', {scope, stage, simulate_prior_products: true}, ctx.signal);
+      const [data, pipeBp] = await Promise.all([
+        api.post('/pipeline/simulate', {
+          scope,
+          stage,
+          brief_text: briefInput.value.trim(),
+          constraints: constraintsInput.value.trim(),
+          simulate_prior_products: true,
+        }, ctx.signal),
+        api.get(`/pipeline/blueprint?scope=${enc(scope)}`, ctx.signal).catch(() => null),
+      ]);
       if (current !== sequence || !ctx.alive()) return;
+
+      if (pipeBp) {
+        const curStep = (pipeBp.design_steps || []).find(s => s.stage === stage);
+        const rtSteps = pipeBp.runtime_steps || [];
+        runtimeBox.innerHTML = `<details class="details">
+          <summary><strong>查看当前层级运行契约与 15–17 写审验收提示词蓝图</strong>
+            <span class="muted">（当前层级：${esc(scopeLabels[scope] || scope)} · 共 ${(pipeBp.design_steps || []).length} 个设计步 + ${rtSteps.length} 个运行环节）</span></summary>
+          <div class="stack" style="margin-top:10px">
+            ${pipeBp.priority_hierarchy ? `<p class="muted" style="font-size:12px;margin:0"><strong>全流程裁决优先级：</strong>${esc(pipeBp.priority_hierarchy)}</p>` : ''}
+            ${curStep ? `<div class="card"><strong>${esc(stageNames[stage] || stage)} · 检索词与输出契约</strong>
+              <p class="muted" style="margin:6px 0;font-size:12px"><strong>功能检索词：</strong>${esc((curStep.function_queries || []).join(' ｜ ') || '按步骤路由池直接供给')}</p>
+              <p class="muted" style="margin:4px 0;font-size:12px"><strong>必产字段：</strong>${esc((curStep.output_fields || []).join('、') || '—')}</p>
+            </div>` : ''}
+            ${rtSteps.length ? `<div class="card"><strong>15–17 运行时环节与职责边界</strong>
+              <div class="stack" style="margin-top:8px;gap:6px">${rtSteps.map(rt => `<div class="method-section">
+                <div class="row spread wrap"><strong>${esc(rt.zh || rt.stage)}</strong><span class="tag">${rt.material_chars || 0} 字符规则</span></div>
+                <p class="muted" style="margin:4px 0 0;font-size:12px;white-space:pre-wrap">${esc(rt.base_prompt || '')}</p>
+              </div>`).join('')}</div>
+            </div>` : ''}
+          </div>
+        </details>`;
+      }
+
+      const sources = data.sources || data.offered_sources || [];
       const rules = data.network_design_audit || [];
-      if (!data.catalog_available || !rules.length) {
-        const offered = data.offered_sources || [];
-        target.innerHTML = offered.length
-          ? `<div class="section-head"><h3>${esc(stageNames[stage] || stage)} · 干跑命中的工作流资料 ${offered.length} 条</h3><span class="muted">本步无额外前置网络审核条目</span></div>
-             <div class="stack">${offered.slice(0, 20).map(s => `<div class="card"><strong>${esc(s.key || s.id)}</strong> <span class="tag">${esc(s.profile || '')}</span><p class="muted">${esc(s.meaning || s.step_use || '')}</p></div>`).join('')}</div>`
-          : empty('当前样本没有可显示的前置记录', '请检查工作空间中的资料版本和步骤配置，或切换至世界设计/人物设计查看网络前置台账。', '', 'layers');
+      const guards = data.anti_forgetting_guards || [];
+      const ledger = data.continuity_ledger || null;
+      const multiChar = data.multi_character_coordination || null;
+      const unresolved = rules.filter(rule => rule.status === 'unresolved');
+
+      if (!data.catalog_available && !sources.length && !rules.length) {
+        target.innerHTML = empty('当前工作区尚未构建六大资料目录', '但跨步守卫与提示词骨架仍可核对。', '', 'layers');
         return;
       }
-      const unresolved = rules.filter(rule => rule.status === 'unresolved');
+
       function paint() {
-        const rows = filter.value === 'unresolved' ? unresolved : rules;
-        target.innerHTML = `<div class="section-head"><h3>${esc(stageNames[stage] || stage)} · 共 ${rules.length} 条</h3>
-          <span class="muted">有条件使用 ${rules.length - unresolved.length} 条 · 待核原义 ${unresolved.length} 条</span></div>`
-          + (rows.length ? rows.map(ruleDetails).join('') : '<p class="muted">此步骤没有待核原义的条目。</p>');
+        const ruleRows = filter.value === 'unresolved' ? unresolved : rules;
+        const guardHtml = (guards.length || ledger || multiChar) ? `<div class="card stack">
+          <strong>跨步防遗忘守卫与连续性台账</strong>
+          ${guards.length ? `<ul style="margin:4px 0 0 18px;font-size:12px">${guards.map(g => `<li>${esc(g)}</li>`).join('')}</ul>` : ''}
+          ${multiChar ? `<p class="muted" style="margin:4px 0 0;font-size:12px"><strong>多人物协调（${multiChar.characters_count || 0} 人）：</strong>${esc((multiChar.coordination_rules || []).join('；'))}</p>` : ''}
+          ${ledger ? `<details class="details"><summary>展开上游交接连续性台账明细</summary><pre class="raw-data">${esc(JSON.stringify(ledger, null, 2))}</pre></details>` : ''}
+        </div>` : '';
+
+        const sourcesHtml = `<div class="card stack">
+          <div class="row spread wrap">
+            <strong>本步干跑实际召回资料（${sources.length} 条）</strong>
+            ${data.queries_executed?.length ? `<span class="muted" style="font-size:12px">执行检索 ${data.queries_executed.length} 组</span>` : '<span class="muted" style="font-size:12px">步骤专属池精准供给</span>'}
+          </div>
+          ${sources.length ? `<div class="stack" style="gap:8px">${sources.slice(0, 30).map(s => `<div class="method-section">
+            <div class="row spread wrap">
+              <strong>${esc(s.key || s.id)}</strong>
+              <div class="row wrap" style="gap:4px">
+                <span class="tag blue">${esc(s.profile || 'general')}</span>
+                <span class="tag ${s.source_state === 'design_ready' ? 'green' : 'amber'}">${esc(s.source_state || '')}</span>
+                ${s.issues_count ? `<span class="tag">原义备注 ${s.issues_count}</span>` : ''}
+              </div>
+            </div>
+            <p class="muted" style="margin:6px 0 0;font-size:12px;white-space:pre-wrap">${esc(s.step_use || s.meaning || s.original_preview || '')}</p>
+          </div>`).join('')}</div>` : '<p class="muted">当前规划层级不包含此步骤或本步无需额外原始资料。</p>'}
+        </div>`;
+
+        const rulesHtml = rules.length ? `<div class="card stack">
+          <div class="row spread wrap">
+            <strong>${esc(stageNames[stage] || stage)} · 网络前置依赖核查（共 ${rules.length} 条）</strong>
+            <span class="muted">有条件使用 ${rules.length - unresolved.length} 条 · 待核原义 ${unresolved.length} 条</span>
+          </div>
+          ${ruleRows.length ? ruleRows.map(ruleDetails).join('') : '<p class="muted">此步骤没有待核原义的条目。</p>'}
+        </div>` : '';
+
+        const promptHtml = data.rendered_prompt ? `<details class="details">
+          <summary><strong>查看本步实际合成系统提示词（${data.rendered_prompt_chars || data.rendered_prompt.length} 字符）</strong></summary>
+          <pre class="raw-data">${esc(data.rendered_prompt)}</pre>
+        </details>` : '';
+
+        target.innerHTML = `<div class="stack" style="gap:14px">
+          ${renderJointPlan(data.joint_material_plan)}
+          ${guardHtml}
+          ${sourcesHtml}
+          ${rulesHtml}
+          ${promptHtml}
+        </div>`;
       }
-      filter.disabled = false;
+
+      filter.disabled = !rules.length;
       filter.onchange = paint;
       paint();
     } catch (error) {
@@ -511,5 +629,6 @@ export async function renderPrerequisites(ctx) {
 
   select.onchange = read;
   scopeSelect.onchange = read;
+  runBtn.onclick = read;
   await Promise.all([loadBlueprint(), read()]);
 }

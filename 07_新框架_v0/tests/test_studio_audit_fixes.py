@@ -3023,6 +3023,750 @@ def test_studio_quality_15_17_http_and_frontend_execution_hooks(tmp_path: Path) 
         server.server_close()
 
 
+def test_post17_chapter_summary_and_periodic_reviews_feed_next_chapter_planning(tmp_path: Path) -> None:
+    from dataclasses import asdict
+    from nw.acceptance import accept_batch
+    from nw.call_budget import create_budget
+    from nw.cards import decide_card, save_card
+    from nw.config import Config
+    from nw.llm.base import GenResult
+    from nw.models import Run
+    from nw.planning import prepare_plan_task
+    from nw.store import now as nw_now
+    from nw.story_state import adopt_story, current_head
+    from nw.studio.library import LibraryService
+    from nw.studio.production import ProductionService
+    from nw.task_models import Budget
+    from story_fixture import baseline, draft_for, proposal
+
+    ws = tmp_path / 'ws'
+    studio = StudioService(workspace=ws, config_path=tmp_path / 'missing.toml')
+    lib = LibraryService(ws)
+    prod = ProductionService(studio, lib, test_mode=True)
+    ident = 'post17loop01'
+    proj_dir = 'novel-post17loop'
+    assert prod.db.add(ident, proj_dir, '三章复盘闭环', {
+        'title': '三章复盘闭环', 'genre_ids': ['GENRE_XUANYI'], 'idea': '三章连查旧案', 'constraints': '现实悬疑',
+    })
+
+    scene_ids: list[str] = []
+    with prod.open_store({'project_dir': proj_dir}, create=True) as store:
+        proj = store.init_project('三章复盘闭环')
+        prod.db.update(ident, project_id=proj.id)
+        store.add_brief('三章连查旧案', '现实悬疑')
+        approvals = []
+        c_ref = save_card(store, {'card_id': 'yan', 'kind': 'character', 'origin': 'author',
+                                  'body': {'name': '沈砚', 'role': '主角', 'want': '追查旧案', 'visibility': 'public'}}, None)
+        approvals.append({**asdict(c_ref), 'decision_id': decide_card(store, c_ref, 'approved', '确认').id})
+        p_ref = save_card(store, {'card_id': 'p-key', 'kind': 'promise', 'origin': 'author',
+                                  'body': {'title': '七道刻痕', 'setup': '钥匙上的七道刻痕对应七次查验',
+                                           'payoff': '终章核验簿册揭晓第七次查验真相'}}, None)
+        approvals.append({**asdict(p_ref), 'decision_id': decide_card(store, p_ref, 'approved', '确认').id})
+        titles = {1: '夜查封条', 2: '值班簿裂页', 3: '档案室对质'}
+        for ch_idx in (1, 2, 3):
+            s_ref = save_card(store, {'card_id': f'sc-{ch_idx}-1', 'kind': 'scene', 'origin': 'author',
+                                      'body': {'title': titles[ch_idx], 'pov': 'yan', 'goal': '核验线索', 'story_time': str(ch_idx)}}, None)
+            approvals.append({**asdict(s_ref), 'decision_id': decide_card(store, s_ref, 'approved', '确认').id})
+            ch = store.add_chapter(ch_idx, f'第{ch_idx}章案卷')
+            sc = store.add_scene(ch.id, 1, json.dumps({'story': {
+                'scene_ref': {'card_id': f'sc-{ch_idx}-1', 'version': 1}, 'story_order': ch_idx}}))
+            scene_ids.append(sc.id)
+        head = adopt_story(store, baseline(card_refs=approvals), {})
+
+        # Before acceptance, saving chapter summary raises clean ValueError (never KeyError).
+        with pytest.raises(ValueError, match='CHAPTER_SCOPE_INCOMPLETE'):
+            studio.record_chapter_summary(proj_dir, 1, '未接受前尝试填写')
+        with pytest.raises(ValueError, match='CHAPTER_SCOPE_INCOMPLETE'):
+            prod.save_chapter_summary(ident, 1, {'summary': '未接受前尝试填写'})
+
+        # Accept all 3 chapters with real WORLD facts, character beliefs, and promise planting.
+        for ch_idx, sid in enumerate(scene_ids, start=1):
+            head = current_head(store, 'main')
+            txt = f'[FAKE] 第{ch_idx}章正文：沈砚查到钥匙上的七道刻痕，并怀疑值夜人撒谎。'
+            draft = draft_for(store, sid, txt)
+            ops = []
+            if ch_idx == 1:
+                ops.extend([
+                    {'op': 'set', 'entity_id': 'p-key', 'predicate': 'promise_stage', 'holder': 'WORLD',
+                     'claim': 'fact', 'story_order': 1, 'disclosure_order': [1, 1, 0],
+                     'expected_old': None, 'new_value': 'planted',
+                     'evidence': [{'draft_id': draft.id, 'text_sha256': '', 'start': 0, 'end': 10}]},
+                    {'op': 'set', 'entity_id': 'guard', 'predicate': 'trust', 'holder': 'yan',
+                     'claim': 'suspicion', 'story_order': 1, 'disclosure_order': [1, 1, 0],
+                     'expected_old': None, 'new_value': '值夜人撒谎',
+                     'evidence': [{'draft_id': draft.id, 'text_sha256': '', 'start': 0, 'end': 10}]},
+                ])
+            from nw.story_delta import draft_digest
+            for op in ops:
+                op['evidence'][0]['text_sha256'] = draft_digest(draft)
+            req = proposal(store, head, draft, ops)
+            accept_batch(store, [req], head, f'accept-ch-{ch_idx}')
+            snap = {'messages': [{'content': json.dumps({'draft': {'id': draft.id}})}]}
+            run = Run(f'rev-{sid}', sid, 'review', 'author', 'manual-review', '{}',
+                      json.dumps(snap), '{}', '', 'error', '{}', nw_now(), '')
+            store.add_run(run)
+            store.finish_run(run.id, GenResult('{"recommendation":"pass"}', 'complete', {}, 'fixture', {}))
+
+    # Versioned scene titles surface cleanly in project_overview and ProgressTree!
+    overview = studio.project_overview(proj_dir)
+    assert [s['title'] for s in overview['scenes']] == ['夜查封条', '值班簿裂页', '档案室对质']
+    prog = prod.progress(ident)
+    chapter_nodes = [n for n in prog['tree'] if n['label'].startswith('第1章')]
+    assert chapter_nodes and chapter_nodes[0]['children'][0]['label'] == '场1 · 夜查封条'
+
+    # Continuation overview surfaces all 3 chapters, due periodic reviews at ch3, promise snapshot, and knowledge matrix.
+    cont = prod.continuation(ident)
+    assert cont['managed_story'] is True and len(cont['chapters']) == 3
+    ch3 = cont['chapters'][2]
+    assert ch3['scope_complete'] is True and ch3['summary_status'] == 'ready'
+    ch3_review_kinds = {r['kind'] for r in ch3['reviews']}
+    assert {'resource-update', 'character', 'cost', 'commitment', 'resource-inventory', 'commitment-ending'} <= ch3_review_kinds
+    assert cont['promises']['items'][0]['card_id'] == 'p-key'
+    assert cont['promises']['items'][0]['accepted_stage'] == 'planted'
+    assert cont['promises']['items'][0]['planted_chapter'] == 1
+    assert set(cont['knowledge_matrix']['holders']) >= {'WORLD', 'READER', 'yan'}
+    assert any(row['entity_id'] == 'guard' and 'yan' in row['cells'] for row in cont['knowledge_matrix']['matrix'])
+
+    # Save chapter 3 summary and periodic character/cost reviews -> verify next-chapter planning receives them!
+    prod.save_chapter_summary(ident, 3, {'summary': '沈砚在档案室与值夜人对质，锁定钥匙七道刻痕指向旧查验簿。'})
+    prod.save_chapter_review(ident, 3, 'character', {'finding': '沈砚三章行为均符合谨慎求证的初始设定，无突变。'})
+    prod.save_chapter_review(ident, 3, 'cost', {'finding': '三章累积了值夜人警惕与体力消耗代价，需在第四章延续。'})
+
+    with prod.open_store({'project_dir': proj_dir}) as store:
+        from nw.chapter_records import continuation_reviews, continuation_summary
+        from nw.chapter_state import continuation_chapter_state
+        from nw.models import Chapter
+        from nw.story_state import revision_state
+
+        head = current_head(store, 'main')
+        handoff = continuation_chapter_state(store, head, revision_state(store, head))
+        assert handoff is not None and handoff['chapter']['index'] == 3
+        summ = continuation_summary(store, head, 3)
+        assert summ is not None and summ['summary'] == '沈砚在档案室与值夜人对质，锁定钥匙七道刻痕指向旧查验簿。'
+        revs = continuation_reviews(store, head, Chapter(**handoff['chapter']))
+        findings = [r['finding'] for r in revs]
+        assert any('沈砚三章行为' in f for f in findings)
+        assert any('累积了值夜人警惕' in f for f in findings)
+
+
+def test_post17_branch_continuation_signals_and_finish_check_lifecycle(tmp_path: Path) -> None:
+    from dataclasses import asdict
+    from nw.acceptance import accept_batch
+    from nw.cards import decide_card, save_card
+    from nw.llm.base import GenResult
+    from nw.models import Run
+    from nw.store import now as nw_now
+    from nw.story_state import adopt_story, apply_settings, current_head
+    from nw.studio.library import LibraryService
+    from nw.studio.production import ProductionService
+    from story_fixture import baseline, draft_for, proposal
+
+    ws = tmp_path / 'ws'
+    studio = StudioService(workspace=ws, config_path=tmp_path / 'missing.toml')
+    lib = LibraryService(ws)
+    prod = ProductionService(studio, lib, test_mode=True)
+    ident = 'post17finish01'
+    proj_dir = 'novel-post17finish'
+    assert prod.db.add(ident, proj_dir, '分支与完稿体检', {
+        'title': '分支与完稿体检', 'genre_ids': ['GENRE_XUANYI'], 'idea': '一章短篇测试', 'constraints': '现实悬疑',
+    })
+
+    with prod.open_store({'project_dir': proj_dir}, create=True) as store:
+        proj = store.init_project('分支与完稿体检')
+        prod.db.update(ident, project_id=proj.id)
+        store.add_brief('一章短篇测试', '现实悬疑')
+        c_ref = save_card(store, {'card_id': 'yan', 'kind': 'character', 'origin': 'author',
+                                  'body': {'name': '沈砚', 'role': '主角', 'want': '核验', 'visibility': 'public'}}, None)
+        s_ref = save_card(store, {'card_id': 'sc-1', 'kind': 'scene', 'origin': 'author',
+                                  'body': {'title': '夜查封条', 'pov': 'yan', 'goal': '核验', 'story_time': '1'}}, None)
+        ch = store.add_chapter(1, '封条')
+        sc = store.add_scene(ch.id, 1, json.dumps({'story': {
+            'scene_ref': {'card_id': 'sc-1', 'version': 1}, 'story_order': 1}}))
+        head = adopt_story(store, baseline(card_refs=[
+            {**asdict(c_ref), 'decision_id': decide_card(store, c_ref, 'approved', '确认').id},
+            {**asdict(s_ref), 'decision_id': decide_card(store, s_ref, 'approved', '确认').id},
+        ]), {})
+        draft = draft_for(store, sc.id, '[FAKE] 沈砚查明封条真相。')
+        accept_batch(store, [proposal(store, head, draft, [])], head, 'accept-1')
+        snap = {'messages': [{'content': json.dumps({'draft': {'id': draft.id}})}]}
+        run = Run('rev-1', sc.id, 'review', 'author', 'manual-review', '{}',
+                  json.dumps(snap), '{}', '', 'error', '{}', nw_now(), '')
+        store.add_run(run)
+        store.finish_run(run.id, GenResult('{"recommendation":"pass"}', 'complete', {}, 'fixture', {}))
+
+    # 1) On main with all scenes accepted: continuation signals needs_candidate_branch & finish_check passes all 9 gates!
+    prog_main = prod.progress(ident)
+    assert prog_main['continuation']['needs_candidate_branch'] is True
+    assert prog_main['continuation']['summary_pending_chapters'] == [1]
+
+    fc_main = prod.finish_check(ident)
+    assert fc_main['ready'] is True and fc_main['blockers'] == []
+    assert fc_main['summary']['passed_count'] == fc_main['summary']['total_checks'] == 9
+    assert any(a['kind'] == 'chapter_summary' for a in fc_main['advisories'])
+
+    # 2) Fork candidate branch and change approved setting -> human-readable revalidation labels + finish_check blocked on branch_main.
+    prod.fork_branch(ident, {'name': '第二章候选'})
+    with prod.open_store({'project_dir': proj_dir}) as store:
+        w_ref = save_card(store, {'card_id': 'w-new', 'kind': 'world', 'origin': 'author',
+                                  'body': {'title': '新规', 'rule': '夜间封锁档案库', 'limits': '限时进入'}}, None)
+        w_dec = decide_card(store, w_ref, 'approved', '新增规则')
+        apply_settings(store, current_head(store, '第二章候选'), [w_dec.id], 'apply-w-new')
+
+    b_status = prod.branch_status(ident)
+    assert b_status['needs_revalidation'] == [sc.id]
+    assert b_status['revalidation_details'] == [{'id': sc.id, 'label': '第1章·场1 夜查封条'}]
+    fc_cand = prod.finish_check(ident)
+    assert fc_cand['ready'] is False
+    assert any(c['id'] == 'branch_main' and not c['passed'] for c in fc_cand['checks'])
+
+    # 3) Revalidate & accept on candidate branch -> progress signals can_promote, promote succeeds, finish() completes!
+    with prod.open_store({'project_dir': proj_dir}) as store:
+        cand_head = current_head(store, '第二章候选')
+        new_draft = draft_for(store, sc.id, '[FAKE] 沈砚在封锁前查明封条真相。')
+        accept_batch(store, [proposal(store, cand_head, new_draft, [])], cand_head, 'reval-1')
+        snap2 = {'messages': [{'content': json.dumps({'draft': {'id': new_draft.id}})}]}
+        run2 = Run('rev-2', sc.id, 'review', 'author', 'manual-review', '{}',
+                   json.dumps(snap2), '{}', '', 'error', '{}', nw_now(), '')
+        store.add_run(run2)
+        store.finish_run(run2.id, GenResult('{"recommendation":"pass"}', 'complete', {}, 'fixture', {}))
+
+    b_ready = prod.branch_status(ident)
+    assert b_ready['can_promote'] is True
+    assert b_ready['changed_scene_details'] == [{'id': sc.id, 'label': '第1章·场1 夜查封条'}]
+    assert prod.progress(ident)['continuation']['can_promote'] is True
+
+    promoted = prod.promote_branch(ident, {
+        'expected_main': b_ready['main_head']['revision'],
+        'expected_candidate': b_ready['candidate_head']['revision'],
+        'reason': '旧稿复核完毕，确认合并回主线',
+    })
+    assert promoted['status'] == 'PROMOTED' and promoted['current_branch'] == 'main'
+    assert prod.finish_check(ident)['ready'] is True
+    assert prod.finish(ident)['status'] == 'DONE'
+
+
+def test_post17_continuation_finish_check_http_and_frontend_hooks(tmp_path: Path) -> None:
+    from dataclasses import asdict
+    import http.client
+    import threading
+    from nw.acceptance import accept_batch
+    from nw.cards import decide_card, save_card
+    from nw.llm.base import GenResult
+    from nw.models import Run
+    from nw.store import now as nw_now
+    from nw.story_state import adopt_story
+    from nw.studio.library import LibraryService
+    from nw.studio.production import ProductionService
+    from nw.studio.server import create_studio_server
+    from story_fixture import baseline, draft_for, proposal
+
+    js_root = ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js'
+    bc_js = (js_root / 'components' / 'BookContinuation.js').read_text(encoding='utf-8')
+    for tok in ('bookContinuationHub', 'chapterContinuationList', 'promiseContinuityPanel',
+                'knowledgeMatrixPanel', 'finishReadinessPanel', 'finishReadinessDrawer',
+                'confirmFinishBook', 'data-summary-form', 'data-review-form'):
+        assert tok in bc_js
+    book_js = (js_root / 'pages' / 'book.js').read_text(encoding='utf-8')
+    assert 'renderContinuationHub' in book_js and '/continuation' in book_js and '/finish-check' in book_js
+    studio_js = (js_root / 'pages' / 'studio.js').read_text(encoding='utf-8')
+    for tok in ('studioContinuationNotice', 'branchBadge', 'quickOpenBranches', 'quickRevalidate', '建立候选以续写'):
+        assert tok in studio_js
+    decisions_js = (js_root / 'pages' / 'studio-decisions.js').read_text(encoding='utf-8')
+    assert 'revalidation_details' in decisions_js and 'changed_scene_details' in decisions_js
+
+    ws = tmp_path / 'ws'
+    studio = StudioService(workspace=ws, config_path=tmp_path / 'missing.toml')
+    lib = LibraryService(ws)
+    prod = ProductionService(studio, lib, test_mode=True)
+    ident = 'post17http01'
+    proj_dir = 'novel-post17http'
+    assert prod.db.add(ident, proj_dir, '续写接口测试', {
+        'title': '续写接口测试', 'genre_ids': ['GENRE_XUANYI'], 'idea': '档案复盘', 'constraints': '现实悬疑',
+    })
+    with prod.open_store({'project_dir': proj_dir}, create=True) as store:
+        proj = store.init_project('续写接口测试')
+        prod.db.update(ident, project_id=proj.id)
+        store.add_brief('档案复盘', '现实悬疑')
+        c_ref = save_card(store, {'card_id': 'yan', 'kind': 'character', 'origin': 'author',
+                                  'body': {'name': '沈砚', 'role': '主角', 'want': '核验', 'visibility': 'public'}}, None)
+        s_ref = save_card(store, {'card_id': 'sc-h1', 'kind': 'scene', 'origin': 'author',
+                                  'body': {'title': '初章验封', 'pov': 'yan', 'goal': '核验', 'story_time': '1'}}, None)
+        ch = store.add_chapter(1, '初章')
+        sc = store.add_scene(ch.id, 1, json.dumps({'story': {
+            'scene_ref': {'card_id': 'sc-h1', 'version': 1}, 'story_order': 1}}))
+        head = adopt_story(store, baseline(card_refs=[
+            {**asdict(c_ref), 'decision_id': decide_card(store, c_ref, 'approved', '确认').id},
+            {**asdict(s_ref), 'decision_id': decide_card(store, s_ref, 'approved', '确认').id},
+        ]), {})
+        draft = draft_for(store, sc.id, '[FAKE] 沈砚记录档案页码并收好钥匙。')
+        accept_batch(store, [proposal(store, head, draft, [])], head, 'http-accept-1')
+        snap = {'messages': [{'content': json.dumps({'draft': {'id': draft.id}})}]}
+        run = Run('rev-h1', sc.id, 'review', 'author', 'manual-review', '{}',
+                  json.dumps(snap), '{}', '', 'error', '{}', nw_now(), '')
+        store.add_run(run)
+        store.finish_run(run.id, GenResult('{"recommendation":"pass"}', 'complete', {}, 'fixture', {}))
+
+    server = create_studio_server(studio, host='127.0.0.1', port=0)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        port = server.server_address[1]
+
+        def req_json(method: str, path: str, body: dict | None = None) -> tuple[int, dict]:
+            conn = http.client.HTTPConnection('127.0.0.1', port, timeout=10)
+            try:
+                headers = {'Content-Type': 'application/json'} if body is not None else {}
+                conn.request(method, path, body=json.dumps(body, ensure_ascii=False).encode('utf-8') if body is not None else None, headers=headers)
+                resp = conn.getresponse()
+                return resp.status, json.loads(resp.read().decode('utf-8'))
+            finally:
+                conn.close()
+
+        st_c, cont = req_json('GET', f'/api/novels/{ident}/continuation')
+        assert st_c == 200 and cont['managed_story'] is True and len(cont['chapters']) == 1
+        assert cont['chapters'][0]['summary_status'] == 'ready'
+
+        st_s, saved_s = req_json('POST', f'/api/novels/{ident}/chapters/1/summary', {
+            'summary': '沈砚核验档案并收好钥匙，锁定次日追查方向。',
+            'input_sha256': cont['chapters'][0]['summary_input_sha256'],
+        })
+        assert st_s == 200 and saved_s['status'] == 'recorded'
+
+        res_rev = next(r for r in cont['chapters'][0]['reviews'] if r['kind'] == 'resource-update')
+        st_r, saved_r = req_json('POST', f'/api/novels/{ident}/chapters/1/reviews/resource-update', {
+            'finding': '本章沈砚新增铜钥匙一件，其余资源无消耗。',
+            'input_sha256': res_rev['input_sha256'],
+        })
+        assert st_r == 200 and saved_r['status'] == 'recorded'
+
+        st_f, fc = req_json('GET', f'/api/novels/{ident}/finish-check')
+        assert st_f == 200 and fc['ready'] is True and len(fc['checks']) == 9
+        assert not any(a['kind'] == 'chapter_summary' for a in fc['advisories'])
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_round12_material_key_noise_filter_and_stage_aware_joint_roles(tmp_path: Path, monkeypatch) -> None:
+    from nw.cards import decide_card, save_card
+    from nw.context.story import build_story_context, scene_scope
+    from nw.materials.stage_input import extract_step_keys
+    from nw.materials.step_guard import build_joint_material_plan
+    from nw.store import Store
+    from nw.story_state import adopt_story
+
+    # 1) Noise field-name filtering in extract_step_keys (both synthetic markdown & real STAGE_MATERIALS)
+    from nw.materials.phase_flow import STAGE_MATERIALS
+    sample_material = (
+        "### type\n【本步用法】\n噪声字段\n\n"
+        "### visual\n【本步用法】\n噪声字段\n\n"
+        "### 12\n【本步用法】\n噪声行号\n\n"
+        "### 1.1_动机\n【本步用法】\n用于确立角色动机。\n\n"
+        "### PLOT_MECHANISM_DUNGEON 迷宫副本\n【本步用法】\n用于副本危机事件。\n"
+    )
+    keys = extract_step_keys(sample_material)
+    for bad in ('type', 'visual', '12'):
+        assert bad not in keys
+    assert {'1.1_动机', 'PLOT_MECHANISM_DUNGEON'} <= keys
+
+    real_keys = set().union(*(extract_step_keys(mat) for mat in STAGE_MATERIALS.values()))
+    assert real_keys
+    for bad in ('type', 'concept', 'mechanism', 'structure', 'identity', 'relationship', 'expression', 'visual', '12'):
+        assert bad not in real_keys
+
+    # 2) Stage-aware joint material role assignment
+    def mk_src(key: str, profile: str, state: str = 'design_ready') -> dict:
+        return {'source': {'key': key, 'profile': profile}, 'source_state': state}
+
+    wd_plan = build_joint_material_plan('world_design', [
+        mk_src('30.1_世界边界', 'world'),
+        mk_src('TE_悬疑基调', 'type_expression'),
+        mk_src('AC_物证具象', 'anchor', 'reference'),
+    ])
+    assert wd_plan is not None
+    assert wd_plan['drivers'] == ['30.1_世界边界']
+    assert set(wd_plan['boundaries']) == {'TE_悬疑基调', 'AC_物证具象'}
+    assert wd_plan.get('anchors_and_expression', []) == []
+    assert '126.15' in wd_plan['creative_autonomy_rule']
+
+    ed_plan = build_joint_material_plan('expression_design', [
+        mk_src('109.2_受限叙述', 'type_expression'),
+        mk_src('AC1.1_动作节拍', 'anchor'),
+        mk_src('DR_动作博弈', 'dynamic_relation'),
+        mk_src('1.1_人物动机', 'character'),
+        mk_src('PL_伏笔结构', 'plot'),
+    ])
+    assert ed_plan is not None
+    assert ed_plan['drivers'] == ['109.2_受限叙述']
+    assert ed_plan['anchors_and_expression'] == ['AC1.1_动作节拍']
+    assert set(ed_plan['boundaries']) == {'DR_动作博弈', '1.1_人物动机', 'PL_伏笔结构'}
+
+    ad_plan = build_joint_material_plan('anchor_design', [
+        mk_src('AC1.1_动作节拍', 'anchor'),
+        mk_src('1.1_人物动机', 'character'),
+    ])
+    assert ad_plan is not None
+    assert ad_plan['drivers'] == ['AC1.1_动作节拍']
+    assert ad_plan['boundaries'] == ['1.1_人物动机']
+
+    sd_plan = build_joint_material_plan('scene_design', [
+        mk_src('1.1_动机', 'character'),
+        mk_src('30.1_世界边界', 'world'),
+        mk_src('AC1.1', 'anchor', 'reference'),
+    ])
+    assert sd_plan is not None
+    assert sd_plan['drivers'] == ['1.1_动机']
+    assert sd_plan['boundaries'] == ['30.1_世界边界']
+    assert sd_plan['anchors_and_expression'] == ['AC1.1']
+
+    # 3) Step-15 writing prompt receives cross-step continuity ledger + vitality guard without mutating work.package
+    store = Store(tmp_path / 'story_proj', create=True)
+    store.init_project('连续性守卫测试')
+    store.add_brief('旧港刑警追查沉船真相', '单章单POV；禁止全知视角')
+    ch = store.add_chapter(1, '夜潮')
+    char_ref = save_card(store, {
+        'card_id': 'char_lin', 'kind': 'character', 'origin': 'author',
+        'body': {'name': '林沉', 'role': '刑警主角', 'want': '查明沉船真相', 'visibility': 'public'},
+        'source_refs': [],
+    }, None)
+    char_dec = decide_card(store, char_ref, 'approved', '启用主角卡')
+    sc_ref = save_card(store, {
+        'card_id': 'sc_card_1', 'kind': 'scene', 'origin': 'author',
+        'body': {
+            'title': '栈桥验封', 'pov': 'char_lin', 'goal': '核验封条',
+            'conflict': '涨潮封锁', 'allowed_disclosure': '仅限现场可见物证',
+            'characters': ['char_lin'],
+        },
+        'source_refs': [],
+    }, None)
+    sc_dec = decide_card(store, sc_ref, 'approved', '启用场景卡')
+    sc = store.add_scene(ch.id, 1, json.dumps({
+        'story': {'scene_ref': {'card_id': sc_ref.card_id, 'version': sc_ref.version}, 'story_order': 1},
+    }))
+    adopt_story(store, {
+        'as_of_story_order': 0, 'disclosure_order': [0, 0, 0],
+        'coverage': {'entities': ['char_lin'], 'predicates': ['status']},
+        'facts': [],
+        'card_refs': [
+            {'card_id': char_ref.card_id, 'version': char_ref.version, 'decision_id': char_dec.id},
+            {'card_id': sc_ref.card_id, 'version': sc_ref.version, 'decision_id': sc_dec.id},
+        ],
+    }, {})
+    design_payload = {
+        'materials': [],
+        'bindings': {},
+        'material_key': 'sc_card_1',
+        'work_session': {
+            'stages': [
+                {
+                    'stage': 'character_design',
+                    'products': {
+                        'members': [{
+                            'key': 'char_lin',
+                            'body': {'name': '林沉', 'voice': '冷静简短', 'behavior': '先看物证再提问'},
+                        }],
+                        'capabilities': [{'entity': 'harbor_lock', 'can_act': False}],
+                    },
+                },
+                {
+                    'stage': 'plot_design',
+                    'products': {
+                        'promise_plan': [{'promise': 'p_watch', 'plant_event': 'ev_1', 'payoff_event': 'ev_3', 'setup': '停摆怀表'}],
+                    },
+                },
+            ],
+        },
+    }
+    monkeypatch.setattr('nw.context.story.scene_materials', lambda _s, _sid, _ref=None: design_payload)
+    monkeypatch.setattr('nw.context.story.scene_checks', lambda _d, scoped=False: [])
+    monkeypatch.setattr('nw.context.story.writer_checks', lambda _d: [])
+    work = build_story_context(store, sc.id, scene_scope(store, sc.id, 'main'), 24000)
+    assert work.prompt.startswith('按作者约束和本场任务写正文')
+    assert '【15写作跨步连续性守卫】' in work.prompt
+    assert '人物声线与基线' in work.prompt
+    assert '叙事生命力原则' in work.prompt
+    assert 'continuity_ledger' not in work.package
+    store.connection.close()
+
+
+def test_round12_wizard_option_stage_precision_and_macro_craft_compass(tmp_path: Path) -> None:
+    from nw.materials.author_references import author_stage_input
+    from nw.studio import catalog
+    from nw.studio.creation_plan import for_stage
+    from nw.studio.library import LibraryService
+    from nw.studio.production_inputs import freeze_wizard, governance
+
+    hook_map = catalog.option_map('hook')
+    assert hook_map['hook.PLOT_MECHANISM_DUNGEON']['stages'] == ['event_design']
+    assert hook_map['hook.PLOT_MECHANISM_RULE_TASK']['stages'] == ['event_design']
+
+    nar_map = catalog.option_map('narration')
+    assert nar_map['narration.109.2']['stages'] == ['scene_design', 'expression_design']
+    for key, opt in nar_map.items():
+        if key.startswith('narration.anc.'):
+            assert opt['stages'] == ['anchor_design'], key
+        elif key.startswith('narration.expr.'):
+            assert opt['stages'] == ['expression_design'], key
+
+    lib = LibraryService(tmp_path / 'ws')
+    frozen = freeze_wizard({
+        'genre_ids': ['GENRE_XUANYI'],
+        'title': '跨步机制与宏观创作罗盘验证',
+        'idea': '封闭海岛档案馆规则怪谈调查',
+        'design_mode': 'manual',
+        'world_ids': ['31.1', 'PLOT_MECHANISM_SYSTEM'],
+        'character_ids': ['1.1', 'PLOT_MECHANISM_BLOODLINE'],
+        'mechanism_ids': ['PLOT_MECHANISM_DUNGEON'],
+        'narration_ids': ['109.2'],
+        'tone_ids': ['TONE_SERIOUS'],
+        'style_ids': ['STYLE_GRITTY'],
+    }, lib)
+    gov = governance(frozen)
+    mechs = set(gov['type_selection']['project_config']['mechanism_ids'])
+    assert {'PLOT_MECHANISM_SYSTEM', 'PLOT_MECHANISM_BLOODLINE', 'PLOT_MECHANISM_DUNGEON'} <= mechs
+    assert 'PLOT_MECHANISM_DUNGEON' in gov['event_design']['author_preferences']['hook']
+    assert 'hook' not in gov['plot_design'].get('author_preferences', {})
+
+    plan = frozen['creation_plan']
+    ta_slice = for_stage(plan, 'type_adaptation')
+    pd_slice = for_stage(plan, 'plot_design')
+    assert ta_slice is not None and 'macro_craft_compass' in ta_slice
+    assert pd_slice is not None and 'macro_craft_compass' in pd_slice
+    assert 'PLOT_MECHANISM_DUNGEON' in {c['id'] for c in pd_slice['macro_craft_compass']}
+    assert 'preferences' not in ta_slice
+
+    # Pure style/narration choices still must NOT leak into world_design
+    style_only = freeze_wizard({
+        'genre_ids': ['GENRE_XUANYI'], 'title': '纯文风隔离', 'idea': '夜班核查',
+        'design_mode': 'manual', 'style_ids': ['STYLE_GRITTY'], 'narration_ids': ['109.2'],
+    }, lib)
+    assert 'creation_plan' not in author_stage_input({'governance_inputs': governance(style_only)}, 'world_design')
+
+
+def test_round12_client_sandbox_context_cards_search_and_adopt_hooks(tmp_path: Path) -> None:
+    import http.client
+    import threading
+    from nw.studio.api import StudioService
+    from nw.studio.server import create_studio_server
+
+    js_root = ROOT / 'src' / 'nw' / 'studio' / 'static' / 'js'
+    prereq_js = (js_root / 'pages' / 'prerequisites.js').read_text(encoding='utf-8')
+    kb_js = (js_root / 'pages' / 'kb.js').read_text(encoding='utf-8')
+    studio_js = (js_root / 'pages' / 'studio.js').read_text(encoding='utf-8')
+    inspector_js = (js_root / 'components' / 'Inspector.js').read_text(encoding='utf-8')
+    cards_js = (js_root / 'components' / 'StoryCards.js').read_text(encoding='utf-8')
+    book_js = (js_root / 'pages' / 'book.js').read_text(encoding='utf-8')
+    cont_js = (js_root / 'components' / 'BookContinuation.js').read_text(encoding='utf-8')
+
+    assert 'jointMaterialSandbox' in prereq_js and 'pipelineRuntimeBlueprint' in prereq_js
+    assert 'data.sources' in prereq_js
+    assert 'kbSearchFilters' in kb_js and 'kbSearchPagination' in kb_js
+    assert 'sceneContextInspector' in studio_js and 'openManualDelta' in studio_js
+    assert 'btnZenDiff' in studio_js and 'btnZenRead' in studio_js
+    assert 'formatContractItem' in inspector_js
+    assert 'storyCardsBrowser' in cards_js and 'newAuthorCardBtn' in cards_js
+    assert 'editBriefBtn' in book_js and 'addBibleBtn' in book_js and "['cards','设定卡片']" in book_js
+    assert 'adoptStoryBtn' in cont_js
+
+    ws = tmp_path / 'ws'
+    studio = StudioService(workspace=ws, config_path=tmp_path / 'missing.toml')
+    server = create_studio_server(studio, host='127.0.0.1', port=0)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        port = server.server_address[1]
+
+        def req_json(method: str, path: str, body: dict | None = None) -> tuple[int, dict]:
+            conn = http.client.HTTPConnection('127.0.0.1', port, timeout=10)
+            try:
+                headers = {'Content-Type': 'application/json'} if body is not None else {}
+                raw = json.dumps(body, ensure_ascii=False).encode('utf-8') if body is not None else None
+                conn.request(method, path, body=raw, headers=headers)
+                resp = conn.getresponse()
+                return resp.status, json.loads(resp.read().decode('utf-8'))
+            finally:
+                conn.close()
+
+        st_bp, bp = req_json('GET', '/api/pipeline/blueprint?scope=chapter')
+        assert st_bp == 200 and len(bp['design_steps']) == 14 and len(bp['runtime_steps']) >= 6
+
+        st_sim, sim = req_json('POST', '/api/pipeline/simulate', {
+            'scope': 'chapter', 'stage': 'expression_design', 'simulate_prior_products': True,
+        })
+        assert st_sim == 200 and 'rendered_prompt' in sim
+
+        st_ms, ms = req_json('GET', '/api/materials/search?stage=world_design&limit=5&offset=0')
+        assert st_ms == 200 and 'items' in ms
+        st_ls, ls = req_json('GET', '/api/ledger/search?disposition=open&limit=5&offset=0')
+        assert st_ls == 200 and 'facets' in ls
+
+        st_n, created = req_json('POST', '/api/novels', {
+            'genre_ids': ['GENRE_XUANYI'], 'title': '客户端全闭环验证',
+            'idea': '旧港封条夜查', 'design_mode': 'manual',
+        })
+        assert st_n == 201
+        novel = created['novel']
+        ident = novel['id']
+        proj = novel['project_dir']
+
+        st_br, br = req_json('POST', f'/api/projects/{proj}/brief', {
+            'text': '旧港刑警林沉夜查封条破口', 'constraints': '单章单POV；禁止机械降神',
+        })
+        assert st_br == 200 and br['version'] >= 2
+
+        st_bi, bi = req_json('POST', f'/api/projects/{proj}/bible', {
+            'kind': 'world', 'name': '潮汐锁港表', 'body': '每日23:00涨潮漫过北栈桥',
+        })
+        assert st_bi == 200 and bi['name'] == '潮汐锁港表'
+
+        st_ch, ch = req_json('POST', f'/api/projects/{proj}/chapters', {'index': 1, 'title': '潮封栈桥'})
+        assert st_ch == 200
+        st_sc, sc = req_json('POST', f'/api/projects/{proj}/scenes', {
+            'chapter_id': ch['id'], 'index': 1, 'card': {'title': '夜查封条'},
+        })
+        assert st_sc == 200
+
+        st_c1, c1 = req_json('POST', f'/api/projects/{proj}/cards', {
+            'card_id': 'char_lin', 'kind': 'character',
+            'body': {'name': '林沉', 'role': '刑警主角', 'want': '查清封条破损真相', 'visibility': 'public'},
+            'auto_approve': True, 'apply_to_branch': True, 'branch': 'main',
+        })
+        assert st_c1 == 200 and c1['status'] == 'approved'
+
+        st_c2, c2 = req_json('POST', f'/api/projects/{proj}/cards', {
+            'card_id': 'sc_card_01', 'kind': 'scene',
+            'body': {
+                'title': '夜查封条', 'pov': 'char_lin', 'goal': '核验封条完整性',
+                'conflict': '涨潮倒计时', 'allowed_disclosure': '仅限手电可见物证',
+                'characters': ['char_lin'],
+            },
+            'auto_approve': True, 'apply_to_branch': True, 'branch': 'main',
+            'bind_scene_id': sc['id'], 'story_order': 1,
+        })
+        assert st_c2 == 200 and c2['status'] == 'approved'
+
+        st_cl, cl = req_json('GET', f'/api/projects/{proj}/cards')
+        assert st_cl == 200 and {c['card_id'] for c in cl['cards']} >= {'char_lin', 'sc_card_01'}
+
+        # Legacy unmanaged project can also be adopted one-click via /api/projects/{dir}/adopt
+        st_lp, _ = req_json('POST', '/api/projects', {
+            'dir_name': 'legacy-adopt-proj', 'title': '历史未接管项目', 'brief_text': '旧稿导入',
+        })
+        assert st_lp == 201
+        st_ad, ad = req_json('POST', '/api/projects/legacy-adopt-proj/adopt', {
+            'include_approved_cards': True, 'entities': ['seal'], 'predicates': ['status'],
+        })
+        assert st_ad == 200 and ad['branch_id'] == 'main'
+
+        st_ctx, ctx_data = req_json('GET', f'/api/projects/{proj}/scenes/{sc["id"]}/context?branch=main&char_limit=24000')
+        assert st_ctx == 200 and ctx_data['total_chars'] > 0 and len(ctx_data['items']) >= 1
+
+        draft_text = '林沉蹲在北栈桥边，借着手电筒看清封条已经断裂。'
+        st_dr, dr = req_json('POST', f'/api/projects/{proj}/scenes/{sc["id"]}/draft', {
+            'text': draft_text, 'branch': 'main',
+        })
+        assert st_dr == 200 and dr['draft']['id']
+        quote = '封条已经断裂'
+        q_start = draft_text.index(quote)
+        q_end = q_start + len(quote)
+
+        st_dl, dl = req_json('POST', f'/api/projects/{proj}/scenes/{sc["id"]}/delta', {
+            'draft_id': dr['draft']['id'],
+            'branch': 'main',
+            'story_order': 1,
+            'operations': [{
+                'op': 'set',
+                'entity_id': 'seal',
+                'predicate': 'status',
+                'holder': 'WORLD',
+                'claim': 'fact',
+                'story_order': 1,
+                'disclosure_order': [1, 1, 0],
+                'expected_old': None,
+                'new_value': 'broken',
+                'evidence': [{'start': q_start, 'end': q_end}],
+            }],
+        })
+        assert st_dl == 200 and dl['findings'] == []
+
+        st_q, q_res = req_json('GET', f'/api/novels/{ident}/quality?scene={sc["id"]}')
+        assert st_q == 200
+        assert q_res['writing_contract']['pov'] == 'char_lin'
+        assert 'anchor_beats' in q_res['writing_contract']
+        assert q_res['delta']['id'] == dl['delta']['id']
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_round13_quarantine_unblocking_f2_closure_and_step_material_slimming() -> None:
+    """Verify Round 13 raw-material unblocking, F2 closure, network prerequisites, and step slimming."""
+    from collections import Counter
+    from nw.materials import character_prerequisites, stage_input, world_prerequisites
+    from nw.materials.phase_flow import STAGE_MATERIALS
+    from nw.materials.work_catalog import SourceDesk
+    from nw.studio import catalog as studio_catalog
+
+    # 1. World & Character derived network prerequisites adjudicated and expanded
+    assert len(world_prerequisites.SPECS) == 86
+    assert {k for k, v in world_prerequisites.SPECS.items() if v['status'] == 'unresolved'} == set()
+    for wid in ('C00045', 'C00110', 'C00062', 'C00116', 'C00415', 'C00419'):
+        assert world_prerequisites.SPECS[wid]['status'] == 'conditional'
+    assert len(character_prerequisites.SPECS) == 55
+    for cid in ('C00616', 'C00618', 'C00619', 'C00627', 'C00856', 'C01235', 'C01304', 'C01707'):
+        assert character_prerequisites.SPECS[cid]['status'] == 'conditional'
+
+    # 2. Step modules slimmed, boilerplate stripped, parsers & explicit usage boundaries intact
+    steps_dir = ROOT / 'src' / 'nw' / 'materials' / 'steps'
+    total_step_bytes = sum(p.stat().st_size for p in steps_dir.glob('*.py'))
+    assert total_step_bytes < 9_500_000, f'Expected slimmed steps/*.py < 9.5 MB, got {total_step_bytes}'
+
+    for dyn_file in steps_dir.glob('*dynamic_network*.py'):
+        assert '【追溯原值】' not in dyn_file.read_text(encoding='utf-8'), dyn_file.name
+    for combo_file in steps_dir.glob('type_adaptation_type_combinations*.py'):
+        assert '【现行裁定依据】' not in combo_file.read_text(encoding='utf-8'), combo_file.name
+
+    studio_catalog.material.cache_clear()
+    studio_catalog._genres.cache_clear()
+    studio_catalog._options.cache_clear()
+    studio_catalog.combinations.cache_clear()
+    stage_input.step_uses.cache_clear()
+
+    combos = studio_catalog.combinations()
+    combo_counts = Counter(c['status'] for c in combos)
+    assert len(combos) == 4200
+    assert combo_counts['design_ready'] == 4095
+    assert combo_counts['blocked'] == 105
+    for slot in studio_catalog.SLOTS:
+        assert studio_catalog.options(slot), slot
+
+    world_uses = stage_input.step_uses(STAGE_MATERIALS['world_design'])
+    assert '补充与边界：' in world_uses.get('18.1_能量浓度下降', '')
+    assert '补充与边界：' in world_uses.get('15.1_进阶四条件', '') or any(
+        '补充与边界：' in v for k, v in world_uses.items() if k.startswith('15.1_')
+    )
+    from nw.materials.steps.writing import MATERIAL as WRITING_MATERIAL
+    writing_uses = stage_input.step_uses(WRITING_MATERIAL)
+    assert any('补充与边界：' in v for k, v in writing_uses.items() if '7.4' in k or '156.5' in k)
+
+    # 3. Live workspace SourceDesk & F2 ledger verification (when workspace is mounted)
+    ws = ROOT / 'workspace'
+    if (ws / 'materials' / 'catalog.db').is_file() and (ws / 'materials' / 'adjudication.db').is_file():
+        desk = SourceDesk(ws)
+        states = Counter(r['state'] for r in desk.by_id.values())
+        assert states['design_ready'] >= 15000, states
+        assert states['blocked'] == 316, states
+        blocked_profiles = {r['profile'] for r in desk.by_id.values() if r['state'] == 'blocked'}
+        assert blocked_profiles == {'type_combination'}, f'Unexpected blocked profiles: {blocked_profiles}'
+
+    ledger = ws / 'materials' / 'F2_统一问题台账.jsonl'
+    if ledger.is_file():
+        items = [json.loads(ln) for ln in ledger.read_text(encoding='utf-8').splitlines() if ln.strip()]
+        assert sum(1 for x in items if x.get('status') == 'open') == 0
+        assert sum(1 for x in items if x.get('status') == 'resolved') >= 2437
+        assert (ws / 'materials' / 'F2_权威核定结项报告_batch38.md').is_file()
+
+
 
 
 

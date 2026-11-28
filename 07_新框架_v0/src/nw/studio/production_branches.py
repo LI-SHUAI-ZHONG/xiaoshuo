@@ -107,12 +107,14 @@ class BranchMixin:
                         'can_promote': False, 'needs_revalidation': [],
                         'blockers': ['旧项目尚未接入故事状态，请先按已有工作流完成 story adopt。']}
             main = current_head(store)
+            from nw.studio.continuation_views import scene_display_labels
+            labels = scene_display_labels(store)
             rows = store.connection.execute('SELECT * FROM story_branches WHERE enabled=1 ORDER BY id').fetchall()
             branches = []
             for row in rows:
                 head = current_head(store, row['id'])
                 preview = (_promotion_preview(store, main, head) if row['id'] != 'main' else
-                           {'can_promote': False, 'needs_revalidation': [], 'blockers': [], 'changed_scenes': []})
+                           {'can_promote': False, 'needs_revalidation': [], 'blockers': [], 'changed_scenes': [], 'settings_changed': False})
                 branches.append({'id': row['id'], 'head': asdict(head), 'parent_branch': row['parent_branch_id'],
                                  'parent_at_fork': row['parent_at_fork'], 'is_current': selected == row['id'], **preview})
             candidate = next((row for row in branches if row['id'] == selected), None)
@@ -122,6 +124,10 @@ class BranchMixin:
         return {'current_branch': selected, 'branch_id': selected, 'managed_story': True,
                 'main_head': asdict(main), 'candidate_head': candidate['head'] if selected != 'main' else None,
                 'branches': branches, 'active_snapshot': active,
+                'scene_labels': labels,
+                'settings_changed': candidate.get('settings_changed', False),
+                'changed_scene_details': [{'id': sid, 'label': labels.get(sid, sid)} for sid in candidate['changed_scenes']],
+                'revalidation_details': [{'id': sid, 'label': labels.get(sid, sid)} for sid in candidate['needs_revalidation']],
                 **{key: candidate[key] for key in ('can_promote', 'needs_revalidation', 'blockers', 'changed_scenes')}}
 
     def fork_branch(self, ident: str, body: dict) -> dict:

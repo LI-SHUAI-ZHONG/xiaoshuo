@@ -36,8 +36,8 @@ def match(key, character, products=None, context=None):
     return rows
 
 
-def test_all_47_preserve_their_distinct_static_and_dynamic_originals():
-    blocked = {'C00616', 'C00618', 'C00619', 'C00627', 'C00856', 'C01235', 'C01304', 'C01707'}
+def test_all_55_preserve_their_distinct_static_and_dynamic_originals():
+    blocked: set[str] = set()
     dynamic = {}
     for line in DYNAMIC.splitlines():
         number, sep, data = line.partition('｜')
@@ -47,7 +47,7 @@ def test_all_47_preserve_their_distinct_static_and_dynamic_originals():
                 dynamic[row['id']] = (int(number), row)
     static = {tuple(line.split('｜')[2:6]) for line in STATIC.splitlines() if line.split('｜')[0].isdecimal()}
     assert set(SPECS) == set(dynamic) - blocked
-    assert len(SPECS) == 47
+    assert len(SPECS) == 55
     for key, spec in SPECS.items():
         line, original = dynamic[key]
         assert tuple(spec[k] for k in ('source', 'target', 'relation', 'condition')) in static
@@ -240,6 +240,23 @@ def cases():
            world('巡防院以守夜时长分级记录意志承受能力。', '伤病时不得按常态折算。'))
     yield ('C01566', designed({'core_conflict': '如何在紧急时维持公正又善待无辜者。', 'want': '救助失去小船的证人。',
            'behavior': '她把自己的船位让给被拒载的证人。'}), {})
+    yield ('C00616 C00618', designed({
+        'need': '流亡后失去容身庇护，亟需自保退路。',
+        'behavior': '她始终执着清点夜渡退路，对上峰每次越权指令都保持高度警觉与提防。',
+    }), {})
+    yield ('C00619 C00627', designed({
+        'background': '早年因寒微出身遭主簿轻视羞辱而渴望重获尊严认可，立下施展毕生所学证明自己的志业。',
+        'want': '力争取得港务席位为旧师正名。',
+    }), {})
+    yield ('C00856 C01235', designed({
+        'flaw': '起初只信官印凭据而存在认知盲区，性情谨慎冷峻。',
+        'voice': '说话一贯用简短措辞并在追问前停顿半息。',
+        'want': '查封无印夜船。',
+    }), {})
+    yield ('C01304 C01707', designed({
+        'need': '怀着对溺亡同伴的愧疚与不甘渴望查明真凶，始终执念翻出沉船铁证。',
+        'want': '执意要查清封港旧案并公开抗命拒不销毁水簿。',
+    }), {})
 
 
 _CASES = {key: (draft, stages) for keys, draft, stages in cases() for key in keys.split()}

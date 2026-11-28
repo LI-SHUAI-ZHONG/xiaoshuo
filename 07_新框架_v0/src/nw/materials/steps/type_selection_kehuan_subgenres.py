@@ -34,5 +34,4 @@ MATERIAL = r"""#### 科幻子类型
 8458|SUB_KEHUAN_28|末日求生：GENRE_KEHUAN的子类型
 8483|SUB_KEHUAN_29|太空探险：GENRE_KEHUAN的子类型
 【本步用法】
-核对作者指定的科幻子类型与父级。「赛博朋克」在本组为 SUB_KEHUAN_12，另有主类型 GENRE_SAIBO。「多元宇宙」在本组为 SUB_KEHUAN_16，玄幻下则是 SUB_XUANHUAN_17。根据项目范围核对采用项，具体设定和写法由作者独立确定。
-"""
+核对作者指定的科幻子类型与父级。「赛博朋克」在本组为 SUB_KEHUAN_12，另有主类型 GENRE_SAIBO。「多元宇宙」在本组为 SUB_KEHUAN_16，玄幻下则是 SUB_XUANHUAN_17。根据项目范围核对采用项，具体设定和写法由作者独立确定。"""

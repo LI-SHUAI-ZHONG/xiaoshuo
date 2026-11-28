@@ -304,6 +304,18 @@ def build_story_context(store: Store, scene_id: str, scope: StoryScope, char_lim
         from nw.studio.craft_materials import design_genre_ids, writing_genre_guidance
         if genre_note := writing_genre_guidance(design_genre_ids(design)):
             base_prompt += ' ' + genre_note
+        session_stages = (design.get('work_session') or {}).get('stages') or ()
+        if session_stages:
+            from nw.materials.step_guard import build_continuity_ledger, format_writing_continuity_prompt
+            products_map = {row['stage']: row for row in session_stages if isinstance(row, dict) and row.get('stage')}
+            ledger = build_continuity_ledger('writing', products_map, [], {
+                'approved_cards': list(view.settings),
+                'current_scene': design.get('material_key') or '',
+                'accepted_state': [asdict(f) for f in view.facts],
+            })
+            if guard_note := format_writing_continuity_prompt(ledger):
+                base_prompt += ' ' + guard_note
+            base_prompt += ' 叙事生命力原则：以人物在当场压力下的真实选择、对手阻力与可见感官动作推动叙事，杜绝机械汇报设定或套话抒情。'
     prompt = step_material_prompt(base_prompt, WRITING_MATERIAL, source_keys)
     provider = get_provider('story')
     assembled = asdict(provider.build(inputs, card))

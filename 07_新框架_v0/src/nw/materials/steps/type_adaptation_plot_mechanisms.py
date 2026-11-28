@@ -10,5 +10,4 @@ MATERIAL = r"""#### 类型适配使用的项目时间与转生机制
 19185 | PLOT_MECHANISM_LOOP | 循环机制 | 主角经历时间循环 | 记录作者已定的时间循环范围、起止条件及角色记忆的待核项。
 19254 | PLOT_MECHANISM_REINCARNATION | 轮回机制 | 主角经历轮回转世 | 按作者明确的轮回转世范围记录前后身份及既有约束。
 【本步使用条件】
-按作者已经确认的机制和现有类型核对。用 adaptations.type_refs 引用实际选型，parameters 写项目确认的起点、终点或反复条件，limits 及 boundaries 写项目限制和待核事项。适配依据来自作者独立确认的机制。
-"""
+按作者已经确认的机制和现有类型核对。用 adaptations.type_refs 引用实际选型，parameters 写项目确认的起点、终点或反复条件，limits 及 boundaries 写项目限制和待核事项。适配依据来自作者独立确认的机制。"""

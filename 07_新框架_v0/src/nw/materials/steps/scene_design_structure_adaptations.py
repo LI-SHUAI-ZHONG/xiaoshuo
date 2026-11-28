@@ -1,6 +1,6 @@
 """特殊叙事结构的场景适配在现有步骤使用的《类型系统》原文。"""
 
-MATERIAL = r"""#### 特殊叙事结构的场景适配
+MATERIAL = """#### 特殊叙事结构的场景适配
 【类型系统原文位置】类型表达适配总表.json 第20889行
 【各条共用原文值】{"priority":0,"weight":0,"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0","target_kind":"scene_type","target_id":null,"target_scope":"all_scenes","adaptation_kind":"scene_preference","parameters":{"scene_frequency_weight":0.5,"pacing_weight":0.5},"not_guaranteed":["结构不决定场景内容","结构不强制剧情发展"]}
 【现有资料裁定】本组全部为 blocked。原字段用于核对待核参数及影响。
@@ -21,5 +21,4 @@ MATERIAL = r"""#### 特殊叙事结构的场景适配
 26079 | ADAPT_B_00101 | STRUCTURE_ENSEMBLE | 核对本场已选角色线、可见行动及它和其他角色线的交接。
 26122 | ADAPT_B_00102 | STRUCTURE_CHAPTER_TWIST | 核对已定反转在本章场的实际落点、触发和可披露范围。
 【本步使用条件】
-本步承接作者已选结构、上游剧情节点、事件、行动和既定视角。用已有 chapters、场景状态和 allowed_disclosure 核对本场如何承接结构。频率和节奏原值供核对，具体章场顺序及披露依据已确认的项目安排。
-"""
+本步承接作者已选结构、上游剧情节点、事件、行动和既定视角。用已有 chapters、场景状态和 allowed_disclosure 核对本场如何承接结构。频率和节奏原值供核对，具体章场顺序及披露依据已确认的项目安排。"""

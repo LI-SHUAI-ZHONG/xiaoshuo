@@ -61,6 +61,16 @@ def for_stage(plan: dict, stage: str) -> dict:
         result['preferences'] = preferences
     if interactions := [row for row in plan['preference_interactions'] if stage in row['stages']]:
         result['preference_interactions'] = interactions
+    if stage in ('type_adaptation', 'plot_design'):
+        compass = [
+            {'slot': row['slot'], 'id': row['id'], 'name': row['name'], 'meaning': row['meaning']}
+            for row in plan['preferences']
+            if (row['slot'] in ('narration', 'tone', 'style')
+                or str(row.get('id', '')).startswith('PLOT_MECHANISM_'))
+            and stage not in row['stages']
+        ]
+        if compass:
+            result['macro_craft_compass'] = compass
     # Approved methods use the existing production-method contracts. Their
     # scopes, applicable inputs and output placement are enforced there.
     return deepcopy(result)

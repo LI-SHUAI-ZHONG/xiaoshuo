@@ -1,6 +1,6 @@
 """行动设计中的概念动作与行动候选参数的《类型系统》原文。"""
 
-MATERIAL = r"""#### 行动设计中的概念动作与行动候选参数
+MATERIAL = """#### 行动设计中的概念动作与行动候选参数
 【类型系统原文位置】类型表达适配总表.json 第20889行
 【各条共用原文值】{"priority":0,"weight":0,"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0"}
 【本步使用条件】
@@ -22,5 +22,4 @@ MATERIAL = r"""#### 行动设计中的概念动作与行动候选参数
 21993 | blocked | ADAPT_B_00020 | GENRE_XUANYI | concept | FEAR | null | expression_preference | {"candidate_actions":["ACTION_INVESTIGATE","ACTION_OBSERVE"],"not_guaranteed":["恐惧必然源于凶手","恐惧是真实威胁"]} | 保留调查与观察候选原值，核对待补的威胁依据及适用条件。
 23742 | design_ready | ADAPT_B_00051 | GENRE_XIANXIA | action_type | null | all_actions | action_candidate_weight | {"parameters":{"candidate_priority":0,"candidate_visibility":"normal","candidate_cost_emphasis":"normal","candidate_risk_emphasis":"normal","candidate_information_gain":"normal","candidate_relationship_effect":"normal","candidate_moral_effect":"normal","candidate_failure_visibility":"normal"},"preferred_expressions":["修行","炼丹","御剑","布阵","斗法"],"avoid_expressions":["打电话","发邮件","开车","刷信用卡"],"not_guaranteed":["修仙者必然战斗"]} | 按本场确实可用的能力核对修行、炼丹、御剑、布阵或斗法候选及代价。
 23801 | design_ready | ADAPT_B_00052 | GENRE_DUSHI | action_type | null | all_actions | action_candidate_weight | {"parameters":{"candidate_priority":0,"candidate_visibility":"normal","candidate_cost_emphasis":"normal","candidate_risk_emphasis":"normal","candidate_information_gain":"normal","candidate_relationship_effect":"normal","candidate_moral_effect":"normal","candidate_failure_visibility":"normal"},"preferred_expressions":["谈判","签约","调查","社交","投资"],"avoid_expressions":["御剑","布阵","服丹"],"not_guaranteed":["城市角色必然商务谈判"]} | 按实际人物、对象和事件核对谈判、签约、调查、社交或投资候选。
-23859 | design_ready | ADAPT_B_00053 | GENRE_MORI | action_type | null | all_actions | action_candidate_weight | {"parameters":{"candidate_priority":0,"candidate_visibility":"normal","candidate_cost_emphasis":"normal","candidate_risk_emphasis":"normal","candidate_information_gain":"normal","candidate_relationship_effect":"normal","candidate_moral_effect":"normal","candidate_failure_visibility":"normal"},"preferred_expressions":["搜寻","守卫","转移","交易","侦察"],"avoid_expressions":["休闲购物","娱乐消遣"],"not_guaranteed":["幸存者必然搜寻到物资"]} | 按既有求生目标、环境和角色能力核对搜寻、守卫、转移、交易或侦察。
-"""
+23859 | design_ready | ADAPT_B_00053 | GENRE_MORI | action_type | null | all_actions | action_candidate_weight | {"parameters":{"candidate_priority":0,"candidate_visibility":"normal","candidate_cost_emphasis":"normal","candidate_risk_emphasis":"normal","candidate_information_gain":"normal","candidate_relationship_effect":"normal","candidate_moral_effect":"normal","candidate_failure_visibility":"normal"},"preferred_expressions":["搜寻","守卫","转移","交易","侦察"],"avoid_expressions":["休闲购物","娱乐消遣"],"not_guaranteed":["幸存者必然搜寻到物资"]} | 按既有求生目标、环境和角色能力核对搜寻、守卫、转移、交易或侦察。"""

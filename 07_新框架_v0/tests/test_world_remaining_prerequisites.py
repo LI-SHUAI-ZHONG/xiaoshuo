@@ -98,6 +98,12 @@ ADDITIONAL_EXAMPLES = [
     ('C00825', '潜工的能力边界可比照护耳器具的使用边界，器具只能保温，潜工也无法靠它延长闭气时限。'),
     ('C00826', '雾语听辨的能力边界决定其作用对象，只对仍在敲击岸壁的舟工手铃生效。'),
     ('C00872', '井港工匠制成的引潮法器须标明工坊和第一位持有者，后主换手时沿用同一枚铸记。'),
+    ('C00045', '北港潜工的天赋档位决定战力核算中的灵力纯度折算上限。'),
+    ('C00062', '寒井凝成的晶化灵能可嵌作夜航雾灯的照明器物，燃尽三刻后晶核碎裂。'),
+    ('C00110', '内湾灵雾流动在闸门开启时遵循梯度散逸的流动规律，遇矿核屏障才转为局部回流。'),
+    ('C00116', '内湾两岸的浓度分布决定浅滩产出的盐晶资源品级，低浓潮沟只结粗盐。'),
+    ('C00415', '堤下铜脉的传导系数决定潮能沿矿脉传导时的衰减速率。'),
+    ('C00419', '北港实测的空间浓度分布决定海底晶矿资源的富集界线，测点三格以下无伴生矿线。'),
     ('C00881', '井港技能树的深水节点比照资质档设两级修习门槛，仍须先修辨流才能解锁。'),
     ('C00882', '守闸技能树的验印节点是升任闸吏的门槛，只有掌握真蜡辨识后才可参加升职考核。'),
 ]
@@ -137,12 +143,15 @@ def test_observation_and_reverse_cause_have_distinct_prerequisites(forward, reve
     assert evidence(forward, card(statement)) and not evidence(reverse, card(statement))
 
 
-def test_disputed_originals_stay_unresolved_even_when_the_project_has_its_own_rule():
-    assert {k for k, r in SPECS.items() if r['status'] == 'unresolved'} == {'C00045', 'C00110'}
+def test_adjudicated_world_edges_enforce_explicit_mechanism_and_boundary_guards():
+    assert {k for k, r in SPECS.items() if r['status'] == 'unresolved'} == set()
     for key in ('C00045', 'C00110'):
-        assert SPECS[key]['blocked_reason']
+        assert SPECS[key]['status'] == 'conditional'
+    # Arbitrary independent multiplier or unbounded universal flow claims remain rejected.
     assert not evidence('C00045', card('天赋品质以五分计入港内力量公式，为独立变量。'))
     assert not evidence('C00110', card('港内流动规律规定能量永远由高浓度扩散至低浓度。'))
+    assert evidence('C00045', card('北港潜工的天赋档位决定战力核算中的灵力纯度折算上限。'))
+    assert evidence('C00110', card('内湾灵雾流动在闸门开启时遵循梯度散逸的流动规律，遇矿核屏障才转为局部回流。'))
 
 
 @pytest.mark.parametrize(('key', 'ability_limit', 'rule'), [
@@ -183,13 +192,13 @@ def test_specs_cover_all_formal_remaining_original_edges_in_the_mystery_sample()
     from nw.materials.type_network_catalog import edge_proof
     from nw.materials.work_catalog import SourceDesk
 
-    assert len(SPECS) == 82
+    assert len(SPECS) == 86
     specialized = {'C00025', 'C00032', 'C00702', 'C00782', 'C00727', 'C00827'}
     assert {key for key, _ in BASIC_EXAMPLES + ADDITIONAL_EXAMPLES} | specialized == {
         key for key, spec in SPECS.items() if spec['status'] == 'conditional'}
     assert Counter(r['family'] for r in SPECS.values()) == {
-        '能量计量与转化': 7, '能量场与生态': 22, '例外与知情范围': 9,
-        '命名与类型承诺': 7, '群体与制度': 20, '道具、功能与技能': 17}
+        '能量计量与转化': 7, '能量场与生态': 25, '例外与知情范围': 9,
+        '命名与类型承诺': 7, '群体与制度': 20, '道具、功能与技能': 18}
     workspace = Path(__file__).resolve().parents[1] / 'workspace'
     if not (workspace / 'materials/catalog.db').exists():
         pytest.skip('正式资料目录不在此工作区')

@@ -29,5 +29,4 @@ MATERIAL = r"""#### 历史子类型
 7508|SUB_LISHI_23|乱世：GENRE_LISHI的子类型
 7533|SUB_LISHI_24|群像史诗：GENRE_LISHI的子类型
 【本步用法】
-核对作者指定的历史子类型与父级。「王朝争霸」另见玄幻子类型 SUB_XUANHUAN_04，「宫廷权谋」另有主类型 GENRE_GONGTING。「古代言情」在本组为 SUB_LISHI_17，别名表指 GENRE_GUDAI_YANQING，原冲突规则还列言情子层级。按作者确认的用途记录实际采用的 ID 和层级，待确认项写入 boundaries。穿越与重生的机制按作者独立确认的要求使用。
-"""
+核对作者指定的历史子类型与父级。「王朝争霸」另见玄幻子类型 SUB_XUANHUAN_04，「宫廷权谋」另有主类型 GENRE_GONGTING。「古代言情」在本组为 SUB_LISHI_17，别名表指 GENRE_GUDAI_YANQING，原冲突规则还列言情子层级。按作者确认的用途记录实际采用的 ID 和层级，待确认项写入 boundaries。穿越与重生的机制按作者独立确认的要求使用。"""

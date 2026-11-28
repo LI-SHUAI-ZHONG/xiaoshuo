@@ -1,6 +1,6 @@
 """机制的行动候选适配在现有步骤使用的《类型系统》原文。"""
 
-MATERIAL = r"""#### 机制的行动候选适配
+MATERIAL = """#### 机制的行动候选适配
 【类型系统原文位置】类型表达适配总表.json 第20889行
 【各条共用原文值】{"priority":0,"weight":0,"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0","target_kind":"action_type","target_id":null,"target_scope":"mechanism_actions","adaptation_kind":"action_candidate_weight","parameters":{"candidate_priority":0},"not_guaranteed":["机制不自动选择行动","机制不自动生成剧情结果"]}
 【现有资料裁定】本组全部为 blocked。原字段用于核对待核参数及影响。
@@ -22,5 +22,4 @@ MATERIAL = r"""#### 机制的行动候选适配
 26753 | ADAPT_B_00117 | MECHANISM_FORESHADOW_RECOVERY | 核对已埋设的线索及回收条件，确认本场人物能执行的承接行动。
 26795 | ADAPT_B_00118 | MECHANISM_STAGE_GOAL | 用已确定的阶段目标、前态及完成条件核对可执行的下一步。
 【本步使用条件】
-本步以作者实际采用的机制、已存在的事件候选、人物可用能力和行动对象为依据核对候选。原优先级供核对待核口径，实际选择、阻碍、代价和结果依本步项目条件填写。
-"""
+本步以作者实际采用的机制、已存在的事件候选、人物可用能力和行动对象为依据核对候选。原优先级供核对待核口径，实际选择、阻碍、代价和结果依本步项目条件填写。"""

@@ -1,6 +1,6 @@
 """状态变化步骤的《类型系统》层级、报告或条件原文。"""
 
-MATERIAL = r"""#### 状态变化核对的类型动态冲突
+MATERIAL = """#### 状态变化核对的类型动态冲突
 【类型系统原文位置】类型动态冲突规则.json 第26990行
 【各条共用原文值】{"detection":"report_only","auto_resolve":false,"severity":"error","schema_version":"TYPE_D-1.0.0"}
 【本步用法】在实际项目产物上核对以下报告项，记录具体对象、时点、所涉字段及依据。原件规定 report_only，auto_resolve=false。报告按现有产物和待核说明保存。
@@ -33,149 +33,102 @@ MATERIAL = r"""#### 状态变化核对的类型动态冲突
 【逐条原文值】原文行 | global_defaults 字段 | 原值 | 本步核对
 27946 | max_state_updates_per_scene | 12 | 核对同一场实际状态更新的数量与对象，项目计数口径沿现有依据。
 【本步用法】对照本场已知实体、状态字段与具体候选变化核对。原件的数量按它所适用的传播范围记录。
-
 【《类型系统》类型动态规则总表｜状态变化】
 【原文位置】来源块第 28,706 行。每项前为条目 ID 字段的原件行和现行裁定。
 【本步用法】按本步的实际前置、条目触发和外部选择条件判断用途。原条所列空值、候选范围和现行裁定随条保留。
-
 28894｜reference｜{"rule_id":"TDR_TEMPLATE_003","rule_scope":"实体状态变化模板","rule_kind":"TYPE_ENTITY_STATE_CHANGE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":[],"trigger_entities":["人物","物品"],"trigger_event_types":["受伤","获得","失去"],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["实体存在","状态变化有事件依据"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_T003_E01","effect_kind":"state_change","description":"实体状态候选变化"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"unknown","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":["事件状态变化表.json"],"evidence_type":"template","confidence":0,"status":"template","schema_version":"TYPE_D-1.0.0"}
 【本步用法】已有受伤、获得或失去事件时，按实际人物或物品、前状态和所选行动核对能支持的状态变化。
-
 29350｜design_ready｜{"rule_id":"TDR_003","rule_scope":"实体在类型环境中的状态变化适配","rule_kind":"TYPE_ENTITY_STATE_CHANGE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":["实体状态","资源状态"],"trigger_entities":["人物","物品"],"trigger_event_types":[],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["实体存在","类型环境支持该状态变化"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_003_E01","effect_kind":"state_change","description":"实体状态候选更新"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"repeatable","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":["事件状态变化表.json"],"evidence_type":"inferred","confidence":0.7,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】本作设定明确支持人物或物品状态发生变化时，从已选行动和事件证据核对前值、可支持的后值及持续条件。
-
 29708｜design_ready｜{"rule_id":"TDR_007","rule_scope":"关系在类型环境中的变化候选","rule_kind":"TYPE_RELATION_CHANGE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":[],"trigger_entities":[],"trigger_event_types":[],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":["友好","敌对","中立","合作"],"trigger_foreshadowing_types":[],"preconditions":["两个实体均存在","当前关系类型已确认"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_007_E01","effect_kind":"relationship_pressure","description":"关系产生变化压力"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"repeatable","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":[],"evidence_type":"inferred","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】现有实体和关系已经确定时，以真实双方、所选行动和关系压力的实际表现核对是否发生可证的关系前后变化。
-
 30414｜design_ready｜{"rule_id":"TDR_015","rule_scope":"延迟后果候选","rule_kind":"TYPE_DELAYED_CONSEQUENCE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":["后果","延迟"],"trigger_entities":[],"trigger_event_types":[],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["事件已完成","后续影响可能在未来显现"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_015_E01","effect_kind":"delayed_consequence","description":"延迟后果候选"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"limited","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":[],"evidence_type":"template","confidence":0.5,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】已完成事件留下延迟影响时，记录发生的前因、将来可能显现的条件和本场能够确认的实际后果。
-
 30849｜design_ready｜{"rule_id":"TDR_020","rule_scope":"物品损坏候选","rule_kind":"TYPE_ITEM_DAMAGE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":[],"trigger_entities":[],"trigger_event_types":[],"trigger_information_types":[],"trigger_resource_types":["武器","装备","工具"],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["物品正在使用或受到攻击"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_020_E01","effect_kind":"item_damage_pressure","description":"物品可能损坏"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"repeatable","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":[],"evidence_type":"template","confidence":0.5,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】道具正在使用或遇到已有损害事件时，按所选行动和可见证据核对物品哪些功能或状态可能变化、后续限制如何承接。
-
 31108｜design_ready｜{"rule_id":"TDR_023","rule_scope":"伤势后果候选","rule_kind":"TYPE_INJURY_CONSEQUENCE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":["伤势","伤害"],"trigger_entities":["人物"],"trigger_event_types":[],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["伤势已被确认为completed事件"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_023_E01","effect_kind":"injury_pressure","description":"伤势后果但不直接改变状态"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"limited","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":["事件状态变化表.json"],"evidence_type":"inferred","confidence":0.75,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】既有伤势相关事件已确认完成时，用实际受影响的动作和持续证据核对后续限制及对应的应对。
-
 31198｜design_ready｜{"rule_id":"TDR_024","rule_scope":"道德约束在类型环境中的适配","rule_kind":"TYPE_ENTITY_STATE_CHANGE","type_ids":[],"subtype_ids":[],"hybrid_ids":[],"mechanism_ids":[],"structure_ids":[],"style_ids":[],"trigger_concepts":["道德","是非"],"trigger_entities":["人物"],"trigger_event_types":[],"trigger_information_types":[],"trigger_resource_types":[],"trigger_relationship_types":[],"trigger_foreshadowing_types":[],"preconditions":["人物有明确道德边界"],"required_context":[],"required_information":[],"required_resources":[],"required_capabilities":[],"required_relationships":[],"required_identity_conditions":[],"required_moral_conditions":[],"candidate_effects":[{"effect_id":"TDR_024_E01","effect_kind":"goal_pressure","description":"道德产生计划压力"}],"candidate_actions":[],"candidate_reactions":[],"state_changes":[],"relationship_changes":[],"resource_changes":[],"information_changes":[],"identity_changes":[],"item_changes":[],"location_changes":[],"foreshadowing_changes":[],"delayed_effects":[],"alternative_branches":[],"failure_branches":[],"interruption_conditions":[],"selection_constraints":["必须经过外部行动选择","不能自动生成completed事件","需要连续性验证"],"propagation_limits":{"max_depth":3,"max_activated_rules":5,"max_state_updates":12},"priority":0,"weight":0,"cooldown":null,"repeat_policy":"repeatable","conflicts_with":[],"requires_rules":[],"excludes_rules":[],"forbidden_assumptions":["类型不能决定确定行为","类型不能代替行动选择","类型不能覆盖人物性格","类型不能跳过连续性验证"],"not_guaranteed":["候选效果不一定被选中","状态变化需要事件证据","传播需要验证每一层"],"validation_rules":[],"source_refs":["类型表达适配总表.json"],"evidence_type":"inferred","confidence":0.65,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】人物已有明确道德边界且所选行动遇到该边界时，按实际取舍记录目标压力、应对及可据证据确认的影响。
-
 【《类型系统》类型动态候选效果｜状态变化】
 【原文位置】来源块第 31,428 行。每项前为条目 ID 字段的原件行和现行裁定。
 【本步用法】各候选效果随相应父规则核对本步状态或行动。原件的目标、字段和值均留空，现行裁定为 reference。用已具备的项目产物确定具体作用及可验证证据。
-
 31499｜reference｜{"effect_id":"TDR_T003_E01","rule_id":"TDR_TEMPLATE_003","effect_kind":"state_change","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":["事件状态变化表.json"],"evidence_type":"template","confidence":0,"status":"active"}
 【本步用法】使用现有事件检验实体及原状态，候选状态的可支持范围由本场行动证据确定。
-
 31663｜reference｜{"effect_id":"TDR_003_E01","rule_id":"TDR_003","effect_kind":"state_change","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":["事件状态变化表.json"],"evidence_type":"inferred","confidence":0.7,"status":"active"}
 【本步用法】目标、字段和取值依项目已确认的实体与事件结果核对，沿用前状态和本场既定证据。
-
 31792｜reference｜{"effect_id":"TDR_007_E01","rule_id":"TDR_007","effect_kind":"relationship_pressure","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":[],"evidence_type":"inferred","confidence":0.6,"status":"active"}
 【本步用法】用确认的关系前值和产生影响的行为核实压力及其程度，状态结论沿用已证关系结果。
-
 32049｜reference｜{"effect_id":"TDR_015_E01","rule_id":"TDR_015","effect_kind":"delayed_consequence","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":[],"evidence_type":"template","confidence":0.5,"status":"active"}
 【本步用法】按原事件和时序保留延迟后果的有效条件，实际出现以后据场景证据确认变化。
-
 32208｜reference｜{"effect_id":"TDR_020_E01","rule_id":"TDR_020","effect_kind":"item_damage_pressure","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":[],"evidence_type":"template","confidence":0.5,"status":"active"}
 【本步用法】用原有物品前值、本场已发生的作用和实际损坏证据核对状态，保留未确认部分。
-
 32301｜reference｜{"effect_id":"TDR_023_E01","rule_id":"TDR_023","effect_kind":"injury_pressure","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":["事件状态变化表.json"],"evidence_type":"inferred","confidence":0.75,"status":"active"}
 【本步用法】随已证伤势定位受限行动和本场可见结果，核对连续性及实际证据。
-
 32334｜reference｜{"effect_id":"TDR_024_E01","rule_id":"TDR_024","effect_kind":"goal_pressure","target_id":null,"target_type":"entity","change_field":null,"change_operation":"candidate","candidate_value":null,"magnitude":null,"duration":null,"probability":null,"priority":0,"requires_selection":true,"requires_validation":true,"possible_side_effects":[],"possible_failures":[],"possible_interruptions":[],"continuity_requirements":["必须通过连续性验证","不能跳过事件证据"],"not_guaranteed":["此效果不是必然结果","需要外部行动选择和验证"],"source_refs":["类型表达适配总表.json"],"evidence_type":"inferred","confidence":0.65,"status":"active"}
 【本步用法】依据既有人设及场景实际选择判断哪项目标受到影响，核对作用对象和已见结果。
-
 【《类型系统》类型动态筛选规则 TDF_001｜状态变化】
 【原文位置】来源块第 32,448 行。条目前缀是原件中的字段行。
 【本步用法】按当前步骤的实际前置和已有产物落实适用的筛选动作，并保留原步骤编号及其现行裁定。
-
 32531｜reference｜{"step":20,"action":"不直接写入状态"}
 【本步用法】把规则所提示的后果留在已有规划结果或变化候选中。正式状态由现有取证和接受流程确认。
-
 【《类型系统》类型动态筛选规则每场上限 TDF_001｜状态变化】
 【原文位置】来源块第 32,448 行。条目前缀是原件中的字段行。
 【本步用法】用已有场景或候选实际对应的实体、字段、时点和范围核对原上限。证据不足或计数所需产物未形成时，在本步已有说明中标明待核。
-
 32543｜{"max_relationship_candidates":5}
 【本步用法】按同场和既有关系双方核对可能引出的关系后果数量，保留原有前值和变更证据。
-
 32546｜{"max_state_updates":12}
 【本步用法】按同一场和现有计数口径核对实际更新的实体及状态字段、数量和变化依据。
-
 【《类型系统》类型动态验证规则｜状态变化】
 【原文位置】来源块第 32,597 行。条目前缀是原件中的字段行。
 【本步用法】按实际项目对象、已用资料和本步产物核对下列验证项，并将问题定位到已有产物和证据。原件规定 report_only=true、auto_fix_allowed=false。
-
 32656｜reference｜{"validation_id":"TDV_007","check_description":"实体是否存在","report_only":true,"auto_fix_allowed":false,"severity":"error","status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】核对变化候选指向的真实实体、原有状态和造成变化的事件，报告找不到对象或前值的项。
-
 32755｜reference｜{"validation_id":"TDV_018","check_description":"候选效果是否超过状态更新上限","report_only":true,"auto_fix_allowed":false,"severity":"error","status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】统计同场候选效果实际会造成的状态更新，记录涉及实体、字段和计数依据。
-
 32827｜reference｜{"validation_id":"TDV_026","check_description":"是否直接写入正式状态","report_only":true,"auto_fix_allowed":false,"severity":"error","status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】检查本步候选产物与现有正式状态或接受产物上的来源记录，标出未经现有流程确认就进入正式状态的结果。
-
 【《类型系统》类型多样性策略的维度｜状态变化】
 【原文位置】来源块第 32,920 行。每项前缀为对应字段的物理原件行。
 【本步用法】沿用作者已确认的条件，比较当前步骤实际已有的适用候选。权重保留原值，具体比较依据采用本次已明确的范围。
-
 33008｜reference｜{"id":"delayed_consequence","name":"延迟后果维度","weight":0.04}
 【本步用法】用已选事件前后状态和实际触发依据区分当场结果与已有的延迟后果预案。
-
 【《类型系统》类型状态变化适配｜状态变化】
 【原文位置】来源块第 41,109 行。条目前缀为 ID 字段的物理原件行。
 【本步用法】按本场已选事件、真实前态和已采用类型核对候选范围。原件的 allowed_fields、确认条件和连续性限制随条保留，按本项目实际字段及已有取证和接受流程核对结果。
-
 41114｜design_ready｜{"state_adaptation_id":"TSA_001","type_ids":[],"state_type":"body_state","allowed_fields":["body_state_value","body_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】依据既有事件和人物身体前态，核对实际可观察的变化、持续影响及所选应对。
-
 41156｜design_ready｜{"state_adaptation_id":"TSA_002","type_ids":[],"state_type":"injury_state","allowed_fields":["injury_state_value","injury_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】用已经有证据的伤势、触发事件及可行动能力核对前后限制与后续承接。
-
 41198｜design_ready｜{"state_adaptation_id":"TSA_003","type_ids":[],"state_type":"emotion_state","allowed_fields":["emotion_state_value","emotion_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】对照人物原有情绪和已发生事件，按稿面或事件中可观察的变化确认当步结果。
-
 41240｜design_ready｜{"state_adaptation_id":"TSA_004","type_ids":[],"state_type":"attention_state","allowed_fields":["attention_state_value","attention_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】按事件前后实际注意对象、当场行动和可见表现核对人物关注状态。
-
 41282｜design_ready｜{"state_adaptation_id":"TSA_005","type_ids":[],"state_type":"goal_state","allowed_fields":["goal_state_value","goal_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】以人物已确认的原目标、所选行动和真实后果核对目标何时及如何转变。
-
 41324｜design_ready｜{"state_adaptation_id":"TSA_006","type_ids":[],"state_type":"plan_state","allowed_fields":["plan_state_value","plan_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】沿用此前实际计划及所选应对，核对哪些步骤改变、受阻或继续有效。
-
 41366｜design_ready｜{"state_adaptation_id":"TSA_007","type_ids":[],"state_type":"identity_state","allowed_fields":["identity_state_value","identity_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】依已发生的事件、角色实际身份与知情范围区分真实身份变化和认知变化。
-
 41408｜design_ready｜{"state_adaptation_id":"TSA_008","type_ids":[],"state_type":"relationship_state","allowed_fields":["relationship_state_value","relationship_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】用真实双方、原关系及实际互动证据核对当前状态变化和后场承接。
-
 41450｜design_ready｜{"state_adaptation_id":"TSA_009","type_ids":[],"state_type":"resource_state","allowed_fields":["resource_state_value","resource_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】根据已确认的资源起量、持有者、当场消耗或转移及后续约束核对实际变化。
-
 41492｜design_ready｜{"state_adaptation_id":"TSA_010","type_ids":[],"state_type":"information_state","allowed_fields":["information_state_value","information_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】按前态、事件和信息的实际来源与传递结果核对角色所知及信念是否改变。
-
 41534｜design_ready｜{"state_adaptation_id":"TSA_011","type_ids":[],"state_type":"location_state","allowed_fields":["location_state_value","location_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】依本场实际移动、原位置与世界距离条件核对新位置和下一场可达性。
-
 41576｜design_ready｜{"state_adaptation_id":"TSA_012","type_ids":[],"state_type":"item_state","allowed_fields":["item_state_value","item_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】以物品原有归属、完损和用法为前态，按已选行动和事件结果核对变化。
-
 41618｜design_ready｜{"state_adaptation_id":"TSA_013","type_ids":[],"state_type":"capability_state","allowed_fields":["capability_state_value","capability_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】按作品已有能力来源、原有范围和实际表现核对获得、损失或受限的结果。
-
 41660｜design_ready｜{"state_adaptation_id":"TSA_014","type_ids":[],"state_type":"moral_state","allowed_fields":["moral_state_value","moral_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】从已确认的道德边界、实际冲突和人物的具体取舍核对所涉变化及持续作用。
-
 41702｜design_ready｜{"state_adaptation_id":"TSA_015","type_ids":[],"state_type":"reputation_state","allowed_fields":["reputation_state_value","reputation_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】依据事件所涉群体、真实获知范围及行动后果核对相关角色的实际声誉变化。
-
 41744｜design_ready｜{"state_adaptation_id":"TSA_016","type_ids":[],"state_type":"risk_state","allowed_fields":["risk_state_value","risk_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】用已存在的风险、当前触发及实际结果核对风险受影响的范围和后场条件。
-
 41786｜design_ready｜{"state_adaptation_id":"TSA_017","type_ids":[],"state_type":"foreshadowing_state","allowed_fields":["foreshadowing_state_value","foreshadowing_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
 【本步用法】在已立伏笔和实际事件证据中核对本场究竟进行了设置、提示或兑现，保存后续承接。
-
 41828｜design_ready｜{"state_adaptation_id":"TSA_018","type_ids":[],"state_type":"social_state","allowed_fields":["social_state_value","social_state_change"],"preferred_changes":["候选更新优先级调整"],"forbidden_changes":["直接改变正式状态","跳过事件证据","覆盖人物当前状态","让死亡人物恢复行动","让损坏物品恢复正常","让未知信息自动变成已知"],"preconditions":["类型已选中","状态变化有事件依据","人物当前状态允许该变化"],"validation_rules":["状态字段必须在allowed_fields内","变化必须来自confirmed事件","不能与当前连续性冲突"],"continuity_constraints":["状态变化必须通过连续性验证","不能产生自相矛盾的状态"],"source_refs":["类型表达适配总表.json","事件状态变化表.json"],"evidence_type":"template","confidence":0.6,"status":"active","schema_version":"TYPE_D-1.0.0"}
-【本步用法】按当场已有实体、群体关系、已选行动和真实公开范围核对社交处境变化。
-"""
+【本步用法】按当场已有实体、群体关系、已选行动和真实公开范围核对社交处境变化。"""

@@ -1,6 +1,6 @@
 """表达设计中的概念、实体可见特征和人物反应的《类型系统》原文。"""
 
-MATERIAL = r"""#### 表达设计中的概念、实体可见特征和人物反应
+MATERIAL = """#### 表达设计中的概念、实体可见特征和人物反应
 【类型系统原文位置】类型表达适配总表.json 第20889行
 【各条共用原文值】{"priority":0,"weight":0,"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0"}
 【本步使用条件】
@@ -50,5 +50,4 @@ MATERIAL = r"""#### 表达设计中的概念、实体可见特征和人物反应
 23434 | blocked | ADAPT_B_00045 | GENRE_KEHUAN | entity_type | FOOD | null | expression_preference | {"parameters":{"appearance_preference":["高科技外观","极简","流线型"],"description_density":"medium","visibility_emphasis":"normal"},"not_guaranteed":["科技物品必然失控","科技物品必然是武器"]} | 依当前视角核对已有食物的外观、描写比重及可见度。
 23916 | blocked | ADAPT_B_00054 | GENRE_XIANXIA | reaction_type | null | all_reactions | reaction_candidate_weight | {"parameters":{"immediate_reaction_weight":0.6,"delayed_reaction_weight":0.4,"public_reaction_weight":0.5,"private_reaction_weight":0.5,"concealed_reaction_weight":0.7,"verbal_reaction_weight":0.3,"bodily_reaction_weight":0.4,"social_reaction_weight":0.3},"not_guaranteed":["反应必然表现为灵力波动"]} | 核对已选反应的明暗、快慢及表达渠道，使用已有角色和情境。
 23964 | blocked | ADAPT_B_00055 | GENRE_DUSHI | reaction_type | null | all_reactions | reaction_candidate_weight | {"parameters":{"immediate_reaction_weight":0.5,"delayed_reaction_weight":0.5,"public_reaction_weight":0.7,"private_reaction_weight":0.3,"concealed_reaction_weight":0.4,"verbal_reaction_weight":0.7,"bodily_reaction_weight":0.2,"social_reaction_weight":0.8},"not_guaranteed":["反应必然符合社交礼仪"]} | 核对已选反应的公开程度及言语、身体或社交表现。
-24012 | blocked | ADAPT_B_00056 | GENRE_MORI | reaction_type | null | all_reactions | reaction_candidate_weight | {"parameters":{"immediate_reaction_weight":0.9,"delayed_reaction_weight":0.1,"public_reaction_weight":0.3,"private_reaction_weight":0.7,"concealed_reaction_weight":0.5,"verbal_reaction_weight":0.2,"bodily_reaction_weight":0.8,"social_reaction_weight":0.1},"not_guaranteed":["反应必然暴力"]} | 按本场危险与视角核对已定反应的时机、可见度及表现渠道。
-"""
+24012 | blocked | ADAPT_B_00056 | GENRE_MORI | reaction_type | null | all_reactions | reaction_candidate_weight | {"parameters":{"immediate_reaction_weight":0.9,"delayed_reaction_weight":0.1,"public_reaction_weight":0.3,"private_reaction_weight":0.7,"concealed_reaction_weight":0.5,"verbal_reaction_weight":0.2,"bodily_reaction_weight":0.8,"social_reaction_weight":0.1},"not_guaranteed":["反应必然暴力"]} | 按本场危险与视角核对已定反应的时机、可见度及表现渠道。"""

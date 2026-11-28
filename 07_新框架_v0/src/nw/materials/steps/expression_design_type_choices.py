@@ -1,7 +1,6 @@
 """表达设计使用的性别表达边界及独立语气表。"""
 
-MATERIAL = r"""
-【《类型系统》性别表达适配.json｜SOURCE[67]｜原文第 470,200 行】
+MATERIAL = """【《类型系统》性别表达适配.json｜SOURCE[67]｜原文第 470,200 行】
 【本步用法】依作者确认的人物资料、关系、场景目的和视角写 guidance。原列允许字段按本步职责处理；候选排序及故事触发等涉及上游的字段沿用已确认产物。保留全部事实边界。adaptations 为空，现有数据只说明可调整的表达范围；需要具体呈现时用项目已有依据，选择可见动作、对白或措辞及对应判据。
 【原文规则字段】{"stable_id":"G1_2323","object_kind":"性别表达适配_adaptation","schema_version":"1.0.0","description":"性别表达适配：按类型调整性别表达呈现","type_adjustments_allowed":["候选排序","感官重点","表达密度","语言复杂度","反差强度","故事触发方式","社交冲突重点","资源和身份呈现","读者体验","节奏和信息揭示"],"type_adjustments_forbidden":["年龄真实值","物种","生理状态","人物能力事实","动物生态事实","正式项目状态"],"adaptations":[],"source_refs":["G1_SPEC_001"],"evidence_type":"template","confidence":0.7,"status":"active"}
 【逐项用法】
@@ -38,5 +37,4 @@ MATERIAL = r"""
 【原文行 470380】{"tone_id":"TONE_RELAXED","canonical_name":"轻松","definition":"轻松、闲适的语气基调","scope":"语气基调","source_refs":["stylistics_standard"],"evidence_type":"template","confidence":0.9,"status":"active","schema_version":"TYPE_A-1.0.0"}
 【本条用法】按已有动作和对白调节松紧，核查轻松语气下场景目标和冲突仍清楚。
 【原文行 470393】{"tone_id":"TONE_OPPRESSIVE","canonical_name":"压抑","definition":"沉重、压抑的语气基调","scope":"语气基调","source_refs":["stylistics_standard"],"evidence_type":"template","confidence":0.9,"status":"active","schema_version":"TYPE_A-1.0.0"}
-【本条用法】以人物可感的限制、压力或其后果体现压抑，核查叙述集中于已有情境证据。
-"""
+【本条用法】以人物可感的限制、压力或其后果体现压抑，核查叙述集中于已有情境证据。"""

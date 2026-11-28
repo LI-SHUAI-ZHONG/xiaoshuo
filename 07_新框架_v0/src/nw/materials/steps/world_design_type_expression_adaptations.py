@@ -1,6 +1,6 @@
 """世界设计中的实体用途、归属和资源候选的《类型系统》原文。"""
 
-MATERIAL = r"""#### 世界设计中的实体用途、归属和资源候选
+MATERIAL = """#### 世界设计中的实体用途、归属和资源候选
 【类型系统原文位置】类型表达适配总表.json 第20889行
 【各条共用原文值】{"priority":0,"weight":0,"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0"}
 【本步使用条件】
@@ -33,5 +33,4 @@ MATERIAL = r"""#### 世界设计中的实体用途、归属和资源候选
 23434 | blocked | ADAPT_B_00045 | GENRE_KEHUAN | entity_type | FOOD | null | expression_preference | {"parameters":{"function_emphasis":["多功能","智能化","科技层级"],"ownership_emphasis":"技术获得","social_meaning":["技术水平","文明等级"]},"not_guaranteed":["科技物品必然失控","科技物品必然是武器"]} | 结合项目已定的科幻依据核对已有食物的作用、归属及社会含义。
 24256 | blocked | ADAPT_B_00061 | GENRE_XIANXIA | resource_type | null | all_resources | resource_presentation | {"parameters":{"preferred_resources":["灵石","丹药","法宝","功法","灵脉"],"exchange_media":["灵石","丹药"],"long_term_constraints":["灵根","悟性","机缘"]},"not_guaranteed":["资源必然以这些形式出现","资源数量必然被显性呈现"]} | 核对既有修炼资源、交换媒介与长期限制的原值，来源仍受阻。
 24313 | blocked | ADAPT_B_00062 | GENRE_DUSHI | resource_type | null | all_resources | resource_presentation | {"parameters":{"preferred_resources":["金钱","人脉","信息","房产","股份"],"exchange_media":["金钱"],"long_term_constraints":["学历","关系网","信用记录"]},"not_guaranteed":["资源必然以这些形式出现","资源数量必然被显性呈现"]} | 核对已经存在的都市资源、交换媒介与长期限制，来源仍受阻。
-24369 | blocked | ADAPT_B_00063 | GENRE_MORI | resource_type | null | all_resources | resource_presentation | {"parameters":{"preferred_resources":["食物","水","药品","弹药","燃料"],"exchange_media":["食物","弹药","药品"],"long_term_constraints":["安全据点","生存技能","可靠伙伴"]},"not_guaranteed":["资源必然以这些形式出现","资源数量必然被显性呈现"]} | 核对已定求生物资、交换媒介及长期限制，来源仍受阻。
-"""
+24369 | blocked | ADAPT_B_00063 | GENRE_MORI | resource_type | null | all_resources | resource_presentation | {"parameters":{"preferred_resources":["食物","水","药品","弹药","燃料"],"exchange_media":["食物","弹药","药品"],"long_term_constraints":["安全据点","生存技能","可靠伙伴"]},"not_guaranteed":["资源必然以这些形式出现","资源数量必然被显性呈现"]} | 核对已定求生物资、交换媒介及长期限制，来源仍受阻。"""

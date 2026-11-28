@@ -12,5 +12,4 @@ MATERIAL = r"""#### 类型总表的受众标签
 20496 | AUDIENCE_MAINSTREAM | 大众 | 面向大众读者 | 记录作者明确给出的大众读者定位。
 20519 | AUDIENCE_NICHE | 小众 | 面向特定小众读者 | 记录作者指定的具体小众读者群及需求。
 【本步使用条件】
-按作者明确选定的目标读者和项目既有边界，使用实际选择的类型作 type_refs，在 adaptations 的 parameters、limits 或 boundaries 中记录已有受众要求。读者年龄、内容边界与文学效果依据作者和项目证据确认。
-"""
+按作者明确选定的目标读者和项目既有边界，使用实际选择的类型作 type_refs，在 adaptations 的 parameters、limits 或 boundaries 中记录已有受众要求。读者年龄、内容边界与文学效果依据作者和项目证据确认。"""

@@ -1,6 +1,6 @@
 """场景设计中的出现位置及披露候选的《类型系统》原文。"""
 
-MATERIAL = r"""#### 场景设计中的出现位置及披露候选
+MATERIAL = """#### 场景设计中的出现位置及披露候选
 【类型系统原文位置】类型表达适配总表.json 第20889行
 【各条共用原文值】{"priority":0,"weight":0,"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0"}
 【本步使用条件】
@@ -20,5 +20,4 @@ MATERIAL = r"""#### 场景设计中的出现位置及披露候选
 24060 | blocked | ADAPT_B_00057 | GENRE_XUANYI | information_type | null | all_information | information_reveal_preference | {"parameters":{"information_asymmetry":"high","viewpoint_restriction":"high"},"candidate_information_patterns":["clue","secret","false_information","motive","danger"],"not_guaranteed":["信息必然被揭示","信息必然是真实的"]} | 核对线索、秘密、虚假信息、动机和危险的拟披露边界，实际披露使用已定依据。
 24109 | blocked | ADAPT_B_00058 | GENRE_DUSHI | information_type | null | all_information | information_reveal_preference | {"parameters":{"information_asymmetry":"medium","viewpoint_restriction":"low"},"candidate_information_patterns":["identity","resource","relationship","plan","opportunity"],"not_guaranteed":["信息必然被揭示","信息必然是真实的"]} | 核对身份、资源、关系、计划和机会在当前场景的已知范围。
 24158 | blocked | ADAPT_B_00059 | GENRE_MORI | information_type | null | all_information | information_reveal_preference | {"parameters":{"information_asymmetry":"high","viewpoint_restriction":"high"},"candidate_information_patterns":["resource","danger","threat","location","weakness"],"not_guaranteed":["信息必然被揭示","信息必然是真实的"]} | 核对资源、危险、威胁、地点和弱点各自的实际持有者与可见范围。
-24207 | blocked | ADAPT_B_00060 | GENRE_XIANXIA | information_type | null | all_information | information_reveal_preference | {"parameters":{"information_asymmetry":"high","viewpoint_restriction":"medium"},"candidate_information_patterns":["capability","secret","opportunity","history","rule"],"not_guaranteed":["信息必然被揭示","信息必然是真实的"]} | 核对能力、秘密、机会、历史和规则的已有披露前置。
-"""
+24207 | blocked | ADAPT_B_00060 | GENRE_XIANXIA | information_type | null | all_information | information_reveal_preference | {"parameters":{"information_asymmetry":"high","viewpoint_restriction":"medium"},"candidate_information_patterns":["capability","secret","opportunity","history","rule"],"not_guaranteed":["信息必然被揭示","信息必然是真实的"]} | 核对能力、秘密、机会、历史和规则的已有披露前置。"""

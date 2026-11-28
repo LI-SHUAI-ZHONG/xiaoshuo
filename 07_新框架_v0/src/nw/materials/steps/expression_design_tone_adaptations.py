@@ -1,7 +1,6 @@
 """语气表达适配在现有步骤使用的《类型系统》原文。"""
 
-MATERIAL = r"""
-【《类型系统》语气表达适配.json｜SOURCE[69]｜原文第 470,454 行】
+MATERIAL = """【《类型系统》语气表达适配.json｜SOURCE[69]｜原文第 470,454 行】
 【本步用法】九条与类型表达适配总表同 ID 内容逐字段一致，在本步合并保留，两处原文可回查。沿用原先 blocked 边界：confidence=999，source_refs 及优选、备选等多项数组为空。程度词和字段只供核对，现有可核项目语气仍按作者确认及本场视角形成 guidance，具体数值或候选动作有赖已有依据。
 【原文表头】{"schema_version":"TYPE_B-1.0.0","updated_at":"2026-07-31T09:57:28","description":"语气维度的表达适配参数","total":9}
 【另一原文位置】SOURCE[23]「类型表达适配总表.json」第 20,889 行。以下 9 条在该表的条目标识行依次为 25133, 25176, 25219, 25262, 25305, 25348, 25391, 25434, 25477。
@@ -23,5 +22,4 @@ MATERIAL = r"""
 【原文行 470764】{"adaptation_id":"ADAPT_B_00086","type_id":"TONE_RELAXED","target_kind":"tone_dimension","target_id":"TONE_RELAXED","target_scope":null,"adaptation_kind":"expression_preference","priority":0,"weight":0,"parameters":{"rhythm_speed":"low","humor_density":"medium","cliffhanger_density":"low"},"preferred_expressions":[],"alternative_expressions":[],"avoid_expressions":[],"candidate_actions":[],"candidate_reactions":[],"candidate_scene_uses":[],"candidate_plot_uses":[],"candidate_information_patterns":[],"candidate_resource_patterns":[],"candidate_relationship_patterns":[],"candidate_foreshadowing_patterns":[],"character_modifiers":[],"identity_modifiers":[],"personality_constraints":[],"situation_constraints":[],"moral_constraints":[],"resource_constraints":[],"relationship_constraints":[],"continuity_constraints":[],"not_guaranteed":["轻松语气不等于无冲突"],"conflicts_with":[],"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0"}
 【本条用法】按本场已定冲突和停连安排核对轻松语气的措辞及进展速度。
 【原文行 470807】{"adaptation_id":"ADAPT_B_00087","type_id":"TONE_OPPRESSIVE","target_kind":"tone_dimension","target_id":"TONE_OPPRESSIVE","target_scope":null,"adaptation_kind":"expression_preference","priority":0,"weight":0,"parameters":{"darkness_level":"high","emotional_suppression":"high","violence_consequence_density":"high"},"preferred_expressions":[],"alternative_expressions":[],"avoid_expressions":[],"candidate_actions":[],"candidate_reactions":[],"candidate_scene_uses":[],"candidate_plot_uses":[],"candidate_information_patterns":[],"candidate_resource_patterns":[],"candidate_relationship_patterns":[],"candidate_foreshadowing_patterns":[],"character_modifiers":[],"identity_modifiers":[],"personality_constraints":[],"situation_constraints":[],"moral_constraints":[],"resource_constraints":[],"relationship_constraints":[],"continuity_constraints":[],"not_guaranteed":["压抑语气不等于悲剧"],"conflicts_with":[],"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0"}
-【本条用法】按已确认的压力及可见后果核对阴暗程度、情绪克制与叙述表现。
-"""
+【本条用法】按已确认的压力及可见后果核对阴暗程度、情绪克制与叙述表现。"""

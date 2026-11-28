@@ -1,7 +1,6 @@
 """剧情设计使用的爽点、机制、结构和信息差原文。"""
 
-MATERIAL = r"""
-【《类型系统》爽点类型适配.json｜SOURCE[63]｜原文第 469,042 行】
+MATERIAL = """【《类型系统》爽点类型适配.json｜SOURCE[63]｜原文第 469,042 行】
 【本步用法】本步先读上游人物、已定读者期待和当前剧情目标。下列原文是兑现节奏候选。power_fantasy、realism 是源字段，绑定需有项目用途和来源依据；按题材名称命中只可回查。根据已有事件及条件在 reader_plan 写出选择、兑现位置和效果判据。
 【原文表头】{"system":"爽点类型适配","version":"G-3C-1.0","total":2}
 【原文逐条字段】adapters
@@ -9,7 +8,6 @@ MATERIAL = r"""
 【本条用法】项目明确需要快速兑现，且已有隐藏实力、资源得失或身份伏笔中的实际前提时，在 reader_plan 比较适当的兑现时机。按本场已有事件选择一种能兑现的读者期待。
 【原文行 469067】{"stable_id":"G3C_ADAPT_爽点类型适配_002","object_kind":"爽点类型适配_adapter","source_refs":[],"evidence_type":"template","confidence":"high","status":"active","schema_version":"G-3C-1.0","type":"realism","release_pace":"slow","delay_tendency":"high","preferred_satisfactions":["intelligence_victory","misconception_corrected","goal_partial_achievement"]}
 【本条用法】项目明确需要延迟兑现，且已有智取、误解待纠正或阶段目标时，在 reader_plan 记录等待期间可见的进展与部分兑现的位置。
-
 【《类型系统》爽文机制.json｜SOURCE[64]｜原文第 469,132 行】
 【本步用法】从已定人物、世界及本段剧情目标出发比较机制。原文 applicable_to 表示可比较的类型范围。采用时在 directions、event_nodes、reader_plan 或 promise_plan 记录与本步职责相符的实际设计、前提和后果，并核对相应 limitations 与 forbidden_triggers。作者可独立决定机制，原模板不使候选结果自动发生。同名 PLOT_MECHANISM_* 条目保留各自定义。
 【原文表头】{"schema_version":"TYPE_A-1.0.0","updated_at":"2026-07-31T09:42:37.831980"}
@@ -46,7 +44,6 @@ MATERIAL = r"""
 【本条用法】在 promise_plan 对照实际埋设点和可用证据安排匹配的回收节点，检查间隔与同一段落承载的回收数量。
 【原文行 469632】{"mechanism_id":"MECHANISM_STAGE_GOAL","type_kind":"TROPE_MECHANISM","canonical_name":"阶段目标机制","display_name":"阶段目标机制","aliases":["阶段目标","Stage Goals"],"definition":"通过设定明确的阶段性目标来结构化推动剧情的叙事机制。每个阶段有明确目标和完成条件。","scope":"通用爽文机制","applicable_to":["GENRE","SUBGENRE","HYBRID_GENRE"],"limitations":["阶段目标需要有逻辑递进","目标完成需要有代价"],"forbidden_triggers":["不能自动确保目标达成","不能跳过过程直接完成"],"source_refs":["web_novel_taxonomy_standard"],"evidence_type":"template","confidence":0.9,"status":"active","schema_version":"TYPE_A-1.0.0"}
 【本条用法】把现有长线目标拆成具体阶段及真实完成条件，并在 event_nodes 记录完成该目标需要的选择和代价。
-
 【《类型系统》特殊叙事结构.json｜SOURCE[65]｜原文第 469,712 行】
 【本步用法】依据作者对结构的选择和实际可用的事件、视角、知情范围与伏笔安排，决定本项目使用的结构。在 event_nodes、reader_plan、promise_plan 记录时间、读者所见与回收等对应安排，按各条 continuity_risks 和 validation_requirements 核对。资料里的结构可按目标相互比较。与 NARRATIVE_STRUCTURE_* 同名时按各自编号和原义核对。
 【原文表头】{"schema_version":"TYPE_A-1.0.0","updated_at":"2026-07-31T09:42:37.831980"}
@@ -81,7 +78,6 @@ MATERIAL = r"""
 【本条用法】核对各人物线的既有事件先后、各自知道的信息及共用伏笔，在交叉点核验因果关系。
 【原文行 470046】{"structure_id":"STRUCTURE_CHAPTER_TWIST","canonical_name":"章节反转结构","definition":"每章或每组章节设置反转/高潮的结构。强调短周期内的戏剧性。","information_distribution":"每章有信息爆发点","time_handling":"节奏紧凑","viewpoint_handling":"灵活","foreshadowing_handling":"短周期伏笔+长线伏笔","continuity_risks":["反转频率过高导致审美疲劳","逻辑崩坏"],"validation_requirements":["检查反转频率","检查反转合理性"],"source_refs":["narrative_theory_standard"],"evidence_type":"template","confidence":0.85,"status":"active","schema_version":"TYPE_A-1.0.0"}
 【本条用法】仅在已有短线或长线铺垫可支持时安排章末新信息，检查先前线索和相邻章节的反转频率。
-
 【《类型系统》信息差适配.json｜SOURCE[66]｜原文第 470,118 行】
 【本步用法】已有剧情信息及读者体验目标时，在 reader_plan 核对信息的持有者、获得出处和披露时点。原文两个适配为模板；类型简称与深度既缺少统一映射也缺少量化口径，按项目已经成立的信息条件比较。
 【原文表头】{"system":"信息差适配","version":"G-3C-1.0","total":2}
@@ -89,5 +85,4 @@ MATERIAL = r"""
 【原文行 470126】{"stable_id":"G3C_ADAPT_信息差适配_001","object_kind":"信息差适配_adapter","source_refs":[],"evidence_type":"template","confidence":"high","status":"active","schema_version":"G-3C-1.0","type":"mystery","gap_type":"reader_knows_character_not_or_neither","gap_depth":"deep","rule":"悬疑类型深度信息差"}
 【本条用法】确有悬疑信息差需求时，在 reader_plan 先写出本段读者所知、当前视角角色所知与双方暂未知的事项；结合已有线索明确揭示顺序。原字面枚举有歧义，分支限实际可证明的知情状态。
 【原文行 470139】{"stable_id":"G3C_ADAPT_信息差适配_002","object_kind":"信息差适配_adapter","source_refs":[],"evidence_type":"template","confidence":"high","status":"active","schema_version":"G-3C-1.0","type":"drama","gap_type":"character_knows_reader_not","gap_depth":"moderate","rule":"剧情类型角色知道更多"}
-【本条用法】确有角色先于读者知情的叙事需求时，按已有人物获知出处和视角安排，记录哪项信息何时能披露，防止把角色已经知道的前提写成临时新增。
-"""
+【本条用法】确有角色先于读者知情的叙事需求时，按已有人物获知出处和视角安排，记录哪项信息何时能披露，防止把角色已经知道的前提写成临时新增。"""

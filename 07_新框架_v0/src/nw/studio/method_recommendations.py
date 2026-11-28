@@ -32,8 +32,8 @@ AUTO_BASE_TASKS = {
     'world': SLOT_TASKS['world'],
     'character': SLOT_TASKS['character'],
     'structure': SLOT_TASKS['structure'] - {'pacing', 'method_binding'},
-    'hook': {'hook', 'foreshadow'},
-    'narration': {'narration'},
+    'hook': {'hook', 'foreshadow', 'information'},
+    'narration': {'narration', 'anchors'},
     'tone': {'pacing'},
     'style': {'expression'},
 }

@@ -18,6 +18,7 @@ _ANCHOR_ROW = re.compile(r'^\d+｜\|\s*([A-Z]+\d+\.\d+)\s*\|')
 _ORIG_JSON_ROW = re.compile(r'^【原文行\s*\d+】\{"[a-z_]*id"\s*:\s*"([^"]+)"')
 _JSON_BLOCK_ID = re.compile(r'^\s*"(?:stable_id|filter_id|rule_id)"\s*:\s*"([^"]+)"')
 _STEP_SOURCE_LINE = re.compile(r'^【原文位置】[^\n]*?第\s*(\d+)(?:\s*[–—-]\s*\d+)?\s*行\s*$')
+_NOISE_STEP_KEY = re.compile(r'^(?:[a-z_]+|\d+)$')
 
 
 def _add_usage(excerpts: dict[str, list[tuple[int | None, list[str]]]], key: str, lines: list[str],
@@ -244,7 +245,7 @@ def extract_step_keys(material: str) -> set[str]:
         if line.startswith(('【本步用法】', '【本条用法】')):
             found.update(titles)
             found.update(group_defs)
-    return found
+    return {k for k in found if k and not _NOISE_STEP_KEY.fullmatch(k.strip())}
 
 
 @lru_cache(maxsize=32)

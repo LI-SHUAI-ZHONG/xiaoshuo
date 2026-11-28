@@ -43,16 +43,16 @@ def test_f2_ledger_batch35_resolved_count():
     assert resolved >= 2320, f'Expected ≥2320 resolved, got {resolved}'
 
 
-def test_f2_ledger_open_count_is_117():
-    """After Batch 35, only 117 items should remain open (needs_author_input)."""
+def test_f2_ledger_open_count_is_zero():
+    """After Batch 38 authoritative completion, all 117 previously open items are resolved (open == 0)."""
     ledger = ROOT / 'workspace' / 'materials' / 'F2_统一问题台账.jsonl'
     if not ledger.is_file():
         return
-    open_count = sum(
-        1 for line in ledger.read_text(encoding='utf-8').splitlines()
-        if line.strip() and json.loads(line).get('status') == 'open'
-    )
-    assert open_count == 117, f'Expected 117 open, got {open_count}'
+    rows = [json.loads(line) for line in ledger.read_text(encoding='utf-8').splitlines() if line.strip()]
+    open_count = sum(1 for obj in rows if obj.get('status') == 'open')
+    resolved_count = sum(1 for obj in rows if obj.get('status') == 'resolved')
+    assert open_count == 0, f'Expected 0 open after Batch 38, got {open_count}'
+    assert resolved_count >= 2437, f'Expected ≥2437 resolved after Batch 38, got {resolved_count}'
 
 
 def test_f2_batch35_resolutions_have_correct_model():

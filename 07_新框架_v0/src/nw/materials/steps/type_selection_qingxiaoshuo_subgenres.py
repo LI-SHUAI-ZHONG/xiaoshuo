@@ -13,5 +13,4 @@ MATERIAL = r"""#### 轻小说子类型
 12383|SUB_QINGXIAOSHUO_07|冒险：GENRE_QINGXIAOSHUO的子类型
 12408|SUB_QINGXIAOSHUO_08|战斗：GENRE_QINGXIAOSHUO的子类型
 【本步用法】
-核对作者指定的轻小说子类型。「轻小说」在本组是 SUB_QINGXIAOSHUO_01，别名表指主类型 GENRE_QINGXIAOSHUO。其余七个同名条目另见二次元，按作者确认的 ID 和父级记录，文风按作者要求单独确定。
-"""
+核对作者指定的轻小说子类型。「轻小说」在本组是 SUB_QINGXIAOSHUO_01，别名表指主类型 GENRE_QINGXIAOSHUO。其余七个同名条目另见二次元，按作者确认的 ID 和父级记录，文风按作者要求单独确定。"""

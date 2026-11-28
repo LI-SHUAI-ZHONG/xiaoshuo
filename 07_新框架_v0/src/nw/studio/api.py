@@ -375,8 +375,10 @@ class StudioService:
             chapters = [asdict(c) for c in store.list('chapter')]
             chapter_by_id = {c['id']: c for c in chapters}
             scenes: list[dict[str, Any]] = []
+            from nw.studio.continuation_views import resolve_scene_card_body
             for sc in store.list('scene'):
                 card_obj = json.loads(sc.card_json)
+                resolved_body = resolve_scene_card_body(store, card_obj)
                 draft_ids = [r[0] for r in store.connection.execute(
                     'SELECT id FROM drafts WHERE scene_id=? ORDER BY version', (sc.id,))]
                 slot = active_slots.get(sc.id)
@@ -394,6 +396,7 @@ class StudioService:
                     'chapter_id': sc.chapter_id,
                     'chapter_index': chapter_by_id.get(sc.chapter_id, {}).get('index', 0),
                     'index': sc.index,
+                    'title': str(resolved_body.get('title') or '').strip(),
                     'card': card_obj,
                     'drafts_count': len(draft_ids),
                     'latest_draft_id': latest_id,
@@ -1092,6 +1095,8 @@ class StudioService:
         with self._open_store(project_name) as store:
             head = current_head(store, branch)
             current = chapter_summary(store, head, int(chapter_idx))
+            if current.get('status') == 'drafts_pending' or 'input_sha256' not in current:
+                raise ValueError('CHAPTER_SCOPE_INCOMPLETE: 本章仍有未接受的场景，请先完成审稿并接受后再填写章总结')
             body: dict[str, Any] = {'input_sha256': current['input_sha256'], 'summary': summary_text.strip()}
             if comparison and comparison.strip():
                 body['comparison'] = comparison.strip()

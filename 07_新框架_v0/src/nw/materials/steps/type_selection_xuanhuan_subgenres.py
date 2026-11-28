@@ -30,5 +30,4 @@ MATERIAL = r"""#### 玄幻子类型
 4483|SUB_XUANHUAN_24|玄幻经营：GENRE_XUANHUAN的子类型
 4508|SUB_XUANHUAN_25|玄幻群像：GENRE_XUANHUAN的子类型
 【本步用法】
-作者明确指定子类型时，以原名、ID 和父级核对项目选型，在 selection.basis 写实际依据。以下定义只声明父子关系。需要更细的适用标准时按作者确认的范围记录，仍缺的标准填入 boundaries 待核。
-"""
+作者明确指定子类型时，以原名、ID 和父级核对项目选型，在 selection.basis 写实际依据。以下定义只声明父子关系。需要更细的适用标准时按作者确认的范围记录，仍缺的标准填入 boundaries 待核。"""

@@ -61,6 +61,10 @@ class ProductionRoutes:
                     data = app.timeline(ident)
                 elif action == 'quality':
                     data = app.quality(ident, first(query, 'scene'))
+                elif action == 'continuation':
+                    data = app.continuation(ident)
+                elif action == 'finish-check':
+                    data = app.finish_check(ident)
                 elif action == 'export':
                     text, filename = app.export(ident, first(query, 'fmt', 'txt'), first(query, 'scope', 'book'))
                     raw = text.encode('utf-8')
@@ -130,6 +134,10 @@ class ProductionRoutes:
                     data = branch_actions[segs[3]](ident, body)
             elif len(segs) == 5 and action == 'scenes' and segs[4] == 'accept':
                 data = app.accept_scene(ident, segs[3], body)
+            elif len(segs) == 5 and action == 'chapters' and segs[4] == 'summary':
+                data = app.save_chapter_summary(ident, int(segs[3]), body)
+            elif len(segs) == 6 and action == 'chapters' and segs[4] == 'reviews':
+                data = app.save_chapter_review(ident, int(segs[3]), segs[5], body)
         elif segs == ['staging']:
             data, status = lib.import_book(body), 201
         elif len(segs) == 3 and segs[0] == 'staging':

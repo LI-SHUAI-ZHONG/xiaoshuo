@@ -5,10 +5,7 @@ from nw.materials.phase_routes import product_ref
 from nw.materials.world_prerequisite_edges import EDGES
 from nw.materials.world_prerequisite_fields import FIELDS
 
-_UNRESOLVED = {
-    'C00045': '10.5 原定义只列总量、纯度和技巧，缺少天赋作为独立变量的算法依据。',
-    'C00110': '原文对吸引与扩散的说明有歧义，缺少能确定通用流向的原义依据。',
-}
+_UNRESOLVED: dict[str, str] = {}
 
 # The static source of these two edges is only written into the action step.
 _ACTION_ONLY = {'C00025', 'C00032'}
@@ -39,7 +36,7 @@ _CAUSE = re.compile(r'决定|导致|造成|引起|使得|影响|限定|规定|�
 # These pairs have separately authored reverse edges. A rule, its visible consequence
 # and an observation offered as proof of that rule are different design evidence.
 _DIRECTED = {'C00051', 'C00115', 'C00727', 'C00827', 'C00751', 'C00776'}
-_PHYSICAL_FLOW = {'C00109', 'C00412', 'C00413'}
+_PHYSICAL_FLOW = {'C00109', 'C00110', 'C00412', 'C00413'}
 _TERMS = {key: tuple(re.compile(pattern) for pattern in row[3:6]) for key, row in FIELDS.items()}
 
 
@@ -109,7 +106,9 @@ def _world_evidence(key: str, body: dict, *, strict: bool = False):
             continue
         if not (left.search(clause) and right.search(clause) and _LINK.search(clause) and _direction(key, clause)):
             continue
-        if key in _PHYSICAL_FLOW and re.search(r'必定.{0,8}由高向低|任何.{0,10}必然扩散|永远.{0,8}高浓度流向低浓度', clause):
+        if key in _PHYSICAL_FLOW and re.search(
+                r'必定.{0,8}由高向低|任何.{0,10}必然扩散|永远.{0,12}(?:高浓度.{0,6}低浓度|由高.{0,6}低)|无条件.{0,8}(?:逆流|汇聚|吸引)',
+                clause):
             continue
         for limit in limits:
             if detail.search(clause) or detail.search(limit):

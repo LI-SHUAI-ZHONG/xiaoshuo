@@ -545,6 +545,97 @@ def build_continuity_ledger(stage: str, products: dict, deps: list[str], context
     return ledger or None
 
 
+def _classify_material_role(stage: str, prof: str, key: str) -> str:
+    """Stage-aware role assignment so materials act according to the current step's real responsibility."""
+    if stage == 'type_selection':
+        return 'drivers' if prof in ('type_identity', 'brief') else 'boundaries'
+    if stage == 'type_adaptation':
+        if prof in ('type_combination', 'type_link', 'type_expression', 'type_identity'):
+            return 'drivers'
+        return 'boundaries'
+    if stage == 'world_design':
+        if prof in ('world', 'type_link', 'type_combination'):
+            return 'drivers'
+        return 'boundaries'
+    if stage == 'character_design':
+        if prof in ('character', 'type_link', 'type_combination'):
+            return 'drivers'
+        return 'boundaries'
+    if stage == 'static_relations':
+        if prof in ('static_relation', 'static_binding', 'type_link'):
+            return 'drivers'
+        return 'boundaries'
+    if stage in ('plot_design', 'event_design'):
+        if prof in ('plot', 'opening', 'promise_process', 'dynamic_relation', 'dynamic_binding',
+                    'type_transition', 'type_link', 'type_combination') or (stage == 'event_design' and prof == 'scene'):
+            return 'drivers'
+        if prof == 'type_expression' and any(tok in key for tok in ('结构', '机制', '伏笔', '悬念', '冲突', 'FORESHADOW', 'STRUCTURE', 'MECHANISM')):
+            return 'drivers'
+        return 'boundaries'
+    if stage in ('action_design', 'state_transition', 'state_propagation'):
+        if prof in ('dynamic_relation', 'dynamic_binding', 'type_transition', 'scene', 'character', 'plot'):
+            return 'drivers'
+        return 'boundaries'
+    if stage == 'anchor_design':
+        if prof == 'anchor':
+            return 'drivers'
+        if prof in ('expression', 'type_expression'):
+            return 'anchors_and_expression'
+        return 'boundaries'
+    if stage == 'expression_design':
+        if prof in ('expression', 'type_expression'):
+            return 'drivers'
+        if prof == 'anchor':
+            return 'anchors_and_expression'
+        return 'boundaries'
+    if stage == 'bind_scope':
+        if prof in ('material_selection', 'material_conversion', 'usage_process', 'preflight'):
+            return 'drivers'
+        if prof in ('anchor', 'expression', 'type_expression'):
+            return 'anchors_and_expression'
+        return 'boundaries'
+    # Default / scene_design: preserve classic 3-tier role division.
+    if prof in _DRIVER_PROFILES:
+        return 'drivers'
+    if prof in _BOUNDARY_PROFILES:
+        return 'boundaries'
+    if prof in _ANCHOR_PROFILES:
+        return 'anchors_and_expression'
+    return 'boundaries'
+
+
+def format_writing_continuity_prompt(ledger: dict | None) -> str:
+    """Render compact cross-step anti-forgetting guards for Step 15 prose writing."""
+    if not ledger:
+        return ''
+    parts: list[str] = []
+    if vg := ledger.get('character_voice_guard'):
+        voices = [
+            f"{p.get('name') or p['entity']}({p['voice_traits'] or p['core_personality']})"
+            for p in vg.get('profiles', ())[:5]
+            if p.get('voice_traits') or p.get('core_personality')
+        ]
+        if voices:
+            parts.append('人物声线与基线：' + '；'.join(voices))
+    if eg := ledger.get('entity_guard'):
+        if eg.get('cannot_act'):
+            parts.append('非行动实体禁发主动动作：' + '、'.join(str(x) for x in eg['cannot_act'][:6]))
+    if fr := ledger.get('foreshadow_reminder'):
+        due = [str(d.get('title') or d.get('promise') or '') for d in fr.get('due_this_scene', ())[:4] if d]
+        overdue = [str(o.get('title') or o.get('promise') or '') for o in fr.get('overdue_warnings', ())[:4] if o]
+        if due:
+            parts.append('本场到期伏笔须自然落笔或交代推迟：' + '、'.join(due))
+        if overdue:
+            parts.append('超期未回收伏笔优先推进：' + '、'.join(overdue))
+    if mc := ledger.get('multi_char_guard'):
+        asym = [str(a.get('guard') or '') for a in mc.get('information_asymmetry', ())[:4] if a.get('guard')]
+        if asym:
+            parts.append('群戏知情隔离：' + '；'.join(asym))
+    if not parts:
+        return ''
+    return '【15写作跨步连续性守卫】' + ' ｜ '.join(parts) + '。'
+
+
 def build_joint_material_plan(stage: str, sources: list[dict]) -> dict | None:
     """Coordinate 2+ materials in the same step so they combine by role without deadlocking or clashing."""
     if len(sources) < 2:
@@ -562,28 +653,29 @@ def build_joint_material_plan(stage: str, sources: list[dict]) -> dict | None:
         is_ref = src.get('source_state') != 'design_ready'
         if is_ref or has_issues:
             templates_or_partial.append(label)
-        if prof in _DRIVER_PROFILES:
+        role = _classify_material_role(stage, prof, str(label))
+        if role == 'drivers':
             drivers.append(label)
-        elif prof in _BOUNDARY_PROFILES:
-            boundaries.append(label)
-        elif prof in _ANCHOR_PROFILES:
+        elif role == 'anchors_and_expression':
             anchors.append(label)
         else:
             boundaries.append(label)
 
     plan: dict[str, Any] = {
         'stage': stage,
+        'total_sources': len(sources),
         'priority': PRIORITY_HIERARCHY,
-        'rule': '多份资料联合使用时：驱动类决定目标与推进，边界类限定规则/知情/能力上限，锚点表达类落地可见细节；不适用项写入_excluded并说明本项目具体差异，局部缺义条款标source_unresolved，严禁硬凑冲突效果或伪造已完成事实。',
+        'rule': '多份资料联合使用时：驱动类决定本步核心产物与因果推进，边界类划定世界/知情/能力/步骤职责红线（严禁越步篡改上游目标），锚点表达类落地具象感知与语言质感；不适用项写入_excluded并说明本项目具体差异，局部缺义条款标source_unresolved，严禁硬凑冲突效果或伪造已完成事实。',
+        'creative_autonomy_rule': '弹性与原创铁律（126.15）：资料与模板是启发因果与检验质量的脚手架，绝非束缚故事生命力的八股填空；当参考套路与本作人物真实动机/处境张力冲突时，优先服从已接受事实、作者意图与人物真实选择。',
     }
     if drivers:
-        plan['drivers'] = drivers[:8]
+        plan['drivers'] = drivers[:16]
     if boundaries:
-        plan['boundaries'] = boundaries[:8]
+        plan['boundaries'] = boundaries[:16]
     if anchors:
-        plan['anchors_and_expression'] = anchors[:8]
+        plan['anchors_and_expression'] = anchors[:16]
     if templates_or_partial:
-        plan['needs_instantiation_or_clause_guard'] = templates_or_partial[:8]
+        plan['needs_instantiation_or_clause_guard'] = templates_or_partial[:16]
     return plan
 
 

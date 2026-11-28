@@ -428,7 +428,8 @@ method_requirements是上游已按资料形成的本步约束；逐项生成_req
 dependency_source_ids来自前步实际采用资料的后续引用；只在当前步读取并按真实前置使用或说明不适用，不能把引用关系本身当成已确认事实。
 人物和世界卡明确visibility(public、holders、author_only)；场景人物的可见设定必须对该POV可用，私密信息另置author_only卡，不能全设public。
 资料不够时可先输出{stage,requests:[{action:search,query:具体用途,cursor:0}或{action:read,id:本步候选ID}]}，
-检索结果可翻页；读取全文后才能使用。每次只处理当前步骤，预算不够时停止，不能伪造已读或省略必要资料。'''
+检索结果可翻页；读取全文后才能使用。每次只处理当前步骤，预算不够时停止，不能伪造已读或省略必要资料。
+创作弹性与原创性：资料与模板用于强化因果链与人物真实选择，严禁机械套用同款桥段或把人物压扁为功能标签；与当前人物处境不符的候选依规记入_excluded并写明实际差异。'''
 
 STEP_SOURCE_PROMPT = (STEP_PROMPT
     .replace('先读原文及运用层', '先读 sources 各条的 step_use 与已核定的使用条件')
@@ -794,20 +795,20 @@ SCHEMAS={
 }
 
 FUNCTION_QUERIES={
- 'type_selection':('类型本体 读者承诺',),
+ 'type_selection':('类型本体 读者承诺','题材特征 禁区 识别边界'),
  'type_adaptation':('类型组合 类型连接','表达适配 候选参数','概念触发 关注重点'),
- 'world_design':('世界设定 规则 限制',),
- 'character_design':('人物目标 动机 行为','人物能力 关系 初始状态'),
- 'static_relations':('稳定关系 关系限制',),
+ 'world_design':('世界设定 规则 限制','力量 制度 资源 代价','生态 空间 历史 边界'),
+ 'character_design':('人物目标 动机 行为','人物能力 关系 初始状态','人物弧光 底线 声音'),
+ 'static_relations':('稳定关系 关系限制','权力 信息差 情感债务 阵营'),
  'plot_design':('剧情结构 因果 选择 后果','读者情绪 信息顺序','伏笔 埋设 回收'),
  'event_design':('事件候选 前一事件 完成条件','剧情因果 后继事件'),
  'action_design':('行动候选 能力 限制','动作 对象 障碍 应对 结果'),
  'scene_design':('场景 目标 冲突 阻碍','视角 知情 披露','时间线 场景'),
  'state_transition':('状态变化 外部行动 连续性','动作 阻碍 应对 代价'),
- 'state_propagation':('状态传播 变化确认 外部选择',),
- 'anchor_design':('锚点 可见动作 对象 节拍',),
+ 'state_propagation':('状态传播 变化确认 外部选择','传播载体 目击 流言 波及'),
+ 'anchor_design':('锚点 可见动作 对象 节拍','观察者 器物 身体反应 镜头'),
  'expression_design':('动作描写 具体表现','情绪描写 表现','对白 文风 叙述'),
- 'bind_scope':('资料筛选 实际参数 检验点',),
+ 'bind_scope':('资料筛选 实际参数 检验点','场景表现 方法核验 审稿判据'),
 }
 
 # Non-schema providers receive the same explicit transport fields as Ollama.

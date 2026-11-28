@@ -10,5 +10,4 @@ MATERIAL = r"""#### 童话与寓言子类型
 13308|SUB_TONGHUA_04|民间传说：GENRE_TONGHUA的子类型
 13333|SUB_TONGHUA_05|动物故事：GENRE_TONGHUA的子类型
 【本步用法】
-核对作者指定的童话与寓言子类型。「童话」在本组为 SUB_TONGHUA_01，别名表指主类型 GENRE_TONGHUA。按作者确认的形式与范围记录项目采用的 ID。
-"""
+核对作者指定的童话与寓言子类型。「童话」在本组为 SUB_TONGHUA_01，别名表指主类型 GENRE_TONGHUA。按作者确认的形式与范围记录项目采用的 ID。"""

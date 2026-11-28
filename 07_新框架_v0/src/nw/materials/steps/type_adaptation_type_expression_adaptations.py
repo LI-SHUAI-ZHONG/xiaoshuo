@@ -1,6 +1,6 @@
 """类型适配中的概念条件和非保证边界的《类型系统》原文。"""
 
-MATERIAL = r"""#### 类型适配中的概念条件和非保证边界
+MATERIAL = """#### 类型适配中的概念条件和非保证边界
 【类型系统原文位置】类型表达适配总表.json 第20889行
 【各条共用原文值】{"priority":0,"weight":0,"source_refs":[],"evidence_type":"template","confidence":999,"status":"active","schema_version":"TYPE_B-1.0.0"}
 【本步使用条件】
@@ -27,5 +27,4 @@ MATERIAL = r"""#### 类型适配中的概念条件和非保证边界
 21887 | design_ready | ADAPT_B_00018 | GENRE_KEHUAN | concept | NEED_FOOD | null | expression_preference | {"parameters":{"expression_weight":0.5},"not_guaranteed":["食物必然是合成品"]} | 核对世界已设定的食物来源与本场需要。
 21941 | design_ready | ADAPT_B_00019 | GENRE_KEHUAN | concept | FATIGUE | null | expression_preference | {"parameters":{"expression_weight":0.5},"not_guaranteed":["疲劳必然是科技副作用"]} | 确认本场疲惫与已有科技或环境条件的关系。
 21993 | blocked | ADAPT_B_00020 | GENRE_XUANYI | concept | FEAR | null | expression_preference | {"parameters":{"expression_weight":0.5},"not_guaranteed":["恐惧必然源于凶手","恐惧是真实威胁"]} | 核对原文关联的恐惧与威胁信息，登记来源受阻及真实性待核。
-22050 | design_ready | ADAPT_B_00021 | GENRE_XUANYI | concept | JOY | null | expression_preference | {"parameters":{"expression_weight":0.5},"not_guaranteed":["快乐必然是结局"]} | 核对已经确定的揭示、解除危险或结果与人物喜悦。
-"""
+22050 | design_ready | ADAPT_B_00021 | GENRE_XUANYI | concept | JOY | null | expression_preference | {"parameters":{"expression_weight":0.5},"not_guaranteed":["快乐必然是结局"]} | 核对已经确定的揭示、解除危险或结果与人物喜悦。"""

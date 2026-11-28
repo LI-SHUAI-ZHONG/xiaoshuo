@@ -220,6 +220,12 @@ def prepare_plan_task(store: Store, brief_ref: Ref | int, scope: str, provider: 
                 project_inputs.pop('length_policy', None)
                 project_inputs.pop('length_auto', None)
                 project_inputs.pop('length_recommendation', None)
+                if (not config.source_driven
+                        and not (store.directory.parent / 'materials/catalog.db').is_file()
+                        and set(project_inputs) == {'creation_plan'}
+                        and isinstance(project_inputs['creation_plan'], dict)
+                        and set(project_inputs['creation_plan']) <= {'macro_craft_compass'}):
+                    project_inputs.pop('creation_plan', None)
                 if project_inputs:
                     material_governance['plot_design'] = project_inputs
                 elif governance_inputs['plot_design']:

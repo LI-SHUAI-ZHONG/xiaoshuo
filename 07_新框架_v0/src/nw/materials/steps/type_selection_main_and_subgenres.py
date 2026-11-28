@@ -1,7 +1,6 @@
 """类型选择使用的独立主类型表和子类型表。"""
 
-MATERIAL = r"""
-【《类型系统》主类型.json｜SOURCE[71]｜原文第 470,984 行】
+MATERIAL = r"""【《类型系统》主类型.json｜SOURCE[71]｜原文第 470,984 行】
 【本步用法】以作者明确的创作需求和本书主驱动力核对定义、区分特征和层级，选择依据写入 selection.basis，范围及非保证事项写入 boundaries。人物、世界、资源、表达等倾向是待比较特征，具体写法按作者和对应步骤的实际需要选取。与「类型本体\类型总表.json」重叠的 ID 各保留原字段与出处；影响项目选择的定义或适用边界差异记录为待确认。
 【原文表头】{"schema_version":"TYPE_A-1.0.0","updated_at":"2026-07-31T09:42:37.831980"}
 【原文逐条字段】genres
@@ -45,7 +44,6 @@ MATERIAL = r"""
 【本条用法】核对作者是否明确基于某已有作品或设定创作，以及实际继承范围，按项目已给事实确定类型。
 【原文行 472866】{"type_id":"GENRE_XIANSHI","type_kind":"GENRE","canonical_name":"现实","display_name":"现实","aliases":["现实主义","Realism","写实","文学"],"parent_id":null,"ancestor_ids":[],"child_ids":[],"level":1,"definition":"以真实/写实手法描绘现实生活的类型。强调社会真实、人性深度和现实逻辑。","scope":"主类型","inclusions":["现实社会","真实人物","社会议题","现实逻辑"],"exclusions":["超自然元素","完全架空"],"distinguishing_features":["现实逻辑","社会观察","人性深度"],"common_confusions":["与都市混淆（现实更侧重文学性）"],"compatible_parent_kinds":[],"compatible_child_kinds":["SUBGENRE"],"compatible_hybrid_kinds":["HYBRID_GENRE"],"compatible_mechanisms":["TROPE_MECHANISM"],"compatible_structures":["NARRATIVE_STRUCTURE"],"compatible_styles":["STYLE"],"expression_dimensions":["社会描写","人物心理","现实困境"],"character_tendencies":["人物有现实原型感"],"world_tendencies":["遵循现实规律"],"conflict_tendencies":["社会矛盾","人性困境","伦理抉择"],"resource_tendencies":["社会资源","教育","机会"],"information_tendencies":["社会真相"],"relationship_tendencies":["真实人际关系"],"pacing_tendencies":["生活节奏"],"foreshadowing_tendencies":["社会变迁暗示"],"not_guaranteed":["一定有社会批判","一定是悲剧","一定有大团圆"],"source_refs":["web_novel_taxonomy_standard"],"evidence_type":"template","confidence":0.85,"status":"active","schema_version":"TYPE_A-1.0.0"}
 【本条用法】根据作者已定的写实程度、社会环境和人物冲突，说明现实逻辑如何构成项目承诺。
-
 【《类型系统》子类型.json｜SOURCE[72]｜原文第 473,011 行】
 【本步用法】据父级原文 ID 和本项目明确选择核对分类；按实际剧情驱动力和作者选择说明为什么考虑本分支。父级与相近类型各自按来源核查，空字段保留，风格与具体写法按项目需要独立选取。
 【原文表头】{"schema_version":"TYPE_A-1.0.0","updated_at":"2026-07-31T09:42:37.831980"}
@@ -91,5 +89,4 @@ MATERIAL = r"""
 【原文行 474028】{"type_id":"SUBGENRE_TUILI_BENGE","type_kind":"SUBGENRE","canonical_name":"本格推理","display_name":"本格推理","aliases":["古典推理"],"parent_id":"GENRE_TUILI","ancestor_ids":["GENRE_TUILI"],"child_ids":[],"level":2,"definition":"以谜题和逻辑解谜为核心的经典推理子类型。","scope":"子类型","inclusions":["公平线索","逻辑解谜","密室/不可能犯罪"],"exclusions":[],"distinguishing_features":["公平原则"],"common_confusions":[],"compatible_parent_kinds":["GENRE"],"compatible_child_kinds":[],"compatible_hybrid_kinds":[],"compatible_mechanisms":[],"compatible_structures":[],"compatible_styles":[],"expression_dimensions":[],"character_tendencies":[],"world_tendencies":[],"conflict_tendencies":[],"resource_tendencies":[],"information_tendencies":[],"relationship_tendencies":[],"pacing_tendencies":[],"foreshadowing_tendencies":[],"not_guaranteed":[],"source_refs":["web_novel_taxonomy_standard"],"evidence_type":"template","confidence":0.85,"status":"active","schema_version":"TYPE_A-1.0.0"}
 【本条用法】父级确认是推理时，用已确认的谜题、逻辑解谜和线索公平要求核对这个子分支。
 【原文行 474080】{"type_id":"SUBGENRE_JINGJI_DIANJING","type_kind":"SUBGENRE","canonical_name":"电子竞技","display_name":"电子竞技","aliases":["Esports"],"parent_id":"GENRE_JINGJI","ancestor_ids":["GENRE_JINGJI"],"child_ids":[],"level":2,"definition":"以电子竞技比赛为核心的竞技子类型。","scope":"子类型","inclusions":["电竞游戏","职业联赛","战队运营"],"exclusions":[],"distinguishing_features":["电子竞技职业体系"],"common_confusions":[],"compatible_parent_kinds":["GENRE"],"compatible_child_kinds":[],"compatible_hybrid_kinds":[],"compatible_mechanisms":[],"compatible_structures":[],"compatible_styles":[],"expression_dimensions":[],"character_tendencies":[],"world_tendencies":[],"conflict_tendencies":[],"resource_tendencies":[],"information_tendencies":[],"relationship_tendencies":[],"pacing_tendencies":[],"foreshadowing_tendencies":[],"not_guaranteed":[],"source_refs":["web_novel_taxonomy_standard"],"evidence_type":"template","confidence":0.85,"status":"active","schema_version":"TYPE_A-1.0.0"}
-【本条用法】父级确认是竞技时，用既定电竞比赛及其职业或竞赛体系核对分支依据。
-"""
+【本条用法】父级确认是竞技时，用既定电竞比赛及其职业或竞赛体系核对分支依据。"""

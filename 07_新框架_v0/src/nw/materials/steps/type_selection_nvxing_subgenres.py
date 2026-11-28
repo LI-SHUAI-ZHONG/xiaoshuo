@@ -12,5 +12,4 @@ MATERIAL = r"""#### 女性成长子类型
 14058|SUB_NVXING_06|女性创业：GENRE_NVXING的子类型
 14083|SUB_NVXING_07|女性群像：GENRE_NVXING的子类型
 【本步用法】
-核对作者指定的女性成长子类型。同名记录包括主类型 GENRE_NVXING 和子类型 SUB_NVXING_01、SUB_YANQING_28、SUB_XIANSHI_24。「大女主」「女强」还见于言情，按作者确定的范围和层级记录，待定项写入 boundaries。
-"""
+核对作者指定的女性成长子类型。同名记录包括主类型 GENRE_NVXING 和子类型 SUB_NVXING_01、SUB_YANQING_28、SUB_XIANSHI_24。「大女主」「女强」还见于言情，按作者确定的范围和层级记录，待定项写入 boundaries。"""

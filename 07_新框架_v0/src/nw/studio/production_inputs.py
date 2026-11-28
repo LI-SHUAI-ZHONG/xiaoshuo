@@ -172,7 +172,7 @@ def governance(wizard: dict, *, library=None) -> dict:
         values = wizard.get(field)
         if not values:
             continue
-        if slot in ('character', 'structure', 'hook', 'narration'):
+        if slot != 'genre':
             opt_by_id = {row['id']: row for row in catalog.option_map(slot).values() if row.get('selectable', True)}
             by_stage: dict[str, list[str]] = {}
             for ident in values:
@@ -198,6 +198,14 @@ def governance(wizard: dict, *, library=None) -> dict:
             # The type governance registry accepts typed identifiers only.
             config[SLOTS[slot]] = [r['id'] for r in plan['preferences'] if r['slot'] == slot
                                     and 'original_line' in r['source_ref']]
+        extra_mechanisms = [
+            r['id'] for r in plan['preferences']
+            if r['slot'] in ('world', 'character')
+            and 'original_line' in r['source_ref']
+            and str(r['id']).startswith('PLOT_MECHANISM_')
+        ]
+        if extra_mechanisms:
+            config['mechanism_ids'] = list(dict.fromkeys([*config['mechanism_ids'], *extra_mechanisms]))
     if any(config.values()):
         result['type_selection']['project_config'] = config
         if catalog.single_genre_path(config['genre_ids']):
